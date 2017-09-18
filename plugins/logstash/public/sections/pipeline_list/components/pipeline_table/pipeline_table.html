@@ -39,16 +39,6 @@
       >
         Last Modified By
       </th>
-      <th class="kuiTableHeaderCell">
-        <sortable-column
-          field="version.sortOrder"
-          on-sort-change="pipelineTable.onSortChange"
-          sort-field="pipelineTable.sortField"
-          sort-reverse="pipelineTable.sortReverse"
-        >
-          Version
-        </sortable-column>
-      </th>
     </tr>
   </thead>
 
@@ -68,10 +58,11 @@
         </div>
       </td>
       <td class="kuiTableRowCell">
-        <div class="kuiTableRowCell__liner" data-test-subj="cellId">
+        <div class="kuiTableRowCell__liner">
           <a
             class="kuiLink"
             ng-href="#/management/logstash/pipelines/pipeline/{{item.pipeline.id}}/edit"
+            data-test-subj="cellId"
           >
             {{item.pipeline.id}}
           </a>
@@ -95,11 +86,6 @@
       >
         <div class="kuiTableRowCell__liner" data-test-subj="cellUsername">
           {{item.pipeline.username}}
-        </div>
-      </td>
-      <td class="kuiTableRowCell">
-        <div class="kuiTableRowCell__liner" data-test-subj="cellVersion">
-          {{item.pipeline.version}}
         </div>
       </td>
     </tr>

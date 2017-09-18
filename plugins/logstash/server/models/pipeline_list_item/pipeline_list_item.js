@@ -5,7 +5,6 @@ export class PipelineListItem {
     this.id = props.id;
     this.description = props.description;
     this.last_modified = props.last_modified;
-    this.version = props.version;
     this.username = props.username;
   }
 
@@ -14,7 +13,6 @@ export class PipelineListItem {
       id: this.id,
       description: this.description,
       last_modified: this.last_modified,
-      version: this.version,
       username: this.username
     };
 
@@ -30,7 +28,6 @@ export class PipelineListItem {
       id: pipeline._id,
       description: get(pipeline, '_source.description'),
       last_modified: get(pipeline, '_source.last_modified'),
-      version: get(pipeline, '_source.version'),
       username: get(pipeline, '_source.username')
     };
 

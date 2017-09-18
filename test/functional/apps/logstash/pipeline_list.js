@@ -32,8 +32,7 @@ export default function ({ getService, getPageObjects }) {
         selected: false,
         id: 'tweets_and_beats',
         description: 'ingest tweets and beats',
-        username: 'elastic',
-        version: ''
+        username: 'elastic'
       }];
 
       for (let emptyPipelineId = 1; emptyPipelineId <= 19; ++emptyPipelineId) {
@@ -41,8 +40,7 @@ export default function ({ getService, getPageObjects }) {
           selected: false,
           id: `empty_pipeline_${emptyPipelineId}`,
           description: 'an empty pipeline',
-          username: 'elastic',
-          version: ''
+          username: 'elastic'
         });
       }
 
@@ -140,15 +138,13 @@ export default function ({ getService, getPageObjects }) {
             selected: false,
             id: 'empty_pipeline_20',
             description: 'an empty pipeline',
-            username: 'elastic',
-            version: ''
+            username: 'elastic'
           },
           {
             selected: false,
             id: 'empty_pipeline_21',
             description: 'an empty pipeline',
-            username: 'elastic',
-            version: ''
+            username: 'elastic'
           }
         ]);
       });

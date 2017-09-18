@@ -41,9 +41,6 @@
           },
           "username": {
             "type": "keyword"
-          },
-          "version": {
-            "type": "keyword"
           }
         }
       }

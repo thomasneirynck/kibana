@@ -7,7 +7,6 @@ import { getMoment } from 'plugins/logstash/../common/lib/get_moment';
  * @param {string} props.id Named Id of the pipeline
  * @param {string} props.description Description for the pipeline
  * @param {string} props.lastModified Timestamp when the config was last modified
- * @param {string} props.version User defined pipeline config version (like apache-v1.0, 5.4.1)
  * @param {string} props.username User who created or updated the pipeline
  */
 export class PipelineListItem {
@@ -15,7 +14,6 @@ export class PipelineListItem {
     this.id = props.id;
     this.description = props.description;
     this.lastModified = getMoment(props.lastModified);
-    this.version = props.version;
     this.username = props.username;
 
     if (this.lastModified) {
@@ -28,7 +26,7 @@ export class PipelineListItem {
   }
 
   static fromUpstreamJSON(pipelineListItem) {
-    const props = pick(pipelineListItem, [ 'id', 'description', 'version', 'username' ]);
+    const props = pick(pipelineListItem, [ 'id', 'description', 'username' ]);
     props.lastModified = pipelineListItem.last_modified;
     return new PipelineListItem(props);
   }

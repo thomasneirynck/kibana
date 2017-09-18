@@ -28,17 +28,15 @@ export default function ({ getService, getPageObjects }) {
         await PageObjects.logstash.gotoNewPipelineEditor();
 
         const id = random.id();
-        const version = random.version();
         const description = random.text();
         const pipeline = random.longText();
 
         await pipelineEditor.setId(id);
-        await pipelineEditor.setVersion(version);
         await pipelineEditor.setDescription(description);
         await pipelineEditor.setPipeline(pipeline);
 
         await pipelineEditor.assertInputs({
-          id, version, description, pipeline
+          id, description, pipeline
         });
 
         await pipelineEditor.clickSave();
@@ -47,8 +45,7 @@ export default function ({ getService, getPageObjects }) {
         const newRow = rows.find(row => row.id === id);
 
         expect(newRow)
-          .to.have.property('version', version)
-          .and.property('description', description);
+          .to.have.property('description', description);
       });
     });
 

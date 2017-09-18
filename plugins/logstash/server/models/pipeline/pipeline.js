@@ -8,7 +8,6 @@ export class Pipeline {
   constructor(props) {
     this.id = props.id;
     this.description = props.description;
-    this.version = props.version;
     this.username = props.username;
     this.pipeline = props.pipeline;
   }
@@ -17,7 +16,6 @@ export class Pipeline {
     const json = {
       id: this.id,
       description: this.description,
-      version: this.version,
       username: this.username,
       pipeline: this.pipeline
     };
@@ -41,7 +39,6 @@ export class Pipeline {
         version: 1,
         type : 'logstash_pipeline',
       },
-      version: this.version,
       username: this.username,
       pipeline: this.pipeline
     };
@@ -52,7 +49,6 @@ export class Pipeline {
     const opts = {
       id: downstreamPipeline.id,
       description: downstreamPipeline.description,
-      version: downstreamPipeline.version,
       username: downstreamPipeline.username,
       pipeline: downstreamPipeline.pipeline
     };
@@ -67,11 +63,10 @@ export class Pipeline {
     }
     const id = get(upstreamPipeline, '_id');
     const description = get(upstreamPipeline, '_source.description');
-    const version = get(upstreamPipeline, '_source.version');
     const username = get(upstreamPipeline, '_source.username');
     const pipeline = get(upstreamPipeline, '_source.pipeline');
 
-    const opts = { id, description, version, username, pipeline };
+    const opts = { id, description, username, pipeline };
 
     return new Pipeline(opts);
   }

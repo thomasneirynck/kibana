@@ -14,7 +14,6 @@ describe('pipeline_list_item', () => {
           type: 'logstash_pipeline',
           version: 1
         },
-        version: '5.4.1',
         username: 'elastic',
         pipeline: 'input {} filter { grok {} }\n output {}'
       }
@@ -26,7 +25,6 @@ describe('pipeline_list_item', () => {
         const pipelineListItem = PipelineListItem.fromUpstreamJSON(upstreamJSON);
         expect(pipelineListItem.id).to.be(upstreamJSON._id);
         expect(pipelineListItem.description).to.be(upstreamJSON._source.description);
-        expect(pipelineListItem.version).to.be(upstreamJSON._source.version);
         expect(pipelineListItem.username).to.be(upstreamJSON._source.username);
         expect(pipelineListItem.last_modified).to.be(upstreamJSON._source.last_modified);
       });
@@ -40,7 +38,6 @@ describe('pipeline_list_item', () => {
         const expectedDownstreamJSON = {
           id: 'apache',
           description: 'this is an apache pipeline',
-          version: '5.4.1',
           username: 'elastic',
           last_modified: '2017-05-14T02:50:51.250Z'
         };

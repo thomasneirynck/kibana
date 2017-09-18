@@ -9,7 +9,6 @@ export function PipelineEditorProvider({ getService }) {
   const SUBJ_CONTAINER = 'pipelineEdit';
   const getContainerSubjForId = id => `pipelineEdit-${id}`;
   const SUBJ_INPUT_ID = 'pipelineEdit inputId';
-  const SUBJ_INPUT_VERSION = 'pipelineEdit inputVersion';
   const SUBJ_INPUT_DESCRIPTION = 'pipelineEdit inputDescription';
   const SUBJ_UI_ACE_PIPELINE = 'pipelineEdit acePipeline';
   const SUBJ_BTN_SAVE = 'pipelineEdit btnSavePipeline';
@@ -18,7 +17,6 @@ export function PipelineEditorProvider({ getService }) {
 
   const DEFAULT_INPUT_VALUES = {
     id: '',
-    version: '',
     description: '',
     pipeline: [
       'input {',
@@ -43,9 +41,6 @@ export function PipelineEditorProvider({ getService }) {
 
     async setId(value) {
       await testSubjects.setValue(SUBJ_INPUT_ID, value);
-    }
-    async setVersion(value) {
-      await testSubjects.setValue(SUBJ_INPUT_VERSION, value);
     }
     async setDescription(value) {
       await testSubjects.setValue(SUBJ_INPUT_DESCRIPTION, value);
@@ -87,13 +82,12 @@ export function PipelineEditorProvider({ getService }) {
 
     /**
      *  Assert that the editors fields match the passed values
-     *  @param  {Object} expectedValues - must have id, version, description, and pipeline keys
+     *  @param  {Object} expectedValues - must have id, description, and pipeline keys
      *  @return {Promise<undefined>}
      */
     async assertInputs(expectedValues) {
       const values = await propsAsync({
         id: testSubjects.getProperty(SUBJ_INPUT_ID, 'value'),
-        version: testSubjects.getProperty(SUBJ_INPUT_VERSION, 'value'),
         description: testSubjects.getProperty(SUBJ_INPUT_DESCRIPTION, 'value'),
         pipeline: aceEditor.getValue(SUBJ_UI_ACE_PIPELINE),
       });

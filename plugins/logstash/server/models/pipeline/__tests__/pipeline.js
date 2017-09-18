@@ -15,7 +15,6 @@ describe('pipeline', () => {
             version: 1,
             type: 'logstash_pipeline'
           },
-          version: '5.4.1',
           username: 'elastic',
           pipeline: 'input {} filter { grok {} }\n output {}'
         }
@@ -25,7 +24,6 @@ describe('pipeline', () => {
         const pipeline = Pipeline.fromUpstreamJSON(upstreamJSON);
         expect(pipeline.id).to.be(upstreamJSON._id);
         expect(pipeline.description).to.be(upstreamJSON._source.description);
-        expect(pipeline.version).to.be(upstreamJSON._source.version);
         expect(pipeline.username).to.be(upstreamJSON._source.username);
         expect(pipeline.pipeline).to.be(upstreamJSON._source.pipeline);
       });
@@ -38,7 +36,6 @@ describe('pipeline', () => {
         const downstreamJSON = {
           id: 'apache',
           description: 'this is an apache pipeline',
-          version: '5.4.1',
           username: 'elastic',
           pipeline: 'input {} filter { grok {} }\n output {}'
         };

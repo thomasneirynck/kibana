@@ -28,7 +28,6 @@ export function PipelineListProvider({ getService }) {
   const SUBJ_CELL_DESCRIPTION = `pipelineList pipelineTable cellDescription`;
   const SUBJ_CELL_LAST_MODIFIED = `pipelineList pipelineTable cellLastModified`;
   const SUBJ_CELL_USERNAME = `pipelineList pipelineTable cellUsername`;
-  const SUBJ_CELL_VERSION = `pipelineList pipelineTable cellVersion`;
   const SUBJ_BTN_NEXT_PAGE = `pipelineList btnNextPage`;
 
   return new class PipelineList {
@@ -65,8 +64,7 @@ export function PipelineListProvider({ getService }) {
         id: testSubjects.getVisibleTextAll(SUBJ_CELL_ID),
         description: testSubjects.getVisibleTextAll(SUBJ_CELL_DESCRIPTION),
         lastModified: testSubjects.getVisibleTextAll(SUBJ_CELL_LAST_MODIFIED),
-        username: testSubjects.getVisibleTextAll(SUBJ_CELL_USERNAME),
-        version: testSubjects.getVisibleTextAll(SUBJ_CELL_VERSION)
+        username: testSubjects.getVisibleTextAll(SUBJ_CELL_USERNAME)
       });
 
       // ensure that we got values for every row, otherwise we can't

@@ -11,7 +11,6 @@ function fetchPipeline(callWithRequest, pipelineId) {
     id: pipelineId,
     _source: [
       'description',
-      'version',
       'username',
       'pipeline'
     ]

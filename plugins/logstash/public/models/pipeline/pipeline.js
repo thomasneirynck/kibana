@@ -14,20 +14,18 @@ export class Pipeline {
    * @param {object} props An object used to instantiate a pipeline instance
    * @param {string} props.id Named Id of the pipeline
    * @param {string} props.description Optional description for the pipeline
-   * @param {string} props.version User defined pipeline config version (like apache-v1.0, 5.4.1)
    * @param {object} props.pipeline The actual LS configuration as a string blob
    * @param {string} props.username User who created or updated the pipeline
    */
   constructor(props) {
     this.id = get(props, 'id');
     this.description = get(props, 'description', '');
-    this.version = get(props, 'version', '');
     this.pipeline = get(props, 'pipeline', emptyPipeline);
     this.username = get(props, 'username');
   }
 
   get upstreamJSON() {
-    return pick(this, [ 'id', 'description', 'version', 'pipeline', 'username' ]);
+    return pick(this, [ 'id', 'description', 'pipeline', 'username' ]);
   }
 
   static fromUpstreamJSON(pipeline) {
