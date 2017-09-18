@@ -12,7 +12,7 @@ import {
   fontSize,
   fontSizes
 } from '../../../../style/variables';
-import { LegendElm, Indicator } from './Legend';
+import Legend from '../Legend';
 
 const CustomHintElm = styled.div`
   margin: 0 ${px(unit)};
@@ -43,11 +43,6 @@ const LegendAndValueWrap = styled.div`
   font-size: ${fontSizes.small};
 `;
 
-const SmallIndicator = Indicator.extend`
-  width: ${px(units.half)};
-  height: ${px(units.half)};
-`;
-
 const Value = styled.div`
   color: ${colors.black};
   font-size: ${fontSize};
@@ -75,10 +70,10 @@ export function CustomHint({
         <Legends>
           {hoveredPoints.map((point, i) => (
             <LegendAndValueWrap key={i}>
-              <LegendElm>
-                <SmallIndicator color={series[i].color} />{' '}
-                {series[i].titleShort || series[i].title}
-              </LegendElm>
+              <Legend
+                color={series[i].color}
+                text={series[i].titleShort || series[i].title}
+              />
               <Value>{valueFormatter(point.y)}</Value>
             </LegendAndValueWrap>
           ))}

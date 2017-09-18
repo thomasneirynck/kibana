@@ -12,7 +12,7 @@ export const TRACE_TRANSACTION_ID = 'trace.transaction_id';
 export const TRACE_TYPE = 'trace.type';
 export const TRACE_NAME = 'trace.name';
 export const TRACE_ID = 'trace.id';
-export const TRACE_SQL = 'context.sql';
+export const TRACE_SQL = 'context.db.statement';
 
 export const ERROR_GROUP_ID = 'error.grouping_key';
 export const ERROR_CULPRIT = 'error.culprit';

@@ -18,9 +18,9 @@ import {
   makeWidthFlexible
 } from 'react-vis';
 import { CustomHint } from './CustomHint';
-import { Legend } from './Legend';
+import Legend from '../Legend';
 import styled from 'styled-components';
-import { units, fontSizes, px } from '../../../../style/variables';
+import { units, fontSizes, px, colors } from '../../../../style/variables';
 
 const XY_HEIGHT = 250;
 const XY_MARGIN = {
@@ -43,6 +43,14 @@ const Legends = styled.div`
   display: flex;
   align-items: center;
 `;
+
+const SeriesValue = styled.span`
+  margin-left: ${px(units.quarter)};
+  color: ${colors.black};
+  display: inline-block;
+`;
+
+const LegendContent = styled.span`white-space: nowrap;`;
 
 class CustomPlot extends PureComponent {
   state = {
@@ -184,15 +192,26 @@ class CustomPlot extends PureComponent {
         <Header>
           <Title>{chartTitle}</Title>
           <Legends>
-            {series.map((serie, i) => (
-              <Legend
-                key={i}
-                i={i}
-                serie={serie}
-                onClick={this.clickLegend}
-                isDisabled={this.state.disabledSeries[i]}
-              />
-            ))}
+            {series.map((serie, i) => {
+              const text = (
+                <LegendContent>
+                  {serie.title}{' '}
+                  {serie.legendValue && (
+                    <SeriesValue>{serie.legendValue}</SeriesValue>
+                  )}
+                </LegendContent>
+              );
+              return (
+                <Legend
+                  key={i}
+                  size={2}
+                  onClick={() => this.clickLegend(i)}
+                  isDisabled={this.state.disabledSeries[i]}
+                  text={text}
+                  color={serie.color}
+                />
+              );
+            })}
           </Legends>
         </Header>
 
