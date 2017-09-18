@@ -60,6 +60,7 @@ module
   mlJobService,
   mlMultiMetricJobService,
   mlMessageBarService,
+  mlFullTimeRangeSelectorService,
   mlESMappingService) {
 
   timefilter.enabled = true;
@@ -788,6 +789,10 @@ module
       }
     }
   }
+
+  $scope.setFullTimeRange = function () {
+    mlFullTimeRangeSelectorService.setFullTimeRange($scope.ui.indexPattern, $scope.formConfig.combinedQuery);
+  };
 
   mlESMappingService.getMappings().then(() => {
     initAgg();
