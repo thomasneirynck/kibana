@@ -23,12 +23,13 @@ import moment from 'moment';
 import d3 from 'd3';
 
 import { getSeverityColor } from 'plugins/ml/util/anomaly_utils';
-import { numTicks } from 'plugins/ml/util/chart_utils';
+import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
+import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardService) {
+module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDashboardService) {
 
   function link(scope, element) {
 
@@ -46,6 +47,8 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
       mlExplorerDashboardService.removeSwimlaneDataChangeListener(swimlaneDataChangeListener);
       scope.$destroy();
     });
+
+    const MlTimeBuckets = Private(IntervalHelperProvider);
 
     function render() {
       if (scope.swimlaneData === undefined) {
@@ -78,8 +81,11 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
         .domain([new Date(startTime * 1000), new Date(endTime * 1000)])
         .range([0, xAxisWidth]);
 
-      const xAxisTickFormat = xAxisScale.tickFormat();
-      const xAxisTicks = xAxisScale.ticks(numTicks(scope.chartWidth));
+      // Get the scaled date format to use for x axis tick labels.
+      const timeBuckets = new MlTimeBuckets();
+      timeBuckets.setInterval(`${stepSecs}s`);
+      const xAxisTickFormat = timeBuckets.getScaledDateFormat();
+      const xAxisTicks = xAxisScale.ticks(numTicksForDateFormat(scope.chartWidth, xAxisTickFormat));
 
       // Clear selection if clicking away from a cell.
       $swimlanes.click(($event) => {
@@ -239,7 +245,7 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
       _.each(xAxisTicks, (tick) => {
         const $tickLabel = $('<div>', {
           class: 'tick-label',
-          text: xAxisTickFormat(tick)
+          text: moment(tick).format(xAxisTickFormat)
         });
         const $tickLabelWrapper = $('<div>', {
           class: 'tick-label-wrapper',

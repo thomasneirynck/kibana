@@ -14,20 +14,23 @@
  */
 
 /*
- * Chart showing model plot data, annotated with anomalies.
+ * Chart showing event rate data, plus a progress bar indicating the progress of
+ * the creation of a job.
  */
 
 import $ from 'jquery';
 import d3 from 'd3';
 import angular from 'angular';
+import moment from 'moment';
 import 'ui/timefilter';
 
-import { numTicks } from 'plugins/ml/util/chart_utils';
+import { TimeBucketsProvider } from 'ui/time_buckets';
+import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlEventRateChart', function () {
+module.directive('mlEventRateChart', function (Private) {
 
   function link(scope, element) {
 
@@ -37,7 +40,7 @@ module.directive('mlEventRateChart', function () {
     const svgHeight = barChartHeight + margin.top + margin.bottom;
     let vizWidth  = svgWidth  - margin.left - margin.right;
     const chartLimits = { max: 0, min: 0 };
-
+    const TimeBuckets = Private(TimeBucketsProvider);
 
     let barChartXScale = null;
     let swimlaneXScale = null;
@@ -141,9 +144,23 @@ module.directive('mlEventRateChart', function () {
         chartLimits.max
       ]);
 
+      // Get the scaled date format to use for x axis tick labels.
+      const timeBuckets = new TimeBuckets();
+      timeBuckets.setInterval('auto');
+      if (data.length > 0) {
+        const xDomain = barChartXScale.domain();
+        const bounds = { min: moment(xDomain[0]), max: moment(xDomain[1]) };
+        timeBuckets.setBounds(bounds);
+      }
+
+      const xAxisTickFormat = timeBuckets.getScaledDateFormat();
 
       const xAxis = d3.svg.axis().scale(swimlaneXScale).orient('bottom')
-        .innerTickSize(-barChartHeight).outerTickSize(0).tickPadding(10).ticks(numTicks(vizWidth));
+        .innerTickSize(-barChartHeight).outerTickSize(0).tickPadding(10)
+        .ticks(numTicksForDateFormat(vizWidth, xAxisTickFormat))
+        .tickFormat((d) => {
+          return moment(d).format(xAxisTickFormat);
+        });
       const yAxis = d3.svg.axis().scale(barChartYScale).orient('left')
         .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
 

@@ -13,8 +13,17 @@
  * strictly prohibited.
  */
 
+import { calculateTextWidth } from 'plugins/ml/util/string_utils';
+import moment from 'moment';
+
 const MAX_LABEL_WIDTH = 100;
 
 export function numTicks(axisWidth) {
   return axisWidth / MAX_LABEL_WIDTH;
+}
+
+export function numTicksForDateFormat(axisWidth, dateFormat) {
+  // Allow 1.75 times the width of a formatted date per tick for padding.
+  const tickWidth = calculateTextWidth(moment().format(dateFormat), false);
+  return axisWidth / (1.75 * tickWidth);
 }

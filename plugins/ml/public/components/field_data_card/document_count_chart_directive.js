@@ -20,10 +20,11 @@
 
 import _ from 'lodash';
 import d3 from 'd3';
+import moment from 'moment';
 
 import 'plugins/ml/services/results_service';
 import { showChartLoading } from 'plugins/ml/components/chart_loading_indicator';
-import { numTicks } from 'plugins/ml/util/chart_utils';
+import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
 import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 
@@ -46,6 +47,7 @@ module.directive('mlDocumentCountChart', function (
 
     let xScale = null;
     let yScale = d3.scale.linear().range([chartHeight, 0]);
+    let xAxisTickFormat = 'YYYY-MM-DD HH:mm';
 
     let barChartGroup;
 
@@ -76,6 +78,7 @@ module.directive('mlDocumentCountChart', function (
       buckets.setBarTarget(Math.floor(barTarget));
       buckets.setMaxBars(maxBars);
       chartAggInterval = buckets.getInterval();
+      xAxisTickFormat = buckets.getScaledDateFormat();
 
       // Load the event rate data.
       mlResultsService.getEventRateData(
@@ -141,7 +144,10 @@ module.directive('mlDocumentCountChart', function (
         .range([0, chartWidth]);
 
       const xAxis = d3.svg.axis().scale(xScale).orient('bottom')
-        .outerTickSize(0).ticks(numTicks(chartWidth));
+        .outerTickSize(0).ticks(numTicksForDateFormat(chartWidth, xAxisTickFormat))
+        .tickFormat((d) => {
+          return moment(d).format(xAxisTickFormat);
+        });
 
       barChartGroup = svg.append('g')
         .attr('class', 'bar-chart')

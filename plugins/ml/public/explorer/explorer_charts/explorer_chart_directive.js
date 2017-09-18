@@ -26,14 +26,15 @@ import numeral from 'numeral';
 
 import { showChartLoading } from 'plugins/ml/components/chart_loading_indicator';
 import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
-import { numTicks } from 'plugins/ml/util/chart_utils';
+import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
+import { TimeBucketsProvider } from 'ui/time_buckets';
 import 'plugins/ml/filters/format_value';
 import 'plugins/ml/services/results_service';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlExplorerChart', function (mlResultsService, formatValueFilter) {
+module.directive('mlExplorerChart', function (Private, mlResultsService, formatValueFilter) {
 
   function link(scope, element) {
     console.log('ml-explorer-chart directive link series config:', scope.seriesConfig);
@@ -52,6 +53,7 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
     const svgHeight = chartHeight + margin.top + margin.bottom;
     const chartLimits = { max: 0, min: 0 };
 
+    const TimeBuckets = Private(TimeBucketsProvider);
     let lineChartXScale = null;
     let lineChartYScale = null;
     let lineChartGroup;
@@ -230,8 +232,20 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
     }
 
     function drawLineChartAxes() {
+      // Get the scaled date format to use for x axis tick labels.
+      const timeBuckets = new TimeBuckets();
+      const bounds = { min: moment(scope.plotEarliest), max: moment(scope.plotLatest) };
+      timeBuckets.setBounds(bounds);
+      timeBuckets.setInterval('auto');
+      const xAxisTickFormat = timeBuckets.getScaledDateFormat();
+
       const xAxis = d3.svg.axis().scale(lineChartXScale).orient('bottom')
-        .innerTickSize(-chartHeight).outerTickSize(0).tickPadding(10).ticks(numTicks(vizWidth));
+        .innerTickSize(-chartHeight).outerTickSize(0).tickPadding(10)
+        .ticks(numTicksForDateFormat(vizWidth, xAxisTickFormat))
+        .tickFormat((d) => {
+          return moment(d).format(xAxisTickFormat);
+        });
+
       const yAxis = d3.svg.axis().scale(lineChartYScale).orient('left')
         .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
       const axes = lineChartGroup.append('g');
