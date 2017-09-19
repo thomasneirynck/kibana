@@ -13,12 +13,65 @@ import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import { Poller } from '../../../../common/poller';
 
 uiModules.get('kibana')
-.run(($http, reportingJobQueue, Private, reportingPollConfig, reportingJobCompletionNotifications) => {
+.run(($http, reportingJobQueue, Private, reportingPollConfig, reportingJobCompletionNotifications, $rootScope) => {
   const { jobCompletionNotifier } = reportingPollConfig;
 
   const xpackInfo = Private(XPackInfoProvider);
   const showLinks = xpackInfo.get('features.reporting.management.showLinks');
   if (Private(PathProvider).isLoginOrLogout() || !showLinks) return;
+
+  async function showCompletionNotification(job) {
+    const reportObjectTitle = job._source.payload.title;
+    const reportObjectType = job._source.payload.type;
+    let notificationMessage;
+    let notificationType;
+
+    // Define actions for notification
+    const actions = [
+      {
+        text: 'OK',
+        dataTestSubj: 'reportCompleteOkToastButton'
+      }
+    ];
+
+    const isJobSuccessful = get(job, '_source.status') === 'completed';
+    const maxSizeReached = get(job, '_source.output.max_size_reached');
+    if (isJobSuccessful) {
+      actions.push({
+        text: 'Download',
+        dataTestSubj: 'downloadCompletedReportButton',
+        callback: downloadReport(job._id)
+      });
+
+      if (maxSizeReached) {
+        notificationType = 'warning';
+        notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready;` +
+          `however, it reached the max size and contains partial data.`;
+      } else {
+        notificationType = 'info';
+        notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready!`;
+      }
+      if (chrome.navLinkExists('kibana:management')) {
+        const managementUrl = chrome.getNavLinkById('kibana:management').url;
+        const reportingSectionUrl = `${managementUrl}/kibana/reporting`;
+        notificationMessage += ` Pick it up from [Management > Kibana > Reporting](${reportingSectionUrl})`;
+      }
+    } else {
+      const errorDoc = await reportingJobQueue.getContent(job._id);
+      const error = errorDoc.content;
+      notificationMessage = `There was an error generating your report for the "${reportObjectTitle}" ${reportObjectType}: ${error}`;
+      notificationType = 'error';
+    }
+
+    notify.custom(notificationMessage, {
+      type: notificationType,
+      lifetime: 0,
+      actions
+    });
+
+    // manually scheduling digest loop so the notifications are displayed, we're outside of the normal loop
+    $rootScope.$apply();
+  }
 
   const poller = new Poller({
     functionToPoll: async () => {
@@ -26,9 +79,8 @@ uiModules.get('kibana')
       if (!jobIds.length) {
         return;
       }
-
       const jobs = await getJobs($http, jobIds);
-      jobIds.forEach(jobId => {
+      jobIds.forEach(async jobId => {
         const job = jobs.find(j => j._id === jobId);
         if (!job) {
           reportingJobCompletionNotifications.remove(job.id);
@@ -36,7 +88,7 @@ uiModules.get('kibana')
         }
 
         if (job._source.status === 'completed' || job._source.status === 'failed') {
-          showCompletionNotification(job, reportingJobQueue);
+          await showCompletionNotification(job);
           reportingJobCompletionNotifications.remove(job.id);
           return;
         }
@@ -67,52 +119,3 @@ function downloadReport(jobId) {
   return () => window.open(downloadLink);
 }
 
-async function showCompletionNotification(job, reportingJobQueue) {
-  const reportObjectTitle = job._source.payload.title;
-  const reportObjectType = job._source.payload.type;
-  let notificationMessage;
-  let notificationType;
-
-  // Define actions for notification
-  const actions = [
-    {
-      text: 'OK',
-      dataTestSubj: 'reportCompleteOkToastButton'
-    }
-  ];
-
-  const isJobSuccessful = get(job, '_source.status') === 'completed';
-  const maxSizeReached = get(job, '_source.output.max_size_reached');
-  if (isJobSuccessful) {
-    actions.push({
-      text: 'Download',
-      dataTestSubj: 'downloadCompletedReportButton',
-      callback: downloadReport(job._id)
-    });
-
-    if (maxSizeReached) {
-      notificationType = 'warning';
-      notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready;` +
-        `however, it reached the max size and contains partial data.`;
-    } else {
-      notificationType = 'info';
-      notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready!`;
-    }
-    if (chrome.navLinkExists('kibana:management')) {
-      const managementUrl = chrome.getNavLinkById('kibana:management').url;
-      const reportingSectionUrl = `${managementUrl}/kibana/reporting`;
-      notificationMessage += ` Pick it up from [Management > Kibana > Reporting](${reportingSectionUrl})`;
-    }
-  } else {
-    const errorDoc = await reportingJobQueue.getContent(job._id);
-    const error = errorDoc.content;
-    notificationMessage = `There was an error generating your report for the "${reportObjectTitle}" ${reportObjectType}: ${error}`;
-    notificationType = 'error';
-  }
-
-  notify.custom(notificationMessage, {
-    type: notificationType,
-    lifetime: 0,
-    actions
-  });
-}
