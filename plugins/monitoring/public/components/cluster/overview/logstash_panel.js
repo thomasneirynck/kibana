@@ -2,6 +2,7 @@ import React from 'react';
 import { formatNumber } from 'plugins/monitoring/lib/format_number';
 import { KuiKeyboardAccessible } from 'ui_framework/components';
 import { ClusterItemContainer, BytesPercentageUsage } from './helpers';
+import { Tooltip } from 'plugins/monitoring/components/tooltip';
 
 export function LogstashPanel(props) {
   if (!props.node_count) {
@@ -54,6 +55,13 @@ export function LogstashPanel(props) {
             <dt className="cluster-panel__inner-title">
               <KuiKeyboardAccessible>
                 <a className="link" onClick={goToPipelines} data-test-subj="lsPipelines">
+                  <Tooltip
+                    text="Beta Feature"
+                    placement="bottom"
+                    trigger="hover"
+                  >
+                    <span className="kuiIcon fa-flask betaIcon" />
+                  </Tooltip>
                   Pipelines: <span data-test-subj="number_of_logstash_pipelines">{ props.pipeline_count }</span>
                 </a>
               </KuiKeyboardAccessible>
