@@ -5,6 +5,7 @@
 :lang:           en
 :kib-repo-dir:   {docdir}/../../../kibana/docs
 :xes-repo-dir:   {docdir}/../../../elasticsearch-extra/x-pack-elasticsearch/docs/{lang}
+:xkb-repo-dir:   {docdir}
 :blog-ref:       https://www.elastic.co/blog/
 :wikipedia:      https://en.wikipedia.org/wiki
 
@@ -12,6 +13,12 @@ include::{kib-repo-dir}/index-shared1.asciidoc[]
 
 :edit_url!:
 include::setup-xkb.asciidoc[]
+
+:edit_url:
+include::{kib-repo-dir}/index-shared11.asciidoc[]
+
+:edit_url!:
+include::release-notes/breaking-changes-xpack.asciidoc[]
 
 :edit_url:
 include::{kib-repo-dir}/index-shared2.asciidoc[]
@@ -54,3 +61,6 @@ include::reporting/index.asciidoc[]
 
 :edit_url:
 include::{kib-repo-dir}/index-shared5.asciidoc[]
+
+:edit_url!:
+include::release-notes/xpack.asciidoc[]

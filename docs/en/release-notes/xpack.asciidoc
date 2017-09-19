@@ -1,0 +1,14 @@
+[role="xpack"]
+[[release-notes-xpackkb]]
+== {xpack} Release Notes
+
+This section summarizes the changes in each release for all of the {xpack}
+components in {kib}: {security}, {monitoring}, {watcher}, {reporting}, {xpackml},
+and {graph}.
+
+//TO-DO: Add links to similar pages in Elasticsearch and Logstash References.
+
+include::6.0.0-beta2.asciidoc[]
+include::6.0.0-beta1.asciidoc[]
+include::6.0.0-alpha2.asciidoc[]
+include::6.0.0-alpha1.asciidoc[]

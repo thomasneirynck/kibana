@@ -1,0 +1,26 @@
+[role="xpack"]
+[[breaking-changes-xpackkb]]
+== Breaking changes in {xpack}
+
+This section summarizes the changes that you need to be aware of when migrating
+you application from one version of {xpack} to another.
+
+//TO-DO: Add links to similar pages in Elasticsearch and Logstash References.
+
+Reporting::
+* When {security} is enabled, reports will only be accessible to the user that created them.
+* When {security} is enabled, user authorization is controlled by the
+`xpack.reporting.roles.allow` setting in the `kibana.yml` which defaults to
+`['reporting_user']`. Users will no longer have access to the underlying {reporting}
+indices in {es} when assigned to the built-in `reporting_user` role. If using
+custom reporting roles, the privileges to the indices will need to be removed, and the
+role will need to be added to the `xpack-reporting.roles.allow` setting.
+
+Watcher::
+* The watch `_status` field has been renamed to `status`, as underscores in
+field names will not be allowed.
+* The built-in HTTP client used in webhooks, the http input and the http email
+attachment has been replaced. This results in the need to always escape all
+parts of an URL.
+* The new built-in HTTP client also enforces a maximum request size, which
+defaults to 10mb.
