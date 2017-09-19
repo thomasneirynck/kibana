@@ -15,13 +15,13 @@ include::{kib-repo-dir}/index-shared1.asciidoc[]
 include::setup-xkb.asciidoc[]
 
 :edit_url:
-include::{kib-repo-dir}/index-shared11.asciidoc[]
+include::{kib-repo-dir}/index-shared2.asciidoc[]
 
 :edit_url!:
 include::release-notes/breaking-changes-xpack.asciidoc[]
 
 :edit_url:
-include::{kib-repo-dir}/index-shared2.asciidoc[]
+include::{kib-repo-dir}/index-shared3.asciidoc[]
 
 :edit_url!:
 include::ml/index.asciidoc[]
@@ -30,7 +30,7 @@ include::ml/index.asciidoc[]
 include::graph/index.asciidoc[]
 
 :edit_url:
-include::{kib-repo-dir}/index-shared3.asciidoc[]
+include::{kib-repo-dir}/index-shared4.asciidoc[]
 
 :edit_url!:
 include::searchprofiler/index.asciidoc[]
@@ -42,7 +42,7 @@ include::grokdebugger/index.asciidoc[]
 include::monitoring/index.asciidoc[]
 
 :edit_url:
-include::{kib-repo-dir}/index-shared4.asciidoc[]
+include::{kib-repo-dir}/index-shared5.asciidoc[]
 
 :edit_url!:
 include::security/index.asciidoc[]
@@ -60,7 +60,7 @@ include::dashboard_only_mode/index.asciidoc[]
 include::reporting/index.asciidoc[]
 
 :edit_url:
-include::{kib-repo-dir}/index-shared5.asciidoc[]
+include::{kib-repo-dir}/index-shared6.asciidoc[]
 
 :edit_url!:
 include::release-notes/xpack.asciidoc[]
