@@ -70,7 +70,7 @@ describe('xpack_info', function () {
           'Calling Elasticsearch _xpack API'
         ]);
         expect(mockServer.log.getCall(1).args).to.eql([ ['license', 'info', 'xpack'], (
-          'Imported license information from Elasticsearch for [data] cluster: mode: undefined ' +
+          'Imported license information from Elasticsearch for the [data] cluster: mode: undefined ' +
           '| status: active ' +
           '| expiry date: Invalid date'
         ) ]);
@@ -84,7 +84,7 @@ describe('xpack_info', function () {
           'Calling Elasticsearch _xpack API'
         ]);
         expect(mockServer.log.getCall(1).args).to.eql([ ['license', 'info', 'xpack'], (
-          'Imported license information from Elasticsearch for [data] cluster: mode: undefined ' +
+          'Imported license information from Elasticsearch for the [data] cluster: mode: undefined ' +
           '| status: expired ' +
           '| expiry date: Invalid date'
         ) ]);

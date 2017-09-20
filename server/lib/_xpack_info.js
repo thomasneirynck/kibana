@@ -4,8 +4,13 @@ import { get, set, includes, forIn } from 'lodash';
 import { Poller } from '../../common/poller';
 import { LICENSE_EXPIRY_SOON_DURATION_IN_DAYS } from './constants';
 
-export async function _xpackInfo(server, pollFrequencyInMillis, clusterSource = 'data') {
-  if(!pollFrequencyInMillis) {
+/*
+ * @param {Object} server - Kibana server
+ * @param {Number} pollFrequencyInMillis - frequency interval to run the polling
+ * @param {String} opts.clusterSource - which cluster to talk to (data, monitoring, etc)
+ */
+export async function _xpackInfo(server, pollFrequencyInMillis, { clusterSource = 'data' } = {}) {
+  if (!pollFrequencyInMillis) {
     const config = server.config();
     pollFrequencyInMillis = config.get('xpack.xpack_main.xpack_api_polling_frequency_millis');
   }
@@ -79,7 +84,7 @@ export async function _xpackInfo(server, pollFrequencyInMillis, clusterSource = 
       }
 
       if ((_cachedErrorFromElasticsearch instanceof Error) && _cachedErrorFromElasticsearch.status === 400) {
-        return 'X-Pack plugin is not installed on Elasticsearch cluster';
+        return `X-Pack plugin is not installed on the [${clusterSource}] Elasticsearch cluster.`;
       }
 
       return _cachedErrorFromElasticsearch;
@@ -163,7 +168,7 @@ export async function _xpackInfo(server, pollFrequencyInMillis, clusterSource = 
       }
 
       const licenseInfo = _getLicenseInfoForLog(response);
-      const logMessage = `Imported ${changed}license information from Elasticsearch for [${clusterSource}] cluster: ${licenseInfo}`;
+      const logMessage = `Imported ${changed}license information from Elasticsearch for the [${clusterSource}] cluster: ${licenseInfo}`;
       server.log([ 'license', 'info', 'xpack'  ], logMessage);
     }
 
@@ -173,7 +178,10 @@ export async function _xpackInfo(server, pollFrequencyInMillis, clusterSource = 
   }
 
   function _handleErrorFromElasticsearch(error) {
-    server.log([ 'license', 'warning', 'xpack' ], 'License information could not be obtained from Elasticsearch. ' + error);
+    server.log(
+      [ 'license', 'warning', 'xpack' ],
+      `License information from the X-Pack plugin could not be obtained from Elasticsearch for the [${clusterSource}] cluster. ` + error
+    );
     _cachedResponseFromElasticsearch = null;
     _cachedErrorFromElasticsearch = error;
     _updateXPackInfoJSON();

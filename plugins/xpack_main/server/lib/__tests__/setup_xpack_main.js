@@ -101,7 +101,7 @@ describe('setupXPackMain()', () => {
       .then(() => {
         expect(mockServer.eventHandlers).to.be(undefined);
         expect(mockXPackMainPlugin.status.state).to.be('red');
-        expect(mockXPackMainPlugin.status.message).to.be('X-Pack plugin is not installed on Elasticsearch cluster');
+        expect(mockXPackMainPlugin.status.message).to.be('X-Pack plugin is not installed on the [data] Elasticsearch cluster.');
       });
     });
   });
