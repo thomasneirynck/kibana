@@ -5,4 +5,7 @@
 This section summarizes the changes that you need to be aware of when migrating
 your application from one version of {xpack} to another.
 
-//TO-DO: Add links to similar pages in Elasticsearch and Logstash References.
+To see similar information for Logstash, see
+{logstash-ref}/breaking-changes-xls.html[Breaking Changes in Logstash].
+
+//TO-DO: Add link to similar page in Elasticsearch Reference.
