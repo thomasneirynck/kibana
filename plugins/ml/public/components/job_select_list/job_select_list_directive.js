@@ -36,12 +36,14 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
     controller: function ($scope) {
       $scope.jobs = [];
       $scope.groups = [];
+      $scope.homelessJobs = [];
       $scope.singleSelection = false;
       $scope.timeSeriesOnly = false;
       $scope.selectableJobs = [];
       $scope.noJobsCreated = undefined;
       $scope.applyTimeRange = true;
-      $scope.selections = [];
+      $scope.urlSelectedIds = {};
+      $scope.selected = {};
       $scope.allGroupsSelected = false;
       $scope.allJobsSelected = false;
       $scope.selectedJobRadio = '';
@@ -66,6 +68,38 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
             const { groups, homeless } = createGroups($scope.jobs);
             $scope.groups = groups;
             $scope.homelessJobs = homeless;
+            $scope.selected = {
+              groups: [],
+              jobs: []
+            };
+
+            // count all jobs, including duplicates in groups.
+            // if it's the same as the number of ids passed in, tick all jobs
+            const jobCount = resp.jobs.reduce((sum, job) => (sum + ((job.groups === undefined) ? 1 : job.groups.length)), 0);
+            const selectAll = (jobCount === $scope.urlSelectedIds.jobs.length);
+
+            // create the groups and jobs which are used in the menu
+            groups.forEach(group => {
+              $scope.selected.groups.push({
+                id:  group.id,
+                selected: group.selected,
+                selectable: group.selectable,
+                timeRange: group.timeRange,
+                isGroup: true,
+              });
+            });
+
+            jobs.forEach(job => {
+              if ($scope.selected.jobs.find(j => j.id === job.name) === undefined) {
+                $scope.selected.jobs.push({
+                  id:  job.name,
+                  selected: selectAll || job.selected,
+                  timeRange: job.timeRange,
+                  isGroup: false
+                });
+              }
+            });
+
             $scope.allJobsSelected = areAllJobsSelected();
             $scope.allGroupsSelected = areAllGroupsSelected();
             createSelectedCount();
@@ -77,7 +111,7 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
             if ($scope.singleSelection === true) {
               $scope.jobs.forEach(j => {
                 if (j.selected) {
-                  $scope.selectedJobRadio = j.id;
+                  $scope.selectedJobRadio = j.name;
                 }
               });
             }
@@ -93,7 +127,8 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
           id: jobId,
           name: job.job_id,
           group: groupId,
-          selected: (($scope.selections.find(id => id === jobId) === undefined) ? false : true),
+          isGroup: false,
+          selected: _.includes($scope.urlSelectedIds.jobs, job.job_id),
           disabled: !($scope.timeSeriesOnly === false || isTimeSeriesViewJob(job) === true),
           running: (job.datafeed_config && job.datafeed_config.state === 'started'),
           timeRange: {
@@ -130,19 +165,13 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
             selected: false,
             selectable: true,
             expanded: false,
+            isGroup: true,
             jobs
           };
           // check to see whether all of the groups jobs have been selected,
           // if they have, select the group
           if ($scope.singleSelection === false) {
-            group.selected = isGroupSelected({ jobs });
-          }
-
-          // if the whole group isn't selected, but one of it's jobs is, expand the group
-          if (group.selected === false) {
-            if (jobs.filter(job => job.selected === true).length) {
-              group.expanded = true;
-            }
+            group.selected = _.includes($scope.urlSelectedIds.groups, id);
           }
 
           // create an over all time range for the group
@@ -193,61 +222,24 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
         };
       }
 
-      // create a list of job ids
-      // if all jobs in a group have been selected,
-      // replace with a single myGroup.* entry
-      function createReducedJobIdList(jobs) {
-        const groupsToReplace = [];
-        const jobIds = [];
-
-        const allJobsSelected = ($scope.jobs.length === $scope.jobs.filter(j => j.selected).length);
-        // if all jobs have been selected, just return *
-        if (allJobsSelected) {
-          jobIds.push('*');
-        } else {
-          // otherwise reduce jobs to their groups if all have been selected
-          $scope.groups.forEach(group => {
-            const foundJobs = jobs.filter(job => (job.group !== null && job.group.id === group.id));
-            if (foundJobs.length === group.jobs.length) {
-              // all jobs in this group have been selected
-              groupsToReplace.push(group);
-            }
-          });
-
-          jobs.forEach(job => {
-            if (job.group === null) {
-              // if job is not in any groups, add it to the list
-              jobIds.push(job.id);
-            } else {
-              // if this job's group hasn't been flagged for replacement, add it to the list
-              if (groupsToReplace.find(g => g.id === job.group.id) === undefined) {
-                jobIds.push(job.id);
-              }
-            }
-          });
-
-          groupsToReplace.forEach(group => {
-            jobIds.push(`${group.id}.*`);
-          });
-        }
-        return jobIds;
-      }
-
       // apply the selected jobs
       $scope.apply = function () {
         // if in single selection mode, get the job id from $scope.selectedJobRadio
-        const selectedJobs = $scope.singleSelection ?
-          $scope.jobs.filter(job => job.id === $scope.selectedJobRadio) :
-          $scope.jobs.filter(job => job.selected);
-
-
-        let jobIds = [];
+        const selectedJobs = [];
         if ($scope.singleSelection) {
-          jobIds = selectedJobs.map(j => j.name);
+          selectedJobs.push(...$scope.selected.jobs.filter(j => j.id === $scope.selectedJobRadio));
         } else {
-          jobIds = createReducedJobIdList(selectedJobs);
+          selectedJobs.push(...$scope.selected.jobs.filter(j => j.selected));
+          selectedJobs.push(...$scope.selected.groups.filter(g => g.selected));
         }
-        mlJobSelectService.setJobIds(jobIds);
+
+        if (areAllJobsSelected()) {
+          // if all jobs have been selected, just store '*' in the url
+          mlJobSelectService.setJobIds(['*']);
+        } else {
+          const jobIds = selectedJobs.map(j => (j.isGroup ? `${j.id}.*` : j.id));
+          mlJobSelectService.setJobIds(jobIds);
+        }
 
         // if the apply time range checkbox is ticked,
         // find the min and max times for all selected jobs
@@ -273,18 +265,7 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
       };
 
       // ticking a job
-      $scope.toggleSelection = function (job) {
-        const group = job.group;
-        if (group !== null) {
-          // if all jobs in that group are now selected
-          // mark the group as selected and disable the jobs
-          if (isGroupSelected(group)) {
-            group.selected = true;
-            group.jobs.forEach(j => j.disabled = true);
-          } else {
-            group.selected = false;
-          }
-        }
+      $scope.toggleSelection = function () {
         // check to see if all jobs are now selected
         $scope.allJobsSelected = areAllJobsSelected();
         $scope.allGroupsSelected = areAllGroupsSelected();
@@ -296,26 +277,15 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
         const allJobsSelected = areAllJobsSelected();
         $scope.allJobsSelected = !allJobsSelected;
 
-        $scope.homelessJobs.forEach(job => {
-          job.selected = !allJobsSelected;
-          if (job.group !== null) {
-            job.disabled = !allJobsSelected;
-          }
+        $scope.selected.jobs.forEach(job => {
+          job.selected = $scope.allJobsSelected;
         });
 
         createSelectedCount();
       };
 
       // ticking a group
-      $scope.toggleGroupSelection = function (group) {
-        const groupAlreadySelected = isGroupSelected(group);
-        group.selected = !groupAlreadySelected;
-
-        group.jobs.forEach(job => {
-          job.disabled = false;
-          job.selected = group.selected;
-          job.disabled = group.selected;
-        });
+      $scope.toggleGroupSelection = function () {
         $scope.allGroupsSelected = areAllGroupsSelected();
         createSelectedCount();
       };
@@ -325,32 +295,16 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
         const allGroupsSelected = areAllGroupsSelected();
         $scope.allGroupsSelected = !allGroupsSelected;
 
-        $scope.groups.forEach(group => {
-          group.selected = !allGroupsSelected;
-          group.jobs.forEach(job => {
-            job.disabled = false;
-            job.selected = group.selected;
-            job.disabled = group.selected;
-          });
+        $scope.selected.groups.forEach(group => {
+          group.selected = $scope.allGroupsSelected;
         });
         createSelectedCount();
       };
 
-      // check to see whether all jobs within a group have been selected
-      function isGroupSelected(group) {
-        let selected = true;
-        group.jobs.forEach(job => {
-          if (job.selected === false) {
-            selected = false;
-          }
-        });
-        return selected;
-      }
-
       // check to see whether all jobs in the list have been selected
       function areAllJobsSelected() {
         let allSelected = true;
-        $scope.homelessJobs.forEach(job => {
+        $scope.selected.jobs.forEach(job => {
           if (job.selected === false) {
             allSelected = false;
           }
@@ -361,8 +315,8 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
       // check to see whether all groups in the list have been selected
       function areAllGroupsSelected() {
         let allSelected = true;
-        $scope.groups.forEach(group => {
-          if (isGroupSelected(group) === false) {
+        $scope.selected.groups.forEach(group => {
+          if (group.selected === false) {
             allSelected = false;
           }
         });
@@ -371,8 +325,13 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
 
       function createSelectedCount() {
         $scope.selectedCount = 0;
-        $scope.jobs.forEach(job => {
+        $scope.selected.jobs.forEach(job => {
           if (job.selected) {
+            $scope.selectedCount++;
+          }
+        });
+        $scope.selected.groups.forEach(group => {
+          if (group.selected) {
             $scope.selectedCount++;
           }
         });
@@ -419,7 +378,10 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
 
       // Make a copy of the list of jobs ids
       // '*' is passed to indicate 'All jobs'.
-      scope.selections = [...mlJobSelectService.jobIdsWithGroup];
+      scope.urlSelectedIds = {
+        groups: [...mlJobSelectService.groupIds],
+        jobs: [...mlJobSelectService.jobIdsWithGroup],
+      };
 
       // Giving the parent div focus fixes checkbox tick UI selection on IE.
       $('.ml-select-list', element).focus();

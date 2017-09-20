@@ -35,6 +35,7 @@ module.service('mlJobSelectService', function ($rootScope, mlJobService, globalS
 
   this.jobIdsWithGroup = [];
   this.jobIds = [];
+  this.groupIds = [];
   this.description = { txt: '' };
   this.singleJobDescription = { txt: '' };
 
@@ -103,8 +104,8 @@ module.service('mlJobSelectService', function ($rootScope, mlJobService, globalS
     });
   }
 
-  function removeGroupIds(jobsIds) {
-    return jobsIds.map(id => {
+  function removeGroupIds(jobIds) {
+    return jobIds.map(id => {
       const splitId = id.split('.');
       return (splitId.length > 1) ? splitId[1] : splitId[0];
     });
@@ -183,21 +184,21 @@ module.service('mlJobSelectService', function ($rootScope, mlJobService, globalS
     }
     return obj;
   }
+  this.splitJobId = splitJobId;
 
   // expands `*` into groupId.jobId list
   // expands `groupId.*` into `groupId.jobId` list
-  // expands `jobId` into `groupId.jobId` if job belongs to one or more groups
   // returns list of expanded job ids
-  function expandGroups(jobsIds) {
-    const newJobsIds = [];
+  function expandGroups(jobIds) {
+    const newJobIds = [];
     const groups = mlJobService.getJobGroups();
-    jobsIds.forEach(jobId => {
+    jobIds.forEach(jobId => {
       if (jobId === '*') {
         mlJobService.jobs.forEach(job => {
           if (job.groups === undefined) {
-            newJobsIds.push(job.job_id);
+            newJobIds.push(job.job_id);
           } else {
-            newJobsIds.push(...job.groups.map(g => `${g}.${job.job_id}`));
+            newJobIds.push(...job.groups.map(g => `${g}.${job.job_id}`));
           }
         });
       } else {
@@ -206,25 +207,26 @@ module.service('mlJobSelectService', function ($rootScope, mlJobService, globalS
           const groupId = splitId.group;
           const group = groups.find(g => g.id === groupId);
           group.jobs.forEach(j => {
-            newJobsIds.push(`${groupId}.${j.job_id}`);
+            newJobIds.push(`${groupId}.${j.job_id}`);
           });
         }
         else {
-          let groupFound = false;
-          groups.forEach(g=> {
-            if (g.jobs.find(j => j.job_id === jobId) !== undefined) {
-              groupFound = true;
-              newJobsIds.push(`${g.id}.${jobId}`);
-            }
-          });
-
-          if (groupFound === false) {
-            newJobsIds.push(jobId);
-          }
+          newJobIds.push(jobId);
         }
       }
     });
-    return newJobsIds;
+    return newJobIds;
+  }
+
+  function getGroupIds(jobIds) {
+    const groupIds = [];
+    jobIds.forEach(jobId => {
+      const splitId = splitJobId(jobId);
+      if (splitId.group !== undefined && splitId.job === '*') {
+        groupIds.push(splitId.group);
+      }
+    });
+    return groupIds;
   }
 
   // takes an array of ids.
@@ -235,6 +237,7 @@ module.service('mlJobSelectService', function ($rootScope, mlJobService, globalS
     const expandedJobIds = expandGroups(ids);
     self.jobIdsWithGroup.length = 0;
     self.jobIdsWithGroup.push(...expandedJobIds);
+    self.groupIds = getGroupIds(ids);
     self.jobIds.length = 0;
     self.jobIds.push(...removeGroupIds(expandedJobIds));
     self.description.txt = createDescription(self.jobIdsWithGroup);
