@@ -16,9 +16,12 @@ function getActionStatusTotals(watchStatus) {
   return result;
 }
 
+const WATCH_STATE_FAILED = 'failed';
+
 export class WatchStatus {
   constructor(props) {
     this.id = props.id;
+    this.watchState = props.state;
     this.watchStatusJson = props.watchStatusJson;
 
     this.isActive = Boolean(get(this.watchStatusJson, 'state.active'));
@@ -33,26 +36,28 @@ export class WatchStatus {
   }
 
   get state() {
-    const totals = getActionStatusTotals(this);
-    let result = WATCH_STATES.OK;
-
-    const firingTotal = totals[ACTION_STATES.FIRING] +
-      totals[ACTION_STATES.ACKNOWLEDGED] +
-      totals[ACTION_STATES.THROTTLED];
-
-    if (firingTotal > 0) {
-      result = WATCH_STATES.FIRING;
+    if (!this.isActive) {
+      return WATCH_STATES.DISABLED;
     }
+
+    if (this.watchState === WATCH_STATE_FAILED) {
+      return WATCH_STATES.ERROR;
+    }
+
+    const totals = getActionStatusTotals(this);
 
     if (totals[ACTION_STATES.ERROR] > 0) {
-      result = WATCH_STATES.ERROR;
+      return WATCH_STATES.ERROR;
     }
 
-    if (!this.isActive) {
-      result = WATCH_STATES.DISABLED;
+    const firingTotal = totals[ACTION_STATES.FIRING] + totals[ACTION_STATES.ACKNOWLEDGED] +
+                              totals[ACTION_STATES.THROTTLED];
+
+    if (firingTotal > 0) {
+      return WATCH_STATES.FIRING;
     }
 
-    return result;
+    return WATCH_STATES.OK;
   }
 
   get comment() {

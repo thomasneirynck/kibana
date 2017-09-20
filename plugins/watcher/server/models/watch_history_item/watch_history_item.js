@@ -13,7 +13,8 @@ export class WatchHistoryItem {
     this.startTime = getMoment(get(this.watchHistoryItemJson, 'result.execution_time'));
 
     const watchStatusJson = get(this.watchHistoryItemJson, 'status');
-    this.watchStatus = WatchStatus.fromUpstreamJson({ id: this.watchId, watchStatusJson });
+    const state = get(this.watchHistoryItemJson, 'state');
+    this.watchStatus = WatchStatus.fromUpstreamJson({ id: this.watchId, watchStatusJson, state });
   }
 
   get downstreamJson() {

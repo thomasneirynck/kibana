@@ -62,6 +62,7 @@ describe('watch_history_item', () => {
           isActive: upstreamJson.watchHistoryItemJson.status.state.active,
           lastChecked: null,
           lastMetCondition: null,
+          watchState: upstreamJson.watchHistoryItemJson.state,
           watchStatusJson: {
             state: {
               active: upstreamJson.watchHistoryItemJson.status.state.active
