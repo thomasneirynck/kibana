@@ -34,7 +34,7 @@ const ImpactBarBackground = styled.div`
 const ImpactBar = styled.div`
   height: ${px(units.minus)};
   width: ${props => props.barWidth}%;
-  background: ${colors.blue};
+  background: ${colors.blue1};
   border-radius: ${borderRadius};
 `;
 

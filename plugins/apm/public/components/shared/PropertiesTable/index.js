@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
-import isNil from 'lodash.isnil';
 import STATIC_PROPS from './staticProperties.json';
 import { units, colors } from '../../../style/variables';
 
@@ -55,7 +54,7 @@ function formatValue(value) {
 }
 
 function formatKey(key, value) {
-  if (isNil(value)) {
+  if (value == null) {
     return <EmptyValue>{key}</EmptyValue>;
   }
 

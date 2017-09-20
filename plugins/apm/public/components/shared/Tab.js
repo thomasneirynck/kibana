@@ -9,13 +9,8 @@ const Tab = styled.span`
   padding: ${px(units.half)};
   text-align: center;
 
-  &:hover {
-    opacity: 1;
-  }
-
-  opacity: ${props => (props.selected ? 1 : 0.7)};
   border-bottom: ${props =>
-    props.selected && `${units.quarter / 2}px solid ${colors.blue}`};
+    props.selected && `${units.quarter / 2}px solid ${colors.blue1}`};
   pointer-events: ${props => props.selected && 'none'};
 `;
 

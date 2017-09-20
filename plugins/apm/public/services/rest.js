@@ -2,7 +2,6 @@ import 'isomorphic-fetch';
 import { camelizeKeys } from 'humps';
 import url from 'url';
 import _ from 'lodash';
-import isNil from 'lodash.isnil';
 
 async function callApi(options) {
   const { pathname, query, camelcase, compact, ...urlOptions } = {
@@ -18,7 +17,7 @@ async function callApi(options) {
 
   const fullUrl = url.format({
     pathname,
-    query: compact ? _.omit(query, isNil) : query
+    query: compact ? _.omit(query, val => val == null) : query
   });
 
   try {

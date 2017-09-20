@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import d3 from 'd3';
 import _ from 'lodash';
-import isNil from 'lodash.isnil';
 import PropTypes from 'prop-types';
 import { scaleLinear } from 'd3-scale';
 import SingleRect from './SingleRect';
@@ -121,7 +120,7 @@ class Histogram extends PureComponent {
           />
         )}
 
-        {!isNil(selectedBucket) && (
+        {selectedBucket != null && (
           <SingleRect
             x={x(selectedBucket * bucketSize)}
             width={x(bucketSize) - x(0)}

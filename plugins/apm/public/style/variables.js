@@ -24,8 +24,9 @@ export function pct(value) {
 // Styling
 export const borderRadius = '5px';
 
-// Colors
-const colorBlue = '#005472';
+// Colors (from dark to light)
+const colorBlue1 = '#006E8A';
+const colorBlue2 = '#0079a5';
 export const colors = {
   black: '#000000',
   black2: '#2d2d2d',
@@ -37,10 +38,12 @@ export const colors = {
   white: '#ffffff',
   teal: '#00a69b',
   red: '#a30000',
-  blue: colorBlue,
+  blue1: colorBlue1,
+  blue2: colorBlue2,
 
   // Semantic colors
-  link: colorBlue
+  link: colorBlue2,
+  linkHover: colorBlue1
 };
 
 // Fonts

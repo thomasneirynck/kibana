@@ -33,7 +33,7 @@ const DetailsHeaderSmall = DetailsHeader.extend`font-size: ${fontSizes.small};`;
 const DetailsText = styled.div`font-size: ${fontSizes.large};`;
 const DiscoverButton = styled(KuiButton)`
   align-self: center;
-  background-color: ${colors.blue};
+  background-color: ${colors.blue1};
   color: ${colors.white};
 `;
 

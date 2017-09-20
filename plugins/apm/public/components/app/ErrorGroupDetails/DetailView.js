@@ -9,7 +9,6 @@ import {
   borderRadius
 } from '../../../style/variables';
 import { get } from 'lodash';
-import isNil from 'lodash.isnil';
 import { STATUS } from '../../../constants';
 import {
   PropertiesTable,
@@ -67,7 +66,7 @@ function AllOccurrencesLink({ errorGroup, appName }) {
     height: 18px;
     margin-top: -3px;
     margin-right: 6px;
-    background: ${colors.blue};
+    background: ${colors.blue1};
     padding: 2px;
     border-radius: 4px;
     vertical-align: middle;
@@ -107,7 +106,7 @@ function DetailView({ errorGroup, urlParams }) {
   const timestamp = moment(get(errorGroup, 'data.error.@timestamp')).format();
 
   const stacktraces = get(errorGroup.data.error.error.exception, 'stacktrace');
-  const hasStacktraces = !isNil(stacktraces);
+  const hasStacktraces = stacktraces != null;
   const tabs = getTabs(errorGroup, hasStacktraces);
   const currentTab = getCurrentTab(tabs, urlParams.detailTab);
 
