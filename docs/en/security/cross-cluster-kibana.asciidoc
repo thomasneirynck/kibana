@@ -5,17 +5,17 @@ When Kibana is used to search across multiple clusters, a two-step authorization
 process determines whether or not the user can access indices on a remote
 cluster:
 
-* First, the loal cluster determines if the user is authorized to access remote
+* First, the local cluster determines if the user is authorized to access remote
 clusters. (The local cluster is the cluster Kibana is connected to.)
 * If they are, the remote cluster then determines if the user has access
 to the specified indices.
 
 To grant Kibana users access to remote clusters, assign them a local role
-with read privileges to indices on the remote cluster(s). You specify remote
+with read privileges to indices on the remote clusters. You specify remote
 cluster indices as `<remote_cluster_name>:<index_name>`.
 
 To enable users to actually read the remote indices, you must create a matching
-role on the remote cluster(s) that grants the `read_cross_cluster` privilege
+role on the remote clusters that grants the `read_cross_cluster` privilege
 and access to the appropriate indices.
 
 For example, if Kibana is connected to the cluster where you're actively
@@ -25,12 +25,9 @@ offloading older time-based indices to an archive cluster
 clusters:
 
 . On the local cluster, create a `logstash_reader` role that grants
-`read` and `view_index_metadata` privileges on the local `logstash-*` indices
-as well as the remote Logstash indices, `remote_cluster_name:logstash-*`.
+`read` and `view_index_metadata` privileges on the local `logstash-*` indices.
 +
-NOTE: If you configure the local cluster as another remote in
-Elasticsearch, you can grant access to `*:logstash-*` to enable users to access
-both the local cluster and all of your remote clusters. In this case, the
+NOTE: If you configure the local cluster as another remote in {es}, the
 `logstash_reader` role on your local cluster also needs to grant the
 `read_cross_cluster` privilege.
 
@@ -40,10 +37,3 @@ role.
 . On the remote cluster, create a `logstash_reader` role that grants the
 `read_cross_cluster` privilege and `read` and `view_index_metadata` privileges
 for the `logstash-*` indices.
-
-IMPORTANT: Currently, Kibana shows an error when users without super user access
-attempt to create cross-cluster index patterns; however, they are not blocked
-from doing so. Granting users read access to `*:*` on the local cluster will
-eliminate these error messages. This does _not_ grant access to everything on
-a remote cluster, that is controlled by the corresponding role on the
-remote cluster(s).
