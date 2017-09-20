@@ -1,4 +1,7 @@
 import * as rest from '../services/rest';
+import orderBy from 'lodash.orderby';
+import { getUrlParams } from './urlParams';
+import { createSelector } from 'reselect';
 import {
   getKey,
   createActionTypes,
@@ -31,10 +34,25 @@ const appLists = (state = {}, action) => {
 export const loadAppList = createAction(actionTypes, rest.loadAppList);
 
 // SELECTORS
-export function getAppList(state) {
-  const { start, end } = state.urlParams;
-  const key = getKey({ start, end });
-  return state.appLists[key] || INITIAL_STATE;
-}
+export const getAppList = createSelector(
+  state => state.appLists,
+  state => state.sorting.app,
+  getUrlParams,
+  (appLists, appSorting, urlParams) => {
+    const { start, end } = urlParams;
+    const key = getKey({ start, end });
+
+    if (!appLists[key]) {
+      return INITIAL_STATE;
+    }
+
+    const { key: sortKey, descending } = appSorting;
+
+    return {
+      ...appLists[key],
+      data: orderBy(appLists[key].data, sortKey, descending ? 'desc' : 'asc')
+    };
+  }
+);
 
 export default appLists;

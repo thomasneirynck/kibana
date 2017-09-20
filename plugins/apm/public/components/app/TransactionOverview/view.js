@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
+import withErrorHandler from '../../shared/withErrorHandler';
+import Breadcrumbs from '../../shared/Breadcrumbs';
 import PageHeader from '../../shared/PageHeader';
 import TabNavigation from '../../shared/TabNavigation';
 import Charts from './Charts';
 import List from './List';
-import Breadcrumbs from '../../shared/Breadcrumbs';
-import withErrorHandler from '../../shared/withErrorHandler';
 
 function loadTransactionList(props) {
   const { appName, start, end, transactionType } = props.urlParams;
@@ -42,7 +42,7 @@ export class TransactionOverview extends Component {
         <List
           appName={appName}
           type={transactionType}
-          list={this.props.transactionList}
+          items={this.props.transactionList.data}
           changeTransactionSorting={changeTransactionSorting}
           transactionSorting={transactionSorting}
         />

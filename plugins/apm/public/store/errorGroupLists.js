@@ -36,7 +36,7 @@ export const loadErrorGroupList = createAction(
 
 export const getErrorGroupList = createSelector(
   state => state.errorGroupLists,
-  state => state.errorGroupSorting,
+  state => state.sorting.errorGroup,
   getUrlParams,
   (errorGroupLists, errorGroupSorting, urlParams) => {
     const { appName, start, end } = urlParams;

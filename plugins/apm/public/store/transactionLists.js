@@ -36,7 +36,7 @@ export const loadTransactionList = createAction(
 
 export const getTransactionList = createSelector(
   state => state.transactionLists,
-  state => state.transactionSorting,
+  state => state.sorting.transaction,
   getUrlParams,
   (transactionLists, transactionSorting, urlParams) => {
     const { appName, start, end, transactionType } = urlParams;

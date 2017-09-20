@@ -5,13 +5,13 @@ import {
   getErrorGroupList,
   loadErrorGroupList
 } from '../../../store/errorGroupLists';
-import { changeErrorGroupSorting } from '../../../store/errorGroupSorting';
+import sorting, { changeErrorGroupSorting } from '../../../store/sorting';
 
 function mapStateToProps(state = {}) {
   return {
     urlParams: getUrlParams(state),
     errorGroupList: getErrorGroupList(state),
-    errorGroupSorting: state.errorGroupSorting
+    errorGroupSorting: sorting(state, 'errorGroup').sorting.errorGroup
   };
 }
 

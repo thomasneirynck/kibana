@@ -6,14 +6,13 @@ import charts from './charts';
 import errorDistributions from './errorDistributions';
 import errorGroupLists from './errorGroupLists';
 import errorGroups from './errorGroups';
-import errorGroupSorting from './errorGroupSorting';
 import license from './license';
 import location from './location';
+import sorting from './sorting';
 import traces from './traces';
 import transactionDistributions from './transactionDistributions';
 import transactionLists from './transactionLists';
 import transactions from './transactions';
-import transactionSorting from './transactionSorting';
 import urlParams from './urlParams';
 
 const appReducer = combineReducers({
@@ -23,14 +22,13 @@ const appReducer = combineReducers({
   errorDistributions,
   errorGroupLists,
   errorGroups,
-  errorGroupSorting,
   license,
   location,
+  sorting,
   traces,
   transactionDistributions,
   transactionLists,
   transactions,
-  transactionSorting,
   urlParams
 });
 

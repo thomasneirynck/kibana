@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import TransactionOverview from './view';
 import { getUrlParams } from '../../../store/urlParams';
-import { changeTransactionSorting } from '../../../store/transactionSorting';
+import sorting, { changeTransactionSorting } from '../../../store/sorting';
 import {
   getTransactionList,
   loadTransactionList
@@ -11,7 +11,7 @@ function mapStateToProps(state = {}) {
   return {
     urlParams: getUrlParams(state),
     transactionList: getTransactionList(state),
-    transactionSorting: state.transactionSorting
+    transactionSorting: sorting(state, 'transaction').sorting.transaction
   };
 }
 

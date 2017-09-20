@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import withErrorHandler from '../../shared/withErrorHandler';
+import Breadcrumbs from '../../shared/Breadcrumbs';
 import PageHeader from '../../shared/PageHeader';
 import TabNavigation from '../../shared/TabNavigation';
-import Breadcrumbs from '../../shared/Breadcrumbs';
 import List from './List';
 
 function loadErrorGroupList(props) {
@@ -30,9 +30,10 @@ class ErrorGroupOverview extends Component {
         <Breadcrumbs />
         <PageHeader title={`Errors for ${appName}`} />
         <TabNavigation />
+
         <List
           appName={appName}
-          list={this.props.errorGroupList}
+          items={this.props.errorGroupList.data}
           changeErrorGroupSorting={changeErrorGroupSorting}
           errorGroupSorting={errorGroupSorting}
         />

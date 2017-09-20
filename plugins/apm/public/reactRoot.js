@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { Router, Route, Redirect } from 'react-router-dom';
 import createHistory from 'history/createHashHistory';
 
-import AppList from './components/app/AppList';
+import AppOverview from './components/app/AppOverview';
 import ErrorGroupDetails from './components/app/ErrorGroupDetails';
 import ErrorGroupOverview from './components/app/ErrorGroupOverview';
 import Main from './components/app/Main';
@@ -26,7 +26,7 @@ function Root({ timefilter }) {
       <Router history={history}>
         <Main>
           {/* App */}
-          <Route exact path="/" component={AppList} />
+          <Route exact path="/" component={AppOverview} />
 
           {/* Errors */}
           <Route

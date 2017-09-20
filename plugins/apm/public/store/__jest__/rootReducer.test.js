@@ -9,20 +9,26 @@ describe('root reducer', () => {
       errorDistributions: {},
       errorGroupLists: {},
       errorGroups: {},
-      errorGroupSorting: {
-        descending: true,
-        key: 'latestOccurrenceAt'
-      },
       license: {},
       location: {},
+      sorting: {
+        transaction: {
+          key: 'impact',
+          descending: true
+        },
+        errorGroup: {
+          key: 'latestOccurrenceAt',
+          descending: true
+        },
+        app: {
+          key: 'overallAvg',
+          descending: true
+        }
+      },
       traces: {},
       transactionDistributions: {},
       transactionLists: {},
       transactions: {},
-      transactionSorting: {
-        descending: true,
-        key: 'impact'
-      },
       urlParams: {}
     });
   });
