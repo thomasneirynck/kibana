@@ -63,14 +63,13 @@ uiModules.get('kibana')
       notificationType = 'error';
     }
 
-    notify.custom(notificationMessage, {
-      type: notificationType,
-      lifetime: 0,
-      actions
+    $rootScope.$evalAsync(function () {
+      notify.custom(notificationMessage, {
+        type: notificationType,
+        lifetime: 0,
+        actions
+      });
     });
-
-    // manually scheduling digest loop so the notifications are displayed, we're outside of the normal loop
-    $rootScope.$apply();
   }
 
   const poller = new Poller({
