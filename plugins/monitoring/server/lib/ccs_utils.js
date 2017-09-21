@@ -1,15 +1,19 @@
 /**
  * Prefix all comma separated index patterns within the original {@code indexPattern}.
  *
+ * Cross Cluster Search (CCS) prefixing is ignored if the user has disabled CCS via kibana.yml,
+ * which means that the index pattern will be returned without using {@code ccs}.
+ *
  * @param  {Object} config The Kibana configuration object.
  * @param  {String} indexPatternName The index pattern name (e.g., 'xpack.monitoring.elasticsearch.index_pattern')
  * @param  {String} ccs The optional cluster-prefix to prepend.
  * @return {String} The index pattern with the {@code cluster} prefix appropriately prepended.
  */
 export function prefixIndexPattern(config, indexPatternName, ccs) {
+  const ccsEnabled = config.get('xpack.monitoring.ccs.enabled');
   const indexPattern = config.get(indexPatternName);
 
-  if (!ccs) {
+  if (!ccsEnabled || !ccs) {
     return indexPattern;
   }
 

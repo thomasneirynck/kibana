@@ -10,6 +10,9 @@ export const config = (Joi) => {
   const DEFAULT_REQUEST_HEADERS = [ 'authorization' ];
 
   return object({
+    ccs: object({
+      enabled: boolean().default(true)
+    }).default(),
     enabled: boolean().default(true),
     ui: object({
       enabled: boolean().default(true),
