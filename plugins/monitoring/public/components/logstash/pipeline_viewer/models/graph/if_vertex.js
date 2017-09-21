@@ -13,4 +13,15 @@ export class IfVertex extends Vertex {
   get icon() {
     return ifIcon;
   }
+
+  get subtitle() {
+    return {
+      complete: this.name,
+      display: this.truncateStringForDisplay(this.name, this.displaySubtitleMaxLength)
+    };
+  }
+
+  get displaySubtitleMaxLength() {
+    return 39;
+  }
 }

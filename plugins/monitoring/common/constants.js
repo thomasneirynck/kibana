@@ -154,9 +154,7 @@ export const LOGSTASH = {
         /**
          * Vertical distance between vertices, as measured from top-border-to-top-border
          */
-        VERTICAL_DISTANCE_PX: 20,
-
-        DISPLAY_ID_MAX_LENGTH_CHARS: 15
+        VERTICAL_DISTANCE_PX: 20
       }
     }
   },

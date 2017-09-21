@@ -87,12 +87,12 @@ describe('Vertex', () => {
     expect(vertex2.htmlAttrId).to.be('my_queue');
   });
 
-  it('should have the correct display ID', () => {
+  it('should have the correct subtitle', () => {
     const vertex1 = graph.getVertexById('my-prefix:my-really-long-named-generator');
-    expect(vertex1.displayId).to.be('my-pref…nerator');
+    expect(vertex1.subtitle).to.eql({ display: 'my-prefi … enerator', complete: 'my-prefix:my-really-long-named-generator' });
 
     const vertex2 = graph.getVertexById('my-queue');
-    expect(vertex2.displayId).to.be('my-queue');
+    expect(vertex2.subtitle).to.eql({ display: 'my-queue', complete: 'my-queue' });
   });
 
   it('should have the correct number of incoming edges', () => {

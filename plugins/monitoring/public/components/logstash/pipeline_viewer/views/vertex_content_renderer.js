@@ -79,7 +79,10 @@ function renderHeader(colaObjects, title, subtitle) {
     })
     .append('tspan')
     .attr('class', 'lspvVertexSubtitle')
-    .text(d => subtitle ? ` (${subtitle(d)})` : null);
+    .text(d => subtitle ? ` (${subtitle(d).display})` : null)
+    .append('title')
+      .text(d => subtitle ? subtitle(d).complete : null);
+
 
   const autoGenIdPluginVertexGroup = colaObjects
     .filter(d => d.vertex instanceof PluginVertex)
@@ -116,7 +119,7 @@ export function enterInputVertex(inputs) {
   renderHeader(
     inputs,
     (d => d.vertex.name),
-    (d => d.vertex.displayId)
+    (d => d.vertex.subtitle)
   );
 
   renderIcon(inputs, inputIcon);
@@ -133,7 +136,7 @@ export function enterProcessorVertex(processors) {
   renderHeader(
     processors,
     (d => d.vertex.name),
-    (d => d.vertex.displayId)
+    (d => d.vertex.subtitle)
   );
 
   processors
@@ -186,7 +189,7 @@ export function enterIfVertex(ifs) {
   renderHeader(
     ifs,
     'if',
-    (d => d.vertex.name)
+    (d => d.vertex.subtitle)
   );
 
   renderIcon(ifs, ifIcon);

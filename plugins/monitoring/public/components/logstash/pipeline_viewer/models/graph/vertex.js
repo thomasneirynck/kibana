@@ -49,16 +49,15 @@ export class Vertex {
     return this.json.id.replace(/\W/g, '_');
   }
 
-  get displayId() {
-    const maxDisplayLength = LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.DISPLAY_ID_MAX_LENGTH_CHARS;
-    if (this.id.length <= maxDisplayLength) {
-      return this.id;
-    }
+  get subtitle() {
+    return {
+      complete: this.id,
+      display: this.truncateStringForDisplay(this.id, this.displaySubtitleMaxLength)
+    };
+  }
 
-    const ellipses = '\u2026';
-    const eachHalfMaxDisplayLength = Math.floor((maxDisplayLength - ellipses.length) / 2);
-
-    return `${this.id.substr(0, eachHalfMaxDisplayLength)}${ellipses}${this.id.substr(-eachHalfMaxDisplayLength)}`;
+  get displaySubtitleMaxLength() {
+    return 19;
   }
 
   get incomingEdges() {
@@ -182,5 +181,16 @@ export class Vertex {
 
   get hasExplicitId() {
     return Boolean(this.json.explicit_id);
+  }
+
+  truncateStringForDisplay(completeString, maxDisplayLength) {
+    if (completeString.length <= maxDisplayLength) {
+      return completeString;
+    }
+
+    const ellipses = ' \u2026 ';
+    const eachHalfMaxDisplayLength = Math.floor((maxDisplayLength - ellipses.length) / 2);
+
+    return `${completeString.substr(0, eachHalfMaxDisplayLength)}${ellipses}${completeString.substr(-eachHalfMaxDisplayLength)}`;
   }
 }
