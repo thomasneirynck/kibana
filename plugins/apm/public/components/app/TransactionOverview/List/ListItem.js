@@ -33,7 +33,6 @@ const ImpactBarBackground = styled.div`
 
 const ImpactBar = styled.div`
   height: ${px(units.minus)};
-  width: ${props => props.barWidth}%;
   background: ${colors.blue1};
   border-radius: ${borderRadius};
 `;
@@ -45,7 +44,7 @@ function ImpactSparkline({ impact }) {
 
   return (
     <ImpactBarBackground>
-      <ImpactBar barWidth={impact} />
+      <ImpactBar style={{ width: `${impact}%` }} />
     </ImpactBarBackground>
   );
 }

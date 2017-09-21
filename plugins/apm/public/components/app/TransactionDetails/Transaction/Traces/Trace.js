@@ -7,8 +7,7 @@ import { KuiPopover } from 'ui_framework/components';
 import { isNumber, get } from 'lodash';
 import './KuiPopover-overrides.css';
 
-import { unit, colors, px } from '../../../../../style/variables';
-import { truncate } from '../../../../../style/utils';
+import { unit, units, colors, px } from '../../../../../style/variables';
 import {
   TRACE_DURATION,
   TRACE_START,
@@ -20,26 +19,19 @@ function closePopover() {}
 
 const TraceBar = styled.div`
   position: relative;
-  width: ${props => props.width}%;
-  left: ${props => props.left}%;
-  background: ${props => props.color};
   height: ${unit}px;
 `;
-
-const breakpoint = 70;
-const TraceName = styled.div`
-  ${truncate('100%')};
+const TraceLabel = styled.div`
+  white-space: nowrap;
   position: relative;
-  right: ${props =>
-    props.left > breakpoint ? `${100 - props.width - props.left}%` : 'initial'};
-  left: ${props => (props.left > breakpoint ? 'initial' : `${props.left}%`)};
-  text-align: ${props => (props.left > breakpoint ? 'right' : 'left')};
+  direction: rtl;
+  text-align: left;
 `;
 
 const Popover = styled(({ isSelected, ...props }) => <KuiPopover {...props} />)`
   display: block;
   user-select: none;
-  padding: ${px(unit)};
+  padding: ${px(units.half)};
   border-top: 1px solid ${colors.gray4};
   background-color: ${props => (props.isSelected ? 'yellow' : 'initial')};
   &:hover {
@@ -56,10 +48,12 @@ function Trace({ history, location, totalDuration, trace, color, isSelected }) {
 
   const button = (
     <div>
-      <TraceBar left={left} width={width} color={color} />
-      <TraceName left={left} width={width}>
+      <TraceBar
+        style={{ left: `${left}%`, width: `${width}%`, backgroundColor: color }}
+      />
+      <TraceLabel style={{ left: `${left}%`, width: `${100 - left}%` }}>
         {traceName}
-      </TraceName>
+      </TraceLabel>
     </div>
   );
 

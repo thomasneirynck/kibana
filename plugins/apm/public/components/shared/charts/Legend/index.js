@@ -1,22 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { units, px, fontSizes, colors } from '../../../../style/variables';
+import { units, px, colors, fontSizes } from '../../../../style/variables';
 
 const Container = styled.div`
   display: flex;
   align-items: center;
-  font-size: ${props => {
-    switch (Math.round(props.size)) {
-      case 1:
-        return fontSizes.small;
-      case 2:
-        return fontSizes.large;
-      case 3:
-        return fontSizes.xlarge;
-      default:
-        return fontSizes.small;
-    }
-  }};
+  font-size: ${props => props.fontSize};
   color: ${colors.gray2};
   cursor: pointer;
   opacity: ${props => (props.isDisabled ? 0.4 : 1)};
@@ -28,9 +17,9 @@ const Container = styled.div`
 `;
 
 const Indicator = styled.span`
-  width: ${props => px(units.half + units.quarter * props.size)};
-  height: ${props => px(units.half + units.quarter * props.size)};
-  margin-right: ${px(units.quarter)};
+  width: ${props => px(props.radius)};
+  height: ${props => px(props.radius)};
+  margin-right: ${props => px(props.radius / 2)};
   background: ${props => props.color};
   border-radius: 100%;
 `;
@@ -39,12 +28,13 @@ export default function Legend({
   onClick,
   color,
   text,
-  size = 1,
+  fontSize = fontSizes.small,
+  radius = units.minus - 1,
   isDisabled = false
 }) {
   return (
-    <Container onClick={onClick} isDisabled={isDisabled} size={size}>
-      <Indicator color={color} size={size} />
+    <Container onClick={onClick} isDisabled={isDisabled} fontSize={fontSize}>
+      <Indicator color={color} radius={radius} />
       {text}
     </Container>
   );

@@ -14,7 +14,7 @@ import {
 } from '../../../../style/variables';
 import Legend from '../Legend';
 
-const CustomHintElm = styled.div`
+const TooltipElm = styled.div`
   margin: 0 ${px(unit)};
   transform: translateY(-50%);
   border: 1px solid ${colors.gray4};
@@ -48,7 +48,7 @@ const Value = styled.div`
   font-size: ${fontSize};
 `;
 
-export function CustomHint({
+export function Tooltip({
   hoveredPoints,
   series,
   seriesValueType,
@@ -65,12 +65,14 @@ export function CustomHint({
 
   return (
     <Hint {...props} value={{ x, y }}>
-      <CustomHintElm>
+      <TooltipElm>
         <Header>{timestamp}</Header>
         <Legends>
           {hoveredPoints.map((point, i) => (
             <LegendAndValueWrap key={i}>
               <Legend
+                fontSize={fontSize.tiny}
+                radius={units.half}
                 color={series[i].color}
                 text={series[i].titleShort || series[i].title}
               />
@@ -78,7 +80,7 @@ export function CustomHint({
             </LegendAndValueWrap>
           ))}
         </Legends>
-      </CustomHintElm>
+      </TooltipElm>
     </Hint>
   );
 }

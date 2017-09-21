@@ -17,7 +17,7 @@ import {
   VerticalGridLines,
   makeWidthFlexible
 } from 'react-vis';
-import { CustomHint } from './CustomHint';
+import { Tooltip } from './Tooltip';
 import Legend from '../Legend';
 import styled from 'styled-components';
 import { units, fontSizes, px, colors } from '../../../../style/variables';
@@ -204,7 +204,6 @@ class CustomPlot extends PureComponent {
               return (
                 <Legend
                   key={i}
-                  size={2}
                   onClick={() => this.clickLegend(i)}
                   isDisabled={this.state.disabledSeries[i]}
                   text={text}
@@ -233,21 +232,21 @@ class CustomPlot extends PureComponent {
           />
 
           {hoverIndex !== null &&
-          !isDrawing && (
-            <CustomHint
-              hoveredPoints={hoveredPoints}
-              series={series}
-              valueFormatter={formatYAxisValue}
-              y={0}
-            />
-          )}
+            !isDrawing && (
+              <Tooltip
+                hoveredPoints={hoveredPoints}
+                series={series}
+                valueFormatter={formatYAxisValue}
+                y={0}
+              />
+            )}
 
           {this.getEnabledSeries(series)
             .reverse()
             .map(this.getSerie)}
 
           {hoverIndex !== null &&
-          !isDrawing && <MarkSeries data={hoveredPoints} />}
+            !isDrawing && <MarkSeries data={hoveredPoints} />}
 
           <MarkSeries
             fill="transparent"
@@ -270,9 +269,12 @@ class CustomPlot extends PureComponent {
           />
 
           {isDrawing &&
-          selectionEnd !== null && (
-            <SelectionMarker start={x(selectionStart)} end={x(selectionEnd)} />
-          )}
+            selectionEnd !== null && (
+              <SelectionMarker
+                start={x(selectionStart)}
+                end={x(selectionEnd)}
+              />
+            )}
         </XYPlot>
       </ChartWrapper>
     );

@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { units, px, fontFamilyCode } from '../../../style/variables';
 import { get } from 'lodash';
 
-const Container = styled.div``;
-
 const Filename = styled.span`
   font-weight: bold;
   font-family: ${fontFamilyCode};
@@ -17,7 +15,7 @@ const ContextWrap = styled.pre`
 
 function Stacktrace({ stacktraces = [] }) {
   return (
-    <Container>
+    <div>
       {stacktraces.map((item, i) => {
         const pre = get(item, 'context.pre', []);
         const post = get(item, 'context.post', []);
@@ -43,7 +41,7 @@ function Stacktrace({ stacktraces = [] }) {
           </div>
         );
       })}
-    </Container>
+    </div>
   );
 }
 

@@ -88,11 +88,9 @@ function recursiveSort(propData, levelTwoKey, level) {
             <Row key={key}>
               <Cell>{formatKey(key, value)}</Cell>
               <Cell>
-                {level < 3 && _.isObject(value) ? (
-                  recursiveSort(value, levelTwoKey, level + 1)
-                ) : (
-                  formatValue(value)
-                )}
+                {level < 3 && _.isObject(value)
+                  ? recursiveSort(value, levelTwoKey, level + 1)
+                  : formatValue(value)}
               </Cell>
             </Row>
           );
