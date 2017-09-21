@@ -71,7 +71,7 @@ export function BucketSpanEstimatorProvider($injector) {
       if(this.aggTypes.length === this.fields.length) {
         // loop over detectors
         for(let i = 0; i < this.aggTypes.length; i++) {
-          if (this.splitField === undefined || this.splitField === '--No split--') {
+          if (this.splitField === undefined) {
             // either a single metric job or no data split
             this.checkers.push({
               check: new SingleSeriesChecker(

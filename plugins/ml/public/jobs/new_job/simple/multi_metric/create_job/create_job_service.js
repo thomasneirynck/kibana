@@ -259,7 +259,7 @@ module.service('mlMultiMetricJobService', function (
         dtr.detector_description += `(${field.name})`;
       }
 
-      if (formConfig.splitField !== '--No split--') {
+      if (formConfig.splitField !== undefined) {
         dtr.partition_field_name =  formConfig.splitField;
       }
       job.analysis_config.detectors.push(dtr);

@@ -79,7 +79,7 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
 
         // a partition has been selected, so we need to load some field values to use in the
         // bucket span tests.
-        if (splitField !== undefined && splitField !== '--No split--') {
+        if (splitField !== undefined) {
           getRandomFieldValues($scope.formConfig.indexPattern.title, splitField, query)
           .then((resp) => {
             splitFieldValues = resp;

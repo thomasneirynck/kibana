@@ -205,7 +205,7 @@ module
     start: 0,
     end: 0,
     timeField: indexPattern.timeFieldName,
-    splitField: '--No split--',
+    splitField: undefined,
     keyFields: {},
     firstSplitFieldValue: undefined,
     indexPattern: indexPattern,
@@ -230,7 +230,7 @@ module
     const splitField = $scope.formConfig.splitField;
     $scope.formConfig.firstSplitFieldValue = undefined;
 
-    if (splitField !== '--No split--') {
+    if (splitField !== undefined) {
       $scope.formConfig.keyFields[splitField] = splitField;
 
       $scope.ui.splitText = 'Data split by ' + splitField;
@@ -251,6 +251,11 @@ module
       destroyCards();
       $scope.formChange();
     }
+  };
+
+  $scope.splitReset = function () {
+    $scope.formConfig.splitField = undefined;
+    $scope.splitChange();
   };
 
   function wizardStep(step) {
@@ -780,7 +785,7 @@ module
   // which will cause the split cards to look odd
   // TODO - all charts should resize correctly on page resize
   function resize() {
-    if ($scope.formConfig.splitField !== '--No split--') {
+    if ($scope.formConfig.splitField !== undefined) {
       let width = angular.element('.card-front').width();
       const cardsBehind = angular.element('.card-behind');
       for (let i = 0; i < cardsBehind.length; i++) {
