@@ -1,5 +1,4 @@
 import React from 'react';
-import { RelativeLink } from '../../../utils/url';
 import Tab from '../Tab';
 import styled from 'styled-components';
 import withApp from '../withApp';
@@ -26,20 +25,17 @@ function TabNavigation({ urlParams, location, app }) {
       {types.map(type => {
         return (
           <Tab
+            path={`${appName}/transactions/${encodeURIComponent(type)}`}
             selected={transactionType === type && !errorsSelected}
             key={type}
           >
-            <RelativeLink
-              path={`${appName}/transactions/${encodeURIComponent(type)}`}
-            >
-              {type}
-            </RelativeLink>
+            {type}
           </Tab>
         );
       })}
       <Divider />
-      <Tab selected={errorsSelected}>
-        <RelativeLink path={`${appName}/errors`}>Errors</RelativeLink>
+      <Tab path={`${appName}/errors`} selected={errorsSelected}>
+        Errors
       </Tab>
     </div>
   );

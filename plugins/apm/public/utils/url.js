@@ -27,7 +27,11 @@ function RelativeLinkComponent({ location, path, query, ...props }) {
       : location.search;
 
   return (
-    <Link {...props} to={{ ...location, ...props.to, pathname, search }} />
+    <Link
+      {...props}
+      to={{ ...location, ...props.to, pathname, search }}
+      className={`kuiLink ${props.className || ''}`}
+    />
   );
 }
 

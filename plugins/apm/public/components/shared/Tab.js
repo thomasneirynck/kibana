@@ -1,17 +1,16 @@
 import styled from 'styled-components';
-import { unit, units, px, fontSize, colors } from '../../style/variables';
+import { unit, units, px, fontSizes, colors } from '../../style/variables';
+import { RelativeLink } from '../../utils/url';
 
-const Tab = styled.span`
+const Tab = styled(RelativeLink)`
   display: inline-block;
-  font-size: ${fontSize};
-  width: ${px(unit * 10)};
+  font-size: ${fontSizes.large};
   margin: 0 0 ${px(units.plus)} 0;
-  padding: ${px(units.half)};
+  padding: ${px(unit)} ${px(unit + units.quarter)};
   text-align: center;
 
   border-bottom: ${props =>
     props.selected && `${units.quarter / 2}px solid ${colors.blue1}`};
-  pointer-events: ${props => props.selected && 'none'};
 `;
 
 export default Tab;

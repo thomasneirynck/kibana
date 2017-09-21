@@ -79,7 +79,10 @@ function Breadcrumbs({ match, location }) {
           <div className="kuiLocalBreadcrumbs">
             {breadcrumbs.map(breadcrumb => (
               <div key={breadcrumb.url} className="kuiLocalBreadcrumb">
-                <Link to={{ pathname: breadcrumb.url, search }}>
+                <Link
+                  className="kuiLink"
+                  to={{ pathname: breadcrumb.url, search }}
+                >
                   {breadcrumb.label}
                 </Link>
               </div>

@@ -8,13 +8,12 @@ import {
   fontSizes,
   borderRadius
 } from '../../../style/variables';
-import { get } from 'lodash';
+import { get, capitalize } from 'lodash';
 import { STATUS } from '../../../constants';
 import {
   PropertiesTable,
   getLevelOneProps
 } from '../../shared/PropertiesTable';
-import { RelativeLink } from '../../../utils/url';
 
 import moment from 'moment';
 import Tab from '../../shared/Tab';
@@ -132,10 +131,12 @@ function DetailView({ errorGroup, urlParams }) {
       </Properties>
       {tabs.map(key => {
         return (
-          <Tab selected={currentTab === key} key={key}>
-            <RelativeLink query={{ detailTab: key }}>
-              {key.toUpperCase()}
-            </RelativeLink>
+          <Tab
+            query={{ detailTab: key }}
+            selected={currentTab === key}
+            key={key}
+          >
+            {capitalize(key)}
           </Tab>
         );
       })}

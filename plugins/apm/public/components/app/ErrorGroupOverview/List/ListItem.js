@@ -17,7 +17,6 @@ const GroupIdCell = styled(KuiTableRowCell)`width: ${px(unit * 6)};`;
 
 const GroupIdLink = styled(RelativeLink)`
   font-family: ${fontFamilyCode};
-  text-decoration: none;
   color: ${colors.gray2};
 `;
 
