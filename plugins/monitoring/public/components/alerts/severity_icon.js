@@ -13,6 +13,10 @@ export function SeverityIcon({ severity }) {
   })();
 
   return (
-    <img src={`../plugins/monitoring/icons/${icon}`} />
+    <img
+      alt={`severity level: ${mappedSeverity}`}
+      src={`../plugins/monitoring/icons/${icon}`}
+      data-test-subj="alertIcon"
+    />
   );
 }

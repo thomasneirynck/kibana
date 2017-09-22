@@ -1,6 +1,9 @@
 import React from 'react';
 import { isEqual, sortByOrder, get, includes } from 'lodash';
-import { DEFAULT_NO_DATA_MESSAGE } from 'monitoring-constants';
+import {
+  DEFAULT_NO_DATA_MESSAGE,
+  DEFAULT_NO_DATA_MESSAGE_WITH_FILTER
+} from 'monitoring-constants';
 import {
   KuiControlledTable,
   KuiPagerButtonGroup,
@@ -14,6 +17,7 @@ import classNames from 'classnames';
 
 /*
  * State and data management for Monitoring Tables
+ * To be used when all the data is loaded at once and must be paged in the browser
  * - Sort the data
  * - Show the data
  * - Allow the user to change how the data is sorted
@@ -38,11 +42,17 @@ export class MonitoringTable extends React.Component {
   constructor(props) {
     super(props);
 
-    const defaultSortColumn = props.columns.find(c => c.hasOwnProperty('sortOrder')); // find the col to sort by default
-    const sortKey = defaultSortColumn ? defaultSortColumn.sortKey : null;
-    const sortOrder = defaultSortColumn ? defaultSortColumn.sortOrder : null;
+    let sortKey = props.sortKey;
+    let sortOrder = props.sortOrder;
+    if (props.sortKey === undefined || props.sortOrder === undefined) {
+      // find the col to sort by per table config
+      const defaultSortColumn = props.columns.find(c => c.hasOwnProperty('sortOrder'));
+      sortKey = defaultSortColumn ? defaultSortColumn.sortKey : null;
+      sortOrder = defaultSortColumn ? defaultSortColumn.sortOrder : null;
+    }
 
-    const secondarySortColumn = props.columns.find(c => c.hasOwnProperty('secondarySortOrder')); // find the col to sort by default
+    // find the secondary col to sort by per table config
+    const secondarySortColumn = props.columns.find(c => c.hasOwnProperty('secondarySortOrder'));
     const secondarySortKey = secondarySortColumn ? secondarySortColumn.sortKey : null;
     const secondarySortOrder = secondarySortColumn ? secondarySortColumn.secondarySortOrder : null;
 
@@ -52,21 +62,33 @@ export class MonitoringTable extends React.Component {
       sortOrder,
       secondarySortKey,
       secondarySortOrder,
-      filterText: '',
-      pageIndex: 1
+      filterText: props.filterText || '',
+      pageIndex: props.pageIndex || 1
     };
   }
 
+  /*
+   * Handle an interaction in the UI by calling to the external function (from
+   * angular controller) that does something extra
+   */
+  onNewState(newState) {
+    if (this.props.onNewState) {
+      this.props.onNewState(newState); // call top-level function
+    }
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
-    const diffProps = !isEqual(nextProps.rows, this.props);
+    const diffRows = !isEqual(nextProps.rows, this.props.rows);
     const diffState = !isEqual(nextState, this.state);
-    if (diffProps || diffState) {
+
+    if (diffRows || diffState) {
       return true;
     }
     return false;
   }
 
   componentWillReceiveProps({ rows }) {
+    // Any prop change will cause a re-render, as long as it's the `rows` prop :)
     this.setState({ rows });
   }
 
@@ -94,38 +116,66 @@ export class MonitoringTable extends React.Component {
    * Handle UI event of entering text in the Filter text input box
    * @param {Object} event - UI event data
    */
-  onFilterChange(value) {
-    this.setState({
-      filterText: value,
-      pageIndex: 1
+  onFilterChange(filterText) {
+    this.setState(prevState => {
+      const newState = {
+        ...prevState,
+        pageIndex: 1,
+        filterText
+      };
+
+      this.onNewState(newState);
+      return newState;
+    });
+  }
+
+  paginationHasPrevious() {
+    return this.state.pageIndex > 1;
+  }
+
+  paginationOnPrevious() {
+    this.setState(prevState => {
+      const newState = {
+        ...prevState,
+        pageIndex: prevState.pageIndex - 1
+      };
+
+      this.onNewState(newState);
+      return newState;
+    });
+
+  }
+
+  paginationHasNext(numAvailableRows) {
+    const pageIndex = this.state.pageIndex;
+    const numPages = Math.ceil(numAvailableRows / this.props.rowsPerPage);
+    return pageIndex < numPages;
+  }
+
+  paginationOnNext() {
+    this.setState(prevState => {
+      const newState = {
+        ...prevState,
+        pageIndex: prevState.pageIndex + 1
+      };
+
+      this.onNewState(newState);
+      return newState;
     });
   }
 
   /*
-   * @param {Number} numVisibleRows - number of visible rows in the current page
    * @param {Number} numAvailableRows - total number of rows in the table
    */
   getPaginationControls(numAvailableRows) {
-    if (!numAvailableRows) {
+    if (numAvailableRows === 0) {
       return null;
     }
 
-    const pageIndex = this.state.pageIndex;
-    const numPages = Math.ceil(numAvailableRows / this.props.rowsPerPage);
-
-    const hasPrevious = pageIndex > 1;
-    const hasNext = pageIndex < numPages;
-
-    const onPrevious = () => {
-      if (hasPrevious) {
-        this.setState({ pageIndex: pageIndex - 1 });
-      }
-    };
-    const onNext = () => {
-      if (hasNext) {
-        this.setState({ pageIndex: pageIndex + 1 });
-      }
-    };
+    const hasPrevious = this.paginationHasPrevious();
+    const hasNext = this.paginationHasNext(numAvailableRows);
+    const onPrevious = this.paginationOnPrevious.bind(this);
+    const onNext = this.paginationOnNext.bind(this);
 
     return (
       <KuiPagerButtonGroup
@@ -152,6 +202,7 @@ export class MonitoringTable extends React.Component {
         pageIndexFirstRow={numVisibleRows ? firstRow + 1 : 0}
         pageIndexLastRow={numVisibleRows ? numVisibleRows + firstRow : 0}
         rowsFiltered={numAvailableRows}
+        filterText={this.state.filterText}
         placeholder={this.props.placeholder}
         toolBarSections={this.props.toolBarSections}
         paginationControls={this.getPaginationControls(numAvailableRows)}
@@ -168,16 +219,26 @@ export class MonitoringTable extends React.Component {
    */
   setSortColumn({ sortKey }) {
     // clicking the column that is already sorted reverses the sort order
-    if (sortKey === this.state.sortKey) {
-      // same column, reverse the sort
-      this.setState({ sortOrder: this.state.sortOrder * -1 });
-    } else {
-      // new column, set to ASC sort
-      this.setState({
-        sortOrder: 1,
+    this.setState(prevState => {
+      let newSortOrder;
+
+      if (sortKey === this.state.sortKey) {
+        // same column, reverse the sort
+        newSortOrder = prevState.sortOrder * -1;
+      } else {
+        // new column, set to ASC sort
+        newSortOrder = 1;
+      }
+
+      const newState = {
+        ...prevState,
+        sortOrder: newSortOrder,
         sortKey
-      });
-    }
+      };
+
+      this.onNewState(newState);
+      return newState;
+    });
   }
 
   /*
@@ -190,10 +251,11 @@ export class MonitoringTable extends React.Component {
         Object.assign(headerCellProps, col.headerCellProps);
       }
 
+      // if onSort is null, then col is not sortable
       return (
         <KuiTableHeaderCell
           key={`kuiTableHeaderCell-${colIndex}`}
-          onSort={this.setSortColumn.bind(this, col)}
+          onSort={col.sortKey !== null ? this.setSortColumn.bind(this, col) : null}
           isSorted={this.state.sortKey === col.sortKey}
           isSortAscending={this.state.sortKey === col.sortKey ? this.state.sortOrder > 0 : true}
           {...headerCellProps}
@@ -242,7 +304,7 @@ export class MonitoringTable extends React.Component {
    * Important: Should be only called from render
    * @param {Array} rows - rows of data for which the table is meant to display
    */
-  getVisibleRows(rows = []) {
+  getVisibleRows(rows) {
     // [1] filter the rows
     const filteredRows = this.getFilteredRows(rows);
     const numAvailableRows = filteredRows.length;
@@ -250,7 +312,7 @@ export class MonitoringTable extends React.Component {
     const sortedRows = this.sortRows(filteredRows);
     // [3] paginate the sorted filtered rows
     const firstRow = this.calculateFirstRow();
-    const visibleRows = sortedRows.slice(firstRow, firstRow + this.props.rowsPerPage);
+    const visibleRows = sortedRows.slice(firstRow, firstRow + this.props.rowsPerPage) || [];
 
     return {
       numAvailableRows,
@@ -262,10 +324,16 @@ export class MonitoringTable extends React.Component {
     const classes = classNames(this.props.className, 'monitoringTable');
 
     let table; // This will come out to either be the KuiTable or a "No Data" message
-    const { visibleRows, numAvailableRows } = this.getVisibleRows(this.state.rows);
+
+    // guard the possibility that rows are null (data is loading)
+    const { visibleRows, numAvailableRows } = this.getVisibleRows(this.state.rows || []);
     const numVisibleRows = visibleRows.length;
 
-    if (numVisibleRows > 0) {
+    if (this.state.rows === null) {
+      // rows are null, show loading message
+      table = <MonitoringTableNoData message="Loading..." />;
+    } else if (numVisibleRows > 0) {
+      // data has some rows, show them
       const RowComponent = this.props.rowComponent;
       const tBody = visibleRows.map((rowData, rowIndex) => {
         return <RowComponent {...rowData} key={`rowData-${rowIndex}`} />;
@@ -284,7 +352,7 @@ export class MonitoringTable extends React.Component {
         </KuiTable>
       );
     } else {
-      table = <MonitoringTableNoData message={this.props.noDataMessage} />;
+      table = <MonitoringTableNoData message={this.props.getNoDataMessage(this.state.filterText)} />;
     }
 
     return (
@@ -297,9 +365,16 @@ export class MonitoringTable extends React.Component {
   }
 }
 
+const defaultGetNoDataMessage = filterText => {
+  if (filterText) {
+    return DEFAULT_NO_DATA_MESSAGE_WITH_FILTER.replace('{{FILTER}}', filterText.trim());
+  }
+  return DEFAULT_NO_DATA_MESSAGE;
+};
+
 MonitoringTable.defaultProps = {
   rows: [],
   filterFields: [],
-  noDataMessage: DEFAULT_NO_DATA_MESSAGE,
+  getNoDataMessage: defaultGetNoDataMessage,
   rowsPerPage: 20
 };

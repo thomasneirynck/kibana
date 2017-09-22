@@ -1,54 +1,9 @@
-/**
- * Controller for Index Listing
- */
-import { find, partial } from 'lodash';
+import { find } from 'lodash';
 import uiRoutes from 'ui/routes';
-import { uiModules } from 'ui/modules';
 import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
-import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
+import { MonitoringTableBaseController } from 'plugins/monitoring/components/table';
+import { getPageData } from './get_page_data';
 import template from './index.html';
-
-function getPageData($injector) {
-  const $http = $injector.get('$http');
-  const globalState = $injector.get('globalState');
-  const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch/indices`;
-  const features = $injector.get('features');
-  const showSystemIndices = features.isEnabled('showSystemIndices', false);
-  const timefilter = $injector.get('timefilter');
-  const timeBounds = timefilter.getBounds();
-
-  return $http.post(url, {
-    showSystemIndices,
-    ccs: globalState.ccs,
-    timeRange: {
-      min: timeBounds.min.toISOString(),
-      max: timeBounds.max.toISOString()
-    }
-  })
-  .then(response => response.data)
-  .then(data => {
-    data.rows.forEach(row => {
-      // calculate a numerical field to help sorting by status
-      // this allows default sort to show red, then yellow, then green
-      switch (row.status) {
-        case 'green':
-          row.statusSort = 1;
-          break;
-        case 'yellow':
-          row.statusSort = 2;
-          break;
-        default:
-          row.statusSort = 3;
-      }
-    });
-    return data;
-  })
-  .catch((err) => {
-    const Private = $injector.get('Private');
-    const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
-    return ajaxErrorHandlers(err);
-  });
-}
 
 uiRoutes.when('/elasticsearch/indices', {
   template,
@@ -58,44 +13,39 @@ uiRoutes.when('/elasticsearch/indices', {
       return routeInit();
     },
     pageData: getPageData
+  },
+  controllerAs: 'esIndices',
+  controller: class EsIndicesList extends MonitoringTableBaseController {
+
+    constructor($injector, $scope) {
+      super({
+        title: 'Elasticsearch - Indices',
+        storageKey: 'elasticsearch.indices',
+        getPageData,
+        $scope,
+        $injector
+      });
+
+      const $route = $injector.get('$route');
+      this.data = $route.current.locals.pageData;
+      const globalState = $injector.get('globalState');
+      $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
+      $scope.pageData = this.data;
+
+      // used in table toolbar
+      const features = $injector.get('features');
+      this.showSystemIndices = features.isEnabled('showSystemIndices', false);
+
+      // for binding
+      this.toggleShowSystemIndices = isChecked => {
+        // flip the boolean
+        this.showSystemIndices = isChecked;
+        // preserve setting in localStorage
+        features.update('showSystemIndices', isChecked);
+        // update the page (resets pagination and sorting)
+        this.updateData();
+      };
+    }
+
   }
-});
-
-const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-uiModule.controller('indices', ($injector, $scope) => {
-  const timefilter = $injector.get('timefilter');
-  timefilter.enabled = true;
-
-  const $route = $injector.get('$route');
-  const globalState = $injector.get('globalState');
-  $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
-  $scope.pageData = $route.current.locals.pageData;
-
-  const callPageData = partial(getPageData, $injector);
-
-  // Control whether system indices shown in the index listing
-  // shown by default, and setting is stored in localStorage
-  const features = $injector.get('features');
-  $scope.showSystemIndices = features.isEnabled('showSystemIndices', false);
-  $scope.toggleShowSystemIndices = (isChecked) => {
-    // flip the boolean
-    $scope.showSystemIndices = isChecked;
-    // preserve setting in localStorage
-    features.update('showSystemIndices', isChecked);
-    // update the page
-    callPageData().then((pageData) => $scope.pageData = pageData);
-  };
-
-  const title = $injector.get('title');
-  title($scope.cluster, 'Elasticsearch - Indices');
-
-  const $executor = $injector.get('$executor');
-  $executor.register({
-    execute: () => callPageData(),
-    handleResponse: (pageData) => $scope.pageData = pageData
-  });
-
-  $executor.start();
-
-  $scope.$on('$destroy', $executor.destroy);
 });

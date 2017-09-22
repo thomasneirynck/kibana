@@ -18,7 +18,7 @@ function formatMetric(metric, key) {
   const value = get(metric, key);
   if (!meta.format) { return value; }
 
-  if (!!value || value === 0) {
+  if (Boolean(value) || value === 0) {
     return formatNumber(value, meta.format) + ' ' + meta.units;
   }
 

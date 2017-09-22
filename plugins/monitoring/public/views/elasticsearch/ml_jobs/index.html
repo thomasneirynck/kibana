@@ -1,9 +1,14 @@
-<div ng-controller="ml_jobs">
-  <monitoring-main product="elasticsearch" name="ml">
-    <monitoring-cluster-status-elasticsearch></monitoring-cluster-status-elasticsearch>
-    <div class="page-row">
-      <h3 class="kuiScreenReaderOnly">Machine Learning Jobs</h3>
-      <monitoring-ml-listing jobs="pageData.rows"></monitoring-ml-listing>
-    </div>
-  </monitoring-main>
-</div>
+<monitoring-main product="elasticsearch" name="ml">
+  <monitoring-cluster-status-elasticsearch></monitoring-cluster-status-elasticsearch>
+  <div class="page-row">
+    <h3 class="kuiScreenReaderOnly">Machine Learning Jobs</h3>
+    <monitoring-ml-listing
+      page-index="mlJobs.pageIndex"
+      filter-text="mlJobs.filterText"
+      sort-key="mlJobs.sortKey"
+      sort-order="mlJobs.sortOrder"
+      on-new-state="mlJobs.onNewState"
+      jobs="mlJobs.data.rows"
+    ></monitoring-ml-listing>
+  </div>
+</monitoring-main>

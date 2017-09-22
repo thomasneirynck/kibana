@@ -5,10 +5,9 @@ export function MonitoringClusterOverviewProvider({ getService }) {
     return el.getVisibleText();
   };
 
-  const SUBJ_CLUSTER_ALERTS       = `clusterAlertsContainer`; // NOTE: for more in-depth cluster alerts tests, refer to the alerts test suite
-
-  const SUBJ_CLUSTER_OVERVIEW      = 'clusterOverviewContainer';
-  const SUBJ_CLUSTER_NAME          = `${SUBJ_CLUSTER_OVERVIEW} clusterName`;
+  const SUBJ_CLUSTER_ALERTS   = `clusterAlertsContainer`;
+  const SUBJ_CLUSTER_OVERVIEW = 'clusterOverviewContainer';
+  const SUBJ_CLUSTER_NAME     = `${SUBJ_CLUSTER_OVERVIEW} clusterName`;
 
   const SUBJ_ES_PANEL             = `clusterItemContainerElasticsearch`;
   const SUBJ_ES_STATUS            = `${SUBJ_ES_PANEL} statusIcon`;
@@ -138,6 +137,26 @@ export function MonitoringClusterOverviewProvider({ getService }) {
     }
     async getLsPipelines() {
       return getVisibleTextForSubj(SUBJ_LS_PIPELINES);
+    }
+
+    async getClusterAlerts() {
+      return await testSubjects.findAll(`${SUBJ_CLUSTER_ALERTS} topAlertItem`);
+    }
+    async getClusterAlert(index) {
+      const alerts = await this.getClusterAlerts();
+      const alert = alerts[index];
+
+      const alertIcon = await testSubjects.findDescendant('alertIcon', alert);
+      const alertText = await testSubjects.findDescendant('alertTextMessage', alert);
+      // const alertMeta = await testSubjects.findDescendant('alertTextMeta', alert); // FIXME can't use this for assertions since time is relative
+
+      return {
+        alertIcon: await alertIcon.getProperty('alt'),
+        alertText: await alertText.getVisibleText(),
+      };
+    }
+    async clickViewAllAlerts() {
+      return testSubjects.exists(SUBJ_ES_ML_JOBS);
     }
 
   };
