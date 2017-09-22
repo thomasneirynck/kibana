@@ -75,7 +75,7 @@ module.controller('MlExplorerController', function (
 
   const $mlExplorer = $('.ml-explorer');
   const MAX_INFLUENCER_FIELD_NAMES = 10;
-  const MAX_DISPLAY_FIELD_VALUES = 10;
+  const MAX_INFLUENCER_FIELD_VALUES = 10;
   const VIEW_BY_JOB_LABEL = 'job ID';
 
   $scope.selectedJobs = null;
@@ -88,6 +88,9 @@ module.controller('MlExplorerController', function (
   $scope.viewBySwimlaneOptions = [];
   $scope.viewBySwimlaneData = { 'fieldName': '', 'laneLabels':[],
     'points':[], 'interval': 3600 };
+
+  $scope.limitSwimlaneOptions = [5, 10, 25, 50];
+  $scope.swimlaneLimit = 10;
 
   $scope.initializeVis = function () {
     // Initialize the AppState in which to store filters.
@@ -195,6 +198,17 @@ module.controller('MlExplorerController', function (
 
     // Save the 'view by' field name to the AppState so that it can restored from the URL.
     $scope.appState.mlExplorerSwimlane.viewBy = viewByFieldName;
+    $scope.appState.save();
+
+    loadViewBySwimlane([]);
+    clearSelectedAnomalies();
+  };
+
+  $scope.setSwimlaneLimit = function (limit) {
+    $scope.swimlaneLimit = limit;
+
+    // Save the 'view by' field name to the AppState so that it can restored from the URL.
+    $scope.appState.mlExplorerSwimlane.limit = limit;
     $scope.appState.save();
 
     loadViewBySwimlane([]);
@@ -471,7 +485,7 @@ module.controller('MlExplorerController', function (
       bounds.min.valueOf(),
       bounds.max.valueOf(),
       MAX_INFLUENCER_FIELD_NAMES,
-      MAX_DISPLAY_FIELD_VALUES
+      MAX_INFLUENCER_FIELD_VALUES
     ).then((resp) => {
       // TODO - sort the influencers keys so that the partition field(s) are first.
       $scope.influencersData = resp.influencers;
@@ -527,7 +541,7 @@ module.controller('MlExplorerController', function (
           bounds.min.valueOf(),
           bounds.max.valueOf(),
           interval,
-          MAX_DISPLAY_FIELD_VALUES
+          $scope.swimlaneLimit
         ).then((resp) => {
           processViewByResults(resp.results);
           finish();
@@ -539,7 +553,7 @@ module.controller('MlExplorerController', function (
           bounds.min.valueOf(),
           bounds.max.valueOf(),
           interval,
-          MAX_DISPLAY_FIELD_VALUES
+          $scope.swimlaneLimit
         ).then((resp) => {
           processViewByResults(resp.results);
           finish();
@@ -560,7 +574,7 @@ module.controller('MlExplorerController', function (
         earliestMs,
         latestMs,
         MAX_INFLUENCER_FIELD_NAMES,
-        MAX_DISPLAY_FIELD_VALUES
+        $scope.swimlaneLimit
       ).then((resp) => {
         const topFieldValues = [];
         const topInfluencers = resp.influencers[$scope.swimlaneViewByFieldName];
@@ -577,7 +591,7 @@ module.controller('MlExplorerController', function (
         earliestMs,
         latestMs,
         $scope.swimlaneBucketInterval.asSeconds() + 's',
-        MAX_DISPLAY_FIELD_VALUES
+        $scope.swimlaneLimit
       ).then((resp) => {
         loadViewBySwimlane(_.keys(resp.results));
       });
