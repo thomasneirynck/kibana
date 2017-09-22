@@ -6,7 +6,6 @@ import { promisify } from 'bluebird';
 import { checkIfPdfsMatch } from './lib';
 const writeFileAsync = promisify(fs.writeFile);
 const mkdirAsync = promisify(mkdirp);
-const os = require('os');
 
 const REPORTS_FOLDER = path.resolve(__dirname, 'reports');
 
@@ -50,14 +49,14 @@ export default function ({ getService, getPageObjects }) {
     const writeSessionReport = async (name, rawPdf) => {
       const sessionDirectory = path.resolve(REPORTS_FOLDER, 'session');
       await mkdirAsync(sessionDirectory);
-      const sessionReportPath = path.resolve(sessionDirectory, `${name}_${os.platform()}.pdf`);
+      const sessionReportPath = path.resolve(sessionDirectory, `${name}.pdf`);
       await writeFileAsync(sessionReportPath, rawPdf);
       return sessionReportPath;
     };
 
     const getBaselineReportPath = (fileName) => {
       const baselineFolder = path.resolve(REPORTS_FOLDER, 'baseline');
-      return path.resolve(baselineFolder, `${fileName}_${os.platform()}.pdf`);
+      return path.resolve(baselineFolder, `${fileName}.pdf`);
     };
 
     describe('Dashboard', () => {
