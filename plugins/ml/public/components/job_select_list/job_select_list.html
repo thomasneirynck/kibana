@@ -3,10 +3,10 @@
     Job Selection
   </div>
 
-  <div ng-show='noJobsCreated===undefined' style='text-align: center;'>
-    <div class="loading-jobs"><i class='fa fa-spinner fa-spin'></i></div>
-    <div>Loading Jobs</div>
-  </div>
+  <ml-loading-indicator
+    label="Loading jobs"
+    is-loading="noJobsCreated===undefined"
+  />
   <div class="select-list" ng-show='noJobsCreated!==undefined'>
     <div ng-if="groups.length && singleSelection !== true">
       <div class="list-section-title">

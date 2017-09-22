@@ -23,7 +23,6 @@ import d3 from 'd3';
 import moment from 'moment';
 
 import 'plugins/ml/services/results_service';
-import { showChartLoading } from 'plugins/ml/components/chart_loading_indicator';
 import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
 import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
@@ -37,8 +36,9 @@ module.directive('mlDocumentCountChart', function (
   mlResultsService) {
 
   function link(scope, element, attrs) {
+    scope.isLoading = false;
     const svgWidth = attrs.width ? +attrs.width : 400;
-    const svgHeight = attrs.height ? +attrs.height : 400;
+    const svgHeight = scope.height = attrs.height ? +attrs.height : 400;
 
     const margin = { top: 0, right: 5, bottom: 20, left: 15 };
 
@@ -65,7 +65,7 @@ module.directive('mlDocumentCountChart', function (
 
     function loadDocCountData() {
       // Show the chart loading indicator.
-      showChartLoading(true, element, svgHeight);
+      scope.isLoading = true;
 
       // Calculate the aggregation interval to use for the chart.
       const barTarget = chartWidth / TARGET_BAR_WIDTH;
@@ -90,7 +90,7 @@ module.directive('mlDocumentCountChart', function (
         chartAggInterval.expression)
       .then((resp) => {
         scope.chartData = processChartData(resp.results);
-        showChartLoading(false, element);
+        scope.isLoading = false;
         render();
       }).catch((resp) => {
         console.log('Document count chart - error building document count chart:', resp);
@@ -114,7 +114,7 @@ module.directive('mlDocumentCountChart', function (
     function render() {
       // Clear any existing elements from the visualization,
       // then build the svg elements for the bar chart.
-      const chartElement = d3.select(element.get(0));
+      const chartElement = d3.select(element.get(0)).select('.content-wrapper');
       chartElement.selectAll('*').remove();
 
       if (scope.chartData === undefined) {
@@ -200,6 +200,7 @@ module.directive('mlDocumentCountChart', function (
       latest: '=',
       chartConfig: '='
     },
-    link: link
+    link: link,
+    template: require('plugins/ml/components/loading_indicator/loading_indicator_wrapper.html')
   };
 });

@@ -58,10 +58,11 @@
 
       <div class="no-jobs-warning" ng-show="filterText && table.rows.length===0">No jobs found</div>
       <div class="no-jobs-warning" ng-show="noJobsCreated===true">No jobs configured</div>
-      <div class="no-jobs-warning" ng-show="noJobsCreated===undefined">
-        <div class="loading-jobs"><i class='fa fa-spinner fa-spin'></i></div>
-        <div>Loading Jobs</div>
-      </div>
+      <ml-loading-indicator
+        label="Loading jobs"
+        is-loading="noJobsCreated===undefined"
+        class="no-jobs-warning"
+      />
 
     </div>
   </div>

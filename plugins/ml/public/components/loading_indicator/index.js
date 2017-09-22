@@ -14,5 +14,4 @@
  */
 
 
-export { showChartLoading } from './chart_loading_indicator';
-import './styles/main.less';
+import './loading_indicator_directive';

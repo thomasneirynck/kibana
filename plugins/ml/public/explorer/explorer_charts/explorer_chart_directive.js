@@ -24,7 +24,6 @@ import angular from 'angular';
 import moment from 'moment';
 import numeral from 'numeral';
 
-import { showChartLoading } from 'plugins/ml/components/chart_loading_indicator';
 import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
 import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
 import { TimeBucketsProvider } from 'ui/time_buckets';
@@ -38,6 +37,7 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
 
   function link(scope, element) {
     console.log('ml-explorer-chart directive link series config:', scope.seriesConfig);
+    scope.isLoading = false;
     const config = scope.seriesConfig;
 
     const ML_TIME_FIELD_NAME = 'timestamp';
@@ -50,7 +50,7 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
 
     // Left margin is adjusted later for longest y-axis label.
     const margin = { top: 10, right: 0, bottom: 30, left: 60 };
-    const svgHeight = chartHeight + margin.top + margin.bottom;
+    const svgHeight = scope.height = chartHeight + margin.top + margin.bottom;
     const chartLimits = { max: 0, min: 0 };
 
     const TimeBuckets = Private(TimeBucketsProvider);
@@ -63,7 +63,7 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
     let awaitingCount = 2;
 
     // create a chart loading placeholder
-    showChartLoading(true, element, svgHeight);
+    scope.isLoading = true;
 
     // finish() function, called after each data set has been loaded and processed.
     // The last one to call it will trigger the page render.
@@ -72,7 +72,7 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
       if (awaitingCount === 0) {
         scope.chartData = processChartData();
         // charts are ready, hide the chart loading placeholder
-        showChartLoading(false, element);
+        scope.isLoading = false;
         init();
         drawLineChart();
       }
@@ -489,6 +489,7 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
       selectedEarliest: '=',
       selectedLatest: '='
     },
-    link: link
+    link: link,
+    template: require('plugins/ml/components/loading_indicator/loading_indicator_wrapper.html')
   };
 });

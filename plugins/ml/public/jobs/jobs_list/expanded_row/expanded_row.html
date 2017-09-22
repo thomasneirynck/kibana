@@ -83,7 +83,13 @@
         <button ng-click="datafeedPreview.update()" class="kuiButton kuiButton--primary">
           Refresh
         </button>
-        <div class="ml-pre">{{datafeedPreview.json}}</div>
+        <ml-loading-indicator
+          label="Loading datafeed preview"
+          is-loading="(datafeedPreview.json === '')"
+        />
+        <div ng-hide="(datafeedPreview.json === '')">
+          <div class="ml-pre">{{datafeedPreview.json}}</div>
+        </div>
       </div>
     </ml-job-tab-6>
 

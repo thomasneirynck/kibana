@@ -6,10 +6,10 @@
 
   <filter-bar state="appState"></filter-bar>
 
-  <div class="loading-container" ng-show="loading === true">
-    <div class="loading-spinner"><i class='fa fa-spinner fa-spin'></i></div>
-    <div>Loading</div>
-  </div>
+  <ml-loading-indicator
+    label="Loading"
+    is-loading="loading === true"
+  />
 
   <div class="no-results-container" ng-if="jobs.length === 0 && loading === false">
     <div class="no-results">

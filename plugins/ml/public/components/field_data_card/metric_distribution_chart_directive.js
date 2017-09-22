@@ -21,7 +21,6 @@
 import _ from 'lodash';
 import d3 from 'd3';
 
-import { showChartLoading } from 'plugins/ml/components/chart_loading_indicator';
 import { numTicks } from 'plugins/ml/util/chart_utils';
 import { ordinalSuffix } from 'ui/utils/ordinal_suffix';
 
@@ -31,8 +30,10 @@ const module = uiModules.get('apps/ml');
 module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSearchService) {
 
   function link(scope, element, attrs) {
+    scope.isLoading = false;
+
     const svgWidth = attrs.width ? +attrs.width : 400;
-    const svgHeight = attrs.height ? +attrs.height : 400;
+    const svgHeight = scope.height = attrs.height ? +attrs.height : 400;
 
     // TODO - do we want to label the y axis?
     const margin = { top: 0, right: 15, bottom: 20, left: 15 };
@@ -71,7 +72,7 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
 
     function loadDistributionData() {
       // Show the chart loading indicator.
-      showChartLoading(true, element, svgHeight);
+      scope.isLoading = true;
 
       const config = scope.chartConfig;
       mlFieldDataSearchService.getMetricDistributionData(
@@ -85,7 +86,7 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
         scope.chartData = processDistributionData(resp.results.percentiles);
         minPercentileDisplay = resp.results.minPercentile;
         maxPercentileDisplay = resp.results.maxPercentile;
-        showChartLoading(false, element);
+        scope.isLoading = false;
 
         render();
       });
@@ -207,7 +208,7 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
 
       // Clear any existing elements from the visualization,
       // then build the svg elements for the chart.
-      const chartElement = d3.select(element.get(0));
+      const chartElement = d3.select(element.get(0)).select('.content-wrapper');
       chartElement.select('svg').remove();
 
       const svg = chartElement.append('svg')
@@ -339,6 +340,7 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
       latest: '=',
       chartConfig: '='
     },
-    link: link
+    link: link,
+    template: require('plugins/ml/components/loading_indicator/loading_indicator_wrapper.html')
   };
 });
