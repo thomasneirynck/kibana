@@ -1,14 +1,9 @@
-<monitoring-main product="elasticsearch" name="nodes">
-  <monitoring-cluster-status-elasticsearch></monitoring-cluster-status-elasticsearch>
-  <div class="page-row">
-    <h3 class="kuiScreenReaderOnly">Elasticsearch Nodes</h3>
-    <monitoring-nodes-listing
-      page-index="esNodes.pageIndex"
-      filter-text="esNodes.filterText"
-      sort-key="esNodes.sortKey"
-      sort-order="esNodes.sortOrder"
-      on-new-state="esNodes.onNewState"
-      nodes="esNodes.data.rows"
-    ></monitoring-nodes-listing>
-  </div>
-</monitoring-main>
+<div ng-controller="nodes">
+  <monitoring-main product="elasticsearch" name="nodes">
+    <monitoring-cluster-status-elasticsearch></monitoring-cluster-status-elasticsearch>
+    <div class="page-row">
+      <h3 class="kuiScreenReaderOnly">Elasticsearch Nodes</h3>
+      <monitoring-nodes-listing nodes="pageData.rows"></monitoring-nodes-listing>
+    </div>
+  </monitoring-main>
+</div>

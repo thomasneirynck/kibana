@@ -111,14 +111,7 @@ uiModule.directive('monitoringNodesListing', ($injector) => {
 
   return {
     restrict: 'E',
-    scope: {
-      nodes: '=',
-      pageIndex: '=',
-      filterText: '=',
-      sortKey: '=',
-      sortOrder: '=',
-      onNewState: '=',
-    },
+    scope: { nodes: '=' },
     link(scope, $el) {
 
       scope.$watch('nodes', (nodes = []) => {
@@ -126,11 +119,6 @@ uiModule.directive('monitoringNodesListing', ($injector) => {
           <MonitoringTable
             className="nodesTable"
             rows={nodes}
-            pageIndex={scope.pageIndex}
-            filterText={scope.filterText}
-            sortKey={scope.sortKey}
-            sortOrder={scope.sortOrder}
-            onNewState={scope.onNewState}
             placeholder="Filter Nodes..."
             filterFields={filterFields}
             columns={columns}

@@ -4,16 +4,7 @@ import { Tooltip } from 'plugins/monitoring/components/tooltip';
 import { FormattedMessage } from 'plugins/monitoring/components/alerts/formatted_message';
 import { SeverityIcon } from 'plugins/monitoring/components/alerts/severity_icon';
 import { mapSeverity } from 'plugins/monitoring/components/alerts/map_severity';
-import {
-  KuiKeyboardAccessible,
-  KuiMenu,
-  KuiMenuItem,
-  KuiEvent,
-  KuiEventSymbol,
-  KuiEventBody,
-  KuiEventBodyMessage,
-  KuiEventBodyMetadata
-} from 'ui_framework/components';
+import { KuiKeyboardAccessible } from 'ui_framework/components';
 import { formatTimestampToDuration } from 'plugins/monitoring/lib/format_number';
 import { CALCULATE_DURATION_SINCE } from 'monitoring-constants';
 import { formatDateTimeLocal } from 'monitoring-formatting';
@@ -29,16 +20,16 @@ export function AlertsPanel({ alerts, angularChangeUrl }) {
   // enclosed component for accessing angularChangeUrl
   function TopAlertItem({ item, index }) {
     return (
-      <KuiMenuItem key={`alert-item-${index}`} data-test-subj={'topAlertItem'}>
-        <KuiEvent>
-          <KuiEventSymbol>
+      <div key={`alert-item-${index}`} className="kuiMenuItem">
+        <div className="kuiEvent">
+          <div className="kuiEventSymbol">
             <Tooltip text={`${capitalize(mapSeverity(item.metadata.severity))} severity alert`} placement="bottom" trigger="hover">
               <SeverityIcon severity={item.metadata.severity} />
             </Tooltip>
-          </KuiEventSymbol>
+          </div>
 
-          <KuiEventBody>
-            <KuiEventBodyMessage data-test-subj="alertTextMessage">
+          <div className="kuiEventBody">
+            <div className="kuiEventBody__message">
               <FormattedMessage
                 prefix={item.prefix}
                 suffix={item.suffix}
@@ -46,18 +37,18 @@ export function AlertsPanel({ alerts, angularChangeUrl }) {
                 metadata={item.metadata}
                 angularChangeUrl={angularChangeUrl}
               />
-            </KuiEventBodyMessage>
+            </div>
 
-            <KuiEventBodyMetadata data-test-subj="alertTextMeta">
+            <div className="kuiEventBody__metadata">
               Last checked {
                 formatDateTimeLocal(item.update_timestamp)
               } (since {
                 formatTimestampToDuration(item.timestamp, CALCULATE_DURATION_SINCE)
               } ago)
-            </KuiEventBodyMetadata>
-          </KuiEventBody>
-        </KuiEvent>
-      </KuiMenuItem>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -68,12 +59,12 @@ export function AlertsPanel({ alerts, angularChangeUrl }) {
       <h2 className="kuiSubTitle kuiVerticalRhythm">
         Top Cluster Alerts
       </h2>
-      <KuiMenu contained className="kuiVerticalRhythm">
+      <div className="kuiMenu kuiMenu--contained kuiVerticalRhythm">
         { topAlertItems }
-      </KuiMenu>
+      </div>
       <p className="kuiText kuiVerticalRhythm">
         <KuiKeyboardAccessible>
-          <a className="kuiLink" onClick={goToAlerts} data-test-subj="viewAllAlerts">
+          <a className="kuiLink" onClick={goToAlerts} >
             View all { alerts.total } alerts
           </a>
         </KuiKeyboardAccessible>

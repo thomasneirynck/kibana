@@ -39,11 +39,6 @@ export const KIBANA_SETTINGS_TYPE = 'kibana_settings';
 export const KIBANA_USAGE_TYPE = 'kibana';
 
 /*
- * Key for the localStorage service
- */
-export const STORAGE_KEY = 'xpack.monitoring.data';
-
-/*
  * Values for column sorting in table options
  * @type {number} 1 or -1
  */
@@ -168,6 +163,3 @@ export const LOGSTASH = {
 };
 
 export const DEFAULT_NO_DATA_MESSAGE = 'There are no records that match your query. Try changing the time range selection.';
-export const DEFAULT_NO_DATA_MESSAGE_WITH_FILTER = (
-  'There are no records that match your query with the filter [{{FILTER}}]. Try changing the filter or the time range selection.'
-);

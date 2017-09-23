@@ -60,41 +60,19 @@ const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringMlListing', kbnUrl => {
   return {
     restrict: 'E',
-    scope: {
-      jobs: '=',
-      pageIndex: '=',
-      filterText: '=',
-      sortKey: '=',
-      sortOrder: '=',
-      onNewState: '=',
-    },
+    scope: { jobs: '=' },
     link(scope, $el) {
-
-      const getNoDataMessage = filterText => {
-        if (filterText) {
-          return (
-            `There are no Machine Learning Jobs that match the filter [${filterText.trim()}] or the time range.
-Try changing the filter or time range.`
-          );
-        }
-        return 'There are no Machine Learning Jobs that match your query. Try changing the time range selection.';
-      };
 
       scope.$watch('jobs', (jobs = []) => {
         const mlTable = (
           <MonitoringTable
             className="mlJobsTable"
             rows={jobs}
-            pageIndex={scope.pageIndex}
-            filterText={scope.filterText}
-            sortKey={scope.sortKey}
-            sortOrder={scope.sortOrder}
-            onNewState={scope.onNewState}
             placeholder="Filter Jobs..."
             filterFields={filterFields}
             columns={columns}
             rowComponent={jobRowFactory(scope, kbnUrl)}
-            getNoDataMessage={getNoDataMessage}
+            noDataMessage="There are no Machine Learning Jobs that match your filter or time range. Try changing the filter or time range."
           />
         );
         render(mlTable, $el[0]);

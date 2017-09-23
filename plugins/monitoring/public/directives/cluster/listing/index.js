@@ -247,14 +247,7 @@ const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringClusterListing', ($injector) => {
   return {
     restrict: 'E',
-    scope: {
-      clusters: '=',
-      pageIndex: '=',
-      filterText: '=',
-      sortKey: '=',
-      sortOrder: '=',
-      onNewState: '=',
-    },
+    scope: { clusters: '=' },
     link(scope, $el) {
       const globalState = $injector.get('globalState');
       const kbnUrl = $injector.get('kbnUrl');
@@ -265,11 +258,6 @@ uiModule.directive('monitoringClusterListing', ($injector) => {
           <MonitoringTable
             className="clusterTable"
             rows={clusters}
-            pageIndex={scope.pageIndex}
-            filterText={scope.filterText}
-            sortKey={scope.sortKey}
-            sortOrder={scope.sortOrder}
-            onNewState={scope.onNewState}
             placeholder="Filter Clusters..."
             filterFields={filterFields}
             columns={columns}
