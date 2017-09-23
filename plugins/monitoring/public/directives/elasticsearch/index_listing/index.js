@@ -24,8 +24,8 @@ const showSystemIndicesComponentFactory = scope => {
     }
     // See also directives/shard_allocation/components/tableHead
     toggleShowSystemIndices(e) {
-      const isChecked = e.target.checked;
-      this.setState({ showSystemIndices: !this.state.showSystemIndices });
+      const isChecked = Boolean(e.target.checked);
+      this.setState({ showSystemIndices: isChecked });
       scope.$evalAsync(() => {
         scope.toggleShowSystemIndices(isChecked);
       });
@@ -53,7 +53,7 @@ const showSystemIndicesComponentFactory = scope => {
 /* TODO refactor other listing APIs to return metrics similar to here
  * then make this a shared function */
 const formatMetric = (value, format, suffix) => {
-  if (!!value || value === 0) {
+  if (Boolean(value) || value === 0) {
     return formatNumber(value, format) + (suffix ? ' ' + suffix : '');
   }
   return 'N/A';
@@ -107,12 +107,27 @@ const indexRowFactory = (scope, kbnUrl) => {
   };
 };
 
-const noDataMessage = (
-  <div>
-    <p>There are no indices that match your selections. Try changing the time range selection.</p>
-    <p>If you are looking for system indices (e.g., .kibana), try checking &lsquo;Show system indices&rsquo;.</p>
-  </div>
-);
+const getNoDataMessage = filterText => {
+  if (filterText) {
+    return (
+      <div>
+        <p>
+          There are no indices that match your selection with the filter [{filterText.trim()}].
+          Try changing the filter or the time range selection.
+        </p>
+        <p>
+          If you are looking for system indices (e.g., .kibana), try checking &lsquo;Show system indices&rsquo;.
+        </p>
+      </div>
+    );
+  }
+  return (
+    <div>
+      <p>There are no indices that match your selections. Try changing the time range selection.</p>
+      <p>If you are looking for system indices (e.g., .kibana), try checking &lsquo;Show system indices&rsquo;.</p>
+    </div>
+  );
+};
 
 const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringIndexListing', kbnUrl => {
@@ -120,29 +135,43 @@ uiModule.directive('monitoringIndexListing', kbnUrl => {
     restrict: 'E',
     scope: {
       indices: '=',
+      pageIndex: '=',
+      filterText: '=',
+      sortKey: '=',
+      sortOrder: '=',
+      onNewState: '=',
       showSystemIndices: '=',
       toggleShowSystemIndices: '='
     },
     link(scope, $el) {
       const ShowSytemIndicesCheckbox = showSystemIndicesComponentFactory(scope);
-      const toolBarSection = <ShowSytemIndicesCheckbox key="toolbarSection-1" showSystemIndices={scope.showSystemIndices}/>;
+      const toolBarSection = (
+        <ShowSytemIndicesCheckbox
+          key="toolbarSection-1"
+          showSystemIndices={scope.showSystemIndices}
+        />
+      );
 
       scope.$watch('indices', (indices = []) => {
         const instancesTable = (
           <MonitoringTable
             className="indicesTable"
             rows={indices}
+            pageIndex={scope.pageIndex}
+            filterText={scope.filterText}
+            sortKey={scope.sortKey}
+            sortOrder={scope.sortOrder}
+            onNewState={scope.onNewState}
             placeholder="Filter Indices..."
             filterFields={filterFields}
             toolBarSections={[ toolBarSection ]}
             columns={cols}
             rowComponent={indexRowFactory(scope, kbnUrl)}
-            noDataMessage={noDataMessage}
+            getNoDataMessage={getNoDataMessage}
           />
         );
         render(instancesTable, $el[0]);
       });
-
     }
   };
 });

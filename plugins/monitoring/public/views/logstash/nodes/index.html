@@ -1,9 +1,14 @@
-<div ng-controller="logstashNodes">
-  <monitoring-main product="logstash" name="nodes">
-    <monitoring-cluster-status-logstash></monitoring-cluster-status-logstash>
-    <div class="page-row">
-      <h3 class="kuiScreenReaderOnly">Logstash Nodes</h3>
-      <monitoring-logstash-node-listing nodes="pageData.nodes"></monitoring-logstash-node-listing>
-    </div>
-  </monitoring-main>
-</div>
+<monitoring-main product="logstash" name="nodes">
+  <monitoring-cluster-status-logstash></monitoring-cluster-status-logstash>
+  <div class="page-row">
+    <h3 class="kuiScreenReaderOnly">Logstash Nodes</h3>
+    <monitoring-logstash-node-listing
+      page-index="lsNodes.pageIndex"
+      filter-text="lsNodes.filterText"
+      sort-key="lsNodes.sortKey"
+      sort-order="lsNodes.sortOrder"
+      on-new-state="lsNodes.onNewState"
+      nodes="lsNodes.data.nodes"
+    ></monitoring-logstash-node-listing>
+  </div>
+</monitoring-main>

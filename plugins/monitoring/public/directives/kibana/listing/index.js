@@ -79,7 +79,14 @@ const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringKibanaListing', kbnUrl => {
   return {
     restrict: 'E',
-    scope: { instances: '=' },
+    scope: {
+      instances: '=',
+      pageIndex: '=',
+      filterText: '=',
+      sortKey: '=',
+      sortOrder: '=',
+      onNewState: '=',
+    },
     link(scope, $el) {
 
       scope.$watch('instances', (instances = []) => {
@@ -87,6 +94,11 @@ uiModule.directive('monitoringKibanaListing', kbnUrl => {
           <MonitoringTable
             className="kibanaInstancesTable"
             rows={instances}
+            pageIndex={scope.pageIndex}
+            filterText={scope.filterText}
+            sortKey={scope.sortKey}
+            sortOrder={scope.sortOrder}
+            onNewState={scope.onNewState}
             placeholder="Filter Instances..."
             filterFields={filterFields}
             columns={columns}
