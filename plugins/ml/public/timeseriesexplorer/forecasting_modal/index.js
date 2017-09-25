@@ -13,9 +13,4 @@
  * strictly prohibited.
  */
 
-import './forecasting_modal';
-import './timeseriesexplorer_controller.js';
-import './timeseries_search_service.js';
-import './timeseries_chart_directive';
-import './styles/main.less';
-import 'plugins/ml/components/job_select_list';
+import './forecasting_modal_controller';

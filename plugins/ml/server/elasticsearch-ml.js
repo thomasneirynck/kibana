@@ -289,6 +289,31 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
     method: 'GET'
   });
 
+  ml.forecast = ca({
+    urls: [
+      {
+        fmt: '/_xpack/ml/anomaly_detectors/<%=jobId%>/_forecast?&end=<%=end%>',
+        req: {
+          jobId: {
+            type: 'string'
+          },
+          end: {
+            type: 'string'
+          }
+        }
+      },
+      {
+        fmt: '/_xpack/ml/anomaly_detectors/<%=jobId%>/_forecast',
+        req: {
+          jobId: {
+            type: 'string'
+          }
+        }
+      }
+    ],
+    method: 'POST'
+  });
+
   ml.privilegeCheck = ca({
     url: {
       fmt: '/_xpack/security/user/_has_privileges'

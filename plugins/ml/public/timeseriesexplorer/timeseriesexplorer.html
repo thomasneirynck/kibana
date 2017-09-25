@@ -36,6 +36,15 @@
       <i class="fa fa-play" ></i>
     </button>
 
+    <div ng-show="showForecastButton === true" class="forecast-controls">
+      <button
+        ng-click='openForecastDialog()'
+        class="kuiButton kuiButton--primary"
+        aria-label="Forecast">
+        Forecast
+      </button>
+    </div>
+
   </div>
 
   <ml-loading-indicator
@@ -70,10 +79,12 @@
         <ml-timeseries-chart  style="width: 1200px; height: 400px;"
           model-plot-enabled="modelPlotEnabled"
           context-chart-data="contextChartData"
+          context-forecast-data="contextForecastData"
           context-aggregation-interval="contextAggregationInterval"
-          focus-aggregation-interval="focusAggregationInterval"
           swimlane-data="swimlaneData"
           focus-chart-data="focusChartData"
+          focus-forecast-data="focusForecastData"
+          focus-aggregation-interval="focusAggregationInterval"
           zoom-from="zoomFrom"
           zoom-to="zoomTo"
           auto-zoom-duration="autoZoomDuration">

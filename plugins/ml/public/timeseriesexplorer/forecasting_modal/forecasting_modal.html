@@ -1,0 +1,32 @@
+<div class="forecasting-modal">
+  <ml-message-bar ></ml-message-bar>
+  <h3>Forecasting</h3>
+
+  <h4>Run a new forecast</h4>
+  <div class="form-group">
+    <label for="forecastDuration" class="kuiLabel">Duration</label>
+    <input
+      id="forecastDuration"
+      ng-model="newForecastDuration"
+      ng-change="newForecastDurationChange()"
+      required
+      type="text"
+      class="form-control" />
+    <button
+      class="kuiButton kuiButton--primary run-button"
+      ng-click="runForecast()"
+      ng-disabled="newForecastDurationValid === false || isForecastRunning === true" >
+      <i ng-if="isForecastRunning === false" class="fa fa-play" ></i>
+      <i ng-if="isForecastRunning === true" class="fa fa-spinner fa-spin" ></i>
+    </button>
+    <div ng-hide="newForecastDurationValid" class="validation-error">Invalid duration format</div>
+  </div>
+
+  <hr />
+
+  <button
+    ng-click="close()"
+    class="kuiButton kuiButton--primary" >
+    Close
+  </button>
+</div>

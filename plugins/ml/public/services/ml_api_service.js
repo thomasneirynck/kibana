@@ -162,6 +162,19 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
+  this.forecast = function (obj) {
+    const data = {};
+    if(obj.end !== undefined) {
+      data.end = obj.end;
+    }
+
+    return http.request({
+      url: `${basePath}/anomaly_detectors/${obj.jobId}/_forecast`,
+      method: 'POST',
+      data
+    });
+  };
+
   this.checkPrivilege = function (obj) {
     return http.request({
       url: `${basePath}/_has_privileges`,

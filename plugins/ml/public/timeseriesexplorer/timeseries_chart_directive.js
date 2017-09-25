@@ -156,12 +156,16 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       // Set the size of the left margin according to the width of the largest y axis tick label.
       // Temporarily set the domain of the focus y axis to the full data range so that we can
       // measure the maximum tick label width on temporary text elements.
-      if (scope.modelPlotEnabled === true) {
+      if (scope.modelPlotEnabled === true ||
+        (scope.contextForecastData !== undefined && scope.contextForecastData.length > 0)) {
+        const combinedData = scope.contextForecastData === undefined ?
+          scope.contextChartData : scope.contextChartData.concat(scope.contextForecastData);
+
         focusYScale = focusYScale.domain([
-          d3.min(scope.contextChartData, (d) => {
+          d3.min(combinedData, (d) => {
             return Math.min(d.value, d.lower);
           }),
-          d3.max(scope.contextChartData, (d) => {
+          d3.max(combinedData, (d) => {
             return Math.max(d.value, d.upper);
           })
         ]);
@@ -216,10 +220,15 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       const contextXMin = contextXScale.domain()[0].getTime();
       const contextXMax = contextXScale.domain()[1].getTime();
 
+      let combinedData = scope.contextChartData;
+      if (scope.contextForecastData !== undefined) {
+        combinedData = combinedData.concat(scope.contextForecastData);
+      }
+
       if (scope.zoomFrom) {
         focusLoadFrom = scope.zoomFrom.getTime();
       } else {
-        focusLoadFrom = _.reduce(scope.contextChartData, (memo, point) =>
+        focusLoadFrom = _.reduce(combinedData, (memo, point) =>
           Math.min(memo, point.date.getTime()) , new Date(2099, 12, 31).getTime());
       }
       focusLoadFrom = Math.max(focusLoadFrom, contextXMin);
@@ -227,7 +236,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       if (scope.zoomTo) {
         focusLoadTo = scope.zoomTo.getTime();
       } else {
-        focusLoadTo = _.reduce(scope.contextChartData, (memo, point) => Math.max(memo, point.date.getTime()) , 0);
+        focusLoadTo = _.reduce(combinedData, (memo, point) => Math.max(memo, point.date.getTime()) , 0);
       }
       focusLoadTo = Math.min(focusLoadTo, contextXMax);
 
@@ -298,14 +307,25 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       axes.append('g')
         .attr('class', 'y axis');
 
-      // Create the path elements for the bounded area and values line.
+      // Create the elements for the metric value line and model bounds area.
       fcsGroup.append('path')
         .attr('class', 'area bounds');
       fcsGroup.append('path')
         .attr('class', 'values-line');
-
       fcsGroup.append('g')
         .attr('class', 'focus-chart-markers');
+
+
+      // Create the path elements for the forecast value line and bounds area.
+      if (scope.contextForecastData) {
+        fcsGroup.append('path')
+          .attr('class', 'area forecast');
+        fcsGroup.append('path')
+          .attr('class', 'values-line forecast');
+        fcsGroup.append('g')
+          .attr('class', 'focus-chart-markers forecast');
+      }
+
 
       // Define the div for the tooltip.
       // TODO - append to the chartElement rather than the body.
@@ -347,37 +367,43 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       const aggMs = scope.focusAggregationInterval.asMilliseconds();
       const earliest = moment(Math.floor((bounds.min.valueOf()) / aggMs) * aggMs);
       const latest = moment(Math.ceil((bounds.max.valueOf()) / aggMs) * aggMs);
-
       focusXScale.domain([earliest.toDate(), latest.toDate()]);
-      if (scope.focusChartData.length > 0) {
+
+      // Calculate the y-axis domain.
+      if (scope.focusChartData.length > 0 ||
+        (scope.focusForecastData !== undefined && scope.focusForecastData.length > 0)) {
         // Use default tick formatter.
         focusYAxis.tickFormat(null);
 
-        const chartLimits = {};
-        if (scope.modelPlotEnabled === true) {
-          //  Set domain to min/max of bounds and value.
-          chartLimits.min = d3.min(data, (d) => { return Math.min(d.value, d.lower); });
-          chartLimits.max = d3.max(data, (d) => { return Math.max(d.value, d.upper); });
-        } else {
-          chartLimits.min = d3.min(data, (d) => d.value);
-          chartLimits.max = d3.max(data, (d) => d.value);
+        // Calculate the min/max of the metric data and the forecast data.
+        let yMin = 0;
+        let yMax = 0;
+
+        let combinedData = data;
+        if (scope.focusForecastData !== undefined && scope.focusForecastData.length > 0) {
+          combinedData = data.concat(scope.focusForecastData);
         }
 
-        if (chartLimits.max === chartLimits.min) {
+        yMin = d3.min(combinedData, (d) => {
+          return d.lower !== undefined ? Math.min(d.value, d.lower) : d.value;
+        });
+        yMax = d3.max(combinedData, (d) => {
+          return d.upper !== undefined ? Math.max(d.value, d.upper) : d.value;
+        });
+
+        if (yMax === yMin) {
           if (contextYScale.domain()[0] !== contextYScale.domain()[1]) {
             // Set the focus chart limits to be the same as the context chart.
-            chartLimits.min = contextYScale.domain()[0];
-            chartLimits.max = contextYScale.domain()[1];
+            yMin = contextYScale.domain()[0];
+            yMax = contextYScale.domain()[1];
           } else {
-            chartLimits.min -= (chartLimits.max * 0.05);
-            chartLimits.max += (chartLimits.max * 0.05);
+            yMin -= (yMin * 0.05);
+            yMax += (yMax * 0.05);
           }
         }
 
-        focusYScale = focusYScale.domain([
-          chartLimits.min,
-          chartLimits.max
-        ]);
+        focusYScale = focusYScale.domain([yMin, yMax]);
+
       } else {
         // Display 10 unlabelled ticks.
         focusYScale = focusYScale.domain([0, 10]);
@@ -402,6 +428,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         focusChart.select('.area.bounds')
           .attr('d', focusBoundedArea(data));
       }
+
       focusChart.select('.values-line')
         .attr('d', focusValuesLine(data));
 
@@ -421,9 +448,9 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         .on('mouseout', hideFocusChartTooltip);
 
       // Update all dots to new positions.
-      dots.attr('cx', function (d) { return focusXScale(d.date); })
-        .attr('cy', function (d) { return focusYScale(d.value); })
-        .attr('class', function (d) {
+      dots.attr('cx', (d) => { return focusXScale(d.date); })
+        .attr('cy', (d) => { return focusYScale(d.value); })
+        .attr('class', (d) => {
           let markerClass = 'metric-value';
           if (_.has(d, 'anomalyScore')) {
             markerClass += ' anomaly-marker ';
@@ -431,6 +458,30 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
           }
           return markerClass;
         });
+
+      if (scope.focusForecastData !== undefined) {
+        focusChart.select('.area.forecast').attr('d', focusBoundedArea(scope.focusForecastData));
+        focusChart.select('.values-line.forecast')
+          .attr('d', focusValuesLine(scope.focusForecastData));
+
+        const forecastDots = d3.select('.focus-chart-markers.forecast').selectAll('.metric-value')
+          .data(scope.focusForecastData);
+
+        // Remove dots that are no longer needed i.e. if number of forecast points has decreased.
+        forecastDots.exit().remove();
+        // Create any new dots that are needed i.e. if number of forecast points has increased.
+        forecastDots.enter().append('circle')
+          .attr('r', FOCUS_CHART_ANOMALY_RADIUS)
+          .on('mouseover', function (d) {
+            showFocusChartTooltip(d, this);
+          })
+          .on('mouseout', hideFocusChartTooltip);
+
+        // Update all dots to new positions.
+        forecastDots.attr('cx', (d) => { return focusXScale(d.date); })
+          .attr('cy', (d) => { return focusYScale(d.value); })
+          .attr('class', 'metric-value');
+      }
 
     }
 
@@ -498,8 +549,9 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       contextXScale = d3.time.scale().range([0, cxtWidth])
         .domain(calculateContextXAxisDomain());
 
+      const combinedData = scope.contextForecastData === undefined ? data : data.concat(scope.contextForecastData);
       const valuesRange = { min: Number.MAX_VALUE, max: Number.MIN_VALUE };
-      _.each(data, function (item) {
+      _.each(combinedData, (item) => {
         valuesRange.min = Math.min(item.value, valuesRange.min);
         valuesRange.max = Math.max(item.value, valuesRange.max);
       });
@@ -507,9 +559,10 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       let dataMax = valuesRange.max;
       const chartLimits = { min: dataMin, max: dataMax };
 
-      if (scope.modelPlotEnabled === true) {
+      if (scope.modelPlotEnabled === true ||
+        (scope.contextForecastData !== undefined && scope.contextForecastData.length > 0)) {
         const boundsRange = { min: Number.MAX_VALUE, max: Number.MIN_VALUE };
-        _.each(data, function (item) {
+        _.each(combinedData, (item) => {
           boundsRange.min = Math.min(item.lower, boundsRange.min);
           boundsRange.max = Math.max(item.upper, boundsRange.max);
         });
@@ -564,26 +617,38 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
 
       cxtGroup.datum(data);
 
-      if (scope.modelPlotEnabled === true) {
-        const area = d3.svg.area()
-          .x(function (d) { return contextXScale(d.date); })
-          .y0(function (d) { return contextYScale(Math.min(chartLimits.max, Math.max(d.lower, chartLimits.min))); })
-          .y1(function (d) { return contextYScale(Math.max(chartLimits.min, Math.min(d.upper, chartLimits.max))); });
+      const contextBoundsArea = d3.svg.area()
+        .x((d) => { return contextXScale(d.date); })
+        .y0((d) => { return contextYScale(Math.min(chartLimits.max, Math.max(d.lower, chartLimits.min))); })
+        .y1((d) => { return contextYScale(Math.max(chartLimits.min, Math.min(d.upper, chartLimits.max))); });
 
+      if (scope.modelPlotEnabled === true) {
         cxtGroup.append('path')
           .datum(data)
           .attr('class', 'area context')
-          .attr('d', area);
+          .attr('d', contextBoundsArea);
       }
 
       const contextValuesLine = d3.svg.line()
-       .x(function (d) { return contextXScale(d.date); })
-       .y(function (d) { return contextYScale(d.value); });
+       .x((d) => { return contextXScale(d.date); })
+       .y((d) => { return contextYScale(d.value); });
 
       cxtGroup.append('path')
         .datum(data)
         .attr('class', 'values-line')
         .attr('d', contextValuesLine);
+
+      // Create the path elements for the forecast value line and bounds area.
+      if (scope.contextForecastData !== undefined) {
+        cxtGroup.append('path')
+          .datum(scope.contextForecastData)
+          .attr('class', 'area forecast')
+          .attr('d', contextBoundsArea);
+        cxtGroup.append('path')
+          .datum(scope.contextForecastData)
+          .attr('class', 'values-line forecast')
+          .attr('d', contextValuesLine);
+      }
 
       // Create and draw the anomaly swimlane.
       const swimlane = cxtGroup.append('g')
@@ -682,7 +747,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
 
         // Set the color of the swimlane cells according to whether they are inside the selection.
         contextGroup.selectAll('.swimlane-cell')
-          .style('fill', function (d) {
+          .style('fill', (d) => {
             const cellMs = d.date.getTime();
             if (cellMs < selectionMin || cellMs > selectionMax) {
               return anomalyGrayScale(d.score);
@@ -767,14 +832,14 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         .data(data);
 
       cells.enter().append('rect')
-        .attr('x', function (d) { return x(d.date); })
+        .attr('x', (d) => { return x(d.date); })
         .attr('y', 0)
         .attr('rx', 0)
         .attr('ry', 0)
-        .attr('class', function (d) { return d.score > 0 ? 'swimlane-cell' : 'swimlane-cell-hidden';})
+        .attr('class', (d) => { return d.score > 0 ? 'swimlane-cell' : 'swimlane-cell-hidden';})
         .attr('width', cellWidth)
         .attr('height', swlHeight)
-        .style('fill', function (d) { return anomalyColorScale(d.score);});
+        .style('fill', (d) => { return anomalyColorScale(d.score);});
 
     }
 
@@ -837,16 +902,16 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       if (_.has(marker, 'anomalyScore')) {
         const score = parseInt(marker.anomalyScore);
         const displayScore = (score > 0 ? score : '< 1');
-        contents += ('anomaly score: ' + displayScore + '<br/>');
+        contents += `anomaly score: ${displayScore}<br/>`;
 
         if (scope.modelPlotEnabled === false) {
           if (_.has(marker, 'actual')) {
             // Display the record actual in preference to the chart value, which may be
             // different depending on the aggregation interval of the chart.
-            contents += ('actual: ' + formatValueFilter(marker.actual, marker.function));
-            contents += ('<br/>typical: ' + formatValueFilter(marker.typical, marker.function));
+            contents += `actual: ${formatValueFilter(marker.actual, marker.function)}`;
+            contents += `<br/>typical: ${formatValueFilter(marker.typical, marker.function)}`;
           } else {
-            contents += ('value: ' + numeral(marker.value).format('0,0.[00]'));
+            contents += `value: ${numeral(marker.value).format('0,0.[00]')}`;
             if (_.has(marker, 'byFieldName') && _.has(marker, 'numberOfCauses')) {
               const numberOfCauses = marker.numberOfCauses;
               const byFieldName = marker.byFieldName;
@@ -860,16 +925,21 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
             }
           }
         } else {
-          contents += ('value: ' + numeral(marker.value).format('0,0.[00]'));
-          contents += ('<br/>upper bounds: ' + numeral(marker.upper).format('0,0.[00]'));
-          contents += ('<br/>lower bounds: ' + numeral(marker.lower).format('0,0.[00]'));
+          contents += `value: ${numeral(marker.value).format('0,0.[00]')}`;
+          contents += `<br/>upper bounds: ${numeral(marker.upper).format('0,0.[00]')}`;
+          contents += `<br/>lower bounds: ${numeral(marker.lower).format('0,0.[00]')}`;
         }
       } else {
         // TODO - need better formatting for small decimals.
-        contents += ('value: ' + numeral(marker.value).format('0,0.[00]'));
+        if (_.get(marker, 'isForecast', false) === true) {
+          contents += `prediction: ${numeral(marker.value).format('0,0.[00]')}`;
+        } else {
+          contents += `value: ${numeral(marker.value).format('0,0.[00]')}`;
+        }
+
         if (scope.modelPlotEnabled === true) {
-          contents += ('<br/>upper bounds: ' + numeral(marker.upper).format('0,0.[00]'));
-          contents += ('<br/>lower bounds: ' + numeral(marker.lower).format('0,0.[00]'));
+          contents += `<br/>upper bounds: ${numeral(marker.upper).format('0,0.[00]')}`;
+          contents += `<br/>lower bounds: ${numeral(marker.lower).format('0,0.[00]')}`;
         }
       }
 
@@ -931,21 +1001,25 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       }
 
       // Render an additional highlighted anomaly marker on the focus chart.
-      const selectedMarker = d3.select('.focus-chart-markers').selectAll('.focus-chart-highlighted-marker')
-        .data([markerToSelect]);
-      selectedMarker.enter().append('circle')
-        .attr('r', FOCUS_CHART_ANOMALY_RADIUS);
-      selectedMarker.attr('cx', function (d) { return focusXScale(d.date); })
-        .attr('cy', function (d) { return focusYScale(d.value); })
-        .attr('class', function (d) {
-          let markerClass = 'metric-value anomaly-marker highlighted ';
-          markerClass += getSeverityWithLow(d.anomalyScore);
-          return markerClass;
-        });
+      // TODO - plot anomaly markers for cases where there is an anomaly due
+      // to the absence of data and model plot is enabled.
+      if (markerToSelect !== undefined) {
+        const selectedMarker = d3.select('.focus-chart-markers').selectAll('.focus-chart-highlighted-marker')
+          .data([markerToSelect]);
+        selectedMarker.enter().append('circle')
+          .attr('r', FOCUS_CHART_ANOMALY_RADIUS);
+        selectedMarker.attr('cx', (d) => { return focusXScale(d.date); })
+          .attr('cy', (d) => { return focusYScale(d.value); })
+          .attr('class', (d) => {
+            let markerClass = 'metric-value anomaly-marker highlighted ';
+            markerClass += getSeverityWithLow(d.anomalyScore);
+            return markerClass;
+          });
 
-      // Display the chart tooltip for this marker.
-      // Note the values of the record and marker may differ depending on the levels of aggregation.
-      showFocusChartTooltip(markerToSelect, $('.focus-chart-markers .anomaly-marker.highlighted'));
+        // Display the chart tooltip for this marker.
+        // Note the values of the record and marker may differ depending on the levels of aggregation.
+        showFocusChartTooltip(markerToSelect, $('.focus-chart-markers .anomaly-marker.highlighted'));
+      }
     }
 
     function unhighlightFocusChartAnomaly() {
@@ -960,9 +1034,11 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
     scope: {
       modelPlotEnabled: '=',
       contextChartData: '=',
+      contextForecastData: '=',
       contextChartAnomalyData: '=',
       focusChartData: '=',
       swimlaneData: '=',
+      focusForecastData: '=',
       contextAggregationInterval: '=',
       focusAggregationInterval: '=',
       zoomFrom: '=',
