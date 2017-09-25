@@ -49,8 +49,7 @@ describe('phone home class', () => {
   });
 
   // call the private method
-  // eslint-disable-next-line jest/no-disabled-tests
-  describe.skip('should send a report', () => {
+  describe('should send a report', () => {
     it('never reported before', () => {
       const sender = new PhoneHome(
         getMockInjector({ allowReport: true }),
@@ -60,16 +59,16 @@ describe('phone home class', () => {
       .then(result => {
         expect(result).to.eql([
           {
-            data: [ '/testo/api/monitoring/v1/clusters/fake-123/info', { info: true } ],
-            kbnXsrfToken: false,
             method: 'POST',
-            url: 'https://testo.com/'
+            url: 'https://testo.com/',
+            data: { cluster_uuid: 'fake-123' },
+            kbnXsrfToken: false
           },
           {
-            data: [ '/testo/api/monitoring/v1/clusters/fake-456/info', { info: true } ],
-            kbnXsrfToken: false,
             method: 'POST',
-            url: 'https://testo.com/'
+            url: 'https://testo.com/',
+            data: { cluster_uuid: 'fake-456' },
+            kbnXsrfToken: false
           }
         ]);
       });
@@ -86,22 +85,22 @@ describe('phone home class', () => {
       return sender._sendIfDue()
       .then(result => expect(result).to.eql([
         {
-          data: [ '/testo/api/monitoring/v1/clusters/fake-123/info', { info: true } ],
-          kbnXsrfToken: false,
           method: 'POST',
-          url: 'https://testo.com/'
+          url: 'https://testo.com/',
+          data: { cluster_uuid: 'fake-123' },
+          kbnXsrfToken: false
         },
         {
-          data: [ '/testo/api/monitoring/v1/clusters/fake-456/info', { info: true } ],
-          kbnXsrfToken: false,
           method: 'POST',
-          url: 'https://testo.com/'
+          url: 'https://testo.com/',
+          data: { cluster_uuid: 'fake-456' },
+          kbnXsrfToken: false
         }
       ]));
     });
   });
-  // eslint-disable-next-line jest/no-disabled-tests
-  describe.skip('should not send the report', () => {
+
+  describe('should not send the report', () => {
     it('config does not allow report', () => {
       const sender = new PhoneHome(getMockInjector({ allowReport: false }), mockBasePath);
       return sender._sendIfDue()

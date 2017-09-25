@@ -59,7 +59,7 @@ export class PhoneHome {
    * Check report permission and if passes, send the report
    */
   _sendIfDue() {
-    if (!this._checkReportStatus()) { return Promise.resolve(); }
+    if (!this._checkReportStatus()) { return Promise.resolve(null); }
 
     // call to get the latest cluster uuids with a time range to go back 20 minutes up to now
     const currentClustersUrl = `${this._basePath}/api/monitoring/v1/clusters/_stats`;
@@ -82,14 +82,15 @@ export class PhoneHome {
         return this._$http(req);
       });
     })
-    .then(() => {
+    .then(response => {
       // we sent a report, so we need to record and store the current time stamp
       this._set('lastReport', Date.now());
       this._saveToBrowser();
+      return response;
     })
     .catch(() => {
       // no ajaxErrorHandlers for phone home
-      return Promise.resolve();
+      return Promise.resolve(null);
     });
   }
 
