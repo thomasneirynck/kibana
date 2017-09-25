@@ -13,7 +13,7 @@
  * strictly prohibited.
  */
 
-import _ from 'lodash';
+import { migrateFilter } from 'ui/courier/data_source/_migrate_filter.js';
 
 export function getQueryFromSavedSearch(formConfig) {
   const must = [];
@@ -21,12 +21,13 @@ export function getQueryFromSavedSearch(formConfig) {
 
   must.push(formConfig.query);
 
-  _.each(formConfig.filters, (f) => {
+  formConfig.filters.forEach(f => {
+    const query = migrateFilter(f.query);
     if(f.meta.disabled === false) {
       if(f.meta.negate) {
-        mustNot.push(f.query);
+        mustNot.push(query);
       } else {
-        must.push(f.query);
+        must.push(query);
       }
     }
   });
