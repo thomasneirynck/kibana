@@ -828,14 +828,16 @@ function (
         tabs[0].checks.jobId.message = msg;
       }
 
-      job.groups.forEach(group => {
-        if (isJobIdValid(group) === false) {
-          tabs[0].checks.groupIds.valid = false;
-          let msg = 'Job group names can contain lowercase alphanumeric (a-z and 0-9), hyphens or underscores; ';
-          msg += 'must start and end with an alphanumeric character';
-          tabs[0].checks.groupIds.message = msg;
-        }
-      });
+      if (job.groups !== undefined) {
+        job.groups.forEach(group => {
+          if (isJobIdValid(group) === false) {
+            tabs[0].checks.groupIds.valid = false;
+            let msg = 'Job group names can contain lowercase alphanumeric (a-z and 0-9), hyphens or underscores; ';
+            msg += 'must start and end with an alphanumeric character';
+            tabs[0].checks.groupIds.message = msg;
+          }
+        });
+      }
 
       // tab 1 - Analysis Configuration
       if (job.analysis_config.categorization_filters) {
