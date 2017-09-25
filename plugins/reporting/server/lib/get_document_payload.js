@@ -17,45 +17,49 @@ function getDocumentPayloadFn(server) {
     }
   }
 
-  function getPayloadOutput(output, jobType) {
-    const statusCode = 200;
-    const content = encodeContent(output.content, jobType);
-    const contentType = output.content_type;
-    return { content, statusCode, contentType };
-  }
-
-  function getFailureOutput(output) {
-    const statusCode = 500;
-    const content = {
-      message: 'Report generation failed',
-      reason: output.content,
+  function getCompleted(output, jobType) {
+    return {
+      statusCode: 200,
+      content: encodeContent(output.content, jobType),
+      contentType: output.content_type
     };
-    const contentType = 'text/json';
-    return { content, statusCode, contentType };
   }
 
-  function sendIncomplete(status) {
-    const statusCode = 503;
-    const content = status;
-    const contentType = 'text/json';
-    return { content, statusCode, contentType };
+  function getFailure(output) {
+    return {
+      statusCode: 500,
+      content: {
+        message: 'Reporting generation failed',
+        reason: output.content
+      },
+      contentType: 'application/json'
+    };
+  }
+
+  function getIncomplete(status) {
+    return {
+      statusCode: 503,
+      content: status,
+      contentType: 'application/json',
+      headers: {
+        'retry-after': 30
+      }
+    };
   }
 
   return function getDocumentPayload(doc) {
     const { status, output, jobtype: jobType } = doc._source;
 
-    return new Promise((resolve, reject) => {
-      if (status === 'completed') {
-        return resolve(getPayloadOutput(output, jobType));
-      }
+    if (status === 'completed') {
+      return getCompleted(output, jobType);
+    }
 
-      if (status === 'failed') {
-        return reject(getFailureOutput(output));
-      }
+    if (status === 'failed') {
+      return getFailure(output);
+    }
 
-      // send a 503 indicating that the report isn't completed yet
-      return reject(sendIncomplete(status));
-    });
+    // send a 503 indicating that the report isn't completed yet
+    return getIncomplete(status);
   };
 }
 

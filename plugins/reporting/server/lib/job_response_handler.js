@@ -2,6 +2,7 @@ import boom from 'boom';
 import { oncePerServer } from './once_per_server';
 import { jobsQueryFactory } from './jobs_query';
 import { getDocumentPayloadFactory } from './get_document_payload';
+import { WHITELISTED_JOB_CONTENT_TYPES } from '../../common/constants';
 
 function jobResponseHandlerFn(server) {
   const jobsQuery = jobsQueryFactory(server);
@@ -18,36 +19,21 @@ function jobResponseHandlerFn(server) {
         return reply(boom.unauthorized(`Sorry, you are not authorized to download ${jobType} reports`));
       }
 
-      return getDocumentPayload(doc)
-      .then((output) => {
-        const response = reply(output.content);
-        response.type(output.contentType);
-      })
-      .catch((err) => {
-        // 503 here means that the document is still pending
-        if (err.statusCode === 503) {
-          // Boom 3.x hijacks the reply object
-          // since we need to add headers to the response, we can't use it here
-          // Boom 4.2.0+ is required to work completely, and without the header
-          const response = reply(err.content);
-          response.type(err.contentType);
-          response.code(err.statusCode);
+      const output = getDocumentPayload(doc);
 
-          // The Retry-After header is added to tell the client to check back later
-          // to see if the document is ready. We use it to indicate that the client
-          // should poll for a completed (or failed) state after a delay
-          // see https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.37
-          response.header('Retry-After', 30);
-          return;
-        }
+      if (!WHITELISTED_JOB_CONTENT_TYPES.includes(output.contentType)) {
+        return reply(boom.badImplementation(`Unsupported content-type of ${output.contentType} specified by job output`));
+      }
 
-        if (err.statusCode === 500) {
-          return reply(boom.badImplementation(err.content))
-          .type(err.contentType);
-        }
+      const response = reply(output.content);
+      response.type(output.contentType);
+      response.code(output.statusCode);
 
-        reply(boom.badImplementation());
-      });
+      if (output.headers) {
+        Object.keys(output.headers).forEach(key => {
+          response.header(key, output.headers[key]);
+        });
+      }
     });
   };
 }
