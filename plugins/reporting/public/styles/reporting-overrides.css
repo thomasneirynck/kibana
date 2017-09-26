@@ -94,11 +94,22 @@ visualize .metric-vis {
 *  Dashboard tweaks
 */
 
-dashboard-panel .panel-heading {
+.dashboard-panel .panel-heading {
   /* hide the panel heading with the controls in it like expand */
   display: none !important;
 }
 
-dashboard-app .gridster .gs-w {
-  z-index: auto;
+/**
+ * 1. Reporting manually makes each visualization it wants to screenshot larger, so we need to hide
+ * the visualizations in the other panels.  We can only use properties that will be manually set in
+ * reporting/export_types/printable_pdf/server/lib/screenshot.js or this will also hide the visualization
+ * we want to capture.
+ * 2. React grid item's transform affects the visualizations, even when they are using fixed positioning. Chrome seems
+ * to handle this fine, but firefox moves the visualizations around, as I suspect Phantom since it had a problem.
+ */
+dashboard-app dashboard-grid .react-grid-item {
+  height: 0 !important; /* 1. */
+  width: 0 !important; /* 1. */
+  transform: none !important; /* 2. */
+  -webkit-transform: none !important; /* 2. */
 }
