@@ -2,6 +2,30 @@
   <ml-message-bar ></ml-message-bar>
   <h3>Forecasting</h3>
 
+  <div ng-if="previousForecasts.length > 0">
+    <h4 class="view-forecast-title">View a previous forecast</h4><i ml-info-icon="forecasting_modal_view_list" />
+
+    <div class="previous-forecast-list">
+      <table>
+        <thead>
+          <th>run time</th>
+          <th>from</th>
+          <th>to</th>
+        </thead>
+        <tbody >
+          <tr ng-repeat="forecast in previousForecasts">
+            <td><a class="kuiLink" href="" ng-click="viewForecast(forecast.id)">{{forecast.runTime}}</a></td>
+            <td>{{forecast.earliestTime}}</td>
+            <td>{{forecast.latestTime}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr />
+  </div>
+
+
   <h4>Run a new forecast</h4>
   <div class="form-group">
     <label for="forecastDuration" class="kuiLabel">Duration</label>

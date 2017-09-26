@@ -449,7 +449,6 @@ module.controller('MlTimeSeriesExplorerController', function (
         to: moment(zoomLatestMs).toISOString()
       };
       $scope.appState.mlTimeSeriesExplorer.zoom = zoomState;
-      console.log('!!! loadForForecastId zoomState:', zoomState);
 
       $scope.appState.save();
 
@@ -469,6 +468,9 @@ module.controller('MlTimeSeriesExplorerController', function (
   };
 
   $scope.openForecastDialog = function () {
+    // Allow forecast data to be viewed from the start of the dashboard bounds.
+    const bounds = timefilter.getActiveBounds();
+
     // Filter any entity fields (by, over, partition) with non-blank values.
     const nonBlankEntities = _.filter($scope.entities, (entity) => { return entity.fieldValue.length > 0; });
     $modal.open({
@@ -476,13 +478,15 @@ module.controller('MlTimeSeriesExplorerController', function (
       controller: 'MlForecastingModal',
       backdrop: 'static',
       keyboard: false,
+
       resolve: {
         params: () => {
           return {
             pscope: $scope,
             job: $scope.selectedJob,
             detectorIndex: +$scope.detectorId,
-            entities: nonBlankEntities
+            entities: nonBlankEntities,
+            earliest: bounds.min.valueOf()
           };
         }
       }

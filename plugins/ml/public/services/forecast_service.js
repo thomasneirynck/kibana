@@ -24,25 +24,46 @@ const module = uiModules.get('apps/ml');
 
 module.service('mlForecastService', function ($q, es, ml) {
 
-  // Get the ID of the latest forecast for the job with the specified ID.
-  // Returned response contains an id property with the latest forecast ID,
-  // or null if no forecast has been run for this job.
-  this.getLatestForecastId = function (jobId) {
+  // Gets a basic summary of the most recently run forecasts for the specified
+  // job, with results at or later than the supplied timestamp.
+  // Returned response contains a forecasts property, which is an array of objects
+  // containing id, earliest and latest keys.
+  this.getForecastsSummary = function (
+    job,
+    earliestMs,
+    maxResults
+    ) {
     const deferred = $q.defer();
     const obj = {
-      success: true
+      success: true,
+      forecasts: []
     };
 
     // Build the criteria to use in the bool filter part of the request.
-    // Add criteria for the job ID and time range.
-    const boolCriteria = [
-      {
-        term : { job_id : jobId }
+    // Add criteria for the job ID, result type and earliest time.
+    const filterCriteria = [{
+      query_string: {
+        query: 'result_type:model_forecast',
+        analyze_wildcard: true
       }
-    ];
+    },
+    {
+      term : { job_id : job.job_id }
+    },
+    {
+      range: {
+        timestamp: {
+          gte: earliestMs,
+          format: 'epoch_millis'
+        }
+      }
+    }];
 
     // TODO - add criteria for detector index when model forecast results
     // are tagged with detectorIndex.
+
+    // TODO - add criteria for partitioning fields (partition, by and over)
+    // when this is supported on the back-end.
 
     es.search({
       index: ML_RESULTS_INDEX_PATTERN,
@@ -50,29 +71,44 @@ module.service('mlForecastService', function ($q, es, ml) {
       body: {
         query: {
           bool: {
-            filter: [{
-              query_string: {
-                query: 'result_type:model_forecast',
-                analyze_wildcard: true
-              }
-            }, {
-              bool: {
-                must: boolCriteria
-              }
-            }]
+            filter: filterCriteria
           }
         },
         aggs: {
-          latestForecastId: {
-            max: {
-              field: 'forecast_id'
+          forecasts: {
+            terms: {
+              field: 'forecast_id',
+              size: maxResults !== undefined ? maxResults : 10,
+              order: {
+                _term: 'desc'
+              }
+            },
+            aggs: {
+              earliest: {
+                min: {
+                  field: 'timestamp'
+                }
+              },
+              latest: {
+                max: {
+                  field: 'timestamp'
+                }
+              }
             }
           }
         }
       }
     })
     .then((resp) => {
-      obj.id = _.get(resp, 'aggregations.latestForecastId.value', null);
+      const buckets = _.get(resp, ['aggregations', 'forecasts', 'buckets'], []);
+      _.each(buckets, (bucket) => {
+        obj.forecasts.push({
+          id: bucket.key,
+          earliest: bucket.earliest.value,
+          latest: bucket.latest.value,
+        });
+      });
+
       deferred.resolve(obj);
     })
     .catch((resp) => {

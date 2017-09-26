@@ -40,6 +40,8 @@ module.controller('MlForecastingModal', function (
   $scope.newForecastDuration = '1d';
   $scope.newForecastDurationValid = true;
   $scope.isForecastRunning = false;
+  $scope.showFrom = params.earliest;
+  $scope.previousForecasts = [];
 
   const job = params.job;
   const detectorIndex = params.detectorIndex;
@@ -47,8 +49,32 @@ module.controller('MlForecastingModal', function (
   const loadForForecastId = params.pscope.loadForForecastId;
   let forecastChecker = null;
 
+  const FORECASTS_VIEW_MAX = 5;       // Display links to a maximum of 5 forecasts.
+
   const msgs = mlMessageBarService;
   msgs.clear();
+
+  // List of all the forecasts with results at or later than the specified 'from' time.
+  mlForecastService.getForecastsSummary(job, $scope.showFrom, FORECASTS_VIEW_MAX)
+    .then((resp) => {
+      resp.forecasts.forEach((forecast) => {
+        // Format run time of forecast just down to HH:mm
+        forecast.runTime = moment(forecast.id).format('MMMM Do YYYY, HH:mm');
+        forecast.earliestTime = moment(forecast.earliest).format('MMMM Do YYYY, HH:mm:ss');
+        forecast.latestTime = moment(forecast.latest).format('MMMM Do YYYY, HH:mm:ss');
+      });
+
+      $scope.previousForecasts = resp.forecasts;
+    })
+    .catch((resp) => {
+      console.log('Time series forecast modal - error obtaining forecasts summary:', resp);
+      msgs.error('Error obtaining list of previous forecasts.', resp);
+    });
+
+  $scope.viewForecast = function (forecastId) {
+    loadForForecastId(forecastId);
+    $scope.close();
+  };
 
   $scope.newForecastDurationChange = function () {
 
