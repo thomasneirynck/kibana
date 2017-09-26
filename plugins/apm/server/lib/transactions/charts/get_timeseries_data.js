@@ -7,11 +7,16 @@ import {
 } from '../../../../common/constants';
 import moment from 'moment';
 import { isNumber, get } from 'lodash';
-export async function getTimeseriesData(req) {
-  const { appName } = req.params;
-  const transactionType = req.query.transaction_type;
-  const transactionName = req.query.transaction_name;
-  const { start, end, client, intervalString, config } = req.pre.setup;
+import { getBucketSize } from '../../helpers/get_bucket_size';
+
+export async function getTimeseriesData({
+  appName,
+  transactionType,
+  transactionName,
+  setup
+}) {
+  const { start, end, client, config } = setup;
+  const { intervalString } = getBucketSize(start, end, '1m');
 
   const params = {
     index: config.get('xpack.apm.indexPattern'),

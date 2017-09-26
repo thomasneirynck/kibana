@@ -4,9 +4,8 @@ import {
   TRANSACTION_DURATION
 } from '../../../common/constants';
 
-export async function getTransactionDuration(req) {
-  const { transactionId } = req.params;
-  const { start, end, client, config } = req.pre.setup;
+export async function getTransactionDuration({ transactionId, setup }) {
+  const { start, end, client, config } = setup;
 
   const params = {
     index: config.get('xpack.apm.indexPattern'),

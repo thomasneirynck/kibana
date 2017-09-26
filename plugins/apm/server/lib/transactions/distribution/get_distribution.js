@@ -7,10 +7,18 @@ function getDefaultBucketIndex(buckets) {
   return buckets.indexOf(middleBucket);
 }
 
-export async function getDistribution(req) {
-  const { transaction_name: transactionName } = req.query;
-  const bucketSize = await calculateBucketSize(req, transactionName);
-  const buckets = await getBuckets(req, transactionName, bucketSize);
+export async function getDistribution({ appName, transactionName, setup }) {
+  const bucketSize = await calculateBucketSize({
+    appName,
+    transactionName,
+    setup
+  });
+  const buckets = await getBuckets({
+    appName,
+    transactionName,
+    setup,
+    bucketSize
+  });
 
   return {
     buckets,

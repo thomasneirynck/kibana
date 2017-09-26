@@ -5,9 +5,15 @@ import {
   TRANSACTION_ID,
   TRANSACTION_NAME
 } from '../../../../common/constants';
-export async function getBuckets(req, transactionName, bucketSize = 100) {
-  const { start, end, client, config } = req.pre.setup;
-  const { appName } = req.params;
+
+export async function getBuckets({
+  appName,
+  transactionName,
+  bucketSize = 100,
+  setup
+}) {
+  const { start, end, client, config } = setup;
+
   const bucketTargetCount = config.get('xpack.apm.bucketTargetCount');
 
   const params = {

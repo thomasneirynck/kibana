@@ -1,8 +1,8 @@
 import { TRANSACTION_ID } from '../../../common/constants';
 import { get } from 'lodash';
-async function getTransaction(req) {
-  const { transactionId } = req.params;
-  const { start, end, client, config } = req.pre.setup;
+
+async function getTransaction({ transactionId, setup }) {
+  const { start, end, client, config } = setup;
 
   const params = {
     index: config.get('xpack.apm.indexPattern'),

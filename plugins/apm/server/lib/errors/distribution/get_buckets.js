@@ -1,7 +1,7 @@
 import { APP_NAME, ERROR_GROUP_ID } from '../../../../common/constants';
-export async function getBuckets(req, groupId, bucketSize = 100) {
-  const { start, end, client, config } = req.pre.setup;
-  const { appName } = req.params;
+
+export async function getBuckets({ appName, groupId, bucketSize, setup }) {
+  const { start, end, client, config } = setup;
 
   const params = {
     index: config.get('xpack.apm.indexPattern'),

@@ -6,8 +6,8 @@ import {
 } from '../../../common/constants';
 import { get } from 'lodash';
 
-export async function getApps(req) {
-  const { start, end, client, config } = req.pre.setup;
+export async function getApps({ setup }) {
+  const { start, end, client, config } = setup;
 
   const params = {
     index: config.get('xpack.apm.indexPattern'),

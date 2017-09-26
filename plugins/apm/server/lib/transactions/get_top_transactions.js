@@ -7,11 +7,10 @@ import {
   TRANSACTION_DURATION
 } from '../../../common/constants';
 import { get, sortBy } from 'lodash';
-export async function getTopTransactions(req) {
-  const { appName } = req.params;
-  const { query } = req.query;
-  const transactionType = req.query.transaction_type;
-  const { start, end, client, config } = req.pre.setup;
+
+export async function getTopTransactions({ transactionType, appName, setup }) {
+  const { start, end, client, config } = setup;
+
   const duration = moment.duration(end - start);
   const minutes = duration.asMinutes();
 
@@ -66,11 +65,6 @@ export async function getTopTransactions(req) {
     }
   };
 
-  if (query) {
-    params.body.query.bool.must.push({
-      query_string: { default_field: TRANSACTION_NAME, query }
-    });
-  }
   const resp = await client('search', params);
   const buckets = get(resp, 'aggregations.transactions.buckets', []);
   const results = buckets.map(bucket => {

@@ -1,19 +1,21 @@
-import { getBucketSize } from './get_bucket_size';
-import { getStartEnd } from './get_start_end';
+import moment from 'moment';
+
 export function setupRequest(req, reply) {
   const { server } = req;
   const config = server.config();
   const { callWithRequest } = server.plugins.elasticsearch.getCluster('data');
-
-  const { start, end } = getStartEnd(req.query.start, req.query.end);
-  const { bucketSize, intervalString } = getBucketSize(start, end, '1m');
+  const { start, end } = getAsTimestamp(req.query.start, req.query.end);
 
   reply({
     start,
     end,
     client: callWithRequest.bind(null, req),
-    intervalString,
-    bucketSize,
     config
   });
+}
+
+export function getAsTimestamp(start, end) {
+  const startTs = moment.utc(start);
+  const endTs = moment.utc(end);
+  return { start: startTs.valueOf(), end: endTs.valueOf() };
 }

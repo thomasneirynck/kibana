@@ -26,7 +26,8 @@ export function initAppsApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      getApps(req)
+      const { setup } = req.pre;
+      return getApps({ setup })
         .then(reply)
         .catch(defaultErrorHandler(reply));
     }
@@ -45,7 +46,9 @@ export function initAppsApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      getApp(req)
+      const { setup } = req.pre;
+      const { appName } = req.params;
+      return getApp({ appName, setup })
         .then(reply)
         .catch(defaultErrorHandler(reply));
     }

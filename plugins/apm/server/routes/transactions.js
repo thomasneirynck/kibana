@@ -33,7 +33,15 @@ export function initTransactionsApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      getTopTransactions(req)
+      const { appName } = req.params;
+      const { transaction_type } = req.query;
+      const { setup } = req.pre;
+
+      return getTopTransactions({
+        appName,
+        transactionType: transaction_type,
+        setup
+      })
         .then(reply)
         .catch(defaultErrorHandler(reply));
     }
@@ -52,7 +60,9 @@ export function initTransactionsApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      getTransaction(req)
+      const { transactionId } = req.params;
+      const { setup } = req.pre;
+      return getTransaction({ transactionId, setup })
         .then(reply)
         .catch(defaultErrorHandler(reply));
     }
@@ -71,7 +81,12 @@ export function initTransactionsApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      Promise.all([getTraces(req), getTransactionDuration(req)])
+      const { transactionId } = req.params;
+      const { setup } = req.pre;
+      return Promise.all([
+        getTraces({ transactionId, setup }),
+        getTransactionDuration({ transactionId, setup })
+      ])
         .then(([traces, duration]) => reply({ ...traces, duration }))
         .catch(defaultErrorHandler(reply));
     }
@@ -93,7 +108,17 @@ export function initTransactionsApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      getTimeseriesData(req)
+      const { setup } = req.pre;
+      const { appName } = req.params;
+      const transactionType = req.query.transaction_type;
+      const transactionName = req.query.transaction_name;
+
+      return getTimeseriesData({
+        appName,
+        transactionType,
+        transactionName,
+        setup
+      })
         .then(reply)
         .catch(defaultErrorHandler(reply));
     }
@@ -113,7 +138,14 @@ export function initTransactionsApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      getDistribution(req)
+      const { setup } = req.pre;
+      const { appName } = req.params;
+      const { transaction_name: transactionName } = req.query;
+      return getDistribution({
+        appName,
+        transactionName,
+        setup
+      })
         .then(reply)
         .catch(defaultErrorHandler(reply));
     }

@@ -5,9 +5,9 @@ import {
   ERROR_MESSAGE
 } from '../../../common/constants';
 import { get } from 'lodash';
-export async function getErrors(req) {
-  const { appName } = req.params;
-  const { start, end, client, config } = req.pre.setup;
+
+export async function getErrors({ appName, setup }) {
+  const { start, end, client, config } = setup;
 
   const params = {
     index: config.get('xpack.apm.indexPattern'),

@@ -4,9 +4,8 @@ import {
   TRACE_TYPE
 } from '../../../../common/constants';
 
-async function getTraces(req) {
-  const { start, end, client, config } = req.pre.setup;
-  const { transactionId } = req.params;
+async function getTraces({ transactionId, setup }) {
+  const { start, end, client, config } = setup;
 
   const params = {
     index: config.get('xpack.apm.indexPattern'),

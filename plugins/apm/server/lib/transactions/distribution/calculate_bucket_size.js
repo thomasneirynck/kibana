@@ -3,9 +3,10 @@ import {
   TRANSACTION_NAME,
   TRANSACTION_DURATION
 } from '../../../../common/constants';
-export async function calculateBucketSize(req, transactionName) {
-  const { start, end, client, config } = req.pre.setup;
-  const { appName } = req.params;
+
+export async function calculateBucketSize({ appName, transactionName, setup }) {
+  const { start, end, client, config } = setup;
+
   const params = {
     index: config.get('xpack.apm.indexPattern'),
     body: {

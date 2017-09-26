@@ -28,7 +28,9 @@ export function initErrorsApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      getErrors(req)
+      const { setup } = req.pre;
+      const { appName } = req.params;
+      return getErrors({ appName, setup })
         .then(reply)
         .catch(defaultErrorHandler(reply));
     }
@@ -47,7 +49,9 @@ export function initErrorsApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      getErrorGroup(req)
+      const { setup } = req.pre;
+      const { appName, groupId } = req.params;
+      return getErrorGroup({ appName, groupId, setup })
         .then(reply)
         .catch(defaultErrorHandler(reply));
     }
@@ -66,7 +70,10 @@ export function initErrorsApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      getDistribution(req)
+      const { setup } = req.pre;
+      const { appName, groupId } = req.params;
+
+      return getDistribution({ appName, groupId, setup })
         .then(reply)
         .catch(defaultErrorHandler(reply));
     }
