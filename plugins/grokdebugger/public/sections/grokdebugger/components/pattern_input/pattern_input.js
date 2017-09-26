@@ -9,15 +9,14 @@ app.directive('patternInput', function () {
     restrict: 'E',
     template: template,
     scope: {
-      pattern: '=',
       onChange: '='
     },
     bindToController: true,
     controllerAs: 'patternInput',
     controller: class PatternInputController {
       constructor($scope) {
-        $scope.$watch('patternInput.pattern', () => {
-          this.onChange(this.pattern);
+        $scope.$watch('patternInput.pattern', (newPattern) => {
+          this.onChange(newPattern);
         });
         $scope.aceLoaded = (editor) => {
           this.editor = editor;

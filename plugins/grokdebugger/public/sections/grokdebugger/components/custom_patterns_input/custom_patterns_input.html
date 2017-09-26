@@ -4,6 +4,7 @@
     button-text="Custom Patterns"
     is-collapsed="customPatternsInput.isSectionCollapsed('action')"
     on-toggle="customPatternsInput.onSectionToggle"
+    data-test-subj="btnToggleCustomPatternsInput"
   >
     <div class="kuiFormSection">
       <div class="kuiInfoPanel kuiInfoPanel--info kuiVerticalRhythm">
@@ -28,7 +29,8 @@ MSG message-id=<%{GREEDYDATA}></code></pre>
           onLoad: aceLoaded
         }"
         ng-model="customPatternsInput.customPatterns"
-      ></div>
+        data-test-subj="aceCustomPatternsInput"
+        ></div>
     </div>
   </toggle-panel>
 </form>

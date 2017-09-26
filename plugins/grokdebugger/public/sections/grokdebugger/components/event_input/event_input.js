@@ -10,15 +10,14 @@ app.directive('eventInput', function () {
     restrict: 'E',
     template: template,
     scope: {
-      rawEvent: '=',
       onChange: '='
     },
     bindToController: true,
     controllerAs: 'eventInput',
     controller: class EventInputController {
       constructor($scope) {
-        $scope.$watch('eventInput.rawEvent', () => {
-          this.onChange(this.rawEvent);
+        $scope.$watch('eventInput.rawEvent', (newRawEvent) => {
+          this.onChange(newRawEvent);
         });
         $scope.aceLoaded = (editor) => {
           this.editor = editor;

@@ -9,6 +9,7 @@ import {
   MonitoringPageProvider,
   LogstashPageProvider,
   GraphPageProvider,
+  GrokDebuggerPageProvider,
 } from './page_objects';
 
 import {
@@ -18,6 +19,7 @@ import {
   PipelineEditorProvider,
   RandomProvider,
   AceEditorProvider,
+  GrokDebuggerProvider,
 } from './services';
 
 // the default export of config files must be a config provider
@@ -37,6 +39,7 @@ export default async function ({ readConfigFile }) {
       resolve(__dirname, './apps/security'),
       resolve(__dirname, './apps/reporting'),
       resolve(__dirname, './apps/logstash'),
+      resolve(__dirname, './apps/grok_debugger'),
     ],
 
     // define the name and providers for services that should be
@@ -50,6 +53,7 @@ export default async function ({ readConfigFile }) {
       pipelineEditor: PipelineEditorProvider,
       random: RandomProvider,
       aceEditor: AceEditorProvider,
+      grokDebugger: GrokDebuggerProvider,
     },
 
     // just like services, PageObjects are defined as a map of
@@ -61,6 +65,7 @@ export default async function ({ readConfigFile }) {
       monitoring: MonitoringPageProvider,
       logstash: LogstashPageProvider,
       graph: GraphPageProvider,
+      grokDebugger: GrokDebuggerPageProvider,
     },
 
     servers: {
@@ -103,7 +108,11 @@ export default async function ({ readConfigFile }) {
       },
       graph: {
         pathname: '/app/graph',
-      }
+      },
+      grokDebugger: {
+        pathname: '/app/kibana',
+        hash: '/dev_tools/grokdebugger'
+      },
     },
 
     // choose where esArchiver should load archives from

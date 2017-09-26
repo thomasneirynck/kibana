@@ -1,6 +1,9 @@
 <kbn-dev-tools-app class="grokdebuggerDevTool">
   <div class="kuiViewContent kuiViewContent--constrainedWidth kuiViewContentItem">
-    <div class="grokdebugger-container">
+    <div
+      class="grokdebugger-container"
+      data-test-subj="grokDebugger"
+    >
       <event-input on-change="grokdebugger.onRawEventChange"></event-input>
       <pattern-input on-change="grokdebugger.onPatternChange"></pattern-input>
       <custom-patterns-input on-change="grokdebugger.onCustomPatternsChange"></custom-patterns-input>
@@ -9,6 +12,7 @@
           class="kuiButton kuiButton--primary"
           ng-disabled="!grokdebugger.isSimulateEnabled"
           ng-click="grokdebugger.onSimulateClick()"
+          data-test-subj="btnSimulate"
         >
           Simulate
         </button>
