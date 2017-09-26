@@ -62,8 +62,13 @@ export async function loadAppList({ start, end, query }) {
 }
 
 export async function loadApp({ start, end, appName }) {
-  const apps = await loadAppList({ start, end, query: appName });
-  return _.first(apps);
+  return callApi({
+    pathname: `../api/apm/apps/${appName}`,
+    query: {
+      start,
+      end
+    }
+  });
 }
 
 export async function loadTransactionList({

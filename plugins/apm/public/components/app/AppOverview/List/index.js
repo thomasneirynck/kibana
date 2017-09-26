@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 
-import { KuiTableHeaderCell } from 'ui_framework/components';
-import APMTable from '../../../shared/APMTable';
+import APMTable, {
+  AlignmentKuiTableHeaderCell
+} from '../../../shared/APMTable';
 import ListItem from './ListItem';
 
 class List extends Component {
@@ -11,16 +12,28 @@ class List extends Component {
     const renderHead = () => {
       const cells = [
         { key: 'appName', label: 'Name' },
-        { key: 'overallAvg', label: 'Avg. response time' }
-      ].map(({ key, label }) => (
-        <KuiTableHeaderCell
+        { key: 'agentName', label: 'Agent' },
+        {
+          key: 'avgResponseTime',
+          label: 'Avg. response time',
+          alignRight: true
+        },
+        {
+          key: 'transactionsPerMinute',
+          label: 'Transactions / min.',
+          alignRight: true
+        },
+        { key: 'errorsPerMinute', label: 'Errors  / min.', alignRight: true }
+      ].map(({ key, label, alignRight }) => (
+        <AlignmentKuiTableHeaderCell
           key={key}
           onSort={() => changeAppSorting(key)}
           isSorted={appSorting.key === key}
           isSortAscending={!appSorting.descending}
+          className={alignRight ? 'kuiTableHeaderCell--alignRight' : ''}
         >
           {label}
-        </KuiTableHeaderCell>
+        </AlignmentKuiTableHeaderCell>
       ));
 
       return cells;
@@ -34,7 +47,7 @@ class List extends Component {
 
     return (
       <APMTable
-        searchableFields={['appName']}
+        searchableFields={['appName', 'agentName']}
         items={items}
         emptyText="No apps matched your filter. "
         renderHead={renderHead}

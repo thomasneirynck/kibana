@@ -1,15 +1,9 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 
-import APMTable from '../../../shared/APMTable';
+import APMTable, {
+  AlignmentKuiTableHeaderCell
+} from '../../../shared/APMTable';
 import ListItem from './ListItem';
-
-import { KuiTableHeaderCell } from 'ui_framework/components';
-const AlignmentKuiTableHeaderCell = styled(KuiTableHeaderCell)`
-  &.kuiTableHeaderCell--alignRight > button > span {
-    justify-content: flex-end;
-  }
-`; // Fixes alignment for sortable KuiTableHeaderCell children
 
 class List extends Component {
   render() {

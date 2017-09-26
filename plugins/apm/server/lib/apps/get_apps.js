@@ -1,12 +1,13 @@
 import {
   APP_NAME,
   TRANSACTION_DURATION,
-  TRANSACTION_TYPE
+  APP_AGENT_NAME,
+  EVENT_PROCESSOR_NAME
 } from '../../../common/constants';
 import { get } from 'lodash';
+
 export async function getApps(req) {
-  const { start, end, client, intervalString, config } = req.pre.setup;
-  const { query } = req.query;
+  const { start, end, client, config } = req.pre.setup;
 
   const params = {
     index: config.get('xpack.apm.indexPattern'),
@@ -37,28 +38,11 @@ export async function getApps(req) {
             avg: {
               avg: { field: TRANSACTION_DURATION }
             },
-            types: {
-              terms: { field: TRANSACTION_TYPE, size: 100 },
-              aggs: {
-                avg: {
-                  avg: { field: TRANSACTION_DURATION }
-                },
-                timeseries: {
-                  date_histogram: {
-                    field: '@timestamp',
-                    interval: intervalString,
-                    extended_bounds: {
-                      min: start,
-                      max: end
-                    }
-                  },
-                  aggs: {
-                    avg: {
-                      avg: { field: TRANSACTION_DURATION }
-                    }
-                  }
-                }
-              }
+            agents: {
+              terms: { field: APP_AGENT_NAME, size: 1 }
+            },
+            events: {
+              terms: { field: EVENT_PROCESSOR_NAME, size: 2 }
             }
           }
         }
@@ -66,25 +50,30 @@ export async function getApps(req) {
     }
   };
 
-  if (query) {
-    params.body.query.bool.must.push({
-      query_string: { query }
-    });
-  }
-
   const resp = await client('search', params);
-  const buckets = get(resp, 'aggregations.apps.buckets', []);
+
+  const { buckets } = resp.aggregations.apps;
+
   return buckets.map(bucket => {
+    const eventTypes = bucket.events.buckets;
+
+    const transactions = eventTypes.find(e => e.key === 'transaction');
+    const totalTransactions = get(transactions, 'doc_count', 0);
+
+    const errors = eventTypes.find(e => e.key === 'error');
+    const totalErrors = get(errors, 'doc_count', 0);
+
+    const deltaAsMinutes = (end - start) / 1000 / 60;
+
+    const transactionsPerMinute = totalTransactions / deltaAsMinutes;
+    const errorsPerMinute = totalErrors / deltaAsMinutes;
+
     return {
       app_name: bucket.key,
-      overall_avg: get(bucket, 'avg.value', 0) || 0,
-      types: get(bucket, 'types.buckets', []).map(bucket => bucket.key),
-      chart: get(bucket, 'types.buckets', []).reduce((acc, bucket) => {
-        acc[bucket.key] = get(bucket, 'timeseries.buckets').map(bucket => {
-          return [bucket.key_as_string, bucket.avg.value || 0];
-        });
-        return acc;
-      }, {})
+      agent_name: get(bucket, 'agents.buckets[0].key', null),
+      transactions_per_minute: transactionsPerMinute,
+      errors_per_minute: errorsPerMinute,
+      avg_response_time: bucket.avg.value
     };
   });
 }

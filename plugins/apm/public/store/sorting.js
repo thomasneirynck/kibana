@@ -10,8 +10,8 @@ const INITIAL_STATE = {
     descending: true
   },
   app: {
-    key: 'overallAvg',
-    descending: true
+    key: 'appName',
+    descending: false
   }
 };
 

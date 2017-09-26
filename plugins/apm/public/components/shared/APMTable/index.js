@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
 
 import {
   KuiTable,
@@ -9,11 +10,18 @@ import {
   KuiPager,
   KuiTableBody,
   KuiTableHeader,
+  KuiTableHeaderCell,
   KuiEmptyTablePromptPanel,
   KuiTableInfo,
   KuiToolBarFooter,
   KuiToolBarFooterSection
 } from 'ui_framework/components';
+
+export const AlignmentKuiTableHeaderCell = styled(KuiTableHeaderCell)`
+  &.kuiTableHeaderCell--alignRight > button > span {
+    justify-content: flex-end;
+  }
+`; // Fixes alignment for sortable KuiTableHeaderCell children
 
 class APMTable extends Component {
   state = { searchQuery: '' };

@@ -21,8 +21,8 @@ describe('root reducer', () => {
           descending: true
         },
         app: {
-          key: 'overallAvg',
-          descending: true
+          key: 'appName',
+          descending: false
         }
       },
       traces: {},
