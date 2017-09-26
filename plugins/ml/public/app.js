@@ -18,6 +18,7 @@ import 'ui-bootstrap';
 import 'ui/persisted_log';
 import 'ui/autoload/all';
 
+import 'plugins/ml/styles/main.less';
 import 'plugins/ml/access_denied';
 import 'plugins/ml/lib/angular_bootstrap_patch';
 import 'plugins/ml/jobs/index';
@@ -53,3 +54,4 @@ uiRoutes
 .otherwise({
   redirectTo: '/jobs'
 });
+
