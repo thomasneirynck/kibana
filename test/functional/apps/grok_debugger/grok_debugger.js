@@ -14,7 +14,7 @@ export default function ({ getService, getPageObjects }) {
     });
 
     describe('input with built-in grok patterns', () => {
-      it.skip('accepts and parses the input', async () => { // eslint-disable-line jest/no-disabled-tests
+      it('accepts and parses the input', async () => {
         await grokDebugger.setEventInput('SegerCommaBob');
         await grokDebugger.setPatternInput('%{USERNAME:u}');
         await grokDebugger.clickSimulate();
@@ -24,7 +24,7 @@ export default function ({ getService, getPageObjects }) {
     });
 
     describe('input with custom grok patterns', () => {
-      it.skip('accepts and parses the input', async () => { // eslint-disable-line jest/no-disabled-tests
+      it('accepts and parses the input', async () => {
         await grokDebugger.setEventInput('Seger Comma Bob');
         await grokDebugger.setPatternInput('%{FIRSTNAME:f} %{MIDDLENAME:m} %{LASTNAME:l}');
 

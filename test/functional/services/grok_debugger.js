@@ -38,7 +38,7 @@ export function GrokDebuggerProvider({ getService }) {
     }
 
     async getEventOutput() {
-      return await retry.try(async () => aceEditor.getValue(SUBJ_UI_ACE_EVENT_OUTPUT));
+      return await aceEditor.getValue(SUBJ_UI_ACE_EVENT_OUTPUT);
     }
 
     async assertExists() {
@@ -50,8 +50,10 @@ export function GrokDebuggerProvider({ getService }) {
     }
 
     async assertEventOutput(expectedValue) {
-      const value = JSON.parse(await this.getEventOutput());
-      expect(value).to.eql(expectedValue);
+      await retry.try(async () => {
+        const value = JSON.parse(await this.getEventOutput());
+        expect(value).to.eql(expectedValue);
+      });
     }
   };
 }
