@@ -197,8 +197,11 @@ export class MonitoringTable extends React.Component {
    */
   getSearchBar(numVisibleRows, numAvailableRows) {
     const firstRow = this.calculateFirstRow();
+    const showSearchBox = Boolean(this.props.filterFields) && (this.props.filterFields.length > 0);
+
     return (
       <MonitoringTableSearchBar
+        showSearchBox={showSearchBox}
         pageIndexFirstRow={numVisibleRows ? firstRow + 1 : 0}
         pageIndexLastRow={numVisibleRows ? numVisibleRows + firstRow : 0}
         rowsFiltered={numAvailableRows}
