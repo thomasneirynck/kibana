@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import numeral from 'numeral';
 import { get, first } from 'lodash';
 import { KuiButton } from 'ui_framework/components';
-import CodePreview from './CodePreview';
+import CodePreview from '../../../../../shared/CodePreview';
 import {
   TRACE_DURATION,
   TRACE_NAME
@@ -37,17 +37,17 @@ const DiscoverButton = styled(KuiButton)`
   color: ${colors.white};
 `;
 
-const getInAppStacktrace = trace =>
-  first(trace.stacktrace.filter(stacktrace => stacktrace.inApp));
+const getInAppStackframe = stacktrace =>
+  first(stacktrace.filter(stacktrace => stacktrace.inApp));
 
 function TraceDetails({ trace, totalDuration }) {
   const traceDuration = get({ trace }, TRACE_DURATION);
   const relativeDuration = traceDuration / totalDuration;
   // const sql = get(trace, TRACE_SQL);
-  const stacktrace = getInAppStacktrace(trace);
+  const stackframe = getInAppStackframe(trace.stacktrace);
   const traceName = get({ trace }, TRACE_NAME);
 
-  if (!stacktrace) {
+  if (!stackframe) {
     return <div>No stacktrace</div>;
   }
 
@@ -72,7 +72,7 @@ function TraceDetails({ trace, totalDuration }) {
       </DetailsWrapper>
       {/* <div>{sql}</div> */}
 
-      <CodePreview stacktrace={stacktrace} />
+      <CodePreview stackframe={stackframe} />
     </div>
   );
 }

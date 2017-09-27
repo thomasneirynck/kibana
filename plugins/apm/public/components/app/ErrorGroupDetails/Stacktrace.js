@@ -1,46 +1,82 @@
-import React from 'react';
-import styled from 'styled-components';
-import { units, px, fontFamilyCode } from '../../../style/variables';
-import { get } from 'lodash';
+import React, { PureComponent } from 'react';
+import CodePreview from '../../shared/CodePreview';
+import { Ellipsis } from '../../shared/Icons';
+import { units } from '../../../style/variables';
 
-const Filename = styled.span`
-  font-weight: bold;
-  font-family: ${fontFamilyCode};
-`;
+function getCollapsedLibraryFrames(stackframes) {
+  return stackframes.reduce((acc, stackframe) => {
+    if (stackframe.in_app) {
+      return [...acc, stackframe];
+    }
 
-const ContextWrap = styled.pre`
-  margin-top: ${px(units.half)};
-  margin-bottom: ${px(units.plus)};
-`;
+    const prevItem = acc[acc.length - 1];
+    if (prevItem.in_app) {
+      return [...acc, { in_app: false, stackframes: [stackframe] }];
+    }
 
-function Stacktrace({ stacktraces = [] }) {
+    return [
+      ...acc.slice(0, -1),
+      { ...prevItem, stackframes: [...prevItem.stackframes, stackframe] }
+    ];
+  }, []);
+}
+
+class Stacktrace extends PureComponent {
+  state = {
+    libraryframes: {}
+  };
+
+  toggle = i =>
+    this.setState(({ libraryframes }) => {
+      return { libraryframes: { ...libraryframes, [i]: !libraryframes[i] } };
+    });
+
+  render() {
+    const { stackframes = [] } = this.props;
+    if (!stackframes) {
+      return <div>No stackframes</div>;
+    }
+
+    return (
+      <div>
+        {getCollapsedLibraryFrames(stackframes).map((item, i) => {
+          if (item.in_app) {
+            return <CodePreview key={i} stackframe={item} />;
+          }
+
+          return (
+            <Libraryframes
+              key={i}
+              visible={this.state.libraryframes[i]}
+              stackframes={item.stackframes}
+              onClick={() => this.toggle(i)}
+            />
+          );
+        })}
+      </div>
+    );
+  }
+}
+
+function Libraryframes({ visible, stackframes, onClick }) {
   return (
     <div>
-      {stacktraces.map((item, i) => {
-        const pre = get(item, 'context.pre', []);
-        const post = get(item, 'context.post', []);
+      <div>
+        <a style={{ cursor: 'pointer' }} onClick={onClick}>
+          <Ellipsis
+            horizontal={visible}
+            style={{ marginRight: units.half }}
+          />{' '}
+          {stackframes.length} library frames
+        </a>
+      </div>
 
-        return (
-          <div key={i}>
-            <div>
-              <Filename>{item.absPath}</Filename> in{' '}
-              <Filename>{item.function}</Filename>
-            </div>
-
-            <ContextWrap>
-              <code>
-                {pre.map(line => {
-                  return `${line} \n`;
-                })}
-                {item.line.context}
-                {post.map(line => {
-                  return `${line} \n`;
-                })}
-              </code>
-            </ContextWrap>
-          </div>
-        );
-      })}
+      <div>
+        {visible &&
+          stackframes.map((stackframe, i) => (
+            <CodePreview key={i} stackframe={stackframe} isLibraryFrame />
+          ))}
+      </div>
     </div>
   );
 }

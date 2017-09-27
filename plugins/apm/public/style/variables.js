@@ -38,6 +38,7 @@ export const colors = {
   white: '#ffffff',
   teal: '#00a69b',
   red: '#a30000',
+  yellow: '#FFF7EB',
   blue1: colorBlue1,
   blue2: colorBlue2,
 

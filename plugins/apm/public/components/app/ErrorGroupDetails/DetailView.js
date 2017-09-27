@@ -83,17 +83,13 @@ function AllOccurrencesLink({ errorGroup, appName }) {
 const STACKTRACE_TAB = 'stacktrace';
 
 // Ensure the selected tab exists or use the first
-function getCurrentTab(tabs = [], urlParamsTab) {
-  return tabs.includes(urlParamsTab) ? urlParamsTab : tabs[0];
+function getCurrentTab(tabs = [], selectedTab) {
+  return tabs.includes(selectedTab) ? selectedTab : tabs[0];
 }
 
-function getTabs(errorGroup, hasStacktraces) {
+function getTabs(errorGroup) {
   const dynamicProps = Object.keys(errorGroup.data.error.context);
-  if (hasStacktraces) {
-    return [STACKTRACE_TAB, ...getLevelOneProps(dynamicProps)];
-  }
-
-  return getLevelOneProps(dynamicProps);
+  return [STACKTRACE_TAB, ...getLevelOneProps(dynamicProps)];
 }
 
 function DetailView({ errorGroup, urlParams }) {
@@ -104,9 +100,8 @@ function DetailView({ errorGroup, urlParams }) {
   const { appName } = urlParams;
   const timestamp = moment(get(errorGroup, 'data.error.@timestamp')).format();
 
-  const stacktraces = get(errorGroup.data.error.error.exception, 'stacktrace');
-  const hasStacktraces = stacktraces != null;
-  const tabs = getTabs(errorGroup, hasStacktraces);
+  const stackframes = get(errorGroup.data.error.error.exception, 'stacktrace');
+  const tabs = getTabs(errorGroup);
   const currentTab = getCurrentTab(tabs, urlParams.detailTab);
 
   return (
@@ -129,6 +124,7 @@ function DetailView({ errorGroup, urlParams }) {
           );
         })}
       </Properties>
+
       {tabs.map(key => {
         return (
           <Tab
@@ -143,7 +139,7 @@ function DetailView({ errorGroup, urlParams }) {
 
       <div>
         {currentTab === STACKTRACE_TAB ? (
-          <Stacktrace stacktraces={stacktraces} />
+          <Stacktrace stackframes={stackframes} />
         ) : (
           <PropertiesTable
             propData={errorGroup.data.error.context[currentTab]}
