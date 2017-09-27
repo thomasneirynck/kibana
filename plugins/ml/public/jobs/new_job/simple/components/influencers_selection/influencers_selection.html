@@ -13,13 +13,13 @@
             append-to-body=true
           >
             <ui-select-match placeholder="Key fields">
-              <span ng-class="{'split-field': isSplitField($item)}">{{$item}}</span>
+              <span ng-class="{'split-field': isSplitField($item)}">
+                <ml-field-type-icon type="$item.mlType"></ml-field-type-icon>{{$item.name}}
+              </span>
             </ui-select-match>
-            <ui-select-choices
-              repeat="field in ui.splitFields"
-            >
-              <div class="select-item" ng-bind-html="(field | highlight: $select.search)"></div>
-
+            <ui-select-choices repeat="field in ui.splitFields" group-by="'mlType'">
+              <ml-field-type-icon type="field.mlType"></ml-field-type-icon>
+              <span class="select-item" ng-bind-html="(field.name | highlight: $select.search)"></span>
             </ui-select-choices>
           </ui-select>
         </div>

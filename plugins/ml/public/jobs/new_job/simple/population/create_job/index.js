@@ -21,7 +21,7 @@ import 'plugins/ml/services/mapping_service';
 import 'plugins/ml/jobs/new_job/simple/components/utils/search_service';
 import 'plugins/ml/jobs/new_job/simple/components/post_save_options';
 import 'plugins/ml/jobs/new_job/simple/components/event_rate_chart';
-import 'plugins/ml/jobs/new_job/simple/components/fields_selection';
+import 'plugins/ml/jobs/new_job/simple/components/fields_selection_population';
 import 'plugins/ml/jobs/new_job/simple/components/influencers_selection';
 import 'plugins/ml/jobs/new_job/simple/components/bucket_span_selection';
 import 'plugins/ml/jobs/new_job/simple/components/general_job_details';

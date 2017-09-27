@@ -1,7 +1,7 @@
 /*
  * ELASTICSEARCH CONFIDENTIAL
  *
- * Copyright © 2016 Elasticsearch BV. All Rights Reserved.
+ * Copyright © 2017 Elasticsearch BV. All Rights Reserved.
  *
  * Notice: this software, and all information contained
  * therein, is the exclusive property of Elasticsearch BV
@@ -23,3 +23,4 @@ import 'plugins/ml/jobs/new_job/simple/components/post_save_options';
 import 'plugins/ml/jobs/new_job/simple/components/bucket_span_estimator';
 import 'plugins/ml/components/job_group_select';
 import 'plugins/ml/components/full_time_range_selector';
+import 'plugins/ml/components/field_type_icon';

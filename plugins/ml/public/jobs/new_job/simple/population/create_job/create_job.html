@@ -1,7 +1,7 @@
-<ml-nav-menu name="new_job_multi_metric"></ml-nav-menu>
-<ml-new-job-multi-metric>
+<ml-nav-menu name="new_job_population"></ml-nav-menu>
+<ml-new-job-population>
   <ml-message-bar></ml-message-bar>
-  <div ng-controller="MlCreateMultiMetricJob" class="multi-metric-job-container">
+  <div ng-controller="MlCreatePopulationJob" class="population-job-container">
     <div class="row">
       <div class="col-md-6"><h3>New job from {{ui.pageTitle}}</h3></div>
       <div class="col-md-6">
@@ -21,47 +21,56 @@
         <div class="row form-controls">
           <h4 >Job settings</h4>
           <div>
-            <div class='form-section'>
-              <ml-fields-selection></ml-fields-selection>
-            </div>
-
             <div class='form-section form-section-overflow' >
-              <h4>
-                Split Data
-                <button
-                  ng-if="formConfig.splitField !== undefined && (!ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED)"
-                  ng-click="splitReset()"
-                  aria-label="Reset Split Data to none."
-                  class="kuiButton kuiButton--small"
-                >
-                  Remove split
-                </button>
-              </h4>
+              <h4 >Population</h4>
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group">
                     <ui-select
-                      ng-model="formConfig.splitField"
-                      ng-change="splitChange()"
+                      ng-model="formConfig.overField"
+                      on-select="overChange()"
                       ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                    >
-                        <ui-select-match placeholder="Select a field">
-                          <ml-field-type-icon type="$select.selected.mlType"></ml-field-type-icon>{{$select.selected.name}}
-                        </ui-select-match>
-                        <ui-select-choices repeat="field in ui.splitFields | filter: { name: $select.search }" group-by="'mlType'">
-                          <div>
-                            <ml-field-type-icon type="field.mlType"></ml-field-type-icon>
-                            <span
-                              class="select-item"
-                              ng-bind-html="field.name | highlight: $select.search">
-                            </span>
-                          </div>
-                        </ui-select-choices>
+                      append-to-body=true>
+                      <ui-select-match placeholder="Select population field">
+                        <ml-field-type-icon type="$select.selected.mlType"></ml-field-type-icon>{{$select.selected.name}}
+                      </ui-select-match>
+                      <ui-select-choices repeat="field in ui.overFields | filter: { name: $select.search }" group-by="'mlType'">
+                        <div>
+                          <ml-field-type-icon type="field.mlType"></ml-field-type-icon>
+                          <span
+                            class="select-item"
+                            ng-bind-html="field.name | highlight: $select.search">
+                          </span>
+                        </div>
+                      </ui-select-choices>
                     </ui-select>
                   </div>
                 </div>
               </div>
             </div>
+
+            <div class='form-section form-section-overflow'>
+              <ml-fields-selection-population></ml-fields-selection-population>
+
+            </div>
+
+            <!-- <div class='form-section' >
+              <h4 >Split Data</h4>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <select
+                      ng-model="formConfig.splitField"
+                      ng-change="splitChange()"
+                      ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+                      class="form-control">
+                        <option value='{{undefined}}'>--No split--</option>
+                        <option ng-repeat="field in ui.splitFields" value='{{field}}'>{{field}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div> -->
 
             <div class='form-section' >
               <ml-influencers-selection></ml-influencers-selection>
@@ -174,18 +183,51 @@
 
             </div>
             <div class='chart-list-panel detector-container' ng-show='ui.showFieldCharts'>
-              <label ng-hide="ui.splitText === ''">{{ui.splitText}}</label>
               <div class='card-front'>
                 <div class="card-title"></div>
-                <div ng-repeat='(id, chart) in chartData.detectors' class='chart' style='height: {{ui.chartHeight + 50}}px;'>
+                <div ng-repeat='(id, chart) in chartData.detectors track by id' class='chart' style='height: {{ui.chartHeight + 90}}px;'>
                   <label>{{formConfig.fields[id].agg.type.title}} {{formConfig.fields[id].name}}</label>
+                  <div class="split-controls">
+                    <div class="split-align">Split data: </div>
+                    <div class="split-field-container">
+                      <ui-select
+                        class="split-field-select"
+                        ng-model="formConfig.fields[id].splitField"
+                        ng-change="splitChange(id, $select.selected)"
+                        append-to-body="true"
+                        ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+                      >
+                          <ui-select-match placeholder="Select a field">
+                            <ml-field-type-icon type="$select.selected.mlType"></ml-field-type-icon>{{$select.selected.name}}
+                          </ui-select-match>
+                          <ui-select-choices repeat="field in ui.splitFields | filter: { name: $select.search }" group-by="'mlType'">
+                            <div>
+                              <ml-field-type-icon type="field.mlType"></ml-field-type-icon>
+                              <span
+                                class="select-item"
+                                ng-bind-html="field.name | highlight: $select.search">
+                              </span>
+                            </div>
+                          </ui-select-choices>
+                      </ui-select>
+                    </div>
+                    <button
+                      ng-if="formConfig.fields[id].splitField !== undefined && (!ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED)"
+                      ng-click="splitReset(id)"
+                      aria-label="Remove split"
+                      class="kuiButton kuiButton--small split-align"
+                    >
+                      Remove split
+                    </button>
+                  </div>
+
                   <div class='chart-container'>
                     <div style='height: {{ui.chartHeight + 25}}px;'>
-                      <ml-multi-metric-job-chart
+                      <ml-population-job-chart
                         chart-data="chart"
                         chart-height='ui.chartHeight'
                         chart-ticks-margin="chartData.chartTicksMargin">
-                      </ml-multi-metric-job-chart>
+                      </ml-population-job-chart>
                     </div>
 
                     <div ng-show="chartStates.fields[id] === CHART_STATE.NOT_STARTED || chartStates.fields[id] === CHART_STATE.LOADING || chartStates.fields[id] === CHART_STATE.NO_RESULTS"
@@ -211,4 +253,4 @@
       </div>
     </div>
   </div>
-</ml-new-job-multi-metric>
+</ml-new-job-population>

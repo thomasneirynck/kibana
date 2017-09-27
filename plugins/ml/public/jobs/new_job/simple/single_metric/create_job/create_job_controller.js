@@ -33,6 +33,7 @@ import { isJobIdValid } from 'plugins/ml/util/job_utils';
 import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
 import { changeJobIDCase } from 'plugins/ml/jobs/new_job/simple/components/general_job_details/change_job_id_case';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
+import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
 
 uiRoutes
 .when('/jobs/new_job/simple/single_metric/create', {
@@ -288,9 +289,9 @@ module
   }
 
   function loadFields() {
-    const type = $scope.formConfig.agg.type;
+    const agg = $scope.formConfig.agg;
     let fields = [];
-    type.params.forEach((param) => {
+    agg.type.params.forEach((param) => {
       if (param.name === 'field') {
         fields = getIndexedFields(param);
       }
@@ -309,13 +310,14 @@ module
         id,
         name: field.displayName,
         tooltip: field.displayName,
-        agg: { type }
+        agg,
+        mlType: field.mlType,
       };
       $scope.ui.fields.push(f);
     });
 
     if ($scope.ui.fields.length === 1 ||
-      ($scope.formConfig.field === null && type.name === 'cardinality')) {
+      ($scope.formConfig.field === null && agg.type.name === 'cardinality')) {
       $scope.formConfig.field = $scope.ui.fields[0];
     }
   }
@@ -328,6 +330,7 @@ module
       fields = $filter('fieldType')(fields, fieldTypes);
       fields = $filter('orderBy')(fields, ['type', 'name']);
       fields = _.filter(fields, (f) => f.displayName !== '_type');
+      fields = _.each(fields, (f) => f.mlType = kbnTypeToMLJobType(f));
     }
     return fields;
   }

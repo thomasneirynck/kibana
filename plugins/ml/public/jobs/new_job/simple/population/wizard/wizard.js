@@ -23,7 +23,7 @@ import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { getIndexPatterns } from 'plugins/ml/util/index_utils';
 
 uiRoutes
-.when('/jobs/new_job/simple/multi_metric/step/1', {
+.when('/jobs/new_job/simple/population/step/1', {
   template: require('./step_1.html'),
   resolve: {
     CheckLicense: checkLicense,
@@ -35,7 +35,7 @@ uiRoutes
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('MlNewJobMultiStep1', function ($scope, $route, timefilter) {
+module.controller('MlNewJobPopulationStep1', function ($scope, $route, timefilter) {
 
   timefilter.enabled = false; // remove time picker from top of page.
 
@@ -45,10 +45,10 @@ module.controller('MlNewJobMultiStep1', function ($scope, $route, timefilter) {
   };
 
   $scope.step2WithSearchUrl = (hit) => {
-    return '#/jobs/new_job/simple/multi_metric/create?savedSearchId=' + encodeURIComponent(hit.id);
+    return '#/jobs/new_job/simple/population/create?savedSearchId=' + encodeURIComponent(hit.id);
   };
   $scope.makeUrl = (pattern) => {
     if (!pattern) return;
-    return '#/jobs/new_job/simple/multi_metric/create?index=' + encodeURIComponent(pattern.id);
+    return '#/jobs/new_job/simple/population/create?index=' + encodeURIComponent(pattern.id);
   };
 });

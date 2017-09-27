@@ -29,7 +29,7 @@ import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlMultiMetricJobChart', function (Private) {
+module.directive('mlPopulationJobChart', function (Private) {
 
   function link(scope, element) {
 
@@ -66,7 +66,7 @@ module.directive('mlMultiMetricJobChart', function (Private) {
     });
 
     function init() {
-      const $el = angular.element('.multi-metric-job-container .card-front');
+      const $el = angular.element('.population-job-container .card-front');
       const offset = $el.hasClass('card') ? 30 : 0;
 
       margin.left = scope.chartTicksMargin.width;

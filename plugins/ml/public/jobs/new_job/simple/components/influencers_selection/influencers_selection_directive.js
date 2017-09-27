@@ -29,7 +29,7 @@ module.directive('mlInfluencersSelection', function () {
       // called from html. split fields can't be removed from the influencer list
       $scope.isSplitField = function (field) {
         const splitFields = getSplitFields();
-        return (splitFields.find(f => f === field) !== undefined);
+        return (splitFields.find(f => f.name === field.name) !== undefined);
       };
 
       $scope.toggleSplitField = function () {
@@ -52,7 +52,7 @@ module.directive('mlInfluencersSelection', function () {
       function getSplitFields() {
         if ($scope.formConfig.hasOwnProperty('splitField') === false) {
           const splitFields = $scope.formConfig.fields.map(f => f.splitField);
-          return splitFields.filter(f => f !== '');
+          return splitFields.filter(f => (f !== undefined && f !== ''));
         } else {
           if ($scope.formConfig.splitField === undefined) {
             return [];

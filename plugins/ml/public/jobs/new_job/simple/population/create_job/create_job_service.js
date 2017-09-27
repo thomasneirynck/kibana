@@ -26,7 +26,7 @@ import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('mlMultiMetricJobService', function (
+module.service('mlPopulationJobService', function (
   $q,
   es,
   timefilter,
@@ -70,7 +70,7 @@ module.service('mlMultiMetricJobService', function (
   this.getLineChartResults = function (formConfig, thisLoadTimestamp) {
     const deferred = $q.defer();
 
-    const fieldIds = Object.keys(formConfig.fields).sort();
+    const fieldIds = formConfig.fields.map(f => f.id);
 
     // move event rate field to the front of the list
     const idx = _.findIndex(fieldIds,(id) => id === EVENT_RATE_COUNT_FIELD);
@@ -79,8 +79,8 @@ module.service('mlMultiMetricJobService', function (
       fieldIds.splice(0, 0, EVENT_RATE_COUNT_FIELD);
     }
 
-    _.each(fieldIds, (fieldId) => {
-      this.chartData.detectors[fieldId] = {
+    fieldIds.forEach((fieldId, i) => {
+      this.chartData.detectors[i] = {
         line: [],
         swimlane:[]
       };
@@ -92,8 +92,8 @@ module.service('mlMultiMetricJobService', function (
     .then((resp) => {
       // if this is the last chart load, wipe all previous chart data
       if (thisLoadTimestamp === this.chartData.lastLoadTimestamp) {
-        _.each(fieldIds, (fieldId) => {
-          this.chartData.detectors[fieldId] = {
+        fieldIds.forEach((fieldId, i) => {
+          this.chartData.detectors[i] = {
             line: [],
             swimlane:[]
           };
@@ -123,14 +123,14 @@ module.service('mlMultiMetricJobService', function (
           value: null,
         });
 
-        _.each(fieldIds, (fieldId) => {
+        fieldIds.forEach((fieldId, i) => {
           let value;
           if (fieldId === EVENT_RATE_COUNT_FIELD) {
             value = docCount;
-          } else if (typeof dataForTime[fieldId].value !== 'undefined') {
-            value = dataForTime[fieldId].value;
-          } else if (typeof dataForTime[fieldId].values !== 'undefined') {
-            value = dataForTime[fieldId].values[ML_MEDIAN_PERCENTS];
+          } else if (typeof dataForTime[i].value !== 'undefined') {
+            value = dataForTime[i].value;
+          } else if (typeof dataForTime[i].values !== 'undefined') {
+            value = dataForTime[i].values[ML_MEDIAN_PERCENTS];
           }
 
           if (!isFinite(value)) {
@@ -141,15 +141,15 @@ module.service('mlMultiMetricJobService', function (
             highestValue = value;
           }
 
-          if (this.chartData.detectors[fieldId]) {
-            this.chartData.detectors[fieldId].line.push({
+          if (this.chartData.detectors[i]) {
+            this.chartData.detectors[i].line.push({
               date,
               time,
               value,
             });
 
             // init swimlane
-            this.chartData.detectors[fieldId].swimlane.push({
+            this.chartData.detectors[i].swimlane.push({
               date,
               time,
               value: 0,
@@ -208,23 +208,23 @@ module.service('mlMultiMetricJobService', function (
     if (formConfig.firstSplitFieldValue !== undefined) {
       query.bool.must.push({
         term: {
-          [formConfig.splitField.name] : formConfig.firstSplitFieldValue
+          [formConfig.splitField] : formConfig.firstSplitFieldValue
         }
       });
     }
 
     json.body.query = query;
 
-    if (Object.keys(formConfig.fields).length) {
+    if (formConfig.fields.length) {
       json.body.aggs.times.aggs = {};
-      _.each(formConfig.fields, (field) => {
+      _.each(formConfig.fields, (field, i) => {
         if (field.id !== EVENT_RATE_COUNT_FIELD) {
-          json.body.aggs.times.aggs[field.id] = {
+          json.body.aggs.times.aggs[i] = {
             [field.agg.type.dslName]: { field: field.name }
           };
 
           if (field.agg.type.dslName === 'percentiles') {
-            json.body.aggs.times.aggs[field.id][field.agg.type.dslName].percents = [ML_MEDIAN_PERCENTS];
+            json.body.aggs.times.aggs[i][field.agg.type.dslName].percents = [ML_MEDIAN_PERCENTS];
           }
         }
       });
@@ -259,9 +259,18 @@ module.service('mlMultiMetricJobService', function (
         dtr.detector_description += `(${field.name})`;
       }
 
-      if (formConfig.splitField !== undefined) {
-        dtr.partition_field_name =  formConfig.splitField.name;
+      if (field.splitField !== undefined) {
+        dtr.by_field_name = field.splitField.name;
+        dtr.detector_description += ` by ${dtr.by_field_name}`;
       }
+
+      if (formConfig.overField !== undefined) {
+        dtr.over_field_name = formConfig.overField.name;
+        dtr.detector_description += ` over ${dtr.over_field_name}`;
+      }
+      // if (formConfig.splitField !== undefined) {
+      //   dtr.partition_field_name =  formConfig.splitField;
+      // }
       job.analysis_config.detectors.push(dtr);
     });
 
@@ -316,7 +325,7 @@ module.service('mlMultiMetricJobService', function (
 
     this.job = getJobFromConfig(formConfig);
     const job = createJobForSaving(this.job);
-
+    console.log(job);
     // DO THE SAVE
     mlJobService.saveNewJob(job)
     .then((resp) => {
@@ -437,7 +446,7 @@ module.service('mlMultiMetricJobService', function (
     const query = formConfig.combinedQuery;
     return mlSimpleJobSearchService.getCategoryFields(
       formConfig.indexPattern.title,
-      formConfig.splitField.name,
+      formConfig.splitField,
       size,
       query);
   };

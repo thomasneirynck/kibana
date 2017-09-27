@@ -13,6 +13,5 @@
  * strictly prohibited.
  */
 
-import './influencers_selection_directive';
-import './styles/main.less';
-import 'plugins/ml/components/field_type_icon';
+ import './field_type_icon_directive';
+ import './styles/main.less';

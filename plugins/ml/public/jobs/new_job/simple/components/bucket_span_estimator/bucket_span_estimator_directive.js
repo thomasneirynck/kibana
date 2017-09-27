@@ -57,7 +57,7 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
           start: $scope.formConfig.start,
           end: $scope.formConfig.end
         };
-        const splitField = $scope.formConfig.splitField;
+        const splitField = $scope.formConfig.splitField !== undefined ? $scope.formConfig.splitField.name : undefined;
         let splitFieldValues = [];
 
         const query = getQueryFromSavedSearch($scope.formConfig);
@@ -65,13 +65,13 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
         if ($scope.formConfig.fields === undefined) {
           // single metric config
           const fieldName = ($scope.formConfig.field === null) ?
-            null : $scope.formConfig.field.id;
+            null : $scope.formConfig.field.name;
           fields.push(fieldName);
           aggTypes.push($scope.formConfig.agg.type);
         } else {
           // multi metric config
-          _.each($scope.formConfig.fields, (field, key) => {
-            const fieldName = (key === '__ml_event_rate_count__') ? null : key;
+          _.each($scope.formConfig.fields, (field) => {
+            const fieldName = (field.id === '__ml_event_rate_count__') ? null : field.name;
             fields.push(fieldName);
             aggTypes.push(field.agg.type);
           });

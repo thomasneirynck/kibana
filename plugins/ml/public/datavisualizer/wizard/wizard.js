@@ -1,7 +1,7 @@
 /*
  * ELASTICSEARCH CONFIDENTIAL
  *
- * Copyright © 2016 Elasticsearch BV. All Rights Reserved.
+ * Copyright © 2017 Elasticsearch BV. All Rights Reserved.
  *
  * Notice: this software, and all information contained
  * therein, is the exclusive property of Elasticsearch BV

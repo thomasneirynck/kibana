@@ -50,12 +50,11 @@
           class=""
         >
           <ui-select-match placeholder="Select a field">
-            {{$select.selected.name}}
+            <ml-field-type-icon type="$select.selected.mlType"></ml-field-type-icon>{{$select.selected.name}}
           </ui-select-match>
-          <ui-select-choices
-            repeat="field in ui.fields | filter: { name: $select.search }"
-          >
-            <div ng-bind-html="field.name | highlight: $select.search"></div>
+          <ui-select-choices repeat="field in ui.fields | filter: { name: $select.search }" group-by="'mlType'">
+            <ml-field-type-icon type="field.mlType"></ml-field-type-icon>
+            <span class="select-item" ng-bind-html="field.name | highlight: $select.search"></span>
           </ui-select-choices>
         </ui-select>
       </div>
