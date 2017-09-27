@@ -265,9 +265,9 @@ module.service('mlMultiMetricJobService', function (
       job.analysis_config.detectors.push(dtr);
     });
 
-    const keyFields = Object.keys(formConfig.keyFields);
-    if (keyFields && keyFields.length) {
-      job.analysis_config.influencers = keyFields;
+    const influencerFields = formConfig.influencerFields;
+    if (influencerFields && influencerFields.length) {
+      job.analysis_config.influencers = influencerFields;
     }
 
     let query = {

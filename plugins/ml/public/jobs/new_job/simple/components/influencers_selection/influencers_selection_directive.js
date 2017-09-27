@@ -24,14 +24,43 @@ module.directive('mlInfluencersSelection', function () {
     replace: true,
     template,
     controller: function ($scope) {
-      $scope.toggleKeyFields = function (key) {
-        const f = $scope.formConfig.keyFields[key];
-        if (f === undefined) {
-          $scope.formConfig.keyFields[key] = key;
-        } else {
-          delete $scope.formConfig.keyFields[key];
-        }
+
+      // is the field passed in being used as a split field?
+      // called from html. split fields can't be removed from the influencer list
+      $scope.isSplitField = function (field) {
+        const splitFields = getSplitFields();
+        return (splitFields.find(f => f === field) !== undefined);
       };
+
+      $scope.toggleSplitField = function () {
+        $scope.addSplitFieldsToInfluencerList();
+      };
+
+      // force add the split fields to the front of the influencer list.
+      // as we have no control over the ui-select remove "x" link on each pill, if
+      // the user removes a split field, this function will put it back in again.
+      $scope.addSplitFieldsToInfluencerList = function () {
+        const splitFields = getSplitFields();
+        const nonSplitFields = $scope.formConfig.influencerFields.filter(f => {
+          return (splitFields.find(sp => sp === f) === undefined);
+        });
+        $scope.formConfig.influencerFields = splitFields.concat(nonSplitFields);
+      };
+
+      // get the split fields from either each selected field (for population jobs)
+      // or from the global split field (multi-metric jobs)
+      function getSplitFields() {
+        if ($scope.formConfig.hasOwnProperty('splitField') === false) {
+          const splitFields = $scope.formConfig.fields.map(f => f.splitField);
+          return splitFields.filter(f => f !== '');
+        } else {
+          if ($scope.formConfig.splitField === undefined) {
+            return [];
+          } else {
+            return [$scope.formConfig.splitField];
+          }
+        }
+      }
     }
   };
 });

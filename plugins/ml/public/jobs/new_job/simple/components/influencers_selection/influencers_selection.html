@@ -4,19 +4,25 @@
     <div class="col-md-12">
       <div class="form-group">
         <div class='selection-list-container'>
-          <div class="checkbox field-row" ng-repeat="field in ui.splitFields" >
-            <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
-              <input type="checkbox"
-                class='kuiCheckBox'
-                ng-checked="formConfig.keyFields[field] !== undefined"
-                ng-click="toggleKeyFields(field)"
-                ng-disabled='formConfig.splitField===field || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED'
-              />
-              <span class="kuiCheckBoxLabel__text">{{field}}</span>
-            </label>
-          </div>
-        </div>
+          <ui-select
+            ng-model="formConfig.influencerFields"
+            ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+            on-select="toggleSplitField()"
+            on-remove="toggleSplitField()"
+            multiple
+            append-to-body=true
+          >
+            <ui-select-match placeholder="Key fields">
+              <span ng-class="{'split-field': isSplitField($item)}">{{$item}}</span>
+            </ui-select-match>
+            <ui-select-choices
+              repeat="field in ui.splitFields"
+            >
+              <div class="select-item" ng-bind-html="(field | highlight: $select.search)"></div>
 
+            </ui-select-choices>
+          </ui-select>
+        </div>
       </div>
     </div>
   </div>

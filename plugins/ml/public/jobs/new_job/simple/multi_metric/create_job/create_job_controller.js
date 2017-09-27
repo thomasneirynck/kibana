@@ -206,7 +206,7 @@ module
     end: 0,
     timeField: indexPattern.timeFieldName,
     splitField: undefined,
-    keyFields: {},
+    influencerFields: [],
     firstSplitFieldValue: undefined,
     indexPattern: indexPattern,
     query,
@@ -231,7 +231,10 @@ module
     $scope.formConfig.firstSplitFieldValue = undefined;
 
     if (splitField !== undefined) {
-      $scope.formConfig.keyFields[splitField] = splitField;
+      if ($scope.formConfig.influencerFields.find(k => k === splitField) === undefined) {
+        $scope.formConfig.influencerFields.push(splitField);
+      }
+      $scope.addSplitFieldsToInfluencerList();
 
       $scope.ui.splitText = 'Data split by ' + splitField;
 
