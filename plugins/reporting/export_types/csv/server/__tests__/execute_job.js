@@ -91,11 +91,11 @@ describe('CSV Execute Job', function () {
         };
       },
       savedObjectsClientFactory: (opts) => {
-        return new SavedObjectsClient(
-          '.kibana',
-          { rootType: { properties: {} } },
-          opts.callCluster
-        );
+        return new SavedObjectsClient({
+          index: '.kibana',
+          mappings: { rootType: { properties: {} } },
+          callCluster: opts.callCluster
+        });
       },
       uiSettingsServiceFactory: () => {
         return {
