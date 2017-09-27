@@ -15,7 +15,7 @@
 
  /*
   * Angular controller for the Machine Learning data visualizer which allows the user
-  * to explpre the data in the fields in an index pattern prior to creating a job.
+  * to explore the data in the fields in an index pattern prior to creating a job.
   */
 
 import _ from 'lodash';
@@ -27,7 +27,7 @@ import chrome from 'ui/chrome';
 import uiRoutes from 'ui/routes';
 import { luceneStringToDsl } from 'ui/courier/data_source/build_query/lucene_string_to_dsl.js';
 import { DecorateQueryProvider } from 'ui/courier/data_source/_decorate_query';
-import { DATA_VISUALIZER_FIELD_TYPES, KBN_FIELD_TYPES } from 'plugins/ml/constants/field_types';
+import { ML_JOB_FIELD_TYPES, KBN_FIELD_TYPES, kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
 import { checkLicense } from 'plugins/ml/license/check_license';
 
 uiRoutes
@@ -62,7 +62,7 @@ module
   $scope.fieldConfigurations = [];
   $scope.totalNonMetricFieldCount = 0;
   $scope.populatedNonMetricFieldCount = 0;
-  $scope.DATA_VISUALIZER_FIELD_TYPES = DATA_VISUALIZER_FIELD_TYPES;
+  $scope.ML_JOB_FIELD_TYPES = ML_JOB_FIELD_TYPES;
   $scope.showAllFields = false;
   $scope.filterFieldType = '*';
   $scope.urlBasePath = chrome.getBasePath();
@@ -97,7 +97,7 @@ module
   let indexedFieldTypes = [];
   _.each(indexPattern.fields, (field) => {
     if (!field.scripted) {
-      const dataVisualizerType = mapKbnToDataVisualizerFieldType(field);
+      const dataVisualizerType = kbnTypeToMLJobType(field);
       if (dataVisualizerType !== undefined) {
         indexedFieldTypes.push(dataVisualizerType);
       }
@@ -105,7 +105,7 @@ module
   });
   indexedFieldTypes = _.chain(indexedFieldTypes)
       .unique()
-      .without(DATA_VISUALIZER_FIELD_TYPES.NUMBER)
+      .without(ML_JOB_FIELD_TYPES.NUMBER)
       .value();
   $scope.indexedFieldTypes = indexedFieldTypes.sort();
 
@@ -250,7 +250,7 @@ module
 
     // Add a config for 'event rate', identified by no field name.
     metricConfigs.push({
-      type: DATA_VISUALIZER_FIELD_TYPES.NUMBER,
+      type: ML_JOB_FIELD_TYPES.NUMBER,
       existsInDocs: true
     });
 
@@ -267,7 +267,7 @@ module
       metricConfigs.push({
         fieldName: field.displayName,
         fieldFormat: field.format,
-        type: DATA_VISUALIZER_FIELD_TYPES.NUMBER,
+        type: ML_JOB_FIELD_TYPES.NUMBER,
         existsInDocs: aggregatableExistsFields.indexOf(field.displayName) > -1
       });
     });
@@ -291,9 +291,9 @@ module
         return (f.type !== KBN_FIELD_TYPES.NUMBER && !_.contains(omitFields, f.displayName));
       });
     } else {
-      if ($scope.filterFieldType === DATA_VISUALIZER_FIELD_TYPES.TEXT ||
-            $scope.filterFieldType === DATA_VISUALIZER_FIELD_TYPES.KEYWORD)  {
-        const aggregatableCheck = $scope.filterFieldType === DATA_VISUALIZER_FIELD_TYPES.KEYWORD ? true : false;
+      if ($scope.filterFieldType === ML_JOB_FIELD_TYPES.TEXT ||
+            $scope.filterFieldType === ML_JOB_FIELD_TYPES.KEYWORD)  {
+        const aggregatableCheck = $scope.filterFieldType === ML_JOB_FIELD_TYPES.KEYWORD ? true : false;
         allNonMetricFields = _.filter(indexPattern.fields, (f) => {
           return !_.contains(omitFields, f.displayName) &&
             (f.type === KBN_FIELD_TYPES.STRING) &&
@@ -385,7 +385,7 @@ module
 
       // Map the field type from the Kibana index pattern to the field type
       // used in the data visualizer.
-      const dataVisualizerType = mapKbnToDataVisualizerFieldType(field);
+      const dataVisualizerType = kbnTypeToMLJobType(field);
       if (dataVisualizerType !== undefined) {
         config.type = dataVisualizerType;
       } else {
@@ -403,36 +403,6 @@ module
 
     $scope.fieldConfigurations = _.sortBy(fieldConfigs, 'fieldName');
   }
-
-  function mapKbnToDataVisualizerFieldType(field) {
-    // Return undefined if not one of the supported data visualizer field types.
-    let type = undefined;
-    switch (field.type) {
-      case KBN_FIELD_TYPES.STRING:
-        type = field.aggregatable ? DATA_VISUALIZER_FIELD_TYPES.KEYWORD : DATA_VISUALIZER_FIELD_TYPES.TEXT;
-        break;
-      case KBN_FIELD_TYPES.NUMBER:
-        type = DATA_VISUALIZER_FIELD_TYPES.NUMBER;
-        break;
-      case KBN_FIELD_TYPES.DATE:
-        type = DATA_VISUALIZER_FIELD_TYPES.DATE;
-        break;
-      case KBN_FIELD_TYPES.IP:
-        type = DATA_VISUALIZER_FIELD_TYPES.IP;
-        break;
-      case KBN_FIELD_TYPES.BOOLEAN:
-        type = DATA_VISUALIZER_FIELD_TYPES.BOOLEAN;
-        break;
-      case KBN_FIELD_TYPES.GEO_POINT:
-        type = DATA_VISUALIZER_FIELD_TYPES.GEO_POINT;
-        break;
-      default:
-        break;
-    }
-
-    return type;
-  }
-
 
   function loadOverallStats() {
     mlDataVisualizerSearchService.getOverallStats(

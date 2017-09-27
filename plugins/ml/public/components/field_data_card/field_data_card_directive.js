@@ -22,7 +22,7 @@ import $ from 'jquery';
 import chrome from 'ui/chrome';
 import 'ui/filters/moment';
 
-import { DATA_VISUALIZER_FIELD_TYPES } from 'plugins/ml/constants/field_types';
+import { ML_JOB_FIELD_TYPES } from 'plugins/ml/util/field_types_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -32,9 +32,9 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
   function link(scope, element) {
     scope.stats = {};
     scope.detailsMode = 'top';
-    scope.DATA_VISUALIZER_FIELD_TYPES = DATA_VISUALIZER_FIELD_TYPES;
+    scope.ML_JOB_FIELD_TYPES = ML_JOB_FIELD_TYPES;
 
-    if (scope.cardConfig.type === DATA_VISUALIZER_FIELD_TYPES.NUMBER) {
+    if (scope.cardConfig.type === ML_JOB_FIELD_TYPES.NUMBER) {
       // Create a div for the chart tooltip.
       $('.ml-field-data-card-tooltip').remove();
       $('body').append('<div class="ml-field-data-card-tooltip" style="opacity:0; display: none;">');
@@ -62,23 +62,23 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
       const baseCardPath = `${urlBasePath}/plugins/ml/components/field_data_card/content_types`;
       const cardType = scope.cardConfig.type;
       switch (cardType) {
-        case DATA_VISUALIZER_FIELD_TYPES.BOOLEAN:
+        case ML_JOB_FIELD_TYPES.BOOLEAN:
           return `${baseCardPath}/card_boolean.html`;
-        case DATA_VISUALIZER_FIELD_TYPES.DATE:
+        case ML_JOB_FIELD_TYPES.DATE:
           return `${baseCardPath}/card_date.html`;
-        case DATA_VISUALIZER_FIELD_TYPES.GEO_POINT:
+        case ML_JOB_FIELD_TYPES.GEO_POINT:
           return `${baseCardPath}/card_geo_point.html`;
-        case DATA_VISUALIZER_FIELD_TYPES.IP:
+        case ML_JOB_FIELD_TYPES.IP:
           return `${baseCardPath}/card_ip.html`;
-        case DATA_VISUALIZER_FIELD_TYPES.KEYWORD:
+        case ML_JOB_FIELD_TYPES.KEYWORD:
           return `${baseCardPath}/card_keyword.html`;
-        case DATA_VISUALIZER_FIELD_TYPES.NUMBER:
+        case ML_JOB_FIELD_TYPES.NUMBER:
           if (scope.cardConfig.fieldName) {
             return `${baseCardPath}/card_number.html`;
           } else {
             return `${baseCardPath}/card_document_count.html`;
           }
-        case DATA_VISUALIZER_FIELD_TYPES.TEXT:
+        case ML_JOB_FIELD_TYPES.TEXT:
           return `${baseCardPath}/card_text.html`;
         default:
           return `${baseCardPath}/card_other.html`;
@@ -92,7 +92,7 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
     function loadStats() {
       const config = scope.cardConfig;
       switch (config.type) {
-        case DATA_VISUALIZER_FIELD_TYPES.NUMBER:
+        case ML_JOB_FIELD_TYPES.NUMBER:
           if (scope.cardConfig.fieldName) {
             mlFieldDataSearchService.getAggregatableFieldStats(
               scope.indexPattern.title,
@@ -114,10 +114,10 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
             });
           }
           break;
-        case DATA_VISUALIZER_FIELD_TYPES.BOOLEAN:
-        case DATA_VISUALIZER_FIELD_TYPES.DATE:
-        case DATA_VISUALIZER_FIELD_TYPES.IP:
-        case DATA_VISUALIZER_FIELD_TYPES.KEYWORD:
+        case ML_JOB_FIELD_TYPES.BOOLEAN:
+        case ML_JOB_FIELD_TYPES.DATE:
+        case ML_JOB_FIELD_TYPES.IP:
+        case ML_JOB_FIELD_TYPES.KEYWORD:
           mlFieldDataSearchService.getAggregatableFieldStats(
             scope.indexPattern.title,
             scope.query,
@@ -130,7 +130,7 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
             scope.stats = resp.stats;
           });
           break;
-        case DATA_VISUALIZER_FIELD_TYPES.TEXT:
+        case ML_JOB_FIELD_TYPES.TEXT:
           mlFieldDataSearchService.getFieldExamples(
             scope.indexPattern.title,
             scope.query,

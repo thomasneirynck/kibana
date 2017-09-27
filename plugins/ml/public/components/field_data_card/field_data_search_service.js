@@ -15,7 +15,7 @@
 
 import _ from 'lodash';
 
-import { DATA_VISUALIZER_FIELD_TYPES } from 'plugins/ml/constants/field_types';
+import { ML_JOB_FIELD_TYPES } from 'plugins/ml/util/field_types_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -25,14 +25,14 @@ module.service('mlFieldDataSearchService', function ($q, es) {
   this.getAggregatableFieldStats = function (index, query, field, fieldType,
     timeFieldName, earliestMs, latestMs) {
     switch (fieldType) {
-      case DATA_VISUALIZER_FIELD_TYPES.NUMBER:
+      case ML_JOB_FIELD_TYPES.NUMBER:
         return this.getNumericFieldStats(index, query, field, timeFieldName, earliestMs, latestMs);
-      case DATA_VISUALIZER_FIELD_TYPES.DATE:
+      case ML_JOB_FIELD_TYPES.DATE:
         return this.getDateFieldStats(index, query, field, timeFieldName, earliestMs, latestMs);
-      case DATA_VISUALIZER_FIELD_TYPES.BOOLEAN:
+      case ML_JOB_FIELD_TYPES.BOOLEAN:
         return this.getBooleanFieldStats(index, query, field, timeFieldName, earliestMs, latestMs);
-      case DATA_VISUALIZER_FIELD_TYPES.KEYWORD:
-      case DATA_VISUALIZER_FIELD_TYPES.IP:
+      case ML_JOB_FIELD_TYPES.KEYWORD:
+      case ML_JOB_FIELD_TYPES.IP:
         return this.getStringFieldStats(index, query, field, timeFieldName, earliestMs, latestMs);
       default:
         return this.getDefaultAggregatableFieldStats(index, query, field, timeFieldName, earliestMs, latestMs);
