@@ -132,6 +132,18 @@ function (
     $location.path('jobs/new_job/advanced');
   };
 
+  $scope.closeJob = function (job) {
+    mlJobService.closeJob(job.job_id)
+    .then(() => {
+      $scope.refreshJob(job.job_id);
+    })
+    .catch(resp => {
+      msgs.error('Job could not be closed', resp);
+      refreshJobs();
+    });
+  };
+
+
   $scope.copyToClipboard = function (job) {
     const success = mlClipboardService.copy(angular.toJson(job));
     if (success) {
