@@ -20,10 +20,11 @@ import 'plugins/kibana/visualize/wizard/wizard.less';
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { getIndexPatterns } from 'plugins/ml/util/index_utils';
+import step1Template from './step_1.html';
 
 uiRoutes
 .when('/datavisualizer/step/1', {
-  template: require('./step_1.html'),
+  template: step1Template,
   resolve: {
     CheckLicense: checkLicense,
     indexPatterns: getIndexPatterns

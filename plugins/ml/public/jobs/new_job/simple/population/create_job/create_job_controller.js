@@ -33,10 +33,11 @@ import { isJobIdValid } from 'plugins/ml/util/job_utils';
 import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
 import { ML_JOB_FIELD_TYPES, kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
+import template from './create_job.html';
 
 uiRoutes
 .when('/jobs/new_job/simple/population/create', {
-  template: require('./create_job.html'),
+  template,
   resolve: {
     CheckLicense: checkLicense,
     privileges: checkCreateJobsPrivilege,

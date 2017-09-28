@@ -15,6 +15,7 @@
 
 import _ from 'lodash';
 import './styles/main.less';
+import template from './messagebar.html';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -75,7 +76,7 @@ module.service('mlMessageBarService', function () {
 .directive('mlMessageBar', function () {
   return {
     restrict: 'AE',
-    template: require('plugins/ml/components/messagebar/messagebar.html')
+    template
   };
 
 });

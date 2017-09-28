@@ -18,7 +18,7 @@
 * to extract information for display in dashboards.
 */
 
-const _ = require('lodash');
+import _ from 'lodash';
 
 // List of function descriptions for which actual values from record level results should be displayed.
 const DISPLAY_ACTUAL_FUNCTIONS = ['count', 'distinct_count', 'lat_long', 'mean', 'max', 'min', 'sum',

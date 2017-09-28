@@ -47,10 +47,12 @@ import {
   processRecordScoreResults } from 'plugins/ml/timeseriesexplorer/timeseriesexplorer_utils';
 import { refreshIntervalWatcher } from 'plugins/ml/util/refresh_interval_watcher';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
+import template from './timeseriesexplorer.html';
+import forecastingModalTemplate from 'plugins/ml/timeseriesexplorer/forecasting_modal/forecasting_modal.html';
 
 uiRoutes
 .when('/timeseriesexplorer/?', {
-  template: require('./timeseriesexplorer.html'),
+  template,
   resolve : {
     CheckLicense: checkLicense,
     privileges: checkGetJobsPrivilege,
@@ -479,7 +481,7 @@ module.controller('MlTimeSeriesExplorerController', function (
     // Filter any entity fields (by, over, partition) with non-blank values.
     const nonBlankEntities = _.filter($scope.entities, (entity) => { return entity.fieldValue.length > 0; });
     $modal.open({
-      template: require('plugins/ml/timeseriesexplorer/forecasting_modal/forecasting_modal.html'),
+      template: forecastingModalTemplate,
       controller: 'MlForecastingModal',
       backdrop: 'static',
       keyboard: false,

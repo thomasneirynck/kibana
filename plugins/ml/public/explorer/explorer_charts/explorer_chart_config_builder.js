@@ -18,7 +18,7 @@
  * the raw data in the Explorer dashboard.
  */
 
-const _ = require('lodash');
+import _ from 'lodash';
 
 import { parseInterval } from 'ui/utils/parse_interval';
 import { buildConfigFromDetector } from 'plugins/ml/util/chart_config_builder';

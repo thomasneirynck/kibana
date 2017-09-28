@@ -13,6 +13,7 @@
  * strictly prohibited.
  */
 
+import template from './field_type_icon.html';
 import { ML_JOB_FIELD_TYPES } from 'plugins/ml/util/field_types_utils';
 
 import { uiModules } from 'ui/modules';
@@ -25,7 +26,7 @@ module.directive('mlFieldTypeIcon', function () {
     scope: {
       type: '='
     },
-    template: require('plugins/ml/components/field_type_icon/field_type_icon.html'),
+    template,
     controller: function ($scope) {
       $scope.ML_JOB_FIELD_TYPES = ML_JOB_FIELD_TYPES;
     }

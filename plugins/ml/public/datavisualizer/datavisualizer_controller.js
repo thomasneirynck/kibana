@@ -29,10 +29,11 @@ import { luceneStringToDsl } from 'ui/courier/data_source/build_query/lucene_str
 import { DecorateQueryProvider } from 'ui/courier/data_source/_decorate_query';
 import { ML_JOB_FIELD_TYPES, KBN_FIELD_TYPES, kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
 import { checkLicense } from 'plugins/ml/license/check_license';
+import template from './datavisualizer.html';
 
 uiRoutes
 .when('/datavisualizer/view', {
-  template: require('./datavisualizer.html'),
+  template,
   resolve: {
     CheckLicense: checkLicense,
     indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index)

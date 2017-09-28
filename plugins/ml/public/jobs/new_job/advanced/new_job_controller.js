@@ -24,17 +24,19 @@ import 'ui/courier';
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
+import template from './new_job.html';
+import saveStatusTemplate from 'plugins/ml/jobs/new_job/advanced/save_status_modal/save_status_modal.html';
 
 uiRoutes
 .when('/jobs/new_job/advanced', {
-  template: require('./new_job.html'),
+  template,
   resolve : {
     CheckLicense: checkLicense,
     privileges: checkCreateJobsPrivilege
   }
 })
 .when('/jobs/new_job/advanced/:jobId', {
-  template: require('./new_job.html'),
+  template,
   resolve : {
     CheckLicense: checkLicense,
     privileges: checkCreateJobsPrivilege
@@ -923,7 +925,7 @@ function (
 
   function openSaveStatusWindow() {
     $modal.open({
-      template: require('plugins/ml/jobs/new_job/advanced/save_status_modal/save_status_modal.html'),
+      template: saveStatusTemplate,
       controller: 'MlSaveStatusModal',
       backdrop: 'static',
       keyboard: false,

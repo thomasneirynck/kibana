@@ -15,6 +15,8 @@
 
 // service for displaying a modal confirmation dialog with OK and Cancel buttons.
 
+import template from './confirm_modal.html';
+
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
@@ -23,7 +25,7 @@ module.service('mlConfirmModalService', function ($modal, $q) {
   this.open = function (options) {
     const deferred = $q.defer();
     $modal.open({
-      template: require('plugins/ml/components/confirm_modal/confirm_modal.html'),
+      template,
       controller: 'MlConfirmModal',
       backdrop: 'static',
       keyboard: false,

@@ -27,9 +27,14 @@ import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 
+import template from './jobs_list.html';
+import deleteJobTemplate from 'plugins/ml/jobs/jobs_list/delete_job_modal/delete_job_modal.html';
+import editJobTemplate from 'plugins/ml/jobs/jobs_list/edit_job_modal/edit_job_modal.html';
+import createWatchTemplate from 'plugins/ml/jobs/jobs_list/create_watch_modal/create_watch_modal.html';
+
 uiRoutes
 .when('/jobs/?', {
-  template: require('./jobs_list.html'),
+  template,
   resolve : {
     CheckLicense: checkLicense,
     privileges: checkGetJobsPrivilege
@@ -82,7 +87,7 @@ function (
     const status = { deleteLock: false, deleteDatafeed: 0, deleteJob: 0, errorMessage: '' };
 
     $modal.open({
-      template: require('plugins/ml/jobs/jobs_list/delete_job_modal/delete_job_modal.html'),
+      template: deleteJobTemplate,
       controller: 'MlDeleteJobModal',
       backdrop: 'static',
       keyboard: false,
@@ -503,7 +508,7 @@ function (
   // create modal dialog for editing job descriptions
   function openEditJobWindow(job) {
     $modal.open({
-      template: require('plugins/ml/jobs/jobs_list/edit_job_modal/edit_job_modal.html'),
+      template: editJobTemplate,
       controller: 'MlEditJobModal',
       backdrop: 'static',
       keyboard: false,
@@ -522,7 +527,7 @@ function (
   // create modal dialog for creating a watch
   $scope.openCreateWatchWindow = function (job) {
     $modal.open({
-      template: require('plugins/ml/jobs/jobs_list/create_watch_modal/create_watch_modal.html'),
+      template: createWatchTemplate,
       controller: 'MlCreateWatchModal',
       backdrop: 'static',
       keyboard: false,

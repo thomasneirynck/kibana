@@ -29,6 +29,7 @@ import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
 import { TimeBucketsProvider } from 'ui/time_buckets';
 import 'plugins/ml/filters/format_value';
 import 'plugins/ml/services/results_service';
+import loadingIndicatorTemplate from 'plugins/ml/components/loading_indicator/loading_indicator_wrapper.html';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -490,6 +491,6 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
       selectedLatest: '='
     },
     link: link,
-    template: require('plugins/ml/components/loading_indicator/loading_indicator_wrapper.html')
+    template: loadingIndicatorTemplate
   };
 });

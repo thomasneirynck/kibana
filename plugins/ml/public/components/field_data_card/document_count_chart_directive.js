@@ -23,6 +23,7 @@ import d3 from 'd3';
 import moment from 'moment';
 
 import 'plugins/ml/services/results_service';
+import loadingIndicatorTemplate from 'plugins/ml/components/loading_indicator/loading_indicator_wrapper.html';
 import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
 import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
@@ -201,6 +202,6 @@ module.directive('mlDocumentCountChart', function (
       chartConfig: '='
     },
     link: link,
-    template: require('plugins/ml/components/loading_indicator/loading_indicator_wrapper.html')
+    template: loadingIndicatorTemplate
   };
 });

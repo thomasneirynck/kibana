@@ -13,6 +13,8 @@
  * strictly prohibited.
  */
 
+import jobTimePickerTemplate from './job_timepicker_modal.html';
+
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
@@ -20,7 +22,7 @@ module.service('mlDatafeedService', function ($modal) {
 
   this.openJobTimepickerWindow = function (job) {
     $modal.open({
-      template: require('plugins/ml/jobs/jobs_list/job_timepicker_modal/job_timepicker_modal.html'),
+      template: jobTimePickerTemplate,
       controller: 'MlJobTimepickerModal',
       backdrop: 'static',
       keyboard: false,

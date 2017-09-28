@@ -25,10 +25,11 @@ import 'plugins/kibana/visualize/styles/main.less';
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
+import template from './create_job.html';
 
 uiRoutes
 .when('/jobs/new_job/simple/recognize/create', {
-  template: require('./create_job.html'),
+  template,
   resolve: {
     CheckLicense: checkLicense,
     privileges: checkCreateJobsPrivilege,

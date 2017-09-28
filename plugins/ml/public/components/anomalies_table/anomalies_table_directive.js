@@ -30,6 +30,7 @@ import {
   showTypicalForFunction,
   getSeverity
 } from 'plugins/ml/util/anomaly_utils';
+import template from './anomalies_table.html';
 
 import 'plugins/ml/components/paginated_table';
 import 'plugins/ml/filters/format_value';
@@ -54,7 +55,7 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
       showViewSeriesLink: '=',
       filteringEnabled: '='
     },
-    template: require('plugins/ml/components/anomalies_table/anomalies_table.html'),
+    template,
     link: function (scope, element) {
       const appState = new AppState();
       appState.fetch();

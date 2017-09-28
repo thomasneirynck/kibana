@@ -22,6 +22,7 @@ import $ from 'jquery';
 import chrome from 'ui/chrome';
 import 'ui/filters/moment';
 
+import template from './field_data_card.html';
 import { ML_JOB_FIELD_TYPES } from 'plugins/ml/util/field_types_utils';
 
 import { uiModules } from 'ui/modules';
@@ -188,7 +189,7 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
       earliest: '=',
       latest: '='
     },
-    template: require('plugins/ml/components/field_data_card/field_data_card.html'),
+    template,
     link: link
   };
 })

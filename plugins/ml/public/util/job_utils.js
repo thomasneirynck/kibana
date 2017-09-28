@@ -13,7 +13,7 @@
  * strictly prohibited.
  */
 
-const _ = require('lodash');
+import _ from 'lodash';
 
 // work out the default frequency based on the bucket_span in seconds
 export function calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) {

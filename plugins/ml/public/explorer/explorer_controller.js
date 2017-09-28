@@ -31,6 +31,7 @@ import 'plugins/ml/services/results_service';
 
 import { FilterBarQueryFilterProvider } from 'ui/filter_bar/query_filter';
 import { parseInterval } from 'ui/utils/parse_interval';
+import template from './explorer.html';
 
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
@@ -41,7 +42,7 @@ import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 
 uiRoutes
 .when('/explorer/?', {
-  template: require('./explorer.html'),
+  template,
   resolve : {
     CheckLicense: checkLicense,
     privileges: checkGetJobsPrivilege,

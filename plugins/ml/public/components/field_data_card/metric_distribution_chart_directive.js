@@ -21,6 +21,7 @@
 import _ from 'lodash';
 import d3 from 'd3';
 
+import loadingIndicatorTemplate from 'plugins/ml/components/loading_indicator/loading_indicator_wrapper.html';
 import { numTicks } from 'plugins/ml/util/chart_utils';
 import { ordinalSuffix } from 'ui/utils/ordinal_suffix';
 
@@ -341,6 +342,6 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
       chartConfig: '='
     },
     link: link,
-    template: require('plugins/ml/components/loading_indicator/loading_indicator_wrapper.html')
+    template: loadingIndicatorTemplate
   };
 });

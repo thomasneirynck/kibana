@@ -18,7 +18,7 @@
  * in the source metric data.
  */
 
-const _ = require('lodash');
+import _ from 'lodash';
 
 import { mlFunctionToESAggregation } from 'plugins/ml/util/job_utils';
 

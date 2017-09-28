@@ -20,6 +20,7 @@ import { ML_DATA_PREVIEW_COUNT } from 'plugins/ml/util/job_utils';
 import numeral from 'numeral';
 import chrome from 'ui/chrome';
 import angular from 'angular';
+import template from './expanded_row.html';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -29,7 +30,7 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
     restrict: 'AE',
     replace: false,
     scope: {},
-    template: require('plugins/ml/jobs/jobs_list/expanded_row/expanded_row.html'),
+    template,
     link: function ($scope, $element) {
       const msgs = mlMessageBarService; // set a reference to the message bar service
       const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';

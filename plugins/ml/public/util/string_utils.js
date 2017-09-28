@@ -16,7 +16,7 @@
 /*
 * Contains utility functions for performing operations on Strings.
 */
-const _ = require('lodash');
+import _ from 'lodash';
 import d3 from 'd3';
 
 // Replaces all instances of dollar delimited tokens in the specified String

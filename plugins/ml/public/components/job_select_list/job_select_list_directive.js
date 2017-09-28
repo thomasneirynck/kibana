@@ -22,6 +22,8 @@ import _ from 'lodash';
 import $ from 'jquery';
 import moment from 'moment';
 import d3 from 'd3';
+
+import template from './job_select_list.html';
 import { isTimeSeriesViewJob } from 'plugins/ml/util/job_utils';
 
 import { uiModules } from 'ui/modules';
@@ -32,7 +34,7 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
     restrict: 'AE',
     replace: true,
     transclude: true,
-    template: require('plugins/ml/components/job_select_list/job_select_list.html'),
+    template,
     controller: function ($scope) {
       $scope.jobs = [];
       $scope.groups = [];

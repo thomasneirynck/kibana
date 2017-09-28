@@ -18,6 +18,8 @@
  * one or more jobs from the list of configured jobs.
  */
 
+import template from './job_select_button.html';
+
 import 'ui/accessibility/kbn_accessible_click';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -49,6 +51,6 @@ module.directive('jobSelectButton', function (mlJobSelectService) {
     },
     link,
     replace: true,
-    template: require('plugins/ml/components/job_select_list/job_select_button.html')
+    template
   };
 });

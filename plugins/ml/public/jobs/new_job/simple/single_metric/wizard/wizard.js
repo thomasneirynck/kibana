@@ -21,10 +21,11 @@ import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { getIndexPatterns } from 'plugins/ml/util/index_utils';
+import step1Template from './step_1.html';
 
 uiRoutes
 .when('/jobs/new_job/simple/single_metric/step/1', {
-  template: require('./step_1.html'),
+  template: step1Template,
   resolve: {
     CheckLicense: checkLicense,
     privileges: checkCreateJobsPrivilege,

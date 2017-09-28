@@ -20,6 +20,9 @@ import _ from 'lodash';
 import 'plugins/ml/jobs/new_job/advanced/detector_modal';
 import 'plugins/ml/jobs/new_job/advanced/detector_filter_modal';
 import { detectorToString } from 'plugins/ml/util/string_utils';
+import template from './detectors_list.html';
+import detectorModalTemplate from 'plugins/ml/jobs/new_job/advanced/detector_modal/detector_modal.html';
+import detectorFilterModalTemplate from 'plugins/ml/jobs/new_job/advanced/detector_filter_modal/detector_filter_modal.html';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -35,7 +38,7 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
       catFieldNameSelected: '=mlCatFieldNameSelected',
       editMode:             '=mlEditMode',
     },
-    template: require('plugins/ml/jobs/new_job/advanced/detectors_list.html'),
+    template,
     controller: function ($scope) {
 
       $scope.addDetector = function (dtr, index) {
@@ -125,7 +128,7 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
           dtr = angular.copy($scope.detectors[index]);
         }
         $modal.open({
-          template: require('plugins/ml/jobs/new_job/advanced/detector_modal/detector_modal.html'),
+          template: detectorModalTemplate,
           controller: 'MlDetectorModal',
           backdrop: 'static',
           keyboard: false,
@@ -152,7 +155,7 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
           filter = angular.copy(dtr.detector_rules[filterIndex]);
         }
         $modal.open({
-          template: require('plugins/ml/jobs/new_job/advanced/detector_filter_modal/detector_filter_modal.html'),
+          template: detectorFilterModalTemplate,
           controller: 'MlDetectorFilterModal',
           backdrop: 'static',
           keyboard: false,

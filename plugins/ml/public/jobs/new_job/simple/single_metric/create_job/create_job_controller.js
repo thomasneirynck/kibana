@@ -34,10 +34,11 @@ import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/componen
 import { changeJobIDCase } from 'plugins/ml/jobs/new_job/simple/components/general_job_details/change_job_id_case';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
 import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
+import template from './create_job.html';
 
 uiRoutes
 .when('/jobs/new_job/simple/single_metric/create', {
-  template: require('./create_job.html'),
+  template,
   resolve: {
     CheckLicense: checkLicense,
     privileges: checkCreateJobsPrivilege,

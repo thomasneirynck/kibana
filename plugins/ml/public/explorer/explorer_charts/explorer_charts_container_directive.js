@@ -25,6 +25,7 @@ import rison from 'rison-node';
 
 import chrome from 'ui/chrome';
 import 'ui/timefilter';
+import template from './explorer_charts_container.html';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -116,6 +117,6 @@ module.directive('mlExplorerChartsContainer', function ($window, timefilter) {
       tooManyBuckets: '='
     },
     link: link,
-    template: require('plugins/ml/explorer/explorer_charts/explorer_charts_container.html')
+    template
   };
 });

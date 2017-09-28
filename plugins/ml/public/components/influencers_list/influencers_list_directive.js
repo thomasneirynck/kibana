@@ -22,6 +22,7 @@ import _ from 'lodash';
 import 'plugins/ml/lib/angular_bootstrap_patch';
 import 'plugins/ml/filters/abbreviate_whole_number';
 
+import template from './influencers_list.html';
 import { getSeverity } from 'plugins/ml/util/anomaly_utils';
 
 import { FilterManagerProvider } from 'ui/filter_manager';
@@ -116,7 +117,7 @@ module.directive('mlInfluencersList', function (Private) {
       indexPatternId: '=',
       tooltipPlacement: '@'
     },
-    template: require('plugins/ml/components/influencers_list/influencers_list.html'),
+    template,
     link: link
   };
 });

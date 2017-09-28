@@ -24,6 +24,7 @@ import './styles/main.less';
 import 'ui/directives/paginate';
 import 'ui/styles/pagination.less';
 import _ from 'lodash';
+import template from './paginated_table.html';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -33,7 +34,7 @@ module.directive('mlPaginatedTable', function ($filter) {
 
   return {
     restrict: 'E',
-    template: require('./paginated_table.html'),
+    template,
     transclude: true,
     scope: {
       rows: '=',
