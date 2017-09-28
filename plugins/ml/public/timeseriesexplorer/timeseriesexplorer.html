@@ -36,7 +36,7 @@
       <i class="fa fa-play" ></i>
     </button>
 
-    <div ng-show="showForecastButton === true" class="forecast-controls">
+    <div ng-show="forecastingEnabled === true" class="forecast-controls">
       <button
         ng-click='openForecastDialog()'
         class="kuiButton kuiButton--primary"
@@ -75,7 +75,29 @@
           {{$first ? '(' : ''}}{{countData.count}} distinct {{countData.fieldName}}{{countData.count > 1 ? ' values' : ''}}{{$last ? ')' : ', '}}
         </span>
       </span>
+
+      <div class="show-model-controls">
+        <div ng-show="showModelBoundsCheckbox === true">
+          <input id="toggleShowModelBoundsCheckbox"
+            type="checkbox"
+            class="kuiCheckBox"
+            ng-click="toggleShowModelBounds()"
+            ng-checked="showModelBounds === true">
+          <label for="toggleShowModelBoundsCheckbox" class="kuiCheckBoxLabel">show model bounds</label>
+        </div>
+
+        <div ng-show="showForecastCheckbox === true">
+          <input id="toggleShowForecaseCheckbox"
+            type="checkbox"
+            class="kuiCheckBox"
+            ng-click="toggleShowForecast()"
+            ng-checked="showForecast === true">
+          <label for="toggleShowForecaseCheckbox" class="kuiCheckBoxLabel">show forecast</label>
+        </div>
+      </div>
+
       <div class="ml-timeseries-chart">
+
         <ml-timeseries-chart  style="width: 1200px; height: 400px;"
           model-plot-enabled="modelPlotEnabled"
           context-chart-data="contextChartData"
@@ -85,6 +107,8 @@
           focus-chart-data="focusChartData"
           focus-forecast-data="focusForecastData"
           focus-aggregation-interval="focusAggregationInterval"
+          show-model-bounds="showModelBounds"
+          show-forecast="showForecast"
           zoom-from="zoomFrom"
           zoom-to="zoomTo"
           auto-zoom-duration="autoZoomDuration">

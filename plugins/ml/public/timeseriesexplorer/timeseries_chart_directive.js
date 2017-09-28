@@ -426,7 +426,8 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       // Render the bounds area and values line.
       if (scope.modelPlotEnabled === true) {
         focusChart.select('.area.bounds')
-          .attr('d', focusBoundedArea(data));
+          .attr('d', focusBoundedArea(data))
+          .classed('hidden', !scope.showModelBounds);
       }
 
       focusChart.select('.values-line')
@@ -460,9 +461,12 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         });
 
       if (scope.focusForecastData !== undefined) {
-        focusChart.select('.area.forecast').attr('d', focusBoundedArea(scope.focusForecastData));
+        focusChart.select('.area.forecast')
+          .attr('d', focusBoundedArea(scope.focusForecastData))
+          .classed('hidden', !scope.showForecast);
         focusChart.select('.values-line.forecast')
-          .attr('d', focusValuesLine(scope.focusForecastData));
+          .attr('d', focusValuesLine(scope.focusForecastData))
+          .classed('hidden', !scope.showForecast);
 
         const forecastDots = d3.select('.focus-chart-markers.forecast').selectAll('.metric-value')
           .data(scope.focusForecastData);
@@ -480,7 +484,8 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         // Update all dots to new positions.
         forecastDots.attr('cx', (d) => { return focusXScale(d.date); })
           .attr('cy', (d) => { return focusYScale(d.value); })
-          .attr('class', 'metric-value');
+          .attr('class', 'metric-value')
+          .classed('hidden', !scope.showForecast);
       }
 
     }
@@ -1043,7 +1048,9 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       focusAggregationInterval: '=',
       zoomFrom: '=',
       zoomTo: '=',
-      autoZoomDuration: '='
+      autoZoomDuration: '=',
+      showModelBounds: '=',
+      showForecast: '='
     },
     link: link
   };
