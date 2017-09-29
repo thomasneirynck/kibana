@@ -3,10 +3,10 @@ import Joi from 'joi';
 import { getClusterStats } from '../../../../lib/cluster/get_cluster_stats';
 import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
 import { getNodes } from '../../../../lib/elasticsearch/get_nodes';
-import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
 import { calculateNodeType } from '../../../../lib/elasticsearch/calculate_node_type';
 import { getNodeTypeClassLabel } from '../../../../lib/elasticsearch/get_node_type_class_label';
 import { getDefaultNodeFromId } from '../../../../lib/elasticsearch/get_default_node_from_id';
+import { getShardStats } from '../../../../lib/elasticsearch/shards';
 import { handleError } from '../../../../lib/handle_error';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
@@ -37,7 +37,7 @@ export function nodesRoutes(server) {
 
       try {
         const clusterStats = await getClusterStats(req, esIndexPattern, clusterUuid);
-        const shardStats = await getShardStats(req, esIndexPattern, clusterStats); // needed for summary bar and showing # of shards
+        const shardStats = await getShardStats(req, esIndexPattern, clusterStats);
         const { nodes, rows } = await getNodes(req, esIndexPattern);
 
         const clusterState = get(clusterStats, 'cluster_state', { nodes: {} });
@@ -70,11 +70,9 @@ export function nodesRoutes(server) {
         });
 
         reply({
-          clusterStatus: getClusterStatus(clusterStats, get(shardStats, 'indices.totals.unassigned')),
-          shardStats,
-          nodes,
+          clusterStatus: getClusterStatus(clusterStats, shardStats),
           rows: mappedRows,
-          shardStats
+          nodes,
         });
       } catch(err) {
         reply(handleError(err, req));

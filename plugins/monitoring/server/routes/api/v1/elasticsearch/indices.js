@@ -3,8 +3,7 @@ import Joi from 'joi';
 import { getClusterStats } from '../../../../lib/cluster/get_cluster_stats';
 import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
 import { getIndices } from '../../../../lib/elasticsearch/get_indices';
-import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
-import { getUnassignedShards } from '../../../../lib/elasticsearch/get_unassigned_shards';
+import { getShardStats, getUnassignedShards } from '../../../../lib/elasticsearch/shards';
 import { handleError } from '../../../../lib/handle_error';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
@@ -36,7 +35,7 @@ export function indicesRoutes(server) {
 
       try {
         const clusterStats = await getClusterStats(req, esIndexPattern, clusterUuid);
-        const shardStats = await getShardStats(req, esIndexPattern, clusterStats); // needed for summary bar and showing # of shards
+        const shardStats = await getShardStats(req, esIndexPattern, clusterStats, { includeIndices: true });
         const rows = await getIndices(req, esIndexPattern, showSystemIndices);
 
         const mappedRows = rows.map(row => {
@@ -59,8 +58,7 @@ export function indicesRoutes(server) {
         });
 
         reply({
-          clusterStatus: getClusterStatus(clusterStats, get(shardStats, 'indices.totals.unassigned')),
-          shardStats,
+          clusterStatus: getClusterStatus(clusterStats, shardStats),
           rows: mappedRows
         });
       } catch(err) {

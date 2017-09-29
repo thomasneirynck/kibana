@@ -2,15 +2,16 @@ import { get } from 'lodash';
 
 /*
  * @param cluster {Object} clusterStats from getClusterStatus
- * @param unassignedShards {Object} (optional) shardStats.indices.totals.unassigned from getShardStats
- * NOTE unassignedShards is optional only until the calculate_cluster_shards function is removed
+ * @param unassignedShards {Object} shardStats from getShardStats
+ * @return top-level cluster summary data
  */
-export function getClusterStatus(cluster, unassignedShards = {}) {
+export function getClusterStatus(cluster, shardStats) {
   const clusterStats = get(cluster, 'cluster_stats', {});
   const clusterNodes = get(clusterStats, 'nodes', {});
   const clusterIndices = get(clusterStats, 'indices', {});
 
   const clusterTotalShards = get(clusterIndices, 'shards.total', 0);
+  const unassignedShards = get(shardStats, 'indicesTotals.unassigned');
   const { replica, primary } = unassignedShards;
   const unassignedShardsTotal = replica + primary || 0; // replica + primary will be NaN if unassignedShards is not passed
   const totalShards = clusterTotalShards + unassignedShardsTotal;

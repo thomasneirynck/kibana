@@ -1,19 +1,13 @@
-import Promise from 'bluebird';
 import Joi from 'joi';
 import { getClusterStats } from '../../../../lib/cluster/get_cluster_stats';
 import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
-import { calculateClusterShards } from '../../../../lib/cluster/calculate_cluster_shards';
 import { getLastRecovery } from '../../../../lib/elasticsearch/get_last_recovery';
-import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
 import { getMetrics } from '../../../../lib/details/get_metrics';
+import { getShardStats } from '../../../../lib/elasticsearch/shards';
 import { handleError } from '../../../../lib/handle_error';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
-// manipulate cluster status and license meta data
-export function clustersRoutes(server) {
-  /**
-   * Elasticsearch Overview
-   */
+export function esOverviewRoute(server) {
   server.route({
     method: 'POST',
     path: '/api/monitoring/v1/clusters/{clusterUuid}/elasticsearch',
@@ -32,24 +26,26 @@ export function clustersRoutes(server) {
         })
       }
     },
-    handler: (req, reply) => {
+    async handler(req, reply) {
       const config = server.config();
       const ccs = req.payload.ccs;
       const clusterUuid = req.params.clusterUuid;
       const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
 
-      return getClusterStats(req, esIndexPattern, clusterUuid)
-      .then(cluster => {
-        return Promise.props({
-          clusterStatus: getClusterStatus(cluster),
-          metrics: getMetrics(req, esIndexPattern),
-          shardStats: getShardStats(req, esIndexPattern, cluster),
-          shardActivity: getLastRecovery(req, esIndexPattern)
+      try {
+        const clusterStats = await getClusterStats(req, esIndexPattern, clusterUuid);
+        const shardStats = await getShardStats(req, esIndexPattern, clusterStats);
+        const metrics = await getMetrics(req, esIndexPattern);
+        const shardActivity = await getLastRecovery(req, esIndexPattern);
+
+        reply({
+          clusterStatus: getClusterStatus(clusterStats, shardStats),
+          metrics,
+          shardActivity
         });
-      })
-      .then(calculateClusterShards)
-      .then(reply)
-      .catch(err => reply(handleError(err, req)));
+      } catch (err) {
+        reply(handleError(err, req));
+      }
     }
   });
 }

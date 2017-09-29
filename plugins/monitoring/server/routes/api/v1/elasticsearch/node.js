@@ -2,14 +2,11 @@ import { get, merge } from 'lodash';
 import Promise from 'bluebird';
 import Joi from 'joi';
 import { getClusterStats } from '../../../../lib/cluster/get_cluster_stats';
-import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
-import { calculateClusterShards } from '../../../../lib/cluster/calculate_cluster_shards';
 import { getNodeSummary } from '../../../../lib/elasticsearch/get_node_summary';
-import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
-import { getShardAllocation } from '../../../../lib/elasticsearch/get_shard_allocation';
 import { getDefaultNodeFromId } from '../../../../lib/elasticsearch/get_default_node_from_id';
 import { calculateNodeType } from '../../../../lib/elasticsearch/calculate_node_type';
 import { getNodeTypeClassLabel } from '../../../../lib/elasticsearch/get_node_type_class_label';
+import { getShardStats, getShardAllocation } from '../../../../lib/elasticsearch/shards';
 import { getMetrics } from '../../../../lib/details/get_metrics';
 import { handleError } from '../../../../lib/handle_error';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
@@ -53,16 +50,14 @@ export function nodeRoutes(server) {
           shards = getShardAllocation(req, esIndexPattern, [{ term: { [configResolver]: resolver } }], cluster, showSystemIndices);
         }
         return Promise.props({
-          clusterStatus: getClusterStatus(cluster),
           nodeSummary: getNodeSummary(req, esIndexPattern),
           metrics: getMetrics(req, esIndexPattern, [{ term: { [configResolver]: resolver } }]),
           shards,
-          shardStats: getShardStats(req, esIndexPattern, cluster),
+          shardStats: getShardStats(req, esIndexPattern, cluster, { includeIndices: true }),
           nodes: {},
           cluster
         });
       })
-      .then(calculateClusterShards)
       .then(body => {
         const clusterState = get(body, 'cluster.cluster_state', { nodes: {} });
         let nodeDetail = body.nodeSummary.node;
@@ -97,6 +92,13 @@ export function nodeRoutes(server) {
           body.nodeSummary.status = 'Offline';
         }
         delete body.clusterState;
+
+        if (collectShards) {
+          delete body.shardStats.indicesTotals;
+        } else {
+          delete body.shardStats; // no shard info needed for advanced view
+        }
+
         return body;
       })
       .then(reply)

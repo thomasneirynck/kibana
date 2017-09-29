@@ -1,10 +1,10 @@
 import expect from 'expect.js';
-import { getDefaultDataObject, normalizeIndexShards, normalizeNodeShards } from '../normalize_shard_objects';
+import { normalizeIndexShards, normalizeNodeShards } from '../normalize_shard_objects';
 
-function getIndexShardBucket() {
+function getIndexShardBucket(indexName) {
   return {
     // the index name being something we actually don't expect is intentional to ensure the object is not colliding
-    key: 'nodes',
+    key: indexName,
     doc_count: 5,
     states: {
       doc_count_error_upper_bound: 0,
@@ -51,10 +51,10 @@ function getIndexShardBucket() {
   };
 }
 
-function getNodeShardBucket() {
+function getNodeShardBucket(nodeId) {
   return {
-    key: '127.0.0.1:9301',
-    doc_count: 3,
+    key: nodeId,
+    doc_count: 30,
     node_transport_address: {
       doc_count_error_upper_bound: 0,
       sum_other_doc_count: 0,
@@ -98,13 +98,13 @@ function getNodeShardBucket() {
       sum_other_doc_count: 0,
       buckets: [
         {
-          key: 'TqvymHFlQUWIxPGIsIBkTA',
+          key: nodeId,
           doc_count: 3
         }
       ]
     },
     index_count: {
-      value: 3
+      value: 6
     }
   };
 }
@@ -112,34 +112,45 @@ function getNodeShardBucket() {
 describe('Normalizing Shard Data', () => {
   describe('Index Shards', () => {
     it('Calculates the Index Shard data for a result bucket', () => {
-      const data = getDefaultDataObject();
-      const resultFn = normalizeIndexShards(data.indices);
-      resultFn(getIndexShardBucket());
+      const indices = [
+        getIndexShardBucket('nodes'),
+        getIndexShardBucket('toads'),
+      ];
+      const result = indices.reduce(normalizeIndexShards, {});
 
-      // Note: the existence of relocating shards is effectively ignored.
-      // Relocating shards do not matter until they have STARTED, at which point the relocated shard
-      // is deleted, so the count stays the same!
-      expect(data.indices.totals.primary).to.be.eql(1);
-      expect(data.indices.totals.replica).to.be.eql(0);
-      expect(data.indices.totals.unassigned.primary).to.be.eql(1);
-      expect(data.indices.totals.unassigned.replica).to.be.eql(2);
-      // 'nodes' is the index name!
-      expect(data.indices.nodes.status).to.be.eql('red');
-      expect(data.indices.nodes.primary).to.be.eql(1);
-      expect(data.indices.nodes.replica).to.be.eql(0);
-      expect(data.indices.nodes.unassigned.primary).to.be.eql(1);
-      expect(data.indices.nodes.unassigned.replica).to.be.eql(2);
+      expect(result.nodes.status).to.be.eql('red');
+      expect(result.nodes.primary).to.be.eql(2); // "STARTED" and "RELOCATING" shards are counted as assigned primaries
+      expect(result.nodes.replica).to.be.eql(0);
+      expect(result.nodes.unassigned.primary).to.be.eql(1);
+      expect(result.nodes.unassigned.replica).to.be.eql(2);
+
+      expect(result.toads.status).to.be.eql('red');
+      expect(result.toads.primary).to.be.eql(2);
+      expect(result.toads.replica).to.be.eql(0);
+      expect(result.toads.unassigned.primary).to.be.eql(1);
+      expect(result.toads.unassigned.replica).to.be.eql(2);
     });
   });
 
   describe('Node Shards', () => {
     it('Calculates the Node Shard data for a result bucket', () => {
-      const data = getDefaultDataObject();
-      const resultFn = normalizeNodeShards(data.nodes, 'transport_address');
-      resultFn(getNodeShardBucket());
+      const nodes = [
+        getNodeShardBucket('someMasterNode'),
+        getNodeShardBucket('somePlainNode'),
+      ];
+      const normalizeFn = normalizeNodeShards('someMasterNode');
+      const result = nodes.reduce(normalizeFn, {});
 
-      expect(data.nodes).to.be.an('object');
-      expect(data.nodes).to.only.have.key('127.0.0.1:9301');
+      expect(result.someMasterNode.node_ids).to.be.an('object');
+      expect(result.someMasterNode.indexCount).to.be(6);
+      expect(result.someMasterNode.shardCount).to.be(30);
+      expect(result.someMasterNode.name).to.be('Spider-Woman');
+      expect(result.someMasterNode.type).to.be('master');
+
+      expect(result.somePlainNode.node_ids).to.be.an('object');
+      expect(result.somePlainNode.indexCount).to.be(6);
+      expect(result.somePlainNode.shardCount).to.be(30);
+      expect(result.somePlainNode.type).to.be('node');
     });
   });
 });
