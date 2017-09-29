@@ -35,6 +35,7 @@ module.controller('MlForecastingModal', function (
   $modal,
   params,
   mlForecastService,
+  mlJobService,
   mlMessageBarService) {
 
   $scope.newForecastDuration = '1d';
@@ -53,6 +54,9 @@ module.controller('MlForecastingModal', function (
 
   const msgs = mlMessageBarService;
   msgs.clear();
+
+  // TODO - only enable forecasts to be run if the user has the manage_ml role.
+  $scope.enableRunForecast = (job.state === 'opened' || job.state === 'closed');
 
   // List of all the forecasts with results at or later than the specified 'from' time.
   mlForecastService.getForecastsSummary(job, $scope.showFrom, FORECASTS_VIEW_MAX)
@@ -77,38 +81,25 @@ module.controller('MlForecastingModal', function (
   };
 
   $scope.newForecastDurationChange = function () {
-
     $scope.newForecastDurationValid = true;
     if(parseInterval($scope.newForecastDuration) === null) {
       $scope.newForecastDurationValid = false;
     }
   };
 
-  $scope.runForecast = function () {
+  $scope.checkJobStateAndRunForecast = function () {
+    // Checks the job state, opening a job if closed, then runs the forecast.
     msgs.clear();
 
-    $scope.isForecastRunning = !$scope.isForecastRunning;
+    $scope.isForecastRunning = true;
 
-    const forecastDuration = parseInterval($scope.newForecastDuration);
-    const jobLatest = job.data_counts.latest_record_timestamp;
-    const forecastEnd = moment(jobLatest).add(forecastDuration.asMilliseconds(), 'ms');
-
-    mlForecastService.runForecast(job.job_id, forecastEnd.valueOf())
-    .then((resp) => {
-      // Endpoint will return { acknowledged:true, id: <now timestamp> } before forecast is complete.
-      // So wait for results and then refresh the dashboard to the end of the forecast.
-      if (resp.id !== undefined) {
-        waitForForecastResults(resp.id, forecastEnd);
-      } else {
-        console.log('Unexpected response from running forecast', resp);
-        msgs.error('Unexpected response from running forecast', resp);
-      }
-    })
-    .catch((resp) => {
-      console.log('Time series forecast modal - error running forecast:', resp);
-      msgs.error('Error running forecast', resp);
-    });
-
+    // A forecast can only be run on an opened job,
+    // so open job if it is closed.
+    if (job.state === 'closed') {
+      openJobAndRunForecast();
+    } else {
+      runForecast(false);
+    }
   };
 
   $scope.close = function () {
@@ -122,7 +113,46 @@ module.controller('MlForecastingModal', function (
     }
   });
 
-  function waitForForecastResults(forecastId, forecastEnd) {
+  function openJobAndRunForecast() {
+    // Opens a job in a 'closed' state prior to running a forecast.
+    mlJobService.openJob(job.job_id)
+    .then(() => {
+      // If open was successful run the forecast, then close the job again.
+      runForecast(true);
+    })
+    .catch((resp) => {
+      console.log('Time series forecast modal - could not open job:', resp);
+      msgs.error('Error opening job before running forecast.', resp);
+      $scope.isForecastRunning = false;
+    });
+  }
+
+  function runForecast(closeJobAfterRunning) {
+    $scope.isForecastRunning = true;
+
+    const forecastDuration = parseInterval($scope.newForecastDuration);
+    const jobLatest = job.data_counts.latest_record_timestamp;
+    const forecastEnd = moment(jobLatest).add(forecastDuration.asMilliseconds(), 'ms');
+
+    mlForecastService.runForecast(job.job_id, forecastEnd.valueOf())
+    .then((resp) => {
+      // Endpoint will return { acknowledged:true, id: <now timestamp> } before forecast is complete.
+      // So wait for results and then refresh the dashboard to the end of the forecast.
+      if (resp.id !== undefined) {
+        waitForForecastResults(resp.id, forecastEnd, closeJobAfterRunning);
+      } else {
+        console.log('Unexpected response from running forecast', resp);
+        msgs.error('Unexpected response from running forecast.', resp);
+      }
+    })
+    .catch((resp) => {
+      console.log('Time series forecast modal - error running forecast:', resp);
+      msgs.error('Error running forecast.', resp);
+    });
+
+  }
+
+  function waitForForecastResults(forecastId, forecastEnd, closeJobAfterRunning) {
     // Attempt to load 6 hours of forecast data up to the specified end time.
     // As soon as we have results, trigger the time series explorer to refresh
     // to show the forecast data.
@@ -138,16 +168,34 @@ module.controller('MlForecastingModal', function (
       .then((resp) => {
         if (_.keys(resp.results).length > 0) {
           $interval.cancel(forecastChecker);
-          loadForForecastId(forecastId);
-          $scope.close();
+          $scope.isForecastRunning = false;
+
+          if (closeJobAfterRunning === true) {
+            mlJobService.closeJob(job.job_id)
+            .then(() => {
+              $scope.isForecastRunning = false;
+              loadForForecastId(forecastId);
+              $scope.close();
+            })
+            .catch((closeResp) => {
+              // Load the forecast data in the main page,
+              // but leave this dialog open so the error can be viewed.
+              msgs.error('Error closing job after running forecast.', closeResp);
+              loadForForecastId(forecastId);
+              $scope.isForecastRunning = false;
+            });
+          } else {
+            loadForForecastId(forecastId);
+            $scope.close();
+          }
         }
       }).catch((resp) => {
         console.log('Time series forecast modal - error getting model forecast data from elasticsearch:', resp);
-        msgs.error('Error checking whether forecast has finished', resp);
+        msgs.error('Error checking whether forecast has finished.', resp);
+        $scope.isForecastRunning = false;
         $interval.cancel(forecastChecker);
       });
     }, 250);
-
   }
 
 });
