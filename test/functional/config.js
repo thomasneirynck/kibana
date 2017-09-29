@@ -15,6 +15,8 @@ import {
 import {
   MonitoringClusterListProvider,
   MonitoringClusterOverviewProvider,
+  MonitoringClusterAlertsProvider,
+  MonitoringElasticsearchIndicesProvider,
   PipelineListProvider,
   PipelineEditorProvider,
   RandomProvider,
@@ -49,6 +51,8 @@ export default async function ({ readConfigFile }) {
       ...kibanaConfig.get('services'),
       monitoringClusterList: MonitoringClusterListProvider,
       monitoringClusterOverview: MonitoringClusterOverviewProvider,
+      monitoringClusterAlerts: MonitoringClusterAlertsProvider,
+      monitoringElasticsearchIndices: MonitoringElasticsearchIndicesProvider,
       pipelineList: PipelineListProvider,
       pipelineEditor: PipelineEditorProvider,
       random: RandomProvider,

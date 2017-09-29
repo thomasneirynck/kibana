@@ -5,10 +5,9 @@ export function MonitoringClusterOverviewProvider({ getService }) {
     return el.getVisibleText();
   };
 
-  const SUBJ_CLUSTER_ALERTS       = `clusterAlertsContainer`; // NOTE: for more in-depth cluster alerts tests, refer to the alerts test suite
-
-  const SUBJ_CLUSTER_OVERVIEW      = 'clusterOverviewContainer';
-  const SUBJ_CLUSTER_NAME          = `${SUBJ_CLUSTER_OVERVIEW} clusterName`;
+  const SUBJ_CLUSTER_ALERTS   = `clusterAlertsContainer`;
+  const SUBJ_CLUSTER_OVERVIEW = 'clusterOverviewContainer';
+  const SUBJ_CLUSTER_NAME     = `${SUBJ_CLUSTER_OVERVIEW} clusterName`;
 
   const SUBJ_ES_PANEL             = `clusterItemContainerElasticsearch`;
   const SUBJ_ES_STATUS            = `${SUBJ_ES_PANEL} statusIcon`;

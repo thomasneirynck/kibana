@@ -15,7 +15,7 @@ export function FormattedMessage({ prefix, suffix, message, metadata, angularCha
     if (metadata.link) {
       return (
         <KuiKeyboardAccessible>
-          <a className="kuiLink" onClick={goToLink} >
+          <a className="kuiLink" onClick={goToLink} data-test-subj="alertAction">
             { message }
           </a>
         </KuiKeyboardAccessible>
@@ -39,7 +39,7 @@ export function FormattedMessage({ prefix, suffix, message, metadata, angularCha
   const formattedPrefix = prefix ? `${prefix} ` : null;
   const formattedSuffix = suffix ? ` ${suffix}` : null;
   return (
-    <span>
+    <span data-test-subj="alertText">
       { formattedPrefix }
       { formattedMessage }
       { formattedSuffix }
