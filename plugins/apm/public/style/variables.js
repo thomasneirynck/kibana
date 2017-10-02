@@ -38,7 +38,7 @@ export const colors = {
   white: '#ffffff',
   teal: '#00a69b',
   red: '#a30000',
-  yellow: '#FFF7EB',
+  yellow: '#FCF2E6',
   blue1: colorBlue1,
   blue2: colorBlue2,
 

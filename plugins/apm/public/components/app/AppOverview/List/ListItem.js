@@ -2,10 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import { RelativeLink } from '../../../../utils/url';
 import { KuiTableRow, KuiTableRowCell } from 'ui_framework/components';
-import { fontSizes } from '../../../../style/variables';
+import { px, unit, fontSizes } from '../../../../style/variables';
 import { RIGHT_ALIGNMENT } from 'ui_framework/services';
 import { getFormattedResponseTime } from '../../../shared/charts/TransactionCharts/utils';
 import numeral from '@elastic/numeral';
+
+const AppNameCell = styled(KuiTableRowCell)`max-width: ${px(unit * 2)};`;
 
 const AppLink = styled(RelativeLink)`font-size: ${fontSizes.large};`;
 
@@ -29,11 +31,11 @@ function ListItem({ app }) {
 
   return (
     <KuiTableRow>
-      <KuiTableRowCell>
+      <AppNameCell>
         <AppLink path={`${appName}/transactions`}>
           {formatString(appName)}
         </AppLink>
-      </KuiTableRowCell>
+      </AppNameCell>
       <KuiTableRowCell>{formatString(agentName)}</KuiTableRowCell>
       <KuiTableRowCell align={RIGHT_ALIGNMENT}>
         {getFormattedResponseTime(avgResponseTime / 1000)}
