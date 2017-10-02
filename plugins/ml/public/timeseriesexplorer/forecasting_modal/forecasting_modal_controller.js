@@ -43,6 +43,7 @@ module.controller('MlForecastingModal', function (
   $scope.isForecastRunning = false;
   $scope.showFrom = params.earliest;
   $scope.previousForecasts = [];
+  $scope.privileges = params.pscope.privileges;
 
   const job = params.job;
   const detectorIndex = params.detectorIndex;
@@ -55,8 +56,11 @@ module.controller('MlForecastingModal', function (
   const msgs = mlMessageBarService;
   msgs.clear();
 
-  // TODO - only enable forecasts to be run if the user has the manage_ml role.
-  $scope.enableRunForecast = (job.state === 'opened' || job.state === 'closed');
+  // The Run forecast controls will be disabled if the user does not have
+  // canForecastJob privilege, or if the job is not in an opened or closed state.
+  if (job.state !== 'opened' && job.state !== 'closed') {
+    $scope.invalidJobState = job.state;
+  }
 
   // List of all the forecasts with results at or later than the specified 'from' time.
   mlForecastService.getForecastsSummary(job, $scope.showFrom, FORECASTS_VIEW_MAX)

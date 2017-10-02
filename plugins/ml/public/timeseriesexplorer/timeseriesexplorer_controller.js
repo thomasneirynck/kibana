@@ -102,6 +102,9 @@ module.controller('MlTimeSeriesExplorerController', function (
   $scope.showForecast = true;               // Toggles display of forecast data in the focus chart
   $scope.showForecastCheckbox = false;
 
+  $scope.privileges = $route.current.locals.privileges;
+
+
   $scope.initializeVis = function () {
     // Initialize the AppState in which to store the zoom range.
     const stateDefaults = {
@@ -656,21 +659,7 @@ module.controller('MlTimeSeriesExplorerController', function (
     // Don't enable forecasting for now if:
     //   - more than 1 detector
     //   - partition, by or over fields
-    if (jobDetectors.length > 1 || entities.length > 0) {
-      $scope.forecastingEnabled = false;
-    } else {
-      // Keep disabled if no forecasts have been run and the user does not have
-      // the manage_ml role (TODO) or the job state is not opened or closed
-      const bounds = timefilter.getActiveBounds();
-      mlForecastService.getForecastsSummary($scope.selectedJob, bounds.min.valueOf(), 1)
-      .then((resp) => {
-        $scope.forecastingEnabled = resp.forecasts.length > 0 ||
-          $scope.selectedJob.state === 'opened' || $scope.selectedJob.state === 'closed';
-      })
-      .catch((resp) => {
-        console.log('Time series explorer - error obtaining forecasts summary:', resp);
-      });
-    }
+    $scope.forecastingEnabled = (jobDetectors.length === 1 && entities.length === 0);
 
     $scope.refresh();
   }

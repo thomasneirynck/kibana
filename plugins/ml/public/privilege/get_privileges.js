@@ -21,6 +21,7 @@ export function privilegesProvider(Promise, ml) {
       canGetJobs: false,
       canCreateJob: false,
       canDeleteJob: false,
+      canForecastJob: false,
       canGetDatafeeds: false,
       canStartStopDatafeed: false,
       canUpdateJob: false,
@@ -37,6 +38,9 @@ export function privilegesProvider(Promise, ml) {
           'cluster:admin/xpack/ml/job/put',
           'cluster:admin/xpack/ml/job/delete',
           'cluster:admin/xpack/ml/job/update',
+          'cluster:admin/xpack/ml/job/open',
+          'cluster:admin/xpack/ml/job/close',
+          'cluster:admin/xpack/ml/job/forecast',
           'cluster:admin/xpack/ml/datafeeds/put',
           'cluster:admin/xpack/ml/datafeeds/delete',
           'cluster:admin/xpack/ml/datafeeds/start',
@@ -66,6 +70,7 @@ export function privilegesProvider(Promise, ml) {
           }
 
           if (resp.cluster['cluster:admin/xpack/ml/job/put'] &&
+              resp.cluster['cluster:admin/xpack/ml/job/open'] &&
               resp.cluster['cluster:admin/xpack/ml/datafeeds/put']) {
             privileges.canCreateJob = true;
           }
@@ -74,12 +79,17 @@ export function privilegesProvider(Promise, ml) {
             privileges.canUpdateJob = true;
           }
 
+          if (resp.cluster['cluster:admin/xpack/ml/job/forecast']) {
+            privileges.canForecastJob = true;
+          }
+
           if (resp.cluster['cluster:admin/xpack/ml/job/delete'] &&
               resp.cluster['cluster:admin/xpack/ml/datafeeds/delete']) {
             privileges.canDeleteJob = true;
           }
 
-          if (resp.cluster['cluster:admin/xpack/ml/datafeeds/start'] &&
+          if (resp.cluster['cluster:admin/xpack/ml/job/open'] &&
+              resp.cluster['cluster:admin/xpack/ml/datafeeds/start'] &&
               resp.cluster['cluster:admin/xpack/ml/datafeeds/stop']) {
             privileges.canStartStopDatafeed = true;
           }

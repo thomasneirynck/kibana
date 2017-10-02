@@ -25,26 +25,38 @@
     <hr />
   </div>
 
-  <div ng-show="enableRunForecast === true">
-    <h4>Run a new forecast</h4>
-    <div class="form-group">
-      <label for="forecastDuration" class="kuiLabel">Duration</label>
+  <h4>Run a new forecast</h4>
+  <div class="form-group">
+    <label for="forecastDuration" class="kuiLabel">Duration</label>
+    <div ng-class="privileges.canForecastJob && invalidJobState === undefined ? 'control-wrapper' : ['control-wrapper', 'disabled']"
+      data-toggle="tooltip"
+      ng-attr-tooltip="{{privileges.canForecastJob === false ? 'You do not have permission to run forecasts. Please contact your administrator.' :
+        invalidJobState !== undefined ? 'Forecasts cannot be run on ' + invalidJobState + ' jobs' : undefined}}"
+      tooltip-placement="bottom">
       <input
         id="forecastDuration"
         ng-model="newForecastDuration"
         ng-change="newForecastDurationChange()"
+        ng-disabled="isForecastRunning === true || privileges.canForecastJob === false || invalidJobState !== undefined"
         required
         type="text"
         class="form-control" />
+    </div>
+    <div ng-class="privileges.canForecastJob && invalidJobState === undefined ? 'control-wrapper' : ['control-wrapper', 'disabled']"
+      data-toggle="tooltip"
+      ng-attr-tooltip="{{privileges.canForecastJob === false ? 'You do not have permission to run forecasts. Please contact your administrator.' :
+        invalidJobState !== undefined ? 'Forecasts cannot be run on ' + invalidJobState + ' jobs' : undefined}}"
+      tooltip-placement="left">
       <button
         class="kuiButton kuiButton--primary run-button"
         ng-click="checkJobStateAndRunForecast()"
-        ng-disabled="newForecastDurationValid === false || isForecastRunning === true" >
+        ng-disabled="newForecastDurationValid === false || isForecastRunning === true ||
+          privileges.canForecastJob === false || invalidJobState !== undefined" >
         <i ng-if="isForecastRunning === false" class="fa fa-play" ></i>
         <i ng-if="isForecastRunning === true" class="fa fa-spinner fa-spin" ></i>
       </button>
-      <div ng-hide="newForecastDurationValid" class="validation-error">Invalid duration format</div>
     </div>
+    <div ng-hide="newForecastDurationValid" class="validation-error">Invalid duration format</div>
 
     <hr />
 </div>
