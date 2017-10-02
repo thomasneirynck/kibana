@@ -7,8 +7,8 @@ import { getValuesForSeriesIndex, getValuesByX } from './get_values_for_legend';
 
 export class TimeseriesVisualization extends React.Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     // 17ms, which is roughly 60fps
     const debounceMillis = 17;
@@ -17,9 +17,11 @@ export class TimeseriesVisualization extends React.Component {
 
     this.toggleFilter = this.toggleFilter.bind(this);
 
+    const values = this.getLastValues(props);
+
     this.state = {
       values: {},
-      seriesToShow: [],
+      seriesToShow: _.keys(values),
       ignoreVisabilityUpdates: false
     };
   }

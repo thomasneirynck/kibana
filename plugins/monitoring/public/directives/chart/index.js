@@ -30,7 +30,7 @@ uiModule.directive('monitoringChart', (timefilter) => {
         });
       }
 
-      function renderSeries(series) {
+      scope.$watch('series', series => {
         render(
           <div className="monitoring-chart__container">
             <h2 className="monitoring-chart__title">
@@ -52,10 +52,7 @@ uiModule.directive('monitoringChart', (timefilter) => {
           </div>,
           $elem[0]
         );
-      }
-
-      scope.$watch('series', renderSeries);
-      renderSeries(series);
+      });
     }
   };
 });
