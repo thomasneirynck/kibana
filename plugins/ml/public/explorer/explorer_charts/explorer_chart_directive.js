@@ -29,16 +29,19 @@ import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
 import { TimeBucketsProvider } from 'ui/time_buckets';
 import 'plugins/ml/filters/format_value';
 import 'plugins/ml/services/results_service';
-import loadingIndicatorTemplate from 'plugins/ml/components/loading_indicator/loading_indicator_wrapper.html';
+import loadingIndicatorWrapperTemplate from 'plugins/ml/components/loading_indicator/loading_indicator_wrapper.html';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlExplorerChart', function (Private, mlResultsService, formatValueFilter) {
+module.directive('mlExplorerChart', function (Private, mlResultsService, formatValueFilter, $q) {
 
   function link(scope, element) {
     console.log('ml-explorer-chart directive link series config:', scope.seriesConfig);
-    scope.isLoading = false;
+    if (typeof scope.seriesConfig === 'undefined') {
+      // just return so the empty directive renders without an error later on
+      return;
+    }
     const config = scope.seriesConfig;
 
     const ML_TIME_FIELD_NAME = 'timestamp';
@@ -60,59 +63,60 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
     let lineChartGroup;
     let lineChartValuesLine = null;
 
-    // Counter to keep track of what data sets have been loaded.
-    let awaitingCount = 2;
-
     // create a chart loading placeholder
     scope.isLoading = true;
 
-    // finish() function, called after each data set has been loaded and processed.
-    // The last one to call it will trigger the page render.
-    function finish() {
-      awaitingCount--;
-      if (awaitingCount === 0) {
-        scope.chartData = processChartData();
-        // charts are ready, hide the chart loading placeholder
-        scope.isLoading = false;
-        init();
-        drawLineChart();
-      }
-    }
+    // first load and wait for required data,
+    // only after that trigger data processing and page render.
+    // TODO - if query returns no results e.g. source data has been deleted,
+    // display a message saying 'No data between earliest/latest'.
+    $q.all([
+      getMetricData(),
+      getRecordsForCriteria()
+    ]).then(response => {
+      scope.metricData = response[0].results;
+      scope.anomalyRecords = response[1].records;
+      scope.chartData = processChartData();
+      scope.isLoading = false;
+      init();
+      drawLineChart();
+    }).catch(error => {
+      console.error(error);
+    });
 
     // Query 1 - load the raw metric data.
-    const datafeedQuery = _.get(config, 'datafeedConfig.query', null);
-    mlResultsService.getMetricData(
-      config.datafeedConfig.indices,
-      config.datafeedConfig.types,
-      config.entityFields,
-      datafeedQuery,
-      config.metricFunction,
-      config.metricFieldName,
-      config.timeField,
-      scope.plotEarliest,
-      scope.plotLatest,
-      config.interval
-      )
-    .then((resp) => {
-      // TODO - if query returns no results e.g. source data has been deleted,
-      // display a message saying 'No data between earliest/latest'.
-      scope.metricData = resp.results;
-      finish();
-    });
+    function getMetricData() {
+      const datafeedQuery = _.get(config, 'datafeedConfig.query', null);
+      return mlResultsService.getMetricData(
+        config.datafeedConfig.indices,
+        config.datafeedConfig.types,
+        config.entityFields,
+        datafeedQuery,
+        config.metricFunction,
+        config.metricFieldName,
+        config.timeField,
+        scope.plotEarliest,
+        scope.plotLatest,
+        config.interval
+      );
+    }
 
     // Query 2 - load the anomalies.
     // Criteria to return the records for this series are the detector_index plus
     // the specific combination of 'entity' fields i.e. the partition / by / over fields.
-    let criteria = [];
-    criteria.push({ fieldName: 'detector_index', fieldValue: config.detectorIndex });
-    criteria = criteria.concat(config.entityFields);
-
-    mlResultsService.getRecordsForCriteria([config.jobId], criteria,
-      0, scope.plotEarliest, scope.plotLatest, ANOMALIES_MAX_RESULTS)
-    .then((resp) => {
-      scope.anomalyRecords = resp.records;
-      finish();
-    });
+    function getRecordsForCriteria() {
+      let criteria = [];
+      criteria.push({ fieldName: 'detector_index', fieldValue: config.detectorIndex });
+      criteria = criteria.concat(config.entityFields);
+      return mlResultsService.getRecordsForCriteria(
+        [config.jobId],
+        criteria,
+        0,
+        scope.plotEarliest,
+        scope.plotLatest,
+        ANOMALIES_MAX_RESULTS
+      );
+    }
 
     element.on('$destroy', function () {
       scope.$destroy();
@@ -124,7 +128,7 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
 
       // Clear any existing elements from the visualization,
       // then build the svg elements for the chart.
-      const chartElement = d3.select(element.get(0));
+      const chartElement = d3.select(element.get(0)).select('.content-wrapper');
       chartElement.select('svg').remove();
 
       svgWidth = $el.width();
@@ -478,7 +482,6 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
 
       return chartData;
     }
-
   }
 
   return {
@@ -491,6 +494,6 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
       selectedLatest: '='
     },
     link: link,
-    template: loadingIndicatorTemplate
+    template: loadingIndicatorWrapperTemplate
   };
 });
