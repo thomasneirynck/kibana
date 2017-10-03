@@ -2,6 +2,7 @@ export { MonitoringClusterListProvider } from './monitoring/cluster_list';
 export { MonitoringClusterOverviewProvider } from './monitoring/cluster_overview';
 export { MonitoringClusterAlertsProvider } from './monitoring/cluster_alerts';
 export { MonitoringElasticsearchIndicesProvider } from './monitoring/elasticsearch_indices';
+export { MonitoringElasticsearchSummaryStatusProvider } from './monitoring/elasticsearch_summary_status';
 export { PipelineListProvider } from './pipeline_list';
 export { PipelineEditorProvider } from './pipeline_editor';
 export { RandomProvider } from './random';

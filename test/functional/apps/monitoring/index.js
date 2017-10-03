@@ -8,7 +8,7 @@ export default function ({ loadTestFile }) {
     // loadTestFile(require.resolve('./elasticsearch/overview'));
     // loadTestFile(require.resolve('./elasticsearch/nodes'));
     // loadTestFile(require.resolve('./elasticsearch/node'));
-    // loadTestFile(require.resolve('./elasticsearch/indices'));
+    loadTestFile(require.resolve('./elasticsearch/indices'));
     // loadTestFile(require.resolve('./elasticsearch/index'));
     // loadTestFile(require.resolve('./elasticsearch/shard_activity'));
 

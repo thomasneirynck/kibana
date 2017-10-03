@@ -85,22 +85,32 @@ const indexRowFactory = (scope, kbnUrl) => {
 
       return (
         <KuiTableRow>
-          <KuiTableRowCell>
+          <KuiTableRowCell data-test-subj="name">
             <KuiKeyboardAccessible>
-              <a className="kuiLink" onClick={this.changePath}>{ this.props.name }</a>
+              <a className="kuiLink" onClick={this.changePath}>{this.props.name}</a>
             </KuiKeyboardAccessible>
           </KuiTableRowCell>
           <KuiTableRowCell>
             <div title={`Index status: ${status}`}>
               <ElasticsearchStatusIcon status={status} />&nbsp;
-              { capitalize(status) }
+              {capitalize(status)}
             </div>
           </KuiTableRowCell>
-          <KuiTableRowCell>{ formatMetric(get(this.props, 'doc_count'), LARGE_ABBREVIATED) }</KuiTableRowCell>
-          <KuiTableRowCell>{ formatMetric(get(this.props, 'data_size'), LARGE_BYTES) }</KuiTableRowCell>
-          <KuiTableRowCell>{ formatMetric(get(this.props, 'index_rate'), LARGE_FLOAT, '/s') }</KuiTableRowCell>
-          <KuiTableRowCell>{ formatMetric(get(this.props, 'search_rate'), LARGE_FLOAT, '/s') }</KuiTableRowCell>
-          <KuiTableRowCell>{ formatMetric(get(this.props, 'unassigned_shards'), '0') }</KuiTableRowCell>
+          <KuiTableRowCell data-test-subj="documentCount">
+            {formatMetric(get(this.props, 'doc_count'), LARGE_ABBREVIATED)}
+          </KuiTableRowCell>
+          <KuiTableRowCell data-test-subj="dataSize">
+            {formatMetric(get(this.props, 'data_size'), LARGE_BYTES)}
+          </KuiTableRowCell>
+          <KuiTableRowCell data-test-subj="indexRate">
+            {formatMetric(get(this.props, 'index_rate'), LARGE_FLOAT, '/s')}
+          </KuiTableRowCell>
+          <KuiTableRowCell data-test-subj="searchRate">
+            {formatMetric(get(this.props, 'search_rate'), LARGE_FLOAT, '/s')}
+          </KuiTableRowCell>
+          <KuiTableRowCell data-test-subj="unassignedShards">
+            {formatMetric(get(this.props, 'unassigned_shards'), '0')}
+          </KuiTableRowCell>
         </KuiTableRow>
       );
     }

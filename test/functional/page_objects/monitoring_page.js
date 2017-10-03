@@ -21,8 +21,7 @@ export function MonitoringPageProvider({ getPageObjects, getService }) {
     }
 
     async clickBreadcrumb(subj) {
-      const clustersBreadcrumb = await testSubjects.find(subj);
-      await clustersBreadcrumb.click();
+      return testSubjects.click(subj);
     }
 
     async assertTableNoData(subj) {

@@ -1,25 +1,25 @@
 <div class="monitoring-summary-status">
-  <div class="monitoring-summary-status__content">
-    <div>Nodes:
-      <strong data-test-subj="nodesCount">{{ pageData.clusterStatus.nodesCount }}</strong>
+  <div class="monitoring-summary-status__content" data-test-subj="elasticsearchSummaryStatus">
+    <div data-test-subj="nodesCount">Nodes:
+      <strong>{{ pageData.clusterStatus.nodesCount }}</strong>
     </div>
-    <div>Indices:
-      <strong data-test-subj="indicesCount">{{ pageData.clusterStatus.indicesCount }}</strong>
+    <div data-test-subj="indicesCount">Indices:
+      <strong>{{ pageData.clusterStatus.indicesCount }}</strong>
     </div>
-    <div>Memory:
-      <strong data-test-subj="memory">{{ pageData.clusterStatus.memUsed|formatNumber:'bytes' }} / {{ pageData.clusterStatus.memMax|formatNumber:'bytes' }}</strong>
+    <div data-test-subj="memory">Memory:
+      <strong>{{ pageData.clusterStatus.memUsed|formatNumber:'bytes' }} / {{ pageData.clusterStatus.memMax|formatNumber:'bytes' }}</strong>
     </div>
-    <div>Total Shards:
-      <strong data-test-subj="totalShards">{{ pageData.clusterStatus.totalShards }}</strong>
+    <div data-test-subj="totalShards">Total Shards:
+      <strong>{{ pageData.clusterStatus.totalShards }}</strong>
     </div>
-    <div>Unassigned Shards:
-      <strong data-test-subj="unassignedShards">{{ pageData.clusterStatus.unassignedShards }}</strong>
+    <div data-test-subj="unassignedShards">Unassigned Shards:
+      <strong>{{ pageData.clusterStatus.unassignedShards }}</strong>
     </div>
-    <div>Documents:
-      <strong data-test-subj="documentCount">{{ pageData.clusterStatus.documentCount|formatNumber:'int_commas' }}</strong>
+    <div data-test-subj="documentCount">Documents:
+      <strong>{{ pageData.clusterStatus.documentCount|formatNumber:'int_commas' }}</strong>
     </div>
-    <div>Data:
-      <strong data-test-subj="dataSize">{{ pageData.clusterStatus.dataSize|formatNumber:'bytes' }}</strong>
+    <div data-test-subj="dataSize">Data:
+      <strong>{{ pageData.clusterStatus.dataSize|formatNumber:'bytes' }}</strong>
     </div>
     <div class="monitoring-summary-status__status-indicator">
       Health:

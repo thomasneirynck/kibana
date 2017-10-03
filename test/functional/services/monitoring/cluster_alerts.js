@@ -64,8 +64,7 @@ export function MonitoringClusterAlertsProvider({ getService, getPageObjects }) 
     }
 
     async clickViewAll() {
-      const viewAllLink = await testSubjects.find(SUBJ_OVERVIEW_VIEW_ALL);
-      return viewAllLink.click();
+      return testSubjects.click(SUBJ_OVERVIEW_VIEW_ALL);
     }
 
     /*

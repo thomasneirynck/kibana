@@ -1,9 +1,5 @@
 export function MonitoringClusterListProvider({ getService, getPageObjects }) {
   const testSubjects = getService('testSubjects');
-  const getVisibleTextForSubj = async subj => {
-    const el = await testSubjects.find(subj);
-    return el.getVisibleText();
-  };
   const retry = getService('retry');
   const PageObjects = getPageObjects(['monitoring']);
 
@@ -44,28 +40,28 @@ export function MonitoringClusterListProvider({ getService, getPageObjects }) {
       return testSubjects.find(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} clusterLink`);
     }
     getClusterName(clusterUuid) {
-      return getVisibleTextForSubj(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} clusterLink`);
+      return testSubjects.getVisibleText(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} clusterLink`);
     }
     getClusterStatus(clusterUuid) {
-      return getVisibleTextForSubj(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} alertsStatus`);
+      return testSubjects.getVisibleText(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} alertsStatus`);
     }
     getClusterNodesCount(clusterUuid) {
-      return getVisibleTextForSubj(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} nodesCount`);
+      return testSubjects.getVisibleText(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} nodesCount`);
     }
     getClusterIndicesCount(clusterUuid) {
-      return getVisibleTextForSubj(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} indicesCount`);
+      return testSubjects.getVisibleText(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} indicesCount`);
     }
     getClusterDataSize(clusterUuid) {
-      return getVisibleTextForSubj(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} dataSize`);
+      return testSubjects.getVisibleText(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} dataSize`);
     }
     getClusterLogstashCount(clusterUuid) {
-      return getVisibleTextForSubj(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} logstashCount`);
+      return testSubjects.getVisibleText(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} logstashCount`);
     }
     getClusterKibanaCount(clusterUuid) {
-      return getVisibleTextForSubj(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} kibanaCount`);
+      return testSubjects.getVisibleText(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} kibanaCount`);
     }
     getClusterLicense(clusterUuid) {
-      return getVisibleTextForSubj(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} clusterLicense`);
+      return testSubjects.getVisibleText(`${SUBJ_CLUSTER_ROW_PREFIX}${clusterUuid} clusterLicense`);
     }
   };
 }

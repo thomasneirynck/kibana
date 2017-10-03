@@ -1,9 +1,5 @@
 export function MonitoringClusterOverviewProvider({ getService }) {
   const testSubjects = getService('testSubjects');
-  const getVisibleTextForSubj = async subj => {
-    const el = await testSubjects.find(subj);
-    return el.getVisibleText();
-  };
 
   const SUBJ_CLUSTER_ALERTS   = `clusterAlertsContainer`;
   const SUBJ_CLUSTER_OVERVIEW = 'clusterOverviewContainer';
@@ -45,7 +41,7 @@ export function MonitoringClusterOverviewProvider({ getService }) {
       return testSubjects.exists(SUBJ_CLUSTER_OVERVIEW);
     }
     async getClusterName() {
-      return getVisibleTextForSubj(SUBJ_CLUSTER_NAME);
+      return testSubjects.getVisibleText(SUBJ_CLUSTER_NAME);
     }
 
     async doesClusterAlertsExist() {
@@ -57,41 +53,45 @@ export function MonitoringClusterOverviewProvider({ getService }) {
       return statusIcon.getProperty('alt');
     }
     async getEsVersion() {
-      return getVisibleTextForSubj(SUBJ_ES_VERSION);
+      return testSubjects.getVisibleText(SUBJ_ES_VERSION);
     }
     async getEsUptime() {
-      return getVisibleTextForSubj(SUBJ_ES_UPTIME);
+      return testSubjects.getVisibleText(SUBJ_ES_UPTIME);
     }
     async getEsNumberOfNodes() {
-      return getVisibleTextForSubj(SUBJ_ES_NUMBER_OF_NODES);
+      return testSubjects.getVisibleText(SUBJ_ES_NUMBER_OF_NODES);
     }
     async getEsDiskAvailable() {
-      return getVisibleTextForSubj(SUBJ_ES_DISK_AVAILABLE);
+      return testSubjects.getVisibleText(SUBJ_ES_DISK_AVAILABLE);
     }
     async getEsJvmHeap() {
-      return getVisibleTextForSubj(SUBJ_ES_JVM_HEAP);
+      return testSubjects.getVisibleText(SUBJ_ES_JVM_HEAP);
     }
     async getEsNumberOfIndices() {
-      return getVisibleTextForSubj(SUBJ_ES_NUMBER_OF_INDICES);
+      return testSubjects.getVisibleText(SUBJ_ES_NUMBER_OF_INDICES);
     }
     async getEsDocumentsCount() {
-      return getVisibleTextForSubj(SUBJ_ES_DOCUMENTS_COUNT);
+      return testSubjects.getVisibleText(SUBJ_ES_DOCUMENTS_COUNT);
     }
     async getEsDiskUsage() {
-      return getVisibleTextForSubj(SUBJ_ES_DISK_USAGE);
+      return testSubjects.getVisibleText(SUBJ_ES_DISK_USAGE);
     }
     async getEsPrimaryShards() {
-      return getVisibleTextForSubj(SUBJ_ES_PRIMARY_SHARDS);
+      return testSubjects.getVisibleText(SUBJ_ES_PRIMARY_SHARDS);
     }
     async getEsReplicaShards() {
-      return getVisibleTextForSubj(SUBJ_ES_REPLICA_SHARDS);
+      return testSubjects.getVisibleText(SUBJ_ES_REPLICA_SHARDS);
+    }
+
+    async clickEsIndices() {
+      return testSubjects.click(SUBJ_ES_NUMBER_OF_INDICES);
     }
 
     async doesEsMlJobsExist() {
       return testSubjects.exists(SUBJ_ES_ML_JOBS);
     }
     async getEsMlJobs() {
-      return getVisibleTextForSubj(SUBJ_ES_ML_JOBS);
+      return testSubjects.getVisibleText(SUBJ_ES_ML_JOBS);
     }
 
     async doesKbnPanelExist() {
@@ -102,41 +102,41 @@ export function MonitoringClusterOverviewProvider({ getService }) {
       return statusIcon.getProperty('alt');
     }
     async getKbnRequests() {
-      return getVisibleTextForSubj(SUBJ_KBN_REQUESTS);
+      return testSubjects.getVisibleText(SUBJ_KBN_REQUESTS);
     }
     async getKbnMaxResponseTime() {
-      return getVisibleTextForSubj(SUBJ_KBN_MAX_RESPONSE_TIME);
+      return testSubjects.getVisibleText(SUBJ_KBN_MAX_RESPONSE_TIME);
     }
     async getKbnInstances() {
-      return getVisibleTextForSubj(SUBJ_KBN_INSTANCES);
+      return testSubjects.getVisibleText(SUBJ_KBN_INSTANCES);
     }
     async getKbnConnections() {
-      return getVisibleTextForSubj(SUBJ_KBN_CONNECTIONS);
+      return testSubjects.getVisibleText(SUBJ_KBN_CONNECTIONS);
     }
     async getKbnMemoryUsage() {
-      return getVisibleTextForSubj(SUBJ_KBN_MEMORY_USAGE);
+      return testSubjects.getVisibleText(SUBJ_KBN_MEMORY_USAGE);
     }
 
     async doesLsPanelExist() {
       return testSubjects.exists(SUBJ_LS_PANEL);
     }
     async getLsEventsReceived() {
-      return getVisibleTextForSubj(SUBJ_LS_EVENTS_RECEIVED);
+      return testSubjects.getVisibleText(SUBJ_LS_EVENTS_RECEIVED);
     }
     async getLsEventsEmitted() {
-      return getVisibleTextForSubj(SUBJ_LS_EVENTS_EMITTED);
+      return testSubjects.getVisibleText(SUBJ_LS_EVENTS_EMITTED);
     }
     async getLsNodes() {
-      return getVisibleTextForSubj(SUBJ_LS_NODES);
+      return testSubjects.getVisibleText(SUBJ_LS_NODES);
     }
     async getLsUptime() {
-      return getVisibleTextForSubj(SUBJ_LS_UPTIME);
+      return testSubjects.getVisibleText(SUBJ_LS_UPTIME);
     }
     async getLsJvmHeap() {
-      return getVisibleTextForSubj(SUBJ_LS_JVM_HEAP);
+      return testSubjects.getVisibleText(SUBJ_LS_JVM_HEAP);
     }
     async getLsPipelines() {
-      return getVisibleTextForSubj(SUBJ_LS_PIPELINES);
+      return testSubjects.getVisibleText(SUBJ_LS_PIPELINES);
     }
 
   };

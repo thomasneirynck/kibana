@@ -1,5 +1,5 @@
 import React from 'react';
-import { isEqual, sortByOrder, get, includes } from 'lodash';
+import { camelCase, isEqual, sortByOrder, get, includes } from 'lodash';
 import {
   DEFAULT_NO_DATA_MESSAGE,
   DEFAULT_NO_DATA_MESSAGE_WITH_FILTER
@@ -248,19 +248,21 @@ export class MonitoringTable extends React.Component {
    * Render the table header cells
    */
   getTableHeader() {
-    return this.props.columns.map((col, colIndex) => {
+    return this.props.columns.map(col => {
       const headerCellProps = {};
       if (col.headerCellProps) {
         Object.assign(headerCellProps, col.headerCellProps);
       }
 
+      const colKey = camelCase(col.title);
       // if onSort is null, then col is not sortable
       return (
         <KuiTableHeaderCell
-          key={`kuiTableHeaderCell-${colIndex}`}
+          key={`kuiTableHeaderCell-${colKey}`}
           onSort={col.sortKey !== null ? this.setSortColumn.bind(this, col) : null}
           isSorted={this.state.sortKey === col.sortKey}
           isSortAscending={this.state.sortKey === col.sortKey ? this.state.sortOrder > 0 : true}
+          data-test-subj={`tableHeaderCell-${colKey}`}
           {...headerCellProps}
         >
           { col.title }
