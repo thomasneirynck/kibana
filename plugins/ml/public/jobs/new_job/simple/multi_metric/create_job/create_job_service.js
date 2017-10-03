@@ -289,7 +289,6 @@ module.service('mlMultiMetricJobService', function (
     job.datafeed_config = {
       query,
       types: mappingTypes,
-      query_delay: '60s',
       frequency: calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) + 's',
       indices: [formConfig.indexPattern.title],
       scroll_size: 1000
