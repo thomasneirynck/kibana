@@ -4,10 +4,12 @@ import { getTimeFilterRange } from './get_time_filter_range';
 import { pdf } from './pdf';
 import { oncePerServer } from '../../../../server/lib/once_per_server';
 import { getScreenshotFactory } from './get_screenshot';
+import { getAbsoluteUrlFactory } from './get_absolute_url';
 
 function generatePdfFn(server) {
   const getScreenshot = getScreenshotFactory(server);
   const warningLog = (msg) => server.log(['reporting', 'warning'], msg);
+  const getAbsoluteUrl = getAbsoluteUrlFactory(server);
 
   function cleanImages(cleanupPaths) {
     return Promise.all(cleanupPaths.map(imagePath => {
@@ -24,6 +26,18 @@ function generatePdfFn(server) {
     });
   }
 
+  function getUrl(savedObj) {
+    if (savedObj.urlHash) {
+      return getAbsoluteUrl(savedObj.urlHash);
+    }
+
+    if (savedObj.url.startsWith(getAbsoluteUrl())) {
+      return savedObj.url;
+    }
+
+    throw new Error(`Unable to generate report for url ${savedObj.url}, it's not a Kibana URL`);
+  }
+
   return function generatePdf(title, savedObjects, query, headers, browserTimezone) {
     const pdfOutput = pdf.create();
 
@@ -31,7 +45,7 @@ function generatePdfFn(server) {
       if (savedObj.isMissing) {
         return  { savedObj };
       } else {
-        return getScreenshot(savedObj.url, savedObj.type, headers)
+        return getScreenshot(getUrl(savedObj), savedObj.type, headers)
         .then(({ isTimepickerEnabled, screenshots }) => {
           server.log(['reporting', 'debug'], `${savedObj.id} -> ${JSON.stringify(screenshots)}`);
           return { isTimepickerEnabled, screenshots, savedObj };
