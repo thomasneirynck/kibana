@@ -37,7 +37,7 @@ export function nodesRoutes(server) {
 
       try {
         const clusterStats = await getClusterStats(req, esIndexPattern, clusterUuid);
-        const shardStats = await getShardStats(req, esIndexPattern, clusterStats);
+        const shardStats = await getShardStats(req, esIndexPattern, clusterStats, { includeNodes: true });
         const { nodes, rows } = await getNodes(req, esIndexPattern);
 
         const clusterState = get(clusterStats, 'cluster_state', { nodes: {} });
