@@ -2,12 +2,14 @@ import React from 'react';
 import Tab from '../Tab';
 import styled from 'styled-components';
 import withApp from '../withApp';
-import { unit, units, colors } from '../../../style/variables';
+import { unit, units, px, colors } from '../../../style/variables';
+
+const Container = styled.div`height: ${px(unit * 5)};`;
 
 const Divider = styled.div`
   border-left: 1px solid ${colors.gray4};
-  height: ${units.double}px;
-  margin: 0 ${unit}px;
+  height: ${px(units.double)};
+  margin: 0 ${px(unit)};
   display: inline-block;
   vertical-align: middle;
 `;
@@ -16,12 +18,9 @@ function TabNavigation({ urlParams, location, app }) {
   const { appName, transactionType } = urlParams;
   const errorsSelected = location.pathname.includes('/errors');
   const { types } = app.data;
-  if (!types) {
-    return null;
-  }
 
   return (
-    <div>
+    <Container>
       {types.map(type => {
         return (
           <Tab
@@ -37,7 +36,7 @@ function TabNavigation({ urlParams, location, app }) {
       <Tab path={`${appName}/errors`} selected={errorsSelected}>
         Errors
       </Tab>
-    </div>
+    </Container>
   );
 }
 

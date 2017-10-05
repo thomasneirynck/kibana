@@ -3,6 +3,7 @@ import _ from 'lodash';
 import 'react-vis/dist/style.css';
 import PropTypes from 'prop-types';
 import SelectionMarker from './SelectionMarker';
+import StatusText from './StatusText';
 import d3 from 'd3';
 import { scaleLinear } from 'd3-scale';
 import {
@@ -161,6 +162,7 @@ class CustomPlot extends PureComponent {
       chartTitle,
       hoverIndex,
       series,
+      isEmpty,
       width: XY_WIDTH,
       formatYAxisValue
     } = this.props;
@@ -219,6 +221,7 @@ class CustomPlot extends PureComponent {
         </Header>
 
         <XYPlot
+          dontCheckIfEmpty
           onMouseLeave={this.onMouseLeave}
           width={XY_WIDTH}
           height={XY_HEIGHT}
@@ -245,9 +248,10 @@ class CustomPlot extends PureComponent {
               />
             )}
 
-          {this.getEnabledSeries(series)
-            .reverse()
-            .map(this.getSerie)}
+          {!isEmpty &&
+            this.getEnabledSeries(series)
+              .reverse()
+              .map(this.getSerie)}
 
           {hoverIndex !== null &&
             !isDrawing && (
@@ -258,15 +262,19 @@ class CustomPlot extends PureComponent {
             <VerticalGridLines tickValues={[defaultSerie[hoverIndex].x]} />
           )}
 
-          <Voronoi
-            extent={[[XY_MARGIN.left, XY_MARGIN.top], [XY_WIDTH, XY_HEIGHT]]}
-            nodes={defaultSerie}
-            onHover={this.onHover}
-            onMouseDown={this.onMouseDown}
-            onMouseUp={this.onMouseUp}
-            x={d => x(d.x)}
-            y={() => 0}
-          />
+          {isEmpty && <StatusText text="No data within this time range." />}
+
+          {!isEmpty && (
+            <Voronoi
+              extent={[[XY_MARGIN.left, XY_MARGIN.top], [XY_WIDTH, XY_HEIGHT]]}
+              nodes={defaultSerie}
+              onHover={this.onHover}
+              onMouseDown={this.onMouseDown}
+              onMouseUp={this.onMouseUp}
+              x={d => x(d.x)}
+              y={() => 0}
+            />
+          )}
 
           {isDrawing &&
             selectionEnd !== null && (

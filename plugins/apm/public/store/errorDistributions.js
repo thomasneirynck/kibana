@@ -13,7 +13,7 @@ export const [
   ERROR_DISTRIBUTION_FAILURE
 ] = actionTypes;
 
-const INITIAL_STATE = { data: { buckets: [] } };
+const INITIAL_STATE = { data: { buckets: [], totalHits: 0 } };
 const distribution = createReducer(actionTypes, INITIAL_STATE);
 
 const errorDistributions = (state = {}, action) => {

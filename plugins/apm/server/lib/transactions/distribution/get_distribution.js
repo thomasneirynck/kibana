@@ -13,7 +13,7 @@ export async function getDistribution({ appName, transactionName, setup }) {
     transactionName,
     setup
   });
-  const buckets = await getBuckets({
+  const { buckets, total_hits } = await getBuckets({
     appName,
     transactionName,
     setup,
@@ -21,6 +21,7 @@ export async function getDistribution({ appName, transactionName, setup }) {
   });
 
   return {
+    total_hits,
     buckets,
     bucket_size: bucketSize,
     default_bucket_index: getDefaultBucketIndex(buckets)

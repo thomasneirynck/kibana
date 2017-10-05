@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Histogram from '../../../shared/charts/Histogram';
+import EmptyMessage from '../../../shared/EmptyMessage';
 
 export function getFormattedBuckets(buckets, bucketSize) {
   if (!buckets) {
@@ -42,6 +43,13 @@ class Distribution extends Component {
       distribution.data.buckets,
       distribution.data.bucketSize
     );
+
+    const isEmpty = distribution.data.totalHits === 0;
+
+    if (isEmpty) {
+      return <EmptyMessage heading="No errors in the selected time range." />;
+    }
+
     return (
       <div>
         <Histogram

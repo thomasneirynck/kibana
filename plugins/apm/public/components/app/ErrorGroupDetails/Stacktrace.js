@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import CodePreview from '../../shared/CodePreview';
 import { Ellipsis } from '../../shared/Icons';
 import { units } from '../../../style/variables';
+import EmptyMessage from '../../shared/EmptyMessage';
 
 function getCollapsedLibraryFrames(stackframes) {
   return stackframes.reduce((acc, stackframe) => {
@@ -35,6 +36,10 @@ class Stacktrace extends PureComponent {
     const { stackframes = [] } = this.props;
     if (!stackframes) {
       return <div>No stackframes</div>;
+    }
+
+    if (stackframes.length <= 0) {
+      return <EmptyMessage heading="No stacktrace available." />;
     }
 
     return (

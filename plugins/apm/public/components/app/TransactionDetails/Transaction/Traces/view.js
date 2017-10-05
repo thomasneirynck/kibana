@@ -8,6 +8,7 @@ import TimelineHeader from './TimelineHeader';
 import { colors, units, px } from '../../../../../style/variables';
 import { StickyContainer } from 'react-sticky';
 import Timeline from '../../../../shared/charts/Timeline';
+import EmptyMessage from '../../../../shared/EmptyMessage';
 
 const Container = styled.div`
   transition: 0.1s padding ease;
@@ -36,6 +37,15 @@ class Traces extends PureComponent {
     const { traces } = this.props;
     if (traces.status !== STATUS.SUCCESS) {
       return null;
+    }
+
+    if (traces.data.traces.length <= 0) {
+      return (
+        <EmptyMessage
+          heading="No traces available for this transaction."
+          subheading="Try selecting another transaction bucket above."
+        />
+      );
     }
 
     const paddingBottom = getPaddingBottom(

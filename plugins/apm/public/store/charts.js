@@ -11,6 +11,7 @@ export const [CHARTS_LOADING, CHARTS_SUCCESS, CHARTS_FAILURE] = actionTypes;
 
 const INITIAL_STATE = {
   data: {
+    totalHits: 0,
     responseTimes: {},
     rpmPerStatusClass: {},
     rpmPerStatusClassAverage: {}

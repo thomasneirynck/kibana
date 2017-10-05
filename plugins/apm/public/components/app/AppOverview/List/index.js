@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import APMTable, {
   AlignmentKuiTableHeaderCell
 } from '../../../shared/APMTable';
+
 import ListItem from './ListItem';
 
 class List extends Component {
@@ -49,7 +50,7 @@ class List extends Component {
       <APMTable
         searchableFields={['appName', 'agentName']}
         items={items}
-        emptyText="No apps matched your filter. "
+        emptyMessageHeading="No apps with data in the selected time range."
         renderHead={renderHead}
         renderBody={renderBody}
       />

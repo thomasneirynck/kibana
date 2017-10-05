@@ -102,7 +102,7 @@ class List extends Component {
       <APMTable
         searchableFields={['name']}
         items={items}
-        emptyText="No transactions matched your filter."
+        emptyMessageHeading="No transactions in the selected time range."
         renderHead={renderHead}
         renderBody={renderBody}
       />

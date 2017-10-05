@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import CustomPlot from '../CustomPlot';
-import { STATUS } from '../../../../constants';
 import { getTimefilter } from '../../../../utils/timepicker';
 import {
   getFormattedResponseTime,
@@ -38,36 +37,42 @@ export class Charts extends Component {
     timefilter.setTime(selection.start, selection.end);
   };
 
-  render() {
-    const { status, responseTimeSeries, rpmSeries } = this.props;
+  getResponseTimeFormatter = t => {
+    return this.props.isEmpty ? '- ms' : getFormattedResponseTime(t);
+  };
 
-    if (status !== STATUS.SUCCESS) {
-      return null;
-    }
+  getRequestPerMinuteFormatter = t => {
+    return this.props.isEmpty ? '- rpm' : getFormattedRequestsPerMinute(t);
+  };
+
+  render() {
+    const { isEmpty, responseTimeSeries, rpmSeries } = this.props;
 
     return (
       <ChartsWrapper>
         <Chart>
           <CustomPlot
+            isEmpty={isEmpty}
             chartTitle="Response Times"
             series={responseTimeSeries}
             onHover={this.onHover}
             onMouseLeave={this.onMouseLeave}
             onSelection={this.onSelection}
             hoverIndex={this.state.hoverIndex}
-            formatYAxisValue={getFormattedResponseTime}
+            formatYAxisValue={this.getResponseTimeFormatter}
           />
         </Chart>
 
         <Chart>
           <CustomPlot
+            isEmpty={isEmpty}
             chartTitle="Requests per minute"
             series={rpmSeries}
             onHover={this.onHover}
             onMouseLeave={this.onMouseLeave}
             onSelection={this.onSelection}
             hoverIndex={this.state.hoverIndex}
-            formatYAxisValue={getFormattedRequestsPerMinute}
+            formatYAxisValue={this.getRequestPerMinuteFormatter}
           />
         </Chart>
       </ChartsWrapper>

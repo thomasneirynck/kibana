@@ -67,12 +67,6 @@ export async function getApp({ appName, setup }) {
 
   return {
     app_name: appName,
-    types: types.buckets.map(bucket => bucket.key),
-    chart: types.buckets.reduce((acc, bucket) => {
-      acc[bucket.key] = bucket.timeseries.buckets.map(bucket => {
-        return [bucket.key_as_string, bucket.avg.value || 0];
-      });
-      return acc;
-    }, {})
+    types: types.buckets.map(bucket => bucket.key)
   };
 }

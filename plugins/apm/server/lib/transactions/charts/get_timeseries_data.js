@@ -134,6 +134,7 @@ export async function getTimeseriesData({
   }
 
   return {
+    total_hits: resp.hits.total,
     response_times: responseTimeBuckets.reduce(
       (acc, bucket) => {
         const p95 = bucket.pct.values['95.0'];

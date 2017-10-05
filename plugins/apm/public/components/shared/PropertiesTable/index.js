@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import _ from 'lodash';
 import STATIC_PROPS from './staticProperties.json';
 import { unit, units, colors } from '../../../style/variables';
+import TipMessage from '../TipMessage';
 
 const Table = styled.table`
   font-family: monospace;
@@ -79,24 +80,55 @@ function getLevelTwoProps(dynamicProps, currentKey) {
   }));
 }
 
+function getTip(propertyKey) {
+  switch (propertyKey) {
+    case 'user':
+      return 'You can configure your agent to add contextual information about your users';
+
+    case 'tags':
+      return 'You can configure your agent to add filterable tags on transactions';
+
+    case 'custom':
+      return 'You can configure your agent to add custom contextual information on transactions';
+
+    default:
+      return null;
+  }
+}
+
 function recursiveSort(propData, levelTwoKey, level) {
+  const tipHeading = getTip(levelTwoKey);
+
   return (
-    <Table>
-      <tbody>
-        {getSortedProps(propData, levelTwoKey, level).map(({ key, value }) => {
-          return (
-            <Row key={key}>
-              <Cell>{formatKey(key, value)}</Cell>
-              <Cell>
-                {level < 3 && _.isObject(value)
-                  ? recursiveSort(value, levelTwoKey, level + 1)
-                  : formatValue(value)}
-              </Cell>
-            </Row>
-          );
-        })}
-      </tbody>
-    </Table>
+    <div>
+      <Table>
+        <tbody>
+          {getSortedProps(
+            propData,
+            levelTwoKey,
+            level
+          ).map(({ key, value }) => {
+            return (
+              <Row key={key}>
+                <Cell>{formatKey(key, value)}</Cell>
+                <Cell>
+                  {level < 3 && _.isObject(value)
+                    ? recursiveSort(value, levelTwoKey, level + 1)
+                    : formatValue(value)}
+                </Cell>
+              </Row>
+            );
+          })}
+        </tbody>
+      </Table>
+
+      {tipHeading && (
+        <TipMessage
+          heading={tipHeading}
+          link="https://www.elastic.co/guide/en/apm/get-started/current/index.html"
+        />
+      )}
+    </div>
   );
 }
 

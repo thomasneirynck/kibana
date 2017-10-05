@@ -12,10 +12,11 @@ import {
   KuiTableHeader,
   KuiTableHeaderCell,
   KuiEmptyTablePromptPanel,
-  KuiTableInfo,
   KuiToolBarFooter,
   KuiToolBarFooterSection
 } from 'ui_framework/components';
+
+import EmptyMessage from '../EmptyMessage';
 
 export const AlignmentKuiTableHeaderCell = styled(KuiTableHeaderCell)`
   &.kuiTableHeaderCell--alignRight > button > span {
@@ -34,7 +35,7 @@ class APMTable extends Component {
     const {
       searchableFields = [],
       items = [],
-      emptyText,
+      emptyMessageHeading,
       renderHead,
       renderBody
     } = this.props;
@@ -78,7 +79,7 @@ class APMTable extends Component {
 
         {filteredItems.length === 0 && (
           <KuiEmptyTablePromptPanel>
-            <KuiTableInfo>{emptyText}</KuiTableInfo>
+            <EmptyMessage heading={emptyMessageHeading} />
           </KuiEmptyTablePromptPanel>
         )}
 

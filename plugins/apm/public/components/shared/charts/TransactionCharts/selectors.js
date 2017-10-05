@@ -1,3 +1,4 @@
+import d3 from 'd3';
 import { createSelector } from 'reselect';
 import {
   getFormattedResponseTime,
@@ -101,4 +102,20 @@ function getRpmValues(dates = [], yValues = []) {
     x: new Date(x).getTime(),
     y: yValues[i]
   }));
+}
+
+export function getEmptySerie(start, end) {
+  const dates = d3.time
+    .scale()
+    .domain([new Date(start), new Date(end)])
+    .ticks();
+
+  return [
+    {
+      data: dates.map(x => ({
+        x: x.getTime(),
+        y: 1
+      }))
+    }
+  ];
 }

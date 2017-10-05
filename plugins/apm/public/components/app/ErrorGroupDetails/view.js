@@ -9,6 +9,11 @@ import Distribution from './Distribution';
 
 import { units, px, fontFamilyCode, fontSizes } from '../../../style/variables';
 
+const Titles = styled.div`
+  height: ${px(units.triple)};
+  margin-bottom: ${px(units.plus)};
+`;
+
 const Message = styled.div`
   font-family: ${fontFamilyCode};
   font-weight: bold;
@@ -16,10 +21,7 @@ const Message = styled.div`
   margin-bottom: ${px(units.half)};
 `;
 
-const Culprit = styled.div`
-  font-family: ${fontFamilyCode};
-  margin-bottom: ${px(units.plus)};
-`;
+const Culprit = styled.div`font-family: ${fontFamilyCode};`;
 
 function loadErrorGroup(props) {
   const { appName, errorGroupId, start, end } = props.urlParams;
@@ -51,8 +53,10 @@ class ErrorGroupDetails extends Component {
         <PageHeader
           title={`Error group ${errorGroupId.slice(0, 5) || 'N/A'}`}
         />
-        <Message>{message}</Message>
-        <Culprit>{culprit}</Culprit>
+        <Titles>
+          <Message>{message}</Message>
+          <Culprit>{culprit}</Culprit>
+        </Titles>
         <Distribution />
         <DetailView errorGroup={errorGroup} urlParams={this.props.urlParams} />
       </div>

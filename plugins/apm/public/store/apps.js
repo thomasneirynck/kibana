@@ -11,7 +11,9 @@ const actionTypes = createActionTypes('APP');
 export const [APP_LOADING, APP_SUCCESS, APP_FAILURE] = actionTypes;
 
 const INITIAL_STATE = {
-  data: {}
+  data: {
+    types: []
+  }
 };
 
 const app = createReducer(actionTypes, INITIAL_STATE);

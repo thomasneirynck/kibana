@@ -63,9 +63,14 @@ export async function getBuckets({
 
   const resp = await client('search', params);
 
-  return resp.aggregations.distribution.buckets.map(bucket => ({
+  const buckets = resp.aggregations.distribution.buckets.map(bucket => ({
     key: bucket.key,
     count: bucket.doc_count,
     transaction_id: get(bucket.sample.hits.hits[0], `_source.${TRANSACTION_ID}`)
   }));
+
+  return {
+    total_hits: resp.hits.total,
+    buckets
+  };
 }

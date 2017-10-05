@@ -53,7 +53,7 @@ class List extends Component {
       <APMTable
         searchableFields={['groupId', 'culprit', 'message']}
         items={items}
-        emptyText="No error groups matched your filter."
+        emptyMessageHeading="No errors in the selected time range."
         renderHead={renderHead}
         renderBody={renderBody}
       />
