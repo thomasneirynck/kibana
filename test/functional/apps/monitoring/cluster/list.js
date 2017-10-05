@@ -14,7 +14,6 @@ export default function ({ getService, getPageObjects }) {
 
       before(async () => {
         await esArchiver.load('monitoring/multicluster');
-        await kibanaServer.waitForStabilization();
         await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
         remote.setWindowSize(1600, 1000);
 
@@ -81,7 +80,6 @@ Need to monitor multiple clusters? Get a license with full functionality to enjo
 
       before(async () => {
         await esArchiver.load('monitoring/multi-basic');
-        await kibanaServer.waitForStabilization();
         await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
         remote.setWindowSize(1600, 1000);
 

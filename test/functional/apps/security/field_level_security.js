@@ -3,7 +3,6 @@ import { indexBy } from 'lodash';
 
 export default function ({ getService, getPageObjects }) {
   const esArchiver = getService('esArchiver');
-  const kibanaServer = getService('kibanaServer');
   const remote = getService('remote');
   const retry = getService('retry');
   const log = getService('log');
@@ -13,7 +12,6 @@ export default function ({ getService, getPageObjects }) {
     before('initialize tests', async () => {
       await esArchiver.loadIfNeeded('security/flstest');
       await esArchiver.load('empty_kibana');
-      await kibanaServer.waitForStabilization();
       remote.setWindowSize(1600, 1000);
       await PageObjects.settings.navigateTo();
       await PageObjects.settings.clickKibanaIndices();

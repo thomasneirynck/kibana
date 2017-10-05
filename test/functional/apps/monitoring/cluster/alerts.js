@@ -17,7 +17,6 @@ export default function ({ getService, getPageObjects }) {
     describe('cluster has single alert', () => {
       before(async () => {
         await esArchiver.load('monitoring/singlecluster-yellow-platinum');
-        await kibanaServer.waitForStabilization();
         await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
 
         await PageObjects.monitoring.navigateTo();
@@ -48,7 +47,6 @@ export default function ({ getService, getPageObjects }) {
     describe('cluster has 10 alerts', () => {
       before(async () => {
         await esArchiver.load('monitoring/singlecluster-yellow-platinum--with-10-alerts');
-        await kibanaServer.waitForStabilization();
         await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
 
         await PageObjects.monitoring.navigateTo();
@@ -164,7 +162,6 @@ export default function ({ getService, getPageObjects }) {
     describe('alert actions take you to the elasticsearch indices listing', async () => {
       before(async () => {
         await esArchiver.load('monitoring/singlecluster-yellow-platinum');
-        await kibanaServer.waitForStabilization();
         await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
 
         await PageObjects.monitoring.navigateTo();

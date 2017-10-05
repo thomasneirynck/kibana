@@ -17,7 +17,6 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
       await PageObjects.settings.navigateTo();
       await esArchiver.loadIfNeeded('logstash_functional');
       await esArchiver.load('reporting');
-      await kibanaServer.waitForStabilization();
       await kibanaServer.uiSettings.replace({
         'dateFormat:tz':'UTC',
         'defaultIndex':'logstash-*'

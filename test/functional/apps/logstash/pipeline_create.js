@@ -3,7 +3,6 @@ import expect from 'expect.js';
 export default function ({ getService, getPageObjects }) {
   const esArchiver = getService('esArchiver');
   const random = getService('random');
-  const kibanaServer = getService('kibanaServer');
   const pipelineList = getService('pipelineList');
   const pipelineEditor = getService('pipelineEditor');
   const PageObjects = getPageObjects(['logstash']);
@@ -11,7 +10,6 @@ export default function ({ getService, getPageObjects }) {
   describe('pipeline create new', () => {
     before(async () => {
       await esArchiver.load('logstash/empty');
-      await kibanaServer.waitForStabilization();
     });
 
     after(async () => {

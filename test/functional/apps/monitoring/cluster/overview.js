@@ -15,7 +15,6 @@ export default function ({ getService, getPageObjects }) {
     describe('for Green cluster with Gold license', () => {
       before(async () => {
         await esArchiver.load('monitoring/singlecluster-green-gold');
-        await kibanaServer.waitForStabilization();
         await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
 
         await PageObjects.monitoring.navigateTo();
@@ -74,7 +73,6 @@ export default function ({ getService, getPageObjects }) {
     describe('for Yellow cluster with Platinum license', () => {
       before(async () => {
         await esArchiver.load('monitoring/singlecluster-yellow-platinum');
-        await kibanaServer.waitForStabilization();
         await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
 
         await PageObjects.monitoring.navigateTo();
@@ -128,7 +126,6 @@ export default function ({ getService, getPageObjects }) {
     describe('for Yellow cluster with Basic license and no Kibana / Logstash', () => {
       before(async () => {
         await esArchiver.load('monitoring/singlecluster-yellow-basic');
-        await kibanaServer.waitForStabilization();
         await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
 
         await PageObjects.monitoring.navigateTo();

@@ -3,7 +3,6 @@ import { omit } from 'lodash';
 
 export default function ({ getService, getPageObjects }) {
   const esArchiver = getService('esArchiver');
-  const kibanaServer = getService('kibanaServer');
   const pipelineList = getService('pipelineList');
   const pipelineEditor = getService('pipelineEditor');
   const PageObjects = getPageObjects(['logstash']);
@@ -11,7 +10,6 @@ export default function ({ getService, getPageObjects }) {
   describe('pipeline list route', () => {
     before(async () => {
       await esArchiver.load('logstash/example_pipelines');
-      await kibanaServer.waitForStabilization();
       await PageObjects.logstash.gotoPipelineList();
     });
 

@@ -3,7 +3,6 @@ export function GraphPageProvider({ getService, getPageObjects }) {
   const config = getService('config');
   // const retry = getService('retry');
   const log = getService('log');
-  const kibanaServer = getService('kibanaServer');
   const testSubjects = getService('testSubjects');
   const defaultFindTimeout = config.get('timeouts.find');
   const PageObjects = getPageObjects(['common', 'header', 'settings']);
@@ -14,7 +13,6 @@ export function GraphPageProvider({ getService, getPageObjects }) {
     async selectIndexPattern(pattern) {
       await remote.setFindTimeout(defaultFindTimeout).findDisplayedByCssSelector('.indexDropDown').click();
       await remote.setFindTimeout(defaultFindTimeout).findByCssSelector('.indexDropDown > option[label="' + pattern + '"]').click();
-      await kibanaServer.waitForStabilization();
     }
 
     async clickAddField() {
@@ -26,7 +24,6 @@ export function GraphPageProvider({ getService, getPageObjects }) {
       await remote.setFindTimeout(defaultFindTimeout).findDisplayedByCssSelector('select[id="fieldList"] > option[label="' + field + '"]')
       .click();
       await remote.setFindTimeout(defaultFindTimeout).findDisplayedByCssSelector('button[ng-click="addFieldToSelection()"]').click();
-      await kibanaServer.waitForStabilization();
     }
 
     async addField(field) {
@@ -37,7 +34,6 @@ export function GraphPageProvider({ getService, getPageObjects }) {
     async query(str) {
       await remote.setFindTimeout(defaultFindTimeout).findByCssSelector('input.kuiLocalSearchInput').type(str);
       await remote.setFindTimeout(defaultFindTimeout).findByCssSelector('button.kuiLocalSearchButton').click();
-      await kibanaServer.waitForStabilization();
     }
 
 
@@ -75,7 +71,6 @@ export function GraphPageProvider({ getService, getPageObjects }) {
       log.debug('Click New Workspace');
       await remote.setFindTimeout(defaultFindTimeout)
       .findByCssSelector('[aria-label="New Workspace"]').click();
-      await kibanaServer.waitForStabilization();
       const modal = await remote.setFindTimeout(defaultFindTimeout).findByCssSelector('#kibana-body');
       const page = await modal.getVisibleText();
       if (page.includes('This will clear the workspace - are you sure?')) {
@@ -97,21 +92,17 @@ export function GraphPageProvider({ getService, getPageObjects }) {
     async openGraph(name) {
       await remote.setFindTimeout(defaultFindTimeout)
       .findByCssSelector('[aria-label="Load Saved Workspace"]').click();
-      await kibanaServer.waitForStabilization();
       await remote.setFindTimeout(defaultFindTimeout)
       .findByCssSelector('input[name="filter"]').type(name);
-      await kibanaServer.waitForStabilization();
       await PageObjects.common.sleep(1000);
       await remote.setFindTimeout(defaultFindTimeout)
       .findByLinkText(name).click();
-      await kibanaServer.waitForStabilization();
       await PageObjects.common.sleep(5000);
     }
 
     async deleteGraph() {
       await remote.setFindTimeout(defaultFindTimeout)
       .findByCssSelector('[aria-label="Delete Saved Workspace"]').click();
-      await kibanaServer.waitForStabilization();
       await testSubjects.click('confirmModalConfirmButton');
     }
 

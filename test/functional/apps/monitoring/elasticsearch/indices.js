@@ -14,7 +14,6 @@ export default function ({ getService, getPageObjects }) {
       await remote.setWindowSize(1600, 1000);
 
       await esArchiver.load('monitoring/single-red');
-      await kibanaServer.waitForStabilization();
       await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
 
       await PageObjects.monitoring.navigateTo();
