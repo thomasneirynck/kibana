@@ -285,7 +285,7 @@ module
     }
 
     if (makeTheSame) {
-      interval.setInterval(bucketSpan);
+      interval.setInterval($scope.formConfig.bucketSpan);
     }
   }
 

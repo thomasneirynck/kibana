@@ -31,6 +31,7 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
     restrict: 'AE',
     replace: false,
     scope: {
+      bucketSpanFieldChange: '=',
       formConfig: '=',
       jobStateWrapper: '=',
       JOB_STATE: '=jobState',
@@ -134,8 +135,12 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
 
         $q.when(bss.run())
         .then((interval) => {
+          const notify = ($scope.formConfig.bucketSpan !== interval.name);
           $scope.formConfig.bucketSpan = interval.name;
           $scope.ui.bucketSpanEstimator.status = STATUS.FINISHED;
+          if (notify && typeof $scope.bucketSpanFieldChange === 'function') {
+            $scope.bucketSpanFieldChange();
+          }
         })
         .catch((resp) => {
           console.log('Bucket span could not be estimated', resp);

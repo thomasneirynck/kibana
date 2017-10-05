@@ -29,7 +29,7 @@ import 'ui/timefilter';
 import { ResizeCheckerProvider } from 'ui/resize_checker';
 
 import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
-import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
+import { drawLineChartDots, numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
 import { TimeBucketsProvider } from 'ui/time_buckets';
 import ContextChartMask from 'plugins/ml/timeseriesexplorer/context_chart_mask';
 import 'plugins/ml/filters/format_value';
@@ -84,11 +84,13 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
 
     const focusValuesLine = d3.svg.line()
        .x(function (d) { return focusXScale(d.date); })
-       .y(function (d) { return focusYScale(d.value); });
+       .y(function (d) { return focusYScale(d.value); })
+       .defined(d => d.value !== null);
     const focusBoundedArea = d3.svg.area()
       .x (function (d) { return focusXScale(d.date) || 1; })
       .y0(function (d) { return focusYScale(d.upper); })
-      .y1(function (d) { return focusYScale(d.lower); });
+      .y1(function (d) { return focusYScale(d.lower); })
+      .defined(d => (d.lower !== null && d.upper !== null));
 
     let contextXScale = d3.time.scale().range([0, vizWidth]);
     let contextYScale = d3.scale.linear().range([contextChartHeight, 0]);
@@ -432,11 +434,13 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
 
       focusChart.select('.values-line')
         .attr('d', focusValuesLine(data));
+      drawLineChartDots(data, focusChart, focusValuesLine);
 
       // Render circle markers for the points.
       // These are used for displaying tooltips on mouseover.
+      // Don't render dots where value=null (data gaps)
       const dots = d3.select('.focus-chart-markers').selectAll('.metric-value')
-        .data(data);
+        .data(data.filter(d => d.value !== null));
 
       // Remove dots that are no longer needed i.e. if number of chart points has decreased.
       dots.exit().remove();
@@ -625,7 +629,8 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       const contextBoundsArea = d3.svg.area()
         .x((d) => { return contextXScale(d.date); })
         .y0((d) => { return contextYScale(Math.min(chartLimits.max, Math.max(d.lower, chartLimits.min))); })
-        .y1((d) => { return contextYScale(Math.max(chartLimits.min, Math.min(d.upper, chartLimits.max))); });
+        .y1((d) => { return contextYScale(Math.max(chartLimits.min, Math.min(d.upper, chartLimits.max))); })
+        .defined(d => (d.lower !== null && d.upper !== null));
 
       if (scope.modelPlotEnabled === true) {
         cxtGroup.append('path')
@@ -636,12 +641,14 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
 
       const contextValuesLine = d3.svg.line()
        .x((d) => { return contextXScale(d.date); })
-       .y((d) => { return contextYScale(d.value); });
+       .y((d) => { return contextYScale(d.value); })
+       .defined(d => d.value !== null);
 
       cxtGroup.append('path')
         .datum(data)
         .attr('class', 'values-line')
         .attr('d', contextValuesLine);
+      drawLineChartDots(data, cxtGroup, contextValuesLine, 1);
 
       // Create the path elements for the forecast value line and bounds area.
       if (scope.contextForecastData !== undefined) {

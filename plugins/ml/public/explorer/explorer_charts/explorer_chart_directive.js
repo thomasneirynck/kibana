@@ -25,7 +25,7 @@ import moment from 'moment';
 import numeral from 'numeral';
 
 import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
-import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
+import { drawLineChartDots, numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
 import { TimeBucketsProvider } from 'ui/time_buckets';
 import 'plugins/ml/filters/format_value';
 import 'plugins/ml/services/results_service';
@@ -74,9 +74,7 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
       getMetricData(),
       getRecordsForCriteria()
     ]).then(response => {
-      scope.metricData = response[0].results;
-      scope.anomalyRecords = response[1].records;
-      scope.chartData = processChartData();
+      scope.chartData = processChartData(response);
       scope.isLoading = false;
       init();
       drawLineChart();
@@ -233,6 +231,7 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
       drawLineChartAxes();
       drawLineChartHighlightedSpan();
       drawLineChartPaths(data);
+      drawLineChartDots(data, lineChartGroup, lineChartValuesLine);
       drawLineChartMarkers(data);
     }
 
@@ -290,10 +289,11 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
     function drawLineChartMarkers(data) {
       // Render circle markers for the points.
       // These are used for displaying tooltips on mouseover.
+      // Don't render dots where value=null (data gaps)
       const dots = lineChartGroup.append('g')
         .attr('class', 'chart-markers')
         .selectAll('.metric-value')
-        .data(data);
+        .data(data.filter(d => d.value !== null));
 
       // Remove dots that are no longer needed i.e. if number of chart points has decreased.
       dots.exit().remove();
@@ -387,26 +387,28 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
         .style('display', 'none');
     }
 
-    function processChartData() {
+    function processChartData(response) {
+      const metricData = response[0].results;
+      const anomalyRecords = response[1].records;
+
       // Return dataset in format used by the chart.
       // i.e. array of Objects with keys date (JavaScript date), value,
       //    plus anomalyScore for points with anomaly markers.
       const chartData = [];
-      if (scope.metricData === undefined || _.keys(scope.metricData).length === 0) {
+      if (metricData === undefined || _.keys(metricData).length === 0) {
         return chartData;
       }
 
-      _.each(scope.metricData, (value, time) => {
-        chartData.push(
-          {
-            date: new Date(+time),
-            value: value
-          });
+      _.each(metricData, (value, time) => {
+        chartData.push({
+          date: new Date(+time),
+          value: value
+        });
       });
 
       // Iterate through the anomaly records, adding anomalyScore properties
       // to the chartData entries for anomalous buckets.
-      _.each(scope.anomalyRecords, (record) => {
+      _.each(anomalyRecords, (record) => {
 
         // Look for a chart point with the same time as the record.
         // If none found, find closest time in chartData set.

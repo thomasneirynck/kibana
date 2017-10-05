@@ -24,7 +24,7 @@ import moment from 'moment';
 import 'ui/timefilter';
 
 import { TimeBucketsProvider } from 'ui/time_buckets';
-import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
+import { drawLineChartDots, numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -191,6 +191,7 @@ module.directive('mlMultiMetricJobChart', function (Private) {
 
       drawLineChartAxes(xAxis, yAxis);
       drawLineChartPaths(data);
+      drawLineChartDots(data, lineChartGroup, lineChartValuesLine);
     }
 
     function drawLineChartAxes(xAxis, yAxis) {

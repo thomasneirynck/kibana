@@ -133,8 +133,8 @@ module.service('mlMultiMetricJobService', function (
             value = dataForTime[fieldId].values[ML_MEDIAN_PERCENTS];
           }
 
-          if (!isFinite(value)) {
-            value = 0;
+          if (!isFinite(value) || docCount === 0) {
+            value = null;
           }
 
           if (value > highestValue) {
@@ -187,7 +187,7 @@ module.service('mlMultiMetricJobService', function (
             'date_histogram': {
               'field': formConfig.timeField,
               'interval': interval,
-              'min_doc_count': 1
+              'min_doc_count': 0
             }
           }
         }

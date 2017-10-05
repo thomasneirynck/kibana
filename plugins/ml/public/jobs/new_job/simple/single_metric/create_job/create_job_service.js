@@ -79,8 +79,8 @@ module.service('mlSingleMetricJobService', function (
         if (value === undefined && formConfig.field === null) {
           value = dataForTime.doc_count;
         }
-        if (!isFinite(value)) {
-          value = 0;
+        if (!isFinite(value) || dataForTime.doc_count === 0) {
+          value = null;
         }
         if (value > highestValue) {
           highestValue = value;
@@ -106,23 +106,7 @@ module.service('mlSingleMetricJobService', function (
     return deferred.promise;
   };
 
-  function processLineChartResults(data, formConfig) {
-    // for count, scale the model upper and lower by the
-    // ratio of chart interval to bucketspan.
-    // this will force the model bounds to be drawn in the correct location
-    let scale = 1;
-    if (formConfig &&
-      (formConfig.agg.type.mlName === 'count' ||
-      formConfig.agg.type.mlName === 'high_count' ||
-      formConfig.agg.type.mlName === 'low_count' ||
-      formConfig.agg.type.mlName === 'distinct_count')) {
-      const chartIntervalSeconds = formConfig.chartInterval.getInterval().asSeconds();
-      const bucketSpan = parseInterval(formConfig.bucketSpan);
-      if (bucketSpan !== null) {
-        scale =  chartIntervalSeconds / bucketSpan.asSeconds();
-      }
-    }
-
+  function processLineChartResults(data, scale = 1) {
     const lineData = [];
     _.each(data, (dataForTime, t) => {
       const time = +t;
@@ -136,7 +120,7 @@ module.service('mlSingleMetricJobService', function (
       });
     });
 
-    return lineData;
+    return _.sortBy(lineData, 'time');
   }
 
   function processSwimlaneResults(bucketScoreData, init) {
@@ -173,7 +157,7 @@ module.service('mlSingleMetricJobService', function (
             'date_histogram': {
               'field': formConfig.timeField,
               'interval': interval,
-              'min_doc_count': 1
+              'min_doc_count': 0
             }
           }
         }
@@ -416,7 +400,23 @@ module.service('mlSingleMetricJobService', function (
       formConfig.agg.type.mlModelPlotAgg
     )
     .then(data => {
-      this.chartData.model = this.chartData.model.concat(processLineChartResults(data.results, formConfig));
+      // for count, scale the model upper and lower by the
+      // ratio of chart interval to bucketspan.
+      // this will force the model bounds to be drawn in the correct location
+      let scale = 1;
+      if (formConfig &&
+        (formConfig.agg.type.mlName === 'count' ||
+        formConfig.agg.type.mlName === 'high_count' ||
+        formConfig.agg.type.mlName === 'low_count' ||
+        formConfig.agg.type.mlName === 'distinct_count')) {
+        const chartIntervalSeconds = formConfig.chartInterval.getInterval().asSeconds();
+        const bucketSpan = parseInterval(formConfig.bucketSpan);
+        if (bucketSpan !== null) {
+          scale =  chartIntervalSeconds / bucketSpan.asSeconds();
+        }
+      }
+
+      this.chartData.model = this.chartData.model.concat(processLineChartResults(data.results, scale));
 
       const lastBucket = this.chartData.model[this.chartData.model.length - 1];
       const time = (lastBucket !== undefined) ? lastBucket.time : formConfig.start;

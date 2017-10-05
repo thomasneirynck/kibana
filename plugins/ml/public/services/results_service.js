@@ -1215,7 +1215,7 @@ module.service('mlResultsService', function ($q, es) {
           'date_histogram': {
             'field': timeFieldName,
             'interval': interval,
-            'min_doc_count': 1
+            'min_doc_count': 0
           }
 
         }
@@ -1250,10 +1250,14 @@ module.service('mlResultsService', function ($q, es) {
         } else {
           const value = _.get(dataForTime, ['metric', 'value']);
           const values = _.get(dataForTime, ['metric', 'values']);
-          if (value !== undefined) {
+          if (dataForTime.doc_count === 0) {
+            obj.results[dataForTime.key] = null;
+          } else if (value !== undefined) {
             obj.results[dataForTime.key] = value;
           } else if (values !== undefined) {
             obj.results[dataForTime.key] = values[ML_MEDIAN_PERCENTS];
+          } else {
+            obj.results[dataForTime.key] = null;
           }
         }
       });
@@ -1395,7 +1399,7 @@ module.service('mlResultsService', function ($q, es) {
             'date_histogram': {
               'field': 'timestamp',
               'interval': interval,
-              'min_doc_count': 1
+              'min_doc_count': 0
             },
             'aggs': {
               'actual': {
@@ -1427,10 +1431,10 @@ module.service('mlResultsService', function ($q, es) {
         const actual = _.get(dataForTime, ['actual', 'value']);
 
         if (modelUpper === undefined || isFinite(modelUpper) === false) {
-          modelUpper = 0;
+          modelUpper = null;
         }
         if (modelLower === undefined || isFinite(modelLower) === false) {
-          modelLower = 0;
+          modelLower = null;
         }
 
         obj.results[time] = {

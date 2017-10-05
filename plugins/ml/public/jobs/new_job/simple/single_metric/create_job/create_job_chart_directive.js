@@ -24,7 +24,7 @@ import moment from 'moment';
 import 'ui/timefilter';
 
 import { TimeBucketsProvider } from 'ui/time_buckets';
-import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
+import { drawLineChartDots, numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -81,7 +81,8 @@ module.directive('mlSingleMetricJobChart', function (Private) {
       // TODO - do we want to use interpolate('basis') to smooth the connecting lines?
       lineChartValuesLine = d3.svg.line()
         .x(d => lineChartXScale(d.date))
-        .y(d => lineChartYScale(d.value));
+        .y(d => lineChartYScale(d.value))
+        .defined(d => d.value !== null);
       lineChartBoundedArea = d3.svg.area()
         .x (d => lineChartXScale(d.date) || 0)
         .y0(d => lineChartYScale(Math.max(chartLimits.min, Math.min(chartLimits.max, d.upper))))
@@ -132,7 +133,6 @@ module.directive('mlSingleMetricJobChart', function (Private) {
 
     function drawLineChart() {
       const data = scope.chartData.line;
-      const model = scope.chartData.model;
 
       lineChartXScale = lineChartXScale.domain(d3.extent(data, d => d.date));
 
@@ -181,7 +181,8 @@ module.directive('mlSingleMetricJobChart', function (Private) {
 
 
       drawLineChartAxes(xAxis, yAxis);
-      drawLineChartPaths(data, model);
+      drawLineChartPaths(data);
+      drawLineChartDots(data, lineChartGroup, lineChartValuesLine);
     }
 
     function drawLineChartAxes(xAxis, yAxis) {

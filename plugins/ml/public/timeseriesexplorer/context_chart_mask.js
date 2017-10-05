@@ -15,6 +15,8 @@
 
 import d3 from 'd3';
 
+import { drawLineChartDots } from 'plugins/ml/util/chart_utils';
+
 /*
  * Creates a mask over sections of the context chart and swimlane
  * which fall outside the extent of the selection brush used for zooming.
@@ -96,7 +98,8 @@ ContextChartMask.prototype.redraw = function () {
     const boundedArea = d3.svg.area()
       .x(function (d) { return that._x(d.date) || 1; })
       .y0(function (d) { return that._y(Math.min(maxY, Math.max(d.lower, minY))); })
-      .y1(function (d) { return that._y(Math.max(minY, Math.min(d.upper, maxY))); });
+      .y1(function (d) { return that._y(Math.max(minY, Math.min(d.upper, maxY))); })
+      .defined(d => (d.lower !== null && d.upper !== null));
     this.leftGroup.select('.left.area.bounds')
       .attr('d', boundedArea(leftData));
     this.rightGroup.select('.right.area.bounds')
@@ -105,13 +108,16 @@ ContextChartMask.prototype.redraw = function () {
 
   const valuesLine = d3.svg.line()
     .x(function (d) { return that._x(d.date); })
-    .y(function (d) { return that._y(d.value); });
+    .y(function (d) { return that._y(d.value); })
+    .defined(d => d.value !== null);
 
   this.leftGroup.select('.left.values-line')
-        .attr('d', valuesLine(leftData));
+    .attr('d', valuesLine(leftData));
+  drawLineChartDots(leftData, this.leftGroup, valuesLine, 1);
 
   this.rightGroup.select('.right.values-line')
     .attr('d', valuesLine(rightData));
+  drawLineChartDots(rightData, this.rightGroup, valuesLine, 1);
 
   // Configure the coordinates of the left and right polygons (which provide opacity).
   // y extends to the scale min plus the swimlane height.
