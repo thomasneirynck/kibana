@@ -18,11 +18,8 @@ export function MonitoringTableSearchBar(props) {
       )
     : null;
 
-  return (
-    <KuiToolBar>
-      { searchBox }
-      { props.toolBarSections }
-
+  const paginationSection = Boolean(props.paginationControls)
+    ? (
       <KuiToolBarSection>
         <KuiToolBarText>
           { props.pageIndexFirstRow } &ndash; { props.pageIndexLastRow } of { props.rowsFiltered }
@@ -30,6 +27,15 @@ export function MonitoringTableSearchBar(props) {
 
         { props.paginationControls }
       </KuiToolBarSection>
+      )
+    : null;
+
+  return (
+    <KuiToolBar>
+      { searchBox }
+      { props.toolBarSections }
+
+      { paginationSection }
     </KuiToolBar>
   );
 }

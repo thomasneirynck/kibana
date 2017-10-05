@@ -172,8 +172,13 @@ export class MonitoringTable extends React.Component {
       return null;
     }
 
+    if (!this.isPaginationRequired(numAvailableRows)) {
+      return null;
+    }
+
     const hasPrevious = this.paginationHasPrevious();
     const hasNext = this.paginationHasNext(numAvailableRows);
+
     const onPrevious = this.paginationOnPrevious.bind(this);
     const onNext = this.paginationOnNext.bind(this);
 
@@ -197,7 +202,11 @@ export class MonitoringTable extends React.Component {
    */
   getSearchBar(numVisibleRows, numAvailableRows) {
     const firstRow = this.calculateFirstRow();
-    const showSearchBox = Boolean(this.props.filterFields) && (this.props.filterFields.length > 0);
+    const showSearchBox = this.isSearchBoxShown();
+
+    if (!this.isPaginationRequired(numAvailableRows) && !this.isSearchBoxShown()) {
+      return null;
+    }
 
     return (
       <MonitoringTableSearchBar
@@ -276,6 +285,10 @@ export class MonitoringTable extends React.Component {
    * @param {Number} numAvailableRows - number of rows total on all the pages
    */
   getFooter(numVisibleRows, numAvailableRows) {
+    if (!this.isPaginationRequired(numAvailableRows)) {
+      return null;
+    }
+
     const firstRow = this.calculateFirstRow();
     return (
       <MonitoringTableFooter
@@ -325,6 +338,17 @@ export class MonitoringTable extends React.Component {
     };
   }
 
+  isPaginationRequired(numAvailableRows) {
+    const hasPrevious = this.paginationHasPrevious();
+    const hasNext = this.paginationHasNext(numAvailableRows);
+
+    return hasPrevious || hasNext;
+  }
+
+  isSearchBoxShown() {
+    return Boolean(this.props.filterFields) && (this.props.filterFields.length > 0);
+  }
+
   render() {
     const classes = classNames(this.props.className, 'monitoringTable');
 
@@ -360,13 +384,17 @@ export class MonitoringTable extends React.Component {
       table = <MonitoringTableNoData message={this.props.getNoDataMessage(this.state.filterText)} />;
     }
 
-    return (
-      <KuiControlledTable className={classes} data-test-subj={`${this.props.className}Container`}>
-        { this.getSearchBar(numVisibleRows, numAvailableRows)}
-        { table }
-        { this.getFooter(numVisibleRows, numAvailableRows) }
-      </KuiControlledTable>
-    );
+    if(this.isPaginationRequired(numAvailableRows) || this.isSearchBoxShown()) {
+      return (
+        <KuiControlledTable className={classes} data-test-subj={`${this.props.className}Container`}>
+          { this.getSearchBar(numVisibleRows, numAvailableRows) }
+          { table }
+          { this.getFooter(numVisibleRows, numAvailableRows) }
+        </KuiControlledTable>
+      );
+    }
+
+    return table;
   }
 }
 
