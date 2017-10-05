@@ -20,10 +20,10 @@ function TimelineAxis({
   xScale,
   xDomain,
   width,
-  margins,
+  timelineMargins,
   tickValues,
   xMax,
-  legends
+  header
 }) {
   const tickFormat = getTickFormat(xMax);
   const xAxisTickValues = getXAxisTickValues(tickValues, xMax);
@@ -36,21 +36,24 @@ function TimelineAxis({
             style={{
               position: 'absolute',
               backgroundColor: colors.white,
-              borderBottom: `1px solid ${colors.black}`,
-              height: margins.top,
+              borderBottom: `1px solid ${colors.gray3}`,
+              height: `${timelineMargins.top}px`,
+              display: 'flex',
+              justifyContent: 'space-between',
+              flexDirection: 'column',
               zIndex: 2,
               ...style
             }}
           >
-            {legends}
+            {header}
             <XYPlot
               dontCheckIfEmpty
               width={width}
-              height={40}
+              height={20}
               margin={{
-                top: 40,
-                left: margins.left,
-                right: margins.right
+                top: 20,
+                left: timelineMargins.left,
+                right: timelineMargins.right
               }}
               xDomain={xDomain}
             >
@@ -60,6 +63,9 @@ function TimelineAxis({
                 tickSize={0}
                 tickValues={xAxisTickValues}
                 tickFormat={tickFormat}
+                style={{
+                  text: { fill: colors.gray3 }
+                }}
               />
 
               <LastTickValue x={xScale(xMax)} value={tickFormat(xMax)} />

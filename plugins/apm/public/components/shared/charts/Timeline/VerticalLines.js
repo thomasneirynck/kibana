@@ -4,7 +4,14 @@ import { colors } from '../../../../style/variables';
 
 export default class VerticalLines extends PureComponent {
   render() {
-    const { width, height, margins, xDomain, tickValues, xMax } = this.props;
+    const {
+      width,
+      height,
+      timelineMargins,
+      xDomain,
+      tickValues,
+      xMax
+    } = this.props;
 
     return (
       <div
@@ -17,14 +24,17 @@ export default class VerticalLines extends PureComponent {
         <XYPlot
           dontCheckIfEmpty
           width={width}
-          height={height + margins.top}
-          margin={margins}
+          height={height + timelineMargins.top}
+          margin={timelineMargins}
           xDomain={xDomain}
         >
-          <VerticalGridLines tickValues={tickValues} />
+          <VerticalGridLines
+            tickValues={tickValues}
+            style={{ stroke: colors.gray5 }}
+          />
           <VerticalGridLines
             tickValues={[xMax]}
-            style={{ stroke: colors.gray2 }}
+            style={{ stroke: colors.gray3 }}
           />
         </XYPlot>
       </div>

@@ -7,7 +7,14 @@ import { KuiPopover } from 'ui_framework/components';
 import { isNumber, get } from 'lodash';
 import './KuiPopover-overrides.css';
 
-import { unit, units, colors, px } from '../../../../../style/variables';
+import {
+  unit,
+  units,
+  colors,
+  px,
+  fontFamilyCode,
+  fontSizes
+} from '../../../../../style/variables';
 import {
   TRACE_DURATION,
   TRACE_START,
@@ -26,20 +33,34 @@ const TraceLabel = styled.div`
   position: relative;
   direction: rtl;
   text-align: left;
+  margin: ${px(units.quarter)} 0;
+  font-family: ${fontFamilyCode};
+  font-size: ${fontSizes.small};
 `;
 
-const Popover = styled(({ isSelected, ...props }) => <KuiPopover {...props} />)`
+const Popover = styled(({ isSelected, timelineMargins, ...props }) => (
+  <KuiPopover {...props} />
+))`
   display: block;
   user-select: none;
-  padding: ${px(units.half)};
+  padding: ${px(units.half)} ${props => px(props.timelineMargins.right)}
+    ${px(units.half)} ${props => px(props.timelineMargins.left)};
   border-top: 1px solid ${colors.gray4};
-  background-color: ${props => (props.isSelected ? 'yellow' : 'initial')};
+  background-color: ${props => (props.isSelected ? colors.gray5 : 'initial')};
   &:hover {
-    background-color: ${props => (props.isSelected ? 'yellow' : colors.gray5)};
+    background-color: ${colors.gray5};
   }
 `;
 
-function Trace({ history, location, totalDuration, trace, color, isSelected }) {
+function Trace({
+  timelineMargins,
+  history,
+  location,
+  totalDuration,
+  trace,
+  color,
+  isSelected
+}) {
   const width = get({ trace }, TRACE_DURATION) / totalDuration * 100;
   const left = get({ trace }, TRACE_START) / totalDuration * 100;
 
@@ -75,6 +96,7 @@ function Trace({ history, location, totalDuration, trace, color, isSelected }) {
           })
         });
       }}
+      timelineMargins={timelineMargins}
       isSelected={isSelected}
       bodyClassName="apm-overrides"
       button={button}

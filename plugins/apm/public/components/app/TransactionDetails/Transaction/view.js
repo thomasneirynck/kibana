@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { STATUS } from '../../../../constants';
-import { unit, units, colors } from '../../../../style/variables';
+import { units, colors } from '../../../../style/variables';
 import Tab from '../../../shared/Tab';
 import { capitalize } from 'lodash';
 import {
@@ -28,7 +28,6 @@ const TabContentContainer = styled.div`
   border-radius: ${units.quarter}px;
   background-color: ${colors.white};
   overflow: hidden;
-  padding: ${unit}px;
 `;
 
 const DEFAULT_TAB = 'timeline';

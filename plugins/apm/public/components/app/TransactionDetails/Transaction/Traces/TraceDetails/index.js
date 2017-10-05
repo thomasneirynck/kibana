@@ -21,9 +21,11 @@ const DetailsWrapper = styled.div`
   justify-content: space-between;
   align-items: flex-end;
   border-bottom: 1px solid ${colors.gray5};
-  margin-bottom: ${px(units.minus)};
-  padding: ${px(unit)} ${px(units.quarter)};
+  padding: ${px(unit)} ${px(units.plus)};
+  box-shadow: 0 -${units.minus}px ${units.double}px ${units.eighth}px ${colors.black};
+  position: relative;
 `;
+
 const DetailsHeader = styled.div`
   font-weight: 100;
   font-size: ${fontSizes.large};
@@ -37,13 +39,19 @@ const DiscoverButton = styled(KuiButton)`
   color: ${colors.white};
 `;
 
+const CodePreviewContainer = styled.div`
+  max-height: ${px(unit * 20)};
+  overflow: scroll;
+  padding: 0 ${px(units.minus)};
+`;
+
 const getInAppStackframe = stacktrace =>
   first(stacktrace.filter(stacktrace => stacktrace.inApp));
 
 function TraceDetails({ trace, totalDuration }) {
   const traceDuration = get({ trace }, TRACE_DURATION);
   const relativeDuration = traceDuration / totalDuration;
-  // const sql = get(trace, TRACE_SQL);
+
   const stackframe = getInAppStackframe(trace.stacktrace);
   const traceName = get({ trace }, TRACE_NAME);
 
@@ -52,7 +60,7 @@ function TraceDetails({ trace, totalDuration }) {
   }
 
   return (
-    <div>
+    <div style={{ overflow: 'hidden' }}>
       <DetailsWrapper>
         <div>
           <DetailsHeader>Trace details</DetailsHeader>
@@ -70,9 +78,10 @@ function TraceDetails({ trace, totalDuration }) {
         </div>
         <DiscoverButton>Open in Discover</DiscoverButton>
       </DetailsWrapper>
-      {/* <div>{sql}</div> */}
 
-      <CodePreview stackframe={stackframe} />
+      <CodePreviewContainer>
+        <CodePreview stackframe={stackframe} />
+      </CodePreviewContainer>
     </div>
   );
 }

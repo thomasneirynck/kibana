@@ -8,13 +8,13 @@ import TimelineAxis from './TimelineAxis';
 import VerticalLines from './VerticalLines';
 
 const getXScale = _.memoize(
-  (xMin, xMax, margins, width) => {
+  (xMin, xMax, timelineMargins, width) => {
     return scaleLinear()
       .domain([xMin, xMax])
-      .range([margins.left, width - margins.right]);
+      .range([timelineMargins.left, width - timelineMargins.right]);
   },
-  (xMin, xMax, margins, width) =>
-    [xMin, xMax, margins.left, margins.right, width].join('__')
+  (xMin, xMax, timelineMargins, width) =>
+    [xMin, xMax, timelineMargins.left, timelineMargins.right, width].join('__')
 );
 
 const getTicks = _.memoize(
@@ -28,7 +28,7 @@ const getXDomain = _.memoize(
 
 class Timeline extends PureComponent {
   render() {
-    const { width, height, margins, duration, legends } = this.props;
+    const { width, height, timelineMargins, duration, header } = this.props;
 
     if (duration == null || !width) {
       return null;
@@ -36,7 +36,7 @@ class Timeline extends PureComponent {
 
     const xMin = 0;
     const xMax = duration;
-    const xScale = getXScale(xMin, xMax, margins, width);
+    const xScale = getXScale(xMin, xMax, timelineMargins, width);
     const xDomain = getXDomain(xScale);
     const tickValues = getTicks(xScale);
 
@@ -44,18 +44,18 @@ class Timeline extends PureComponent {
       <div>
         <TimelineAxis
           width={width}
-          margins={margins}
+          timelineMargins={timelineMargins}
           xScale={xScale}
           xDomain={xDomain}
           tickValues={tickValues}
           xMax={xMax}
-          legends={legends}
+          header={header}
         />
 
         <VerticalLines
           width={width}
           height={height}
-          margins={margins}
+          timelineMargins={timelineMargins}
           xDomain={xDomain}
           tickValues={tickValues}
           xMax={xMax}

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 import STATIC_PROPS from './staticProperties.json';
-import { units, colors } from '../../../style/variables';
+import { unit, units, colors } from '../../../style/variables';
 
 const Table = styled.table`
   font-family: monospace;
@@ -105,5 +105,9 @@ export function PropertiesTable({ propData, propKey }) {
     return <div>No data</div>;
   }
 
-  return recursiveSort(propData, propKey, 2);
+  return (
+    <div style={{ padding: `${unit}px` }}>
+      {recursiveSort(propData, propKey, 2)}
+    </div>
+  );
 }
