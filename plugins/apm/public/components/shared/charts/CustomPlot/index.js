@@ -50,7 +50,10 @@ const SeriesValue = styled.span`
   display: inline-block;
 `;
 
-const LegendContent = styled.span`white-space: nowrap;`;
+const LegendContent = styled.span`
+  white-space: nowrap;
+  color: ${colors.gray3};
+`;
 
 class CustomPlot extends PureComponent {
   state = {
@@ -114,9 +117,10 @@ class CustomPlot extends PureComponent {
       return [];
     }
 
-    return this.getEnabledSeries(this.props.series).map(
-      serie => serie.data[hoverIndex]
-    );
+    return this.getEnabledSeries(this.props.series).map(serie => ({
+      ...serie.data[hoverIndex],
+      color: serie.color
+    }));
   };
 
   getEnabledSeries(series) {
@@ -246,13 +250,9 @@ class CustomPlot extends PureComponent {
             .map(this.getSerie)}
 
           {hoverIndex !== null &&
-            !isDrawing && <MarkSeries data={hoveredPoints} />}
-
-          <MarkSeries
-            fill="transparent"
-            stroke="transparent"
-            data={defaultSerie.map(point => ({ ...point, y: 0 }))}
-          />
+            !isDrawing && (
+              <MarkSeries data={hoveredPoints} colorType="literal" />
+            )}
 
           {hoverIndex !== null && (
             <VerticalGridLines tickValues={[defaultSerie[hoverIndex].x]} />

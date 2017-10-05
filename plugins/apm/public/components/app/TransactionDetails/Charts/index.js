@@ -21,7 +21,7 @@ function mapStateToProps(state = {}) {
   return {
     urlParams,
     status: charts.status,
-    responseTimeSeries: getResponseTimeSeries(charts.data.responseTimes),
+    responseTimeSeries: getResponseTimeSeries(charts.data),
     rpmSeries: getRpmSeries(charts.data)
   };
 }

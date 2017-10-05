@@ -1,19 +1,24 @@
 import { createSelector } from 'reselect';
-import { getFormattedRequestsPerMinute } from './utils';
+import {
+  getFormattedResponseTime,
+  getFormattedRequestsPerMinute
+} from './utils';
 
 export const getResponseTimeSeries = createSelector(
-  responseTimes => responseTimes.dates,
-  responseTimes => responseTimes.avg,
-  responseTimes => responseTimes.p95,
-  responseTimes => responseTimes.p99,
+  data => data.responseTimes.dates,
+  data => data.responseTimes.avg,
+  data => data.responseTimes.p95,
+  data => data.responseTimes.p99,
+  data => data.weightedAverage,
   _getResponseTimeSeries
 );
 
-function _getResponseTimeSeries(dates, avg, p95, p99) {
+function _getResponseTimeSeries(dates, avg, p95, p99, weightedAverage) {
   return [
     {
       title: 'Avg.',
       data: getResponseTimeValues(dates, avg),
+      legendValue: `${getFormattedResponseTime(weightedAverage / 1000)}`,
       type: 'area',
       color: '#3185FC',
       areaColor: 'rgba(49, 133, 252, 0.1)'
