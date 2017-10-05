@@ -51,6 +51,8 @@ describe('apiHelpers', () => {
     });
 
     it('should return failure state', () => {
+      console.error = jest.fn();
+
       expect(
         createReducer(actionTypes, initialState)(undefined, {
           error: { msg: 'Something failed :(' },
