@@ -190,11 +190,11 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
 // custom filter to filter out objects but allow arrays in a collection
 // used when listing job settings, as id and state are siblings to objects like counts and data_description
 .filter('filterObjects', function () {
-  return function (input) {
+  return function (input, allowArrays = false) {
     const tempObj = {};
     _.each(input, (v,i) => {
       const isObj = typeof v === 'object';
-      if (isObj === false || (isObj && Array.isArray(v))) {
+      if (isObj === false || (allowArrays && isObj && Array.isArray(v))) {
         tempObj[i] = v;
       }
     });

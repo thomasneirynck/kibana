@@ -4,7 +4,7 @@
       <div class="ml_sub_heading">General</div>
       <div class='ml_job_section_container'>
         <div>
-          <ml-job-item ng-repeat="(key, value) in job | filterObjects">
+          <ml-job-item ng-repeat="(key, value) in job | filterObjects: true">
             <div class="ml_job_row row">
               <div class="col-md-3">{{key}}</div>
               <div ng-switch="key">
