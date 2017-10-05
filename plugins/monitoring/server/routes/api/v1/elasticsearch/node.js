@@ -53,7 +53,7 @@ export function nodeRoutes(server) {
           nodeSummary: getNodeSummary(req, esIndexPattern),
           metrics: getMetrics(req, esIndexPattern, [{ term: { [configResolver]: resolver } }]),
           shards,
-          shardStats: getShardStats(req, esIndexPattern, cluster, { includeIndices: true }),
+          shardStats: getShardStats(req, esIndexPattern, cluster, { includeIndices: true, includeNodes: true }),
           nodes: {},
           cluster
         });
