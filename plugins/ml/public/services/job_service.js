@@ -850,7 +850,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
     // if the end timestamp is a number, add one ms to it to make it
     // inclusive of the end of the data
-    if (_.isNumeric(end)) {
+    if (_.isNumber(end)) {
       end++;
     }
 

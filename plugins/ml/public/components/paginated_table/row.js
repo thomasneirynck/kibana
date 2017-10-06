@@ -35,7 +35,7 @@ module.directive('mlRows', function ($compile, getAppState, Private) {
 
         // TODO: It would be better to actually check the type of the field, but we don't have
         // access to it here. This may become a problem with the switch to BigNumber
-        if (_.isNumeric(contents)) {
+        if (_.isNumber(contents)) {
           $cell.addClass('numeric-value');
         }
 
