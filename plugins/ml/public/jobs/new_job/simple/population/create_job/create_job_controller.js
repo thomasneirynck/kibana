@@ -56,6 +56,7 @@ module
   $location,
   $filter,
   $window,
+  $timeout,
   courier,
   timefilter,
   Private,
@@ -193,8 +194,7 @@ module
         jobId: { valid: true },
         groupIds: { valid: true }
       },
-    },
-    isCountOrSum: false
+    }
   };
 
   $scope.formConfig = {
@@ -212,7 +212,7 @@ module
     timeField: indexPattern.timeFieldName,
     // splitField: undefined,
     influencerFields: [],
-    firstSplitFieldValue: undefined,
+    firstSplitFieldName: undefined,
     indexPattern: indexPattern,
     query,
     filters,
@@ -224,11 +224,14 @@ module
     useDedicatedIndex: false
   };
 
-  $scope.formChange = function () {
+  $scope.formChange = function (refreshCardLayout) {
     $scope.ui.isFormValid();
     $scope.ui.dirty = true;
 
     $scope.loadVis();
+    if (refreshCardLayout) {
+      sortSplitCards();
+    }
   };
 
   $scope.overChange = function () {
@@ -236,32 +239,29 @@ module
   };
 
   $scope.splitChange = function (fieldIndex, field) {
-    $scope.formConfig.firstSplitFieldValue = undefined;
+    $scope.formConfig.fields[fieldIndex].firstSplitFieldName = undefined;
 
     if (field !== undefined) {
       $scope.formConfig.fields[fieldIndex].splitField =  field;
 
       $scope.addSplitFieldsToInfluencerList();
 
-      // $scope.ui.splitText = 'Data split by ' + $scope.formConfig.fields[fieldIndex].splitField.name;
+      mlPopulationJobService.getSplitFields($scope.formConfig, field.name, 10)
+      .then((resp) => {
+        if (resp.results.values && resp.results.values.length) {
+          $scope.formConfig.fields[fieldIndex].firstSplitFieldName = resp.results.values[0];
+          $scope.formConfig.fields[fieldIndex].cardLabels = resp.results.values;
+        }
 
-      if (false) { // visual splitting is disabled for now
-        mlPopulationJobService.getSplitFields($scope.formConfig, 10)
-        .then((resp) => {
-          if (resp.results.values && resp.results.values.length) {
-            $scope.formConfig.firstSplitFieldValue = resp.results.values[0];
-          }
-
-          setFieldsChartStates(CHART_STATE.LOADING);
-          drawCards(resp.results.values);
-          $scope.formChange();
-        });
-      }
+        drawCards(fieldIndex, true);
+        $scope.formChange();
+      });
     } else {
       $scope.formConfig.fields[fieldIndex].splitField = undefined;
+      $scope.formConfig.fields[fieldIndex].cardLabels = undefined;
       setFieldsChartStates(CHART_STATE.LOADING);
       $scope.ui.splitText = '';
-      destroyCards();
+      destroyCards(fieldIndex);
       $scope.formChange();
     }
   };
@@ -354,6 +354,8 @@ module
       agg: { type: $scope.ui.aggTypeOptions.find(opt => opt.title === 'Count') },
       splitField: undefined,
       mlType: ML_JOB_FIELD_TYPES.NUMBER,
+      firstSplitFieldName: undefined,
+      cardLabels: undefined
     });
 
     _.each(fields, (field, i) => {
@@ -361,8 +363,8 @@ module
       // use a dummy name.
       // e.g. field_0, field_1
       const id = field.displayName.match(/^[a-zA-Z0-9-_]+$/) ?
-        field.displayName :
-        `field_${i}`;
+      field.displayName :
+      `field_${i}`;
 
       const f = {
         id,
@@ -371,6 +373,8 @@ module
         agg,
         splitField: undefined,
         mlType: field.mlType,
+        firstSplitFieldName: undefined,
+        cardLabels: undefined
       };
       $scope.ui.fields.push(f);
     });
@@ -402,8 +406,7 @@ module
         $scope.formConfig.timeField === undefined ||
         $scope.formConfig.fields.length === 0) {
 
-      // $scope.ui.formValid = false;
-      $scope.ui.formValid = true;
+      $scope.ui.formValid = false;
     } else {
       $scope.ui.formValid = true;
     }
@@ -421,8 +424,6 @@ module
     $scope.ui.showJobFinished = false;
 
     $scope.ui.dirty = false;
-
-    showSparseDataCheckbox();
 
     mlPopulationJobService.clearChartData();
 
@@ -475,17 +476,9 @@ module
     });
   }
 
-  function showSparseDataCheckbox() {
-    $scope.ui.isCountOrSum = false;
-    _.each($scope.formConfig.fields, (fd) => {
-      if (fd.agg.type.dslName === 'count' || fd.agg.type.dslName === 'sum') {
-        $scope.ui.isCountOrSum = true;
-      }
-    });
-  }
-
-  function drawCards(labels) {
-    const $frontCard = angular.element('.population-job-container .detector-container .card-front');
+  function drawCards(fieldIndex, animate = true) {
+    const labels = $scope.formConfig.fields[fieldIndex].cardLabels;
+    const $frontCard = angular.element(`.population-job-container .detector-container.card-${fieldIndex} .card-front`);
     $frontCard.addClass('card');
     $frontCard.find('.card-title').text(labels[0]);
     const w = $frontCard.width();
@@ -501,7 +494,7 @@ module
       backCardTitle += Object.keys($scope.formConfig.fields)[0];
     }
 
-    angular.element('.card-behind').remove();
+    angular.element(`.detector-container.card-${fieldIndex} .card-behind`).remove();
 
     for (let i = 0; i < labels.length; i++) {
       let el = '<div class="card card-behind"><div class="card-title">';
@@ -519,7 +512,7 @@ module
       $backCard.insertBefore($frontCard);
     }
 
-    const cardsBehind = angular.element('.card-behind');
+    const cardsBehind = angular.element(`.detector-container.card-${fieldIndex} .card-behind`);
     let marginLeft = 0;
     let backWidth = w;
 
@@ -549,16 +542,37 @@ module
         window.requestAnimationFrame(fadeCard);
       }
     }
-    fadeCard();
+    if (animate) {
+      fadeCard();
+    } else {
+      for (let i = 0; i < cardsBehind.length; i++) {
+        cardsBehind[i].style.opacity = 1;
+      }
+    }
   }
 
-  function destroyCards() {
-    angular.element('.card-behind').remove();
+  function destroyCards(fieldIndex) {
+    angular.element(`.detector-container.card-${fieldIndex} .card-behind`).remove();
 
-    const $frontCard = angular.element('.population-job-container .detector-container .card-front');
+    const $frontCard = angular.element(`.population-job-container .detector-container.card-${fieldIndex} .card-front`);
     $frontCard.removeClass('card');
     $frontCard.find('.card-title').text('');
     $frontCard.css('margin-top', 0);
+  }
+
+  function sortSplitCards() {
+    // cards may have moved, so redraw or remove the splits if needed
+    // wrapped in a timeout to allow the digest to complete after the charts
+    // has been placed on the page
+    $timeout(() => {
+      $scope.formConfig.fields.forEach((f, i) => {
+        if (f.splitField === undefined) {
+          destroyCards(i);
+        } else {
+          drawCards(i, false);
+        }
+      });
+    }, 0);
   }
 
   let refreshInterval = REFRESH_INTERVAL_MS;

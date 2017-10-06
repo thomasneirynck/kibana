@@ -24,7 +24,7 @@ import moment from 'moment';
 import 'ui/timefilter';
 
 import { TimeBucketsProvider } from 'ui/time_buckets';
-import { drawLineChartDots, numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
+import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -34,27 +34,25 @@ module.directive('mlPopulationJobChart', function (Private) {
   function link(scope, element) {
 
     let svgWidth = 0;
-    const lineChartHeight = scope.chartHeight;
+    const chartHeight = scope.chartHeight;
     const margin = { top: 0, right: 0, bottom: 20, left: scope.chartTicksMargin.width };
-    const svgHeight = lineChartHeight + margin.top + margin.bottom;
+    const svgHeight = chartHeight + margin.top + margin.bottom;
     let vizWidth  = svgWidth  - margin.left - margin.right;
     const chartLimits = { max: 0, min: 0 };
     const TimeBuckets = Private(TimeBucketsProvider);
 
-    let lineChartXScale = null;
-    let lineChartYScale = null;
+    let chartXScale = null;
+    let chartYScale = null;
 
-    let lineChartGroup;
+    let chartGroup;
     let swimlaneGroup;
-
-    let lineChartValuesLine = null;
 
     let $progressBar;
 
     scope.$on('render', () => {
       init();
       createSVGGroups();
-      drawLineChart();
+      drawChart();
     });
 
     scope.$on('render-results', () => {
@@ -74,13 +72,8 @@ module.directive('mlPopulationJobChart', function (Private) {
       svgWidth = $el.width() - offset;
       vizWidth = svgWidth  - margin.left - margin.right;
 
-      lineChartXScale = d3.time.scale().range([0, vizWidth]);
-      lineChartYScale = d3.scale.linear().range([lineChartHeight, 0]);
-
-      lineChartValuesLine = d3.svg.line()
-      .x(d => lineChartXScale(d.date))
-      .y(d => lineChartYScale(d.value))
-      .defined(d => d.value !== null);
+      chartXScale = d3.time.scale().range([0, vizWidth]);
+      chartYScale = d3.scale.linear().range([chartHeight, 0]);
     }
 
 
@@ -90,14 +83,14 @@ module.directive('mlPopulationJobChart', function (Private) {
       }
 
       // Clear any existing elements from the visualization,
-      // then build the svg elements for the bubble chart.
+      // then build the svg elements for the chart.
       const chartElement = d3.select(element.get(0));
       chartElement.select('svg').remove();
       chartElement.select('.progress').remove();
 
       if (chartElement.select('.progress-bar')[0][0] === null) {
         const style = `width: ${(+vizWidth + 2)}px;
-          margin-bottom: -${(+lineChartHeight - 12)}px;
+          margin-bottom: -${(+chartHeight - 12)}px;
           margin-left: ${(+margin.left - 1)}px;'`;
 
         chartElement.append('div')
@@ -117,15 +110,25 @@ module.directive('mlPopulationJobChart', function (Private) {
         .attr('class', 'swimlane')
         .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-      lineChartGroup = svg.append('g')
+      chartGroup = svg.append('g')
         .attr('class', 'line-chart')
         .attr('transform', `translate(${margin.left}, ${margin.top})`);
     }
 
-    function drawLineChart() {
-      const data = scope.chartData.line;
+    function drawChart() {
+      if (scope.chartData.line.length === 0) {
+        return;
+      }
 
-      lineChartXScale = lineChartXScale.domain(d3.extent(data, d => d.date));
+      // create flat array of data points
+      const data = scope.chartData.line.reduce((p, c) => {
+        c.values.forEach(v => {
+          p.push({ date: c.date, value: v.value, label: v.label });
+        });
+        return p;
+      }, []);
+
+      chartXScale = chartXScale.domain(d3.extent(data, d => d.date));
 
       chartLimits.max = d3.max(data, (d) => d.value);
       chartLimits.min = d3.min(data, (d) => d.value);
@@ -136,7 +139,7 @@ module.directive('mlPopulationJobChart', function (Private) {
       chartLimits.max += padding;
       chartLimits.min -= padding;
 
-      lineChartYScale = lineChartYScale.domain([
+      chartYScale = chartYScale.domain([
         chartLimits.min,
         chartLimits.max
       ]);
@@ -145,7 +148,7 @@ module.directive('mlPopulationJobChart', function (Private) {
       const timeBuckets = new TimeBuckets();
       timeBuckets.setInterval('auto');
       if (data.length > 0) {
-        const xDomain = lineChartXScale.domain();
+        const xDomain = chartXScale.domain();
         const bounds = { min: moment(xDomain[0]), max: moment(xDomain[1]) };
         timeBuckets.setBounds(bounds);
       }
@@ -153,9 +156,9 @@ module.directive('mlPopulationJobChart', function (Private) {
 
       const xAxis = d3.svg
         .axis()
-        .scale(lineChartXScale)
+        .scale(chartXScale)
         .orient('bottom')
-        .innerTickSize(-lineChartHeight)
+        .innerTickSize(-chartHeight)
         .outerTickSize(0)
         .tickPadding(10)
         .ticks(numTicksForDateFormat(vizWidth, xAxisTickFormat))
@@ -163,7 +166,7 @@ module.directive('mlPopulationJobChart', function (Private) {
 
       const yAxis = d3.svg
         .axis()
-        .scale(lineChartYScale)
+        .scale(chartYScale)
         .orient('left')
         .innerTickSize(-vizWidth)
         .outerTickSize(0)
@@ -174,33 +177,32 @@ module.directive('mlPopulationJobChart', function (Private) {
       swimlaneGroup.append('rect')
         .attr('x', 0)
         .attr('y', 0)
-        .attr('height', lineChartHeight)
+        .attr('height', chartHeight)
         .attr('width', vizWidth)
         .style('fill', '#FFFFFF');
 
       // Add border round plot area.
-      lineChartGroup.append('rect')
+      chartGroup.append('rect')
         .attr('x', 0)
         .attr('y', 0)
-        .attr('height', lineChartHeight)
+        .attr('height', chartHeight)
         .attr('width', vizWidth)
         .style('stroke', '#cccccc')
         .style('fill', 'none')
         .style('stroke-width', 1);
 
 
-      drawLineChartAxes(xAxis, yAxis);
-      drawLineChartPaths(data);
-      drawLineChartDots(data, lineChartGroup, lineChartValuesLine);
+      drawChartAxes(xAxis, yAxis);
+      drawChartDots(data);
     }
 
-    function drawLineChartAxes(xAxis, yAxis) {
+    function drawChartAxes(xAxis, yAxis) {
 
-      const axes = lineChartGroup.append('g');
+      const axes = chartGroup.append('g');
 
       axes.append('g')
         .attr('class', 'x axis')
-        .attr('transform', `translate(0, ${lineChartHeight})`)
+        .attr('transform', `translate(0, ${chartHeight})`)
         .call(xAxis);
 
       axes.append('g')
@@ -208,14 +210,19 @@ module.directive('mlPopulationJobChart', function (Private) {
         .call(yAxis);
     }
 
-    function drawLineChartPaths(data) {
-      lineChartGroup.append('path')
-        .attr('class', 'values-line')
-        .attr('d', lineChartValuesLine(data));
+    function drawChartDots(data) {
+      const dotGroup = chartGroup.append('g')
+        .classed('values-dots', true);
+      dotGroup.selectAll('circle').data(data)
+        .enter().append('circle')
+          .attr('cx', (d) => chartXScale(d.date))
+          .attr('cy', (d) => chartYScale(d.value))
+          .attr('r', 3)
+          .style("display", (d) => d.value === null ? 'none' : 'auto');
     }
 
     function drawResults() {
-      drawSwimlane(vizWidth, lineChartHeight);
+      drawSwimlane(vizWidth, chartHeight);
       updateProgressBar();
     }
 
@@ -224,7 +231,7 @@ module.directive('mlPopulationJobChart', function (Private) {
 
       let cellWidth = 0;
       if (data.length > 0) {
-        cellWidth = lineChartXScale(data[0].time + scope.chartData.swimlaneInterval) - lineChartXScale(data[0].time);
+        cellWidth = chartXScale(data[0].time + scope.chartData.swimlaneInterval) - chartXScale(data[0].time);
       }
 
       d3.time.scale().range([0, swlWidth])
@@ -246,7 +253,7 @@ module.directive('mlPopulationJobChart', function (Private) {
         .data(data);
 
       cells.enter().append('rect')
-        .attr('x', (d) => lineChartXScale(d.date))
+        .attr('x', (d) => chartXScale(d.date))
         .attr('y', 0)
         .attr('rx', 0)
         .attr('ry', 0)
@@ -269,6 +276,6 @@ module.directive('mlPopulationJobChart', function (Private) {
       chartHeight: '=',
       chartTicksMargin: '='
     },
-    link: link
+    link
   };
 });

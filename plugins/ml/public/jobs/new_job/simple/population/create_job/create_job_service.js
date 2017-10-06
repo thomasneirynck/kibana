@@ -37,6 +37,7 @@ module.service('mlPopulationJobService', function (
 
   const TimeBuckets = Private(IntervalHelperProvider);
   const EVENT_RATE_COUNT_FIELD = '__ml_event_rate_count__';
+  const OVER_FIELD_EXAMPLES_COUNT = 40;
 
   this.chartData = {
     job: {
@@ -107,7 +108,6 @@ module.service('mlPopulationJobService', function (
       _.each(aggregationsByTime, (dataForTime) => {
         const time = +dataForTime.key;
         const date = new Date(time);
-        const docCount = +dataForTime.doc_count;
 
         this.chartData.job.swimlane.push({
           date: date,
@@ -124,28 +124,45 @@ module.service('mlPopulationJobService', function (
         });
 
         fieldIds.forEach((fieldId, i) => {
-          let value;
+          const populationValues = _.get(dataForTime, ['population', 'buckets'], []);
+          const values = [];
           if (fieldId === EVENT_RATE_COUNT_FIELD) {
-            value = docCount;
-          } else if (typeof dataForTime[i].value !== 'undefined') {
-            value = dataForTime[i].value;
+            populationValues.forEach(v => {
+              // check to see if the data is split.
+              if (v[i] === undefined) {
+                values.push({ label:v.key, value: v.doc_count });
+              } else {
+                // a split is being used, so an additional filter was added to the search
+                values.push({ label:v.key, value: v[i].doc_count });
+              }
+            });
+          } else if (typeof dataForTime.population !== 'undefined') {
+            populationValues.forEach(v => {
+              let value = null;
+              // check to see if the data is split
+              if (v[i].value === undefined && v[i].splitValue !== undefined) {
+                // if the field has been split, an additional filter and aggregation
+                // has been added to the search
+                value = v[i].splitValue.value;
+              } else {
+                value = v[i].value;
+              }
+              values.push({ label: v.key, value: (isFinite(value) ? value : null) });
+            });
           } else if (typeof dataForTime[i].values !== 'undefined') {
-            value = dataForTime[i].values[ML_MEDIAN_PERCENTS];
+            // value = dataForTime[i].values[ML_MEDIAN_PERCENTS];
           }
 
-          if (!isFinite(value) || docCount === 0) {
-            value = null;
-          }
-
-          if (value > highestValue) {
-            highestValue = value;
+          const highestValueField = _.reduce(values, (p, c) => (p === undefined || c.value > p.value) ? c : p);
+          if (highestValueField.value > highestValue) {
+            highestValue = highestValueField.value;
           }
 
           if (this.chartData.detectors[i]) {
             this.chartData.detectors[i].line.push({
               date,
               time,
-              value,
+              values,
             });
 
             // init swimlane
@@ -173,7 +190,13 @@ module.service('mlPopulationJobService', function (
   };
 
   function getSearchJsonFromConfig(formConfig) {
-    const interval = formConfig.chartInterval.getInterval().asMilliseconds() + 'ms';
+    const bounds = timefilter.getActiveBounds();
+    const buckets = new TimeBuckets();
+    buckets.setInterval('auto');
+    buckets.setBounds(bounds);
+
+    const interval = buckets.getInterval().asMilliseconds();
+
     // clone the query as we're modifying it
     const query = _.cloneDeep(formConfig.combinedQuery);
 
@@ -204,30 +227,79 @@ module.service('mlPopulationJobService', function (
       }
     });
 
+    // NOTE, disabled for now. this may return it global partitioning is wanted.
     // if the data is partitioned, add an additional search term
-    if (formConfig.firstSplitFieldValue !== undefined) {
-      query.bool.must.push({
-        term: {
-          [formConfig.splitField] : formConfig.firstSplitFieldValue
-        }
-      });
-    }
+    // if (formConfig.firstSplitFieldName !== undefined) {
+    //   query.bool.must.push({
+    //     term: {
+    //       [formConfig.splitField] : formConfig.firstSplitFieldName
+    //     }
+    //   });
+    // }
 
     json.body.query = query;
 
     if (formConfig.fields.length) {
-      json.body.aggs.times.aggs = {};
-      _.each(formConfig.fields, (field, i) => {
-        if (field.id !== EVENT_RATE_COUNT_FIELD) {
-          json.body.aggs.times.aggs[i] = {
-            [field.agg.type.dslName]: { field: field.name }
-          };
+      const aggs = {};
+      formConfig.fields.forEach((field, i) => {
+        if (field.id === EVENT_RATE_COUNT_FIELD) {
+          if (field.splitField !== undefined) {
+            // the event rate chart is draw using doc_values, so no need to specify a field.
+            // however. if the event rate field is split, add a filter to just match the
+            // fields which match the first split value (the front chart)
+            aggs[i] = {
+              filter: {
+                term: {
+                  [field.splitField.name]: field.firstSplitFieldName
+                }
+              }
+            };
+          }
+        } else {
+          if (field.splitField !== undefined) {
+            // if the field is split, add a filter to the aggregation to just select the
+            // fields which match the first split value (the front chart)
+            aggs[i] = {
+              filter: {
+                term: {
+                  [field.splitField.name]: field.firstSplitFieldName
+                }
+              },
+              aggs: {
+                splitValue: {
+                  [field.agg.type.dslName]: { field: field.name }
+                }
+              }
+            };
+          } else {
+            aggs[i] = {
+              [field.agg.type.dslName]: { field: field.name }
+            };
+          }
 
           if (field.agg.type.dslName === 'percentiles') {
-            json.body.aggs.times.aggs[i][field.agg.type.dslName].percents = [ML_MEDIAN_PERCENTS];
+            aggs[i][field.agg.type.dslName].percents = [ML_MEDIAN_PERCENTS];
           }
         }
       });
+
+      if (formConfig.overField !== undefined) {
+        // the over field should not be undefined. the user should not have got this far if it is.
+        // add the wrapping terms based aggregation to divide the results up into
+        // over field values.
+        // we just want the first 40, or whatever OVER_FIELD_EXAMPLES_COUNT is set to.
+        json.body.aggs.times.aggs = {
+          population: {
+            terms: {
+              field: formConfig.overField.name,
+              size: OVER_FIELD_EXAMPLES_COUNT
+            },
+            aggs
+          }
+        };
+      } else {
+        json.body.aggs.times.aggs = aggs;
+      }
     }
 
     return json;
@@ -239,7 +311,7 @@ module.service('mlPopulationJobService', function (
     const job = mlJobService.getBlankJob();
     job.data_description.time_field = formConfig.timeField;
 
-    _.each(formConfig.fields, (field, key) => {
+    formConfig.fields.forEach(field => {
       let func = field.agg.type.mlName;
       if (formConfig.isSparseData) {
         if (field.agg.type.dslName === 'count') {
@@ -254,7 +326,7 @@ module.service('mlPopulationJobService', function (
 
       dtr.detector_description = func;
 
-      if (key !== EVENT_RATE_COUNT_FIELD) {
+      if (field.id !== EVENT_RATE_COUNT_FIELD) {
         dtr.field_name = field.name;
         dtr.detector_description += `(${field.name})`;
       }
@@ -298,7 +370,6 @@ module.service('mlPopulationJobService', function (
     job.datafeed_config = {
       query,
       types: mappingTypes,
-      query_delay: '60s',
       frequency: calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) + 's',
       indices: [formConfig.indexPattern.title],
       scroll_size: 1000
@@ -405,7 +476,7 @@ module.service('mlPopulationJobService', function (
       formConfig.resultsIntervalSeconds + 's',
       {
         name: (formConfig.splitField !== undefined) ? formConfig.splitField.name : undefined,
-        value: formConfig.firstSplitFieldValue
+        value: formConfig.firstSplitFieldName
       }
     )
     .then((data) => {
@@ -442,11 +513,11 @@ module.service('mlPopulationJobService', function (
     return deferred.promise;
   };
 
-  this.getSplitFields = function (formConfig, size) {
+  this.getSplitFields = function (formConfig, splitFieldName, size) {
     const query = formConfig.combinedQuery;
     return mlSimpleJobSearchService.getCategoryFields(
       formConfig.indexPattern.title,
-      formConfig.splitField,
+      splitFieldName,
       size,
       query);
   };

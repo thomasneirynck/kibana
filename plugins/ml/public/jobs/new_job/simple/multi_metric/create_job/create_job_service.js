@@ -205,10 +205,10 @@ module.service('mlMultiMetricJobService', function (
     });
 
     // if the data is partitioned, add an additional search term
-    if (formConfig.firstSplitFieldValue !== undefined) {
+    if (formConfig.firstSplitFieldName !== undefined) {
       query.bool.must.push({
         term: {
-          [formConfig.splitField.name] : formConfig.firstSplitFieldValue
+          [formConfig.splitField.name] : formConfig.firstSplitFieldName
         }
       });
     }
@@ -395,7 +395,7 @@ module.service('mlMultiMetricJobService', function (
       formConfig.resultsIntervalSeconds + 's',
       {
         name: (formConfig.splitField !== undefined) ? formConfig.splitField.name : undefined,
-        value: formConfig.firstSplitFieldValue
+        value: formConfig.firstSplitFieldName
       }
     )
     .then((data) => {

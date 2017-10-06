@@ -211,7 +211,8 @@ module
     description: undefined,
     jobGroups: [],
     mappingTypes: [],
-    useDedicatedIndex: false
+    useDedicatedIndex: false,
+    isSparseData: false
   };
 
   $scope.aggChange = function () {

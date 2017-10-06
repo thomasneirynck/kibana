@@ -32,6 +32,7 @@
                   ng-if="formConfig.splitField !== undefined && (!ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED)"
                   ng-click="splitReset()"
                   aria-label="Reset Split Data to none."
+                  ng-disabled="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
                   class="kuiButton kuiButton--small"
                 >
                   Remove split

@@ -209,7 +209,7 @@ module
     timeField: indexPattern.timeFieldName,
     splitField: undefined,
     influencerFields: [],
-    firstSplitFieldValue: undefined,
+    firstSplitFieldName: undefined,
     indexPattern: indexPattern,
     query,
     filters,
@@ -218,7 +218,8 @@ module
     description: undefined,
     jobGroups: [],
     mappingTypes: [],
-    useDedicatedIndex: false
+    useDedicatedIndex: false,
+    isSparseData: false
   };
 
   $scope.formChange = function () {
@@ -230,7 +231,7 @@ module
 
   $scope.splitChange = function () {
     const splitField = $scope.formConfig.splitField;
-    $scope.formConfig.firstSplitFieldValue = undefined;
+    $scope.formConfig.firstSplitFieldName = undefined;
 
     if (splitField !== undefined) {
       $scope.addSplitFieldsToInfluencerList();
@@ -240,7 +241,7 @@ module
       mlMultiMetricJobService.getSplitFields($scope.formConfig, 10)
       .then((resp) => {
         if (resp.results.values && resp.results.values.length) {
-          $scope.formConfig.firstSplitFieldValue = resp.results.values[0];
+          $scope.formConfig.firstSplitFieldName = resp.results.values[0];
         }
 
         setFieldsChartStates(CHART_STATE.LOADING);

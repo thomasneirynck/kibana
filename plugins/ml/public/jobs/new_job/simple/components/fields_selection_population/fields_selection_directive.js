@@ -49,7 +49,7 @@ module.directive('mlFieldsSelectionPopulation', function () {
           $scope.chartStates.fields[field.id] = CHART_STATE.LOADING;
 
           $scope.sortFields();
-          $scope.formChange();
+          $scope.formChange(true);
         }
         $scope.tempSelectedField.field = undefined;
       };
@@ -58,7 +58,7 @@ module.directive('mlFieldsSelectionPopulation', function () {
         $scope.formConfig.fields.splice(index, 1);
         delete $scope.chartStates.fields[field.id];
         $scope.sortFields();
-        $scope.formChange();
+        $scope.formChange(true);
       };
 
       // put the event rate field at the top
@@ -71,6 +71,7 @@ module.directive('mlFieldsSelectionPopulation', function () {
             $scope.eventRateSelected = true;
           }
         });
+
         if (eventRateIndex >= 0) {
           $scope.formConfig.fields.splice(0, 0, $scope.formConfig.fields.splice(eventRateIndex, 1)[0]);
 

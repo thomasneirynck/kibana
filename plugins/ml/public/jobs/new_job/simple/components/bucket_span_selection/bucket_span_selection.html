@@ -8,7 +8,7 @@
           ng-model="formConfig.bucketSpan"
           required
           placeholder={{formConfig-bucketSpan}}
-          ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED || ui.bucketSpanEstimator.status===1"
+          ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED || ui.bucketSpanEstimator.status===1"
           ng-change="bucketSpanFieldChange()"
           ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
           class="form-control lowercase bucket-span-input" />

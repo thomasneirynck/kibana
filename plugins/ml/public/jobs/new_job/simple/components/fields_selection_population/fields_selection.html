@@ -7,7 +7,7 @@
           <ui-select
             ng-model="tempSelectedField.field"
             on-select="selectField()"
-            ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+            ng-disabled="formConfig.overField === undefined || jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
             append-to-body=true>
             <ui-select-match placeholder="Add field">
                 <ml-field-type-icon type="$select.selected.mlType"></ml-field-type-icon>{{$select.selected.name}}
@@ -50,6 +50,7 @@
                   aria-label="Remove Detector"
                   ng-click="removeField($index, field)"
                   tooltip-append-to-body="true"
+                  ng-disabled="formConfig.fields[$index] === undefined || jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
                   type="button"
                   class="kuiButton kuiButton--danger kuiButton--small remove-button">
                     <i aria-hidden="true" class="fa fa-trash"></i>
@@ -60,18 +61,5 @@
         </div>
       </div>
     </div>
-  </div>
-  <div class="row form-controls" ng-show='ui.isCountOrSum'>
-    <span class="col-md-12">
-      <label class='kuiCheckBoxLabel kuiVerticalRhythm sparse-data'>
-        <input type="checkbox"
-          class='kuiCheckBox'
-          ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-          ng-model  ="formConfig.isSparseData" />
-          <span class='kuiCheckBoxLabel__text'>
-            Sparse data <i ml-info-icon="new_job_sparsedata" tooltip-append-to-body="true"></i>
-          </span>
-    </label>
-    </span>
   </div>
 </div>
