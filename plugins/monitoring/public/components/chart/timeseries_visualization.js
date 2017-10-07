@@ -116,6 +116,17 @@ export class TimeseriesVisualization extends React.Component {
       flexDirection: 'column' // for legend position = bottom
     };
 
+    const legend = this.props.hasLegend
+      ? (
+        <HorizontalLegend
+          seriesFilter={this.state.seriesToShow}
+          seriesValues={this.state.values}
+          onToggle={this.toggleFilter}
+          {...this.props}
+        />
+        )
+      : null;
+
     return (
       <div className={className}>
         <div style={style} className="rhythm_chart__content">
@@ -126,12 +137,7 @@ export class TimeseriesVisualization extends React.Component {
               {...this.props}
             />
           </div>
-          <HorizontalLegend
-            seriesFilter={this.state.seriesToShow}
-            seriesValues={this.state.values}
-            onToggle={this.toggleFilter}
-            {...this.props}
-          />
+          { legend }
         </div>
       </div>
     );
@@ -139,5 +145,5 @@ export class TimeseriesVisualization extends React.Component {
 }
 
 TimeseriesVisualization.defaultProps = {
-  legend: true
+  hasLegend: true
 };
