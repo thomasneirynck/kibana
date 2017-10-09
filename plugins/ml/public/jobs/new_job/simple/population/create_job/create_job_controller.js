@@ -30,7 +30,7 @@ import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/single_metric/create_job/filter_agg_types';
 import { isJobIdValid } from 'plugins/ml/util/job_utils';
-import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
+import { getQueryFromSavedSearch, getSafeFieldName } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
 import { ML_JOB_FIELD_TYPES, kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
 import template from './create_job.html';
@@ -359,13 +359,7 @@ module
     });
 
     _.each(fields, (field, i) => {
-      // if the field name contains bad characters which break elasticsearch aggregations
-      // use a dummy name.
-      // e.g. field_0, field_1
-      const id = field.displayName.match(/^[a-zA-Z0-9-_]+$/) ?
-      field.displayName :
-      `field_${i}`;
-
+      const id = getSafeFieldName(field.displayName, i);
       const f = {
         id,
         name: field.displayName,
