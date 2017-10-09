@@ -353,11 +353,11 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
 
       const focusChart = d3.select('.focus-chart');
 
-      focusChart.select('.zoom-interval')
-        .text(scope.focusAggregationInterval.expression);
-
+      // Update the plot interval labels.
+      const focusAggInt = scope.focusAggregationInterval.expression;
+      const bucketSpan = scope.selectedJob.analysis_config.bucket_span;
       angular.element('.zoom-aggregation-interval').text(
-        `(aggregation interval: ${scope.focusAggregationInterval.expression})`);
+        `(aggregation interval: ${focusAggInt}, bucket span: ${bucketSpan})`);
 
       // Render the axes.
 
@@ -534,7 +534,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         .attr('x', (xPos + 6))
         .attr('y', 17)
         .attr('class', 'zoom-info-text zoom-aggregation-interval')
-        .text('(aggregation interval: )');
+        .text('(aggregation interval: , bucket span: )');
 
       if (scope.modelPlotEnabled === false) {
         const modelPlotLabel = zoomGroup.append('text')
@@ -1044,6 +1044,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
 
   return {
     scope: {
+      selectedJob: '=',
       modelPlotEnabled: '=',
       contextChartData: '=',
       contextForecastData: '=',
