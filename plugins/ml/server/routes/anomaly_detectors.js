@@ -160,21 +160,6 @@ export function jobRoutes(server, commonRouteConfig) {
   });
 
   server.route({
-    method: 'UPDATE',
-    path: '/api/ml/anomaly_detectors/{jobId}',
-    handler(request, reply) {
-      const callWithRequest = callWithRequestFactory(server, request);
-      const jobId = request.params.jobId;
-      return callWithRequest('ml.deleteJob', { jobId })
-      .then(resp => reply(resp))
-      .catch(resp => reply(wrapError(resp)));
-    },
-    config: {
-      ...commonRouteConfig
-    }
-  });
-
-  server.route({
     method: 'POST',
     path: '/api/ml/anomaly_detectors/_validate/detector',
     handler(request, reply) {
