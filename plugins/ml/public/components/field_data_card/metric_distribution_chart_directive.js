@@ -28,7 +28,7 @@ import { ordinalSuffix } from 'ui/utils/ordinal_suffix';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlMetricDistributionChart', function () {
+module.directive('mlMetricDistributionChart', function (mlChartTooltipService) {
 
   function link(scope, element, attrs) {
     scope.isLoading = false;
@@ -238,7 +238,7 @@ module.directive('mlMetricDistributionChart', function () {
         .attr('class', 'area')
         .attr('d', distributionArea)
         .on('mouseover', showChartTooltip)
-        .on('mouseout', hideLineChartTooltip)
+        .on('mouseout', () => mlChartTooltipService.hide())
         .on('mousemove', showChartTooltip);
 
       function showChartTooltip() {
@@ -264,34 +264,12 @@ module.directive('mlMetricDistributionChart', function () {
           contents = `${bar.percent}% of documents have<br>a value of ${minValFormatted}`;
         }
 
-        const tooltipDiv = d3.select('.ml-field-data-card-tooltip');
-        tooltipDiv.style('opacity', .9)
-          .style('display', 'block');
-        tooltipDiv.html(contents);
-
-        // Position the tooltip.
-        const pos = path[0][0].getBoundingClientRect();
-        const doc = document.documentElement;
-        const scrollTop = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
-        const y = pos.top + scrollTop + yPos;
-        const x = pos.left + xPos;
-        const tooltipWidth = tooltipDiv.node().offsetWidth;
-        if (x + tooltipWidth + 10 < document.body.clientWidth) {
-          tooltipDiv.style('left', (x + 'px'))
-            .style('top', y + 'px');
-        } else {
-          tooltipDiv.style('left', (x - tooltipWidth) + 'px')
-            .style('top', y + 'px');
+        if (path.length && path[0].length) {
+          mlChartTooltipService.show(contents, path[0][0], {
+            x: xPos + 5,
+            y: yPos + 10
+          });
         }
-
-      }
-
-      function hideLineChartTooltip() {
-        const tooltipDiv = d3.select('.ml-field-data-card-tooltip');
-        tooltipDiv.transition()
-          .duration(500)
-          .style('opacity', 0)
-          .style('display', 'none');
       }
     }
 

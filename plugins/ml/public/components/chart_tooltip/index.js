@@ -13,10 +13,5 @@
  * strictly prohibited.
  */
 
-import './forecasting_modal';
-import './timeseriesexplorer_controller.js';
-import './timeseries_search_service.js';
-import './timeseries_chart_directive';
+import './chart_tooltip';
 import './styles/main.less';
-import 'plugins/ml/components/job_select_list';
-import 'plugins/ml/components/chart_tooltip';

@@ -34,7 +34,7 @@ import loadingIndicatorWrapperTemplate from 'plugins/ml/components/loading_indic
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlExplorerChart', function (Private, mlResultsService, formatValueFilter, $q) {
+module.directive('mlExplorerChart', function (Private, mlResultsService, formatValueFilter, $q, mlChartTooltipService) {
 
   function link(scope, element) {
     console.log('ml-explorer-chart directive link series config:', scope.seriesConfig);
@@ -303,7 +303,7 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
         .on('mouseover', function (d) {
           showLineChartTooltip(d, this);
         })
-        .on('mouseout', hideLineChartTooltip);
+        .on('mouseout', () => mlChartTooltipService.hide());
 
       // Update all dots to new positions.
       dots.attr('cx', function (d) { return lineChartXScale(d.date); })
@@ -353,38 +353,10 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
         contents += ('value: ' + numeral(marker.value).format('0,0.[00]'));
       }
 
-      const tooltipDiv = d3.select('.ml-explorer-charts-tooltip');
-      tooltipDiv.style('display', 'block');
-      tooltipDiv.html(contents);
-
-      // Position the tooltip.
-      const pos = circle.getBoundingClientRect();
-      const doc = document.documentElement;
-      const scrollTop = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
-
-      const y = pos.top + scrollTop;
-      const x = pos.left;
-      const parentWidth = angular.element('.ml-explorer').width();
-      const tooltipWidth = tooltipDiv.node().offsetWidth;
-      if (x + tooltipWidth + LINE_CHART_ANOMALY_RADIUS + 10 < parentWidth) {
-        tooltipDiv.style('left', (x + (LINE_CHART_ANOMALY_RADIUS * 2) + 4) + 'px')
-          .style('top', (y - 0) + 'px');
-      } else {
-        tooltipDiv.style('left', x - (tooltipWidth + LINE_CHART_ANOMALY_RADIUS) + 'px')
-          .style('top', (y - 0) + 'px');
-      }
-
-      tooltipDiv.transition()
-        .duration(200)
-        .style('opacity', .9);
-    }
-
-    function hideLineChartTooltip() {
-      const tooltipDiv = d3.select('.ml-explorer-charts-tooltip');
-      tooltipDiv.transition()
-        .duration(500)
-        .style('opacity', 0)
-        .style('display', 'none');
+      mlChartTooltipService.show(contents, circle, {
+        x: LINE_CHART_ANOMALY_RADIUS * 2,
+        y: 0
+      });
     }
 
     function processChartData(response) {

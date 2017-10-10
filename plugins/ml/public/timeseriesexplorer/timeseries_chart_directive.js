@@ -38,7 +38,7 @@ import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, timefilter,
-  mlAnomaliesTableService, formatValueFilter) {
+  mlAnomaliesTableService, formatValueFilter, mlChartTooltipService) {
 
   function link(scope, element) {
 
@@ -450,7 +450,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         .on('mouseover', function (d) {
           showFocusChartTooltip(d, this);
         })
-        .on('mouseout', hideFocusChartTooltip);
+        .on('mouseout', () => mlChartTooltipService.hide());
 
       // Update all dots to new positions.
       dots.attr('cx', (d) => { return focusXScale(d.date); })
@@ -483,7 +483,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
           .on('mouseover', function (d) {
             showFocusChartTooltip(d, this);
           })
-          .on('mouseout', hideFocusChartTooltip);
+          .on('mouseout', () => mlChartTooltipService.hide());
 
         // Update all dots to new positions.
         forecastDots.attr('cx', (d) => { return focusXScale(d.date); })
@@ -955,32 +955,10 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         }
       }
 
-      const tooltipDiv = d3.select('.ml-timeseries-point-tooltip');
-      tooltipDiv.transition()
-        .duration(200)
-        .style('opacity', .9);
-      tooltipDiv.html(contents);
-
-      // Position the tooltip.
-      const pos = circle.getBoundingClientRect();
-      const x = pos.left;
-      const y = pos.top;
-      const parentWidth = $('body').width();
-      const tooltipWidth = tooltipDiv.node().offsetWidth;
-      if (x + tooltipWidth + FOCUS_CHART_ANOMALY_RADIUS + 10 < parentWidth) {
-        tooltipDiv.style('left', (x + (FOCUS_CHART_ANOMALY_RADIUS * 2) + 4) + 'px')
-          .style('top', (y - 28) + 'px');
-      } else {
-        tooltipDiv.style('left', x - (tooltipWidth + FOCUS_CHART_ANOMALY_RADIUS) + 'px')
-          .style('top', (y - 28) + 'px');
-      }
-    }
-
-    function hideFocusChartTooltip() {
-      const tooltipDiv = d3.select('.ml-timeseries-point-tooltip');
-      tooltipDiv.transition()
-        .duration(500)
-        .style('opacity', 0);
+      mlChartTooltipService.show(contents, circle, {
+        x: FOCUS_CHART_ANOMALY_RADIUS * 2,
+        y: 0
+      });
     }
 
     function highlightFocusChartAnomaly(record) {
@@ -1039,7 +1017,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
 
     function unhighlightFocusChartAnomaly() {
       d3.select('.focus-chart-markers').selectAll('.anomaly-marker.highlighted').remove();
-      hideFocusChartTooltip();
+      mlChartTooltipService.hide();
     }
 
 

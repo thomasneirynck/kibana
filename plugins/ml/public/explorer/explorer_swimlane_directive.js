@@ -29,7 +29,7 @@ import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDashboardService) {
+module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDashboardService, mlChartTooltipService) {
 
   function link(scope, element) {
 
@@ -126,30 +126,14 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
         }
         contents += ('Max anomaly score: ' + displayScore);
 
-        const x = $event.pageX;
-        const y = $event.pageY;
-        const offset = 5;
-        $('<div class="ml-explorer-swimlane-tooltip ml-explorer-tooltip">' + contents + '</div>').css({
-          position: 'absolute',
-          display: 'none',
-          'z-index': 1,
-          top: y + offset,
-          left: x + offset
-        }).appendTo('body').fadeIn(200);
-
-        // Position the tooltip.
-        const $win = $(window);
-        const winHeight = $win.height();
-        const yOffset = window.pageYOffset;
-        const tooltipWidth = $('.ml-explorer-swimlane-tooltip').outerWidth(true);
-        const tooltipHeight = $('.ml-explorer-swimlane-tooltip').outerHeight(true);
-
-        $('.ml-explorer-swimlane-tooltip').css('left', x + offset + tooltipWidth > $win.width() ? x - offset - tooltipWidth : x + offset);
-        $('.ml-explorer-swimlane-tooltip').css('top', y + tooltipHeight < winHeight + yOffset ? y : y - tooltipHeight);
+        mlChartTooltipService.show(contents, $event.target, {
+          x: 20,
+          y: 10
+        });
       }
 
       function cellMouseleave() {
-        $('.ml-explorer-swimlane-tooltip').remove();
+        mlChartTooltipService.hide();
       }
 
       _.each(lanes, (lane) => {

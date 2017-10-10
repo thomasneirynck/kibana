@@ -18,3 +18,4 @@ import './field_data_card_directive';
 import './metric_distribution_chart_directive';
 import './styles/main.less';
 import 'plugins/ml/components/field_type_icon';
+import 'plugins/ml/components/chart_tooltip';
