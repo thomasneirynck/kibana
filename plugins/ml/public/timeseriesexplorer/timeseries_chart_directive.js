@@ -962,7 +962,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       tooltipDiv.html(contents);
 
       // Position the tooltip.
-      const pos = $(circle).position();
+      const pos = circle.getBoundingClientRect();
       const x = pos.left;
       const y = pos.top;
       const parentWidth = $('body').width();
@@ -1030,7 +1030,10 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
 
         // Display the chart tooltip for this marker.
         // Note the values of the record and marker may differ depending on the levels of aggregation.
-        showFocusChartTooltip(markerToSelect, $('.focus-chart-markers .anomaly-marker.highlighted'));
+        const circle = $('.focus-chart-markers .anomaly-marker.highlighted');
+        if (circle.length) {
+          showFocusChartTooltip(markerToSelect, circle[0]);
+        }
       }
     }
 
