@@ -1,12 +1,12 @@
 <div class="ml-field-data-card">
-  <div class="title-bar" ng-class="cardConfig.fieldName===undefined ? 'document_count': cardConfig.isUnsupportedType===true ? 'type-other' : cardConfig.type">
-    <ml-field-type-icon type="cardConfig.type"></ml-field-type-icon>
+  <div class="title-bar" ng-class="card.fieldName===undefined ? 'document_count': card.isUnsupportedType===true ? 'type-other' : card.type">
+    <ml-field-type-icon type="card.type"></ml-field-type-icon>
     <div class="field-name">
-      {{ cardConfig.fieldName || 'document count' }}
+      {{ card.fieldName || 'document count' }}
     </div>
   </div>
 
-  <div ng-if="cardConfig.existsInDocs === false" class="card-contents">
+  <div ng-if="card.existsInDocs === false" class="card-contents">
     <div class="not-exist-message">
       <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
       This field does not appear in any documents for the selected time range

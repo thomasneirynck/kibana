@@ -14,9 +14,8 @@
  */
 
 /*
- * Performs a number of checks during initialization of the Ml plugin,
- * such as that Elasticsearch is running, and that the Ml searches, visualizations
- * and dashboards exist in the Elasticsearch kibana index.
+ * Performs checks during initialization of the ML plugin that necessary dependencies are
+ * running and installed. Currently only verifies that a connection can be made to Elasticsearch.
  */
 
 import Promise from 'bluebird';
@@ -24,8 +23,7 @@ import elasticsearch from 'elasticsearch';
 
 const NoConnections = elasticsearch.errors.NoConnections;
 
-// eslint-disable-next-line kibana-custom/no-default-export
-export default function (plugin, server) {
+export function initializationChecks(plugin, server) {
   const config = server.config();
 
   // Use the admin cluster for managing the .kibana index.

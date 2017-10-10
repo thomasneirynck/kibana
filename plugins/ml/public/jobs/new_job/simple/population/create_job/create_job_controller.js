@@ -32,7 +32,8 @@ import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/single_metric/cre
 import { isJobIdValid } from 'plugins/ml/util/job_utils';
 import { getQueryFromSavedSearch, getSafeFieldName } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
-import { ML_JOB_FIELD_TYPES, kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
+import { ML_JOB_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
+import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
 import template from './create_job.html';
 
 uiRoutes

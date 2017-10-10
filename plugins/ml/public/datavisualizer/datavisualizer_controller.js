@@ -27,7 +27,9 @@ import chrome from 'ui/chrome';
 import uiRoutes from 'ui/routes';
 import { luceneStringToDsl } from 'ui/courier/data_source/build_query/lucene_string_to_dsl.js';
 import { DecorateQueryProvider } from 'ui/courier/data_source/_decorate_query';
-import { ML_JOB_FIELD_TYPES, KBN_FIELD_TYPES, kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
+
+import { ML_JOB_FIELD_TYPES, KBN_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
+import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import template from './datavisualizer.html';
 
@@ -51,16 +53,20 @@ module
   Private,
   timefilter,
   AppState,
-  mlDataVisualizerSearchService) {
+  ml) {
 
   timefilter.enabled = true;
   const indexPattern = $route.current.locals.indexPattern;
 
-  $scope.metricConfigurations = [];
+  // List of system fields we don't want to display.
+  // TODO - are we happy to ignore these fields?
+  const OMIT_FIELDS = ['_source', '_type', '_index', '_id', '_version', '_score'];
+
+  $scope.metricCards = [];
   $scope.totalMetricFieldCount = 0;
   $scope.populatedMetricFieldCount = 0;
   $scope.showAllMetrics = false;
-  $scope.fieldConfigurations = [];
+  $scope.fieldCards = [];
   $scope.totalNonMetricFieldCount = 0;
   $scope.populatedNonMetricFieldCount = 0;
   $scope.ML_JOB_FIELD_TYPES = ML_JOB_FIELD_TYPES;
@@ -125,7 +131,7 @@ module
 
   $scope.toggleAllMetrics = function () {
     $scope.showAllMetrics = !$scope.showAllMetrics;
-    createMetricConfigurations();
+    createMetricCards();
   };
 
   $scope.toggleAllFields = function () {
@@ -154,7 +160,7 @@ module
         metricFieldRegexp = undefined;
       }
 
-      createMetricConfigurations();
+      createMetricCards();
       metricFieldFilterTimeout = undefined;
     }, 1500);
 
@@ -170,7 +176,7 @@ module
   $scope.clearMetricFilter = function () {
     $scope.metricFieldFilter = '';
     metricFieldRegexp = undefined;
-    createMetricConfigurations();
+    createMetricCards();
   };
 
   $scope.fieldFilterChanged = function () {
@@ -221,24 +227,20 @@ module
     $scope.appState.save();
   }
 
-  function createMetricConfigurations() {
-    $scope.metricConfigurations.length = 0;
-
-    // Strip out _score and _version.
-    // TODO - shall we omit all these fields?
-    const omitFields = ['_version', '_score'];
+  function createMetricCards() {
+    $scope.metricCards.length = 0;
 
     const aggregatableExistsFields = $scope.overallStats.aggregatableExistsFields || [];
 
     let allMetricFields = [];
     if (metricFieldRegexp === undefined) {
       allMetricFields = _.filter(indexPattern.fields, (f) => {
-        return (f.type === KBN_FIELD_TYPES.NUMBER && !_.contains(omitFields, f.displayName));
+        return (f.type === KBN_FIELD_TYPES.NUMBER && !_.contains(OMIT_FIELDS, f.displayName));
       });
     } else {
       allMetricFields = _.filter(indexPattern.fields, (f) => {
         return (f.type === KBN_FIELD_TYPES.NUMBER &&
-          !_.contains(omitFields, f.displayName) &&
+          !_.contains(OMIT_FIELDS, f.displayName) &&
           f.displayName.match(metricFieldRegexp));
       });
     }
@@ -247,10 +249,10 @@ module
       return aggregatableExistsFields.indexOf(f.displayName) > -1;
     });
 
-    const metricConfigs = [];
+    const metricCards = [];
 
     // Add a config for 'event rate', identified by no field name.
-    metricConfigs.push({
+    metricCards.push({
       type: ML_JOB_FIELD_TYPES.NUMBER,
       existsInDocs: true
     });
@@ -265,7 +267,7 @@ module
 
     const metricFields = $scope.showAllMetrics ? allMetricFields : metricExistsFields;
     _.each(metricFields, (field) => {
-      metricConfigs.push({
+      metricCards.push({
         fieldName: field.displayName,
         fieldFormat: field.format,
         type: ML_JOB_FIELD_TYPES.NUMBER,
@@ -273,36 +275,29 @@ module
       });
     });
 
-    // Clear the filter spinner if it's running.
-    $scope.metricFilterIcon = 0;
-
-    $scope.metricConfigurations = metricConfigs;
+    loadMetricFieldStats(metricCards);
   }
 
   function loadNonMetricFieldList() {
-    $scope.fieldConfigurations.length = 0;
-
-    // Strip out _source and _type.
-    // TODO - shall we omit all these fields?
-    const omitFields = ['_source', '_type', '_index', '_id', '_version'];
+    $scope.fieldCards.length = 0;
 
     let allNonMetricFields = [];
     if ($scope.filterFieldType === '*') {
       allNonMetricFields = _.filter(indexPattern.fields, (f) => {
-        return (f.type !== KBN_FIELD_TYPES.NUMBER && !_.contains(omitFields, f.displayName));
+        return (f.type !== KBN_FIELD_TYPES.NUMBER && !_.contains(OMIT_FIELDS, f.displayName));
       });
     } else {
       if ($scope.filterFieldType === ML_JOB_FIELD_TYPES.TEXT ||
             $scope.filterFieldType === ML_JOB_FIELD_TYPES.KEYWORD)  {
         const aggregatableCheck = $scope.filterFieldType === ML_JOB_FIELD_TYPES.KEYWORD ? true : false;
         allNonMetricFields = _.filter(indexPattern.fields, (f) => {
-          return !_.contains(omitFields, f.displayName) &&
+          return !_.contains(OMIT_FIELDS, f.displayName) &&
             (f.type === KBN_FIELD_TYPES.STRING) &&
             (f.aggregatable === aggregatableCheck);
         });
       } else {
         allNonMetricFields = _.filter(indexPattern.fields, (f) => {
-          return (!_.contains(omitFields, f.displayName) && (f.type === $scope.filterFieldType));
+          return (!_.contains(OMIT_FIELDS, f.displayName) && (f.type === $scope.filterFieldType));
         });
       }
     }
@@ -316,67 +311,36 @@ module
 
     $scope.totalNonMetricFieldCount = allNonMetricFields.length;
 
-    // Obtain the list of populated non-metric fields.
-    // First add the aggregatable fields which appear in documents.
+    // Obtain the list of all non-metric fields which appear in documents
+    // (aggregatable or not aggregatable).
     const nonMetricFields = [];
     const nonMetricExistsFieldNames = [];
-    const aggregatableNotExistsFields = $scope.overallStats.aggregatableNotExistsFields || [];
     _.each(allNonMetricFields, (f) => {
-      if (f.aggregatable === true && aggregatableNotExistsFields.indexOf(f.displayName) === -1) {
+      if ($scope.overallStats.aggregatableExistsFields.indexOf(f.displayName) > -1 ||
+          $scope.overallStats.nonAggregatableExistsFields.indexOf(f.displayName) > -1) {
         nonMetricFields.push(f);
         nonMetricExistsFieldNames.push(f.displayName);
       }
     });
 
-    // Secondly, add in non-aggregatable string fields which appear in documents.
-    const nonAggFields = _.filter(allNonMetricFields, (f) => {
-      return f.aggregatable === false;
-    });
+    $scope.populatedNonMetricFieldCount = nonMetricFields.length;
+    if ($scope.totalNonMetricFieldCount === $scope.populatedNonMetricFieldCount) {
+      $scope.showAllFields = true;
+    }
 
-    if (nonAggFields.length > 0) {
-      let numWaiting = nonAggFields.length;
-      _.each(nonAggFields, (field) => {
-        mlDataVisualizerSearchService.nonAggregatableFieldExists(indexPattern, field.displayName,
-          $scope.earliest, $scope.latest)
-        .then((resp) => {
-          if (resp.exists) {
-            nonMetricFields.push(field);
-            nonMetricExistsFieldNames.push(field.displayName);
-          }
-          numWaiting--;
-        }).catch((resp) => {
-          console.log(`DataVisualizer - error checking whether field ${field.displayName} exists:`, resp);
-          numWaiting--;
-        }).then(() => {
-          if (numWaiting === 0) {
-            $scope.populatedNonMetricFieldCount = nonMetricExistsFieldNames.length;
-            if ($scope.showAllFields) {
-              createNonMetricFieldConfigurations(allNonMetricFields, nonMetricExistsFieldNames);
-            } else {
-              createNonMetricFieldConfigurations(nonMetricFields, nonMetricExistsFieldNames);
-            }
-          }
-        });
-      });
+    if ($scope.showAllFields) {
+      createNonMetricFieldConfigurations(allNonMetricFields, nonMetricExistsFieldNames);
     } else {
-      $scope.populatedNonMetricFieldCount = nonMetricFields.length;
-      if ($scope.totalNonMetricFieldCount === $scope.populatedNonMetricFieldCount) {
-        $scope.showAllFields = true;
-      }
-      if ($scope.showAllFields) {
-        createNonMetricFieldConfigurations(allNonMetricFields, nonMetricExistsFieldNames);
-      } else {
-        createNonMetricFieldConfigurations(nonMetricFields, nonMetricExistsFieldNames);
-      }
+      createNonMetricFieldConfigurations(nonMetricFields, nonMetricExistsFieldNames);
     }
 
   }
 
   function createNonMetricFieldConfigurations(nonMetricFields, nonMetricExistsFieldNames) {
-    const fieldConfigs = [];
+    let fieldCards = [];
 
     _.each(nonMetricFields, (field) => {
-      const config = {
+      const card = {
         fieldName: field.displayName,
         fieldFormat: field.format,
         aggregatable: field.aggregatable,
@@ -388,36 +352,129 @@ module
       // used in the data visualizer.
       const dataVisualizerType = kbnTypeToMLJobType(field);
       if (dataVisualizerType !== undefined) {
-        config.type = dataVisualizerType;
+        card.type = dataVisualizerType;
       } else {
         // Add a flag to indicate that this is one of the 'other' Kibana
         // field types that do not yet have a specific card type.
-        config.type = field.type;
-        config.isUnsupportedType = true;
+        card.type = field.type;
+        card.isUnsupportedType = true;
       }
 
-      fieldConfigs.push(config);
+      fieldCards.push(card);
     });
 
-    // Clear the filter spinner if it's running.
-    $scope.fieldFilterIcon = 0;
+    fieldCards = _.sortBy(fieldCards, 'fieldName');
+    loadNonMetricFieldStats(fieldCards);
+  }
 
-    $scope.fieldConfigurations = _.sortBy(fieldConfigs, 'fieldName');
+  function loadMetricFieldStats(metricCards) {
+    // Request data for all the metric cards, apart from the document count card
+    // which loads its own data (as the chart bucket aggregation interval is dependant
+    // on the width of the card).
+    const cardsToLoad = _.filter(metricCards, (card) => {
+      return card.fieldName !== undefined;
+    });
+    const numberFields = _.map(cardsToLoad, (card) => {
+      return { fieldName: card.fieldName, type: card.type };
+    });
+
+    //console.log(`loadMetricFieldStats called at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
+    ml.getVisualizerFieldStats({
+      indexPatternTitle: indexPattern.title,
+      query: $scope.searchQuery,
+      timeFieldName: indexPattern.timeFieldName,
+      earliest: $scope.earliest,
+      latest: $scope.latest,
+      fields: numberFields
+    })
+    .then((resp) => {
+      //console.log(`loadMetricFieldStats response received at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
+      // Match up the data to the card.
+      _.each(metricCards, (card) => {
+        card.stats = _.find(resp, { fieldName: card.fieldName });
+      });
+
+      // Clear the filter spinner if it's running.
+      $scope.metricFilterIcon = 0;
+      $scope.metricCards = metricCards;
+    })
+    .catch((resp) => {
+      // TODO - display error in cards saying data could not be loaded.
+      console.log('DataVisualizer - error getting stats for metric cards from elasticsearch:', resp);
+    });
+
+
+  }
+
+  function loadNonMetricFieldStats(fieldCards) {
+    const fields = _.map(fieldCards, (card) => {
+      return { fieldName: card.fieldName, type: card.type };
+    });
+
+    //console.log(`loadNonMetricFieldStats called at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
+    ml.getVisualizerFieldStats({
+      indexPatternTitle: indexPattern.title,
+      query: $scope.searchQuery,
+      fields: fields,
+      timeFieldName: indexPattern.timeFieldName,
+      earliest: $scope.earliest,
+      latest: $scope.latest,
+      maxExamples: 10
+    })
+    .then((resp) => {
+      //console.log(`loadNonMetricFieldStats response received at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
+
+      // Match up the data to the card.
+      _.each(fieldCards, (card) => {
+        card.stats = _.find(resp, { fieldName: card.fieldName });
+      });
+
+      // Clear the filter spinner if it's running.
+      $scope.fieldFilterIcon = 0;
+      $scope.fieldCards = fieldCards;
+    });
   }
 
   function loadOverallStats() {
-    mlDataVisualizerSearchService.getOverallStats(
-      indexPattern,
-      $scope.searchQuery,
-      $scope.earliest,
-      $scope.latest)
+    //console.log(`loadOverallStats called at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
+
+    const aggregatableFields = [];
+    const nonAggregatableFields = [];
+    _.each(indexPattern.fields, (field) => {
+      if (OMIT_FIELDS.indexOf(field.displayName) === -1) {
+        if (field.aggregatable === true) {
+          aggregatableFields.push(field.displayName);
+        } else {
+          nonAggregatableFields.push(field.displayName);
+        }
+      }
+    });
+
+    // Need to find:
+    // 1. List of aggregatable fields that do exist in docs
+    // 2. List of aggregatable fields that do not exist in docs
+    // 3. List of non-aggregatable fields that do exist in docs.
+    // 4. List of non-aggregatable fields that do not exist in docs.
+    ml.getVisualizerOverallStats({
+      indexPatternTitle: indexPattern.title,
+      query: $scope.searchQuery,
+      timeFieldName: indexPattern.timeFieldName,
+      earliest: $scope.earliest,
+      latest: $scope.latest,
+      aggregatableFields: aggregatableFields,
+      nonAggregatableFields: nonAggregatableFields
+    })
     .then((resp) => {
-      $scope.overallStats = resp.stats;
-      createMetricConfigurations();
+      //console.log(`loadOverallStats server response received at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
+      $scope.overallStats = resp;
+      createMetricCards();
       loadNonMetricFieldList();
-    }).catch((resp) => {
+    })
+    .catch((resp) => {
+      // TODO - display error in cards saying data could not be loaded.
       console.log('DataVisualizer - error getting overall stats from elasticsearch:', resp);
     });
+
   }
 
   loadOverallStats();

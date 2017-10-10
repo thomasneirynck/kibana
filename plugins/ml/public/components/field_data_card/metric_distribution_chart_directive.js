@@ -28,7 +28,7 @@ import { ordinalSuffix } from 'ui/utils/ordinal_suffix';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSearchService) {
+module.directive('mlMetricDistributionChart', function () {
 
   function link(scope, element, attrs) {
     scope.isLoading = false;
@@ -49,9 +49,6 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
     let xAxisMax = 1;
     let chartGroup;
 
-    let minPercentileDisplay = 0;
-    let maxPercentileDisplay = 100;
-
     const distributionArea = d3.svg.area()
       .x(function (d) { return xScale(d.x); })
       .y0(function () { return yScale(0); })
@@ -59,41 +56,12 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
 
     const MIN_BAR_WIDTH = 3;  // Minimum bar width, in pixels.
 
-    scope.$on('render',function () {
-      render();
-    });
-
     element.on('$destroy', function () {
       scope.$destroy();
     });
 
-    scope.$on('renderChart', () => {
-      loadDistributionData();
-    });
-
-    function loadDistributionData() {
-      // Show the chart loading indicator.
-      scope.isLoading = true;
-
-      const config = scope.chartConfig;
-      mlFieldDataSearchService.getMetricDistributionData(
-        scope.indexPattern.title,
-        scope.query,
-        config.fieldName,
-        scope.indexPattern.timeFieldName,
-        scope.earliest,
-        scope.latest)
-      .then((resp) => {
-        scope.chartData = processDistributionData(resp.results.percentiles);
-        minPercentileDisplay = resp.results.minPercentile;
-        maxPercentileDisplay = resp.results.maxPercentile;
-        scope.isLoading = false;
-
-        render();
-      });
-    }
-
-    function processDistributionData(distributionData) {
+    function processDistributionData() {
+      const distributionData = _.get(scope, ['card', 'stats', 'distribution', 'percentiles'], []);
       const chartData = [];
 
       // Process the raw distribution data so it is in a suitable format for plotting:
@@ -198,14 +166,8 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
       return chartData;
     }
 
-    function render() {
-      init();
-      drawAxes();
-      drawDistributionArea();
-    }
-
     function init() {
-      const data = scope.chartData;
+      scope.chartData = processDistributionData();
 
       // Clear any existing elements from the visualization,
       // then build the svg elements for the chart.
@@ -217,8 +179,10 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
         .attr('height', svgHeight);
 
       // Add a label above the chart to display percentiles being plotted.
-      const minPercent = ordinalSuffix(minPercentileDisplay);
-      const maxPercent = ordinalSuffix(maxPercentileDisplay);
+      const minPercentile = _.get(scope, ['card', 'stats', 'distribution', 'minPercentile']);
+      const maxPercentile = _.get(scope, ['card', 'stats', 'distribution', 'maxPercentile']);
+      const minPercent = ordinalSuffix(minPercentile);
+      const maxPercent = ordinalSuffix(maxPercentile);
       svg.append('text')
         .attr('x', chartWidth / 2)
         .attr('y', 10)
@@ -231,11 +195,11 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
         .attr('class', 'distribution-chart')
         .attr('transform', `translate(${margin.left}, ${translateTop})`);
 
-      const dataLength = data.length;
+      const dataLength = scope.chartData.length;
       if (dataLength > 0) {
         xScale = xScale.domain([xAxisMin, xAxisMax]);
 
-        const yMax = d3.max(data, (d) => d.y);
+        const yMax = d3.max(scope.chartData, (d) => d.y);
         yScale = yScale.domain([0, yMax]);
       }
     }
@@ -252,7 +216,7 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
         .outerTickSize(0).ticks(numTicks(chartWidth))
         .tickFormat((d) => {
           // Format the tick label according to the format of the index pattern field.
-          return scope.chartConfig.fieldFormat.convert(d, 'text');
+          return scope.card.fieldFormat.convert(d, 'text');
         });
 
       const yAxis = d3.svg.axis().scale(yScale).orient('left')
@@ -292,9 +256,9 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
 
         let contents = `value:${xVal}`;
         const bar = scope.processedData[processedDataIdx];
-        const minValFormatted =  scope.chartConfig.fieldFormat.convert(bar.dataMin, 'text');
+        const minValFormatted =  scope.card.fieldFormat.convert(bar.dataMin, 'text');
         if (bar.dataMax > bar.dataMin) {
-          const maxValFormatted =  scope.chartConfig.fieldFormat.convert(bar.dataMax, 'text');
+          const maxValFormatted =  scope.card.fieldFormat.convert(bar.dataMax, 'text');
           contents = `${bar.percent}% of documents have<br>values between ${minValFormatted} and ${maxValFormatted}`;
         } else {
           contents = `${bar.percent}% of documents have<br>a value of ${minValFormatted}`;
@@ -331,16 +295,14 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
       }
     }
 
+    init();
+    drawAxes();
+    drawDistributionArea();
+
   }
 
   return {
-    scope: {
-      indexPattern: '=',
-      query: '=',
-      earliest: '=',
-      latest: '=',
-      chartConfig: '='
-    },
+    scope: false,
     link: link,
     template: loadingIndicatorTemplate
   };

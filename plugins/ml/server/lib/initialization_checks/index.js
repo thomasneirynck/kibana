@@ -13,22 +13,4 @@
  * strictly prohibited.
  */
 
-import template from './field_type_icon.html';
-import { ML_JOB_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
-
-import { uiModules } from 'ui/modules';
-const module = uiModules.get('apps/ml');
-
-module.directive('mlFieldTypeIcon', function () {
-  return {
-    restrict: 'E',
-    replace: true,
-    scope: {
-      type: '='
-    },
-    template,
-    controller: function ($scope) {
-      $scope.ML_JOB_FIELD_TYPES = ML_JOB_FIELD_TYPES;
-    }
-  };
-});
+export { initializationChecks } from './initialization_checks';

@@ -13,9 +13,9 @@
  * strictly prohibited.
  */
 
-import initializationChecks from './lib/initialization_checks';
 import { resolve } from 'path';
 import Boom from 'boom';
+import { initializationChecks } from './server/lib/initialization_checks';
 import { checkLicense } from './server/lib/check_license';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 import { jobRoutes } from './server/routes/anomaly_detectors';
@@ -24,6 +24,7 @@ import { indicesRoutes } from './server/routes/indices';
 import { notificationRoutes } from './server/routes/notification_settings';
 import { systemRoutes } from './server/routes/system';
 import { dataRecognizer } from './server/routes/data_recognizer';
+import { dataVisualizerRoutes } from './server/routes/data_visualizer';
 
 export const ml = (kibana) => {
   return new kibana.Plugin({
@@ -86,6 +87,7 @@ export const ml = (kibana) => {
       notificationRoutes(server, commonRouteConfig);
       systemRoutes(server, commonRouteConfig);
       dataRecognizer(server, commonRouteConfig);
+      dataVisualizerRoutes(server, commonRouteConfig);
 
       initializationChecks(this, server).start();
     }

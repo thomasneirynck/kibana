@@ -55,14 +55,14 @@
         <div>
           <div class="field-sort-controls">
             <div ng-if="showAllMetrics === false" class="field-count-label">
-              <span class="field-emphasis">{{ metricConfigurations.length }}</span>
-              <ng-pluralize count="metricConfigurations.length" when="{'1':'field exists', 'other':'fields exist'}">fields exist</ng-pluralize> in documents
+              <span class="field-emphasis">{{ metricCards.length }}</span>
+              <ng-pluralize count="metricCards.length" when="{'1':'field exists', 'other':'fields exist'}">fields exist</ng-pluralize> in documents
               (<span class="field-emphasis">{{ totalMetricFieldCount }}</span> in total)
             </div>
 
             <div ng-if="showAllMetrics === true" class="field-count-label">
-              <span class="field-emphasis">{{ metricConfigurations.length }}</span>
-              <ng-pluralize count="metricConfigurations.length" when="{'1':'field', 'other':'fields'}">fields</ng-pluralize>
+              <span class="field-emphasis">{{ metricCards.length }}</span>
+              <ng-pluralize count="metricCards.length" when="{'1':'field', 'other':'fields'}">fields</ng-pluralize>
               (<span class="field-emphasis">{{ populatedMetricFieldCount }}</span>
               <ng-pluralize count="populatedMetricFieldCount" when="{'1':'exists', 'other':'exist'}">exist</ng-pluralize> in documents)
             </div>
@@ -93,13 +93,13 @@
           </div>
         </div>
 
-        <div class="card-container" ng-repeat="config in metricConfigurations">
+        <div class="card-container" ng-repeat="card in metricCards">
           <ml-field-data-card
             index-pattern="indexPattern"
             query="searchQuery"
             earliest="earliest"
             latest="latest"
-            card-config="config">
+            card="card">
           </ml-field-data-card>
         </div>
 
@@ -112,14 +112,14 @@
         <div>
           <div class="field-sort-controls">
              <div ng-if="showAllFields === false" class="field-count-label">
-              <span class="field-emphasis">{{ fieldConfigurations.length }}</span>
-              <ng-pluralize count="fieldConfigurations.length" when="{'1':'field exists', 'other':'fields exist'}">fields exist</ng-pluralize> in documents
+              <span class="field-emphasis">{{ fieldCards.length }}</span>
+              <ng-pluralize count="fieldCards.length" when="{'1':'field exists', 'other':'fields exist'}">fields exist</ng-pluralize> in documents
               (<span class="field-emphasis">{{ totalNonMetricFieldCount }}</span> in total)
             </div>
 
             <div ng-if="showAllFields === true" class="field-count-label">
-              <span class="field-emphasis">{{ fieldConfigurations.length }}</span>
-              <ng-pluralize count="fieldConfigurations.length" when="{'1':'field', 'other':'fields'}">fields</ng-pluralize>
+              <span class="field-emphasis">{{ fieldCards.length }}</span>
+              <ng-pluralize count="fieldCards.length" when="{'1':'field', 'other':'fields'}">fields</ng-pluralize>
               (<span class="field-emphasis">{{ populatedNonMetricFieldCount }}</span>
               <ng-pluralize count="populatedNonMetricFieldCount" when="{'1':'exists', 'other':'exist'}">exist</ng-pluralize> in documents)
             </div>
@@ -153,13 +153,13 @@
           </div>
         </div>
 
-        <div class="card-container" ng-repeat="config in fieldConfigurations">
+        <div class="card-container" ng-repeat="card in fieldCards">
           <ml-field-data-card
             index-pattern="indexPattern"
             query="searchQuery"
             earliest="earliest"
             latest="latest"
-            card-config="config">
+            card="card">
           </ml-field-data-card>
         </div>
 

@@ -14,7 +14,8 @@
  */
 
 import expect from 'expect.js';
-import { KBN_FIELD_TYPES, ML_JOB_FIELD_TYPES, kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
+import { ML_JOB_FIELD_TYPES, KBN_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
+import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
 
 describe('ML - field type utils', () => {
 
