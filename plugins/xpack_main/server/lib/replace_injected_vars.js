@@ -1,7 +1,8 @@
 export async function replaceInjectedVars(originalInjectedVars, request, server) {
   const xpackInfo = server.plugins.xpack_main.info;
-  const withXpackInfo = () => Object.assign({}, originalInjectedVars, {
-    xpackInitialInfo: xpackInfo ? xpackInfo.toJSON() : undefined,
+  const withXpackInfo = () => ({
+    ...originalInjectedVars,
+    xpackInitialInfo: xpackInfo ? xpackInfo.toJSON() : undefined
   });
 
   // security feature is disabled

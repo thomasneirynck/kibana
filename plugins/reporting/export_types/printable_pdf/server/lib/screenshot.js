@@ -16,7 +16,10 @@ class Screenshot {
 
   async capture(url, opts) {
     this.logger(`fetching screenshot of ${url}`);
-    opts = Object.assign({ basePath: this.screenshotSettings.basePath }, opts);
+    opts = {
+      basePath: this.screenshotSettings.basePath,
+      ...opts
+    };
 
     const phantomInstance = await createPhantom(this.phantomPath, this.captureSettings, this.logger);
 

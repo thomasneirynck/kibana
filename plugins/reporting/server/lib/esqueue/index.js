@@ -14,12 +14,13 @@ export class Esqueue extends EventEmitter {
 
     super();
     this.index = index;
-    this.settings = Object.assign({
+    this.settings = {
       interval: constants.DEFAULT_SETTING_INTERVAL,
       timeout: constants.DEFAULT_SETTING_TIMEOUT,
       doctype: constants.DEFAULT_SETTING_DOCTYPE,
       dateSeparator: constants.DEFAULT_SETTING_DATE_SEPARATOR,
-    }, omit(options, [ 'client' ]));
+      ...omit(options, [ 'client' ])
+    };
     this.client = createClient(options.client || {});
     this._logger = options.logger || function () {};
     this._workers = [];

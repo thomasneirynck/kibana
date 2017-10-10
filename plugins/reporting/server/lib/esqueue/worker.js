@@ -119,8 +119,14 @@ export class Worker extends events.EventEmitter {
       body: { doc }
     })
     .then((response) => {
-      const updatedJob = Object.assign({}, job, response);
-      updatedJob._source = Object.assign({}, job._source, doc);
+      const updatedJob = {
+        ...job,
+        ...response
+      };
+      updatedJob._source = {
+        ...job._source,
+        ...doc
+      };
       return updatedJob;
     })
     .catch((err) => {

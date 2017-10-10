@@ -35,7 +35,9 @@ app.directive('jsonWatchEdit', function ($injector) {
         this.notifier = new Notifier({ location: 'Watcher' });
         this.selectedTabId = 'edit-watch';
         this.simulateResults = null;
-        this.originalWatch = Object.assign({}, this.watch);
+        this.originalWatch = {
+          ...this.watch
+        };
 
         this.omitBreadcrumbPages = [
           'new-watch',

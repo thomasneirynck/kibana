@@ -264,7 +264,10 @@ describe('Job Class', function () {
 
     it('should index the created_by value', function () {
       const createdBy = 'user_identifier';
-      const job = new Job(mockQueue, index, type, payload, Object.assign({ created_by: createdBy }, options));
+      const job = new Job(mockQueue, index, type, payload, {
+        created_by: createdBy,
+        ...options
+      });
       return job.ready.then(() => {
         const indexArgs = validateDoc(client.index);
         expect(indexArgs.body).to.have.property('created_by', createdBy);
@@ -321,7 +324,10 @@ describe('Job Class', function () {
 
       newClient = new ClientMock();
       sinon.spy(newClient, 'index');
-      job = new Job(mockQueue, index, type, payload, Object.assign({ client: newClient }, options));
+      job = new Job(mockQueue, index, type, payload, {
+        client: newClient,
+        ...options
+      });
     });
 
     it('should create the target index', function () {

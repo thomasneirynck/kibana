@@ -62,7 +62,10 @@ test(`omits blacklisted headers`, async () => {
     'host': '',
   };
 
-  const encryptedHeaders = await encryptHeaders(Object.assign({}, permittedHeaders, blacklistedHeaders));
+  const encryptedHeaders = await encryptHeaders({
+    ...permittedHeaders,
+    ...blacklistedHeaders
+  });
 
   const executeJob = executeJobFactory(mockServer);
   await executeJob({ headers: encryptedHeaders });

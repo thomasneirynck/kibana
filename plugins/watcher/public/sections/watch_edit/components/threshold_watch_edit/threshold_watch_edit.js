@@ -47,7 +47,9 @@ app.directive('thresholdWatchEdit', function ($injector) {
       initAfterBindings($scope) {
         this.index = undefined;
         this.notifier = new Notifier({ location: 'Watcher' });
-        this.originalWatch = Object.assign({}, this.watch);
+        this.originalWatch = {
+          ...this.watch
+        };
 
         this.omitBreadcrumbPages = [
           'new-watch',

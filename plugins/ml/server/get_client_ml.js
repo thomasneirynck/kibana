@@ -17,7 +17,10 @@ import { once } from 'lodash';
 import { elasticsearchJsPlugin } from './elasticsearch-ml';
 
 const callWithRequest = once((server) => {
-  const config = Object.assign({ plugins: [ elasticsearchJsPlugin ] }, server.config().get('elasticsearch'));
+  const config = {
+    plugins: [ elasticsearchJsPlugin ],
+    ...server.config().get('elasticsearch')
+  };
   const cluster = server.plugins.elasticsearch.createCluster('ml', config);
 
   return cluster.callWithRequest;

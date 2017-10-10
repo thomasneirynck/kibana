@@ -31,20 +31,23 @@ ClientMock.prototype.ping = function () {
 ClientMock.prototype.get = function (params = {}, source = {}) {
   if (params === elasticsearch.errors.NotFound) return elasticsearch.errors.NotFound;
 
-  const _source = Object.assign({
+  const _source = {
     jobtype: 'jobtype',
     created_by: false,
+
     payload: {
       id: 'sample-job-1',
       now: 'Mon Apr 25 2016 14:13:04 GMT-0700 (MST)'
     },
+
     priority: 10,
     timeout: 10000,
     created_at: '2016-04-25T21:13:04.738Z',
     attempts: 0,
     max_attempts: 3,
-    status: 'pending'
-  }, source);
+    status: 'pending',
+    ...source
+  };
 
   return Promise.resolve({
     _index: params.index || 'index',
@@ -64,10 +67,11 @@ ClientMock.prototype.search = function (params = {}, count = 5, source = {}) {
       _id: uniqueId('documentId'),
       _version: random(1, 5),
       _score: null,
-      _source: Object.assign({
+      _source: {
         created_at: new Date().toString(),
-        number: random(0, count, true)
-      }, source)
+        number: random(0, count, true),
+        ...source
+      }
     };
   });
   return Promise.resolve({

@@ -85,7 +85,10 @@ export function alertsClustersAggregation(req, alertsIndex, clusters, checkLicen
             };
           }
 
-          alerts = Object.assign({}, { count: bucket.doc_count }, severities);
+          alerts = {
+            count: bucket.doc_count,
+            ...severities
+          };
         }
       } else {
         // add metadata to the cluster's alerts object detailing that alerts are disabled because of the prod cluster license

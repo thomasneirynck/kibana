@@ -106,8 +106,12 @@ export class BaseWatch {
   isEqualTo = (otherWatch) => {
     // We need to create a POJO copies because isEqual would return false
     // because of property getters
-    const cleanWatch = Object.assign({}, this);
-    const cleanOtherWatch = Object.assign({}, otherWatch);
+    const cleanWatch = {
+      ...this
+    };
+    const cleanOtherWatch = {
+      ...otherWatch
+    };
 
     return isEqual(cleanWatch, cleanOtherWatch);
   }

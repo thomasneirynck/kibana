@@ -21,7 +21,9 @@ export function exposeClient(server) {
     }
   }
 
-  let config = Object.assign({}, server.config().get('xpack.monitoring.elasticsearch'));
+  let config = {
+    ...server.config().get('xpack.monitoring.elasticsearch')
+  };
   let configSource = 'monitoring';
 
   if (!Boolean(config.url)) {

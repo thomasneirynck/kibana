@@ -43,7 +43,10 @@ module.directive('mlFieldsSelectionPopulation', function () {
           ($scope.eventRateSelected === true && $scope.tempSelectedField.field.id !== '__ml_event_rate_count__')) {
           // clone the object, but not a deep clone.
           // we want field.agg to be unique but the reference to the inner agg.type object to be the original.
-          const field = Object.assign({}, $scope.tempSelectedField.field, { agg: { type: $scope.tempSelectedField.field.agg.type } });
+          const field = {
+            ...$scope.tempSelectedField.field,
+            agg: { type: $scope.tempSelectedField.field.agg.type }
+          };
 
           $scope.formConfig.fields.push(field);
           $scope.chartStates.fields[field.id] = CHART_STATE.LOADING;

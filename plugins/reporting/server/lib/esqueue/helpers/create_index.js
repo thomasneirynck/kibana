@@ -26,7 +26,10 @@ export function createIndex(client, indexName, doctype = constants.DEFAULT_SETTI
   const indexBody = { mappings : {} };
   indexBody.mappings[doctype] = { properties: schema };
 
-  const body = Object.assign({}, { settings }, indexBody);
+  const body = {
+    settings,
+    ...indexBody
+  };
 
   return client.indices.exists({
     index: indexName,

@@ -110,7 +110,7 @@ export class Job extends events.EventEmitter {
   }
 
   toJSON() {
-    return Object.assign({
+    return {
       id: this.id,
       index: this.index,
       type: this.doctype,
@@ -119,7 +119,7 @@ export class Job extends events.EventEmitter {
       payload: this.payload,
       timeout: this.timeout,
       max_attempts: this.maxAttempts,
-      priority: this.priority,
-    });
+      priority: this.priority
+    };
   }
 }
