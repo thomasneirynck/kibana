@@ -1,7 +1,6 @@
 import Promise from 'bluebird';
 import { join } from 'path';
 import { requireAllAndApply } from '../../server/lib/require_all_and_apply';
-import { esHealthCheck } from './server/es_client/health_check';
 import { instantiateClient } from './server/es_client/instantiate_client';
 import { initKibanaMonitoring } from './server/kibana_monitoring';
 import { initMonitoringXpackInfo } from './server/init_monitoring_xpack_info';
@@ -39,9 +38,6 @@ export const init = (monitoringPlugin, server) => {
         // Require only routes needed for stats reporting
         features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', 'phone_home.js'), server));
       }
-
-      // Make sure the Monitoring index is created and ready
-      features.push(esHealthCheck(monitoringPlugin, server).start());
     }
 
     // Send Kibana usage / server ops to the monitoring bulk api

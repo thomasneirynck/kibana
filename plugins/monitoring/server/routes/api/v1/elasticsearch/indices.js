@@ -4,7 +4,7 @@ import { getClusterStats } from '../../../../lib/cluster/get_cluster_stats';
 import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
 import { getIndices } from '../../../../lib/elasticsearch/get_indices';
 import { getShardStats, getUnassignedShards } from '../../../../lib/elasticsearch/shards';
-import { handleError } from '../../../../lib/handle_error';
+import { handleError } from '../../../../lib/errors/handle_error';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
 export function indicesRoutes(server) {

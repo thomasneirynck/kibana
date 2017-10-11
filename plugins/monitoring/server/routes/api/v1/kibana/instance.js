@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import Promise from 'bluebird';
 import { getKibanaInfo } from '../../../../lib/kibana/get_kibana_info';
-import { handleError } from '../../../../lib/handle_error';
+import { handleError } from '../../../../lib/errors';
 import { getMetrics } from '../../../../lib/details/get_metrics';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 

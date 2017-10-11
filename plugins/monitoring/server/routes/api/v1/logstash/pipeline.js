@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { handleError } from '../../../../lib/handle_error';
+import { handleError } from '../../../../lib/errors';
 import { getPipeline } from '../../../../lib/logstash/get_pipeline';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 

@@ -2,7 +2,7 @@ import moment from 'moment';
 import Joi from 'joi';
 import { getNodeInfo } from '../../../../../lib/logstash/get_node_info';
 import { getPipelines } from '../../../../../lib/logstash/get_pipelines';
-import { handleError } from '../../../../../lib/handle_error';
+import { handleError } from '../../../../../lib/errors';
 import { prefixIndexPattern } from '../../../../../lib/ccs_utils';
 
 /**

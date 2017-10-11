@@ -7,7 +7,7 @@ import { calculateNodeType } from '../../../../lib/elasticsearch/calculate_node_
 import { getNodeTypeClassLabel } from '../../../../lib/elasticsearch/get_node_type_class_label';
 import { getDefaultNodeFromId } from '../../../../lib/elasticsearch/get_default_node_from_id';
 import { getShardStats } from '../../../../lib/elasticsearch/shards';
-import { handleError } from '../../../../lib/handle_error';
+import { handleError } from '../../../../lib/errors/handle_error';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
 export function nodesRoutes(server) {

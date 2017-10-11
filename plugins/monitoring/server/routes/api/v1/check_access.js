@@ -1,5 +1,5 @@
 import { verifyMonitoringAuth } from '../../../lib/elasticsearch/verify_monitoring_auth';
-import { handleError } from '../../../lib/handle_error';
+import { handleError } from '../../../lib/errors';
 
 /*
  * API for checking read privilege on Monitoring Data

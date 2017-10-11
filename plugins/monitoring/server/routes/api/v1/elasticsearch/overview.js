@@ -4,7 +4,7 @@ import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
 import { getLastRecovery } from '../../../../lib/elasticsearch/get_last_recovery';
 import { getMetrics } from '../../../../lib/details/get_metrics';
 import { getShardStats } from '../../../../lib/elasticsearch/shards';
-import { handleError } from '../../../../lib/handle_error';
+import { handleError } from '../../../../lib/errors/handle_error';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
 export function esOverviewRoute(server) {

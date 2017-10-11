@@ -3,7 +3,7 @@ import { getClusterStats } from '../../../../lib/cluster/get_cluster_stats';
 import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
 import { getMlJobs } from '../../../../lib/elasticsearch/get_ml_jobs';
 import { getShardStats } from '../../../../lib/elasticsearch/shards';
-import { handleError } from '../../../../lib/handle_error';
+import { handleError } from '../../../../lib/errors/handle_error';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
 export function mlJobRoutes(server) {
