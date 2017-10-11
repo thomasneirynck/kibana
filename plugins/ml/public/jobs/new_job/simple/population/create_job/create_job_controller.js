@@ -236,6 +236,7 @@ module
   };
 
   $scope.overChange = function () {
+    $scope.addDefaultFieldsToInfluencerList();
     $scope.formChange();
   };
 
@@ -245,7 +246,7 @@ module
     if (field !== undefined) {
       $scope.formConfig.fields[fieldIndex].splitField =  field;
 
-      $scope.addSplitFieldsToInfluencerList();
+      $scope.addDefaultFieldsToInfluencerList();
 
       mlPopulationJobService.getSplitFields($scope.formConfig, field.name, 10)
       .then((resp) => {

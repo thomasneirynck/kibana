@@ -235,7 +235,7 @@ module
     $scope.formConfig.firstSplitFieldName = undefined;
 
     if (splitField !== undefined) {
-      $scope.addSplitFieldsToInfluencerList();
+      $scope.addDefaultFieldsToInfluencerList();
 
       $scope.ui.splitText = 'Data split by ' + splitField.name;
 

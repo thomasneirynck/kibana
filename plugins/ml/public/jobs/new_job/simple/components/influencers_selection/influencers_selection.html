@@ -7,13 +7,13 @@
           <ui-select
             ng-model="formConfig.influencerFields"
             ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-            on-select="toggleSplitField()"
-            on-remove="toggleSplitField()"
+            on-select="toggleInfluencerChange()"
+            on-remove="toggleInfluencerChange()"
             multiple
             append-to-body=true
           >
             <ui-select-match placeholder="Key fields">
-              <span ng-class="{'split-field': isSplitField($item)}">
+              <span ng-class="{'default-influencer': isDefaultInfluencer($item)}">
                 <ml-field-type-icon type="$item.mlType"></ml-field-type-icon>{{$item.name}}
               </span>
             </ui-select-match>

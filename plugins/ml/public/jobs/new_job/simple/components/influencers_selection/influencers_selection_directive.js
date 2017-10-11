@@ -25,27 +25,41 @@ module.directive('mlInfluencersSelection', function () {
     template,
     controller: function ($scope) {
 
-      // is the field passed in being used as a split field?
-      // called from html. split fields can't be removed from the influencer list
-      $scope.isSplitField = function (field) {
-        const splitFields = getSplitFields();
-        return (splitFields.find(f => f.name === field.name) !== undefined);
+      // is the field passed in being used as a split field or the over field?
+      // called from html. default fields can't be removed from the influencer list
+      $scope.isDefaultInfluencer = function (field) {
+        const defaultFields = getDefaultFields();
+        return (defaultFields.find(f => f.name === field.name) !== undefined);
       };
 
-      $scope.toggleSplitField = function () {
-        $scope.addSplitFieldsToInfluencerList();
+      $scope.toggleInfluencerChange = function () {
+        $scope.addDefaultFieldsToInfluencerList();
       };
 
-      // force add the split fields to the front of the influencer list.
+      // force add the over field and split fields to the front of the influencer list.
       // as we have no control over the ui-select remove "x" link on each pill, if
       // the user removes a split field, this function will put it back in again.
-      $scope.addSplitFieldsToInfluencerList = function () {
-        const splitFields = getSplitFields();
-        const nonSplitFields = $scope.formConfig.influencerFields.filter(f => {
-          return (splitFields.find(sp => sp === f) === undefined);
-        });
-        $scope.formConfig.influencerFields = splitFields.concat(nonSplitFields);
+      $scope.addDefaultFieldsToInfluencerList = function () {
+        const defaultFields = getDefaultFields();
+        const nonDefaultFields = getNonDefaultFields(defaultFields);
+        $scope.formConfig.influencerFields = defaultFields.concat(nonDefaultFields);
       };
+
+      // get a list of the default fields made up of the over field and the split fields
+      function getDefaultFields() {
+        const defaultFields = getSplitFields();
+        if ($scope.formConfig.hasOwnProperty('overField') === true) {
+          // only available for population jobs
+          defaultFields.push($scope.formConfig.overField);
+        }
+        return defaultFields;
+      }
+
+      function getNonDefaultFields(defaultFields) {
+        return $scope.formConfig.influencerFields.filter(f => {
+          return (defaultFields.find(sp => sp === f) === undefined);
+        });
+      }
 
       // get the split fields from either each selected field (for population jobs)
       // or from the global split field (multi-metric jobs)
