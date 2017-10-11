@@ -1,5 +1,4 @@
 {
   "name": "apm",
-  "version": "kibana",
-  "description": "APM plugin for Kibana"
+  "private": true
 }

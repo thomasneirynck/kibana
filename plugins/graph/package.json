@@ -1,5 +1,4 @@
 {
   "name": "graph",
-  "version": "7.0.0-alpha1",
-  "description": "Graph exploration"
+  "private": true
 }

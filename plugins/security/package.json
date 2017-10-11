@@ -1,10 +1,4 @@
 {
   "name": "security",
-  "version": "7.0.0-alpha1",
-  "description": "Security plugin for Kibana",
-  "scripts": {
-    "start": "gulp dev",
-    "build": "gulp package",
-    "test": "gulp test"
-  }
+  "private": true
 }

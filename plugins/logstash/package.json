@@ -1,5 +1,4 @@
 {
   "name": "logstash",
-  "version": "kibana",
-  "description": "Logstash UI components for Kibana"
+  "private": true
 }
