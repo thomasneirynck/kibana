@@ -87,7 +87,13 @@ const indexRowFactory = (scope, kbnUrl) => {
         <KuiTableRow>
           <KuiTableRowCell data-test-subj="name">
             <KuiKeyboardAccessible>
-              <a className="kuiLink" onClick={this.changePath}>{this.props.name}</a>
+              <a
+                className="kuiLink"
+                onClick={this.changePath}
+                data-test-subj={`indexLink-${this.props.name}`}
+              >
+                {this.props.name}
+              </a>
             </KuiKeyboardAccessible>
           </KuiTableRowCell>
           <KuiTableRowCell>

@@ -21,6 +21,8 @@ export function MonitoringElasticsearchIndicesProvider({ getService, getPageObje
   const SUBJ_INDICES_SEARCH_RATES = `${SUBJ_TABLE_BODY} searchRate`;
   const SUBJ_INDICES_UNASSIGNED_SHARD_COUNTS = `${SUBJ_TABLE_BODY} unassignedShards`;
 
+  const SUBJ_INDEX_LINK_PREFIX = `${SUBJ_TABLE_BODY} indexLink-`;
+
   return new class ElasticsearchIndices {
     async isOnListing() {
       return testSubjects.exists(SUBJ_LISTING_PAGE);
@@ -74,6 +76,10 @@ export function MonitoringElasticsearchIndicesProvider({ getService, getPageObje
           }
         ];
       }, []);
+    }
+
+    async clickRowByName(indexName) {
+      return testSubjects.click(SUBJ_INDEX_LINK_PREFIX + indexName);
     }
 
   };

@@ -63,7 +63,7 @@ const nodeRowFactory = (scope, kbnUrl, showCgroupMetricsElasticsearch) => {
         return (
           <KuiTableRowCell>
             <div className="monitoringTableCell__number">
-              { get(this.props, 'metrics.shard_count') }
+              {get(this.props, 'metrics.shard_count')}
             </div>
           </KuiTableRowCell>
         );
@@ -81,21 +81,27 @@ const nodeRowFactory = (scope, kbnUrl, showCgroupMetricsElasticsearch) => {
               </Tooltip>
               &nbsp;
               <KuiKeyboardAccessible>
-                <a className="kuiLink" onClick={this.goToNode}>{ this.props.node.name }</a>
+                <a
+                  className="kuiLink"
+                  onClick={this.goToNode}
+                  data-test-subj={`nodeLink-${this.props.resolver}`}
+                >
+                  {this.props.node.name}
+                </a>
               </KuiKeyboardAccessible>
             </div>
-            <div className="monitoringTableCell__transportAddress">{ extractIp(this.props.node.transport_address) }</div>
+            <div className="monitoringTableCell__transportAddress">{extractIp(this.props.node.transport_address)}</div>
           </KuiTableRowCell>
           <KuiTableRowCell>
             <div title={`Node status: ${this.props.status}`} className="monitoringTableCell__status">
               <NodeStatusIcon status={this.props.status} />&nbsp;
-              { this.props.status }
+              {this.props.status}
             </div>
           </KuiTableRowCell>
-          { this.getCpuComponents() }
+          {this.getCpuComponents()}
           <MetricCell isOnline={isOnline} metric={get(this.props, 'metrics.node_jvm_mem_percent')} />
           <MetricCell isOnline={isOnline} metric={get(this.props, 'metrics.node_free_space')} />
-          { this.getShardCount() }
+          {this.getShardCount()}
         </KuiTableRow>
       );
     }

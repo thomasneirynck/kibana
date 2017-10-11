@@ -32,8 +32,8 @@ export class Unassigned extends React.Component {
   render() {
     const shards = _.sortBy(this.props.shards, 'shard').map(this.createShard);
     return (
-      <td className="unassigned">
-        <div className="children">{ shards }</div>
+      <td className="unassigned" data-test-subj="clusterView-Unassigned">
+        <div className="children">{shards}</div>
       </td>
     );
   }

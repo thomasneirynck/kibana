@@ -30,10 +30,9 @@ function sortByName(item) {
 }
 
 export class Assigned extends React.Component {
-  createShard = (shard, index) => {
+  createShard = (shard) => {
     const type = shard.primary ? 'primary' : 'replica';
-    const additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
-    const key = `${shard.index}.${shard.node}.${type}.${shard.state}.${shard.shard}${additionId}-${index}`;
+    const key = `${shard.index}.${shard.node}.${type}.${shard.state}.${shard.shard}`;
     return (
       <Shard shard={shard} key={key}/>
     );
@@ -41,15 +40,14 @@ export class Assigned extends React.Component {
 
   createChild = (data) => {
     const key = data.id;
-    const classes = ['child'];
+    const initialClasses = ['child'];
     const shardStats = get(this.props.shardStats.indices, key);
     if (shardStats) {
-      classes.push(shardStats.status);
+      initialClasses.push(shardStats.status);
     }
 
-    const that = this;
-    const changeUrl = function () {
-      that.props.changeUrl(generateQueryAndLink(data));
+    const changeUrl = () => {
+      this.props.changeUrl(generateQueryAndLink(data));
     };
 
     // TODO: redesign for shard allocation, possibly giving shard display the
@@ -57,21 +55,21 @@ export class Assigned extends React.Component {
     const name = (
       <KuiKeyboardAccessible>
         <a onClick={changeUrl}>
-          <span>{ data.name }</span>
+          <span>{data.name}</span>
         </a>
       </KuiKeyboardAccessible>
     );
-    let master;
-    if (data.node_type === 'master') {
-      master = (
-        <span className="fa fa-star" />
-      );
-    }
+    const master = (data.node_type === 'master') ? <span className="fa fa-star" /> : null;
     const shards = sortBy(data.children, 'shard').map(this.createShard);
     return (
-      <div className={calculateClass(data, classes.join(' '))} key={key}>
-        <div className="title">{ name }{ master }</div>
-        { shards }
+      <div
+        className={calculateClass(data, initialClasses.join(' '))}
+        key={key}
+        data-test-subj={`clusterView-Assigned-${key}`}
+        data-status={shardStats && shardStats.status}
+      >
+        <div className="title">{name}{master}</div>
+        {shards}
       </div>
     );
   };
@@ -81,7 +79,7 @@ export class Assigned extends React.Component {
     return (
       <td>
         <div className="children">
-          { data }
+          {data}
         </div>
       </td>
     );

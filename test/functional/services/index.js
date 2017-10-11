@@ -1,8 +1,12 @@
 export { MonitoringClusterListProvider } from './monitoring/cluster_list';
 export { MonitoringClusterOverviewProvider } from './monitoring/cluster_overview';
 export { MonitoringClusterAlertsProvider } from './monitoring/cluster_alerts';
-export { MonitoringElasticsearchIndicesProvider } from './monitoring/elasticsearch_indices';
 export { MonitoringElasticsearchSummaryStatusProvider } from './monitoring/elasticsearch_summary_status';
+export { MonitoringElasticsearchNodesProvider } from './monitoring/elasticsearch_nodes';
+export { MonitoringElasticsearchNodeDetailProvider } from './monitoring/elasticsearch_node_detail';
+export { MonitoringElasticsearchIndicesProvider } from './monitoring/elasticsearch_indices';
+export { MonitoringElasticsearchIndexDetailProvider } from './monitoring/elasticsearch_index_detail';
+export { MonitoringElasticsearchShardsProvider } from './monitoring/elasticsearch_shards';
 export { PipelineListProvider } from './pipeline_list';
 export { PipelineEditorProvider } from './pipeline_editor';
 export { RandomProvider } from './random';

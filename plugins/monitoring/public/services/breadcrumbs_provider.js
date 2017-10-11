@@ -13,9 +13,9 @@ function getElasticsearchBreadcrumbs(mainInstance) {
   if (mainInstance.instance) {
     breadcrumbs.push(createCrumb('#/elasticsearch', 'Elasticsearch'));
     if (mainInstance.name === 'indices') {
-      breadcrumbs.push(createCrumb('#/elasticsearch/indices', 'Indices'));
+      breadcrumbs.push(createCrumb('#/elasticsearch/indices', 'Indices', 'breadcrumbEsIndices'));
     } else if (mainInstance.name === 'nodes') {
-      breadcrumbs.push(createCrumb('#/elasticsearch/nodes', 'Nodes'));
+      breadcrumbs.push(createCrumb('#/elasticsearch/nodes', 'Nodes', 'breadcrumbEsNodes'));
     } else if (mainInstance.name === 'ml') {
       // ML Instance (for user later)
       breadcrumbs.push(createCrumb('#/elasticsearch/ml_jobs', 'Jobs'));

@@ -54,7 +54,7 @@ describe('Monitoring Breadcrumbs Service', () => {
       { url: '#/home', label: 'Clusters', testSubj: 'breadcrumbClusters' },
       { url: '#/overview', label: 'test-cluster-foo' },
       { url: '#/elasticsearch', label: 'Elasticsearch' },
-      { url: '#/elasticsearch/nodes', label: 'Nodes' },
+      { url: '#/elasticsearch/nodes', label: 'Nodes', testSubj: 'breadcrumbEsNodes' },
       { url: null, label: 'es-node-name-01' }
     ]);
   });

@@ -9,6 +9,7 @@ export function MonitoringElasticsearchSummaryStatusProvider({ getService }) {
   const SUBJ_SUMMARY_UNASSIGNED_SHARDS = `${SUBJ_SUMMARY} unassignedShards`;
   const SUBJ_SUMMARY_DOCUMENT_COUNT = `${SUBJ_SUMMARY} documentCount`;
   const SUBJ_SUMMARY_DATA_SIZE = `${SUBJ_SUMMARY} dataSize`;
+  const SUBJ_SUMMARY_HEALTH = `${SUBJ_SUMMARY} statusIcon`;
 
   return new class ElasticsearchSummaryStatus {
 
@@ -21,6 +22,7 @@ export function MonitoringElasticsearchSummaryStatusProvider({ getService }) {
         unassignedShards: await testSubjects.getVisibleText(SUBJ_SUMMARY_UNASSIGNED_SHARDS),
         documentCount: await testSubjects.getVisibleText(SUBJ_SUMMARY_DOCUMENT_COUNT),
         dataSize: await testSubjects.getVisibleText(SUBJ_SUMMARY_DATA_SIZE),
+        health: await testSubjects.getProperty(SUBJ_SUMMARY_HEALTH, 'alt'),
       };
     }
 

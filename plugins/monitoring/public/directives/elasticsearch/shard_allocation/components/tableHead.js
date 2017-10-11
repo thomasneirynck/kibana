@@ -46,6 +46,7 @@ class IndexLabel extends React.Component {
             onChange={this.toggleShowSystemIndicesState}
             checked={this.state.showSystemIndices}
             className="kuiCheckBox"
+            data-test-subj="shardShowSystemIndices"
             type="checkbox"
           />
           <span className="kuiCheckBoxLabel__text">

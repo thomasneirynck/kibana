@@ -21,7 +21,7 @@ import { vents } from '../lib/vents';
 
 export class Shard extends React.Component {
   static displayName = 'Shard';
-  state = { tooltip: false };
+  state = { tooltipVisible: false };
 
   componentDidMount() {
     let key;
@@ -30,7 +30,7 @@ export class Shard extends React.Component {
     if (shard.tooltip_message) {
       key = this.generateKey();
       vents.on(key, function (action) {
-        self.setState({ tooltip: action === 'show' });
+        self.setState({ tooltipVisible: action === 'show' });
       });
     }
   }
@@ -56,7 +56,7 @@ export class Shard extends React.Component {
     if (this.props.shard.tooltip_message) {
       const action = (event.type === 'mouseenter') ? 'show' : 'hide';
       const key = this.generateKey(true);
-      this.setState({ tooltip: action === 'show' });
+      this.setState({ tooltipVisible: action === 'show' });
       vents.trigger(key, action);
     }
   };
@@ -64,16 +64,32 @@ export class Shard extends React.Component {
   render() {
     const shard = this.props.shard;
     let tooltip;
-    if (this.state.tooltip) {
-      tooltip = (<div className="shard-tooltip">{ this.props.shard.tooltip_message }</div>);
+    if (this.state.tooltipVisible) {
+      tooltip = (
+        <div
+          className="shard-tooltip"
+          data-test-subj="shardTooltip"
+          data-tooltip-content={this.props.shard.tooltip_message}
+        >
+          {this.props.shard.tooltip_message}
+        </div>
+      );
     }
+
+    const classes = calculateClass(shard);
+    const classification = classes + ' ' + shard.shard;
+
+    // data attrs for automated testing verification
     return (
       <div
         onMouseEnter={this.toggle}
         onMouseLeave={this.toggle}
-        className={calculateClass(shard, 'shard')}
+        className={classes}
+        data-shard-tooltip={this.props.shard.tooltip_message}
+        data-shard-classification={classification}
+        data-test-subj="shardIcon"
       >
-        { tooltip }{ shard.shard }
+        {tooltip}{shard.shard}
       </div>
     );
   }

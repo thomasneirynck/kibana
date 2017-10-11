@@ -83,6 +83,10 @@ export function MonitoringClusterOverviewProvider({ getService }) {
       return testSubjects.getVisibleText(SUBJ_ES_REPLICA_SHARDS);
     }
 
+    async clickEsNodes() {
+      return testSubjects.click(SUBJ_ES_NUMBER_OF_NODES);
+    }
+
     async clickEsIndices() {
       return testSubjects.click(SUBJ_ES_NUMBER_OF_INDICES);
     }
