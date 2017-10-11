@@ -43,10 +43,7 @@ export const security = (kibana) => new kibana.Plugin({
         const xpackInfo = server.plugins.xpack_main.info;
 
         if (!xpackInfo) {
-          const loginMessage =
-            server.plugins.xpack_main.status
-            ? server.plugins.xpack_main.status.message
-            : LOGIN_DISABLED_MESSAGE;
+          const loginMessage = LOGIN_DISABLED_MESSAGE;
 
           return {
             loginState: {
