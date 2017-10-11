@@ -1,4 +1,5 @@
 <ml-nav-menu name="new_job_population"></ml-nav-menu>
+<ml-chart-tooltip></ml-chart-tooltip>
 <ml-new-job-population>
   <ml-message-bar></ml-message-bar>
   <div ng-controller="MlCreatePopulationJob" class="population-job-container">
@@ -228,7 +229,8 @@
                         <ml-population-job-chart
                           chart-data="chart"
                           chart-height='ui.chartHeight'
-                          chart-ticks-margin="chartData.chartTicksMargin">
+                          chart-ticks-margin="chartData.chartTicksMargin"
+                          over-field-name="formConfig.overField.name">
                         </ml-population-job-chart>
                       </div>
 

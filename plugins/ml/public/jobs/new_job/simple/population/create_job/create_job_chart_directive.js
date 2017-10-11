@@ -29,7 +29,7 @@ import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlPopulationJobChart', function (Private) {
+module.directive('mlPopulationJobChart', function (Private, mlChartTooltipService) {
 
   function link(scope, element) {
 
@@ -218,7 +218,25 @@ module.directive('mlPopulationJobChart', function (Private) {
           .attr('cx', (d) => chartXScale(d.date))
           .attr('cy', (d) => chartYScale(d.value))
           .attr('r', 3)
-          .style("display", (d) => d.value === null ? 'none' : 'auto');
+          .style("display", (d) => d.value === null ? 'none' : 'auto')
+          .on('mouseover', function (d) {
+            showTooltip(d, this);
+          })
+          .on('mouseout', () => mlChartTooltipService.hide());
+    }
+
+    function showTooltip(data, el) {
+      scope;
+      let contents = '';
+      const formattedDate = moment(data.date).format('MMMM Do YYYY, HH:mm');
+      contents += `${formattedDate}<br/><hr/>`;
+      contents += `${scope.overFieldName}: ${data.label}<br/>`;
+      contents += `Value: ${parseInt(data.value)}`;
+
+      mlChartTooltipService.show(contents, el, {
+        x: 5,
+        y: 10
+      });
     }
 
     function drawResults() {
@@ -274,7 +292,8 @@ module.directive('mlPopulationJobChart', function (Private) {
     scope: {
       chartData: '=',
       chartHeight: '=',
-      chartTicksMargin: '='
+      chartTicksMargin: '=',
+      overFieldName: '='
     },
     link
   };
