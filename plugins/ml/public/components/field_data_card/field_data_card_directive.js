@@ -35,6 +35,11 @@ module.directive('mlFieldDataCard', function () {
 
     if (scope.card.type === ML_JOB_FIELD_TYPES.NUMBER) {
       if (scope.card.fieldName) {
+        scope.$watch('card.stats', () => {
+          const cardinality = _.get(scope, ['card', 'stats', 'cardinality'], 0);
+          scope.detailsMode = cardinality > 100 ? 'distribution' : 'top';
+        });
+
         const cardinality = _.get(scope, ['card', 'stats', 'cardinality'], 0);
         scope.detailsMode = cardinality > 100 ? 'distribution' : 'top';
       }
@@ -44,14 +49,17 @@ module.directive('mlFieldDataCard', function () {
     }
 
     if (scope.card.type === ML_JOB_FIELD_TYPES.DATE) {
-      // Convert to a Date for formatting with moment filter in the template.
-      scope.card.stats.earliest = new Date(scope.card.stats.earliest);
-      scope.card.stats.latest = new Date(scope.card.stats.latest);
-    }
 
-    scope.detailsModeChanged = function (mode) {
-      scope.detailsMode = mode;
-    };
+      scope.$watch('card.stats', () => {
+        // Convert earliest and latest to Dates for formatting with moment filter in the template.
+        if (_.has(scope, 'card.stats.earliest')) {
+          scope.card.stats.earliest = new Date(scope.card.stats.earliest);
+        }
+        if (_.has(scope, 'card.stats.latest')) {
+          scope.card.stats.latest = new Date(scope.card.stats.latest);
+        }
+      });
+    }
 
     scope.getCardUrl = function () {
       const urlBasePath = chrome.getBasePath();

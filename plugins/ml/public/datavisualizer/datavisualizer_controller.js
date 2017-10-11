@@ -251,10 +251,12 @@ module
 
     const metricCards = [];
 
-    // Add a config for 'event rate', identified by no field name.
+    // Add a config for 'document count', identified by no field name.
+    // Loading currently done by the chart directive, so set flag to false.
     metricCards.push({
       type: ML_JOB_FIELD_TYPES.NUMBER,
-      existsInDocs: true
+      existsInDocs: true,
+      loading: false
     });
 
     // Add on 1 for the document count card.
@@ -271,11 +273,13 @@ module
         fieldName: field.displayName,
         fieldFormat: field.format,
         type: ML_JOB_FIELD_TYPES.NUMBER,
-        existsInDocs: aggregatableExistsFields.indexOf(field.displayName) > -1
+        existsInDocs: aggregatableExistsFields.indexOf(field.displayName) > -1,
+        loading: true
       });
     });
 
-    loadMetricFieldStats(metricCards);
+    $scope.metricCards = metricCards;
+    loadMetricFieldStats();
   }
 
   function loadNonMetricFieldList() {
@@ -337,7 +341,7 @@ module
   }
 
   function createNonMetricFieldConfigurations(nonMetricFields, nonMetricExistsFieldNames) {
-    let fieldCards = [];
+    const fieldCards = [];
 
     _.each(nonMetricFields, (field) => {
       const card = {
@@ -345,7 +349,8 @@ module
         fieldFormat: field.format,
         aggregatable: field.aggregatable,
         scripted: field.scripted,
-        existsInDocs: nonMetricExistsFieldNames.indexOf(field.displayName) > -1
+        existsInDocs: nonMetricExistsFieldNames.indexOf(field.displayName) > -1,
+        loading: true
       };
 
       // Map the field type from the Kibana index pattern to the field type
@@ -363,15 +368,15 @@ module
       fieldCards.push(card);
     });
 
-    fieldCards = _.sortBy(fieldCards, 'fieldName');
-    loadNonMetricFieldStats(fieldCards);
+    $scope.fieldCards = _.sortBy(fieldCards, 'fieldName');
+    loadNonMetricFieldStats();
   }
 
-  function loadMetricFieldStats(metricCards) {
+  function loadMetricFieldStats() {
     // Request data for all the metric cards, apart from the document count card
     // which loads its own data (as the chart bucket aggregation interval is dependant
     // on the width of the card).
-    const cardsToLoad = _.filter(metricCards, (card) => {
+    const cardsToLoad = _.filter($scope.metricCards, (card) => {
       return card.fieldName !== undefined;
     });
     const numberFields = _.map(cardsToLoad, (card) => {
@@ -390,13 +395,13 @@ module
     .then((resp) => {
       //console.log(`loadMetricFieldStats response received at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
       // Match up the data to the card.
-      _.each(metricCards, (card) => {
+      _.each(cardsToLoad, (card) => {
         card.stats = _.find(resp, { fieldName: card.fieldName });
+        card.loading = false;
       });
 
       // Clear the filter spinner if it's running.
       $scope.metricFilterIcon = 0;
-      $scope.metricCards = metricCards;
     })
     .catch((resp) => {
       // TODO - display error in cards saying data could not be loaded.
@@ -406,8 +411,8 @@ module
 
   }
 
-  function loadNonMetricFieldStats(fieldCards) {
-    const fields = _.map(fieldCards, (card) => {
+  function loadNonMetricFieldStats() {
+    const fields = _.map($scope.fieldCards, (card) => {
       return { fieldName: card.fieldName, type: card.type };
     });
 
@@ -425,13 +430,13 @@ module
       //console.log(`loadNonMetricFieldStats response received at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
 
       // Match up the data to the card.
-      _.each(fieldCards, (card) => {
+      _.each($scope.fieldCards, (card) => {
         card.stats = _.find(resp, { fieldName: card.fieldName });
+        card.loading = false;
       });
 
       // Clear the filter spinner if it's running.
       $scope.fieldFilterIcon = 0;
-      $scope.fieldCards = fieldCards;
     });
   }
 

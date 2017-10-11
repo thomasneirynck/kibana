@@ -6,6 +6,14 @@
     </div>
   </div>
 
+  <div ng-if="card.loading === true" class="card-contents">
+    <ml-loading-indicator
+      label="Loading"
+      is-loading="card.loading"
+      height="200"
+    />
+  </div>
+
   <div ng-if="card.existsInDocs === false" class="card-contents">
     <div class="not-exist-message">
       <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
@@ -13,5 +21,5 @@
     </div>
   </div>
 
-  <ng-include src="getCardUrl()"></ng-include>
+  <ng-include ng-if="card.loading === false" src="getCardUrl()"></ng-include>
 </div>
