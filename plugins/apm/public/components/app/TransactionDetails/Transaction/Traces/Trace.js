@@ -98,7 +98,7 @@ function Trace({
       }}
       timelineMargins={timelineMargins}
       isSelected={isSelected}
-      bodyClassName="apm-overrides"
+      panelClassName="apm-overrides"
       button={button}
       isOpen={isSelected}
       closePopover={closePopover}

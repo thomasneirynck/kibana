@@ -1,24 +1,26 @@
 <div
-  class="kuiExpressionItem"
+  class="kuiPopover kuiPopover--withTitle"
+  ng-class="{ 'kuiPopover-isOpen': expressionItem.isOpen }"
   ng-show="expressionItem.isVisible"
 >
   <button
     data-id="expressionItemButton"
-    class="kuiExpressionItem__button"
+    class="kuiExpressionButton"
     ng-class="{
-      'kuiExpressionItem__button--isActive': expressionItem.isOpen,
-      'kuiExpressionItem__button--isError': !expressionItem.isValid() && expressionItem.isDirty()
+      'kuiExpressionButton-isActive': expressionItem.isOpen,
+      'kuiExpressionButton-isError': !expressionItem.isValid() && expressionItem.isDirty()
     }">
-    <span class="kuiExpressionItem__buttonDescription">
+    <span class="kuiExpressionButton__description">
       {{ expressionItem.description | uppercase }}
     </span>
-    <span class="kuiExpression_buttonValue">
+    <span class="kuiExpressionButton__value">
       {{ expressionItem.value | lowercase }}
     </span>
   </button>
+
   <expression-popover
     popover-title="expressionItem.description"
-    ng-show="expressionItem.isOpen">
+  >
     <div ng-transclude></div>
   </expression-popover>
 </div>
