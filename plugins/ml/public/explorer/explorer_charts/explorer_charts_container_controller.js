@@ -22,24 +22,32 @@
 
 import _ from 'lodash';
 import $ from 'jquery';
+import d3 from 'd3';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 import { explorerChartConfigBuilder } from './explorer_chart_config_builder';
 import { isTimeSeriesViewDetector } from 'plugins/ml/util/job_utils';
+import 'plugins/ml/services/results_service';
 
-module.controller('MlExplorerChartsContainerController', function ($scope, timefilter, Private,
-  mlJobService, mlExplorerDashboardService) {
+module.controller('MlExplorerChartsContainerController', function ($scope, $injector) {
+  const Private = $injector.get('Private');
+  const mlJobService = $injector.get('mlJobService');
+  const mlExplorerDashboardService = $injector.get('mlExplorerDashboardService');
+  const mlResultsService = $injector.get('mlResultsService');
+  const $q = $injector.get('$q');
 
-  $scope.allSeriesRecords = [];   // Complete list of series.
   $scope.seriesToPlot = [];
 
   const $chartContainer = $('.explorer-charts');
   const FUNCTION_DESCRIPTIONS_TO_PLOT = ['mean', 'min', 'max', 'sum', 'count', 'distinct_count', 'median'];
   const CHART_MAX_POINTS = 500;
+  const ANOMALIES_MAX_RESULTS = 500;
+  const ML_TIME_FIELD_NAME = 'timestamp';
+  const USE_OVERALL_CHART_LIMITS = false;
 
   const anomalyDataChangeListener = function (anomalyRecords, earliestMs, latestMs) {
-    $scope.allSeriesRecords = processRecordsForDisplay(anomalyRecords);
+    const allSeriesRecords = processRecordsForDisplay(anomalyRecords);
     // Calculate the number of charts per row, depending on the width available, to a max of 4.
     const chartsContainerWidth = $chartContainer.width();
     const chartsPerRow = Math.min(Math.max(Math.floor(chartsContainerWidth / 550), 1), 4);
@@ -51,19 +59,222 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
     // TODO - implement paging?
     // For now just take first 6 (or 8 if 4 charts per row).
     const maxSeriesToPlot = Math.max(chartsPerRow * 2, 6);
-    const recordsToPlot = $scope.allSeriesRecords.slice(0, maxSeriesToPlot);
-    $scope.seriesToPlot = buildDataConfigs(recordsToPlot);
+    const recordsToPlot = allSeriesRecords.slice(0, maxSeriesToPlot);
+    const seriesConfigs = buildDataConfigs(recordsToPlot);
 
     // Calculate the time range of the charts, which is a function of the chart width and max job bucket span.
     $scope.tooManyBuckets = false;
-    const chartRange = calculateChartRange(earliestMs, latestMs,
+    const chartRange = calculateChartRange(seriesConfigs, earliestMs, latestMs,
       Math.floor(chartsContainerWidth / chartsPerRow), recordsToPlot);
 
-    $scope.plotEarliest = chartRange.min;
-    $scope.plotLatest = chartRange.max;
+    // initialize the charts with loading indicators
+    $scope.seriesToPlot = seriesConfigs.map(config => ({
+      ...config,
+      loading: true,
+      chartData: null
+    }));
 
-    $scope.selectedEarliest = earliestMs;
-    $scope.selectedLatest = latestMs;
+    // Query 1 - load the raw metric data.
+    function getMetricData(config, chartRange) {
+      const datafeedQuery = _.get(config, 'datafeedConfig.query', null);
+      return mlResultsService.getMetricData(
+        config.datafeedConfig.indices,
+        config.datafeedConfig.types,
+        config.entityFields,
+        datafeedQuery,
+        config.metricFunction,
+        config.metricFieldName,
+        config.timeField,
+        chartRange.min,
+        chartRange.max,
+        config.interval
+      );
+    }
+
+    // Query 2 - load the anomalies.
+    // Criteria to return the records for this series are the detector_index plus
+    // the specific combination of 'entity' fields i.e. the partition / by / over fields.
+    function getRecordsForCriteria(config, chartRange) {
+      let criteria = [];
+      criteria.push({ fieldName: 'detector_index', fieldValue: config.detectorIndex });
+      criteria = criteria.concat(config.entityFields);
+      return mlResultsService.getRecordsForCriteria(
+        [config.jobId],
+        criteria,
+        0,
+        chartRange.min,
+        chartRange.max,
+        ANOMALIES_MAX_RESULTS
+      );
+    }
+
+    // first load and wait for required data,
+    // only after that trigger data processing and page render.
+    // TODO - if query returns no results e.g. source data has been deleted,
+    // display a message saying 'No data between earliest/latest'.
+    const seriesPromises = seriesConfigs.map(seriesConfig => $q.all([
+      getMetricData(seriesConfig, chartRange),
+      getRecordsForCriteria(seriesConfig, chartRange)
+    ]));
+
+    function processChartData(response) {
+      const metricData = response[0].results;
+      const anomalyRecords = response[1].records;
+
+      // Return dataset in format used by the chart.
+      // i.e. array of Objects with keys date (timestamp), value,
+      //    plus anomalyScore for points with anomaly markers.
+      if (metricData === undefined || _.keys(metricData).length === 0) {
+        return [];
+      }
+
+      const chartData = _.map(metricData, (value, time) => ({
+        date: +time,
+        value: value
+      }));
+      // Iterate through the anomaly records, adding anomalyScore properties
+      // to the chartData entries for anomalous buckets.
+      _.each(anomalyRecords, (record) => {
+
+        // Look for a chart point with the same time as the record.
+        // If none found, find closest time in chartData set.
+        const recordTime = record[ML_TIME_FIELD_NAME];
+        let chartPoint;
+        for (let i = 0; i < chartData.length; i++) {
+          if (chartData[i].date === recordTime) {
+            chartPoint = chartData[i];
+            break;
+          }
+        }
+
+        if (chartPoint === undefined) {
+          // Find nearest point in time.
+          // loop through line items until the date is greater than bucketTime
+          // grab the current and prevous items in the and compare the time differences
+          let foundItem;
+          for (let i = 0; i < chartData.length; i++) {
+            const itemTime = chartData[i].date;
+            if ((itemTime > recordTime) && (i > 0)) {
+              const item = chartData[i];
+              const prevousItem = (i > 0 ? chartData[i - 1] : null);
+
+              const diff1 = Math.abs(recordTime - prevousItem.date);
+              const diff2 = Math.abs(recordTime - itemTime);
+
+              // foundItem should be the item with a date closest to bucketTime
+              if (prevousItem === null || diff1 > diff2) {
+                foundItem = item;
+              } else {
+                foundItem = prevousItem;
+              }
+              break;
+            }
+          }
+
+          chartPoint = foundItem;
+        }
+
+        if (chartPoint === undefined) {
+          // In case there is a record with a time after that of the last chart point, set the score
+          // for the last chart point to that of the last record, if that record has a higher score.
+          const lastChartPoint = chartData[chartData.length - 1];
+          const lastChartPointScore = lastChartPoint.anomalyScore || 0;
+          if (record.record_score > lastChartPointScore) {
+            chartPoint = lastChartPoint;
+          }
+        }
+
+        if (chartPoint !== undefined) {
+          chartPoint.anomalyScore = record.record_score;
+
+          if (_.has(record, 'actual')) {
+            chartPoint.actual = record.actual;
+            chartPoint.typical = record.typical;
+          } else {
+            const causes = _.get(record, 'causes', []);
+            if (causes.length > 0) {
+              chartPoint.byFieldName = record.by_field_name;
+              chartPoint.numberOfCauses = causes.length;
+              if (causes.length === 1) {
+                // If only a single cause, copy actual and typical values to the top level.
+                const cause = _.first(record.causes);
+                chartPoint.actual = cause.actual;
+                chartPoint.typical = cause.typical;
+              }
+            }
+          }
+        }
+      });
+
+      return chartData;
+    }
+
+    function chartLimits(data) {
+      const chartLimits = { max: 0, min: 0 };
+
+      chartLimits.max = d3.max(data, (d) => d.value);
+      chartLimits.min = d3.min(data, (d) => d.value);
+      if (chartLimits.max === chartLimits.min) {
+        chartLimits.max = d3.max(data, (d) => {
+          if (d.typical) {
+            return Math.max(d.value, d.typical);
+          } else {
+            // If analysis with by and over field, and more than one cause,
+            // there will be no actual and typical value.
+            // TODO - produce a better visual for population analyses.
+            return d.value;
+          }
+        });
+        chartLimits.min = d3.min(data, (d) => {
+          if (d.typical) {
+            return Math.min(d.value, d.typical);
+          } else {
+            // If analysis with by and over field, and more than one cause,
+            // there will be no actual and typical value.
+            // TODO - produce a better visual for population analyses.
+            return d.value;
+          }
+        });
+      }
+
+      // add padding of 5% of the difference between max and min
+      // to the upper and lower ends of the y-axis
+      let padding = 0;
+      if (chartLimits.max !== chartLimits.min) {
+        padding = (chartLimits.max - chartLimits.min) * 0.05;
+      } else {
+        padding = chartLimits.max * 0.05;
+      }
+      chartLimits.max += padding;
+      chartLimits.min -= padding;
+
+      return chartLimits;
+    }
+
+    $q.all(seriesPromises)
+      .then(response => {
+        // calculate an overall min/max for all series
+        const processedData = response.map(processChartData);
+        const allDataPoints = _.reduce(processedData, (datapoints, series) => {
+          _.each(series, d => datapoints.push(d));
+          return datapoints;
+        }, []);
+        const overallChartLimits = chartLimits(allDataPoints);
+
+        $scope.seriesToPlot = response.map((d, i) => ({
+          ...seriesConfigs[i],
+          loading: false,
+          chartData: processedData[i],
+          plotEarliest: chartRange.min,
+          plotLatest: chartRange.max,
+          selectedEarliest: earliestMs,
+          selectedLatest: latestMs,
+          chartLimits: USE_OVERALL_CHART_LIMITS ? overallChartLimits : chartLimits(processedData[i])
+        }));
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
 
   mlExplorerDashboardService.addAnomalyDataChangeListener(anomalyDataChangeListener);
@@ -207,22 +418,15 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
 
   function buildDataConfigs(anomalyRecords) {
     // Build the chart configuration for each anomaly record.
-    const seriesConfigs = [];
     const configBuilder = Private(explorerChartConfigBuilder);
-
-    _.each(anomalyRecords, (record) => {
-      const config = configBuilder.buildConfig(record);
-      seriesConfigs.push(config);
-    });
-
-    return seriesConfigs;
+    return anomalyRecords.map(configBuilder.buildConfig);
   }
 
-  function calculateChartRange(earliestMs, latestMs, chartWidth, recordsToPlot) {
+  function calculateChartRange(seriesConfigs, earliestMs, latestMs, chartWidth, recordsToPlot) {
     // Calculate the time range for the charts.
     // Fit in as many points in the available container width plotted at the job bucket span.
     const midpointMs = Math.ceil((earliestMs + latestMs) / 2);
-    const maxBucketSpanMs = Math.max.apply(null, _.pluck($scope.seriesToPlot, 'bucketSpanSeconds')) * 1000;
+    const maxBucketSpanMs = Math.max.apply(null, _.pluck(seriesConfigs, 'bucketSpanSeconds')) * 1000;
 
     const pointsToPlotFullSelection = Math.ceil((latestMs - earliestMs) / maxBucketSpanMs);
 

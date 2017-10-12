@@ -18,6 +18,8 @@
  * anomalies in the raw data in the Machine Learning Explorer dashboard.
  */
 
+import './styles/explorer_charts_container_directive.less';
+
 import _ from 'lodash';
 import $ from 'jquery';
 import moment from 'moment';

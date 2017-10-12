@@ -18,6 +18,8 @@
  * the Machine Learning Explorer dashboard.
  */
 
+import './styles/explorer_chart_directive.less';
+
 import _ from 'lodash';
 import d3 from 'd3';
 import angular from 'angular';
@@ -28,13 +30,12 @@ import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
 import { drawLineChartDots, numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
 import { TimeBucketsProvider } from 'ui/time_buckets';
 import 'plugins/ml/filters/format_value';
-import 'plugins/ml/services/results_service';
 import loadingIndicatorWrapperTemplate from 'plugins/ml/components/loading_indicator/loading_indicator_wrapper.html';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlExplorerChart', function (Private, mlResultsService, formatValueFilter, $q, mlChartTooltipService) {
+module.directive('mlExplorerChart', function (Private, formatValueFilter, mlChartTooltipService) {
 
   function link(scope, element) {
     console.log('ml-explorer-chart directive link series config:', scope.seriesConfig);
@@ -44,18 +45,12 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
     }
     const config = scope.seriesConfig;
 
-    const ML_TIME_FIELD_NAME = 'timestamp';
-    const ANOMALIES_MAX_RESULTS = 500;
-
-    let svgWidth = 0;
     let vizWidth = 0;
     const chartHeight = 170;
     const LINE_CHART_ANOMALY_RADIUS = 7;
 
     // Left margin is adjusted later for longest y-axis label.
     const margin = { top: 10, right: 0, bottom: 30, left: 60 };
-    const svgHeight = scope.height = chartHeight + margin.top + margin.bottom;
-    const chartLimits = { max: 0, min: 0 };
 
     const TimeBuckets = Private(TimeBucketsProvider);
     let lineChartXScale = null;
@@ -64,72 +59,31 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
     let lineChartValuesLine = null;
 
     // create a chart loading placeholder
-    scope.isLoading = true;
-
-    // first load and wait for required data,
-    // only after that trigger data processing and page render.
-    // TODO - if query returns no results e.g. source data has been deleted,
-    // display a message saying 'No data between earliest/latest'.
-    $q.all([
-      getMetricData(),
-      getRecordsForCriteria()
-    ]).then(response => {
-      scope.chartData = processChartData(response);
-      scope.isLoading = false;
-      init();
-      drawLineChart();
-    }).catch(error => {
-      console.error(error);
-    });
-
-    // Query 1 - load the raw metric data.
-    function getMetricData() {
-      const datafeedQuery = _.get(config, 'datafeedConfig.query', null);
-      return mlResultsService.getMetricData(
-        config.datafeedConfig.indices,
-        config.datafeedConfig.types,
-        config.entityFields,
-        datafeedQuery,
-        config.metricFunction,
-        config.metricFieldName,
-        config.timeField,
-        scope.plotEarliest,
-        scope.plotLatest,
-        config.interval
-      );
-    }
-
-    // Query 2 - load the anomalies.
-    // Criteria to return the records for this series are the detector_index plus
-    // the specific combination of 'entity' fields i.e. the partition / by / over fields.
-    function getRecordsForCriteria() {
-      let criteria = [];
-      criteria.push({ fieldName: 'detector_index', fieldValue: config.detectorIndex });
-      criteria = criteria.concat(config.entityFields);
-      return mlResultsService.getRecordsForCriteria(
-        [config.jobId],
-        criteria,
-        0,
-        scope.plotEarliest,
-        scope.plotLatest,
-        ANOMALIES_MAX_RESULTS
-      );
+    scope.isLoading = config.loading;
+    if (Array.isArray(config.chartData)) {
+      // make sure we wait for the previous digest cycle to finish
+      // or the chart's wrapping elements might not have their
+      // right widths yet and we need them to define the SVG's width
+      scope.$evalAsync(() => {
+        init(config.chartLimits);
+        drawLineChart(config.chartData);
+      });
     }
 
     element.on('$destroy', function () {
       scope.$destroy();
     });
 
-    function init() {
-      const $el = angular.element('.ml-explorer-chart-container');
-      const data = scope.chartData;
+    function init(chartLimits) {
+      const $el = angular.element('ml-explorer-chart');
 
       // Clear any existing elements from the visualization,
       // then build the svg elements for the chart.
       const chartElement = d3.select(element.get(0)).select('.content-wrapper');
       chartElement.select('svg').remove();
 
-      svgWidth = $el.width();
+      const svgWidth = $el.width();
+      const svgHeight = chartHeight + margin.top + margin.bottom;
 
       const svg = chartElement.append('svg')
         .attr('width',  svgWidth)
@@ -139,42 +93,6 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
       lineChartYScale = d3.scale.linear().range([chartHeight, 0]);
       const yAxis = d3.svg.axis().scale(lineChartYScale).orient('left')
         .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
-
-      chartLimits.max = d3.max(data, (d) => d.value);
-      chartLimits.min = d3.min(data, (d) => d.value);
-      if (chartLimits.max === chartLimits.min) {
-        chartLimits.max = d3.max(data, (d) => {
-          if (d.typical) {
-            return Math.max(d.value, d.typical);
-          } else {
-            // If analysis with by and over field, and more than one cause,
-            // there will be no actual and typical value.
-            // TODO - produce a better visual for population analyses.
-            return d.value;
-          }
-        });
-        chartLimits.min = d3.min(data, (d) => {
-          if (d.typical) {
-            return Math.min(d.value, d.typical);
-          } else {
-            // If analysis with by and over field, and more than one cause,
-            // there will be no actual and typical value.
-            // TODO - produce a better visual for population analyses.
-            return d.value;
-          }
-        });
-      }
-
-      // add padding of 5% of the difference between max and min
-      // to the upper and lower ends of the y-axis
-      let padding = 0;
-      if (chartLimits.max !== chartLimits.min) {
-        padding = (chartLimits.max - chartLimits.min) * 0.05;
-      } else {
-        padding = chartLimits.max * 0.05;
-      }
-      chartLimits.max += padding;
-      chartLimits.min -= padding;
 
       lineChartYScale = lineChartYScale.domain([
         chartLimits.min,
@@ -202,7 +120,7 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
       // data points across the full range, and the selected anomalous region is centred.
       lineChartXScale = d3.time.scale()
         .range([0, vizWidth])
-        .domain([scope.plotEarliest, scope.plotLatest]);
+        .domain([config.plotEarliest, config.plotLatest]);
 
       lineChartValuesLine = d3.svg.line()
         .x(d => lineChartXScale(d.date))
@@ -215,9 +133,7 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
 
     }
 
-    function drawLineChart() {
-      const data = scope.chartData;
-
+    function drawLineChart(data) {
       // Add border round plot area.
       lineChartGroup.append('rect')
         .attr('x', 0)
@@ -238,7 +154,7 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
     function drawLineChartAxes() {
       // Get the scaled date format to use for x axis tick labels.
       const timeBuckets = new TimeBuckets();
-      const bounds = { min: moment(scope.plotEarliest), max: moment(scope.plotLatest) };
+      const bounds = { min: moment(config.plotEarliest), max: moment(config.plotLatest) };
       timeBuckets.setBounds(bounds);
       timeBuckets.setInterval('auto');
       const xAxisTickFormat = timeBuckets.getScaledDateFormat();
@@ -268,8 +184,8 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
       // Draws a rectangle which highlights the time span that has been selected for view.
       // Note depending on the overall time range and the bucket span, the selected time
       // span may be longer than the range actually being plotted.
-      const rectStart = Math.max(scope.selectedEarliest, scope.plotEarliest);
-      const rectEnd = Math.min(scope.selectedLatest, scope.plotLatest);
+      const rectStart = Math.max(config.selectedEarliest, config.plotEarliest);
+      const rectEnd = Math.min(config.selectedLatest, config.plotLatest);
       const rectWidth = lineChartXScale(rectEnd) - lineChartXScale(rectStart);
 
       lineChartGroup.append('rect')
@@ -358,114 +274,12 @@ module.directive('mlExplorerChart', function (Private, mlResultsService, formatV
         y: 0
       });
     }
-
-    function processChartData(response) {
-      const metricData = response[0].results;
-      const anomalyRecords = response[1].records;
-
-      // Return dataset in format used by the chart.
-      // i.e. array of Objects with keys date (JavaScript date), value,
-      //    plus anomalyScore for points with anomaly markers.
-      const chartData = [];
-      if (metricData === undefined || _.keys(metricData).length === 0) {
-        return chartData;
-      }
-
-      _.each(metricData, (value, time) => {
-        chartData.push({
-          date: new Date(+time),
-          value: value
-        });
-      });
-
-      // Iterate through the anomaly records, adding anomalyScore properties
-      // to the chartData entries for anomalous buckets.
-      _.each(anomalyRecords, (record) => {
-
-        // Look for a chart point with the same time as the record.
-        // If none found, find closest time in chartData set.
-        const recordTime = record[ML_TIME_FIELD_NAME];
-        let chartPoint;
-        for (let i = 0; i < chartData.length; i++) {
-          if (chartData[i].date.getTime() === recordTime) {
-            chartPoint = chartData[i];
-            break;
-          }
-        }
-
-        if (chartPoint === undefined) {
-          // Find nearest point in time.
-          // loop through line items until the date is greater than bucketTime
-          // grab the current and prevous items in the and compare the time differences
-          let foundItem;
-          for (let i = 0; i < chartData.length; i++) {
-            const itemTime = chartData[i].date.getTime();
-            if ((itemTime > recordTime) && (i > 0)) {
-              const item = chartData[i];
-              const prevousItem = (i > 0 ? chartData[i - 1] : null);
-
-              const diff1 = Math.abs(recordTime - prevousItem.date.getTime());
-              const diff2 = Math.abs(recordTime - itemTime);
-
-              // foundItem should be the item with a date closest to bucketTime
-              if (prevousItem === null || diff1 > diff2) {
-                foundItem = item;
-              } else {
-                foundItem = prevousItem;
-              }
-              break;
-            }
-          }
-
-          chartPoint = foundItem;
-        }
-
-        if (chartPoint === undefined) {
-          // In case there is a record with a time after that of the last chart point, set the score
-          // for the last chart point to that of the last record, if that record has a higher score.
-          const lastChartPoint = chartData[chartData.length - 1];
-          const lastChartPointScore = lastChartPoint.anomalyScore || 0;
-          if (record.record_score > lastChartPointScore) {
-            chartPoint = lastChartPoint;
-          }
-        }
-
-        if (chartPoint !== undefined) {
-          chartPoint.anomalyScore = record.record_score;
-
-          if (_.has(record, 'actual')) {
-            chartPoint.actual = record.actual;
-            chartPoint.typical = record.typical;
-          } else {
-            const causes = _.get(record, 'causes', []);
-            if (causes.length > 0) {
-              chartPoint.byFieldName = record.by_field_name;
-              chartPoint.numberOfCauses = causes.length;
-              if (causes.length === 1) {
-                // If only a single cause, copy actual and typical values to the top level.
-                const cause = _.first(record.causes);
-                chartPoint.actual = cause.actual;
-                chartPoint.typical = cause.typical;
-              }
-            }
-          }
-        }
-
-
-      });
-
-      return chartData;
-    }
   }
 
   return {
   	restrict: 'E',
     scope: {
-      seriesConfig: '=',
-      plotEarliest: '=',
-      plotLatest: '=',
-      selectedEarliest: '=',
-      selectedLatest: '='
+      seriesConfig: '='
     },
     link: link,
     template: loadingIndicatorWrapperTemplate
