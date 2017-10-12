@@ -1,4 +1,3 @@
-import { format as formatUrl, resolve as resolveUrl } from 'url';
 import { map as mapAsync } from 'bluebird';
 
 export function SecurityPageProvider({ getService, getPageObjects }) {
@@ -13,16 +12,7 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
   const defaultFindTimeout = config.get('timeouts.find');
   const PageObjects = getPageObjects(['common', 'header', 'settings']);
 
-
-  class SecurityPage {
-    async initTests() {
-      log.debug('SecurityPage:initTests');
-      await esArchiver.load('empty_kibana');
-      await kibanaServer.uiSettings.disableToastAutohide();
-      await esArchiver.loadIfNeeded('logstash_functional');
-      remote.setWindowSize(1600,1000);
-    }
-
+  class LoginPage {
     async login(username, password) {
       const [superUsername, superPassword] = config.get('servers.elasticsearch.auth').split(':');
 
@@ -33,36 +23,52 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
       await testSubjects.setValue('loginUsername', username);
       await testSubjects.setValue('loginPassword', password);
       await testSubjects.click('loginSubmit');
-      await retry.try(() => find.existsByLinkText('Logout'));
+    }
+
+    async getErrorMessage() {
+      const errorMessageContainer = await retry.try(() => testSubjects.find('loginErrorMessage'));
+      return errorMessageContainer.getVisibleText();
+    }
+  }
+
+  class SecurityPage {
+    constructor() {
+      this.loginPage = new LoginPage();
+    }
+
+    async initTests() {
+      log.debug('SecurityPage:initTests');
+      await esArchiver.load('empty_kibana');
+      await kibanaServer.uiSettings.disableToastAutohide();
+      await esArchiver.loadIfNeeded('logstash_functional');
+      remote.setWindowSize(1600,1000);
+    }
+
+    async login(username, password) {
+      await this.loginPage.login(username, password);
+
+      await retry.try(async () => {
+        const logoutLinkExists = await find.existsByLinkText('Logout');
+        if (!logoutLinkExists) {
+          throw 'Login is not completed yet';
+        }
+      });
     }
 
     async logout() {
       log.debug('SecurityPage.logout');
 
-      // There is some issue with being automatically logged in after logging out. The retry loop tries to eliminate
-      // the issue. Only seems to happen in the test environment.
+      const logoutLinkExists = await find.existsByLinkText('Logout');
+      if (!logoutLinkExists) {
+        return;
+      }
+
+      await find.clickByLinkText('Logout');
+
       await retry.try(async () => {
-        const logoutUrl = formatUrl({
-          ...config.get('servers.kibana'),
-          auth: null,
-          pathname: resolveUrl(config.get('servers.kibana.pathname') || '/', 'logout')
-        });
-        await remote.get(logoutUrl);
-
-        // Even this loop itself doesn't seem to be sufficient enough and sometimes the retry timeouts from
-        // being auto logged in so much. This sleep is to try to help avoid that.
-        await PageObjects.common.sleep(1000);
-
-        const loginUrl = formatUrl({
-          ...config.get('servers.kibana'),
-          auth: null,
-          pathname: resolveUrl(config.get('servers.kibana.pathname') || '/', 'login')
-        });
-        await remote.get(loginUrl);
-
-        const currentUrl = await remote.getCurrentUrl();
-        if (!currentUrl.includes('login')) {
-          throw 'User was automatically logged in after logout.';
+        const logoutLinkExists = await find.existsByLinkText('Logout');
+        if (logoutLinkExists) {
+          throw 'Logout is not completed yet';
         }
       });
     }

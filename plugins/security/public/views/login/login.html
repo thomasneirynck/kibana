@@ -6,7 +6,7 @@
   <div class="form-container">
     <form class="login-form" ng-submit="login.submit(username, password)">
       <div ng-show="login.error" class="form-group error-message">
-        <label class="control-label">Oops! Error. Try again.</label>
+        <label class="control-label" data-test-subj="loginErrorMessage" >Oops! Error. Try again.</label>
       </div>
 
       <div ng-if="login.infoMessage" class="form-group error-message">
