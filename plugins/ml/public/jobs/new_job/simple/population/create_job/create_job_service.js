@@ -178,7 +178,6 @@ module.service('mlPopulationJobService', function (
       });
 
       this.chartData.highestValue = Math.ceil(highestValue);
-      this.chartData.chartTicksMargin.width = calculateTextWidth(this.chartData.highestValue, true);
 
       deferred.resolve(this.chartData);
     })
@@ -566,8 +565,6 @@ module.service('mlPopulationJobService', function (
       });
 
       this.chartData.eventRateHighestValue = Math.ceil(highestValue);
-      // Append extra 10px to width of tick label for highest axis value to allow for tick padding.
-      this.chartData.chartTicksMargin.width = calculateTextWidth(this.chartData.eventRateHighestValue, true) + 10;
 
       deferred.resolve(this.chartData);
     }).catch((resp) => {
@@ -577,6 +574,9 @@ module.service('mlPopulationJobService', function (
     return deferred.promise;
   };
 
-
+  this.updateChartMargin = function () {
+    // Append extra 10px to width of tick label for highest axis value to allow for tick padding.
+    this.chartData.chartTicksMargin.width = calculateTextWidth(this.chartData.eventRateHighestValue, true) + 10;
+  };
 
 });

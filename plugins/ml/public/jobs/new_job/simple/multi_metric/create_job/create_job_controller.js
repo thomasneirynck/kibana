@@ -429,8 +429,7 @@ module
     }
 
     function loadDocCountData(dtrs) {
-      const gridWidth = angular.element('.charts-container').width();
-      mlMultiMetricJobService.loadDocCountData($scope.formConfig, gridWidth)
+      mlMultiMetricJobService.loadDocCountData($scope.formConfig)
       .then((resp) => {
         if (thisLoadTimestamp === $scope.chartData.lastLoadTimestamp) {
           _.each(dtrs, (dtr, id) => {
@@ -439,6 +438,7 @@ module
           });
 
           $scope.chartData.lastLoadTimestamp = null;
+          mlMultiMetricJobService.updateChartMargin();
           $scope.$broadcast('render');
           $scope.chartStates.eventRate = (resp.job.bars.length) ? CHART_STATE.LOADED : CHART_STATE.NO_RESULTS;
         }

@@ -445,8 +445,7 @@ module
     }
 
     function loadDocCountData(dtrs) {
-      const gridWidth = angular.element('.charts-container').width();
-      mlPopulationJobService.loadDocCountData($scope.formConfig, gridWidth)
+      mlPopulationJobService.loadDocCountData($scope.formConfig)
       .then((resp) => {
         if (thisLoadTimestamp === $scope.chartData.lastLoadTimestamp) {
           _.each(dtrs, (dtr, id) => {
@@ -455,6 +454,7 @@ module
           });
 
           $scope.chartData.lastLoadTimestamp = null;
+          mlPopulationJobService.updateChartMargin();
           $scope.$broadcast('render');
           $scope.chartStates.eventRate = (resp.job.bars.length) ? CHART_STATE.LOADED : CHART_STATE.NO_RESULTS;
         }
