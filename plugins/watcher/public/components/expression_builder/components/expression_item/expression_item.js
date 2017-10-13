@@ -32,7 +32,7 @@ app.directive('expressionItem', function ($injector) {
       $scope.expressionItem.$firstInput = $el.find('[data-id="expressionItemPopoverContent"]').find(':input:first');
       const $button = $el.find('[data-id="expressionItemButton"]');
 
-      const buttonFocus = () => {
+      const buttonFocusOrClick = () => {
         $scope.$apply(() => {
           $scope.expressionItem.onPopoverOpen();
         });
@@ -54,11 +54,13 @@ app.directive('expressionItem', function ($injector) {
         }
       };
 
-      $button.on('focus', buttonFocus);
+      $button.on('focus', buttonFocusOrClick);
+      $button.on('click', buttonFocusOrClick);
       $document.on('click', documentClick);
       $document.on('keydown', documentKeydown);
       $scope.$on('$destroy', () => {
-        $button.off('focus', buttonFocus);
+        $button.off('focus', buttonFocusOrClick);
+        $button.off('click', buttonFocusOrClick);
         $document.off('click', documentClick);
         $document.off('keydown', documentKeydown);
       });
