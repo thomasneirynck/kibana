@@ -31,7 +31,7 @@ export class Charts extends Component {
 
   onHover = hoverIndex => this.setState({ hoverIndex });
   onMouseLeave = () => this.setState({ hoverIndex: null });
-  onSelection = selection => {
+  onSelectionEnd = selection => {
     const timefilter = getTimefilter();
     this.setState({ hoverIndex: null });
     timefilter.setTime(selection.start, selection.end);
@@ -57,9 +57,9 @@ export class Charts extends Component {
             series={responseTimeSeries}
             onHover={this.onHover}
             onMouseLeave={this.onMouseLeave}
-            onSelection={this.onSelection}
+            onSelectionEnd={this.onSelectionEnd}
             hoverIndex={this.state.hoverIndex}
-            formatYAxisValue={this.getResponseTimeFormatter}
+            tickFormatY={this.getResponseTimeFormatter}
           />
         </Chart>
 
@@ -70,9 +70,9 @@ export class Charts extends Component {
             series={rpmSeries}
             onHover={this.onHover}
             onMouseLeave={this.onMouseLeave}
-            onSelection={this.onSelection}
+            onSelectionEnd={this.onSelectionEnd}
             hoverIndex={this.state.hoverIndex}
-            formatYAxisValue={this.getRequestPerMinuteFormatter}
+            tickFormatY={this.getRequestPerMinuteFormatter}
           />
         </Chart>
       </ChartsWrapper>

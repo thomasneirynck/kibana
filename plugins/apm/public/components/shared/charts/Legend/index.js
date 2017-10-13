@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import styled from 'styled-components';
 import { units, px, colors, fontSizes } from '../../../../style/variables';
 
@@ -10,6 +10,7 @@ const Container = styled.div`
   cursor: pointer;
   opacity: ${props => (props.isDisabled ? 0.4 : 1)};
   margin-right: ${px(units.half)};
+  user-select: none;
 
   &:last-of-type {
     margin-right: 0;
@@ -24,18 +25,21 @@ const Indicator = styled.span`
   border-radius: 100%;
 `;
 
-export default function Legend({
-  onClick,
-  color,
-  text,
-  fontSize = fontSizes.small,
-  radius = units.minus - 1,
-  isDisabled = false
-}) {
-  return (
-    <Container onClick={onClick} isDisabled={isDisabled} fontSize={fontSize}>
-      <Indicator color={color} radius={radius} />
-      {text}
-    </Container>
-  );
+export default class Legend extends PureComponent {
+  render() {
+    const {
+      onClick,
+      color,
+      text,
+      fontSize = fontSizes.small,
+      radius = units.minus - 1,
+      isDisabled = false
+    } = this.props;
+    return (
+      <Container onClick={onClick} isDisabled={isDisabled} fontSize={fontSize}>
+        <Indicator color={color} radius={radius} />
+        {text}
+      </Container>
+    );
+  }
 }

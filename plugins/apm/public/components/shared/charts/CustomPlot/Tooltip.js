@@ -60,7 +60,6 @@ export function Tooltip({
     return null;
   }
   const x = hoveredPoints[0].x;
-
   const timestamp = moment(x).format('MMMM Do YYYY, HH:mm');
 
   return (

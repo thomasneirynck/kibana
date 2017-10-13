@@ -49,6 +49,12 @@ export const getRpmSeries = createSelector(
   _getRpmSeries
 );
 
+export const getSeries = ({ start, end, chartsData, handler }) => {
+  return chartsData.totalHits === 0
+    ? getEmptySerie(start, end)
+    : handler(chartsData);
+};
+
 function _getRpmSeries(rpmPerStatusClass, rpmPerStatusClassAverage) {
   return [
     {
@@ -104,7 +110,7 @@ function getRpmValues(dates = [], yValues = []) {
   }));
 }
 
-export function getEmptySerie(start, end) {
+export function getEmptySerie(start = Date.now() - 3600000, end = Date.now()) {
   const dates = d3.time
     .scale()
     .domain([new Date(start), new Date(end)])
@@ -112,6 +118,7 @@ export function getEmptySerie(start, end) {
 
   return [
     {
+      isEmpty: true,
       data: dates.map(x => ({
         x: x.getTime(),
         y: 1
