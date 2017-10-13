@@ -30,7 +30,13 @@ const ImpactToolTip = () => (
         </Tooltip>
       }
     >
-      <KuiInfoButton />
+      <KuiInfoButton
+        onClick={e => {
+          // TODO: Remove this handler once issue with pui-react-overlay-trigger has been resolved
+          e.stopPropagation();
+          return false;
+        }}
+      />
     </OverlayTrigger>
   </TooltipWrapper>
 );
