@@ -13,6 +13,7 @@
  * strictly prohibited.
  */
 
+import { pick } from 'lodash';
 import './http_service';
 import chrome from 'ui/chrome';
 
@@ -212,14 +213,15 @@ module.service('ml', function (prlHttpService) {
   };
 
   this.getVisualizerFieldStats = function (obj) {
-    const data = {
-      query: obj.query,
-      timeFieldName: obj.timeFieldName,
-      earliest: obj.earliest,
-      latest: obj.latest,
-      fields: obj.fields,
-      maxExamples: obj.maxExamples
-    };
+    const data = pick(obj, [
+      'query',
+      'timeFieldName',
+      'earliest',
+      'latest',
+      'interval',
+      'fields',
+      'maxExamples'
+    ]);
 
     return http.request({
       url: `${basePath}/data_visualizer/get_field_stats/${obj.indexPatternTitle}`,
@@ -229,14 +231,14 @@ module.service('ml', function (prlHttpService) {
   };
 
   this.getVisualizerOverallStats = function (obj) {
-    const data = {
-      query: obj.query,
-      timeFieldName: obj.timeFieldName,
-      earliest: obj.earliest,
-      latest: obj.latest,
-      aggregatableFields: obj.aggregatableFields,
-      nonAggregatableFields: obj.nonAggregatableFields
-    };
+    const data = pick(obj, [
+      'query',
+      'timeFieldName',
+      'earliest',
+      'latest',
+      'aggregatableFields',
+      'nonAggregatableFields'
+    ]);
 
     return http.request({
       url: `${basePath}/data_visualizer/get_overall_stats/${obj.indexPatternTitle}`,

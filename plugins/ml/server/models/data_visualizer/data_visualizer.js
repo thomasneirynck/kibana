@@ -75,6 +75,7 @@ export class DataVisualizer {
     timeFieldName,
     earliestMs,
     latestMs,
+    interval,
     maxExamples) {
     const results = [];
 
@@ -82,14 +83,24 @@ export class DataVisualizer {
       let stats = { fieldName: field.fieldName };
       switch(field.type) {
         case ML_JOB_FIELD_TYPES.NUMBER:
-          // TODO - add in processing of document count request?
-          stats = await this.getNumericFieldStats(
-            indexPatternTitle,
-            query,
-            field.fieldName,
-            timeFieldName,
-            earliestMs,
-            latestMs);
+          // undefined fieldName is used for a document count request.
+          if (field.fieldName !== undefined) {
+            stats = await this.getNumericFieldStats(
+              indexPatternTitle,
+              query,
+              field.fieldName,
+              timeFieldName,
+              earliestMs,
+              latestMs);
+          } else {
+            stats = await this.getDocumentCountStats(
+              indexPatternTitle,
+              query,
+              timeFieldName,
+              earliestMs,
+              latestMs,
+              interval);
+          }
           break;
         case ML_JOB_FIELD_TYPES.KEYWORD:
         case ML_JOB_FIELD_TYPES.IP:
@@ -219,6 +230,57 @@ export class DataVisualizer {
 
     const resp = await this.callWithRequest('search', { index, size, body });
     return (resp.hits.total > 0);
+  }
+
+  async getDocumentCountStats(
+    indexPatternTitle,
+    query,
+    timeFieldName,
+    earliestMs,
+    latestMs,
+    interval
+    ) {
+
+    const index = indexPatternTitle;
+    const size = 0;
+    const filterCriteria = this.buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
+
+    const aggs = {
+      eventRate: {
+        date_histogram: {
+          field: timeFieldName,
+          interval: interval,
+          min_doc_count: 1
+        }
+      }
+    };
+
+    const body = {
+      query: {
+        bool: {
+          filter: filterCriteria
+        }
+      },
+      aggs : aggs
+    };
+
+    const resp = await this.callWithRequest('search', { index, size, body });
+
+    const buckets = {};
+    const dataByTimeBucket = _.get(resp, ['aggregations', 'eventRate', 'buckets'], []);
+    _.each(dataByTimeBucket, (dataForTime) => {
+      const time = dataForTime.key;
+      buckets[time] = dataForTime.doc_count;
+    });
+
+    const stats = {
+      documentCounts: {
+        interval,
+        buckets
+      }
+    };
+
+    return stats;
   }
 
   async getNumericFieldStats(

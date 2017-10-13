@@ -23,7 +23,7 @@ import d3 from 'd3';
 import moment from 'moment';
 
 import 'plugins/ml/services/results_service';
-import loadingIndicatorTemplate from 'plugins/ml/components/loading_indicator/loading_indicator_wrapper.html';
+import { parseInterval } from 'ui/utils/parse_interval';
 import { numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
 import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
@@ -34,10 +34,9 @@ const module = uiModules.get('apps/ml');
 module.directive('mlDocumentCountChart', function (
   timefilter,
   Private,
-  mlResultsService) {
+  mlChartTooltipService) {
 
   function link(scope, element, attrs) {
-    scope.isLoading = false;
     const svgWidth = attrs.width ? +attrs.width : 400;
     const svgHeight = scope.height = attrs.height ? +attrs.height : 400;
 
@@ -51,65 +50,30 @@ module.directive('mlDocumentCountChart', function (
     let xAxisTickFormat = 'YYYY-MM-DD HH:mm';
 
     let barChartGroup;
+    let barWidth = 5;            // Adjusted according to data aggregation interval.
 
-    const TARGET_BAR_WIDTH = 5;  // Target bar width, in pixels.
     const MlTimeBuckets = Private(IntervalHelperProvider);
-    let chartAggInterval = null;
+
+    scope.chartData = [];
 
     element.on('$destroy', function () {
       scope.$destroy();
     });
 
-    scope.$on('renderChart', () => {
-      loadDocCountData();
-    });
-
-    function loadDocCountData() {
-      // Show the chart loading indicator.
-      scope.isLoading = true;
-
-      // Calculate the aggregation interval to use for the chart.
-      const barTarget = chartWidth / TARGET_BAR_WIDTH;
-      // Use a maxBars of 10% greater than the target.
-      const maxBars = Math.floor(1.1 * barTarget);
-      const buckets = new MlTimeBuckets();
-      const bounds = timefilter.getActiveBounds();
-      buckets.setInterval('auto');
-      buckets.setBounds(bounds);
-      buckets.setBarTarget(Math.floor(barTarget));
-      buckets.setMaxBars(maxBars);
-      chartAggInterval = buckets.getInterval();
-      xAxisTickFormat = buckets.getScaledDateFormat();
-
-      // Load the event rate data.
-      mlResultsService.getEventRateData(
-        scope.indexPattern.title,
-        scope.query,
-        scope.indexPattern.timeFieldName,
-        bounds.min.valueOf(),
-        bounds.max.valueOf(),
-        chartAggInterval.expression)
-      .then((resp) => {
-        scope.chartData = processChartData(resp.results);
-        scope.isLoading = false;
-        render();
-      }).catch((resp) => {
-        console.log('Document count chart - error building document count chart:', resp);
-      });
-    }
-
-    function processChartData(docCountByTime) {
-      // Return dataset in format used by the d3 chart i.e. array
+    function processChartData() {
+      // Build the dataset in format used by the d3 chart i.e. array
       // of Objects with keys time (epoch ms), date (JavaScript date) and value.
+      const bucketsData = _.get(scope, ['card', 'stats', 'documentCounts', 'buckets'], {});
       const chartData = [];
-      _.each(docCountByTime, (value, time) => {
+      _.each(bucketsData, (value, time) => {
         chartData.push({
           date: new Date(+time),
           time: +time,
           value
         });
       });
-      return chartData;
+
+      scope.chartData = chartData;
     }
 
     function render() {
@@ -144,6 +108,18 @@ module.directive('mlDocumentCountChart', function (
         .domain([new Date(bounds.min.valueOf()), new Date(bounds.max.valueOf())])
         .range([0, chartWidth]);
 
+      if (scope.chartData.length > 0) {
+        // x axis tick format and bar width determined by data aggregation interval.
+        const buckets = new MlTimeBuckets();
+        const aggInterval = _.get(scope, ['card', 'stats', 'documentCounts', 'interval']);
+        buckets.setInterval(aggInterval);
+        buckets.setBounds(bounds);
+        xAxisTickFormat = buckets.getScaledDateFormat();
+
+        const intervalMs = parseInterval(aggInterval).asMilliseconds();
+        barWidth = xScale(scope.chartData[0].time + intervalMs) - xScale(scope.chartData[0].time);
+      }
+
       const xAxis = d3.svg.axis().scale(xScale).orient('bottom')
         .outerTickSize(0).ticks(numTicksForDateFormat(chartWidth, xAxisTickFormat))
         .tickFormat((d) => {
@@ -172,36 +148,45 @@ module.directive('mlDocumentCountChart', function (
     }
 
     function drawBarChartPaths() {
-      const data = scope.chartData;
-      let cellWidth = 0;
-      if (data.length > 0) {
-        cellWidth = xScale(data[0].time + chartAggInterval.asMilliseconds()) - xScale(data[0].time);
-      }
-
       barChartGroup.selectAll('bar')
-        .data(data)
+        .data(scope.chartData)
         .enter().append('rect')
         .attr('class', 'bar')
         .attr('x', (d) => { return xScale(d.time); })
-        .attr('width', cellWidth)
+        .attr('width', barWidth)
         .attr('y', (d) => { return yScale(d.value); })
-        .attr('height', (d) => { return chartHeight - yScale(d.value); });
+        .attr('height', (d) => { return chartHeight - yScale(d.value); })
+        .on('mouseover', function (d) {
+          showChartTooltip(d, this);
+        })
+        .on('mousemove', function (d) {
+          showChartTooltip(d, this);
+        })
+        .on('mouseout', () => mlChartTooltipService.hide());
+
+      function showChartTooltip(data, rect) {
+        const formattedDate = moment(data.time).format('MMMM Do YYYY, HH:mm');
+        const contents = `${formattedDate}<br/><hr/>count: ${data.value}`;
+
+        // Calculate the y offset.
+        // rectY are mouseY are relative to top of the chart area.
+        const rectY = d3.select(rect).attr('y');
+        const mouseY = +(d3.mouse(rect)[1]);
+
+        mlChartTooltipService.show(contents, rect, {
+          x: 5,
+          y: (mouseY - rectY)
+        });
+      }
     }
 
-    // Do the initial load.
-    loadDocCountData();
-
+    // Process the data and then render the chart.
+    processChartData();
+    render();
   }
 
   return {
-    scope: {
-      indexPattern: '=',
-      query: '=',
-      earliest: '=',
-      latest: '=',
-      chartConfig: '='
-    },
-    link: link,
-    template: loadingIndicatorTemplate
+    scope: false,
+    link: link
   };
 });

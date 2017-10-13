@@ -47,6 +47,7 @@ function getStatsForFields(
   timeFieldName,
   earliestMs,
   latestMs,
+  interval,
   maxExamples) {
   const dv = new DataVisualizer(callWithRequest);
   return dv.getStatsForFields(
@@ -56,6 +57,7 @@ function getStatsForFields(
     timeFieldName,
     earliestMs,
     latestMs,
+    interval,
     maxExamples
   );
 }
@@ -78,6 +80,7 @@ export function dataVisualizerRoutes(server, commonRouteConfig) {
         payload.timeFieldName,
         payload.earliest,
         payload.latest,
+        payload.interval,
         payload.maxExamples)
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));

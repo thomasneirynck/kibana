@@ -30,6 +30,7 @@ import { DecorateQueryProvider } from 'ui/courier/data_source/_decorate_query';
 
 import { ML_JOB_FIELD_TYPES, KBN_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
 import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
+import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import template from './datavisualizer.html';
 
@@ -94,6 +95,8 @@ module
   }
   const decorateQuery = Private(DecorateQueryProvider);
   $scope.searchQuery = buildSearchQuery();
+
+  const MlTimeBuckets = Private(IntervalHelperProvider);
 
   let metricFieldRegexp;
   let metricFieldFilterTimeout;
@@ -252,11 +255,10 @@ module
     const metricCards = [];
 
     // Add a config for 'document count', identified by no field name.
-    // Loading currently done by the chart directive, so set flag to false.
     metricCards.push({
       type: ML_JOB_FIELD_TYPES.NUMBER,
       existsInDocs: true,
-      loading: false
+      loading: true
     });
 
     // Add on 1 for the document count card.
@@ -373,15 +375,20 @@ module
   }
 
   function loadMetricFieldStats() {
-    // Request data for all the metric cards, apart from the document count card
-    // which loads its own data (as the chart bucket aggregation interval is dependant
-    // on the width of the card).
-    const cardsToLoad = _.filter($scope.metricCards, (card) => {
-      return card.fieldName !== undefined;
-    });
-    const numberFields = _.map(cardsToLoad, (card) => {
+    // Request data for all the metric cards.
+    const numberFields = _.map($scope.metricCards, (card) => {
       return { fieldName: card.fieldName, type: card.type };
     });
+
+    // Obtain the interval to use for date histogram aggregations
+    // (such as the document count chart). Aim for 75 bars.
+    const buckets = new MlTimeBuckets();
+    const bounds = timefilter.getActiveBounds();
+    const BAR_TARGET = 75;
+    buckets.setInterval('auto');
+    buckets.setBounds(bounds);
+    buckets.setBarTarget(BAR_TARGET);
+    const aggInterval = buckets.getInterval();
 
     //console.log(`loadMetricFieldStats called at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
     ml.getVisualizerFieldStats({
@@ -390,13 +397,22 @@ module
       timeFieldName: indexPattern.timeFieldName,
       earliest: $scope.earliest,
       latest: $scope.latest,
+      interval: aggInterval.expression,
       fields: numberFields
     })
     .then((resp) => {
       //console.log(`loadMetricFieldStats response received at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
       // Match up the data to the card.
-      _.each(cardsToLoad, (card) => {
-        card.stats = _.find(resp, { fieldName: card.fieldName });
+      _.each($scope.metricCards, (card) => {
+        if (card.fieldName !== undefined) {
+          card.stats = _.find(resp, { fieldName: card.fieldName });
+        } else {
+          // Document count card.
+          card.stats = _.find(resp, (stats) => {
+            return stats.fieldName === undefined;
+          });
+        }
+
         card.loading = false;
       });
 

@@ -27,6 +27,7 @@
   </div>
   <div class="details-container" ng-switch on="detailsMode">
     <ml-metric-distribution-chart ng-switch-when="distribution" width="325" height="220">
+      <div class="content-wrapper" />
     </ml-metric-distribution-chart>
     <div ng-switch-default ng-repeat="value in card.stats.topValues" class="top-value">
       <div class="field-label"
