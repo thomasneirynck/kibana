@@ -50,8 +50,8 @@ module.directive('mlExplorerChartsContainer', function ($window, timefilter) {
       const from = bounds.min.toISOString();    // e.g. 2016-02-08T16:00:00.000Z
       const to = bounds.max.toISOString();
 
-      const zoomFrom = moment(scope.plotEarliest).toISOString();
-      const zoomTo = moment(scope.plotLatest).toISOString();
+      const zoomFrom = moment(series.plotEarliest).toISOString();
+      const zoomTo = moment(series.plotLatest).toISOString();
 
       // Pass the detector index and entity fields (i.e. by, over, partition fields)
       // to identify the particular series to view.
@@ -110,10 +110,6 @@ module.directive('mlExplorerChartsContainer', function ($window, timefilter) {
   	restrict: 'E',
     scope: {
       seriesToPlot: '=',
-      plotEarliest: '=',
-      plotLatest: '=',
-      selectedEarliest: '=',
-      selectedLatest: '=',
       chartsPerRow: '=',
       layoutCellsPerChart: '=',
       tooManyBuckets: '='
