@@ -124,33 +124,37 @@ module.service('mlPopulationJobService', function (
         });
 
         fieldIds.forEach((fieldId, i) => {
-          const populationValues = _.get(dataForTime, ['population', 'buckets'], []);
+          const populationBuckets = _.get(dataForTime, ['population', 'buckets'], []);
           const values = [];
           if (fieldId === EVENT_RATE_COUNT_FIELD) {
-            populationValues.forEach(v => {
+            populationBuckets.forEach(b => {
               // check to see if the data is split.
-              if (v[i] === undefined) {
-                values.push({ label:v.key, value: v.doc_count });
+              if (b[i] === undefined) {
+                values.push({ label:b.key, value: b.doc_count });
               } else {
                 // a split is being used, so an additional filter was added to the search
-                values.push({ label:v.key, value: v[i].doc_count });
+                values.push({ label:b.key, value: b[i].doc_count });
               }
             });
           } else if (typeof dataForTime.population !== 'undefined') {
-            populationValues.forEach(v => {
+            populationBuckets.forEach(b => {
+              const tempBucket = b[i];
               let value = null;
               // check to see if the data is split
-              if (v[i].value === undefined && v[i].splitValue !== undefined) {
-                // if the field has been split, an additional filter and aggregation
-                // has been added to the search
-                value = v[i].splitValue.value;
+              // if the field has been split, an additional filter and aggregation
+              // has been added to the search in the form of splitValue
+              const tempValue = (tempBucket.value === undefined && tempBucket.splitValue !== undefined) ?
+                tempBucket.splitValue : tempBucket;
+
+              // check to see if values is exists rather than value.
+              // if values exists, the aggregation was median
+              if (tempValue.value === undefined && tempValue.values !== undefined) {
+                value = tempValue.values[ML_MEDIAN_PERCENTS];
               } else {
-                value = v[i].value;
+                value = tempValue.value;
               }
-              values.push({ label: v.key, value: (isFinite(value) ? value : null) });
+              values.push({ label: b.key, value: (isFinite(value) ? value : null) });
             });
-          } else if (typeof dataForTime[i].values !== 'undefined') {
-            // value = dataForTime[i].values[ML_MEDIAN_PERCENTS];
           }
 
           const highestValueField = _.reduce(values, (p, c) => (p === undefined || c.value > p.value) ? c : p);
@@ -270,15 +274,19 @@ module.service('mlPopulationJobService', function (
                 }
               }
             };
+            if (field.agg.type.dslName === 'percentiles') {
+              aggs[i].aggs.splitValue[field.agg.type.dslName].percents = [ML_MEDIAN_PERCENTS];
+            }
           } else {
             aggs[i] = {
               [field.agg.type.dslName]: { field: field.name }
             };
+
+            if (field.agg.type.dslName === 'percentiles') {
+              aggs[i][field.agg.type.dslName].percents = [ML_MEDIAN_PERCENTS];
+            }
           }
 
-          if (field.agg.type.dslName === 'percentiles') {
-            aggs[i][field.agg.type.dslName].percents = [ML_MEDIAN_PERCENTS];
-          }
         }
       });
 
