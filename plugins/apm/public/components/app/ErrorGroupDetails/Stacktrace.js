@@ -10,8 +10,9 @@ function getCollapsedLibraryFrames(stackframes) {
       return [...acc, stackframe];
     }
 
+    // current stackframe is library frame
     const prevItem = acc[acc.length - 1];
-    if (prevItem.in_app) {
+    if (!prevItem || prevItem.in_app) {
       return [...acc, { in_app: false, stackframes: [stackframe] }];
     }
 

@@ -56,11 +56,15 @@ export function createAction(actionTypes, callApi) {
         });
       }
 
-      return dispatch({
-        key,
-        response,
-        type: SUCCESS
-      });
+      try {
+        return dispatch({
+          key,
+          response,
+          type: SUCCESS
+        });
+      } catch (error) {
+        console.error(error);
+      }
     };
   };
 }

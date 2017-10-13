@@ -8,7 +8,7 @@ import {
   fontSizes,
   borderRadius
 } from '../../../style/variables';
-import { get, capitalize } from 'lodash';
+import { get, capitalize, isEmpty } from 'lodash';
 import { STATUS } from '../../../constants';
 import {
   PropertiesTable,
@@ -94,6 +94,10 @@ function getTabs(errorGroup) {
 
 function DetailView({ errorGroup, urlParams }) {
   if (errorGroup.status !== STATUS.SUCCESS) {
+    return null;
+  }
+
+  if (isEmpty(errorGroup.data.error)) {
     return null;
   }
 

@@ -5,67 +5,102 @@ import {
   units,
   px,
   colors,
-  fontFamilyCode
+  fontFamilyCode,
+  borderRadius
 } from '../../../style/variables';
 
-const CodeContainer = styled.div`
-  border-right: 1px solid ${colors.gray4};
-  border-bottom: 1px solid ${colors.gray4};
-  overflow: scroll;
-`;
-
-const LinePreview = styled.div`
-  white-space: pre;
-  margin-left: ${px(unit)};
-  font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
-`;
-
-const LineContainer = styled.div`
-  display: flex;
-  background-color: ${props => (props.marked ? colors.yellow : 'initial')};
-
-  ${LinePreview} {
-    background-color: ${props => (props.marked ? colors.yellow : 'initial')};
-  }
-`;
-
-const LineNumber = styled.div`
-  flex: 0 0 ${px(unit * 2.5)};
-  text-align: center;
-  color: ${colors.gray3};
-  border-left: 1px solid ${colors.gray4};
-  border-right: 1px solid ${colors.gray4};
-`;
+import { isEmpty } from 'lodash';
 
 const FileDetails = styled.div`
   color: ${colors.gray3};
-  border: 1px solid ${colors.gray4};
   padding: ${px(units.quarter)} ${px(unit)};
+  border-bottom: 1px solid ${colors.gray4};
+  border-radius: ${borderRadius} ${borderRadius} 0 0;
 `;
 
-const FileDetail = styled.span`color: ${colors.black};`;
+const FileDetail = styled.span`font-weight: bold;`;
 
 const Container = styled.div`
-  margin: ${px(unit)} 0;
+  margin: ${px(unit + units.eighth)} 0 ${px(units.plus)} 0;
+  position: relative;
   font-family: ${fontFamilyCode};
+  border: 1px solid ${colors.gray4};
+  border-radius: ${borderRadius};
+  background: ${props => (props.isLibraryFrame ? colors.white : colors.gray5)};
 
   ${FileDetails} {
-    background: ${props =>
-      props.isLibraryFrame ? colors.white : colors.gray5};
+    ${props => (!props.hasContext ? 'border-bottom: 0' : null)};
   }
 
   ${FileDetail} {
-    font-weight: ${props => (props.isLibraryFrame ? 400 : 600)};
+    color: ${props => (props.isLibraryFrame ? colors.gray1 : colors.black)};
   }
+`;
 
-  ${LineNumber} {
-    background: ${props =>
-      props.isLibraryFrame ? colors.white : colors.gray5};
-  }
+const ContextContainer = styled.div`
+  position: relative;
+  border-radius: 0 0 ${borderRadius} ${borderRadius};
+`;
 
-  ${LinePreview} {
-    color: ${props => (props.isLibraryFrame ? colors.gray3 : colors.black)};
+const LineHighlight = styled.div`
+  position: absolute;
+  width: 100%;
+  height: ${px(units.eighth * 9)};
+  top: ${props =>
+    props.lineNumber ? px(props.lineNumber * (units.eighth * 9)) : '0'};
+  pointer-events: none;
+  background-color: ${colors.yellow};
+`;
+
+const LineNumberContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 0 0 0 ${borderRadius};
+  background: ${props => (props.isLibraryFrame ? colors.white : colors.gray5)};
+`;
+
+const LineNumber = styled.div`
+  position: relative;
+  min-width: ${px(units.eighth * 21)};
+  padding-left: ${px(units.half)};
+  padding-right: ${px(units.half)};
+  color: ${colors.gray3};
+  line-height: ${px(unit + units.eighth)};
+  text-align: right;
+  border-right: 1px solid ${colors.gray4};
+  ${props => (props.marked ? `background-color: ${colors.yellow}` : null)};
+
+  &:last-of-type {
+    border-radius: 0 0 0 ${borderRadius};
   }
+`;
+
+const LineContainer = styled.div`
+  overflow: auto;
+  margin: 0 0 0 ${px(units.eighth * 21)};
+  padding: 0;
+  background-color: ${colors.white};
+`;
+
+const Line = styled.pre`
+  // Override all styles
+  margin: 0;
+  color: inherit;
+  background: inherit;
+  border: 0;
+  border-radius: 0;
+  overflow: initial;
+  padding: 0 ${px(units.eighth * 9)};
+  line-height: ${px(units.eighth * 9)};
+`;
+
+const Code = styled.code`
+  position: relative;
+  padding: 0;
+  margin: 0;
+  white-space: pre;
+  z-index: 2;
 `;
 
 const getStackframeLines = stackframe => {
@@ -73,9 +108,9 @@ const getStackframeLines = stackframe => {
     return [];
   }
   return [
-    ...stackframe.context.pre,
+    ...(stackframe.context.pre || []),
     stackframe.line.context,
-    ...stackframe.context.post
+    ...(stackframe.context.post || [])
   ];
 };
 
@@ -83,37 +118,46 @@ const getStartLineNumber = stackframe =>
   stackframe.line.number - stackframe.context.pre.length;
 
 function CodePreview({ stackframe, isLibraryFrame }) {
+  const hasContext = !isEmpty(stackframe.context);
+
   return (
-    <Container isLibraryFrame={isLibraryFrame}>
+    <Container hasContext={hasContext} isLibraryFrame={isLibraryFrame}>
       <FileDetails>
         <FileDetail>{stackframe.filename}</FileDetail> in{' '}
         <FileDetail>{stackframe.function}</FileDetail> at {' '}
         <FileDetail>line {stackframe.line.number}</FileDetail>
       </FileDetails>
 
-      <Code stackframe={stackframe} />
+      {hasContext && (
+        <Context stackframe={stackframe} isLibraryFrame={isLibraryFrame} />
+      )}
     </Container>
   );
 }
 
-function Code({ stackframe, isLibraryFrame }) {
-  if (!stackframe.context) {
-    return null;
-  }
-
+function Context({ stackframe, isLibraryFrame }) {
   const lines = getStackframeLines(stackframe);
   const startLineNumber = getStartLineNumber(stackframe);
   const lineIndex = stackframe.context.pre.length;
 
   return (
-    <CodeContainer isLibraryFrame={isLibraryFrame}>
-      {lines.map((line, i) => (
-        <LineContainer key={line + i} marked={lineIndex === i}>
-          <LineNumber>{i + startLineNumber}.</LineNumber>
-          <LinePreview>{line}</LinePreview>
-        </LineContainer>
-      ))}
-    </CodeContainer>
+    <ContextContainer>
+      <LineHighlight lineNumber={lineIndex} />
+      <LineNumberContainer isLibraryFrame={isLibraryFrame}>
+        {lines.map((line, i) => (
+          <LineNumber key={line + i} marked={lineIndex === i}>
+            {i + startLineNumber}.
+          </LineNumber>
+        ))}
+      </LineNumberContainer>
+      <LineContainer>
+        {lines.map((line, i) => (
+          <Line key={line + i}>
+            <Code>{line || '\n'}</Code>
+          </Line>
+        ))}
+      </LineContainer>
+    </ContextContainer>
   );
 }
 
