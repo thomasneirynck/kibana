@@ -126,9 +126,10 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
         }
         contents += ('Max anomaly score: ' + displayScore);
 
+        const offsets = ($event.target.className === 'sl-cell-inner' ? { x: 0, y: 0 } : { x: 2, y: 1 });
         mlChartTooltipService.show(contents, $event.target, {
-          x: 20,
-          y: 10
+          x: $event.target.offsetWidth - offsets.x,
+          y: 10 + offsets.y
         });
       }
 
