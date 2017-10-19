@@ -2,10 +2,12 @@ import React from 'react';
 import { render } from 'react-dom';
 import moment from 'moment';
 import { uiModules } from 'ui/modules';
-import { getTitle } from './get_title';
-import { getUnits } from './get_units';
-import { MonitoringTimeseries } from 'plugins/monitoring/components/chart';
-import { InfoTooltip } from 'plugins/monitoring/components/chart/info_tooltip';
+import {
+  getTitle,
+  getUnits,
+  MonitoringTimeseries,
+  InfoTooltip,
+} from 'plugins/monitoring/components/chart';
 import { Tooltip } from 'pui-react-tooltip';
 import { OverlayTrigger } from 'pui-react-overlay-trigger';
 import { KuiInfoButton } from 'ui_framework/components';
@@ -22,7 +24,7 @@ uiModule.directive('monitoringChart', (timefilter) => {
       const series = scope.series;
       const units = getUnits(series);
 
-      function onBrush({ xaxis, _yaxis }) {
+      function onBrush({ xaxis }) {
         scope.$evalAsync(() => {
           timefilter.time.from = moment(xaxis.from);
           timefilter.time.to = moment(xaxis.to);
