@@ -11,6 +11,17 @@ import {
 
 import { isEmpty } from 'lodash';
 
+import SyntaxHighlighter, {
+  registerLanguage
+} from 'react-syntax-highlighter/dist/light';
+import { xcode } from 'react-syntax-highlighter/dist/styles';
+
+import javascript from 'react-syntax-highlighter/dist/languages/javascript';
+import python from 'react-syntax-highlighter/dist/languages/python';
+
+registerLanguage('javascript', javascript);
+registerLanguage('python', python);
+
 const FileDetails = styled.div`
   color: ${colors.gray3};
   padding: ${px(units.quarter)} ${px(unit)};
@@ -81,6 +92,10 @@ const LineContainer = styled.div`
   margin: 0 0 0 ${px(units.eighth * 21)};
   padding: 0;
   background-color: ${colors.white};
+
+  &:last-of-type {
+    border-radius: 0 0 ${borderRadius} 0;
+  }
 `;
 
 const Line = styled.pre`
@@ -117,7 +132,7 @@ const getStackframeLines = stackframe => {
 const getStartLineNumber = stackframe =>
   stackframe.line.number - stackframe.context.pre.length;
 
-function CodePreview({ stackframe, isLibraryFrame }) {
+function CodePreview({ stackframe, codeLanguage, isLibraryFrame }) {
   const hasContext = !isEmpty(stackframe.context);
 
   return (
@@ -129,16 +144,21 @@ function CodePreview({ stackframe, isLibraryFrame }) {
       </FileDetails>
 
       {hasContext && (
-        <Context stackframe={stackframe} isLibraryFrame={isLibraryFrame} />
+        <Context
+          stackframe={stackframe}
+          codeLanguage={codeLanguage}
+          isLibraryFrame={isLibraryFrame}
+        />
       )}
     </Container>
   );
 }
 
-function Context({ stackframe, isLibraryFrame }) {
+function Context({ stackframe, codeLanguage, isLibraryFrame }) {
   const lines = getStackframeLines(stackframe);
   const startLineNumber = getStartLineNumber(stackframe);
   const lineIndex = stackframe.context.pre.length;
+  const language = codeLanguage || 'javascript'; // TODO: Add support for more languages
 
   return (
     <ContextContainer>
@@ -152,9 +172,16 @@ function Context({ stackframe, isLibraryFrame }) {
       </LineNumberContainer>
       <LineContainer>
         {lines.map((line, i) => (
-          <Line key={line + i}>
-            <Code>{line || '\n'}</Code>
-          </Line>
+          <SyntaxHighlighter
+            key={line + i}
+            language={language}
+            style={xcode}
+            PreTag={Line}
+            CodeTag={Code}
+            customStyle={{ padding: null, overflowX: null }}
+          >
+            {line || '\n'}
+          </SyntaxHighlighter>
         ))}
       </LineContainer>
     </ContextContainer>

@@ -34,7 +34,7 @@ class Stacktrace extends PureComponent {
     });
 
   render() {
-    const { stackframes = [] } = this.props;
+    const { stackframes = [], codeLanguage } = this.props;
     if (!stackframes) {
       return <div>No stackframes</div>;
     }
@@ -47,7 +47,13 @@ class Stacktrace extends PureComponent {
       <div>
         {getCollapsedLibraryFrames(stackframes).map((item, i) => {
           if (item.in_app) {
-            return <CodePreview key={i} stackframe={item} />;
+            return (
+              <CodePreview
+                key={i}
+                stackframe={item}
+                codeLanguage={codeLanguage}
+              />
+            );
           }
 
           return (
@@ -55,6 +61,7 @@ class Stacktrace extends PureComponent {
               key={i}
               visible={this.state.libraryframes[i]}
               stackframes={item.stackframes}
+              codeLanguage={codeLanguage}
               onClick={() => this.toggle(i)}
             />
           );
@@ -64,7 +71,7 @@ class Stacktrace extends PureComponent {
   }
 }
 
-function Libraryframes({ visible, stackframes, onClick }) {
+function Libraryframes({ visible, stackframes, codeLanguage, onClick }) {
   return (
     <div>
       <div>
@@ -80,7 +87,12 @@ function Libraryframes({ visible, stackframes, onClick }) {
       <div>
         {visible &&
           stackframes.map((stackframe, i) => (
-            <CodePreview key={i} stackframe={stackframe} isLibraryFrame />
+            <CodePreview
+              key={i}
+              stackframe={stackframe}
+              isLibraryFrame
+              codeLanguage={codeLanguage}
+            />
           ))}
       </div>
     </div>

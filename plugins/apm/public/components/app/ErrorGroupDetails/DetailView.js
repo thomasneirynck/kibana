@@ -105,6 +105,8 @@ function DetailView({ errorGroup, urlParams }) {
   const timestamp = moment(get(errorGroup, 'data.error.@timestamp')).format();
 
   const stackframes = get(errorGroup.data.error.error.exception, 'stacktrace');
+  const codeLanguage = get(errorGroup.data.error, 'context.app.language.name');
+
   const tabs = getTabs(errorGroup);
   const currentTab = getCurrentTab(tabs, urlParams.detailTab);
 
@@ -143,7 +145,7 @@ function DetailView({ errorGroup, urlParams }) {
 
       <div>
         {currentTab === STACKTRACE_TAB ? (
-          <Stacktrace stackframes={stackframes} />
+          <Stacktrace stackframes={stackframes} codeLanguage={codeLanguage} />
         ) : (
           <PropertiesTable
             propData={errorGroup.data.error.context[currentTab]}
