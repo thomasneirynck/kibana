@@ -51,7 +51,7 @@ export default function ({ getService, getPageObjects }) {
 
         expect(await nodeDetail.getSummary()).to.eql({
           transportAddress: '127.0.0.1:9300',
-          jvmHeap: 'JVM Heap: 29%',
+          jvmHeap: 'JVM Heap: 29 %',
           freeDiskSpace: 'Free Disk Space: 173.9 GB',
           documentCount: 'Documents: 24.8k',
           dataSize: 'Data: 50.4 MB',
@@ -67,7 +67,7 @@ export default function ({ getService, getPageObjects }) {
 
         expect(await nodeDetail.getSummary()).to.eql({
           transportAddress: '127.0.0.1:9302',
-          jvmHeap: 'JVM Heap: 17%',
+          jvmHeap: 'JVM Heap: 17 %',
           freeDiskSpace: 'Free Disk Space: 173.9 GB',
           documentCount: 'Documents: 240',
           dataSize: 'Data: 1.4 MB',
@@ -96,13 +96,13 @@ export default function ({ getService, getPageObjects }) {
 
         expect(await nodeDetail.getSummary()).to.eql({
           transportAddress: '127.0.0.1:9302',
-          jvmHeap: 'JVM Heap: 15%', // BUG - should be N/A
+          jvmHeap: 'JVM Heap: N/A',
           freeDiskSpace: 'Free Disk Space: N/A',
           documentCount: 'Documents: N/A',
           dataSize: 'Data: N/A',
           indicesCount: 'Indices: N/A',
           shardsCount: 'Shards: N/A',
-          nodeType: 'Type: Node',
+          nodeType: 'Type: Offline Node',
           status: 'Health: Offline',
         });
       });

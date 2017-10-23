@@ -1,15 +1,29 @@
-import _ from 'lodash';
+import { get } from 'lodash';
 import { checkParam } from '../../error_missing_required';
 import { createQuery } from '../../create_query';
 import { ElasticsearchMetric } from '../../metrics/metric_classes';
 
-export function getShardAllocation(req, esIndexPattern, filters, lastState, showSystemIndices = false) {
+export function handleResponse(nodeResolver) {
+  return response => {
+    const hits = get(response, 'hits.hits');
+    if (!hits) {
+      return [];
+    }
+
+    // map into object with shard and source properties
+    return hits.map(hit => {
+      return {
+        ...hit._source.shard,
+        resolver: get(hit, `_source.source_node[${nodeResolver}]`)
+      };
+    });
+  };
+}
+
+export function getShardAllocation(req, esIndexPattern, { nodeResolver, shardFilter, stateUuid, showSystemIndices = false }) {
   checkParam(esIndexPattern, 'esIndexPattern in elasticsearch/getShardAllocation');
 
-  filters.push({
-    term: { state_uuid: _.get(lastState, 'cluster_state.state_uuid') }
-  });
-
+  const filters = [ { term: { state_uuid: stateUuid } }, shardFilter ];
   if (!showSystemIndices) {
     filters.push({
       bool: { must_not: [
@@ -17,7 +31,6 @@ export function getShardAllocation(req, esIndexPattern, filters, lastState, show
       ] }
     });
   }
-
 
   const config = req.server.config();
   const uuid = req.params.clusterUuid;
@@ -32,12 +45,5 @@ export function getShardAllocation(req, esIndexPattern, filters, lastState, show
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
-  .then((resp) => {
-    const hits = _.get(resp, 'hits.hits');
-    if (!hits) { return []; }
-    // map into object with shard and source properties
-    return hits.map(doc => _.merge(doc._source.shard, {
-      resolver: _.get(doc, `_source.source_node[${config.get('xpack.monitoring.node_resolver')}]`)
-    }));
-  });
+  .then(handleResponse(nodeResolver));
 }

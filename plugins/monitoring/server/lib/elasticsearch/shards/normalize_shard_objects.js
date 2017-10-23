@@ -1,6 +1,5 @@
 import { get, partition } from 'lodash';
-import { calculateNodeType } from '../calculate_node_type';
-import { getLatestAggKey } from '../node_agg_vals';
+import { calculateNodeType, getLatestAggKey } from '../nodes';
 
 /*
  * Reducer function for a set of nodes to key the array by nodeId, summarize

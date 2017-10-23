@@ -2,10 +2,12 @@ import { get, isUndefined } from 'lodash';
 import Joi from 'joi';
 import { getClusterStats } from '../../../../lib/cluster/get_cluster_stats';
 import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
-import { getNodes } from '../../../../lib/elasticsearch/get_nodes';
-import { calculateNodeType } from '../../../../lib/elasticsearch/calculate_node_type';
-import { getNodeTypeClassLabel } from '../../../../lib/elasticsearch/get_node_type_class_label';
-import { getDefaultNodeFromId } from '../../../../lib/elasticsearch/get_default_node_from_id';
+import {
+  getNodes,
+  calculateNodeType,
+  getNodeTypeClassLabel,
+  getDefaultNodeFromId
+} from '../../../../lib/elasticsearch/nodes';
 import { getShardStats } from '../../../../lib/elasticsearch/shards';
 import { handleError } from '../../../../lib/errors/handle_error';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';

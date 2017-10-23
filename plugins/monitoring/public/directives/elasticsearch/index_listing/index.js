@@ -13,7 +13,7 @@ import {
 } from 'ui_framework/components';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';
-import { formatNumber } from '../../../lib/format_number';
+import { formatMetric } from '../../../lib/format_number';
 
 const showSystemIndicesComponentFactory = scope => {
   return class ShowSytemIndicesCheckbox extends React.Component {
@@ -48,15 +48,6 @@ const showSystemIndicesComponentFactory = scope => {
       );
     }
   };
-};
-
-/* TODO refactor other listing APIs to return metrics similar to here
- * then make this a shared function */
-const formatMetric = (value, format, suffix) => {
-  if (Boolean(value) || value === 0) {
-    return formatNumber(value, format) + (suffix ? ' ' + suffix : '');
-  }
-  return 'N/A';
 };
 
 const filterFields = ['name', 'status'];

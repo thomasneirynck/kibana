@@ -76,7 +76,7 @@ export default function ({ getService, getPageObjects }) {
         expect(await shards.getNodeAllocation('relocation_test')).to.eql({
           visibleText: 'relocation_test | 0',
           shards: [
-            { classification: 'shard primary relocating 0', tooltip: 'Relocating', },
+            { classification: 'shard primary relocating 0', tooltip: 'Relocating to whatever-03', },
           ],
           status: 'green',
         });

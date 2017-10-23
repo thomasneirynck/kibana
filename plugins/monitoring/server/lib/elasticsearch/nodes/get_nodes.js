@@ -1,10 +1,10 @@
 import moment from 'moment';
-import { checkParam } from '../error_missing_required';
-import { createQuery } from '../create_query.js';
-import { near } from '../calculate_auto';
-import { getAggItems } from '../lists/get_agg_items';
-import { mapResponse } from '../lists/map_response';
-import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { checkParam } from '../../error_missing_required';
+import { createQuery } from '../../create_query.js';
+import { near } from '../../calculate_auto';
+import { getAggItems } from '../../lists/get_agg_items';
+import { mapResponse } from '../../lists/map_response';
+import { ElasticsearchMetric } from '../../metrics/metric_classes';
 import { getLatestAggKey, getNodeAttribute } from './node_agg_vals';
 
 /* Run an aggregation on node_stats to get stat data for the selected time

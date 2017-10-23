@@ -23,19 +23,11 @@ export function nodesByIndices() {
   return function nodesByIndicesFn(shards, nodes) {
 
     const getNodeType = function (node) {
-      if (node.attributes.client === 'true') {
-        return 'client';
-      }
-      if (node.attributes.data === 'false') {
-        return node.attributes.master === 'true' ? 'master' : 'client';
-      }
-      if (node.attributes.master === 'false') {
-        // we know data is true here..
-        return 'data';
-      }
-      return 'normal';
+      const attrs = node.attributes || {};
+      return attrs.master === 'true' ? 'master' : 'normal';
     };
 
+    // NOTE: this seems to be used, but has no discrenable effect in the UI
     function createNode(obj, node, id) {
       node.type = 'node';
       node.children = [];

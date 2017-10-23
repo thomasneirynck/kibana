@@ -45,10 +45,10 @@ const ShardRow = props => {
 export class TableBody extends React.Component {
   static displayName = 'TableBody';
 
-  createRow = (data) => {
+  createRow = (data, index) => {
     return (
       <ShardRow
-        key={data.name}
+        key={`shardRow-${index}`}
         data={data}
         {...this.props}
         changeUrl={this.props.changeUrl}

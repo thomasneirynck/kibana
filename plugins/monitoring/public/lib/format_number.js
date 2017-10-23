@@ -80,3 +80,10 @@ export function formatNumber(num, which) {
   }
   return numeral(num).format(format) + postfix;
 }
+
+export function formatMetric(value, format, suffix) {
+  if (Boolean(value) || value === 0) {
+    return formatNumber(value, format) + (suffix ? ' ' + suffix : '');
+  }
+  return 'N/A';
+}

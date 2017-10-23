@@ -104,9 +104,9 @@ export default function ({ getService, getPageObjects }) {
         await indicesList.clickRowByName('many-0001_clruksahirti');
 
         expect(await indexDetail.getSummary()).to.eql({
-          dataSize: 'Total: N/A',
-          dataSizePrimaries: 'Primaries: N/A',
-          documentCount: 'Documents: N/A',
+          dataSize: 'Total: 3.6 KB',
+          dataSizePrimaries: 'Primaries: 3.6 KB',
+          documentCount: 'Documents: 1',
           totalShards: 'Total Shards: N/A',
           unassignedShards: 'Unassigned Shards: N/A',
           health: 'Health: Not Available',

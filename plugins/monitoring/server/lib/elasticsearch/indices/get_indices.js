@@ -1,8 +1,8 @@
 import { get } from 'lodash';
-import { checkParam } from '../error_missing_required';
-import { ElasticsearchMetric } from '../metrics/metric_classes';
-import { createQuery } from '../create_query';
-import { calculateRate } from '../calculate_rate';
+import { checkParam } from '../../error_missing_required';
+import { ElasticsearchMetric } from '../../metrics/metric_classes';
+import { createQuery } from '../../create_query';
+import { calculateRate } from '../../calculate_rate';
 
 export function handleResponse(resp, min, max) {
   // map the hits
