@@ -1,10 +1,11 @@
+import { get } from 'lodash';
 import { getBuckets } from './get_buckets';
 import { calculateBucketSize } from './calculate_bucket_size';
 
-function getDefaultBucketIndex(buckets) {
+function getDefaultTransactionId(buckets) {
   const filledBuckets = buckets.filter(bucket => bucket.count);
-  const middleBucket = filledBuckets[Math.floor(filledBuckets.length / 2)];
-  return buckets.indexOf(middleBucket);
+  const middleIndex = Math.floor(filledBuckets.length / 2);
+  return get(filledBuckets, `[${middleIndex}].transaction_id`);
 }
 
 export async function getDistribution({ appName, transactionName, setup }) {
@@ -24,6 +25,6 @@ export async function getDistribution({ appName, transactionName, setup }) {
     total_hits,
     buckets,
     bucket_size: bucketSize,
-    default_bucket_index: getDefaultBucketIndex(buckets)
+    default_transaction_id: getDefaultTransactionId(buckets)
   };
 }

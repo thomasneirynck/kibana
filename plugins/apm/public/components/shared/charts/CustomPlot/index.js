@@ -206,7 +206,7 @@ export class InnerCustomPlot extends PureComponent {
                 <Legend
                   key={i}
                   onClick={() => this.clickLegend(i)}
-                  isDisabled={this.state.seriesVisibility[i]}
+                  disabled={this.state.seriesVisibility[i]}
                   text={text}
                   color={serie.color}
                 />

@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import Boom from 'boom';
+import { isEmpty } from 'lodash';
 
 import { getTimeseriesData } from '../lib/transactions/charts/get_timeseries_data';
 import getTraces from '../lib/transactions/traces/get_traces';
@@ -19,6 +20,7 @@ const defaultErrorHandler = reply => err => {
 
 export function initTransactionsApi(server) {
   server.route({
+    method: 'GET',
     path: ROOT,
     config: {
       pre,
@@ -31,7 +33,6 @@ export function initTransactionsApi(server) {
         })
       }
     },
-    method: 'GET',
     handler: (req, reply) => {
       const { appName } = req.params;
       const { transaction_type } = req.query;
@@ -48,6 +49,7 @@ export function initTransactionsApi(server) {
   });
 
   server.route({
+    method: 'GET',
     path: `${ROOT}/{transactionId}`,
     config: {
       pre,
@@ -58,17 +60,17 @@ export function initTransactionsApi(server) {
         })
       }
     },
-    method: 'GET',
     handler: (req, reply) => {
       const { transactionId } = req.params;
       const { setup } = req.pre;
       return getTransaction({ transactionId, setup })
-        .then(reply)
+        .then(res => reply(res).code(isEmpty(res) ? 404 : 200))
         .catch(defaultErrorHandler(reply));
     }
   });
 
   server.route({
+    method: 'GET',
     path: `${ROOT}/{transactionId}/traces`,
     config: {
       pre,
@@ -79,7 +81,6 @@ export function initTransactionsApi(server) {
         })
       }
     },
-    method: 'GET',
     handler: (req, reply) => {
       const { transactionId } = req.params;
       const { setup } = req.pre;
@@ -93,6 +94,7 @@ export function initTransactionsApi(server) {
   });
 
   server.route({
+    method: 'GET',
     path: `${ROOT}/charts`,
     config: {
       pre,
@@ -106,7 +108,6 @@ export function initTransactionsApi(server) {
         })
       }
     },
-    method: 'GET',
     handler: (req, reply) => {
       const { setup } = req.pre;
       const { appName } = req.params;
@@ -125,6 +126,7 @@ export function initTransactionsApi(server) {
   });
 
   server.route({
+    method: 'GET',
     path: `${ROOT}/distribution`,
     config: {
       pre,
@@ -136,7 +138,6 @@ export function initTransactionsApi(server) {
         })
       }
     },
-    method: 'GET',
     handler: (req, reply) => {
       const { setup } = req.pre;
       const { appName } = req.params;

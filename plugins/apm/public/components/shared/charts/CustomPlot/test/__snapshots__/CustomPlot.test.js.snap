@@ -4,7 +4,7 @@ exports[`when response has data Initially should have 3 legends  1`] = `
 Array [
   Object {
     "color": "#3185FC",
-    "isDisabled": undefined,
+    "disabled": undefined,
     "onClick": [Function],
     "text": <styled.span>
       Avg.
@@ -16,7 +16,7 @@ Array [
   },
   Object {
     "color": "#ECAE23",
-    "isDisabled": undefined,
+    "disabled": undefined,
     "onClick": [Function],
     "text": <styled.span>
       95th percentile
@@ -25,7 +25,7 @@ Array [
   },
   Object {
     "color": "#F98510",
-    "isDisabled": undefined,
+    "disabled": undefined,
     "onClick": [Function],
     "text": <styled.span>
       99th percentile

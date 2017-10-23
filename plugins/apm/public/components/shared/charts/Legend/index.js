@@ -7,8 +7,8 @@ const Container = styled.div`
   align-items: center;
   font-size: ${props => props.fontSize};
   color: ${colors.gray2};
-  cursor: pointer;
-  opacity: ${props => (props.isDisabled ? 0.4 : 1)};
+  cursor: ${props => (props.clickable ? 'pointer' : 'initial')};
+  opacity: ${props => (props.disabled ? 0.4 : 1)};
   margin-right: ${px(units.half)};
   user-select: none;
 
@@ -33,10 +33,16 @@ export default class Legend extends PureComponent {
       text,
       fontSize = fontSizes.small,
       radius = units.minus - 1,
-      isDisabled = false
+      disabled = false,
+      clickable = true
     } = this.props;
     return (
-      <Container onClick={onClick} isDisabled={isDisabled} fontSize={fontSize}>
+      <Container
+        onClick={onClick}
+        disabled={disabled}
+        clickable={clickable}
+        fontSize={fontSize}
+      >
         <Indicator color={color} radius={radius} />
         {text}
       </Container>

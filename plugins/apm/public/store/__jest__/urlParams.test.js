@@ -8,14 +8,14 @@ describe('urlParams', () => {
       updateLocation({
         pathname:
           'myAppName/transactions/myTransactionType/myTransactionName/b/c',
-        search: '?transactionId=25&detailTab=request&traceId=10'
+        search: '?transactionId=myTransactionId&detailTab=request&traceId=10'
       })
     );
 
     expect(state).toEqual({
       appName: 'myAppName',
       traceId: 10,
-      transactionId: '25',
+      transactionId: 'myTransactionId',
       transactionName: 'myTransactionName',
       detailTab: 'request',
       transactionType: 'myTransactionType'
@@ -26,17 +26,17 @@ describe('urlParams', () => {
     const state = reducer(
       {},
       updateLocation({
-        pathname: 'myAppName/errors/myerrorGroupId',
-        search: '?detailTab=request&bucket=4'
+        pathname: 'myAppName/errors/myErrorGroupId',
+        search: '?detailTab=request&transactionId=myTransactionId'
       })
     );
 
     expect(state).toEqual(
       expect.objectContaining({
         appName: 'myAppName',
-        errorGroupId: 'myerrorGroupId',
+        errorGroupId: 'myErrorGroupId',
         detailTab: 'request',
-        bucket: 4
+        transactionId: 'myTransactionId'
       })
     );
   });

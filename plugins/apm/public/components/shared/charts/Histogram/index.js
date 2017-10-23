@@ -34,13 +34,13 @@ class Histogram extends PureComponent {
   }
 
   onClick = bucket => {
-    if (!this.isEmpty(bucket)) {
-      this.props.onClick(bucket.i);
+    if (bucket.y > 0) {
+      this.props.onClick(bucket);
     }
   };
 
   onHover = bucket => {
-    if (!this.isEmpty(bucket)) {
+    if (bucket.y > 0) {
       this.setState({ hoveredBucket: bucket });
     }
   };
@@ -49,13 +49,11 @@ class Histogram extends PureComponent {
     this.setState({ hoveredBucket: null });
   };
 
-  isEmpty = bucket => this.props.buckets[bucket.i].y === 0;
-
-  getChartData(items, selected) {
+  getChartData(items, transactionId) {
     return items
-      .map((item, i) => ({
+      .map(item => ({
         ...item,
-        color: i === selected ? colors.blue : undefined
+        color: item.transactionId === transactionId ? colors.blue1 : undefined
       }))
       .map(item => {
         const padding = (item.x - item.x0) / 20;
@@ -64,16 +62,20 @@ class Histogram extends PureComponent {
   }
 
   render() {
-    const { buckets, selectedBucket, bucketSize, width: XY_WIDTH } = this.props;
+    const { buckets, transactionId, bucketSize, width: XY_WIDTH } = this.props;
     if (_.isEmpty(buckets) || XY_WIDTH === 0) {
       return null;
     }
+
+    const selectedBucket =
+      transactionId &&
+      buckets.find(bucket => bucket.transactionId === transactionId);
 
     const xMin = d3.min(buckets, d => d.x0);
     const xMax = d3.max(buckets, d => d.x);
     const yMin = 0;
     const yMax = d3.max(buckets, d => d.y);
-    const chartData = this.getChartData(buckets, selectedBucket);
+    const chartData = this.getChartData(buckets, transactionId);
 
     const x = scaleLinear()
       .domain([xMin, xMax])
@@ -88,7 +90,7 @@ class Histogram extends PureComponent {
 
     return (
       <XYPlot
-        xType={this.props.xType || 'linear'}
+        xType={this.props.xType}
         width={XY_WIDTH}
         height={XY_HEIGHT}
         margin={XY_MARGIN}
@@ -109,7 +111,6 @@ class Histogram extends PureComponent {
           tickValues={yTickValues}
           tickFormat={this.props.formatYValue}
         />
-
         {this.state.hoveredBucket && (
           <SingleRect
             x={x(this.state.hoveredBucket.x0)}
@@ -119,10 +120,9 @@ class Histogram extends PureComponent {
             }}
           />
         )}
-
-        {selectedBucket != null && (
+        {selectedBucket && (
           <SingleRect
-            x={x(selectedBucket * bucketSize)}
+            x={x(selectedBucket.x0)}
             width={x(bucketSize) - x(0)}
             style={{
               fill: 'transparent',
@@ -130,7 +130,6 @@ class Histogram extends PureComponent {
             }}
           />
         )}
-
         <VerticalRectSeries
           colorType="literal"
           color="rgb(172, 189, 216)"
@@ -140,29 +139,36 @@ class Histogram extends PureComponent {
             ry: '2px'
           }}
         />
-
-        {this.props.onClick && (
-          <Voronoi
-            extent={[[XY_MARGIN.left, XY_MARGIN.top], [XY_WIDTH, XY_HEIGHT]]}
-            nodes={this.props.buckets.map(item => ({
-              ...item,
-              x: (item.x0 + item.x) / 2,
-              y: 1
-            }))}
-            onClick={this.onClick}
-            onHover={this.onHover}
-            onBlur={this.onBlur}
-            x={d => x(d.x)}
-            y={d => y(d.y)}
-          />
-        )}
+        <Voronoi
+          extent={[[XY_MARGIN.left, XY_MARGIN.top], [XY_WIDTH, XY_HEIGHT]]}
+          nodes={this.props.buckets.map(item => ({
+            ...item,
+            x: (item.x0 + item.x) / 2
+          }))}
+          onClick={this.onClick}
+          onHover={this.onHover}
+          onBlur={this.onBlur}
+          x={d => x(d.x)}
+          y={() => 1}
+        />
       </XYPlot>
     );
   }
 }
 
 Histogram.propTypes = {
-  width: PropTypes.number
+  width: PropTypes.number.isRequired,
+  transactionId: PropTypes.string,
+  bucketSize: PropTypes.number.isRequired,
+  onClick: PropTypes.func,
+  buckets: PropTypes.array.isRequired,
+  xType: PropTypes.string,
+  formatYValue: PropTypes.func
+};
+
+Histogram.defaultProps = {
+  onClick: () => {},
+  xType: 'linear'
 };
 
 export default makeWidthFlexible(Histogram);

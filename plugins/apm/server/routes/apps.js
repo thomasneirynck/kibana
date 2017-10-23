@@ -14,6 +14,7 @@ const defaultErrorHandler = reply => err => {
 
 export function initAppsApi(server) {
   server.route({
+    method: 'GET',
     path: ROOT,
     config: {
       pre,
@@ -24,7 +25,6 @@ export function initAppsApi(server) {
         })
       }
     },
-    method: 'GET',
     handler: (req, reply) => {
       const { setup } = req.pre;
       return getApps({ setup })
@@ -34,6 +34,7 @@ export function initAppsApi(server) {
   });
 
   server.route({
+    method: 'GET',
     path: `${ROOT}/{appName}`,
     config: {
       pre,
@@ -44,7 +45,6 @@ export function initAppsApi(server) {
         })
       }
     },
-    method: 'GET',
     handler: (req, reply) => {
       const { setup } = req.pre;
       const { appName } = req.params;

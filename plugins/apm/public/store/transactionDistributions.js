@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import * as rest from '../services/rest';
 import {
   getKey,
@@ -39,18 +38,9 @@ export function getTransactionDistribution(state) {
   return state.transactionDistributions[key] || INITIAL_STATE;
 }
 
-export function getDefaultBucketIndex(state) {
-  const _distribution = getTransactionDistribution(state);
-  return _distribution.data.defaultBucketIndex;
-}
-
 export function getDefaultTransactionId(state) {
   const _distribution = getTransactionDistribution(state);
-  const bucketIndex =
-    state.urlParams.bucket !== undefined
-      ? state.urlParams.bucket
-      : _distribution.data.defaultBucketIndex;
-  return _.get(_distribution.data.buckets[bucketIndex], 'transactionId');
+  return _distribution.data.defaultTransactionId;
 }
 
 export default transactionDistributions;

@@ -1,9 +1,3 @@
-/* eslint-disable
-  import/no-extraneous-dependencies,
-  import/no-unresolved,
-  import/extensions,
-  no-param-reassign
-*/
 import moment from 'moment';
 import { uiModules } from 'ui/modules';
 import 'ui/chrome';

@@ -1,4 +1,3 @@
-/* eslint-disable no-plusplus, no-continue, prefer-arrow-callback */
 import moment from 'moment';
 const d = moment.duration;
 

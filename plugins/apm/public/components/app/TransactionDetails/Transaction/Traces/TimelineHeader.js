@@ -18,30 +18,26 @@ const Legends = styled.div`display: flex;`;
 
 export default function TimelineHeader({
   traceTypes,
-  getColor,
+  getTraceColor,
+  getTraceLabel,
   transactionName
 }) {
   return (
     <TimelineHeaderContainer>
       <Heading>{transactionName}</Heading>
       <Legends>
-        {traceTypes.map(type => (
-          <Legend
-            key={type}
-            color={getColor(type)}
-            text={getTraceTypeLabel(type)}
-          />
-        ))}
+        {traceTypes.map(type => {
+          const color = getTraceColor(type);
+          return (
+            <Legend
+              clickable={false}
+              key={color}
+              color={color}
+              text={getTraceLabel(type)}
+            />
+          );
+        })}
       </Legends>
     </TimelineHeaderContainer>
   );
-}
-
-function getTraceTypeLabel(type) {
-  switch (type) {
-    case 'db.postgresql.query':
-      return 'DB';
-    default:
-      return type;
-  }
 }

@@ -1,18 +1,17 @@
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
 import Trace from './Trace';
-import { get, zipObject, difference } from 'lodash';
+import { first, get, zipObject, difference } from 'lodash';
 import { TRACE_ID } from '../../../../../../common/constants';
 import { STATUS } from '../../../../../constants';
 import TimelineHeader from './TimelineHeader';
-import { colors, units, px } from '../../../../../style/variables';
+import { colors } from '../../../../../style/variables';
 import { StickyContainer } from 'react-sticky';
 import Timeline from '../../../../shared/charts/Timeline';
 import EmptyMessage from '../../../../shared/EmptyMessage';
 
 const Container = styled.div`
   transition: 0.1s padding ease;
-  padding-bottom: ${props => px(props.paddingBottom)};
   position: relative;
 `;
 
@@ -48,31 +47,27 @@ class Traces extends PureComponent {
       );
     }
 
-    const paddingBottom = getPaddingBottom(
-      traces.data.traces,
-      this.props.urlParams
-    );
-
     const traceTypes = traces.data.traceTypes.map(({ type }) => type);
-    const getColor = getColorByType(traceTypes);
+    const getTraceColor = getColorByType(traceTypes);
 
     const totalDuration = traces.data.duration;
-    const traceContainerHeight = 53;
-    const height = traceContainerHeight * traces.data.traces.length;
+    const traceContainerHeight = 58;
+    const timelineHeight = traceContainerHeight * traces.data.traces.length;
 
     return (
-      <Container paddingBottom={paddingBottom}>
+      <Container>
         <StickyContainer>
           <Timeline
             header={
               <TimelineHeader
                 traceTypes={traceTypes}
-                getColor={getColor}
+                getTraceColor={getTraceColor}
+                getTraceLabel={getTraceLabel}
                 transactionName={this.props.urlParams.transactionName}
               />
             }
             duration={totalDuration}
-            height={height}
+            height={timelineHeight}
             timelineMargins={TIMELINE_MARGINS}
           />
           <div
@@ -84,7 +79,7 @@ class Traces extends PureComponent {
               <Trace
                 timelineMargins={TIMELINE_MARGINS}
                 key={get({ trace }, TRACE_ID)}
-                color={getColor(trace.type)}
+                color={getTraceColor(trace.type)}
                 trace={trace}
                 totalDuration={totalDuration}
                 isSelected={
@@ -106,14 +101,6 @@ function loadTraces(props) {
   }
 }
 
-function getPaddingBottom(traces, urlParams) {
-  const selectedIndex = traces.findIndex(
-    trace => get({ trace }, TRACE_ID) === urlParams.traceId
-  );
-  const selectedPos = traces.length - selectedIndex - 1;
-  return selectedIndex > -1 ? 65 * units.half - selectedPos * 70 : 0;
-}
-
 function getColorByType(types) {
   const definedColors = {
     app: '#3185fc',
@@ -121,10 +108,13 @@ function getColorByType(types) {
     ext: '#490092',
     template: '#db1374',
     custom: '#bfa180',
-    'db.postgresql.query': '#f98510'
+    db: '#f98510'
   };
 
-  const unknownTypes = difference(types, Object.keys(colors));
+  const unknownTypes = difference(
+    types.map(getPrimaryType),
+    Object.keys(colors)
+  );
   const fallbackColors = zipObject(unknownTypes, [
     '#feb6db',
     '#ecae23',
@@ -132,7 +122,24 @@ function getColorByType(types) {
     '#461a0a'
   ]);
 
-  return type => definedColors[type] || fallbackColors[type];
+  return type => {
+    const primaryType = getPrimaryType(type);
+    return definedColors[primaryType] || fallbackColors[primaryType];
+  };
+}
+
+function getTraceLabel(type) {
+  const primaryType = getPrimaryType(type);
+  switch (primaryType) {
+    case 'db':
+      return 'DB';
+    default:
+      return type;
+  }
+}
+
+function getPrimaryType(type) {
+  return first(type.split('.'));
 }
 
 export default Traces;

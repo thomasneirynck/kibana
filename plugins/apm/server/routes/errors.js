@@ -16,6 +16,7 @@ const defaultErrorHandler = reply => err => {
 
 export function initErrorsApi(server) {
   server.route({
+    method: 'GET',
     path: ROOT,
     config: {
       pre,
@@ -26,7 +27,6 @@ export function initErrorsApi(server) {
         })
       }
     },
-    method: 'GET',
     handler: (req, reply) => {
       const { setup } = req.pre;
       const { appName } = req.params;
@@ -37,6 +37,7 @@ export function initErrorsApi(server) {
   });
 
   server.route({
+    method: 'GET',
     path: `${ROOT}/{groupId}`,
     config: {
       pre,
@@ -47,7 +48,6 @@ export function initErrorsApi(server) {
         })
       }
     },
-    method: 'GET',
     handler: (req, reply) => {
       const { setup } = req.pre;
       const { appName, groupId } = req.params;
@@ -58,6 +58,7 @@ export function initErrorsApi(server) {
   });
 
   server.route({
+    method: 'GET',
     path: `${ROOT}/{groupId}/distribution`,
     config: {
       pre,
@@ -68,7 +69,6 @@ export function initErrorsApi(server) {
         })
       }
     },
-    method: 'GET',
     handler: (req, reply) => {
       const { setup } = req.pre;
       const { appName, groupId } = req.params;

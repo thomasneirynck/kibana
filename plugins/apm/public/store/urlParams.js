@@ -2,10 +2,7 @@ import _ from 'lodash';
 import { createSelector } from 'reselect';
 import { LOCATION_UPDATE } from './location';
 import { toQuery, legacyDecodeURIComponent } from '../utils/url';
-import {
-  getDefaultTransactionId,
-  getDefaultBucketIndex
-} from './transactionDistributions';
+import { getDefaultTransactionId } from './transactionDistributions';
 import { getDefaultTransactionType } from './apps';
 
 // ACTION TYPES
@@ -29,7 +26,7 @@ function urlParams(state = {}, action) {
         errorGroupId
       } = getPathParams(action.location.pathname);
 
-      const { transactionId, detailTab, traceId, bucket } = toQuery(
+      const { transactionId, detailTab, traceId } = toQuery(
         action.location.search
       );
 
@@ -40,7 +37,6 @@ function urlParams(state = {}, action) {
         transactionId,
         detailTab,
         traceId: toNumber(traceId),
-        bucket: toNumber(bucket),
 
         // path params
         appName,
@@ -98,12 +94,10 @@ export const getUrlParams = createSelector(
   state => state.urlParams,
   getDefaultTransactionType,
   getDefaultTransactionId,
-  getDefaultBucketIndex,
-  (urlParams, transactionType, transactionId, bucket) => {
+  (urlParams, transactionType, transactionId) => {
     return _.defaults({}, urlParams, {
       transactionType,
-      transactionId,
-      bucket
+      transactionId
     });
   }
 );

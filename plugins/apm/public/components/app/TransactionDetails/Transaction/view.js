@@ -37,8 +37,8 @@ function getCurrentTab(tabs = [], detailTab) {
   return tabs.includes(detailTab) ? detailTab : DEFAULT_TAB;
 }
 
-function getTabs(transaction) {
-  const dynamicProps = Object.keys(transaction.data.context);
+function getTabs(transactionData) {
+  const dynamicProps = Object.keys(transactionData.context);
   return getLevelOneProps(dynamicProps);
 }
 
@@ -57,7 +57,7 @@ class Transaction extends Component {
       return null;
     }
 
-    const tabs = getTabs(transaction);
+    const tabs = getTabs(transaction.data);
     const currentTab = getCurrentTab(tabs, this.props.urlParams.detailTab);
 
     return (

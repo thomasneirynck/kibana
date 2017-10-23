@@ -5,7 +5,6 @@ import TraceDetails from './TraceDetails';
 import { toQuery, fromQuery } from '../../../../../utils/url';
 import { KuiPopover } from 'ui_framework/components';
 import { isNumber, get } from 'lodash';
-import './KuiPopover-overrides.css';
 
 import {
   unit,
@@ -98,7 +97,6 @@ function Trace({
       }}
       timelineMargins={timelineMargins}
       isSelected={isSelected}
-      panelClassName="apm-overrides"
       button={button}
       isOpen={isSelected}
       closePopover={closePopover}

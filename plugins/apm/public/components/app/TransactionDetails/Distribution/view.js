@@ -12,9 +12,9 @@ export function getFormattedBuckets(buckets, bucketSize) {
   const yMax = Math.max(...buckets.map(item => item.count));
   const yMin = yMax * 0.1;
 
-  return buckets.map(({ count, key }, i) => {
+  return buckets.map(({ count, key, transactionId }) => {
     return {
-      i,
+      transactionId,
       x0: key,
       x: key + bucketSize,
       y: count > 0 ? Math.max(count, yMin) : 0
@@ -66,13 +66,13 @@ class Distribution extends Component {
           formatYValue={value => `${value} reqs.`}
           buckets={buckets}
           bucketSize={distribution.data.bucketSize}
-          selectedBucket={this.props.urlParams.bucket}
+          transactionId={this.props.urlParams.transactionId}
           onClick={bucket => {
             history.replace({
               ...location,
               search: fromQuery({
                 ...toQuery(location.search),
-                bucket
+                transactionId: bucket.transactionId
               })
             });
           }}

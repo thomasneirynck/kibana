@@ -1,5 +1,4 @@
-/* eslint-disable */
-import { uiModules } from 'ui/modules';
+import { uiModules } from 'ui/modules'; // eslint-disable-line no-unused-vars
 import chrome from 'ui/chrome';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -8,7 +7,6 @@ import 'ui/autoload/styles';
 import template from './templates/index.html';
 import ReactRoot from './reactRoot';
 import 'ui/autoload/all';
-/* eslint-enable */
 
 import { initTimepicker } from './utils/timepicker';
 
