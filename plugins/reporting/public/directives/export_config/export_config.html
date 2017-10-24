@@ -1,13 +1,16 @@
 <div ng-show="!exportConfig.isDirty()">
   <div class="kuiLocalDropdownSection">
-    <div class="kuiLocalDropdownTitle">Reporting</div>
+    <h2 class="kuiLocalDropdownTitle">
+      Reporting
+    </h2>
+
     <div class="input-group generate-controls">
       <button
         class="kuiButton kuiButton--primary"
         data-test-subj="generateReportButton"
         ng-disabled="!exportConfig.relativePath"
         ng-click="exportConfig.export(exportConfig.relativePath)"
-        >
+      >
         Generate {{ exportConfig.exportType.name }}
       </button>
     </div>
@@ -17,9 +20,12 @@
 
     <!-- Header -->
     <div class="kuiLocalDropdownHeader">
-      <div class="kuiLocalDropdownHeader__label">
+      <label
+        class="kuiLocalDropdownHeader__label"
+        for="reportGenerationUrl"
+      >
         Generation URL
-      </div>
+      </label>
       <div class="kuiLocalDropdownHeader__actions">
         <a
           class="kuiLocalDropdownHeader__action"
