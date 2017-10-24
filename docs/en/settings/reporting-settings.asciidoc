@@ -90,7 +90,7 @@ Defaults to `1000` (1 second).
 
 `xpack.reporting.capture.browser.type`::
 Specifies the browser that should be used for capturing the screenshots. Valid options are `phantom`
-and `chromium`. When `chromium` is selected, the settings specified in the <<Chromium Settings>> section
+and `chromium`. When `chromium` is selected, the settings specified in the <<reporting-chromium-settings>> section
 below are respected.
 Defaults to `phantom`.
 
