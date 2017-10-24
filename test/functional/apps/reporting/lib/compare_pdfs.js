@@ -20,14 +20,16 @@ function comparePngs(actualPath, expectedPath, diffPath, log) {
     function doneReading() {
       if (++filesRead < 2) return;
       const diffPng = new PNG({ width: actual.width, height: actual.height });
+      log.debug(`calculating diff pixels...`);
       const diffPixels = pixelmatch(
         actual.data,
         expected.data,
         diffPng.data,
         actual.width,
         actual.height,
-        { threshold: 0.7 }
+        { threshold: 0.9 }
       );
+      log.debug(`diff pixels: ${diffPixels}`);
       diffPng.pack().pipe(fs.createWriteStream(diffPath));
       resolve(diffPixels);
     }

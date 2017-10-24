@@ -73,14 +73,23 @@ export default function ({ getService, getPageObjects }) {
           await expectEnabledGenerateReportButton();
         });
 
-        it('single bar chart matches baseline report', async function () {
-          // Generating and then comparing reports can take longer than the default 60s timeout.
-          this.timeout(120000);
+        it('matches baseline report', async function () {
+          // Generating and then comparing reports can take longer than the default 60s timeout because the comparePngs
+          // function is taking about 15 seconds per comparison in jenkins.
+          this.timeout(180000);
 
           await PageObjects.dashboard.clickEdit();
           await PageObjects.reporting.setTimepickerInDataRange();
-          await PageObjects.dashboard.addVisualizations(['Visualization☺ VerticalBarChart']);
-          await PageObjects.dashboard.saveDashboard('basic chart report test');
+          const visualizations = PageObjects.dashboard.getTestVisualizationNames();
+
+          // There is a current issue causing reports with tilemaps to timeout:
+          // https://github.com/elastic/kibana/issues/14136. Once that is resolved, add the tilemap visualization
+          // back in!
+          const tileMapIndex = visualizations.indexOf('Visualization TileMap');
+          visualizations.splice(tileMapIndex, 1);
+          await PageObjects.dashboard.addVisualizations(visualizations);
+
+          await PageObjects.dashboard.saveDashboard('report test');
           await PageObjects.header.clickToastOK();
           await PageObjects.reporting.openReportingPanel();
           await PageObjects.reporting.clickGenerateReportButton();
@@ -88,34 +97,8 @@ export default function ({ getService, getPageObjects }) {
 
           const url = await PageObjects.reporting.getUrlOfTab(1);
           const reportData = await PageObjects.reporting.getRawPdfReportData(url);
-          const reportFileName = 'one_bar_chart';
+          const reportFileName = 'baseline_chart';
           const sessionReportPath = await writeSessionReport(reportFileName, reportData);
-          const diffCount = await checkIfPdfsMatch(
-            sessionReportPath,
-            getBaselineReportPath(reportFileName),
-            config.get('screenshots.directory'),
-            log
-          );
-          expect(diffCount).to.be(0);
-        });
-
-        it('bar and area chart match baseline', async function () {
-          // Generating and then comparing reports can take longer than the default 60s timeout.
-          this.timeout(120000);
-
-          await PageObjects.dashboard.clickEdit();
-          await PageObjects.dashboard.addVisualizations(['Visualization漢字 AreaChart']);
-          await PageObjects.dashboard.saveDashboard('basic chart report test');
-          await PageObjects.header.clickToastOK();
-          await PageObjects.reporting.openReportingPanel();
-          await PageObjects.reporting.clickGenerateReportButton();
-          await PageObjects.reporting.clickDownloadReportButton();
-
-          const url = await PageObjects.reporting.getUrlOfTab(2);
-          const reportData = await PageObjects.reporting.getRawPdfReportData(url);
-          const reportFileName = 'bar_area_chart';
-          const sessionReportPath = await writeSessionReport(reportFileName, reportData);
-
           const diffCount = await checkIfPdfsMatch(
             sessionReportPath,
             getBaselineReportPath(reportFileName),
