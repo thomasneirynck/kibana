@@ -1,6 +1,7 @@
+import Rx from 'rxjs/Rx';
 import { omit } from 'lodash';
 import { oncePerServer } from '../../../server/lib/once_per_server';
-import { generatePdfFactory } from './lib/generate_pdf';
+import { generatePdfObservableFactory } from './lib/generate_pdf';
 import { cryptoFactory } from '../../../server/lib/crypto';
 
 const KBN_SCREENSHOT_HEADER_BLACKLIST = [
@@ -11,27 +12,36 @@ const KBN_SCREENSHOT_HEADER_BLACKLIST = [
 ];
 
 function executeJobFn(server) {
-  const generatePdf = generatePdfFactory(server);
+  const generatePdfObservable = generatePdfObservableFactory(server);
   const crypto = cryptoFactory(server);
 
-  return async function executeJob(job) {
-    const { title, objects, query, headers:serializedEncryptedHeaders, browserTimezone } = job;
-    let decryptedHeaders;
+  const decryptJobHeaders = async (job) => {
+    const decryptedHeaders = await crypto.decrypt(job.headers);
+    return { job, decryptedHeaders };
+  };
 
-    try {
-      decryptedHeaders = await crypto.decrypt(serializedEncryptedHeaders);
-    } catch (e) {
-      throw new Error('Failed to decrypt report job data. Please re-generate this report.');
-    }
+  const omitBlacklistedHeaders = ({ job, decryptedHeaders }) => {
+    const filteredHeaders = omit(decryptedHeaders, KBN_SCREENSHOT_HEADER_BLACKLIST);
+    return { job, filteredHeaders };
+  };
 
-    const headers = omit(decryptedHeaders, KBN_SCREENSHOT_HEADER_BLACKLIST);
-    const pdf = await generatePdf(title, objects, query, headers, browserTimezone);
-    const buffer = await pdf.getBuffer();
+  return function executeJob(jobToExecute, cancellationToken) {
 
-    return {
-      content_type: 'application/pdf',
-      content: buffer.toString('base64')
-    };
+    const process$ = Rx.Observable.of(jobToExecute)
+      .mergeMap(decryptJobHeaders)
+      .catch(() => Rx.Observable.throw('Failed to decrypt report job data. Please re-generate this report.'))
+      .map(omitBlacklistedHeaders)
+      .mergeMap(({ job, filteredHeaders }) => {
+        return generatePdfObservable(job.title, job.objects, job.query, filteredHeaders, job.browserTimezone);
+      })
+      .map(buffer => ({
+        content_type: 'application/pdf',
+        content: buffer.toString('base64')
+      }));
+
+    const stop$ = Rx.Observable.fromEventPattern(cancellationToken.on);
+
+    return process$.takeUntil(stop$).toPromise();
   };
 }
 

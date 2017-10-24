@@ -41,7 +41,7 @@ export class Worker extends events.EventEmitter {
       const tags = ['worker', 'debug'];
 
       if (err) {
-        logger(`${message}: ${err}`, tags);
+        logger(`${message}: ${err.stack  ? err.stack : err }`, tags);
         return;
       }
 

@@ -19,7 +19,9 @@ test/functional/screenshots/failure/
 test/functional/screenshots/session/
 test/functional/apps/reporting/reports/session
 
+.chromium/
 .phantom/
+build_chromium/.workspace
 coverage
 .aws-config.json
 .env

@@ -2,7 +2,7 @@ import fs from 'fs';
 import crypto from 'crypto';
 import expect from 'expect.js';
 
-import { unzip, bunzip2, ExtractError } from '../extract';
+import { extract, ExtractError } from '../extract';
 import { promisify } from 'bluebird';
 
 const FIXTURES_FOLDER = `${__dirname}/__fixtures__`;
@@ -61,7 +61,7 @@ describe('extract', () => {
     it('throws an Error given a non-zip file', async () => {
       let thrownException;
       try {
-        await unzip(SRC_FILE_UNCOMPRESSED, EXTRACT_TARGET_FOLDER);
+        await extract(SRC_FILE_UNCOMPRESSED, EXTRACT_TARGET_FOLDER);
       } catch (e) {
         thrownException = e;
       }
@@ -70,7 +70,7 @@ describe('extract', () => {
     });
 
     it('successfully extracts a valid zip file to the given target', async () => {
-      await unzip(SRC_FILE_COMPRESSED_ZIP, EXTRACT_TARGET_FOLDER);
+      await extract(SRC_FILE_COMPRESSED_ZIP, EXTRACT_TARGET_FOLDER);
 
       const stats = fs.statSync(EXTRACT_TARGET_FILE);
       expect(stats).to.be.an(Object);
@@ -88,7 +88,7 @@ describe('extract', () => {
 
         let thrownException;
         try {
-          await unzip(SRC_FILE_COMPRESSED_ZIP, EXTRACT_TARGET_FOLDER);
+          await extract(SRC_FILE_COMPRESSED_ZIP, EXTRACT_TARGET_FOLDER);
         } catch (e) {
           thrownException = e;
         }
@@ -103,7 +103,7 @@ describe('extract', () => {
     it('throws an Error given a non-bz2 file', async () => {
       let thrownException;
       try {
-        await bunzip2(SRC_FILE_UNCOMPRESSED, EXTRACT_TARGET_FOLDER);
+        await extract(SRC_FILE_UNCOMPRESSED, EXTRACT_TARGET_FOLDER);
       } catch (e) {
         thrownException = e;
       }
@@ -114,7 +114,7 @@ describe('extract', () => {
     it('throws an Error given a non-tar.bz2 file', async () => {
       let thrownException;
       try {
-        await bunzip2(SRC_FILE_COMPRESSED_BZ2, EXTRACT_TARGET_FOLDER);
+        await extract(SRC_FILE_COMPRESSED_BZ2, EXTRACT_TARGET_FOLDER);
       } catch (e) {
         thrownException = e;
       }
@@ -123,7 +123,7 @@ describe('extract', () => {
     });
 
     it('successfully extracts a valid tar.bz2 file to the given target', async () => {
-      await bunzip2(SRC_FILE_COMPRESSED_TAR_BZ2, EXTRACT_TARGET_FOLDER);
+      await extract(SRC_FILE_COMPRESSED_TAR_BZ2, EXTRACT_TARGET_FOLDER);
 
       const stats = fs.statSync(EXTRACT_TARGET_FILE);
       expect(stats).to.be.an(Object);
@@ -141,7 +141,7 @@ describe('extract', () => {
 
         let thrownException;
         try {
-          await bunzip2(SRC_FILE_COMPRESSED_TAR_BZ2, EXTRACT_TARGET_FOLDER);
+          await extract(SRC_FILE_COMPRESSED_TAR_BZ2, EXTRACT_TARGET_FOLDER);
         } catch (e) {
           thrownException = e;
         }

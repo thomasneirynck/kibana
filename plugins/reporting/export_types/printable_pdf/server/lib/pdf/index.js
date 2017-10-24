@@ -58,7 +58,7 @@ class PdfMaker {
     this._content.push(contents);
   }
 
-  addImage(filePath, opts = {}) {
+  addImage(base64EncodedData, opts = {}) {
     const contents = [];
 
     if (opts.title && opts.title.length > 0) {
@@ -78,7 +78,7 @@ class PdfMaker {
     }
 
     const img = {
-      image: filePath,
+      image: `data:image/png;base64,${base64EncodedData}`,
       width: 500,
       alignment: 'center',
     };

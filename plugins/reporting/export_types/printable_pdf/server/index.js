@@ -1,5 +1,6 @@
 import { createJobFactory } from './create_job';
 import { executeJobFactory } from './execute_job';
+import { initFactory } from './init';
 import { metadata } from '../metadata';
 
 export function register(registry) {
@@ -9,6 +10,7 @@ export function register(registry) {
     jobContentEncoding: 'base64',
     createJobFactory,
     executeJobFactory,
+    initFactory,
     validLicenses: ['trial', 'standard', 'gold', 'platinum'],
   });
 }

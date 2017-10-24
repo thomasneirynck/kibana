@@ -88,9 +88,25 @@ to settle. If visualizations in your PDF are smaller than they should be, try in
 this value.
 Defaults to `1000` (1 second).
 
-`xpack.reporting.capture.timeout`::
-The maximum amount of time to wait for things to render in Kibana when capturing
-screenshots. Defaults to `6000` (6 seconds).
+`xpack.reporting.capture.browser.type`::
+Specifies the browser that should be used for capturing the screenshots. Valid options are `phantom`
+and `chromium`. When `chromium` is selected, the settings specified in the <<Chromium Settings>> section
+below are respected.
+Defaults to `phantom`.
+
+[float]
+[[reporting-chromium-settings]]
+==== Chromium Settings
+
+When `xpack.reporting.capture.browser.type` is set to `chromium` the following settings can also be specified
+
+`xpack.reporting.capture.browser.chromium.disableSandbox`::
+Chromium implements it's own Sandbox that utilizes the OS-provided security mechanisms, and in certain
+scenarios it may need to be disabled. This is primarily an issue when running Kibana/Chromium in a
+docker container as the seccomp-bpf filters and AppArmor profiles that the Docker host enforce can
+prevent the Sandboxing techniques and cause Chromium to crash on startup.
+Default to `false`
+
 
 [float]
 [[reporting-csv-settings]]

@@ -4,12 +4,10 @@ import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 import { main as mainRoutes } from './server/routes/main';
 import { jobs as jobRoutes } from './server/routes/jobs';
 
-import { phantom } from './server/lib/phantom';
 import { createQueueFactory } from './server/lib/create_queue';
 import { config as appConfig } from './server/config/config';
 import { checkLicenseFactory } from './server/lib/check_license';
 import { validateConfig } from './server/lib/validate_config';
-import { ExtractError } from './server/lib/extract';
 import { createExportTypesRegistryFactory } from './server/lib/create_export_types_registry';
 
 export const reporting = (kibana) => {
@@ -50,6 +48,7 @@ export const reporting = (kibana) => {
           timeout: Joi.number().integer().default(30000),
         }).default(),
         capture: Joi.object({
+          record: Joi.boolean().default(false),
           zoom: Joi.number().integer().default(2),
           viewport: Joi.object({
             width: Joi.number().integer().default(1950),
@@ -59,6 +58,12 @@ export const reporting = (kibana) => {
           loadDelay: Joi.number().integer().default(3000),
           settleTime: Joi.number().integer().default(1000),
           concurrency: Joi.number().integer().default(appConfig.concurrency),
+          browser: Joi.object({
+            type: Joi.any().valid('phantom', 'chromium').default('phantom'),
+            chromium: Joi.object({
+              disableSandbox: Joi.boolean().default(false)
+            }).default()
+          }).default()
         }).default(),
         csv: Joi.object({
           maxSizeBytes: Joi.number().integer().default(1024 * 1024 * 10), // bytes in a kB * kB in a mB * 10
@@ -102,42 +107,21 @@ export const reporting = (kibana) => {
         xpackMainPlugin.info.feature(this.id).registerLicenseCheckResultsGenerator(checkLicense);
       });
 
-      function setup() {
-        // prepare phantom binary
-        return phantom.install(config.get('path.data'))
-          .then((phantomPackage) => {
-            server.log(['reporting', 'debug'], `Phantom installed at ${phantomPackage.binary}`);
 
-            // intialize and register application components
-            server.expose('phantom', phantomPackage);
-            server.expose('queue', createQueueFactory(server));
-
-            // Reporting routes
-            mainRoutes(server);
-            jobRoutes(server);
-          })
-          .catch((err) => {
-            server.log(['reporting', 'error'], err);
-
-            if (!err instanceof ExtractError) {
-              this.status.red('Failed to install phantom.js. See kibana logs for more details.');
-              return;
-            }
-
-            server.log(['reporting', 'error'], err.cause);
-
-            if (['EACCES', 'EEXIST'].includes(err.cause.code)) {
-              this.status.red(
-                'Insufficient permissions for extracting the phantom.js archive. ' +
-                'Make sure the Kibana data directory (path.data) is owned by the same user that is running Kibana.'
-              );
-            } else {
-              this.status.red('Failed to extract the phantom.js archive. See kibana logs for more details.');
-            }
-          });
+      for(const exportType of exportTypesRegistry.getAll()) {
+        if (exportType.initFactory) {
+          const result = await exportType.initFactory(server)();
+          if (!result.success) {
+            this.status.red(result.message);
+          }
+        }
       }
 
-      return setup();
+      server.expose('queue', createQueueFactory(server));
+
+      // Reporting routes
+      mainRoutes(server);
+      jobRoutes(server);
     },
 
     deprecations: function () {
@@ -145,6 +129,10 @@ export const reporting = (kibana) => {
         (settings, log) => {
           if (has(settings, 'capture.concurrency')) {
             log('Config key "capture.concurrency" is no longer used and is now deprecated. It can be removed entirely.');
+          }
+
+          if (has(settings, 'capture.timeout')) {
+            log('Config key "capture.timeout" is no longer used and is now deprecated. It can be removed entirely.');
           }
         }
       ];
