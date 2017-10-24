@@ -9,13 +9,23 @@ uiModule.directive('monitoringClusterOverview', (kbnUrl, showLicenseExpiration) 
     restrict: 'E',
     scope: { cluster: '=' },
     link(scope, $el) {
-      ReactDOM.render((
-        <Overview
-          scope={scope}
-          kbnUrl={kbnUrl}
-          showLicenseExpiration={showLicenseExpiration}
-        />
-      ), $el[0]);
+
+      const changeUrl = target => {
+        scope.$evalAsync(() => {
+          kbnUrl.changePath(target);
+        });
+      };
+
+      scope.$watch('cluster', cluster => {
+        ReactDOM.render((
+          <Overview
+            cluster={cluster}
+            changeUrl={changeUrl}
+            showLicenseExpiration={showLicenseExpiration}
+          />
+        ), $el[0]);
+      });
+
     }
   };
 });

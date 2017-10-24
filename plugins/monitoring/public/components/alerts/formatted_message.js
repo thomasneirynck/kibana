@@ -5,10 +5,10 @@ import { KuiKeyboardAccessible } from 'ui_framework/components';
 import { formatTimestampToDuration } from '../../lib/format_number';
 import { CALCULATE_DURATION_UNTIL } from 'monitoring-constants';
 
-export function FormattedMessage({ prefix, suffix, message, metadata, angularChangeUrl }) {
+export function FormattedMessage({ prefix, suffix, message, metadata, changeUrl }) {
   const goToLink = () => {
     if (metadata && metadata.link) {
-      angularChangeUrl(`/${metadata.link}`);
+      changeUrl(`/${metadata.link}`);
     }
   };
   const formattedMessage = (() => {

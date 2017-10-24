@@ -18,15 +18,15 @@ import { formatTimestampToDuration } from 'plugins/monitoring/lib/format_number'
 import { CALCULATE_DURATION_SINCE } from 'monitoring-constants';
 import { formatDateTimeLocal } from 'monitoring-formatting';
 
-export function AlertsPanel({ alerts, angularChangeUrl }) {
-  const goToAlerts = () => angularChangeUrl('/alerts');
+export function AlertsPanel({ alerts, changeUrl }) {
+  const goToAlerts = () => changeUrl('/alerts');
 
   if (!alerts || !alerts.length) {
     // no-op
     return null;
   }
 
-  // enclosed component for accessing angularChangeUrl
+  // enclosed component for accessing changeUrl
   function TopAlertItem({ item, index }) {
     return (
       <KuiMenuItem key={`alert-item-${index}`} data-test-subj={'topAlertItem'}>
@@ -44,7 +44,7 @@ export function AlertsPanel({ alerts, angularChangeUrl }) {
                 suffix={item.suffix}
                 message={item.message}
                 metadata={item.metadata}
-                angularChangeUrl={angularChangeUrl}
+                changeUrl={changeUrl}
               />
             </KuiEventBodyMessage>
 

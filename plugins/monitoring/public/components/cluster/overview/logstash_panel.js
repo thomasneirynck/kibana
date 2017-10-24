@@ -9,9 +9,9 @@ export function LogstashPanel(props) {
     return null;
   }
 
-  const goToLogstash = () => props.angularChangeUrl('logstash');
-  const goToNodes = () => props.angularChangeUrl('logstash/nodes');
-  const goToPipelines = () => props.angularChangeUrl('logstash/pipelines');
+  const goToLogstash = () => props.changeUrl('logstash');
+  const goToNodes = () => props.changeUrl('logstash/nodes');
+  const goToPipelines = () => props.changeUrl('logstash/pipelines');
 
   return (
     <ClusterItemContainer {...props} url="logstash" title="Logstash">

@@ -19,7 +19,7 @@ const columns = [
 ];
 const alertRowFactory = (scope, kbnUrl) => {
   return props => {
-    const angularChangeUrl = target => {
+    const changeUrl = target => {
       scope.$evalAsync(() => {
         kbnUrl.changePath(target);
       });
@@ -38,7 +38,7 @@ const alertRowFactory = (scope, kbnUrl) => {
             suffix={props.suffix}
             message={props.message}
             metadata={props.metadata}
-            angularChangeUrl={angularChangeUrl}
+            changeUrl={changeUrl}
           />
         </KuiTableRowCell>
         <KuiTableRowCell>

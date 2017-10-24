@@ -17,8 +17,8 @@ export function KibanaPanel(props) {
     </HealthStatusIndicator>
   );
 
-  const goToKibana = () => props.angularChangeUrl('kibana');
-  const goToInstances = () => props.angularChangeUrl('kibana/instances');
+  const goToKibana = () => props.changeUrl('kibana');
+  const goToInstances = () => props.changeUrl('kibana/instances');
 
   return (
     <ClusterItemContainer {...props} statusIndicator={statusIndicator} url="kibana" title="Kibana">

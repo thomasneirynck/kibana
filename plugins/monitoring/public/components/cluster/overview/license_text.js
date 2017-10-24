@@ -5,7 +5,7 @@ import { KuiKeyboardAccessible } from 'ui_framework/components';
 
 export function LicenseText(props) {
   const formatDateLocal = input => moment.tz(input, moment.tz.guess()).format('LL');
-  const goToLicense = () => props.angularChangeUrl('/license');
+  const goToLicense = () => props.changeUrl('/license');
 
   if (props.license && props.showLicenseExpiration) {
     return (

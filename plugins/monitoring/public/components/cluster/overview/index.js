@@ -4,69 +4,31 @@ import { LicenseText } from './license_text';
 import { KibanaPanel } from './kibana_panel';
 import { LogstashPanel } from './logstash_panel';
 import { AlertsPanel } from './alerts_panel';
-import { get } from 'lodash';
 
-export class Overview extends React.Component {
-  constructor(props) {
-    super(props);
-    const cluster = get(props, 'scope.cluster', {});
+export function Overview(props) {
+  return (
+    <div>
+      <LicenseText
+        license={props.cluster.license}
+        showLicenseExpiration={props.showLicenseExpiration}
+        changeUrl={props.changeUrl}
+      />
 
-    this.state = {
-      license: cluster.license,
-      alerts: cluster.alerts,
-      elasticsearch: { ...cluster.elasticsearch },
-      ml: cluster.ml, // ML is separate since it is license-conditional
-      kibana: cluster.kibana,
-      logstash: cluster.logstash
-    };
-  }
-
-  componentWillMount() {
-    this.props.scope.$watch('cluster', (cluster) => {
-      cluster = cluster || {};
-
-      this.setState({
-        license: cluster.license,
-        alerts: cluster.alerts,
-        elasticsearch: { ...cluster.elasticsearch },
-        ml: cluster.ml,
-        kibana: cluster.kibana,
-        logstash: cluster.logstash,
-      });
-    });
-  }
-
-  render() {
-    const angularChangeUrl = (target) => {
-      this.props.scope.$evalAsync(() => {
-        this.props.kbnUrl.changePath(target);
-      });
-    };
-
-    return (
-      <div>
-        <LicenseText
-          license={this.state.license}
-          showLicenseExpiration={this.props.showLicenseExpiration}
-          angularChangeUrl={angularChangeUrl}
-        />
-
-        <div className="page-row">
-          <AlertsPanel alerts={this.state.alerts} angularChangeUrl={angularChangeUrl} />
-        </div>
-
-        <div className="page-row">
-          <ElasticsearchPanel {...this.state.elasticsearch} ml={this.state.ml} angularChangeUrl={angularChangeUrl} />
-        </div>
-
-        <div className="page-row">
-          <KibanaPanel {...this.state.kibana} angularChangeUrl={angularChangeUrl} />
-        </div>
-
-        <div className="page-row">
-          <LogstashPanel {...this.state.logstash} angularChangeUrl={angularChangeUrl} />
-        </div>
+      <div className="page-row">
+        <AlertsPanel alerts={props.cluster.alerts} changeUrl={props.changeUrl}/>
       </div>
-    );
-  }
+
+      <div className="page-row">
+        <ElasticsearchPanel {...props.cluster.elasticsearch} ml={props.cluster.ml} changeUrl={props.changeUrl}/>
+      </div>
+
+      <div className="page-row">
+        <KibanaPanel {...props.cluster.kibana} changeUrl={props.changeUrl}/>
+      </div>
+
+      <div className="page-row">
+        <LogstashPanel {...props.cluster.logstash} changeUrl={props.changeUrl}/>
+      </div>
+    </div>
+  );
 }
