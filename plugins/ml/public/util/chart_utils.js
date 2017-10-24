@@ -13,10 +13,50 @@
  * strictly prohibited.
  */
 
+import d3 from 'd3';
 import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 import moment from 'moment';
 
 const MAX_LABEL_WIDTH = 100;
+
+export function chartLimits(data) {
+  const chartLimits = { max: 0, min: 0 };
+
+  chartLimits.max = d3.max(data, (d) => d.value);
+  chartLimits.min = d3.min(data, (d) => d.value);
+  if (chartLimits.max === chartLimits.min) {
+    chartLimits.max = d3.max(data, (d) => {
+      if (d.typical) {
+        return Math.max(d.value, d.typical);
+      } else {
+        // If analysis with by and over field, and more than one cause,
+        // there will be no actual and typical value.
+        // TODO - produce a better visual for population analyses.
+        return d.value;
+      }
+    });
+    chartLimits.min = d3.min(data, (d) => {
+      if (d.typical) {
+        return Math.min(d.value, d.typical);
+      } else {
+        // If analysis with by and over field, and more than one cause,
+        // there will be no actual and typical value.
+        // TODO - produce a better visual for population analyses.
+        return d.value;
+      }
+    });
+  }
+
+  // add padding of 5% of the difference between max and min
+  // if we ended up with the same value for both of them
+  if (chartLimits.max === chartLimits.min) {
+    const padding = chartLimits.max * 0.05;
+    chartLimits.max += padding;
+    chartLimits.min -= padding;
+  }
+
+  return chartLimits;
+}
 
 export function drawLineChartDots(data, lineChartGroup, lineChartValuesLine, radius = 1.5) {
   // We need to do this because when creating a line for a chart which has data gaps,

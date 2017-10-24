@@ -90,14 +90,19 @@ module.directive('mlExplorerChart', function (Private, formatValueFilter, mlChar
         .attr('height', svgHeight);
 
       // Set the size of the left margin according to the width of the largest y axis tick label.
-      lineChartYScale = d3.scale.linear().range([chartHeight, 0]);
-      const yAxis = d3.svg.axis().scale(lineChartYScale).orient('left')
-        .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
+      lineChartYScale = d3.scale.linear()
+        .range([chartHeight, 0])
+        .domain([
+          chartLimits.min,
+          chartLimits.max
+        ])
+        .nice();
 
-      lineChartYScale = lineChartYScale.domain([
-        chartLimits.min,
-        chartLimits.max
-      ]);
+      const yAxis = d3.svg.axis().scale(lineChartYScale)
+        .orient('left')
+        .innerTickSize(0)
+        .outerTickSize(0)
+        .tickPadding(10);
 
       let maxYAxisLabelWidth = 0;
       const tempLabelText = svg.append('g')
@@ -159,15 +164,19 @@ module.directive('mlExplorerChart', function (Private, formatValueFilter, mlChar
       timeBuckets.setInterval('auto');
       const xAxisTickFormat = timeBuckets.getScaledDateFormat();
 
-      const xAxis = d3.svg.axis().scale(lineChartXScale).orient('bottom')
-        .innerTickSize(-chartHeight).outerTickSize(0).tickPadding(10)
+      const xAxis = d3.svg.axis().scale(lineChartXScale)
+        .orient('bottom')
+        .innerTickSize(-chartHeight)
+        .outerTickSize(0)
+        .tickPadding(10)
         .ticks(numTicksForDateFormat(vizWidth, xAxisTickFormat))
-        .tickFormat((d) => {
-          return moment(d).format(xAxisTickFormat);
-        });
+        .tickFormat(d => moment(d).format(xAxisTickFormat));
 
-      const yAxis = d3.svg.axis().scale(lineChartYScale).orient('left')
-        .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
+      const yAxis = d3.svg.axis().scale(lineChartYScale)
+        .orient('left')
+        .innerTickSize(0)
+        .outerTickSize(0)
+        .tickPadding(10);
       const axes = lineChartGroup.append('g');
 
       axes.append('g')

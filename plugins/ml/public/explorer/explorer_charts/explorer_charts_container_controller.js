@@ -22,11 +22,11 @@
 
 import _ from 'lodash';
 import $ from 'jquery';
-import d3 from 'd3';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 import { explorerChartConfigBuilder } from './explorer_chart_config_builder';
+import { chartLimits } from 'plugins/ml/util/chart_utils';
 import { isTimeSeriesViewDetector } from 'plugins/ml/util/job_utils';
 import 'plugins/ml/services/results_service';
 
@@ -207,48 +207,6 @@ module.controller('MlExplorerChartsContainerController', function ($scope, $inje
       });
 
       return chartData;
-    }
-
-    function chartLimits(data) {
-      const chartLimits = { max: 0, min: 0 };
-
-      chartLimits.max = d3.max(data, (d) => d.value);
-      chartLimits.min = d3.min(data, (d) => d.value);
-      if (chartLimits.max === chartLimits.min) {
-        chartLimits.max = d3.max(data, (d) => {
-          if (d.typical) {
-            return Math.max(d.value, d.typical);
-          } else {
-            // If analysis with by and over field, and more than one cause,
-            // there will be no actual and typical value.
-            // TODO - produce a better visual for population analyses.
-            return d.value;
-          }
-        });
-        chartLimits.min = d3.min(data, (d) => {
-          if (d.typical) {
-            return Math.min(d.value, d.typical);
-          } else {
-            // If analysis with by and over field, and more than one cause,
-            // there will be no actual and typical value.
-            // TODO - produce a better visual for population analyses.
-            return d.value;
-          }
-        });
-      }
-
-      // add padding of 5% of the difference between max and min
-      // to the upper and lower ends of the y-axis
-      let padding = 0;
-      if (chartLimits.max !== chartLimits.min) {
-        padding = (chartLimits.max - chartLimits.min) * 0.05;
-      } else {
-        padding = chartLimits.max * 0.05;
-      }
-      chartLimits.max += padding;
-      chartLimits.min -= padding;
-
-      return chartLimits;
     }
 
     $q.all(seriesPromises)
