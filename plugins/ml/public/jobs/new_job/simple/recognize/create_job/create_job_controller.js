@@ -124,6 +124,7 @@ module
     query,
     filters: [],
     useFullIndexData: true,
+    startDatafeedAfterSave: true
   };
 
   $scope.resultsUrl = '';
@@ -247,12 +248,16 @@ module
       function checkFinished() {
         jobsCounter--;
         if (jobsCounter === 0) {
-          startDatafeeds()
-          .then(() => {
+          if ($scope.formConfig.startDatafeedAfterSave) {
+            startDatafeeds()
+            .then(() => {
+              resolve();
+            }).catch(() => {
+              reject();
+            });
+          } else {
             resolve();
-          }).catch(() => {
-            reject();
-          });
+          }
         }
       }
 
