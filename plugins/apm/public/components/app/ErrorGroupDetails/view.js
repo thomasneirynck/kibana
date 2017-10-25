@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { get } from 'lodash';
 import withErrorHandler from '../../shared/withErrorHandler';
 import PageHeader from '../../shared/PageHeader';
-import Breadcrumbs from '../../shared/Breadcrumbs';
 import DetailView from './DetailView';
 import Distribution from './Distribution';
 
@@ -49,7 +48,6 @@ class ErrorGroupDetails extends Component {
 
     return (
       <div>
-        <Breadcrumbs />
         <PageHeader
           title={`Error group ${errorGroupId.slice(0, 5) || 'N/A'}`}
         />

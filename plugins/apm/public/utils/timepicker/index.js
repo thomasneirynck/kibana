@@ -4,6 +4,25 @@ import 'ui/chrome';
 import 'ui/autoload/all';
 import { set } from 'lodash';
 import createHistory from 'history/createHashHistory';
+import { setupRoutes } from '../../services/breadcrumbs';
+import { legacyDecodeURIComponent, toQuery } from '../../utils/url';
+
+const routes = {
+  '/': 'APM',
+  '/:appName': {
+    url: params => `/${params.appName}/transactions`,
+    label: params => params.appName
+  },
+  '/:appName/errors': 'Errors',
+  '/:appName/errors/:groupId': params => params.groupId,
+  '/:appName/transactions': {
+    skip: true
+  },
+  '/:appName/transactions/:transactionType': params => params.transactionType,
+  '/:appName/transactions/:transactionType/:transactionName': params =>
+    legacyDecodeURIComponent(params.transactionName)
+};
+const getBreadcrumbs = setupRoutes(routes);
 
 let globalTimefilter;
 
@@ -23,7 +42,16 @@ export function initTimepicker(callback) {
   uiModules
     .get('app/apm', [])
     .controller('TimePickerController', ($scope, timefilter, globalState) => {
-      history.listen(() => globalState.fetch());
+      $scope.breadcrumbs = getBreadcrumbs(history.location.pathname);
+      $scope.searchQueryTime = toQuery(history.location.search)._g;
+
+      history.listen(location => {
+        $scope.$apply(() => {
+          $scope.breadcrumbs = getBreadcrumbs(location.pathname);
+          $scope.searchQueryTime = toQuery(history.location.search)._g;
+        });
+        globalState.fetch();
+      });
       timefilter.setTime = (from, to) => {
         timefilter.time.from = moment(from).toISOString();
         timefilter.time.to = moment(to).toISOString();

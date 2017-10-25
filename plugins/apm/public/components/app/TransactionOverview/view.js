@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import withErrorHandler from '../../shared/withErrorHandler';
-import Breadcrumbs from '../../shared/Breadcrumbs';
 import PageHeader from '../../shared/PageHeader';
 import TabNavigation from '../../shared/TabNavigation';
 import Charts from './Charts';
@@ -34,7 +33,6 @@ export class TransactionOverview extends Component {
     const { changeTransactionSorting, transactionSorting } = this.props;
     return (
       <div>
-        <Breadcrumbs />
         <PageHeader title={appName} />
         <TabNavigation />
         <Charts />

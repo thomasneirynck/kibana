@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import withErrorHandler from '../../shared/withErrorHandler';
-import Breadcrumbs from '../../shared/Breadcrumbs';
 import List from './List';
 
 import styled from 'styled-components';
@@ -32,7 +31,6 @@ class AppOverview extends Component {
 
     return (
       <div>
-        <Breadcrumbs />
         <Header>Apps</Header>
 
         <List
