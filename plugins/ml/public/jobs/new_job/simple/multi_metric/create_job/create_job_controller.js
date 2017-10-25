@@ -353,7 +353,7 @@ module
         id,
         name: field.displayName,
         tooltip: field.displayName,
-        agg,
+        agg: { type: agg.type },
         mlType: field.mlType
       };
       $scope.ui.fields.push(f);
