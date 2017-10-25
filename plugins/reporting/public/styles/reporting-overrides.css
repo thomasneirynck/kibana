@@ -5,7 +5,7 @@
  ******
  */
 
- /**
+/**
  *  global
  */
 
@@ -31,7 +31,7 @@ filter-bar,
 discover-app .discover-timechart,
 discover-app .sidebar-container,
 discover-app .sidebar-collapser,
-discover-app navbar[name=discover-search],
+discover-app navbar[name="discover-search"],
 discover-app .discover-table-footer {
   display: none;
 }
@@ -39,12 +39,25 @@ discover-app .discover-table-footer {
 /**
  *  Visualize Editor Tweaks
  */
-
 /* hide unusable controls */
-visualize-app visualize > :not(.vis-editor-content):not(.vis-editor-full-options)/* all non-content rows in interface */ ,
-visualize-app visualize .vis-editor-content > :not(.vis-editor-canvas):not(.vis-editor-full-options)/* all non-canvas columns in content row */ {
+visualize-app
+  visualize
+  > :not(.vis-editor-content):not(.vis_editor)/* all non-content rows in interface */,
+visualize-app
+  visualize
+  .vis-editor-content
+  > :not(.vis-editor-canvas):not(.vis_editor) {
   display: none;
 }
+/** THIS IS FOR TSVB UNTIL REFACTOR **/
+.vis_editor__visualization {
+  position: static !important;
+}
+.vis-editor-hide-for-reporting {
+  /* all non-content rows in interface */
+  display: none;
+}
+/**  END TSVB BAD BAD HACKS **/
 
 /* remove left padding from visualizations so that map lines up with .leaflet-container and
 *  setting the position to be fixed and to take up the entire screen, because some zoom levels/viewports
@@ -54,7 +67,8 @@ visualize-app .vis-editor-canvas {
   position: fixed;
   width: 100%;
   height: 100%;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
 }
 
 /**
@@ -64,11 +78,11 @@ visualize-app .vis-editor-canvas {
 /* hide unusable controls */
 visualize .legend-toggle,
 visualize .visualize-show-spy,
-visualize .visualize-spy-container > header/* spy "tabs" */ ,
-visualize .agg-table-controls/* export raw, export formatted, etc. */ ,
-visualize .leaflet-container .leaflet-top.leaflet-left/* tilemap controls */ ,
-visualize visualize-spy .pagination-size/* page-size select box */ ,
-visualize paginate-controls /* page numbers */ {
+visualize .visualize-spy-container > header/* spy "tabs" */,
+visualize .agg-table-controls/* export raw, export formatted, etc. */,
+visualize .leaflet-container .leaflet-top.leaflet-left/* tilemap controls */,
+visualize visualize-spy .pagination-size/* page-size select box */,
+visualize paginate-controls {
   display: none;
 }
 
