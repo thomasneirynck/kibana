@@ -31,6 +31,7 @@ import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/single_metric/create_job/filter_agg_types';
 import { isJobIdValid } from 'plugins/ml/util/job_utils';
 import { getQueryFromSavedSearch, getSafeFieldName } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
+import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/components/utils/app_state_settings';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
 import { ML_JOB_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
 import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
@@ -58,6 +59,7 @@ module
   $filter,
   $window,
   $timeout,
+  $q,
   courier,
   timefilter,
   Private,
@@ -65,11 +67,17 @@ module
   mlPopulationJobService,
   mlMessageBarService,
   mlFullTimeRangeSelectorService,
-  mlESMappingService) {
+  mlESMappingService,
+  AppState) {
 
   timefilter.enabled = true;
   const msgs = mlMessageBarService;
   const MlTimeBuckets = Private(IntervalHelperProvider);
+
+  const stateDefaults = {
+    mlJobSettings: {}
+  };
+  const appState = new AppState(stateDefaults);
 
   const aggTypes = Private(AggTypesIndexProvider);
   $scope.courier = courier;
@@ -202,7 +210,6 @@ module
     agg: {
       type: undefined
     },
-    field: null,
     fields: [],
     bucketSpan: '15m',
     chartInterval: undefined,
@@ -240,32 +247,36 @@ module
     $scope.formChange();
   };
 
-  $scope.splitChange = function (fieldIndex, field) {
-    $scope.formConfig.fields[fieldIndex].firstSplitFieldName = undefined;
+  $scope.splitChange = function (fieldIndex, splitField) {
+    return $q((resolve) => {
+      $scope.formConfig.fields[fieldIndex].firstSplitFieldName = undefined;
 
-    if (field !== undefined) {
-      $scope.formConfig.fields[fieldIndex].splitField =  field;
+      if (splitField !== undefined) {
+        $scope.formConfig.fields[fieldIndex].splitField =  splitField;
 
-      $scope.addDefaultFieldsToInfluencerList();
+        $scope.addDefaultFieldsToInfluencerList();
 
-      mlPopulationJobService.getSplitFields($scope.formConfig, field.name, 10)
-      .then((resp) => {
-        if (resp.results.values && resp.results.values.length) {
-          $scope.formConfig.fields[fieldIndex].firstSplitFieldName = resp.results.values[0];
-          $scope.formConfig.fields[fieldIndex].cardLabels = resp.results.values;
-        }
+        mlPopulationJobService.getSplitFields($scope.formConfig, splitField.name, 10)
+        .then((resp) => {
+          if (resp.results.values && resp.results.values.length) {
+            $scope.formConfig.fields[fieldIndex].firstSplitFieldName = resp.results.values[0];
+            $scope.formConfig.fields[fieldIndex].cardLabels = resp.results.values;
+          }
 
-        drawCards(fieldIndex, true);
+          drawCards(fieldIndex, true);
+          $scope.formChange();
+          resolve();
+        });
+      } else {
+        $scope.formConfig.fields[fieldIndex].splitField = undefined;
+        $scope.formConfig.fields[fieldIndex].cardLabels = undefined;
+        setFieldsChartStates(CHART_STATE.LOADING);
+        $scope.ui.splitText = '';
+        destroyCards(fieldIndex);
         $scope.formChange();
-      });
-    } else {
-      $scope.formConfig.fields[fieldIndex].splitField = undefined;
-      $scope.formConfig.fields[fieldIndex].cardLabels = undefined;
-      setFieldsChartStates(CHART_STATE.LOADING);
-      $scope.ui.splitText = '';
-      destroyCards(fieldIndex);
-      $scope.formChange();
-    }
+        resolve();
+      }
+    });
   };
 
   $scope.splitReset = function (fieldIndex) {
@@ -830,6 +841,11 @@ module
     loadFields();
 
     $scope.loadVis();
+
+    $scope.$evalAsync(() => {
+      // populate the fields with any settings from the URL
+      populateAppStateSettings(appState, $scope);
+    });
   });
 
   $scope.$listen(timefilter, 'fetch', $scope.loadVis);
@@ -842,7 +858,6 @@ module
     globalForceStop = true;
     angular.element(window).off('resize');
   });
-
 }).filter('filterAggTypes', function () {
   return (aggTypes, field) => {
     const output = [];

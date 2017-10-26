@@ -35,7 +35,8 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
       formConfig: '=',
       jobStateWrapper: '=',
       JOB_STATE: '=jobState',
-      ui: '=ui'
+      ui: '=ui',
+      exportedFunctions: '='
     },
     template,
     link: function ($scope) {
@@ -113,6 +114,12 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
         }
 
       };
+
+      // export the guessBucketSpan function so it can be called from outside this directive.
+      // this is used when auto populating the settings from the URL.
+      if ($scope.exportedFunctions !== undefined && typeof $scope.exportedFunctions === 'object') {
+        $scope.exportedFunctions.guessBucketSpan = $scope.guessBucketSpan;
+      }
 
       function createBucketSpanEstimator(
         indexPatternId,

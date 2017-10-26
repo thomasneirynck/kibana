@@ -31,6 +31,7 @@ import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/single_metric/create_job/filter_agg_types';
 import { isJobIdValid } from 'plugins/ml/util/job_utils';
 import { getQueryFromSavedSearch, getSafeFieldName } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
+import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/components/utils/app_state_settings';
 import { changeJobIDCase } from 'plugins/ml/jobs/new_job/simple/components/general_job_details/change_job_id_case';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
 import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
@@ -65,11 +66,17 @@ module
   mlSingleMetricJobService,
   mlMessageBarService,
   mlFullTimeRangeSelectorService,
-  mlESMappingService) {
+  mlESMappingService,
+  AppState) {
 
   timefilter.enabled = true;
   const msgs = mlMessageBarService;
   const MlTimeBuckets = Private(IntervalHelperProvider);
+
+  const stateDefaults = {
+    mlJobSettings: {}
+  };
+  const appState = new AppState(stateDefaults);
 
   const aggTypes = Private(AggTypesIndexProvider);
   $scope.courier = courier;
@@ -214,6 +221,10 @@ module
     useDedicatedIndex: false,
     isSparseData: false
   };
+
+  // this is passed into the bucketspan estimator and  reference to the guessBucketSpan function is inserted
+  // to allow it for be called automatically without user interaction.
+  $scope.bucketSpanEstimatorExportedFunctions = {};
 
   $scope.aggChange = function () {
     loadFields();
@@ -637,5 +648,11 @@ module
 
     return valid;
   }
+
+
+  $scope.$evalAsync(() => {
+    // populate the fields with any settings from the URL
+    populateAppStateSettings(appState, $scope);
+  });
 
 });

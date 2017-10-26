@@ -30,6 +30,10 @@ module.directive('mlBucketSpanSelection', function () {
         $scope.ui.bucketSpanEstimator.message = '';
         $scope.formChange();
       };
+
+      // this is passed into the bucketspan estimator and  reference to the guessBucketSpan function is inserted
+      // to allow it for be called automatically without user interaction.
+      $scope.bucketSpanEstimatorExportedFunctions = {};
     }
   };
 });

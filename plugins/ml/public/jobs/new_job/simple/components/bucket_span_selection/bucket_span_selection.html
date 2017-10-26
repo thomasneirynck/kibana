@@ -13,7 +13,14 @@
           ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
           class="form-control lowercase bucket-span-input" />
 
-          <ml-bucket-span-estimator bucket-span-field-change="bucketSpanFieldChange" form-config='formConfig' job-state-wrapper='{jobState:jobState}' job-state='JOB_STATE' ui='ui'></ml-bucket-span-estimator>
+          <ml-bucket-span-estimator
+            bucket-span-field-change="bucketSpanFieldChange"
+            form-config='formConfig'
+            job-state-wrapper='{jobState:jobState}'
+            job-state='JOB_STATE'
+            ui='ui'
+            exported-functions='bucketSpanEstimatorExportedFunctions'>
+          </ml-bucket-span-estimator>
 
         </div>
         <div ng-hide="ui.bucketSpanValid" class="validation-error">Invalid interval format</div>

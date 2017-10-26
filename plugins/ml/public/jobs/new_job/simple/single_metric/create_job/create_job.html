@@ -71,7 +71,13 @@
             ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
             class="form-control lowercase bucket-span-input" />
 
-          <ml-bucket-span-estimator form-config='formConfig' job-state-wrapper='{jobState:jobState}' job-state='JOB_STATE' ui='ui'></ml-bucket-span-estimator>
+          <ml-bucket-span-estimator
+            form-config='formConfig'
+            job-state-wrapper='{jobState:jobState}'
+            job-state='JOB_STATE'
+            ui='ui'
+            exported-functions='bucketSpanEstimatorExportedFunctions'>
+          </ml-bucket-span-estimator>
 
           <button class="kuiButton kuiButton--primary navbar-btn-link btn-load-vis"
             ng-click="loadVis()"
@@ -124,12 +130,12 @@
       <div class="form-group">
         <label>Name</label><i ml-info-icon="new_job_id" ></i>
         <input
+          id='job-id-input'
           ng-model="formConfig.jobId"
           required
           placeholder="Job ID"
           ng-change="changeJobIDCase(formConfig)"
           ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-          input-focus
           class="form-control lowercase" />
           <div ng-hide="ui.validation.checks.jobId.valid" class="validation-error">{{ ( ui.validation.checks.jobId.message || "Enter a name for the job" ) }}</div>
       </div>
@@ -140,7 +146,6 @@
           ng-model="formConfig.description"
           placeholder="Job description"
           ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-          input-focus
           class="form-control" />
       </div>
 

@@ -15,6 +15,7 @@
 
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
+import { preConfiguredJobRedirect } from 'plugins/ml/jobs/new_job/wizard/preconfigured_job_redirect';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import template from './wizard.html';
 
@@ -24,7 +25,7 @@ uiRoutes
   resolve : {
     CheckLicense: checkLicense,
     privileges: checkCreateJobsPrivilege,
-    indexPatternIds: courier => courier.indexPatterns.getIds()
+    preConfiguredJobRedirect
   }
 });
 
@@ -37,7 +38,6 @@ function (
   $route,
   $location,
   timefilter) {
-
 
   timefilter.enabled = false; // remove time picker from top of page
 

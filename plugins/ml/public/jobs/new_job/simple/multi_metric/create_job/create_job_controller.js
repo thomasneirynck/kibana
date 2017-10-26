@@ -31,6 +31,7 @@ import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/single_metric/create_job/filter_agg_types';
 import { isJobIdValid } from 'plugins/ml/util/job_utils';
 import { getQueryFromSavedSearch, getSafeFieldName } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
+import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/components/utils/app_state_settings';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
 import { ML_JOB_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
 import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
@@ -64,11 +65,17 @@ module
   mlMultiMetricJobService,
   mlMessageBarService,
   mlFullTimeRangeSelectorService,
-  mlESMappingService) {
+  mlESMappingService,
+  AppState) {
 
   timefilter.enabled = true;
   const msgs = mlMessageBarService;
   const MlTimeBuckets = Private(IntervalHelperProvider);
+
+  const stateDefaults = {
+    mlJobSettings: {}
+  };
+  const appState = new AppState(stateDefaults);
 
   const aggTypes = Private(AggTypesIndexProvider);
   $scope.courier = courier;
@@ -200,7 +207,6 @@ module
     agg: {
       type: undefined
     },
-    field: null,
     fields: {},
     bucketSpan: '15m',
     chartInterval: undefined,
@@ -801,6 +807,11 @@ module
     loadFields();
 
     $scope.loadVis();
+
+    $scope.$evalAsync(() => {
+      // populate the fields with any settings from the URL
+      populateAppStateSettings(appState, $scope);
+    });
   });
 
   $scope.$listen(timefilter, 'fetch', $scope.loadVis);
@@ -813,7 +824,6 @@ module
     globalForceStop = true;
     angular.element(window).off('resize');
   });
-
 }).filter('filterAggTypes', function () {
   return (aggTypes, field) => {
     const output = [];
