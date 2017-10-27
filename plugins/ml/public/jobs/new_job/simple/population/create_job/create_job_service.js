@@ -157,7 +157,7 @@ module.service('mlPopulationJobService', function (
             });
           }
 
-          const highestValueField = _.reduce(values, (p, c) => (p === undefined || c.value > p.value) ? c : p);
+          const highestValueField = _.reduce(values, (p, c) => (c.value > p.value) ? c : p, { value: 0 });
           if (highestValueField.value > highestValue) {
             highestValue = highestValueField.value;
           }
