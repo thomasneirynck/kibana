@@ -24,7 +24,7 @@ import { ML_RESULTS_INDEX_PATTERN } from 'plugins/ml/constants/index_patterns';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('mlResultsService', function ($q, es) {
+module.service('mlResultsService', function ($q, es, ml) {
 
   // Obtains the maximum bucket anomaly scores by job ID and time.
   // Pass an empty array or ['*'] to search over all job IDs.
@@ -380,93 +380,32 @@ module.service('mlResultsService', function ($q, es) {
     return deferred.promise;
   };
 
-  // Obtains the maximum bucket influencer score by time for the specified job ID(s).
-  // Pass an empty array or ['*'] to search over all job IDs.
+  // Obtains the overall bucket scores for the specified job ID(s).
+  // Pass ['*'] to search over all job IDs.
   // Returned response contains a results property as an object of max score by time.
-  this.getBucketInfluencerMaxScoreByTime = function (jobIds, earliestMs, latestMs, interval) {
+  this.getOverallBucketScores = function (jobIds, topN, earliestMs, latestMs, interval) {
     const deferred = $q.defer();
     const obj = { success: true, results: {} };
 
-    // Build the criteria to use in the bool filter part of the request.
-    // Adds criteria for the time range plus any specified job IDs.
-    const boolCriteria = [];
-    boolCriteria.push({
-      'range': {
-        'timestamp': {
-          'gte': earliestMs,
-          'lte': latestMs,
-          'format': 'epoch_millis'
-        }
-      }
-    });
-    if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
-      let jobIdFilterStr = '';
-      _.each(jobIds, (jobId, i) => {
-        if (i > 0) {
-          jobIdFilterStr += ' OR ';
-        }
-        jobIdFilterStr += 'job_id:';
-        jobIdFilterStr += jobId;
-      });
-      boolCriteria.push({
-        'query_string': {
-          'analyze_wildcard':false,
-          'query':jobIdFilterStr
-        }
-      });
-    }
-
-    es.search({
-      index: ML_RESULTS_INDEX_PATTERN,
-      size: 0,
-      body: {
-        'query': {
-          'bool': {
-            'filter': [
-              {
-                'query_string': {
-                  'query': 'result_type:bucket_influencer',
-                  'analyze_wildcard': false
-                }
-              },
-              {
-                'bool': {
-                  'must': boolCriteria
-                }
-              }
-            ]
-          }
-        },
-        'aggs': {
-          'byTime': {
-            'date_histogram': {
-              'field': 'timestamp',
-              'interval': interval,
-              'min_doc_count': 1
-            },
-            'aggs': {
-              'maxAnomalyScore': {
-                'max': {
-                  'field': 'anomaly_score'
-                }
-              }
-            }
-          }
-        }
-      }
+    ml.overallBuckets({
+      jobId: jobIds,
+      topN: topN,
+      bucketSpan: interval,
+      start: earliestMs,
+      end: latestMs
     })
-    .then((resp) => {
-      const dataByTime = _.get(resp, ['aggregations', 'byTime', 'buckets'], []);
+    .then(resp => {
+      const dataByTime = _.get(resp, ['overall_buckets'], []);
       _.each(dataByTime, (dataForTime) => {
-        const value = _.get(dataForTime, ['maxAnomalyScore', 'value']);
+        const value = _.get(dataForTime, ['overall_score']);
         if (value !== undefined) {
-          obj.results[dataForTime.key] = value;
+          obj.results[dataForTime.timestamp] = value;
         }
       });
 
       deferred.resolve(obj);
     })
-    .catch((resp) => {
+    .catch(resp => {
       deferred.reject(resp);
     });
     return deferred.promise;

@@ -190,4 +190,24 @@ export function jobRoutes(server, commonRouteConfig) {
     }
   });
 
+  server.route({
+    method: 'POST',
+    path: '/api/ml/anomaly_detectors/{jobId}/results/overall_buckets',
+    handler(request, reply) {
+      const callWithRequest = callWithRequestFactory(server, request);
+      return callWithRequest('ml.overallBuckets', {
+        jobId: request.params.jobId,
+        top_n: request.payload.topN,
+        bucket_span: request.payload.bucketSpan,
+        start: request.payload.start,
+        end: request.payload.end
+      })
+      .then(resp => reply(resp))
+      .catch(resp => reply(wrapError(resp)));
+    },
+    config: {
+      ...commonRouteConfig
+    }
+  });
+
 }

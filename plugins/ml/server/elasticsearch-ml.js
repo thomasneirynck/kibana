@@ -314,6 +314,18 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
     method: 'POST'
   });
 
+  ml.overallBuckets = ca({
+    url: {
+      fmt: '/_xpack/ml/anomaly_detectors/<%=jobId%>/results/overall_buckets',
+      req: {
+        jobId: {
+          type: 'string'
+        }
+      }
+    },
+    method: 'POST'
+  });
+
   ml.privilegeCheck = ca({
     url: {
       fmt: '/_xpack/security/user/_has_privileges'

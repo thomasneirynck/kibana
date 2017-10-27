@@ -494,11 +494,15 @@ module.controller('MlExplorerController', function (
       finish(counter);
     });
 
-    // Query 2 - load 'overall' scores by time - using max of bucket_influencer anomaly_score.
+    // Query 2 - load overall bucket scores by time.
     // Pass the interval in seconds as the swimlane relies on a fixed number of seconds between buckets
     // which wouldn't be the case if e.g. '1M' was used.
-    mlResultsService.getBucketInfluencerMaxScoreByTime(
+    mlResultsService.getOverallBucketScores(
       selectedJobIds,
+      // Note there is an optimization for when top_n == 1.
+      // If top_n > 1, we should test what happens when the request takes long
+      // and refactor the loading calls, if necessary, to avoid delays in loading other components.
+      1,
       bounds.min.valueOf(),
       bounds.max.valueOf(),
       $scope.swimlaneBucketInterval.asSeconds() + 's'

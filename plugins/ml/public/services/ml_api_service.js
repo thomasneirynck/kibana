@@ -176,6 +176,20 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
+  this.overallBuckets = function (obj) {
+    const data = pick(obj, [
+      'topN',
+      'bucketSpan',
+      'start',
+      'end'
+    ]);
+    return http.request({
+      url: `${basePath}/anomaly_detectors/${obj.jobId}/results/overall_buckets`,
+      method: 'POST',
+      data
+    });
+  };
+
   this.checkPrivilege = function (obj) {
     return http.request({
       url: `${basePath}/_has_privileges`,
