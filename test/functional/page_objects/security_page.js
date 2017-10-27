@@ -341,8 +341,7 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
         return PageObjects.common.sleep(2000);
       })
       .then (() => {
-        return remote.setFindTimeout(defaultFindTimeout)
-        .findByCssSelector('.kuiModalBodyText').getVisibleText();
+        return testSubjects.getVisibleText('confirmModalBodyText');
       })
       .then ((alert) => {
         alertText = alert;
