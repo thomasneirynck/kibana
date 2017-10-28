@@ -224,7 +224,7 @@ module
 
   function saveAppState() {
     $scope.appState.query = {
-      language:'lucene',
+      language: 'lucene',
       query: $scope.searchQueryText
     };
     $scope.appState.save();

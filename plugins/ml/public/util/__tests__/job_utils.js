@@ -61,7 +61,7 @@ describe('ML - job utils', () => {
       const job = {
         analysis_config: {
           detectors: [
-              { 'function':'high_count','partition_field_name':'status','detector_description': 'High count status code' }
+              { 'function': 'high_count', 'partition_field_name': 'status', 'detector_description': 'High count status code' }
           ]
         }
       };
@@ -73,8 +73,8 @@ describe('ML - job utils', () => {
       const job = {
         analysis_config: {
           detectors: [
-              { 'function':'high_count','partition_field_name':'status','detector_description': 'High count status code' },
-              { 'function':'rare','by_field_name':'status','over_field_name':'clientip', 'detector_description': 'Rare status code' }
+              { 'function': 'high_count', 'partition_field_name': 'status', 'detector_description': 'High count status code' },
+              { 'function': 'rare', 'by_field_name': 'status', 'over_field_name': 'clientip', 'detector_description': 'Rare status code' }
           ]
         }
       };
@@ -86,8 +86,8 @@ describe('ML - job utils', () => {
       const job = {
         analysis_config: {
           detectors: [
-              { 'function':'rare','by_field_name':'status','over_field_name':'clientip','detector_description': 'Rare status code' },
-              { 'function':'freq_rare','by_field_name':'uri','over_field_name':'clientip','detector_description': 'Freq rare URI' }
+              { 'function': 'rare', 'by_field_name': 'status', 'over_field_name': 'clientip', 'detector_description': 'Rare status code' },
+              { 'function': 'freq_rare', 'by_field_name': 'uri', 'over_field_name': 'clientip', 'detector_description': 'Freq rare URI' }
           ]
         }
       };
@@ -99,7 +99,7 @@ describe('ML - job utils', () => {
       const job = {
         analysis_config: {
           detectors: [
-              { 'function':'count','by_field_name':'mlcategory', 'detector_description': 'Count by category' }
+              { 'function': 'count', 'by_field_name': 'mlcategory', 'detector_description': 'Count by category' }
           ]
         }
       };
@@ -114,10 +114,10 @@ describe('ML - job utils', () => {
     const job = {
       analysis_config: {
         detectors: [
-            { 'function':'sum','field_name':'bytes','partition_field_name':'clientip','detector_description': 'High bytes client IP' },
-            { 'function':'freq_rare','by_field_name':'uri','over_field_name':'clientip','detector_description': 'Freq rare URI' },
-            { 'function':'count','by_field_name':'mlcategory', 'detector_description': 'Count by category' },
-            { 'function':'count','by_field_name':'hrd','detector_description':'count by hrd' }
+            { 'function': 'sum', 'field_name': 'bytes', 'partition_field_name': 'clientip', 'detector_description': 'High bytes client IP' }, // eslint-disable-line max-len
+            { 'function': 'freq_rare', 'by_field_name': 'uri', 'over_field_name': 'clientip', 'detector_description': 'Freq rare URI' },
+            { 'function': 'count', 'by_field_name': 'mlcategory', 'detector_description': 'Count by category' },
+            { 'function': 'count', 'by_field_name': 'hrd', 'detector_description': 'count by hrd' }
         ]
       },
       datafeed_config: {
@@ -200,7 +200,7 @@ describe('ML - job utils', () => {
       const job = {
         analysis_config: {
           detectors: [
-              { 'function':'high_count','partition_field_name':'status','detector_description': 'High count status code' }
+              { 'function': 'high_count', 'partition_field_name': 'status', 'detector_description': 'High count status code' }
           ]
         },
         model_plot_config: {
@@ -215,9 +215,9 @@ describe('ML - job utils', () => {
       const job = {
         analysis_config: {
           detectors: [
-            { 'function':'max',
-              'field_name':'responsetime',
-              'partition_field_name':'country',
+            { 'function': 'max',
+              'field_name': 'responsetime',
+              'partition_field_name': 'country',
               'by_field_name': 'airline' }
           ]
         },
@@ -248,7 +248,7 @@ describe('ML - job utils', () => {
       const job1 = {
         analysis_config: {
           detectors: [
-              { 'function':'high_count','partition_field_name':'status','detector_description': 'High count status code' }
+              { 'function': 'high_count', 'partition_field_name': 'status', 'detector_description': 'High count status code' }
           ]
         },
         model_plot_config: {

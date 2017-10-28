@@ -1117,7 +1117,7 @@ module.exports = (function () {
         const target = newNodes[edge.target];
         const srcId = src.field + '..' + src.term;
         const targetId = target.field + '..' + target.term;
-        const id = this.makeEdgeId(srcId,targetId);
+        const id = this.makeEdgeId(srcId, targetId);
         const existingSrcNode = self.nodesMap[srcId];
         const existingTargetNode = self.nodesMap[targetId];
         if (existingSrcNode != null && existingTargetNode != null) {
@@ -1165,7 +1165,7 @@ module.exports = (function () {
       return {
         'bool': {
           'should': shoulds,
-          'minimum_should_match' : Math.min(shoulds.length, loose ? 1 : 2)
+          'minimum_should_match': Math.min(shoulds.length, loose ? 1 : 2)
         }
       };
     };
@@ -1214,7 +1214,7 @@ module.exports = (function () {
           nodesForLinking[randomIndex] = oldNode;
         }
         // Trim to our random selection
-        nodesForLinking = nodesForLinking.slice(0,maxNumVerticesSearchable - 1);
+        nodesForLinking = nodesForLinking.slice(0, maxNumVerticesSearchable - 1);
       }
 
 
@@ -1230,18 +1230,18 @@ module.exports = (function () {
         filterMap[nodeNum] = nodeQuery;
       });
       const searchReq = {
-        "size":0,
-        "query":{
-          "bool":{
+        "size": 0,
+        "query": {
+          "bool": {
             // Only match docs that share 2 nodes so can help describe their relationship
             'minimum_should_match': 2,
             'should': shoulds
           }
         },
-        "aggs":{
-          "matrix":{
-            "adjacency_matrix":{
-              "separator":"|",
+        "aggs": {
+          "matrix": {
+            "adjacency_matrix": {
+              "separator": "|",
               "filters": filterMap
             }
           }
@@ -1300,7 +1300,7 @@ module.exports = (function () {
             // Bucket represents an edge
             const srcNode = nodesForLinking[ids[0]];
             const targetNode = nodesForLinking[ids[1]];
-            const edgeId = self.makeEdgeId(srcNode.id,targetNode.id);
+            const edgeId = self.makeEdgeId(srcNode.id, targetNode.id);
             const existingEdge = self.edgesMap[edgeId];
             if (existingEdge) {
               // Tweak the doc_count score having just looked it up.
@@ -1311,7 +1311,7 @@ module.exports = (function () {
                 "source": parseInt(ids[0]),
                 "target": parseInt(ids[1]),
                 "weight": bucket.weight,
-                "width":  Math.max(backFilledMinLineSize, ((bucket.weight / maxEdgeWeight) * backFilledMaxLineSize)),
+                "width": Math.max(backFilledMinLineSize, ((bucket.weight / maxEdgeWeight) * backFilledMaxLineSize)),
                 "doc_count": bucket.doc_count
               });
             }
@@ -1363,8 +1363,8 @@ module.exports = (function () {
             'like': txtsByFieldType[field],
             'min_term_freq': 1,
             'minimum_should_match': '20%',
-            'min_doc_freq':1,
-            'boost_terms':2,
+            'min_doc_freq': 1,
+            'boost_terms': 2,
             'max_query_terms': 25
           }
         });
@@ -1386,7 +1386,7 @@ module.exports = (function () {
         const termsQuery = {};
         termsQuery[fieldName] = excludeNodesByField[fieldName];
         notExistingNodes.push({
-          'terms':termsQuery
+          'terms': termsQuery
         });
       });
 
@@ -1396,12 +1396,12 @@ module.exports = (function () {
         'boosting': {
           'negative_boost': 0.0001,
           'negative': {
-            'bool':{
+            'bool': {
               'should': notExistingNodes
             }
           },
           'positive': {
-            'bool':{
+            'bool': {
               'should': likeQueries
             }
           }

@@ -53,7 +53,7 @@ import forecastingModalTemplate from 'plugins/ml/timeseriesexplorer/forecasting_
 uiRoutes
 .when('/timeseriesexplorer/?', {
   template,
-  resolve : {
+  resolve: {
     CheckLicense: checkLicense,
     privileges: checkGetJobsPrivilege,
     indexPatterns: getIndexPatterns
@@ -206,8 +206,8 @@ module.controller('MlTimeSeriesExplorerController', function (
     // Only filter on the entity if the field has a value.
     const nonBlankEntities = _.filter($scope.entities, (entity) => { return entity.fieldValue.length > 0; });
     $scope.criteriaFields = [{
-      'fieldName':'detector_index',
-      'fieldValue':detectorIndex }
+      'fieldName': 'detector_index',
+      'fieldValue': detectorIndex }
     ].concat(nonBlankEntities);
 
     // Calculate the aggregation interval for the context chart.
@@ -300,7 +300,7 @@ module.controller('MlTimeSeriesExplorerController', function (
     // for the selected detector across the full time range. No need to pass through finish().
     mlResultsService.getRecordsForCriteria(
       [$scope.selectedJob.job_id],
-      [{ 'fieldName':'detector_index','fieldValue':detectorIndex }],
+      [{ 'fieldName': 'detector_index', 'fieldValue': detectorIndex }],
       0,
       bounds.min.valueOf(),
       bounds.max.valueOf(),
@@ -528,7 +528,7 @@ module.controller('MlTimeSeriesExplorerController', function (
 
   // Add a listener for filter changes triggered from the anomalies table.
   const filterChangeListener = function (field, value, operator) {
-    const entity = _.find($scope.entities, { fieldName:field });
+    const entity = _.find($scope.entities, { fieldName: field });
     if (entity !== undefined) {
       if (operator === '+' && entity.fieldValue !== value) {
         entity.fieldValue = value;
@@ -595,7 +595,7 @@ module.controller('MlTimeSeriesExplorerController', function (
       _.each(mlJobService.jobs, (job) => {
         if (isTimeSeriesViewJob(job) === true) {
           const bucketSpan = parseInterval(job.analysis_config.bucket_span);
-          newJobs.push({ id:job.job_id, selected: false, bucketSpanSeconds: bucketSpan.asSeconds() });
+          newJobs.push({ id: job.job_id, selected: false, bucketSpanSeconds: bucketSpan.asSeconds() });
         }
       });
       $scope.jobs = newJobs;

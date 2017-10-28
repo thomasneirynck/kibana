@@ -12,7 +12,7 @@ const API_TAG = 'api';
 export function main(server) {
   const config = server.config();
   const DOWNLOAD_BASE_URL = config.get('server.basePath') + `${API_BASE_URL}/jobs/download`;
-  const { errors:esErrors } = server.plugins.elasticsearch.getCluster('admin');
+  const { errors: esErrors } = server.plugins.elasticsearch.getCluster('admin');
 
   const enqueueJob = enqueueJobFactory(server);
   const reportingFeaturePreRouting = reportingFeaturePreRoutingFactory(server);

@@ -43,35 +43,35 @@ describe('ML - time buckets', () => {
   describe('default bar target', () => {
 
     it('returns correct interval for default target with hour bounds', () => {
-      const hourBounds = { min:moment('2017-01-01T00:00:00.000'), max:moment('2017-01-01T01:00:00.000') };
+      const hourBounds = { min: moment('2017-01-01T00:00:00.000'), max: moment('2017-01-01T01:00:00.000') };
       autoBuckets.setBounds(hourBounds);
       const hourResult = autoBuckets.getInterval();
       expect(hourResult.asSeconds()).to.be(60);      // 1 minute
     });
 
     it('returns correct interval for default target with day bounds', () => {
-      const dayBounds = { min:moment('2017-01-01T00:00:00.000'), max:moment('2017-01-02T00:00:00.000') };
+      const dayBounds = { min: moment('2017-01-01T00:00:00.000'), max: moment('2017-01-02T00:00:00.000') };
       autoBuckets.setBounds(dayBounds);
       const dayResult = autoBuckets.getInterval();
       expect(dayResult.asSeconds()).to.be(1800);    // 30 minutes
     });
 
     it('returns correct interval for default target with week bounds', () => {
-      const weekBounds = { min:moment('2017-01-01T00:00:00.000'), max:moment('2017-01-08T00:00:00.000') };
+      const weekBounds = { min: moment('2017-01-01T00:00:00.000'), max: moment('2017-01-08T00:00:00.000') };
       autoBuckets.setBounds(weekBounds);
       const weekResult = autoBuckets.getInterval();
       expect(weekResult.asSeconds()).to.be(14400);  // 4 hours
     });
 
     it('returns correct interval for default target with 30 day bounds', () => {
-      const monthBounds = { min:moment('2017-01-01T00:00:00.000'), max:moment('2017-01-31T00:00:00.000') };
+      const monthBounds = { min: moment('2017-01-01T00:00:00.000'), max: moment('2017-01-31T00:00:00.000') };
       autoBuckets.setBounds(monthBounds);
       const monthResult = autoBuckets.getInterval();
       expect(monthResult.asSeconds()).to.be(86400); // 1 day
     });
 
     it('returns correct interval for default target with year bounds', () => {
-      const yearBounds = { min:moment('2017-01-01T00:00:00.000'), max:moment('2018-01-01T00:00:00.000') };
+      const yearBounds = { min: moment('2017-01-01T00:00:00.000'), max: moment('2018-01-01T00:00:00.000') };
       autoBuckets.setBounds(yearBounds);
       const yearResult = autoBuckets.getInterval();
       expect(yearResult.asSeconds()).to.be(604800); // 1 week
@@ -82,35 +82,35 @@ describe('ML - time buckets', () => {
   describe('custom bar target', () => {
 
     it('returns correct interval for 500 bar target with hour bounds', () => {
-      const hourBounds = { min:moment('2017-01-01T00:00:00.000'), max:moment('2017-01-01T01:00:00.000') };
+      const hourBounds = { min: moment('2017-01-01T00:00:00.000'), max: moment('2017-01-01T01:00:00.000') };
       customBuckets.setBounds(hourBounds);
       const hourResult = customBuckets.getInterval();
       expect(hourResult.asSeconds()).to.be(10);      // 10 seconds
     });
 
     it('returns correct interval for 500 bar target with day bounds', () => {
-      const dayBounds = { min:moment('2017-01-01T00:00:00.000'), max:moment('2017-01-02T00:00:00.000') };
+      const dayBounds = { min: moment('2017-01-01T00:00:00.000'), max: moment('2017-01-02T00:00:00.000') };
       customBuckets.setBounds(dayBounds);
       const dayResult = customBuckets.getInterval();
       expect(dayResult.asSeconds()).to.be(300);    // 5 minutes
     });
 
     it('returns correct interval for 500 bar target with week bounds', () => {
-      const weekBounds = { min:moment('2017-01-01T00:00:00.000'), max:moment('2017-01-08T00:00:00.000') };
+      const weekBounds = { min: moment('2017-01-01T00:00:00.000'), max: moment('2017-01-08T00:00:00.000') };
       customBuckets.setBounds(weekBounds);
       const weekResult = customBuckets.getInterval();
       expect(weekResult.asSeconds()).to.be(1800);  // 30 minutes
     });
 
     it('returns correct interval for 500 bar target with 30 day bounds', () => {
-      const monthBounds = { min:moment('2017-01-01T00:00:00.000'), max:moment('2017-01-31T00:00:00.000') };
+      const monthBounds = { min: moment('2017-01-01T00:00:00.000'), max: moment('2017-01-31T00:00:00.000') };
       customBuckets.setBounds(monthBounds);
       const monthResult = customBuckets.getInterval();
       expect(monthResult.asSeconds()).to.be(7200); // 2 hours
     });
 
     it('returns correct interval for 500 bar target with year bounds', () => {
-      const yearBounds = { min:moment('2017-01-01T00:00:00.000'), max:moment('2018-01-01T00:00:00.000') };
+      const yearBounds = { min: moment('2017-01-01T00:00:00.000'), max: moment('2018-01-01T00:00:00.000') };
       customBuckets.setBounds(yearBounds);
       const yearResult = customBuckets.getInterval();
       expect(yearResult.asSeconds()).to.be(86400); // 1 day

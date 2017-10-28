@@ -137,8 +137,8 @@ module.service('mlSimpleJobSearchService', function ($q, es) {
       size: 0,
       body: {
         'query': query,
-        'aggs' : {
-          'catFields' : {
+        'aggs': {
+          'catFields': {
             'terms': {
               'field': field,
               'size': size

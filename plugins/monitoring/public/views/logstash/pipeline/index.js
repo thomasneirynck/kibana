@@ -15,7 +15,7 @@ function getPageData($injector) {
   const globalState = $injector.get('globalState');
   const Private = $injector.get('Private');
 
-  const { ccs, cluster_uuid : clusterUuid } = globalState;
+  const { ccs, cluster_uuid: clusterUuid } = globalState;
   const timeBounds = timefilter.getBounds();
   const pipelineId = $route.current.params.id;
   const pipelineHash = $route.current.params.hash;

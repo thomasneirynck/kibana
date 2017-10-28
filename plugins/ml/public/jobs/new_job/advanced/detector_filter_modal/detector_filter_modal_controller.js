@@ -100,7 +100,7 @@ module.controller('MlDetectorFilterModal', function ($scope, $modalInstance, par
   }
 
   $scope.ui = {
-    ruleAction:['filter_results'],
+    ruleAction: ['filter_results'],
     target_field_name: '',
     target_field_value: '',
     conditions_connective: ['or', 'and'],
@@ -108,7 +108,7 @@ module.controller('MlDetectorFilterModal', function ($scope, $modalInstance, par
       condition_type: [{
         label: 'actual',
         value: 'numerical_actual'
-      },{
+      }, {
         label: 'typical',
         value: 'numerical_typical'
       }, {
@@ -123,7 +123,7 @@ module.controller('MlDetectorFilterModal', function ($scope, $modalInstance, par
       field_value: '',
       condition: {
         operator: [{
-          label:'<',
+          label: '<',
           value: 'lt'
         }, {
           label: '>',

@@ -18,7 +18,7 @@ watch.input.search.request.body.query.bool.filter.range
  */
 function buildRange({ timeWindowSize, timeWindowUnit, timeField }) {
   return {
-    [timeField] : {
+    [timeField]: {
       gte: `{{ctx.trigger.scheduled_time}}||-${timeWindowSize}${timeWindowUnit}`,
       lte: `{{ctx.trigger.scheduled_time}}`,
       format: 'strict_date_optional_time||epoch_millis'
@@ -85,7 +85,7 @@ function buildAggs({ aggType, aggField, termField, termSize, termOrder }) {
           }
         },
         aggs: {
-          metricAgg : {}
+          metricAgg: {}
         }
       }
     };

@@ -122,9 +122,9 @@ describe('Azure', () => {
       expect(response.isConfirmed()).to.eql(true);
       expect(response.toJSON()).to.eql({
         name: 'azure',
-        id : "d4c57456-2b3b-437a-9f1f-7082cf123456",
-        vm_type : "Standard_A1",
-        region : "eastus",
+        id: "d4c57456-2b3b-437a-9f1f-7082cf123456",
+        vm_type: "Standard_A1",
+        region: "eastus",
         zone: undefined,
         metadata: {
           name: "pickypg-ubuntu-rm",

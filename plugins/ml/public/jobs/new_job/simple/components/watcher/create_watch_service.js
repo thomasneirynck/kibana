@@ -50,7 +50,7 @@ module.service('mlCreateWatchService', function ($http, $q, Private) {
     this.config.interval = '20m';
     this.config.watcherEditURL = '';
     this.config.includeInfluencers = false;
-    this.config.threshold = { display:'critical', val:75 };
+    this.config.threshold = { display: 'critical', val: 75 };
   };
 
   const compiledEmailBody = _.template(emailBody);

@@ -268,7 +268,7 @@ module.directive('mlSingleMetricJobChart', function (Private) {
   return {
     scope: {
       chartData: '=',
-      chartHeight:'=',
+      chartHeight: '=',
       chartTicksMargin: '='
     },
     link: link

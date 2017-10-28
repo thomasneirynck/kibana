@@ -63,7 +63,7 @@ describe('ExportTypesRegistry', function () {
     it('returns all objects that have been registered', function () {
       const obj1 = { id: 'foo' };
       const obj2 = { id: 'bar' };
-      const objs = [obj1 , obj2];
+      const objs = [obj1, obj2];
       objs.forEach(obj => exportTypesRegistry.register(obj));
       const all = Array.from(exportTypesRegistry.getAll());
       expect(all).to.contain(obj1);

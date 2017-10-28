@@ -110,7 +110,7 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es, mlResult
   // for which data is being plotted.
   this.getChartDetails = function (job, detectorIndex, entityFields, earliestMs, latestMs) {
     const deferred = $q.defer();
-    const obj = { success: true, results:{ functionLabel: '', entityData: { entities: [] } } };
+    const obj = { success: true, results: { functionLabel: '', entityData: { entities: [] } } };
 
     const chartConfig = buildConfigFromDetector(job, detectorIndex);
     let functionLabel = chartConfig.metricFunction;
@@ -125,7 +125,7 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es, mlResult
     const aggs = {};
     _.each(entityFields, (entity) => {
       if (entity.fieldValue.length === 0) {
-        aggs[entity.fieldName] = { 'cardinality' : { 'field': entity.fieldName } };
+        aggs[entity.fieldName] = { 'cardinality': { 'field': entity.fieldName } };
       }
     });
 
@@ -139,7 +139,7 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es, mlResult
       const mustCriteria = [];
       mustCriteria.push(chartConfig.datafeedConfig.query);
 
-      const timeRangeCriteria = { 'range':{} };
+      const timeRangeCriteria = { 'range': {} };
       timeRangeCriteria.range[chartConfig.timeField] = {
         'gte': earliestMs,
         'lte': latestMs,
@@ -147,7 +147,7 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es, mlResult
       };
       mustCriteria.push(timeRangeCriteria);
 
-      mustCriteria.push({ 'terms' : { '_type' : chartConfig.datafeedConfig.types } });
+      mustCriteria.push({ 'terms': { '_type': chartConfig.datafeedConfig.types } });
 
       const searchBody = {
         'query': {

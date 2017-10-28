@@ -32,11 +32,11 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
     restrict: 'AE',
     replace: true,
     scope: {
-      detectors:            '=mlDetectors',
-      indices:              '=mlIndices',
-      properties:           '=mlProperties',
+      detectors: '=mlDetectors',
+      indices: '=mlIndices',
+      properties: '=mlProperties',
       catFieldNameSelected: '=mlCatFieldNameSelected',
-      editMode:             '=mlEditMode',
+      editMode: '=mlEditMode',
     },
     template,
     controller: function ($scope) {
@@ -136,11 +136,11 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
           resolve: {
             params: function () {
               return {
-                properties:           $scope.properties,
-                validate:             validateDetector,
-                detector:             dtr,
-                index:                index,
-                add:                  $scope.addDetector,
+                properties: $scope.properties,
+                validate: validateDetector,
+                detector: dtr,
+                index: index,
+                add: $scope.addDetector,
                 catFieldNameSelected: $scope.catFieldNameSelected
               };
             }
@@ -163,12 +163,12 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
           resolve: {
             params: function () {
               return {
-                properties:           $scope.properties,
-                validate:             validateDetector,
-                detector:             dtr,
-                filter:               filter,
-                index:                filterIndex,
-                add:                  $scope.addFilter
+                properties: $scope.properties,
+                validate: validateDetector,
+                detector: dtr,
+                filter: filter,
+                index: filterIndex,
+                add: $scope.addFilter
               };
             }
           }

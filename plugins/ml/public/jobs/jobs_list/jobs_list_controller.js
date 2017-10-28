@@ -35,7 +35,7 @@ import createWatchTemplate from 'plugins/ml/jobs/jobs_list/create_watch_modal/cr
 uiRoutes
 .when('/jobs/?', {
   template,
-  resolve : {
+  resolve: {
     CheckLicense: checkLicense,
     privileges: checkGetJobsPrivilege
   }
@@ -95,10 +95,10 @@ function (
       resolve: {
         params: function () {
           return {
-            doDelete:     doDelete,
-            status:       status,
-            jobId:        job.job_id,
-            isDatafeed:   (job.datafeed_config && Object.keys(job.datafeed_config).length) ? true : false
+            doDelete: doDelete,
+            status: status,
+            jobId: job.job_id,
+            isDatafeed: (job.datafeed_config && Object.keys(job.datafeed_config).length) ? true : false
           };
         }
       }
@@ -173,7 +173,7 @@ function (
   // function for displaying the time for a job based on latest_record_timestamp
   // added to rowScope so it can be updated live when data changes
   function latestTimeStamp(dataCounts) {
-    const obj = { string:'', unix: 0 };
+    const obj = { string: '', unix: 0 };
     if (dataCounts.latest_record_timestamp) {
       const ts = moment(dataCounts.latest_record_timestamp);
       obj.string = ts.format(TIME_FORMAT);
@@ -220,7 +220,7 @@ function (
     let rows = jobs.map((job) => {
       const rowScope = $scope.$new();
       rowScope.job = job;
-      rowScope.jobAudit = { messages:'', update: () => {}, jobWarningClass: '', jobWarningText: '' };
+      rowScope.jobAudit = { messages: '', update: () => {}, jobWarningClass: '', jobWarningText: '' };
 
       // rowScope.unsafeHtml = '<ml-job-preview ml-job-id=''+job.job_id+''></ml-job-preview>';
 
@@ -254,41 +254,41 @@ function (
 
         const tableRow = [{
           markup: jobsListArrow,
-          scope:  rowScope
+          scope: rowScope
         }, {
           markup: filterHighlight(job.job_id),
-          value:  job.job_id
+          value: job.job_id
         }, {
           markup: iconTxt,
-          scope:  rowScope
+          scope: rowScope
         }, {
           markup: filterHighlight(mlEscape(jobDescription)),
-          value:  jobDescription
+          value: jobDescription
         }, {
           markup: '<div class="col-align-right">{{toLocaleString(job.data_counts.processed_record_count)}}</div>',
-          value:  job.data_counts.processed_record_count ,
-          scope:  rowScope
+          value: job.data_counts.processed_record_count,
+          scope: rowScope
         }, {
           markup: '{{job.model_size_stats.memory_status}}',
-          value:  (() => { return (job.model_size_stats) ? job.model_size_stats.memory_status : ''; }),
-          scope:  rowScope
+          value: (() => { return (job.model_size_stats) ? job.model_size_stats.memory_status : ''; }),
+          scope: rowScope
         }, {
           markup: '{{job.state}}',
-          value:  job.state,
-          scope:  rowScope
+          value: job.state,
+          scope: rowScope
         }, {
           markup: '{{job.datafeed_config.state}}',
-          value:  (() => { return (job.datafeed_config.state) ? job.datafeed_config.state : ''; }),
-          scope:  rowScope
+          value: (() => { return (job.datafeed_config.state) ? job.datafeed_config.state : ''; }),
+          scope: rowScope
         }, {
           markup: '{{ time(job.data_counts).string }}',
           // use a function which returns the value as the time stamp value can change
           // but still needs be run though the time function to format it to unix time stamp
-          value:  (() => { return rowScope.time(job.data_counts).unix; }),
-          scope:  rowScope
+          value: (() => { return rowScope.time(job.data_counts).unix; }),
+          scope: rowScope
         }, {
           markup: jobsListControlsHtml,
-          scope:  rowScope
+          scope: rowScope
         }];
 
         return tableRow;
@@ -431,7 +431,7 @@ function (
   // function for loading audit messages for all jobs for displaying icons
 
   function loadAuditSummary(jobs, rowScopesIn) {
-    const levels = { system_info: -1, info:0, warning:1, error:2 };
+    const levels = { system_info: -1, info: 0, warning: 1, error: 2 };
     const jobMessages = {};
     const createTimes = {};
 
@@ -476,10 +476,10 @@ function (
             });
 
             jobMessages[job.key] = {
-              job_id:           job.key,
+              job_id: job.key,
               highestLevelText: highestLevelText,
-              highestLevel:     highestLevel,
-              msgTime:          msgTime
+              highestLevel: highestLevel,
+              msgTime: msgTime
             };
           }
         }

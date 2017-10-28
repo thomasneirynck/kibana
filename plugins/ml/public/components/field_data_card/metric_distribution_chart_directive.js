@@ -153,12 +153,12 @@ module.directive('mlMetricDistributionChart', function (mlChartTooltipService) {
 
       scope.processedData = processedData;
 
-      chartData.push({ x:minX, y: 0 });
+      chartData.push({ x: minX, y: 0 });
       _.each(processedData, (data) => {
-        chartData.push({ x:data.x0, y: data.y });
-        chartData.push({ x:data.x1, y: data.y });
+        chartData.push({ x: data.x0, y: data.y });
+        chartData.push({ x: data.x1, y: data.y });
       });
-      chartData.push({ x:processedData[processedData.length - 1].x1, y: 0 });
+      chartData.push({ x: processedData[processedData.length - 1].x1, y: 0 });
 
       return chartData;
     }

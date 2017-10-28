@@ -182,8 +182,8 @@ module.service('mlResultsService', function ($q, es, ml) {
       });
       boolCriteria.push({
         'query_string': {
-          'analyze_wildcard':false,
-          'query':jobIdFilterStr
+          'analyze_wildcard': false,
+          'query': jobIdFilterStr
         }
       });
     }
@@ -309,8 +309,8 @@ module.service('mlResultsService', function ($q, es, ml) {
       });
       boolCriteria.push({
         'query_string': {
-          'analyze_wildcard':false,
-          'query':jobIdFilterStr
+          'analyze_wildcard': false,
+          'query': jobIdFilterStr
         }
       });
     }
@@ -444,8 +444,8 @@ module.service('mlResultsService', function ($q, es, ml) {
       });
       boolCriteria.push({
         'query_string': {
-          'analyze_wildcard':false,
-          'query':jobIdFilterStr
+          'analyze_wildcard': false,
+          'query': jobIdFilterStr
         }
       });
     }
@@ -461,8 +461,8 @@ module.service('mlResultsService', function ($q, es, ml) {
       });
       boolCriteria.push({
         'query_string': {
-          'analyze_wildcard':false,
-          'query':influencerFilterStr
+          'analyze_wildcard': false,
+          'query': influencerFilterStr
         }
       });
     }
@@ -592,7 +592,7 @@ module.service('mlResultsService', function ($q, es, ml) {
   // examplesByCategoryId (list of examples against categoryId).
   this.getCategoryExamples = function (jobId, categoryIds, maxExamples) {
     const deferred = $q.defer();
-    const obj = { success: true, jobId: jobId, examplesByCategoryId:{} };
+    const obj = { success: true, jobId: jobId, examplesByCategoryId: {} };
 
     es.search({
       index: ML_RESULTS_INDEX_PATTERN,
@@ -649,7 +649,7 @@ module.service('mlResultsService', function ($q, es, ml) {
           'bool': {
             'must': [
               {
-                'exists' : { 'field' : 'influencers' }
+                'exists': { 'field': 'influencers' }
               }
             ]
           }
@@ -686,8 +686,8 @@ module.service('mlResultsService', function ($q, es, ml) {
       });
       boolCriteria.push({
         'query_string': {
-          'analyze_wildcard':false,
-          'query':jobIdFilterStr
+          'analyze_wildcard': false,
+          'query': jobIdFilterStr
         }
       });
     }
@@ -714,8 +714,8 @@ module.service('mlResultsService', function ($q, es, ml) {
             ]
           }
         },
-        'sort' : [
-          { 'record_score' : { 'order' : 'desc' } }
+        'sort': [
+          { 'record_score': { 'order': 'desc' } }
         ],
       }
     })
@@ -775,8 +775,8 @@ module.service('mlResultsService', function ($q, es, ml) {
       });
       boolCriteria.push({
         'query_string': {
-          'analyze_wildcard':false,
-          'query':jobIdFilterStr
+          'analyze_wildcard': false,
+          'query': jobIdFilterStr
         }
       });
     }
@@ -827,8 +827,8 @@ module.service('mlResultsService', function ($q, es, ml) {
             ]
           }
         },
-        'sort' : [
-          { 'record_score' : { 'order' : 'desc' } }
+        'sort': [
+          { 'record_score': { 'order': 'desc' } }
         ],
       }
     })
@@ -911,7 +911,7 @@ module.service('mlResultsService', function ($q, es, ml) {
               'bool': {
                 'must': [
                   {
-                    'exists' : { 'field' : 'influencers' }
+                    'exists': { 'field': 'influencers' }
                   }
                 ]
               }
@@ -942,8 +942,8 @@ module.service('mlResultsService', function ($q, es, ml) {
             ]
           }
         },
-        'sort' : [
-          { 'record_score' : { 'order' : 'desc' } }
+        'sort': [
+          { 'record_score': { 'order': 'desc' } }
         ],
       }
     })
@@ -1010,8 +1010,8 @@ module.service('mlResultsService', function ($q, es, ml) {
       });
       boolCriteria.push({
         'query_string': {
-          'analyze_wildcard':false,
-          'query':jobIdFilterStr
+          'analyze_wildcard': false,
+          'query': jobIdFilterStr
         }
       });
     }
@@ -1044,8 +1044,8 @@ module.service('mlResultsService', function ($q, es, ml) {
             ]
           }
         },
-        'sort' : [
-          { 'record_score' : { 'order' : 'desc' } }
+        'sort': [
+          { 'record_score': { 'order': 'desc' } }
         ],
       }
     })
@@ -1084,10 +1084,10 @@ module.service('mlResultsService', function ($q, es, ml) {
     const shouldCriteria = [];
 
     if (types && types.length) {
-      mustCriteria.push({ 'terms' : { '_type' : types } });
+      mustCriteria.push({ 'terms': { '_type': types } });
     }
 
-    const timeRangeCriteria = { 'range':{} };
+    const timeRangeCriteria = { 'range': {} };
     timeRangeCriteria.range[timeFieldName] = {
       'gte': earliestMs,
       'lte': latestMs,
@@ -1115,10 +1115,10 @@ module.service('mlResultsService', function ($q, es, ml) {
         // Add special handling for blank entity field values, checking for either
         // an empty string or the field not existing.
         const emptyFieldCondition = {
-          'bool':{
-            'must':[
+          'bool': {
+            'must': [
               {
-                'term':{
+                'term': {
                 }
               }
             ]
@@ -1127,10 +1127,10 @@ module.service('mlResultsService', function ($q, es, ml) {
         emptyFieldCondition.bool.must[0].term[entity.fieldName] = '';
         shouldCriteria.push(emptyFieldCondition);
         shouldCriteria.push({
-          'bool':{
+          'bool': {
             'must_not': [
               {
-                'exists' : { 'field' : entity.fieldName }
+                'exists': { 'field': entity.fieldName }
               }
             ]
           }
@@ -1295,7 +1295,7 @@ module.service('mlResultsService', function ($q, es, ml) {
     // Add criteria for the job ID and time range.
     const boolCriteria = [];
     boolCriteria.push({
-      'term' : { 'job_id' : jobId }
+      'term': { 'job_id': jobId }
     });
 
     boolCriteria.push({
@@ -1434,10 +1434,10 @@ module.service('mlResultsService', function ($q, es, ml) {
         // Add special handling for blank entity field values, checking for either
         // an empty string or the field not existing.
         const emptyFieldCondition = {
-          'bool':{
-            'must':[
+          'bool': {
+            'must': [
               {
-                'term':{
+                'term': {
                 }
               }
             ]
@@ -1446,10 +1446,10 @@ module.service('mlResultsService', function ($q, es, ml) {
         emptyFieldCondition.bool.must[0].term[criteria.fieldName] = '';
         shouldCriteria.push(emptyFieldCondition);
         shouldCriteria.push({
-          'bool':{
+          'bool': {
             'must_not': [
               {
-                'exists' : { 'field' : criteria.fieldName }
+                'exists': { 'field': criteria.fieldName }
               }
             ]
           }

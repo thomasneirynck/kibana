@@ -77,10 +77,10 @@ describe('graphui-workspace', function () {
       expect(workspace.blacklistedNodes).to.have.length(0);
 
 
-      const nodeA = workspace.getNode(workspace.makeNodeId('field1','a'));
+      const nodeA = workspace.getNode(workspace.makeNodeId('field1', 'a'));
       expect(nodeA).to.be.an(Object);
 
-      const nodeD = workspace.getNode(workspace.makeNodeId('field1','d'));
+      const nodeD = workspace.getNode(workspace.makeNodeId('field1', 'd'));
       expect(nodeD).to.be(undefined);
 
 
@@ -194,13 +194,13 @@ describe('graphui-workspace', function () {
 
       expect(workspace.selectedNodes).to.have.length(0);
 
-      const nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
+      const nodeA1 = workspace.getNode(workspace.makeNodeId('field1', 'a1'));
       expect(nodeA1).to.be.an(Object);
-      const nodeA2 = workspace.getNode(workspace.makeNodeId('field1','a2'));
+      const nodeA2 = workspace.getNode(workspace.makeNodeId('field1', 'a2'));
       expect(nodeA2).to.be.an(Object);
-      const nodeB1 = workspace.getNode(workspace.makeNodeId('field1','b1'));
+      const nodeB1 = workspace.getNode(workspace.makeNodeId('field1', 'b1'));
       expect(nodeB1).to.be.an(Object);
-      const nodeB2 = workspace.getNode(workspace.makeNodeId('field1','b2'));
+      const nodeB2 = workspace.getNode(workspace.makeNodeId('field1', 'b2'));
       expect(nodeB2).to.be.an(Object);
 
       expect(workspace.selectedNodes).to.have.length(0);
@@ -257,25 +257,25 @@ describe('graphui-workspace', function () {
 
       expect(workspace.nodes).to.have.length(2);
 
-      let nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
+      let nodeA1 = workspace.getNode(workspace.makeNodeId('field1', 'a1'));
       expect(nodeA1).to.be.an(Object);
-      const nodeA2 = workspace.getNode(workspace.makeNodeId('field1','a2'));
+      const nodeA2 = workspace.getNode(workspace.makeNodeId('field1', 'a2'));
       expect(nodeA2).to.be.an(Object);
 
       workspace.selectNode(nodeA1);
       workspace.deleteSelection();
       expect(workspace.nodes).to.have.length(1);
-      nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
+      nodeA1 = workspace.getNode(workspace.makeNodeId('field1', 'a1'));
       expect(nodeA1).to.be(undefined);
 
       workspace.undo();
       expect(workspace.nodes).to.have.length(2);
-      nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
+      nodeA1 = workspace.getNode(workspace.makeNodeId('field1', 'a1'));
       expect(nodeA1).to.be.an(Object);
 
       workspace.redo();
       expect(workspace.nodes).to.have.length(1);
-      nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
+      nodeA1 = workspace.getNode(workspace.makeNodeId('field1', 'a1'));
       expect(nodeA1).to.be(undefined);
 
       workspace.undo();
@@ -314,9 +314,9 @@ describe('graphui-workspace', function () {
 
       expect(workspace.nodes).to.have.length(2);
 
-      const nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
+      const nodeA1 = workspace.getNode(workspace.makeNodeId('field1', 'a1'));
       expect(nodeA1).to.be.an(Object);
-      const nodeA2 = workspace.getNode(workspace.makeNodeId('field1','a2'));
+      const nodeA2 = workspace.getNode(workspace.makeNodeId('field1', 'a2'));
       expect(nodeA2).to.be.an(Object);
 
       workspace.selectNode(nodeA2);

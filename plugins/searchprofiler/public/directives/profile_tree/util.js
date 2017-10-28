@@ -34,7 +34,7 @@ export function timeInMilliseconds(data) {
   }
 
   if (typeof data.time === 'string') {
-    return data.time.replace('ms','');
+    return data.time.replace('ms', '');
   }
 
   return data.time;

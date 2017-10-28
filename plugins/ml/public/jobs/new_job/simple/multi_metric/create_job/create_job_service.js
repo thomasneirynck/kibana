@@ -73,7 +73,7 @@ module.service('mlMultiMetricJobService', function (
     const fieldIds = Object.keys(formConfig.fields).sort();
 
     // move event rate field to the front of the list
-    const idx = _.findIndex(fieldIds,(id) => id === EVENT_RATE_COUNT_FIELD);
+    const idx = _.findIndex(fieldIds, (id) => id === EVENT_RATE_COUNT_FIELD);
     if(idx !== -1) {
       fieldIds.splice(idx, 1);
       fieldIds.splice(0, 0, EVENT_RATE_COUNT_FIELD);
@@ -82,7 +82,7 @@ module.service('mlMultiMetricJobService', function (
     _.each(fieldIds, (fieldId) => {
       this.chartData.detectors[fieldId] = {
         line: [],
-        swimlane:[]
+        swimlane: []
       };
     });
 
@@ -95,7 +95,7 @@ module.service('mlMultiMetricJobService', function (
         _.each(fieldIds, (fieldId) => {
           this.chartData.detectors[fieldId] = {
             line: [],
-            swimlane:[]
+            swimlane: []
           };
         });
       } else {
@@ -207,7 +207,7 @@ module.service('mlMultiMetricJobService', function (
     if (formConfig.firstSplitFieldName !== undefined) {
       query.bool.must.push({
         term: {
-          [formConfig.splitField.name] : formConfig.firstSplitFieldName
+          [formConfig.splitField.name]: formConfig.firstSplitFieldName
         }
       });
     }

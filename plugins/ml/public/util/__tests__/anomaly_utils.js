@@ -29,63 +29,63 @@ import {
 describe('ML - anomaly utils', () => {
 
   const partitionEntityRecord = {
-    'job_id':'farequote',
-    'result_type':'record',
-    'probability':0.012818,
-    'record_score':0.0162059,
-    'bucket_span':300,
-    'detector_index':0,
-    'timestamp':1455047400000,
-    'partition_field_name':'airline',
-    'partition_field_value':'AAL',
-    'function':'mean',
-    'function_description':'mean',
-    'field_name':'responsetime'
+    'job_id': 'farequote',
+    'result_type': 'record',
+    'probability': 0.012818,
+    'record_score': 0.0162059,
+    'bucket_span': 300,
+    'detector_index': 0,
+    'timestamp': 1455047400000,
+    'partition_field_name': 'airline',
+    'partition_field_value': 'AAL',
+    'function': 'mean',
+    'function_description': 'mean',
+    'field_name': 'responsetime'
   };
 
   const byEntityRecord = {
-    'job_id':'farequote',
-    'result_type':'record',
-    'probability':0.012818,
-    'record_score':0.0162059,
-    'bucket_span':300,
-    'detector_index':0,
-    'timestamp':1455047400000,
-    'by_field_name':'airline',
-    'by_field_value':'JZA',
-    'function':'mean',
-    'function_description':'mean',
-    'field_name':'responsetime'
+    'job_id': 'farequote',
+    'result_type': 'record',
+    'probability': 0.012818,
+    'record_score': 0.0162059,
+    'bucket_span': 300,
+    'detector_index': 0,
+    'timestamp': 1455047400000,
+    'by_field_name': 'airline',
+    'by_field_value': 'JZA',
+    'function': 'mean',
+    'function_description': 'mean',
+    'field_name': 'responsetime'
   };
 
   const overEntityRecord = {
-    'job_id':'gallery',
-    'result_type':'record',
-    'probability':2.81806e-9,
-    'record_score':59.055,
-    'bucket_span':3600,
-    'detector_index':4,
-    'timestamp':1420552800000,
-    'function':'sum',
-    'function_description':'sum',
-    'field_name':'bytes',
-    'by_field_name':'method',
-    'over_field_name':'clientip',
-    'over_field_value':'37.157.32.164'
+    'job_id': 'gallery',
+    'result_type': 'record',
+    'probability': 2.81806e-9,
+    'record_score': 59.055,
+    'bucket_span': 3600,
+    'detector_index': 4,
+    'timestamp': 1420552800000,
+    'function': 'sum',
+    'function_description': 'sum',
+    'field_name': 'bytes',
+    'by_field_name': 'method',
+    'over_field_name': 'clientip',
+    'over_field_value': '37.157.32.164'
   };
 
   const noEntityRecord = {
-    'job_id':'farequote_no_by',
-    'result_type':'record',
-    'probability':0.0191711,
-    'record_score':4.38431,
-    'initial_record_score':19.654,
-    'bucket_span':300,
-    'detector_index':0,
-    'timestamp':1454890500000,
-    'function':'mean',
-    'function_description':'mean',
-    'field_name':'responsetime'
+    'job_id': 'farequote_no_by',
+    'result_type': 'record',
+    'probability': 0.0191711,
+    'record_score': 4.38431,
+    'initial_record_score': 19.654,
+    'bucket_span': 300,
+    'detector_index': 0,
+    'timestamp': 1454890500000,
+    'function': 'mean',
+    'function_description': 'mean',
+    'field_name': 'responsetime'
   };
 
   describe('getSeverity', () => {

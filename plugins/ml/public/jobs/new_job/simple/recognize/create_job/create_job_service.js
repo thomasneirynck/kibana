@@ -101,7 +101,7 @@ module.service('mlCreateRecognizerJobsService', function (
 
   this.indexTimeRange = function (indexPattern, formConfig) {
     return $q((resolve, reject) => {
-      const obj = { success: true, start: { epoch:0, string:'' }, end: { epoch:0, string:'' } };
+      const obj = { success: true, start: { epoch: 0, string: '' }, end: { epoch: 0, string: '' } };
       const query = getQueryFromSavedSearch(formConfig);
 
       es.search({

@@ -75,15 +75,15 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       groups: [],
       analysis_config: {
         bucket_span: '15m',
-        influencers:[],
-        detectors :[]
+        influencers: [],
+        detectors: []
       },
-      data_description : {
-        time_field:      '',
-        time_format:     '', // 'epoch',
+      data_description: {
+        time_field: '',
+        time_format: '', // 'epoch',
         field_delimiter: '',
         quote_character: '"',
-        format:         'delimited'
+        format: 'delimited'
       }
     };
   };
@@ -626,7 +626,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   // unique fields across all jobs.
   this.getJobViewByFields = function () {
     const deferred = $q.defer();
-    const obj = { success: true, fieldsByJob: { '*':[] } };
+    const obj = { success: true, fieldsByJob: { '*': [] } };
 
     ml.jobs()
       .then(function (resp) {
@@ -707,7 +707,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
     if (job.datafeed_config) {
       const data = {
-        index:indices,
+        index: indices,
         // removed for now because it looks like kibana are now escaping the & and it breaks
         // it was done this way in the first place because you can't sent <index>/<type>/_search through
         // kibana's proxy. it doesn't like type
@@ -988,7 +988,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       const bucketSpan = parseInterval(analysisConfig.bucket_span);
 
       const job = {
-        id:jobObj.job_id,
+        id: jobObj.job_id,
         bucketSpanSeconds: bucketSpan.asSeconds()
       };
 

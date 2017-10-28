@@ -56,7 +56,7 @@ export class PluginVertex extends Vertex {
       return 0;
     }
 
-    const meanmillisPerEvent = this.graph.processorVertices.reduce((acc,v) => {
+    const meanmillisPerEvent = this.graph.processorVertices.reduce((acc, v) => {
       return acc + v.millisPerEvent || 0;
     }, 0) / totalProcessorVertices;
 

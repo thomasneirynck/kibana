@@ -19,7 +19,7 @@ uiModule.directive('profiletree',  HighlightService => {
     template: template,
     link: $scope => {
       $scope.visible = {
-        'foo':{}
+        'foo': {}
       };
       $scope.indexVisibility = {};
       $scope.highlightedRow = null;

@@ -45,15 +45,15 @@ module.exports = (function () {
     for (const i in termIntersects) {
       const ti = termIntersects[i];
       mergeCandidates.push({
-        'id1':ti.id1,
-        'id2':ti.id2,
-        'term1':ti.term1,
-        'term2':ti.term2,
-        'v1':ti.v1,
-        'v2':ti.v2,
-        'overlap':ti.overlap,
-        width:100,
-        height:60 });
+        'id1': ti.id1,
+        'id2': ti.id2,
+        'term1': ti.term1,
+        'term2': ti.term2,
+        'v1': ti.v1,
+        'v2': ti.v2,
+        'overlap': ti.overlap,
+        width: 100,
+        height: 60 });
 
     }
     return mergeCandidates;
@@ -61,8 +61,8 @@ module.exports = (function () {
 
 
   return {
-    'unwrapFieldNames' : unwrapFieldNames,
-    'getMergeSuggestionObjects':getMergeSuggestionObjects
+    'unwrapFieldNames': unwrapFieldNames,
+    'getMergeSuggestionObjects': getMergeSuggestionObjects
   };
 
 }());

@@ -333,7 +333,7 @@ export class Worker extends events.EventEmitter {
   _getPendingJobs() {
     const nowTime = moment().toISOString();
     const query = {
-      _source : {
+      _source: {
         excludes: [ 'output.content' ]
       },
       query: {

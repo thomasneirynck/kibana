@@ -118,13 +118,13 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
       function getFromTo() {
         if (timefilter.time.mode === 'absolute') {
           return {
-            to:   moment(timefilter.time.to),
+            to: moment(timefilter.time.to),
             from: moment(timefilter.time.from)
           };
         } else {
           timefilter.time.mode = 'absolute';
           return {
-            to:   dateMath.parse(timefilter.time.to, true),
+            to: dateMath.parse(timefilter.time.to, true),
             from: dateMath.parse(timefilter.time.from)
           };
         }

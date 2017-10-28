@@ -27,11 +27,11 @@ export default function ContextChartMask(contextGroup, data, drawBounds, swimlan
   this.data = data;
   this.drawBounds = drawBounds;
   this.swimlaneHeight = swimlaneHeight;
-  this.mask  = this.contextGroup.append('g').attr('class','mask');
+  this.mask  = this.contextGroup.append('g').attr('class', 'mask');
 
   // Create groups for the left and right sides of the mask.
-  this.leftGroup = this.mask.append('g').attr('class','left-mask');
-  this.rightGroup = this.mask.append('g').attr('class','right-mask');
+  this.leftGroup = this.mask.append('g').attr('class', 'left-mask');
+  this.rightGroup = this.mask.append('g').attr('class', 'right-mask');
 
   // Create polygons to provide opacity over the left and right sections of the mask.
   this.leftPolygon = this.leftGroup.append('polygon');

@@ -88,7 +88,7 @@ export function explorerChartConfigBuilder(mlJobService) {
     }
 
     config.infoTooltip = compiledTooltip({
-      'jobId':record.job_id,
+      'jobId': record.job_id,
       'aggregationInterval': config.interval,
       'chartFunction': functionLabel,
       'entityFields': config.entityFields

@@ -50,12 +50,12 @@ module.controller('MlJobTimepickerModal', function (
   $scope.ui = {
     lastTime: lastTime,
     startDateText: '',
-    startRadio:    '1',
-    endDateText:   '',
-    endRadio:      '1',
+    startRadio: '1',
+    endDateText: '',
+    endRadio: '1',
     timepicker: {
       from: '',
-      to:   moment()
+      to: moment()
     },
     setStartRadio: function (i) {
       $scope.ui.startRadio = i;

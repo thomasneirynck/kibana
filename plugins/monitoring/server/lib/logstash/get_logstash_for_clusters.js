@@ -50,7 +50,7 @@ export function getLogstashForClusters(req, lsIndexPattern, clusters) {
                   field: 'logstash_stats.timestamp',
                   size: 1,
                   order: {
-                    '_key' : 'desc'
+                    '_key': 'desc'
                   }
                 },
                 aggs: {

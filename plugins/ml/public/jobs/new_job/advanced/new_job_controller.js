@@ -30,14 +30,14 @@ import saveStatusTemplate from 'plugins/ml/jobs/new_job/advanced/save_status_mod
 uiRoutes
 .when('/jobs/new_job/advanced', {
   template,
-  resolve : {
+  resolve: {
     CheckLicense: checkLicense,
     privileges: checkCreateJobsPrivilege
   }
 })
 .when('/jobs/new_job/advanced/:jobId', {
   template,
-  resolve : {
+  resolve: {
     CheckLicense: checkLicense,
     privileges: checkCreateJobsPrivilege
   }
@@ -98,13 +98,13 @@ function (
   $scope.ui = {
     pageTitle: 'Create a new job',
     wizard: {
-      step:                 1,
-      stepHovering:         0,
-      CHAR_LIMIT:           500,
-      dataLocation:         'ES',
-      indexInputType:       'LIST',
-      dataPreview:          '',
-      dataReady:            false,
+      step: 1,
+      stepHovering: 0,
+      CHAR_LIMIT: 500,
+      dataLocation: 'ES',
+      indexInputType: 'LIST',
+      dataPreview: '',
+      dataReady: false,
       setDataLocation: function (loc) {
         $scope.ui.wizard.dataLocation = loc;
         wizardStep(1);
@@ -131,8 +131,8 @@ function (
         { index: 1, valid: true, checks: {
           detectors: { valid: true }, influencers: { valid: true }, categorizationFilters: { valid: true }, bucketSpan: { valid: true }
         } },
-        { index: 2, valid: true, checks: { timeField: { valid: true }, timeFormat: { valid:true } } },
-        { index: 3, valid: true, checks: { isDatafeed:{ valid: true }, hasAccessToIndex: { valid: true } } },
+        { index: 2, valid: true, checks: { timeField: { valid: true }, timeFormat: { valid: true } } },
+        { index: 3, valid: true, checks: { isDatafeed: { valid: true }, hasAccessToIndex: { valid: true } } },
         { index: 4, valid: true, checks: {} },
         { index: 5, valid: true, checks: {} },
       ],
@@ -146,11 +146,11 @@ function (
     allInfluencers: allInfluencers,
     customInfluencers: [],
     tempCustomInfluencer: '',
-    inputDataFormat:[
+    inputDataFormat: [
       { value: 'delimited',     title: 'Delimited' },
       { value: 'json',          title: 'JSON' },
     ],
-    fieldDelimiterOptions:[
+    fieldDelimiterOptions: [
       { value: '\t',      title: 'tab' },
       { value: ' ',       title: 'space' },
       { value: ',',       title: ',' },
@@ -167,18 +167,18 @@ function (
     useDedicatedIndex: false,
 
     datafeed: {
-      queryText:             '{"match_all":{}}',
-      queryDelayText:        '',
-      queryDelayDefault:     '60s',
-      frequencyText:         '',
-      frequencyDefault:      '',
-      scrollSizeText:        '',
-      scrollSizeDefault:     1000,
-      indicesText:           '',
-      typesText:             '',
+      queryText: '{"match_all":{}}',
+      queryDelayText: '',
+      queryDelayDefault: '60s',
+      frequencyText: '',
+      frequencyDefault: '',
+      scrollSizeText: '',
+      scrollSizeDefault: 1000,
+      indicesText: '',
+      typesText: '',
     },
     saveStatus: {
-      job:     0,
+      job: 0,
     },
     sortByKey: sortByKey,
   };
@@ -300,7 +300,7 @@ function (
           tab.valid = false;
           tab.checks.jobId.valid = false;
           tab.checks.jobId.message = '\'' + $scope.job.job_id + '\' already exists, please choose a different name';
-          changeTab({ index:0 });
+          changeTab({ index: 0 });
         } else {
           checkInfluencers();
         }
@@ -317,7 +317,7 @@ function (
               title: 'No Influencers'
             }).then(saveFunc)
               .catch(function () {
-                changeTab({ index:1 });
+                changeTab({ index: 1 });
               });
           }
         }
@@ -426,7 +426,7 @@ function (
 
   $scope.cancel = function () {
     mlConfirm.open({
-      message:'Are you sure you want to cancel job creation?',
+      message: 'Are you sure you want to cancel job creation?',
       title: 'Are you sure?'
     })
       .then(() => {
@@ -578,15 +578,15 @@ function (
       });
 
       $scope.ui.datafeed = {
-        queryText:         angular.toJson(datafeedConfig.query, true),
-        queryDelayText:    queryDelay,
+        queryText: angular.toJson(datafeedConfig.query, true),
+        queryDelayText: queryDelay,
         queryDelayDefault: queryDelayDefault,
-        frequencyText:     freq,
-        frequencyDefault:  frequencyDefault,
-        scrollSizeText:    scrollSize,
+        frequencyText: freq,
+        frequencyDefault: frequencyDefault,
+        scrollSizeText: scrollSize,
         scrollSizeDefault: scrollSizeDefault,
-        indicesText:       datafeedConfig.indices.join(','),
-        typesText:         datafeedConfig.types.join(','),
+        indicesText: datafeedConfig.indices.join(','),
+        typesText: datafeedConfig.types.join(','),
       };
 
       // load the mappings from the configured server
@@ -933,8 +933,8 @@ function (
       resolve: {
         params: function () {
           return {
-            pscope:           $scope,
-            openDatafeed:    function () {
+            pscope: $scope,
+            openDatafeed: function () {
               mlDatafeedService.openJobTimepickerWindow($scope.job);
             }
           };

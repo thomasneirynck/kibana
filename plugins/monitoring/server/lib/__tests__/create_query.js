@@ -55,7 +55,7 @@ describe('Create Query', () => {
     const options = {
       uuid: 'abc123',
       start: '2016-03-01 10:00:00',
-      end: '2016-03-01 10:00:01' ,
+      end: '2016-03-01 10:00:01',
       metric: {
         uuidField: 'testUuidField',
         timestampField: 'testTimestampField'
@@ -105,7 +105,7 @@ describe('Create Query', () => {
       type: 'test-type-yay',
       uuid: 'abc123',
       start: '2016-03-01 10:00:00',
-      end: '2016-03-01 10:00:01' ,
+      end: '2016-03-01 10:00:01',
       metric
     };
     const result = createQuery(options);

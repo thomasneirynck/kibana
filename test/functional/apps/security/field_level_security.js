@@ -6,7 +6,7 @@ export default function ({ getService, getPageObjects }) {
   const remote = getService('remote');
   const retry = getService('retry');
   const log = getService('log');
-  const PageObjects = getPageObjects(['security','settings', 'common','discover', 'header']);
+  const PageObjects = getPageObjects(['security', 'settings', 'common', 'discover', 'header']);
 
   describe('field_level_security',  () => {
     before('initialize tests', async () => {

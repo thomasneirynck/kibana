@@ -36,7 +36,7 @@ module.directive('mlInfluencersList', function (Private) {
 
   function link(scope, element) {
 
-    scope.$on('render',function () {
+    scope.$on('render', function () {
       render();
     });
 
@@ -84,11 +84,11 @@ module.directive('mlInfluencersList', function (Private) {
             'totalScore': totalScore,
             'severity': severity,
             'tooltip': compiledTooltip({
-              'influencerFieldName':influencerFieldName,
-              'influencerFieldValue':valueData.influencerFieldValue,
+              'influencerFieldName': influencerFieldName,
+              'influencerFieldValue': valueData.influencerFieldValue,
 
-              'maxScoreValue':maxScoreLabel,
-              'totalScoreValue':totalScoreLabel
+              'maxScoreValue': maxScoreLabel,
+              'totalScoreValue': totalScoreLabel
             })
           });
         });

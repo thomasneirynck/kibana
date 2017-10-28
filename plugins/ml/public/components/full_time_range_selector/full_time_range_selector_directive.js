@@ -54,7 +54,7 @@ module.directive('mlFullTimeRangeSelector', function (mlFullTimeRangeSelectorSer
   // load the earliest and latest time stamps for the index
   function indexTimeRange(indexPattern, query) {
     return $q((resolve, reject) => {
-      const obj = { success: true, start: { epoch:0, string:'' }, end: { epoch:0, string:'' } };
+      const obj = { success: true, start: { epoch: 0, string: '' }, end: { epoch: 0, string: '' } };
 
       es.search({
         index: indexPattern.title,

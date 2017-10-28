@@ -35,7 +35,7 @@ module.directive('mlChartTooltip', function (mlChartTooltipService) {
   const doc = document.documentElement;
   const FADE_TIMEOUT_MS = 200;
 
-  this.show = function (contents, target, offset = { x:0, y:0 }) {
+  this.show = function (contents, target, offset = { x: 0, y: 0 }) {
     if (this.element !== null) {
 
       // if a previous fade out was happening, stop it

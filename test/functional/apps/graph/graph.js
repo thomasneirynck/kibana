@@ -2,7 +2,7 @@ import expect from 'expect.js';
 // import { indexBy } from 'lodash';
 export default function ({ getService, getPageObjects }) {
 
-  const PageObjects = getPageObjects(['settings', 'common','graph', 'header']);
+  const PageObjects = getPageObjects(['settings', 'common', 'graph', 'header']);
   const log = getService('log');
   const esArchiver = getService('esArchiver');
   const remote = getService('remote');
@@ -12,13 +12,13 @@ export default function ({ getService, getPageObjects }) {
 
   describe('graph', function () {
     before(async () => {
-      await remote.setWindowSize(1600,1000);
+      await remote.setWindowSize(1600, 1000);
       log.debug('load graph/secrepo data');
       await esArchiver.loadIfNeeded('graph/secrepo');
       await esArchiver.load('empty_kibana');
       log.debug('create secrepo index pattern');
       await PageObjects.settings.createIndexPattern('secrepo', '@timestamp');
-      await kibanaServer.uiSettings.replace({ 'dateFormat:tz':'UTC' });
+      await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
       log.debug('navigateTo graph');
       await PageObjects.common.navigateToApp('graph');
     });
@@ -157,8 +157,8 @@ export default function ({ getService, getPageObjects }) {
       expect(smallVennTerm1).to.be('5');
       expect(smallVennTerm12).to.be(' (5) ');
       expect(smallVennTerm2).to.be('21');
-      expect(vennEllipse1).to.eql({ "cx":"3.8470077339232853","cy":"2.5854414729132054","rx":"1.2615662610100802" });
-      expect(vennEllipse2).to.eql({ "cx":"5.170882945826411","cy":"2.5854414729132054","rx":"2.5854414729132054" });
+      expect(vennEllipse1).to.eql({ "cx": "3.8470077339232853", "cy": "2.5854414729132054", "rx": "1.2615662610100802" });
+      expect(vennEllipse2).to.eql({ "cx": "5.170882945826411", "cy": "2.5854414729132054", "rx": "2.5854414729132054" });
     });
 
 

@@ -33,13 +33,13 @@ module.service('mlConfirmModalService', function ($modal, $q) {
       resolve: {
         params: function () {
           return {
-            message:     options.message,
-            title:       options.title,
-            okLabel:     options.okLabel,
+            message: options.message,
+            title: options.title,
+            okLabel: options.okLabel,
             cancelLabel: options.cancelLabel,
-            hideCancel:  options.hideCancel,
-            ok:          deferred.resolve,
-            cancel:      deferred.reject,
+            hideCancel: options.hideCancel,
+            ok: deferred.resolve,
+            cancel: deferred.reject,
           };
         }
       }

@@ -55,10 +55,10 @@ function getJSONParseError(json) {
       ++line;
     }
     return {
-      snippet:json.substr(currentNL + 1, nextNL - currentNL - 1),
+      snippet: json.substr(currentNL + 1, nextNL - currentNL - 1),
       message: (e.message || '').split('\n', 1)[0],
-      line:parser.line,
-      column:parser.column
+      line: parser.line,
+      column: parser.column
     };
   }
 

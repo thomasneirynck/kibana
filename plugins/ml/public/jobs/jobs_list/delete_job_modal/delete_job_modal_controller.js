@@ -19,10 +19,10 @@ const module = uiModules.get('apps/ml');
 module.controller('MlDeleteJobModal', function ($scope, $modalInstance, params) {
 
   $scope.ui = {
-    stage:        0,
-    status:       params.status,
-    jobId:        params.jobId,
-    isDatafeed:  params.isDatafeed
+    stage: 0,
+    status: params.status,
+    jobId: params.jobId,
+    isDatafeed: params.isDatafeed
   };
 
   $scope.delete = function () {

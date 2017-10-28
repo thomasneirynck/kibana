@@ -215,7 +215,7 @@ export class Graph {
   }
 
   _getReverseVerticesByRank() {
-    return this.getVertices().reduce((acc,v) => {
+    return this.getVertices().reduce((acc, v) => {
       const rank = v.reverseRank;
       if (acc.get(rank) === undefined) {
         acc.set(rank, []);

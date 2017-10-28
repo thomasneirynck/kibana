@@ -179,7 +179,7 @@ module.directive('mlAnomaliesTableExpandedRow', function () {
         const influencers = [];
         _.each(scope.record.influencers, function (influencer) {
           _.each(influencer, function (influencerFieldValue, influencerFieldName) {
-            influencers.push({ 'name':influencerFieldName, 'value': influencerFieldValue });
+            influencers.push({ 'name': influencerFieldName, 'value': influencerFieldValue });
           });
         });
         scope.influencers = influencers;

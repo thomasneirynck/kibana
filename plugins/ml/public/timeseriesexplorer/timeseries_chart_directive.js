@@ -231,14 +231,14 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         focusLoadFrom = scope.zoomFrom.getTime();
       } else {
         focusLoadFrom = _.reduce(combinedData, (memo, point) =>
-          Math.min(memo, point.date.getTime()) , new Date(2099, 12, 31).getTime());
+          Math.min(memo, point.date.getTime()), new Date(2099, 12, 31).getTime());
       }
       focusLoadFrom = Math.max(focusLoadFrom, contextXMin);
 
       if (scope.zoomTo) {
         focusLoadTo = scope.zoomTo.getTime();
       } else {
-        focusLoadTo = _.reduce(combinedData, (memo, point) => Math.max(memo, point.date.getTime()) , 0);
+        focusLoadTo = _.reduce(combinedData, (memo, point) => Math.max(memo, point.date.getTime()), 0);
       }
       focusLoadTo = Math.min(focusLoadTo, contextXMax);
 
@@ -734,8 +734,8 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         if (show === true) {
           const brushExtent = brush.extent();
           mask.reveal(brushExtent);
-          leftHandle.attr('x',contextXScale(brushExtent[0]) - 10);
-          rightHandle.attr('x',contextXScale(brushExtent[1]) + 0);
+          leftHandle.attr('x', contextXScale(brushExtent[0]) - 10);
+          rightHandle.attr('x', contextXScale(brushExtent[1]) + 0);
 
           topBorder.attr('x', contextXScale(brushExtent[0]) + 1);
           topBorder.attr('width', contextXScale(brushExtent[1]) - contextXScale(brushExtent[0]) - 2);

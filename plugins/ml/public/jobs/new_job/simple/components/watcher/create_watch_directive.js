@@ -39,10 +39,10 @@ module.directive('mlCreateWatch', function (es, ml, mlCreateWatchService) {
 
       $scope.ui = {
         thresholdOptions: [
-          { display:'critical', val:75 },
-          { display:'major', val:50 },
-          { display:'minor', val:25 },
-          { display:'warning', val:0 }
+          { display: 'critical', val: 75 },
+          { display: 'major', val: 50 },
+          { display: 'minor', val: 25 },
+          { display: 'warning', val: 0 }
         ],
         setThreshold: (t) => {
           $scope.config.threshold = t;

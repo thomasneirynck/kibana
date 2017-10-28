@@ -43,7 +43,7 @@ import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 uiRoutes
 .when('/explorer/?', {
   template,
-  resolve : {
+  resolve: {
     CheckLicense: checkLicense,
     privileges: checkGetJobsPrivilege,
     indexPatterns: getIndexPatterns
@@ -87,8 +87,8 @@ module.controller('MlExplorerController', function (
   };
 
   $scope.viewBySwimlaneOptions = [];
-  $scope.viewBySwimlaneData = { 'fieldName': '', 'laneLabels':[],
-    'points':[], 'interval': 3600 };
+  $scope.viewBySwimlaneData = { 'fieldName': '', 'laneLabels': [],
+    'points': [], 'interval': 3600 };
 
   $scope.limitSwimlaneOptions = [5, 10, 25, 50];
   $scope.swimlaneLimit = 10;
@@ -127,7 +127,7 @@ module.controller('MlExplorerController', function (
   function createJobs(jobs) {
     return jobs.map(job => {
       const bucketSpan = parseInterval(job.analysis_config.bucket_span);
-      return { id:job.job_id, selected: false, bucketSpanSeconds: bucketSpan.asSeconds() };
+      return { id: job.job_id, selected: false, bucketSpanSeconds: bucketSpan.asSeconds() };
     });
   }
 
@@ -334,7 +334,7 @@ module.controller('MlExplorerController', function (
     let viewByOptions = [];   // Unique influencers for the selected job(s).
 
     const selectedJobIds = $scope.getSelectedJobIds();
-    const fieldsByJob = { '*':[] };
+    const fieldsByJob = { '*': [] };
     _.each(mlJobService.jobs, (job) => {
       // Add the list of distinct by, over, partition and influencer fields for each job.
       let fieldsForJob = [];
@@ -387,7 +387,7 @@ module.controller('MlExplorerController', function (
         });
 
         const firstJobInfluencers = firstSelectedJob.analysis_config.influencers || [];
-        _.each(firstSelectedJob.analysis_config.detectors,(detector) => {
+        _.each(firstSelectedJob.analysis_config.detectors, (detector) => {
 
           if (_.has(detector, 'partition_field_name') &&
               firstJobInfluencers.indexOf(detector.partition_field_name) !== -1) {
@@ -528,7 +528,7 @@ module.controller('MlExplorerController', function (
 
     if ($scope.selectedJobs === undefined ||
         $scope.swimlaneViewByFieldName === undefined  || $scope.swimlaneViewByFieldName === null) {
-      $scope.viewBySwimlaneData = { 'fieldName': '', 'laneLabels':[], 'points':[], 'interval': 3600 };
+      $scope.viewBySwimlaneData = { 'fieldName': '', 'laneLabels': [], 'points': [], 'interval': 3600 };
       finish();
     } else {
       const bounds = timefilter.getActiveBounds();
@@ -642,7 +642,7 @@ module.controller('MlExplorerController', function (
     }
 
     const selectedJobs = _.filter($scope.jobs, job => job.selected);
-    const maxBucketSpanSeconds = _.reduce(selectedJobs, (memo, job) => Math.max(memo, job.bucketSpanSeconds) , 0);
+    const maxBucketSpanSeconds = _.reduce(selectedJobs, (memo, job) => Math.max(memo, job.bucketSpanSeconds), 0);
     if (maxBucketSpanSeconds > intervalSeconds) {
       buckets.setInterval(maxBucketSpanSeconds + 's');
       buckets.setBounds(bounds);
@@ -660,7 +660,7 @@ module.controller('MlExplorerController', function (
     const bounds = timefilter.getActiveBounds();
     const boundsMin = Math.floor(bounds.min.valueOf() / 1000);
     const boundsMax = Math.floor(bounds.max.valueOf() / 1000);
-    const dataset = { 'laneLabels':['Overall'], 'points':[],
+    const dataset = { 'laneLabels': ['Overall'], 'points': [],
       'interval': $scope.swimlaneBucketInterval.asSeconds(), earliest: boundsMin, latest: boundsMax };
 
     if (_.keys(scoresByTime).length > 0) {
@@ -671,7 +671,7 @@ module.controller('MlExplorerController', function (
 
       _.each(scoresByTime, (score, timeMs) => {
         const time = timeMs / 1000;
-        dataset.points.push({ 'laneLabel':'Overall', 'time': time, 'value': score });
+        dataset.points.push({ 'laneLabel': 'Overall', 'time': time, 'value': score });
 
         dataset.earliest = Math.min(time, dataset.earliest);
         dataset.latest = Math.max((time + dataset.interval), dataset.latest);
@@ -694,8 +694,8 @@ module.controller('MlExplorerController', function (
   }
 
   function processViewByResults(scoresByInfluencerAndTime) {
-    const dataset = { 'fieldName': $scope.swimlaneViewByFieldName, 'laneLabels':[],
-      'points':[], 'interval': $scope.swimlaneBucketInterval.asSeconds() };
+    const dataset = { 'fieldName': $scope.swimlaneViewByFieldName, 'laneLabels': [],
+      'points': [], 'interval': $scope.swimlaneBucketInterval.asSeconds() };
 
     // Set the earliest and latest to be the same as the overall swimlane.
     dataset.earliest = $scope.overallSwimlaneData.earliest;

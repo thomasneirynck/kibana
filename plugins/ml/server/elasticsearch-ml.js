@@ -210,7 +210,7 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
           type: 'string'
         }
       }
-    },{
+    }, {
       fmt: '/_xpack/ml/datafeeds/<%=datafeedId%>?force=true',
       req: {
         datafeedId: {

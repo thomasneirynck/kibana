@@ -6,13 +6,13 @@ import { ERR_CODES } from '../../../common/constants';
 const messages = {};
 messages.REINDEX = {};
 messages.REINDEX.COMPLETED = {
-  CREATE_INDEX:  () => 'Created new index.',
-  SET_READONLY:  () => 'Made old index read-only.',
-  REINDEX:       (extra) => {
+  CREATE_INDEX: () => 'Created new index.',
+  SET_READONLY: () => 'Made old index read-only.',
+  REINDEX: (extra) => {
     return <span>Completed reindex task <code>{ extra.taskId }</code></span>;
   },
   REFRESH_INDEX: () => 'Refreshed index.',
-  VERIFY_DOCS:   () => 'Document counts are equal in old and new indices.',
+  VERIFY_DOCS: () => 'Document counts are equal in old and new indices.',
   REPLACE_INDEX: () => 'Replaced old index with new index.',
 };
 
@@ -70,20 +70,20 @@ messages.REINDEX.FAILED = {
 };
 
 messages.REINDEX.RUNNING = {
-  CREATE_INDEX:  () => 'Creating new index',
-  SET_READONLY:  () => 'Making old index read-only',
-  REINDEX:       (extra) => <span>Reindexing with task <code>{ extra.taskId }</code>.</span>,
+  CREATE_INDEX: () => 'Creating new index',
+  SET_READONLY: () => 'Making old index read-only',
+  REINDEX: (extra) => <span>Reindexing with task <code>{ extra.taskId }</code>.</span>,
   REFRESH_INDEX: () => 'Refreshing index.',
-  VERIFY_DOCS:   () => 'Verifying equal document counts in old and new indices',
+  VERIFY_DOCS: () => 'Verifying equal document counts in old and new indices',
   REPLACE_INDEX: () => 'Replacing old index with new index',
 };
 
 messages.REINDEX.CANCELED = {
-  CREATE_INDEX:  () => 'Delivered request to cancel task.',
-  SET_READONLY:  () => '',
-  REINDEX:       () => 'Delivered request to cancel task.',
+  CREATE_INDEX: () => 'Delivered request to cancel task.',
+  SET_READONLY: () => '',
+  REINDEX: () => 'Delivered request to cancel task.',
   REFRESH_INDEX: () => '',
-  VERIFY_DOCS:   () => '',
+  VERIFY_DOCS: () => '',
   REPLACE_INDEX: () => '',
 };
 
@@ -107,11 +107,11 @@ messages.UPGRADE.RUNNING = {
 };
 
 messages.UPGRADE.CANCELED = {
-  CREATE_INDEX:  () => 'Delivered request to cancel task.',
-  SET_READONLY:  () => '',
-  REINDEX:       () => 'Delivered request to cancel task.',
+  CREATE_INDEX: () => 'Delivered request to cancel task.',
+  SET_READONLY: () => '',
+  REINDEX: () => 'Delivered request to cancel task.',
   REFRESH_INDEX: () => '',
-  VERIFY_DOCS:   () => '',
+  VERIFY_DOCS: () => '',
   REPLACE_INDEX: () => '',
 };
 

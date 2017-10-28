@@ -29,20 +29,20 @@ describe('ML - string utils', () => {
   describe('replaceStringTokens', () => {
 
     const testRecord = {
-      'job_id':'test_job',
-      'result_type':'record',
-      'probability':0.0191711,
-      'record_score':4.3,
-      'bucket_span':300,
-      'detector_index':0,
-      'timestamp':1454890500000,
-      'function':'mean',
-      'function_description':'mean',
-      'field_name':'responsetime',
-      'user':'Des O\'Connor',
-      'testfield1':'test$tring=[+-?]',
-      'testfield2':'{<()>}',
-      'testfield3':'host=\\\\test@uk.dev'
+      'job_id': 'test_job',
+      'result_type': 'record',
+      'probability': 0.0191711,
+      'record_score': 4.3,
+      'bucket_span': 300,
+      'detector_index': 0,
+      'timestamp': 1454890500000,
+      'function': 'mean',
+      'function_description': 'mean',
+      'field_name': 'responsetime',
+      'user': 'Des O\'Connor',
+      'testfield1': 'test$tring=[+-?]',
+      'testfield2': '{<()>}',
+      'testfield3': 'host=\\\\test@uk.dev'
     };
 
     it('returns correct values without URI encoding', () => {
@@ -84,22 +84,22 @@ describe('ML - string utils', () => {
 
     it('returns the correct descriptions for detectors', () => {
       const detector1 = {
-        'function':'count',
+        'function': 'count',
       };
 
       const detector2 = {
-        'function':'count',
-        'by_field_name':'airline',
-        'use_null':false
+        'function': 'count',
+        'by_field_name': 'airline',
+        'use_null': false
       };
 
       const detector3 = {
-        'function':'mean',
-        'field_name':'CPUUtilization',
-        'partition_field_name':'region',
-        'by_field_name':'host',
-        'over_field_name':'user',
-        'exclude_frequent':'all'
+        'function': 'mean',
+        'field_name': 'CPUUtilization',
+        'partition_field_name': 'region',
+        'by_field_name': 'host',
+        'over_field_name': 'user',
+        'exclude_frequent': 'all'
       };
 
       expect(detectorToString(detector1)).to.be('count');
@@ -112,9 +112,9 @@ describe('ML - string utils', () => {
 
   describe('sortByKey', () => {
     const obj = {
-      'zebra':'stripes',
-      'giraffe':'neck',
-      'elephant':'trunk'
+      'zebra': 'stripes',
+      'giraffe': 'neck',
+      'elephant': 'trunk'
     };
 
     const valueComparator = function (value) {

@@ -251,7 +251,7 @@ describe('CSV Execute Job', function () {
       const executeJob = executeJobFactory(mockServer);
       const jobParams = {
         headers: encryptedHeaders,
-        fields: ['one','two'],
+        fields: ['one', 'two'],
         conflictedTypesFields: undefined,
         searchRequest: { index: null, body: null }
       };

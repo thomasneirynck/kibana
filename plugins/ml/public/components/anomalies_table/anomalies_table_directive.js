@@ -61,16 +61,16 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
       appState.fetch();
 
       scope.thresholdOptions = [
-        { display:'critical', val:75 },
-        { display:'major', val:50 },
-        { display:'minor', val:25 },
-        { display:'warning', val:0 }];
+        { display: 'critical', val: 75 },
+        { display: 'major', val: 50 },
+        { display: 'minor', val: 25 },
+        { display: 'warning', val: 0 }];
 
       scope.intervalOptions = [
-        { display:'Auto', val:'auto' },
-        { display:'1 hour', val:'hour' },
-        { display:'1 day', val:'day' },
-        { display:'Show all', val:'second' }];
+        { display: 'Auto', val: 'auto' },
+        { display: '1 hour', val: 'hour' },
+        { display: '1 day', val: 'day' },
+        { display: 'Show all', val: 'second' }];
 
       // Store the threshold and aggregation interval in the AppState so that they
       // are restored on page refresh.
@@ -79,19 +79,19 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
       }
 
       let thresholdValue = _.get(appState, 'mlAnomaliesTable.thresholdValue', 0);
-      let thresholdOption = _.findWhere(scope.thresholdOptions, { val:thresholdValue });
+      let thresholdOption = _.findWhere(scope.thresholdOptions, { val: thresholdValue });
       if (thresholdOption === undefined) {
         // Attempt to set value in URL which doesn't map to one of the options.
-        thresholdOption = _.findWhere(scope.thresholdOptions, { val:0 });
+        thresholdOption = _.findWhere(scope.thresholdOptions, { val: 0 });
         thresholdValue = 0;
       }
       scope.threshold = thresholdOption;
 
       let intervalValue = _.get(appState, 'mlAnomaliesTable.intervalValue', 'auto');
-      let intervalOption = _.findWhere(scope.intervalOptions, { val:intervalValue });
+      let intervalOption = _.findWhere(scope.intervalOptions, { val: intervalValue });
       if (intervalOption === undefined) {
         // Attempt to set value in URL which doesn't map to one of the options.
-        intervalOption = _.findWhere(scope.intervalOptions, { val:'auto' });
+        intervalOption = _.findWhere(scope.intervalOptions, { val: 'auto' });
         intervalValue = 'auto';
       }
       scope.interval = intervalOption;
@@ -110,7 +110,7 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
       scope.categoryExamplesByJob = {};
       const MAX_NUMBER_CATEGORY_EXAMPLES = 10;  // Max number of examples to show in table cell or expanded row (engine default is to store 4).
 
-      scope.$on('renderTable',() => {
+      scope.$on('renderTable', () => {
         updateTableData();
       });
 
@@ -282,7 +282,7 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
             });
 
             const _a = rison.encode({
-              index:indexPatternId,
+              index: indexPatternId,
               filters: [],
               query: {
                 query_string: {
@@ -730,7 +730,7 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
             mlResultsService.getCategoryDefinition(record.jobId, record.entityValue)
             .then((resp) => {
               rowScope.categoryDefinition = {
-                'examples':_.slice(resp.examples, 0, Math.min(resp.examples.length, MAX_NUMBER_CATEGORY_EXAMPLES)) };
+                'examples': _.slice(resp.examples, 0, Math.min(resp.examples.length, MAX_NUMBER_CATEGORY_EXAMPLES)) };
             }).catch((resp) => {
               console.log('Anomalies table createTableRow(): error loading categoryDefinition:', resp);
             });
@@ -764,19 +764,19 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
         //   job_id
         //   links (if customUrls configured or drilldown to Single Metric)
         //   category examples (if by mlcategory)
-        const addEntity = _.findWhere(scope.table.columns, { 'title':'found for' });
-        const addInfluencers = _.findWhere(scope.table.columns, { 'title':'influenced by' });
+        const addEntity = _.findWhere(scope.table.columns, { 'title': 'found for' });
+        const addInfluencers = _.findWhere(scope.table.columns, { 'title': 'influenced by' });
 
-        const addActual = _.findWhere(scope.table.columns, { 'title':'actual' });
-        const addTypical = _.findWhere(scope.table.columns, { 'title':'typical' });
-        const addDescription = _.findWhere(scope.table.columns, { 'title':'description' });
-        const addExamples = _.findWhere(scope.table.columns, { 'title':'category examples' });
-        const addLinks = _.findWhere(scope.table.columns, { 'title':'links' });
+        const addActual = _.findWhere(scope.table.columns, { 'title': 'actual' });
+        const addTypical = _.findWhere(scope.table.columns, { 'title': 'typical' });
+        const addDescription = _.findWhere(scope.table.columns, { 'title': 'description' });
+        const addExamples = _.findWhere(scope.table.columns, { 'title': 'category examples' });
+        const addLinks = _.findWhere(scope.table.columns, { 'title': 'links' });
 
         const tableRow = [
           {
             markup: openRowArrow,
-            scope:  rowScope
+            scope: rowScope
           },
           {
             markup: formatTimestamp(record.time),
@@ -788,11 +788,11 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
                 '" aria-hidden="true"></i> ' + Math.floor(record['max severity']) :
               '<i class="fa fa-exclamation-triangle icon-severity-' + getSeverity(record['max severity']) +
                 '" aria-hidden="true"></i> &lt; 1',
-            value:  record['max severity']
+            value: record['max severity']
           },
           {
             markup: record.detector,
-            value:  record.detector
+            value: record.detector
           }
         ];
 
@@ -812,13 +812,13 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
                   `ng-click="filter('${safeEntityName}', '${safeEntityValue}', '-')" ` +
                   'tooltip="Remove filter" tooltip-append-to-body="1" aria-label="Remove filter">' +
                   '<i class="fa fa-search-minus" aria-hidden="true"></i></button>',
-                value:  record.entityValue,
-                scope:  rowScope
+                value: record.entityValue,
+                scope: rowScope
               });
             } else {
               tableRow.push({
                 markup: 'mlcategory ' + record.entityValue,
-                value:  record.entityValue
+                value: record.entityValue
               });
             }
           } else {
@@ -839,7 +839,7 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
             });
             tableRow.push({
               markup: cellMarkup,
-              value:  cellMarkup
+              value: cellMarkup
             });
           } else {
             tableRow.push({
@@ -909,7 +909,7 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
         if (addExamples !== undefined) {
           if (record.entityName === 'mlcategory') {
             tableRow.push({ markup: '<span style="display: block; white-space:nowrap;" ' +
-              'ng-repeat="item in getExamplesForCategory(record.jobId, record.entityValue)">{{item}}</span>', scope:  rowScope });
+              'ng-repeat="item in getExamplesForCategory(record.jobId, record.entityValue)">{{item}}</span>', scope: rowScope });
           } else {
             tableRow.push({ markup: '', value: '' });
           }

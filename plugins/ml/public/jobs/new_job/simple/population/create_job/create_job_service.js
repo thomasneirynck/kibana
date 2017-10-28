@@ -74,7 +74,7 @@ module.service('mlPopulationJobService', function (
     const fieldIds = formConfig.fields.map(f => f.id);
 
     // move event rate field to the front of the list
-    const idx = _.findIndex(fieldIds,(id) => id === EVENT_RATE_COUNT_FIELD);
+    const idx = _.findIndex(fieldIds, (id) => id === EVENT_RATE_COUNT_FIELD);
     if(idx !== -1) {
       fieldIds.splice(idx, 1);
       fieldIds.splice(0, 0, EVENT_RATE_COUNT_FIELD);
@@ -83,7 +83,7 @@ module.service('mlPopulationJobService', function (
     fieldIds.forEach((fieldId, i) => {
       this.chartData.detectors[i] = {
         line: [],
-        swimlane:[]
+        swimlane: []
       };
     });
 
@@ -96,7 +96,7 @@ module.service('mlPopulationJobService', function (
         fieldIds.forEach((fieldId, i) => {
           this.chartData.detectors[i] = {
             line: [],
-            swimlane:[]
+            swimlane: []
           };
         });
       } else {
@@ -130,10 +130,10 @@ module.service('mlPopulationJobService', function (
             populationBuckets.forEach(b => {
               // check to see if the data is split.
               if (b[i] === undefined) {
-                values.push({ label:b.key, value: b.doc_count });
+                values.push({ label: b.key, value: b.doc_count });
               } else {
                 // a split is being used, so an additional filter was added to the search
-                values.push({ label:b.key, value: b[i].doc_count });
+                values.push({ label: b.key, value: b[i].doc_count });
               }
             });
           } else if (typeof dataForTime.population !== 'undefined') {

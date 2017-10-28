@@ -4,7 +4,7 @@ import expect from 'expect.js';
 
 describe('Map response times', () => {
   it('flatten ports', () => {
-    const responseTimes = { '5603': { avg: 30, max : 250 } };
+    const responseTimes = { '5603': { avg: 30, max: 250 } };
     const expected = { average: 30, max: 250 };
     expect(isEqual(mapResponseTimes(responseTimes), expected)).to.be(true);
   });

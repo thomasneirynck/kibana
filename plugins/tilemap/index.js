@@ -8,7 +8,7 @@ export const tilemap = (kibana) => {
     configPrefix: 'xpack.tilemap',
     require: ['xpack_main', 'kbn_vislib_vis_types'],
     publicDir: resolve(__dirname, 'public'),
-    uiExports:{
+    uiExports: {
       visTypeEnhancers: [ 'plugins/tilemap/vis_type_enhancers/update_tilemap_settings'],
     },
     init: function (server) {

@@ -113,7 +113,7 @@ export async function createIndex(indexName, definition) {
 export async function setReadOnly(indexName) {
   try {
     return await putToApi(`/api/migration/settings/${ indexName }`,
-      { 'index.blocks.write' : true });
+      { 'index.blocks.write': true });
 
   } catch (error) {
     if (!error.code) {
@@ -280,7 +280,7 @@ export async function resetIndex(indexName, taskId) {
 
   try {
     await putToApi(`/api/migration/settings/${ indexName }`,
-      { 'index.blocks.write' : false });
+      { 'index.blocks.write': false });
 
     if (taskId) {
       await deleteTask(indexName, taskId);

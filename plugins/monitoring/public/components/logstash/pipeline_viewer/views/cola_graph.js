@@ -125,7 +125,7 @@ export class ColaGraph extends React.Component {
     makeMarker(svgDefs, 'lspvFalseMarker', '#EE408A');
 
     // Set initial zoom to 100%. You need both the translate and scale options
-    const zoom = d3.behavior.zoom().translate([100,100]).scale(1);
+    const zoom = d3.behavior.zoom().translate([100, 100]).scale(1);
     const vis = outer
       .append('g')
       .attr('transform', 'translate(0,0) scale(1)');

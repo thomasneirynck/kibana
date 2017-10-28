@@ -36,10 +36,10 @@ uiModules.get('app/graph')
         const r1 = Math.sqrt(v1 / Math.PI);
         const r2 = Math.sqrt(v2 / Math.PI);
 
-        const maxR = Math.max(r1,r2);
+        const maxR = Math.max(r1, r2);
         let x1 = r1;
         const y1 = maxR;
-        let x2 = x1 + distanceFromIntersectArea(r1,r2,overlap);
+        let x2 = x1 + distanceFromIntersectArea(r1, r2, overlap);
         const y2 = maxR;
 
         //Shift right to centre image
@@ -50,23 +50,23 @@ uiModules.get('app/graph')
 
         const viewBoxDims = '0 0 ' + imageWidth + ' ' + (maxR * 2);
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('width',width);
-        svg.setAttribute('height',height);
+        svg.setAttribute('width', width);
+        svg.setAttribute('height', height);
         svg.setAttribute('viewBox', viewBoxDims);
-        const g = document.createElementNS('http://www.w3.org/2000/svg','g');
-        const circle1 = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
-        circle1.setAttribute('cx',x1);
-        circle1.setAttribute('cy',y1);
-        circle1.setAttribute('rx',r1);
-        circle1.setAttribute('ry',r1);
-        circle1.setAttribute('class',v1Class);
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        const circle1 = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+        circle1.setAttribute('cx', x1);
+        circle1.setAttribute('cy', y1);
+        circle1.setAttribute('rx', r1);
+        circle1.setAttribute('ry', r1);
+        circle1.setAttribute('class', v1Class);
         g.appendChild(circle1);
-        const circle2 = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
-        circle2.setAttribute('cx',x2);
-        circle2.setAttribute('cy',y2);
-        circle2.setAttribute('rx',r2);
-        circle2.setAttribute('ry',r2);
-        circle2.setAttribute('class',v2Class);
+        const circle2 = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+        circle2.setAttribute('cx', x2);
+        circle2.setAttribute('cy', y2);
+        circle2.setAttribute('rx', r2);
+        circle2.setAttribute('ry', r2);
+        circle2.setAttribute('class', v2Class);
         g.appendChild(circle2);
         svg.appendChild(g);
         element.appendChild(svg);

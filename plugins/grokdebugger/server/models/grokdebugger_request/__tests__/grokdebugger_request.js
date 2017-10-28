@@ -37,7 +37,7 @@ describe('grokdebugger_request', () => {
 
       it('returns the upstream simulate JSON request', () => {
         const expectedUpstreamJSON = {
-          pipeline : {
+          pipeline: {
             description: 'this is a grokdebugger simulation',
             processors: [
               {
@@ -67,7 +67,7 @@ describe('grokdebugger_request', () => {
 
       it('returns the upstream simulate JSON request when custom patterns are specfied', () => {
         const expectedUpstreamJSON = {
-          pipeline : {
+          pipeline: {
             description: 'this is a grokdebugger simulation',
             processors: [
               {

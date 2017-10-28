@@ -2,7 +2,7 @@ import expect from 'expect.js';
 import { indexBy } from 'lodash';
 export default function ({ getService, getPageObjects }) {
 
-  const PageObjects = getPageObjects(['security', 'settings', 'monitoring', 'discover','common','reporting', 'header']);
+  const PageObjects = getPageObjects(['security', 'settings', 'monitoring', 'discover', 'common', 'reporting', 'header']);
   const log = getService('log');
   const esArchiver = getService('esArchiver');
   const remote = getService('remote');
@@ -12,12 +12,12 @@ export default function ({ getService, getPageObjects }) {
 
   describe('security', function () {
     before(async () => {
-      await remote.setWindowSize(1600,1000);
+      await remote.setWindowSize(1600, 1000);
       log.debug('users');
       await esArchiver.loadIfNeeded('logstash_functional');
       log.debug('load kibana index with default index pattern');
       await esArchiver.load('discover');
-      await kibanaServer.uiSettings.replace({ 'dateFormat:tz':'UTC', 'defaultIndex':'logstash-*' });
+      await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC', 'defaultIndex': 'logstash-*' });
       await PageObjects.settings.navigateTo();
     });
 

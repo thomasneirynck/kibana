@@ -311,7 +311,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     .then(handleSuccess)
     .then(function (indexPattern) {
       const patternFields = indexPattern.getNonScriptedFields();
-      const blockedFieldNames = ['_id', '_index','_score','_source', '_type'];
+      const blockedFieldNames = ['_id', '_index', '_score', '_source', '_type'];
       patternFields.forEach(function (field, index) {
         if (blockedFieldNames.indexOf(field.name) >= 0) {
           return;
@@ -364,9 +364,9 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
 
   $scope.clickEdge = function (edge) {
     if (edge.inferred) {
-      $scope.setDetail ({ 'inferredEdge':edge });
+      $scope.setDetail ({ 'inferredEdge': edge });
     }else {
-      $scope.workspace.getAllIntersections($scope.handleMergeCandidatesCallback, [edge.topSrc,edge.topTarget]);
+      $scope.workspace.getAllIntersections($scope.handleMergeCandidatesCallback, [edge.topSrc, edge.topTarget]);
     }
   };
 
@@ -490,7 +490,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   };
 
   $scope.replaceKibanaUrlParam = function () {
-    $scope.newUrlTemplate.url = $scope.newUrlTemplate.url.replace(defaultKibanaQuery,',query:{{gquery}}');
+    $scope.newUrlTemplate.url = $scope.newUrlTemplate.url.replace(defaultKibanaQuery, ',query:{{gquery}}');
     $scope.lastPastedURL = null;
     $scope.checkForKibanaUrl();
   };
@@ -515,14 +515,14 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
 
   $scope.resetNewUrlTemplate = function () {
     $scope.newUrlTemplate = {
-      url:null,
+      url: null,
       description: null,
-      encoder:$scope.outlinkEncoders[0]
+      encoder: $scope.outlinkEncoders[0]
     };
   };
 
   $scope.editUrlTemplate = function (urlTemplate) {
-    Object.assign($scope.newUrlTemplate, urlTemplate, { templateBeingEdited:urlTemplate });
+    Object.assign($scope.newUrlTemplate, urlTemplate, { templateBeingEdited: urlTemplate });
   };
 
   $scope.saveUrlTemplate = function () {
@@ -556,7 +556,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   $scope.openUrlTemplate = function (template) {
     const url = template.url;
     const newUrl = url.replace(drillDownRegex, template.encoder.encode($scope.workspace));
-    window.open(newUrl,'_blank');
+    window.open(newUrl, '_blank');
   };
 
 
@@ -642,7 +642,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       $scope.urlTemplates.push({
         url: discoverUrl,
         description: 'Raw documents',
-        encoder:$scope.outlinkEncoders[0]
+        encoder: $scope.outlinkEncoders[0]
       });
     }
   }
@@ -845,20 +845,20 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       $scope.updateLiveResponseFields();
       initWorkspaceIfRequired();
       const graph = {
-        nodes:[],
-        edges:[]
+        nodes: [],
+        edges: []
       };
       for (const i in wsObj.vertices) {
         var vertex = wsObj.vertices[i]; // eslint-disable-line no-var
         const node = {
-          field:vertex.field,
-          term:vertex.term,
-          label:vertex.label,
-          color : vertex.color,
-          icon : $scope.allFields.filter(function (fieldDef) {
+          field: vertex.field,
+          term: vertex.term,
+          label: vertex.label,
+          color: vertex.color,
+          icon: $scope.allFields.filter(function (fieldDef) {
             return vertex.field === fieldDef.name;
           })[0].icon,
-          data : {}
+          data: {}
         };
         graph.nodes.push(node);
       }
@@ -869,14 +869,14 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
         })[0];
         if (fieldDef) {
           const node = {
-            field:vertex.field,
-            term:vertex.term,
-            label:vertex.label,
-            color : vertex.color,
-            icon : fieldDef.icon,
-            data : {
-              field:vertex.field,
-              term:vertex.term
+            field: vertex.field,
+            term: vertex.term,
+            label: vertex.label,
+            color: vertex.color,
+            icon: fieldDef.icon,
+            data: {
+              field: vertex.field,
+              term: vertex.term
             }
           };
           $scope.workspace.blacklistedNodes.push(node);
@@ -890,8 +890,8 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
           inferred: link.inferred,
           label: link.label,
           term: vertex.term,
-          width : link.width,
-          weight : link.weight
+          width: link.width,
+          weight: link.weight
         });
       }
 
@@ -996,11 +996,11 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       'indexPattern': $scope.selectedIndex.attributes.title,
       'selectedFields': $scope.selectedFields.map(function (field) {
         return {
-          'name':field.name,
-          'lastValidHopSize':field.lastValidHopSize,
-          'color':field.color,
-          'iconClass':field.icon.class,
-          'hopSize':field.hopSize
+          'name': field.name,
+          'lastValidHopSize': field.lastValidHopSize,
+          'color': field.color,
+          'iconClass': field.icon.class,
+          'hopSize': field.hopSize
         };
       }),
       blacklist,

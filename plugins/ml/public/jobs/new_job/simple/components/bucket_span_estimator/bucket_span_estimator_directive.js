@@ -206,9 +206,9 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
             index,
             size: 0,
             body: {
-              aggs : {
-                field_count : {
-                  cardinality : {
+              aggs: {
+                field_count: {
+                  cardinality: {
                     field,
                   }
                 }

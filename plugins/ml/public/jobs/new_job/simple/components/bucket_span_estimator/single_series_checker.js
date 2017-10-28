@@ -25,7 +25,7 @@ import { INTERVALS, LONG_INTERVALS } from './intervals';
 export function SingleSeriesCheckerProvider($injector) {
   const es = $injector.get('es');
 
-  const REF_DATA_INTERVAL = { name:'1h',  ms: 3600000 };
+  const REF_DATA_INTERVAL = { name: '1h',  ms: 3600000 };
 
   class SingleSeriesChecker {
     constructor(index, timeField, aggType, field, duration, query, thresholds) {
@@ -171,11 +171,11 @@ export function SingleSeriesCheckerProvider($injector) {
     createSearch(intervalMs) {
       const search = {
         query: this.query,
-        aggs : {
-          non_empty_buckets : {
-            date_histogram : {
-              field : this.timeField,
-              interval : `${intervalMs}ms`
+        aggs: {
+          non_empty_buckets: {
+            date_histogram: {
+              field: this.timeField,
+              interval: `${intervalMs}ms`
             }
           }
         }

@@ -48,7 +48,7 @@ module.service('mlForecastService', function ($q, es, ml) {
       }
     },
     {
-      term : { job_id : job.job_id }
+      term: { job_id: job.job_id }
     },
     {
       range: {
@@ -140,10 +140,10 @@ module.service('mlForecastService', function ($q, es, ml) {
       }
     },
     {
-      term : { job_id : job.job_id }
+      term: { job_id: job.job_id }
     },
     {
-      term : { forecast_id : forecastId }
+      term: { forecast_id: forecastId }
     }];
 
     // TODO - add in criteria for detector index and entity fields (by, over, partition)
@@ -239,10 +239,10 @@ module.service('mlForecastService', function ($q, es, ml) {
       }
     },
     {
-      term : { job_id : job.job_id }
+      term: { job_id: job.job_id }
     },
     {
-      term : { forecast_id : forecastId }
+      term: { forecast_id: forecastId }
     },
     {
       range: {

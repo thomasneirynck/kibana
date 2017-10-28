@@ -60,7 +60,7 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
             { index: 1, title: 'Job config' },
             { index: 3, title: 'Counts' },
             { index: 4, title: 'JSON' },
-            { index: 5, title: 'Job messages' , showIcon: true },
+            { index: 5, title: 'Job messages', showIcon: true },
             { index: 6, title: 'Datafeed preview' },
           ],
           changeTab: function (tab) {
@@ -192,7 +192,7 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
 .filter('filterObjects', function () {
   return function (input, allowArrays = false) {
     const tempObj = {};
-    _.each(input, (v,i) => {
+    _.each(input, (v, i) => {
       const isObj = typeof v === 'object';
       if (isObj === false || (allowArrays && isObj && Array.isArray(v))) {
         tempObj[i] = v;

@@ -38,7 +38,7 @@ export function PolledDataCheckerProvider($injector) {
 
     run() {
       return new Promise((resolve, reject) => {
-        const interval = { name:'1m',  ms: 60000 };
+        const interval = { name: '1m',  ms: 60000 };
         this.performSearch(interval.ms)
         .then((resp) => {
           const fullBuckets = _.get(resp, 'aggregations.non_empty_buckets.buckets', []);
@@ -64,12 +64,12 @@ export function PolledDataCheckerProvider($injector) {
     createSearch(intervalMs) {
       const search = {
         query: this.query,
-        aggs : {
-          non_empty_buckets : {
-            date_histogram : {
+        aggs: {
+          non_empty_buckets: {
+            date_histogram: {
               min_doc_count: 1,
-              field : this.timeField,
-              interval : `${intervalMs}ms`
+              field: this.timeField,
+              interval: `${intervalMs}ms`
             }
           }
         }

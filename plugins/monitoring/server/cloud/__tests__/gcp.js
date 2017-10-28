@@ -143,9 +143,9 @@ describe('GCP', () => {
       expect(response.isConfirmed()).to.eql(true);
       expect(response.toJSON()).to.eql({
         name: 'gcp',
-        id : '5702733457649812345',
-        vm_type : 'f1-micro',
-        region : 'us-fake4',
+        id: '5702733457649812345',
+        vm_type: 'f1-micro',
+        region: 'us-fake4',
         zone: 'us-fake4-c',
         metadata: undefined
       });
@@ -163,9 +163,9 @@ describe('GCP', () => {
       expect(response.isConfirmed()).to.eql(true);
       expect(response.toJSON()).to.eql({
         name: 'gcp',
-        id : '5702733457649812345',
-        vm_type : undefined,
-        region : undefined,
+        id: '5702733457649812345',
+        vm_type: undefined,
+        region: undefined,
         zone: undefined,
         metadata: undefined
       });

@@ -41,7 +41,7 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
       await esArchiver.load('empty_kibana');
       await kibanaServer.uiSettings.disableToastAutohide();
       await esArchiver.loadIfNeeded('logstash_functional');
-      remote.setWindowSize(1600,1000);
+      remote.setWindowSize(1600, 1000);
     }
 
     async login(username, password) {
@@ -221,7 +221,7 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
 
         }, Promise.resolve());
       }
-      log.debug('Add roles: ' , userObj.roles);
+      log.debug('Add roles: ', userObj.roles);
       await addRoles(userObj.roles || []);
       log.debug('After Add role: , userObj.roleName');
       if (userObj.save === true) {

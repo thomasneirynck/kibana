@@ -70,9 +70,9 @@ module.service('mlNotificationService', function ($q, es) {
       size: 1000,
       body:
       {
-        sort : [
-          { 'timestamp' : { 'order' : 'asc' } },
-          { 'job_id' : { 'order' : 'asc' } }
+        sort: [
+          { 'timestamp': { 'order': 'asc' } },
+          { 'job_id': { 'order': 'asc' } }
         ],
         'query': {
           'bool': {

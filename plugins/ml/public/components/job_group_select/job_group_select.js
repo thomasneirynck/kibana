@@ -88,7 +88,7 @@ module.directive('mlJobGroupSelect', function (es, ml, $timeout, mlJobService) {
 
       createNewItem(groupId) {
         const gId = groupId.toLowerCase();
-        return ({ id: gId, count: 0 , isTag: true });
+        return ({ id: gId, count: 0, isTag: true });
       }
 
       groupTypes(group) {

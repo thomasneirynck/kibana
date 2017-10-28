@@ -160,7 +160,7 @@ module
             datafeedId: null,
             datafeedConfig: {},
             datafeedState: SAVE_STATE.NOT_SAVED,
-            runningState :DATAFEED_STATE.NOT_STARTED,
+            runningState: DATAFEED_STATE.NOT_STARTED,
             errors: []
           });
           $scope.ui.numberOfJobs++;

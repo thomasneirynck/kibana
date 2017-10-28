@@ -111,8 +111,8 @@ module.directive('mlRows', function ($compile, getAppState, Private) {
             if (rowScope &&
                 rowScope.mouseenterRow !== undefined && typeof rowScope.mouseenterRow === 'function') {
               // Add mousenter and mouseleave events to the row
-              $tr.attr({ 'ng-mouseenter':'mouseenterRow($event)' });
-              $tr.attr({ 'ng-mouseleave':'mouseleaveRow($event)' });
+              $tr.attr({ 'ng-mouseenter': 'mouseenterRow($event)' });
+              $tr.attr({ 'ng-mouseleave': 'mouseleaveRow($event)' });
               $compile($tr)(rowScope);
             }
 

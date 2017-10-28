@@ -49,7 +49,7 @@ export class HeadlessChromiumDriver {
   async record(recordPath) {
     const { Page } = this._client;
 
-    await promisify(fs.mkdir ,fs)(recordPath);
+    await promisify(fs.mkdir, fs)(recordPath);
     await Page.startScreencast();
 
     Page.screencastFrame(async ({ data, sessionId }) => {

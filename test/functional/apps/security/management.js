@@ -18,8 +18,8 @@ export default function ({ getService, getPageObjects }) {
       await PageObjects.security.login('elastic', 'changeme');
       await PageObjects.security.initTests();
       await kibanaServer.uiSettings.update({
-        'dateFormat:tz':'UTC',
-        'defaultIndex':'logstash-*'
+        'dateFormat:tz': 'UTC',
+        'defaultIndex': 'logstash-*'
       });
       await PageObjects.settings.navigateTo();
     });

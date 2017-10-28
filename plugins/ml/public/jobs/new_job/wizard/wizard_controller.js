@@ -22,7 +22,7 @@ import template from './wizard.html';
 uiRoutes
 .when('/jobs/new_job', {
   template,
-  resolve : {
+  resolve: {
     CheckLicense: checkLicense,
     privileges: checkCreateJobsPrivilege,
     preConfiguredJobRedirect

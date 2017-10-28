@@ -61,7 +61,7 @@ describe('HomeView', () => {
     expect(wrapper.find('InfoGroup').prop('isCollapsed')).toBe(true);
   });
 
-  test(`calls setViewState when the InfoPanel's collapse button is clicked` , () => {
+  test(`calls setViewState when the InfoPanel's collapse button is clicked`, () => {
     const setViewState = sinon.stub();
     const component = (
       <HomeView

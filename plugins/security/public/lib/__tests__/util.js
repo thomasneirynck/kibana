@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import { toggle ,toggleSort } from '../../../public/lib/util';
+import { toggle, toggleSort } from '../../../public/lib/util';
 
 describe('util', () => {
   describe('toggle', () => {

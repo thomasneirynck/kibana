@@ -6,7 +6,7 @@ const defaultSize = 10;
 
 function jobsQueryFn(server) {
   const index = server.config().get('xpack.reporting.index');
-  const { callWithInternalUser, errors:esErrors } = server.plugins.elasticsearch.getCluster('admin');
+  const { callWithInternalUser, errors: esErrors } = server.plugins.elasticsearch.getCluster('admin');
 
   function getUsername(user) {
     return get(user, 'username', false);
@@ -15,7 +15,7 @@ function jobsQueryFn(server) {
   function execQuery(type, body) {
     const defaultBody = {
       search: {
-        _source : {
+        _source: {
           excludes: [ 'output.content' ]
         },
         sort: [

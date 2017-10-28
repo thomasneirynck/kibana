@@ -83,7 +83,7 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
             // create the groups and jobs which are used in the menu
             groups.forEach(group => {
               $scope.selected.groups.push({
-                id:  group.id,
+                id: group.id,
                 selected: group.selected,
                 selectable: group.selectable,
                 timeRange: group.timeRange,
@@ -94,7 +94,7 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
             jobs.forEach(job => {
               if ($scope.selected.jobs.find(j => j.id === job.name) === undefined) {
                 $scope.selected.jobs.push({
-                  id:  job.name,
+                  id: job.name,
                   selected: selectAll || job.selected,
                   timeRange: job.timeRange,
                   isGroup: false

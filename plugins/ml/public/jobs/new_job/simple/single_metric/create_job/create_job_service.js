@@ -178,7 +178,7 @@ module.service('mlSingleMetricJobService', function (
 
     if (formConfig.field !== null) {
       json.body.aggs.times.aggs = {
-        'field_value':{
+        'field_value': {
           [formConfig.agg.type.dslName]: { field: formConfig.field.name }
         }
       };

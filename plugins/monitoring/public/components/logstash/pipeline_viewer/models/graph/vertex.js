@@ -111,7 +111,7 @@ export class Vertex {
     return Object.keys(this.stats)
           .filter(k => !(k.match(/^events\./)))
           .filter(k => k !== 'name')
-          .reduce((acc,k) => {
+          .reduce((acc, k) => {
             acc[k] = this.stats[k];
             return acc;
           }, {});

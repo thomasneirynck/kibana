@@ -37,7 +37,7 @@ export class Pipeline {
       last_modified: moment().toISOString(),
       pipeline_metadata: {
         version: 1,
-        type : 'logstash_pipeline',
+        type: 'logstash_pipeline',
       },
       username: this.username,
       pipeline: this.pipeline

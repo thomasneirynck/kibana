@@ -175,7 +175,7 @@ export class DataVisualizer {
 
     aggregatableFields.forEach((fieldName, i) => {
       aggs[i] = {
-        filter : { exists : { field : fieldName } }
+        filter: { exists: { field: fieldName } }
       };
     });
 
@@ -226,7 +226,7 @@ export class DataVisualizer {
         }
       }
     };
-    filterCriteria.push({ exists : { field } });
+    filterCriteria.push({ exists: { field } });
 
     const resp = await this.callWithRequest('search', { index, size, body });
     return (resp.hits.total > 0);
@@ -261,7 +261,7 @@ export class DataVisualizer {
           filter: filterCriteria
         }
       },
-      aggs : aggs
+      aggs: aggs
     };
 
     const resp = await this.callWithRequest('search', { index, size, body });
@@ -334,7 +334,7 @@ export class DataVisualizer {
           filter: filterCriteria
         }
       },
-      aggs : aggs
+      aggs: aggs
     };
 
     const resp = await this.callWithRequest('search', { index, size, body });
@@ -347,7 +347,7 @@ export class DataVisualizer {
       min: _.get(aggregations, ['field_stats', 'min'], 0),
       max: _.get(aggregations, ['field_stats', 'max'], 0),
       avg: _.get(aggregations, ['field_stats', 'avg'], 0),
-      topValues: _.get(aggregations, ['top', 'buckets'],[]),
+      topValues: _.get(aggregations, ['top', 'buckets'], []),
     };
 
     // TODO - check this is the same as using median agg.
@@ -396,7 +396,7 @@ export class DataVisualizer {
           filter: filterCriteria
         }
       },
-      aggs : aggs
+      aggs: aggs
     };
 
     const resp = await this.callWithRequest('search', { index, size, body });
@@ -406,7 +406,7 @@ export class DataVisualizer {
       totalCount: _.get(resp, ['hits', 'total'], 0),
       count: _.get(aggregations, ['value_count', 'value'], 0),
       cardinality: _.get(aggregations, ['cardinality', 'value'], 0),
-      topValues: _.get(aggregations, ['top', 'buckets'],[])
+      topValues: _.get(aggregations, ['top', 'buckets'], [])
     };
 
     return stats;
@@ -435,7 +435,7 @@ export class DataVisualizer {
           filter: filterCriteria
         }
       },
-      aggs : aggs
+      aggs: aggs
     };
 
     const resp = await this.callWithRequest('search', { index, size, body });
@@ -485,7 +485,7 @@ export class DataVisualizer {
           filter: filterCriteria
         }
       },
-      aggs : aggs
+      aggs: aggs
     };
 
     const resp = await this.callWithRequest('search', { index, size, body });
@@ -495,7 +495,7 @@ export class DataVisualizer {
       totalCount: _.get(resp, ['hits', 'total'], 0),
       count: _.get(aggregations, ['value_count', 'value'], 0)
     };
-    const valueBuckets = _.get(aggregations, ['values', 'buckets'],[]);
+    const valueBuckets = _.get(aggregations, ['values', 'buckets'], []);
     _.each(valueBuckets, (bucket) => {
       stats[`${bucket.key_as_string}Count`] = bucket.doc_count;
     });
@@ -521,7 +521,7 @@ export class DataVisualizer {
 
     // Use an exists filter to return examples of the field.
     filterCriteria.push({
-      exists : { field }
+      exists: { field }
     });
 
     const aggs = {
@@ -591,7 +591,7 @@ export class DataVisualizer {
 
     // Use an exists filter to return examples of the field.
     filterCriteria.push({
-      exists : { field }
+      exists: { field }
     });
 
     const body = {
