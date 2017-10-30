@@ -75,7 +75,7 @@ module.controller('MlExplorerChartsContainerController', function ($scope, $inje
     }));
 
     // Query 1 - load the raw metric data.
-    function getMetricData(config, chartRange) {
+    function getMetricData(config, range) {
       const datafeedQuery = _.get(config, 'datafeedConfig.query', null);
       return mlResultsService.getMetricData(
         config.datafeedConfig.indices,
@@ -85,8 +85,8 @@ module.controller('MlExplorerChartsContainerController', function ($scope, $inje
         config.metricFunction,
         config.metricFieldName,
         config.timeField,
-        chartRange.min,
-        chartRange.max,
+        range.min,
+        range.max,
         config.interval
       );
     }
@@ -94,7 +94,7 @@ module.controller('MlExplorerChartsContainerController', function ($scope, $inje
     // Query 2 - load the anomalies.
     // Criteria to return the records for this series are the detector_index plus
     // the specific combination of 'entity' fields i.e. the partition / by / over fields.
-    function getRecordsForCriteria(config, chartRange) {
+    function getRecordsForCriteria(config, range) {
       let criteria = [];
       criteria.push({ fieldName: 'detector_index', fieldValue: config.detectorIndex });
       criteria = criteria.concat(config.entityFields);
@@ -102,8 +102,8 @@ module.controller('MlExplorerChartsContainerController', function ($scope, $inje
         [config.jobId],
         criteria,
         0,
-        chartRange.min,
-        chartRange.max,
+        range.min,
+        range.max,
         ANOMALIES_MAX_RESULTS
       );
     }
@@ -119,7 +119,7 @@ module.controller('MlExplorerChartsContainerController', function ($scope, $inje
 
     function processChartData(response) {
       const metricData = response[0].results;
-      const anomalyRecords = response[1].records;
+      const records = response[1].records;
 
       // Return dataset in format used by the chart.
       // i.e. array of Objects with keys date (timestamp), value,
@@ -134,7 +134,7 @@ module.controller('MlExplorerChartsContainerController', function ($scope, $inje
       }));
       // Iterate through the anomaly records, adding anomalyScore properties
       // to the chartData entries for anomalous buckets.
-      _.each(anomalyRecords, (record) => {
+      _.each(records, (record) => {
 
         // Look for a chart point with the same time as the record.
         // If none found, find closest time in chartData set.
@@ -150,22 +150,22 @@ module.controller('MlExplorerChartsContainerController', function ($scope, $inje
         if (chartPoint === undefined) {
           // Find nearest point in time.
           // loop through line items until the date is greater than bucketTime
-          // grab the current and prevous items in the and compare the time differences
+          // grab the current and previous items in the and compare the time differences
           let foundItem;
           for (let i = 0; i < chartData.length; i++) {
             const itemTime = chartData[i].date;
             if ((itemTime > recordTime) && (i > 0)) {
               const item = chartData[i];
-              const prevousItem = (i > 0 ? chartData[i - 1] : null);
+              const previousItem = (i > 0 ? chartData[i - 1] : null);
 
-              const diff1 = Math.abs(recordTime - prevousItem.date);
+              const diff1 = Math.abs(recordTime - previousItem.date);
               const diff2 = Math.abs(recordTime - itemTime);
 
               // foundItem should be the item with a date closest to bucketTime
-              if (prevousItem === null || diff1 > diff2) {
+              if (previousItem === null || diff1 > diff2) {
                 foundItem = item;
               } else {
-                foundItem = prevousItem;
+                foundItem = previousItem;
               }
               break;
             }

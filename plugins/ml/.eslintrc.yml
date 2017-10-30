@@ -1,0 +1,4 @@
+---
+rules:
+  quotes: error
+  no-shadow: error

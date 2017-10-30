@@ -20,12 +20,12 @@ import moment from 'moment';
 const MAX_LABEL_WIDTH = 100;
 
 export function chartLimits(data) {
-  const chartLimits = { max: 0, min: 0 };
+  const limits = { max: 0, min: 0 };
 
-  chartLimits.max = d3.max(data, (d) => d.value);
-  chartLimits.min = d3.min(data, (d) => d.value);
-  if (chartLimits.max === chartLimits.min) {
-    chartLimits.max = d3.max(data, (d) => {
+  limits.max = d3.max(data, (d) => d.value);
+  limits.min = d3.min(data, (d) => d.value);
+  if (limits.max === limits.min) {
+    limits.max = d3.max(data, (d) => {
       if (d.typical) {
         return Math.max(d.value, d.typical);
       } else {
@@ -35,7 +35,7 @@ export function chartLimits(data) {
         return d.value;
       }
     });
-    chartLimits.min = d3.min(data, (d) => {
+    limits.min = d3.min(data, (d) => {
       if (d.typical) {
         return Math.min(d.value, d.typical);
       } else {
@@ -49,10 +49,10 @@ export function chartLimits(data) {
 
   // add padding of 5% of the difference between max and min
   // if we ended up with the same value for both of them
-  if (chartLimits.max === chartLimits.min) {
-    const padding = chartLimits.max * 0.05;
-    chartLimits.max += padding;
-    chartLimits.min -= padding;
+  if (limits.max === limits.min) {
+    const padding = limits.max * 0.05;
+    limits.max += padding;
+    limits.min -= padding;
   }
 
   return chartLimits;

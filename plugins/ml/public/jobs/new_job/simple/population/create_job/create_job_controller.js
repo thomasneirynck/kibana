@@ -552,8 +552,8 @@ module
     if (animate) {
       fadeCard();
     } else {
-      for (let i = 0; i < cardsBehind.length; i++) {
-        cardsBehind[i].style.opacity = 1;
+      for (let j = 0; j < cardsBehind.length; j++) {
+        cardsBehind[j].style.opacity = 1;
       }
     }
   }

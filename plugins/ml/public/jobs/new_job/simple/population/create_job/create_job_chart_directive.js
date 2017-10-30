@@ -218,7 +218,7 @@ module.directive('mlPopulationJobChart', function (Private, mlChartTooltipServic
           .attr('cx', (d) => chartXScale(d.date))
           .attr('cy', (d) => chartYScale(d.value))
           .attr('r', 3)
-          .style("display", (d) => d.value === null ? 'none' : 'auto')
+          .style('display', (d) => d.value === null ? 'none' : 'auto')
           .on('mouseover', function (d) {
             showTooltip(d, this);
           })
