@@ -30,11 +30,10 @@ import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/single_metric/create_job/filter_agg_types';
 import { isJobIdValid } from 'plugins/ml/util/job_utils';
-import { getQueryFromSavedSearch, getSafeFieldName } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
+import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
 import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/components/utils/app_state_settings';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
-import { ML_JOB_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
-import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
+import { createFields } from 'plugins/ml/jobs/new_job/simple/components/utils/create_fields';
 import template from './create_job.html';
 
 uiRoutes
@@ -91,8 +90,6 @@ module
   const REFRESH_INTERVAL_MS = 100;
   const MAX_BUCKET_DIFF = 3;
   const METRIC_AGG_TYPE = 'metrics';
-  const EVENT_RATE_COUNT_FIELD = '__ml_event_rate_count__';
-  // $scope.EVENT_RATE_COUNT_FIELD = EVENT_RATE_COUNT_FIELD;
 
   let refreshCounter = 0;
 
@@ -343,69 +340,6 @@ module
         $scope.formConfig.agg.type = agg;
       }
     });
-  }
-
-  function loadFields() {
-    const agg = $scope.formConfig.agg;
-    let fields = [];
-    let categoryFields = [];
-    $scope.ui.fields = [];
-    agg.type.params.forEach((param) => {
-      if (param.name === 'field') {
-        fields = getIndexedFields(param, 'number');
-      }
-      if (param.name === 'customLabel') {
-        categoryFields = getIndexedFields(param, ['string', 'ip']);
-      }
-    });
-
-    $scope.ui.fields.push({
-      id: EVENT_RATE_COUNT_FIELD,
-      name: 'event rate',
-      tooltip: 'System defined field',
-      isCountField: true,
-      agg: { type: $scope.ui.aggTypeOptions.find(opt => opt.title === 'Count') },
-      splitField: undefined,
-      mlType: ML_JOB_FIELD_TYPES.NUMBER,
-      firstSplitFieldName: undefined,
-      cardLabels: undefined
-    });
-
-    _.each(fields, (field, i) => {
-      const id = getSafeFieldName(field.displayName, i);
-      const f = {
-        id,
-        name: field.displayName,
-        tooltip: field.displayName,
-        agg,
-        splitField: undefined,
-        mlType: field.mlType,
-        firstSplitFieldName: undefined,
-        cardLabels: undefined
-      };
-      $scope.ui.fields.push(f);
-    });
-
-    _.each(categoryFields, (field) => {
-      if (field.displayName !== 'type' &&
-          field.displayName !== '_id' &&
-          field.displayName !== '_index') {
-        $scope.ui.splitFields.push(field);
-        $scope.ui.overFields.push(field);
-      }
-    });
-  }
-
-  function getIndexedFields(param, fieldTypes) {
-    let fields = _.filter(indexPattern.fields.raw, 'aggregatable');
-
-    if (fieldTypes) {
-      fields = $filter('fieldType')(fields, fieldTypes);
-      fields = $filter('orderBy')(fields, ['type', 'name']);
-      fields = _.filter(fields, (f) => f.displayName !== '_type');
-      fields = _.each(fields, (f) => f.mlType = kbnTypeToMLJobType(f));
-    }
-    return fields;
   }
 
   $scope.ui.isFormValid = function () {
@@ -838,7 +772,7 @@ module
 
   mlESMappingService.getMappings().then(() => {
     initAgg();
-    loadFields();
+    createFields($scope, indexPattern);
 
     $scope.loadVis();
 
@@ -858,20 +792,4 @@ module
     globalForceStop = true;
     angular.element(window).off('resize');
   });
-}).filter('filterAggTypes', function () {
-  return (aggTypes, field) => {
-    const output = [];
-    _.each(aggTypes, (i) => {
-      if (field.id === '__ml_event_rate_count__') {
-        if(i.isCountType) {
-          output.push(i);
-        }
-      } else {
-        if(!i.isCountType) {
-          output.push(i);
-        }
-      }
-    });
-    return output;
-  };
 });

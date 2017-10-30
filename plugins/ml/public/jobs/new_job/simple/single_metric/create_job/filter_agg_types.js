@@ -23,6 +23,7 @@ export function filterAggTypes(aggTypes) {
     type.mlName = type.name;
     type.mlModelPlotAgg = { max: type.name, min: type.name };
     type.isCountType = false;
+    type.isAggregatableStringType = false;
 
     _.each(type.params, (p) => {
       if (p.filterFieldTypes && typeof p.filterFieldTypes === 'string') {
@@ -96,6 +97,7 @@ export function filterAggTypes(aggTypes) {
       type.title = 'Distinct count';
       type.mlName = 'distinct_count';
       type.mlModelPlotAgg = { max: 'max', min: 'min' };
+      type.isAggregatableStringType = true;
 
       _.each(type.params, (p) => {
         if (p.filterFieldTypes) {

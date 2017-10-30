@@ -14,6 +14,8 @@
  */
 
 import { CHART_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
+import { EVENT_RATE_COUNT_FIELD } from 'plugins/ml/jobs/new_job/simple/components/constants/general';
+
 import template from './fields_selection.html';
 
 import { uiModules } from 'ui/modules';
@@ -40,7 +42,7 @@ module.directive('mlFieldsSelectionPopulation', function () {
       $scope.addField = function () {
         // only allow the event rate field to be added once
         if ($scope.eventRateSelected === false ||
-          ($scope.eventRateSelected === true && $scope.tempSelectedField.field.id !== '__ml_event_rate_count__')) {
+          ($scope.eventRateSelected === true && $scope.tempSelectedField.field.id !== EVENT_RATE_COUNT_FIELD)) {
           // clone the object, but not a deep clone.
           // we want field.agg to be unique but the reference to the inner agg.type object to be the original.
           const field = {
@@ -69,7 +71,7 @@ module.directive('mlFieldsSelectionPopulation', function () {
         $scope.eventRateSelected = false;
         let eventRateIndex = -1;
         $scope.formConfig.fields.forEach((f, i) => {
-          if (f.id === '__ml_event_rate_count__') {
+          if (f.id === EVENT_RATE_COUNT_FIELD) {
             eventRateIndex = i;
             $scope.eventRateSelected = true;
           }

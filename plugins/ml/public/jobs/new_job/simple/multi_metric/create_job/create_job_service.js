@@ -19,6 +19,7 @@ import 'ui/timefilter';
 
 import { parseInterval } from 'ui/utils/parse_interval';
 
+import { EVENT_RATE_COUNT_FIELD } from 'plugins/ml/jobs/new_job/simple/components/constants/general';
 import { calculateDatafeedFrequencyDefaultSeconds, ML_MEDIAN_PERCENTS } from 'plugins/ml/util/job_utils';
 import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
@@ -36,7 +37,6 @@ module.service('mlMultiMetricJobService', function (
   mlSimpleJobSearchService) {
 
   const TimeBuckets = Private(IntervalHelperProvider);
-  const EVENT_RATE_COUNT_FIELD = '__ml_event_rate_count__';
 
   this.chartData = {
     job: {

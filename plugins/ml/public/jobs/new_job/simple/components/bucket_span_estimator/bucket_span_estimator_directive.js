@@ -18,6 +18,7 @@ import _ from 'lodash';
 import template from './bucket_span_estimator.html';
 import { BucketSpanEstimatorProvider } from './bucket_span_estimator';
 import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
+import { EVENT_RATE_COUNT_FIELD } from 'plugins/ml/jobs/new_job/simple/components/constants/general';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -73,7 +74,7 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
         } else {
           // multi metric config
           _.each($scope.formConfig.fields, (field) => {
-            const fieldName = (field.id === '__ml_event_rate_count__') ? null : field.name;
+            const fieldName = (field.id === EVENT_RATE_COUNT_FIELD) ? null : field.name;
             fields.push(fieldName);
             aggTypes.push(field.agg.type);
           });

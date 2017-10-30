@@ -18,6 +18,7 @@ import _ from 'lodash';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 import template from './elastic_data_description.html';
+import { ML_JOB_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
 
 module.directive('mlElasticDataDescription', function () {
   return {
@@ -145,17 +146,17 @@ module.directive('mlElasticDataDescription', function () {
         extractTypesFromIndices();
 
         if ($scope.uiTypeKeys().length) {
-          // diplay a green tick for indices
-          // diplay types selection
+          // display a green tick for indices
+          // display types selection
           $scope.ui.indexTextOk = true;
         }
 
         const ignoreFields = collectCopyToFields($scope.types);
         let flatFields = extractFlatFields($scope.types);
 
-        // add text fields to list of fields used for the categoriztion field name
+        // add text fields to list of fields used for the categorization field name
         _.each(flatFields, (prop, key) => {
-          if (prop.type === 'text' || prop.type === 'keyword') {
+          if (prop.type === ML_JOB_FIELD_TYPES.TEXT || prop.type === ML_JOB_FIELD_TYPES.KEYWORD) {
             $scope.catProperties[key] = prop;
           }
         });
@@ -169,7 +170,7 @@ module.directive('mlElasticDataDescription', function () {
           }
           // add property (field) to list
           $scope.properties[key] = prop;
-          if (prop.type === 'date') {
+          if (prop.type === ML_JOB_FIELD_TYPES.DATE) {
             // add date field to list of date fields
             $scope.dateProperties[key] = prop;
           }
@@ -425,15 +426,15 @@ module.directive('mlElasticDataDescription', function () {
         }
       }
 
-      // modify the names of text fields which contain keyword subfields
+      // modify the names of text fields which contain keyword sub-fields
       function renameMultiFields(fields) {
         const renamedFields = {};
         _.each(fields, (field, k) => {
           let name = k;
-          if (field.type === 'text') {
+          if (field.type === ML_JOB_FIELD_TYPES.TEXT) {
             if(field.fields) {
               _.each(field.fields, (subField, sfk) => {
-                if (subField.type === 'keyword') {
+                if (subField.type === ML_JOB_FIELD_TYPES.KEYWORD) {
                   name = `${name}.${sfk}`;
                 }
               });

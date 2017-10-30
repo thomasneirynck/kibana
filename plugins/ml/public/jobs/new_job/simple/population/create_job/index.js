@@ -25,6 +25,7 @@ import 'plugins/ml/jobs/new_job/simple/components/fields_selection_population';
 import 'plugins/ml/jobs/new_job/simple/components/influencers_selection';
 import 'plugins/ml/jobs/new_job/simple/components/bucket_span_selection';
 import 'plugins/ml/jobs/new_job/simple/components/general_job_details';
+import 'plugins/ml/jobs/new_job/simple/components/agg_types_filter';
 import 'plugins/ml/components/job_group_select';
 import 'plugins/ml/components/full_time_range_selector';
 import 'plugins/ml/components/field_type_icon';
