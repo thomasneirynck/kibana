@@ -242,6 +242,12 @@ module.service('mlJobSelectService', function ($rootScope, mlJobService, globalS
     self.jobIds.push(...removeGroupIds(expandedJobIds));
     self.description.txt = createDescription(self.jobIdsWithGroup);
     self.singleJobDescription.txt = ids[0];
+    setBrowserTitle(self.description.txt);
+  }
+
+  // display the job id in the tab title
+  function setBrowserTitle(title) {
+    document.title = `${title} - Kibana`;
   }
 
   // called externally to retrieve the selected jobs ids.
