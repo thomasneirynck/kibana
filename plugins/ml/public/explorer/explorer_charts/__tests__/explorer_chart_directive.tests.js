@@ -22,6 +22,7 @@ import { chartLimits } from 'plugins/ml/util/chart_utils.js';
 describe('ML - <ml-explorer-chart>', function () {
   let $scope;
   let $compile;
+  let $element;
 
   const seriesConfig = {
     jobId: 'population-03',
@@ -74,7 +75,7 @@ describe('ML - <ml-explorer-chart>', function () {
   });
 
   it('Initialize', function () {
-    const $element = $compile('<ml-explorer-chart />')($scope);
+    $element = $compile('<ml-explorer-chart />')($scope);
     $scope.$digest();
 
     // without setting any attributes and corresponding data
@@ -88,138 +89,137 @@ describe('ML - <ml-explorer-chart>', function () {
       loading: true
     };
 
-    const $element = $compile('<ml-explorer-chart series-config="seriesConfig" />')($scope);
+    $element = $compile('<ml-explorer-chart series-config="seriesConfig" />')($scope);
     $scope.$digest();
 
     // test if the loading indicator is shown
     expect($element.find('ml-loading-indicator .loading-indicator').length).to.be(1);
   });
 
-  // For the following tests the directive needs to be rendered in the actual DOM,
-  // because otherwise there wouldn't be a width available which would
-  // trigger SVG errors. We use a fixed width to be able to test for
-  // fine grained attributes of the chart.
-  function prepareElement($scope) {
-    // First we create the element including a wrapper which sets the width:
-    const $element = angular.element('<div style="width: 500px"><ml-explorer-chart series-config="seriesConfig" /></div>');
-    // Add the element to the body so it gets rendered
-    $element.appendTo(document.body);
-    // Compile the directive and run a $digest()
-    $compile($element)($scope);
-    $scope.$digest();
-    return $element;
-  }
+  describe('ML - <ml-explorer-chart> data rendering', function () {
+    // For the following tests the directive needs to be rendered in the actual DOM,
+    // because otherwise there wouldn't be a width available which would
+    // trigger SVG errors. We use a fixed width to be able to test for
+    // fine grained attributes of the chart.
+    beforeEach(function () {
+      // First we create the element including a wrapper which sets the width:
+      $element = angular.element('<div style="width: 500px"><ml-explorer-chart series-config="seriesConfig" /></div>');
+      // Add the element to the body so it gets rendered
+      $element.appendTo(document.body);
+      // Compile the directive and run a $digest()
+      $compile($element)($scope);
+      $scope.$apply();
+    });
 
-  it('Anomaly Explorer Chart with multiple data points', function () {
-    // prepare data for the test case
-    const chartData = [
-      {
-        date: new Date('2017-02-23T08:00:00.000Z'),
-        value: 228243469, anomalyScore: 63.32916, numberOfCauses: 1,
-        actual: [228243469], typical: [133107.7703441773]
-      },
-      { date: new Date('2017-02-23T09:00:00.000Z'), value: null },
-      { date: new Date('2017-02-23T10:00:00.000Z'), value: null },
-      { date: new Date('2017-02-23T11:00:00.000Z'), value: null },
-      {
-        date: new Date('2017-02-23T12:00:00.000Z'),
-        value: 625736376, anomalyScore: 97.32085, numberOfCauses: 1,
-        actual: [625736376], typical: [132830.424736973]
-      },
-      {
-        date: new Date('2017-02-23T13:00:00.000Z'),
-        value: 201039318, anomalyScore: 59.83488, numberOfCauses: 1,
-        actual: [201039318], typical: [132739.5267403542]
-      }
-    ];
-    $scope.seriesConfig = {
-      ...seriesConfig,
-      chartData: chartData,
-      chartLimits: chartLimits(chartData)
-    };
+    afterEach(function () {
+      // remove the element from the DOM
+      $element.remove();
+    });
 
-    const $element = prepareElement($scope);
+    it('Anomaly Explorer Chart with multiple data points', function () {
+      // prepare data for the test case
+      const chartData = [
+        {
+          date: new Date('2017-02-23T08:00:00.000Z'),
+          value: 228243469, anomalyScore: 63.32916, numberOfCauses: 1,
+          actual: [228243469], typical: [133107.7703441773]
+        },
+        { date: new Date('2017-02-23T09:00:00.000Z'), value: null },
+        { date: new Date('2017-02-23T10:00:00.000Z'), value: null },
+        { date: new Date('2017-02-23T11:00:00.000Z'), value: null },
+        {
+          date: new Date('2017-02-23T12:00:00.000Z'),
+          value: 625736376, anomalyScore: 97.32085, numberOfCauses: 1,
+          actual: [625736376], typical: [132830.424736973]
+        },
+        {
+          date: new Date('2017-02-23T13:00:00.000Z'),
+          value: 201039318, anomalyScore: 59.83488, numberOfCauses: 1,
+          actual: [201039318], typical: [132739.5267403542]
+        }
+      ];
+      $scope.seriesConfig = {
+        ...seriesConfig,
+        chartData: chartData,
+        chartLimits: chartLimits(chartData)
+      };
 
-    // Now the chart should be loaded correctly and we're set up to run the tests
+      // Now the chart should be loaded correctly and we're set up to run the tests
+      $scope.$on('renderComplete', () => {
+        // the loading indicator should not be shown
+        expect($element.find('ml-loading-indicator .loading-indicator').length).to.be(0);
 
-    // the loading indicator should not be shown
-    expect($element.find('ml-loading-indicator .loading-indicator').length).to.be(0);
+        // test if all expected elements are present
+        const svg = $element.find('svg');
+        expect(svg.length).to.be(1);
 
-    // test if all expected elements are present
-    const svg = $element.find('svg');
-    expect(svg.length).to.be(1);
+        const lineChart = svg.find('g.line-chart');
+        expect(lineChart.length).to.be(1);
 
-    const lineChart = svg.find('g.line-chart');
-    expect(lineChart.length).to.be(1);
+        const rects = lineChart.find('rect');
+        expect(rects.length).to.be(2);
 
-    const rects = lineChart.find('rect');
-    expect(rects.length).to.be(2);
+        const chartBorder = angular.element(rects[0]);
+        expect(+chartBorder.attr('x')).to.be(0);
+        expect(+chartBorder.attr('y')).to.be(0);
+        expect(+chartBorder.attr('height')).to.be(170);
 
-    const chartBorder = angular.element(rects[0]);
-    expect(+chartBorder.attr('x')).to.be(0);
-    expect(+chartBorder.attr('y')).to.be(0);
-    expect(+chartBorder.attr('height')).to.be(170);
+        const selectedInterval = angular.element(rects[1]);
+        expect(selectedInterval.attr('class')).to.be('selected-interval');
+        expect(+selectedInterval.attr('y')).to.be(1);
+        expect(+selectedInterval.attr('height')).to.be(169);
 
-    const selectedInterval = angular.element(rects[1]);
-    expect(selectedInterval.attr('class')).to.be('selected-interval');
-    expect(+selectedInterval.attr('y')).to.be(1);
-    expect(+selectedInterval.attr('height')).to.be(169);
+        // skip this test for now
+        // TODO find out why this doesn't work in IE11
+        // const xAxisTicks = lineChart.find('.x.axis .tick');
+        // expect(xAxisTicks.length).to.be(4);
+        const yAxisTicks = lineChart.find('.y.axis .tick');
+        expect(yAxisTicks.length).to.be(10);
 
-    // skip this test for now
-    // TODO find out why this doesn't work in IE11
-    // const xAxisTicks = lineChart.find('.x.axis .tick');
-    // expect(xAxisTicks.length).to.be(4);
-    const yAxisTicks = lineChart.find('.y.axis .tick');
-    expect(yAxisTicks.length).to.be(10);
+        const paths = lineChart.find('path');
+        expect(angular.element(paths[0]).attr('class')).to.be('domain');
+        expect(angular.element(paths[1]).attr('class')).to.be('domain');
 
-    const paths = lineChart.find('path');
-    expect(angular.element(paths[0]).attr('class')).to.be('domain');
-    expect(angular.element(paths[1]).attr('class')).to.be('domain');
+        const line = angular.element(paths[2]);
+        expect(line.attr('class')).to.be('values-line');
+        // this is not feasable to test because of minimal differences
+        // across various browsers
+        // expect(line.attr('d'))
+        //   .to.be('M205.56285511363637,152.3732523349513M215.3515625,7.72727272727272L217.79873934659093,162.27272727272728');
+        expect(line.attr('d')).not.to.be(undefined);
 
-    const line = angular.element(paths[2]);
-    expect(line.attr('class')).to.be('values-line');
-    // this is not feasable to test because of minimal differences
-    // across various browsers
-    // expect(line.attr('d'))
-    //   .to.be('M205.56285511363637,152.3732523349513M215.3515625,7.72727272727272L217.79873934659093,162.27272727272728');
-    expect(line.attr('d')).not.to.be(undefined);
+        const dots = lineChart.find('g.values-dots circle');
+        expect(dots.length).to.be(1);
 
-    const dots = lineChart.find('g.values-dots circle');
-    expect(dots.length).to.be(1);
+        const dot = angular.element(dots[0]);
+        expect(dot.attr('r')).to.be('1.5');
 
-    const dot = angular.element(dots[0]);
-    expect(dot.attr('r')).to.be('1.5');
+        const chartMarkers = lineChart.find('g.chart-markers circle');
+        expect(chartMarkers.length).to.be(3);
+        expect(chartMarkers.toArray().map(d => +angular.element(d).attr('r'))).to.eql([7, 7, 7]);
+      });
+    });
 
-    const chartMarkers = lineChart.find('g.chart-markers circle');
-    expect(chartMarkers.length).to.be(3);
-    expect(chartMarkers.toArray().map(d => +angular.element(d).attr('r'))).to.eql([7, 7, 7]);
+    it('Anomaly Explorer Chart with single data point', function () {
+      const chartData = [
+        {
+          date: new Date('2017-02-23T08:00:00.000Z'),
+          value: 228243469, anomalyScore: 63.32916, numberOfCauses: 1,
+          actual: [228243469], typical: [228243469]
+        }
+      ];
+      $scope.seriesConfig = {
+        ...seriesConfig,
+        chartData: chartData,
+        chartLimits: chartLimits(chartData)
+      };
 
-    // remove the element from the DOM
-    $element.remove();
-  });
-
-  it('Anomaly Explorer Chart with single data point', function () {
-    const chartData = [
-      {
-        date: new Date('2017-02-23T08:00:00.000Z'),
-        value: 228243469, anomalyScore: 63.32916, numberOfCauses: 1,
-        actual: [228243469], typical: [228243469]
-      }
-    ];
-    $scope.seriesConfig = {
-      ...seriesConfig,
-      chartData: chartData,
-      chartLimits: chartLimits(chartData)
-    };
-
-    const $element = prepareElement($scope);
-
-    const svg = $element.find('svg');
-    const lineChart = svg.find('g.line-chart');
-    const yAxisTicks = lineChart.find('.y.axis .tick');
-    expect(yAxisTicks.length).to.be(13);
-
-    // remove the element from the DOM
-    $element.remove();
+      $scope.$on('renderComplete', () => {
+        const svg = $element.find('svg');
+        const lineChart = svg.find('g.line-chart');
+        const yAxisTicks = lineChart.find('.y.axis .tick');
+        expect(yAxisTicks.length).to.be(13);
+      });
+    });
   });
 });
