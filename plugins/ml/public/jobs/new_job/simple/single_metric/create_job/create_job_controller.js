@@ -28,7 +28,7 @@ import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
-import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/single_metric/create_job/filter_agg_types';
+import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/components/utils/filter_agg_types';
 import { isJobIdValid } from 'plugins/ml/util/job_utils';
 import { getQueryFromSavedSearch, getSafeFieldName } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
 import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/components/utils/app_state_settings';
