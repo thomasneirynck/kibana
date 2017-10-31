@@ -13,14 +13,18 @@ import { RIGHT_ALIGNMENT } from 'ui_framework/services';
 import numeral from 'numeral';
 import moment from 'moment';
 
-const GroupIdCell = styled(KuiTableRowCell)`width: ${px(unit * 6)};`;
+const GroupIdCell = styled(KuiTableRowCell)`
+  width: ${px(unit * 6)};
+`;
 
 const GroupIdLink = styled(RelativeLink)`
   font-family: ${fontFamilyCode};
   color: ${colors.gray2};
 `;
 
-const MessageAndCulpritCell = styled(KuiTableRowCell)`max-width: none;`;
+const MessageAndCulpritCell = styled(KuiTableRowCell)`
+  max-width: none;
+`;
 
 const MessageLink = styled(RelativeLink)`
   display: block;
@@ -29,9 +33,13 @@ const MessageLink = styled(RelativeLink)`
   font-size: ${fontSizes.large};
 `;
 
-const Culprit = styled.div`font-family: ${fontFamilyCode};`;
+const Culprit = styled.div`
+  font-family: ${fontFamilyCode};
+`;
 
-const OccurrenceCell = styled(KuiTableRowCell)`width: ${px(unit * 14)};`;
+const OccurrenceCell = styled(KuiTableRowCell)`
+  width: ${px(unit * 14)};
+`;
 
 function ListItem({ error, appName }) {
   const {

@@ -14,7 +14,9 @@ const ChartsWrapper = styled.div`
   user-select: none;
 `;
 
-const Chart = styled.div`width: calc(50% - ${px(units.half)});`;
+const Chart = styled.div`
+  width: calc(50% - ${px(units.half)});
+`;
 
 export class Charts extends Component {
   state = {

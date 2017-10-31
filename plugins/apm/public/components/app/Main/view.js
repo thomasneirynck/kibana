@@ -3,7 +3,9 @@ import styled from 'styled-components';
 import { get } from 'lodash';
 import { units, px } from '../../../style/variables';
 
-const MainContainer = styled.div`padding: ${px(units.plus)};`;
+const MainContainer = styled.div`
+  padding: ${px(units.plus)};
+`;
 function fetchLicense(props) {
   if (!props.license.status) {
     props.loadLicense();

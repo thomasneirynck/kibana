@@ -1,11 +1,11 @@
 import React from 'react';
 import { px, units } from '../../style/variables';
 
-export function Icon({ name, style }) {
-  return <i style={style} className={`fa ${name}`} />;
+export function Icon({ name, className, ...props }) {
+  return <i className={`fa ${name} ${className}`} {...props} />;
 }
 
-export function Ellipsis({ horizontal, style }) {
+export function Ellipsis({ horizontal, style, ...props }) {
   return (
     <Icon
       style={{
@@ -14,11 +14,12 @@ export function Ellipsis({ horizontal, style }) {
         ...style
       }}
       name="fa-ellipsis-v"
+      {...props}
     />
   );
 }
 
-export function Info({ style }) {
+export function Info({ style, ...props }) {
   return (
     <Icon
       style={{
@@ -26,6 +27,11 @@ export function Info({ style }) {
         ...style
       }}
       name="fa-info-circle"
+      {...props}
     />
   );
+}
+
+export function Close({ style, ...props }) {
+  return <Icon style={style} name="fa-times" {...props} />;
 }

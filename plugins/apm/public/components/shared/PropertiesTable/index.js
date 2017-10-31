@@ -32,7 +32,9 @@ const Cell = styled.td`
     font-weight: bold;
   }
 `;
-const EmptyValue = styled.span`color: ${colors.gray4};`;
+const EmptyValue = styled.span`
+  color: ${colors.gray4};
+`;
 
 function getSortedProps(propData, levelTwoKey, level) {
   if (level === 2) {

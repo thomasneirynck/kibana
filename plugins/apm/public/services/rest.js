@@ -115,8 +115,8 @@ export async function loadTraces({ appName, start, end, transactionId }) {
 
 export async function loadTransaction({ appName, start, end, transactionId }) {
   return callApi({
-    camelcase: false,
     pathname: `${getAppRootPath(appName)}/transactions/${transactionId}`,
+    camelcase: false,
     query: {
       start,
       end
@@ -153,7 +153,7 @@ export async function loadErrorGroupList({ appName, start, end }) {
 }
 
 export async function loadErrorGroup({ appName, errorGroupId, start, end }) {
-  return callApi({
+  const res = await callApi({
     pathname: `${getAppRootPath(appName)}/errors/${errorGroupId}`,
     camelcase: false,
     query: {
@@ -161,6 +161,9 @@ export async function loadErrorGroup({ appName, errorGroupId, start, end }) {
       end
     }
   });
+  const camelizedRes = camelizeKeys(res);
+  camelizedRes.error.context = res.error.context;
+  return camelizedRes;
 }
 
 export async function loadErrorDistribution({

@@ -37,9 +37,9 @@ Array [
 
 exports[`when response has data Initially should have correct markup 1`] = `
 "
-<div class=\\"sc-gzVnrw bTqEWp\\">
+<div class=\\"sc-gzVnrw jDjjeJ\\">
   <div class=\\"sc-htoDjs dYZUib\\">
-    <div class=\\"sc-dnqmqq gbpjao\\">
+    <div class=\\"sc-dnqmqq dZBzGE\\">
     </div>
     <div class=\\"sc-iwsKbI hQBmBE\\">
       <div class=\\"sc-bdVaJa eWvHJG\\"
@@ -989,9 +989,9 @@ Array [
 
 exports[`when response has data when setting hoverIndex should match snapshots 1`] = `
 "
-<div class=\\"sc-gzVnrw bTqEWp\\">
+<div class=\\"sc-gzVnrw jDjjeJ\\">
   <div class=\\"sc-htoDjs dYZUib\\">
-    <div class=\\"sc-dnqmqq gbpjao\\">
+    <div class=\\"sc-dnqmqq dZBzGE\\">
     </div>
     <div class=\\"sc-iwsKbI hQBmBE\\">
       <div class=\\"sc-bdVaJa eWvHJG\\"
@@ -2017,9 +2017,9 @@ Object {
 
 exports[`when response has no data Initially should have correct markup 1`] = `
 "
-<div class=\\"sc-gzVnrw bTqEWp\\">
+<div class=\\"sc-gzVnrw jDjjeJ\\">
   <div class=\\"sc-htoDjs dYZUib\\">
-    <div class=\\"sc-dnqmqq gbpjao\\">
+    <div class=\\"sc-dnqmqq dZBzGE\\">
     </div>
     <div class=\\"sc-iwsKbI hQBmBE\\">
     </div>

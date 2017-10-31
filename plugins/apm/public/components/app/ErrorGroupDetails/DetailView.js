@@ -17,7 +17,7 @@ import {
 
 import moment from 'moment';
 import Tab from '../../shared/Tab';
-import Stacktrace from './Stacktrace';
+import Stacktrace from '../../shared/Stacktrace';
 
 const Container = styled.div`
   position: relative;
@@ -44,7 +44,9 @@ const Property = styled.div`
   margin-bottom: ${px(units.plus)};
 `;
 
-const PropertyLabel = styled.div`margin-bottom: ${px(units.quarter)};`;
+const PropertyLabel = styled.div`
+  margin-bottom: ${px(units.quarter)};
+`;
 
 const PropertyValue = styled.div`
   font-weight: bold;
@@ -59,7 +61,9 @@ function AllOccurrencesLink({ errorGroup, appName }) {
     return null;
   }
 
-  const DiscoverLink = styled.a`margin: ${px(units.plus)} ${px(unit)} 0;`;
+  const DiscoverLink = styled.a`
+    margin: ${px(units.plus)} ${px(unit)} 0;
+  `;
 
   const DiscoverIcon = styled.img`
     height: 18px;

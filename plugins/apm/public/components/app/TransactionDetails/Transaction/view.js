@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { STATUS } from '../../../../constants';
 import { units, colors } from '../../../../style/variables';
 import Tab from '../../../shared/Tab';
-import { capitalize } from 'lodash';
+import { capitalize, get } from 'lodash';
 import {
   PropertiesTable,
   getLevelOneProps
@@ -38,7 +38,7 @@ function getCurrentTab(tabs = [], detailTab) {
 }
 
 function getTabs(transactionData) {
-  const dynamicProps = Object.keys(transactionData.context);
+  const dynamicProps = Object.keys(transactionData.context || {});
   return getLevelOneProps(dynamicProps);
 }
 
@@ -80,7 +80,7 @@ class Transaction extends Component {
             <Traces />
           ) : (
             <PropertiesTable
-              propData={transaction.data.context[currentTab]}
+              propData={get(transaction.data.context, currentTab)}
               propKey={currentTab}
             />
           )}

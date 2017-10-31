@@ -1,6 +1,5 @@
 import Joi from 'joi';
 import Boom from 'boom';
-import { isEmpty } from 'lodash';
 
 import { getTimeseriesData } from '../lib/transactions/charts/get_timeseries_data';
 import getTraces from '../lib/transactions/traces/get_traces';
@@ -64,7 +63,7 @@ export function initTransactionsApi(server) {
       const { transactionId } = req.params;
       const { setup } = req.pre;
       return getTransaction({ transactionId, setup })
-        .then(res => reply(res).code(isEmpty(res) ? 404 : 200))
+        .then(res => reply(res))
         .catch(defaultErrorHandler(reply));
     }
   });

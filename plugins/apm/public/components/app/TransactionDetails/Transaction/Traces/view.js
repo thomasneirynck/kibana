@@ -1,10 +1,10 @@
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
-import Trace from './Trace';
 import { first, get, zipObject, difference } from 'lodash';
+import Trace from './Trace';
+import TimelineHeader from './TimelineHeader';
 import { TRACE_ID } from '../../../../../../common/constants';
 import { STATUS } from '../../../../../constants';
-import TimelineHeader from './TimelineHeader';
 import { colors } from '../../../../../style/variables';
 import { StickyContainer } from 'react-sticky';
 import Timeline from '../../../../shared/charts/Timeline';

@@ -10,7 +10,9 @@ const TipMessage = styled(KuiTableInfo)`
   font-size: ${fontSize};
 `;
 
-const Link = styled.div`display: inline-block;`;
+const Link = styled.div`
+  display: inline-block;
+`;
 
 function tipMessage({ heading, link }) {
   return (

@@ -14,7 +14,9 @@ const Heading = styled.div`
   color: ${colors.gray2};
 `;
 
-const Legends = styled.div`display: flex;`;
+const Legends = styled.div`
+  display: flex;
+`;
 
 export default function TimelineHeader({
   traceTypes,

@@ -29,10 +29,15 @@ const FileDetails = styled.div`
   border-radius: ${borderRadius} ${borderRadius} 0 0;
 `;
 
-const FileDetail = styled.span`font-weight: bold;`;
+const FileDetail = styled.span`
+  font-weight: bold;
+`;
 
 const Container = styled.div`
-  margin: ${px(unit + units.eighth)} 0 ${px(units.plus)} 0;
+  margin: ${props =>
+    props.isLibraryFrame
+      ? `${px(units.minus * 1.5)} 0 ${px(units.plus)} 0`
+      : `${px(units.plus)} 0`};
   position: relative;
   font-family: ${fontFamilyCode};
   border: 1px solid ${colors.gray4};

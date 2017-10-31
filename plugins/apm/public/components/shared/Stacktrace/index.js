@@ -6,14 +6,14 @@ import EmptyMessage from '../../shared/EmptyMessage';
 
 function getCollapsedLibraryFrames(stackframes) {
   return stackframes.reduce((acc, stackframe) => {
-    if (stackframe.in_app) {
+    if (stackframe.inApp) {
       return [...acc, stackframe];
     }
 
     // current stackframe is library frame
     const prevItem = acc[acc.length - 1];
-    if (!prevItem || prevItem.in_app) {
-      return [...acc, { in_app: false, stackframes: [stackframe] }];
+    if (!prevItem || prevItem.inApp) {
+      return [...acc, { inApp: false, stackframes: [stackframe] }];
     }
 
     return [
@@ -46,7 +46,7 @@ class Stacktrace extends PureComponent {
     return (
       <div>
         {getCollapsedLibraryFrames(stackframes).map((item, i) => {
-          if (item.in_app) {
+          if (item.inApp) {
             return (
               <CodePreview
                 key={i}

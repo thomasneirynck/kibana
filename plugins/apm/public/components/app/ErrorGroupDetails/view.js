@@ -20,7 +20,9 @@ const Message = styled.div`
   margin-bottom: ${px(units.half)};
 `;
 
-const Culprit = styled.div`font-family: ${fontFamilyCode};`;
+const Culprit = styled.div`
+  font-family: ${fontFamilyCode};
+`;
 
 function loadErrorGroup(props) {
   const { appName, errorGroupId, start, end } = props.urlParams;

@@ -19,14 +19,18 @@ const XY_MARGIN = {
   right: 15
 };
 
-const ChartWrapper = styled.div`padding: ${px(units.half)};`;
+const ChartWrapper = styled.div`
+  padding: ${px(units.half)};
+`;
 
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
 `;
 
-const Title = styled.div`font-size: ${fontSizes.large};`;
+const Title = styled.div`
+  font-size: ${fontSizes.large};
+`;
 
 const Legends = styled.div`
   display: flex;

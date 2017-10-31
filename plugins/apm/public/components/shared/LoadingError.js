@@ -3,7 +3,9 @@ import styled from 'styled-components';
 import { fontSizes } from '../../style/variables';
 
 function LoadingError({ names }) {
-  const ErrorWrap = styled.div`font-size: ${fontSizes.large};`;
+  const ErrorWrap = styled.div`
+    font-size: ${fontSizes.large};
+  `;
 
   return (
     <ErrorWrap>

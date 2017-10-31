@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
+import { get } from 'lodash';
+import { toQuery, fromQuery, RelativeLink } from '../../../../../utils/url';
 import TraceDetails from './TraceDetails';
-import { toQuery, fromQuery } from '../../../../../utils/url';
-import { KuiPopover } from 'ui_framework/components';
-import { isNumber, get } from 'lodash';
+import Modal from '../../../../shared/Modal';
 
 import {
   unit,
@@ -21,8 +21,6 @@ import {
   TRACE_NAME
 } from '../../../../../../common/constants';
 
-function closePopover() {}
-
 const TraceBar = styled.div`
   position: relative;
   height: ${unit}px;
@@ -37,9 +35,10 @@ const TraceLabel = styled.div`
   font-size: ${fontSizes.small};
 `;
 
-const Popover = styled(({ isSelected, timelineMargins, ...props }) => (
-  <KuiPopover {...props} />
+const Container = styled(({ isSelected, timelineMargins, ...props }) => (
+  <RelativeLink {...props} />
 ))`
+  position: relative;
   display: block;
   user-select: none;
   padding: ${px(units.half)} ${props => px(props.timelineMargins.right)}
@@ -51,59 +50,62 @@ const Popover = styled(({ isSelected, timelineMargins, ...props }) => (
   }
 `;
 
-function Trace({
-  timelineMargins,
-  history,
-  location,
-  totalDuration,
-  trace,
-  color,
-  isSelected
-}) {
-  const width = get({ trace }, TRACE_DURATION) / totalDuration * 100;
-  const left = get({ trace }, TRACE_START) / totalDuration * 100;
+class Trace extends React.Component {
+  onClose = () => {
+    const { location, history } = this.props;
+    const { traceId, ...currentQuery } = toQuery(location.search);
+    history.push({
+      ...location,
+      search: fromQuery({
+        ...currentQuery,
+        traceId: null
+      })
+    });
+  };
 
-  const traceId = get({ trace }, TRACE_ID);
-  const traceName = get({ trace }, TRACE_NAME);
+  render() {
+    const {
+      timelineMargins,
+      totalDuration,
+      trace,
+      color,
+      isSelected
+    } = this.props;
 
-  const button = (
-    <div>
-      <TraceBar
-        style={{ left: `${left}%`, width: `${width}%`, backgroundColor: color }}
-      />
-      <TraceLabel style={{ left: `${left}%`, width: `${100 - left}%` }}>
-        {traceName}
-      </TraceLabel>
-    </div>
-  );
+    const width = get({ trace }, TRACE_DURATION) / totalDuration * 100;
+    const left = get({ trace }, TRACE_START) / totalDuration * 100;
 
-  return (
-    <Popover
-      onClick={() => {
-        const { traceId: currentTraceId, ...currentQuery } = toQuery(
-          location.search
-        );
-        const shouldClose =
-          isNumber(parseInt(currentTraceId, 10)) &&
-          !Number.isNaN(parseInt(currentTraceId, 10));
+    const traceId = get({ trace }, TRACE_ID);
+    const traceName = get({ trace }, TRACE_NAME);
 
-        history.push({
-          ...location,
-          search: fromQuery({
-            ...currentQuery,
-            traceId: shouldClose ? null : traceId
-          })
-        });
-      }}
-      timelineMargins={timelineMargins}
-      isSelected={isSelected}
-      button={button}
-      isOpen={isSelected}
-      closePopover={closePopover}
-    >
-      <TraceDetails trace={trace} totalDuration={totalDuration} />
-    </Popover>
-  );
+    return (
+      <Container
+        query={{ traceId }}
+        timelineMargins={timelineMargins}
+        isSelected={isSelected}
+      >
+        <TraceBar
+          style={{
+            left: `${left}%`,
+            width: `${width}%`,
+            backgroundColor: color
+          }}
+        />
+        <TraceLabel style={{ left: `${left}%`, width: `${100 - left}%` }}>
+          {traceName}
+        </TraceLabel>
+
+        <Modal
+          header="Trace details"
+          isOpen={isSelected}
+          onClose={this.onClose}
+          close={this.onClose}
+        >
+          <TraceDetails trace={trace} totalDuration={totalDuration} />
+        </Modal>
+      </Container>
+    );
+  }
 }
 
 export default withRouter(Trace);

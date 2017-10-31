@@ -7,9 +7,13 @@ import { RIGHT_ALIGNMENT } from 'ui_framework/services';
 import { getFormattedResponseTime } from '../../../shared/charts/TransactionCharts/utils';
 import numeral from '@elastic/numeral';
 
-const AppNameCell = styled(KuiTableRowCell)`max-width: ${px(unit * 2)};`;
+const AppNameCell = styled(KuiTableRowCell)`
+  max-width: ${px(unit * 2)};
+`;
 
-const AppLink = styled(RelativeLink)`font-size: ${fontSizes.large};`;
+const AppLink = styled(RelativeLink)`
+  font-size: ${fontSizes.large};
+`;
 
 function formatString(value) {
   return value || 'N/A';

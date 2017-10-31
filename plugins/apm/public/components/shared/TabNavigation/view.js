@@ -4,7 +4,9 @@ import styled from 'styled-components';
 import withApp from '../withApp';
 import { unit, units, px, colors } from '../../../style/variables';
 
-const Container = styled.div`height: ${px(unit * 5)};`;
+const Container = styled.div`
+  height: ${px(unit * 5)};
+`;
 
 const Divider = styled.div`
   border-left: 1px solid ${colors.gray4};
