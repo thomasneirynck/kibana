@@ -24,7 +24,7 @@
     "aws-sdk": "2.2.33",
     "babel-eslint": "7.2.3",
     "babel-jest": "21.0.0",
-    "backport": "1.0.1",
+    "backport": "1.1.1",
     "chance": "1.0.10",
     "checksum": "0.1.1",
     "del": "2.2.0",
