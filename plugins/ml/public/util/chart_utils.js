@@ -55,7 +55,7 @@ export function chartLimits(data) {
     limits.min -= padding;
   }
 
-  return chartLimits;
+  return limits;
 }
 
 export function drawLineChartDots(data, lineChartGroup, lineChartValuesLine, radius = 1.5) {
