@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@elastic/eslint-config-kibana": "0.13.0",
-    "@elastic/eslint-import-resolver-kibana": "0.8.1",
+    "@elastic/eslint-import-resolver-kibana": "0.9.0",
     "@elastic/eslint-plugin-kibana-custom": "1.0.3",
     "@elastic/numeral": "2.2.1",
     "@elastic/plugin-helpers": "7.0.1",
