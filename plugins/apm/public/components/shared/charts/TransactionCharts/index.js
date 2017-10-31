@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import CustomPlot from '../CustomPlot';
 import { getTimefilter } from '../../../../utils/timepicker';
-import {
-  getFormattedResponseTime,
-  getFormattedRequestsPerMinute
-} from './utils';
+import { asMillis, asRpm } from '../../../../utils/formatters';
 import styled from 'styled-components';
 import { units, px } from '../../../../style/variables';
 
@@ -40,11 +37,11 @@ export class Charts extends Component {
   };
 
   getResponseTimeFormatter = t => {
-    return this.props.isEmpty ? '- ms' : getFormattedResponseTime(t);
+    return this.props.isEmpty ? '- ms' : asMillis(t);
   };
 
   getRequestPerMinuteFormatter = t => {
-    return this.props.isEmpty ? '- rpm' : getFormattedRequestsPerMinute(t);
+    return this.props.isEmpty ? '- rpm' : asRpm(t);
   };
 
   render() {

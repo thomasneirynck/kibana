@@ -4,6 +4,7 @@ import numeral from 'numeral';
 import { get } from 'lodash';
 import { KuiButton } from 'ui_framework/components';
 import Stacktrace from '../../../../../shared/Stacktrace';
+import { asMillis } from '../../../../../../utils/formatters';
 import {
   TRACE_DURATION,
   TRACE_NAME
@@ -56,9 +57,7 @@ function TraceDetails({ trace, totalDuration }) {
         </div>
         <div>
           <DetailsHeader>Trace duration</DetailsHeader>
-          <DetailsText>
-            {numeral(traceDuration / 1000).format('0.00')} ms
-          </DetailsText>
+          <DetailsText>{asMillis(traceDuration)}</DetailsText>
         </div>
         <div>
           <DetailsHeader>% of total time</DetailsHeader>

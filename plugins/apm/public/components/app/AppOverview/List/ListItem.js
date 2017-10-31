@@ -4,7 +4,7 @@ import { RelativeLink } from '../../../../utils/url';
 import { KuiTableRow, KuiTableRowCell } from 'ui_framework/components';
 import { px, unit, fontSizes } from '../../../../style/variables';
 import { RIGHT_ALIGNMENT } from 'ui_framework/services';
-import { getFormattedResponseTime } from '../../../shared/charts/TransactionCharts/utils';
+import { asMillisWithDefault } from '../../../../utils/formatters';
 import numeral from '@elastic/numeral';
 
 const AppNameCell = styled(KuiTableRowCell)`
@@ -42,7 +42,7 @@ function ListItem({ app }) {
       </AppNameCell>
       <KuiTableRowCell>{formatString(agentName)}</KuiTableRowCell>
       <KuiTableRowCell align={RIGHT_ALIGNMENT}>
-        {getFormattedResponseTime(avgResponseTime / 1000)}
+        {asMillisWithDefault(avgResponseTime)}
       </KuiTableRowCell>
       <KuiTableRowCell align={RIGHT_ALIGNMENT}>
         {formatNumber(transactionsPerMinute)}

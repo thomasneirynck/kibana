@@ -3,6 +3,7 @@ import d3 from 'd3';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { scaleLinear } from 'd3-scale';
+import { getTimeFormatter } from '../../../../utils/formatters';
 import SingleRect from './SingleRect';
 import 'react-vis/dist/style.css';
 import {
@@ -104,6 +105,7 @@ class Histogram extends PureComponent {
           tickSizeOuter={10}
           tickSizeInner={0}
           tickTotal={X_TICK_TOTAL}
+          tickFormat={getTimeFormatter(xMax)}
         />
         <YAxis
           tickSize={0}

@@ -1,9 +1,6 @@
 import d3 from 'd3';
 import { createSelector } from 'reselect';
-import {
-  getFormattedResponseTime,
-  getFormattedRequestsPerMinute
-} from './utils';
+import { asMillisWithDefault, asRpm } from '../../../../utils/formatters';
 
 export const getResponseTimeSeries = createSelector(
   data => data.responseTimes.dates,
@@ -19,7 +16,7 @@ function _getResponseTimeSeries(dates, avg, p95, p99, weightedAverage) {
     {
       title: 'Avg.',
       data: getResponseTimeValues(dates, avg),
-      legendValue: `${getFormattedResponseTime(weightedAverage / 1000)}`,
+      legendValue: `${asMillisWithDefault(weightedAverage)}`,
       type: 'area',
       color: '#3185FC',
       areaColor: 'rgba(49, 133, 252, 0.1)'
@@ -60,36 +57,28 @@ function _getRpmSeries(rpmPerStatusClass, rpmPerStatusClassAverage) {
     {
       title: '2xx',
       data: getRpmValues(rpmPerStatusClass.dates, rpmPerStatusClass['2xx']),
-      legendValue: `${getFormattedRequestsPerMinute(
-        rpmPerStatusClassAverage['2xx']
-      )}`,
+      legendValue: `${asRpm(rpmPerStatusClassAverage['2xx'])}`,
       type: 'line',
       color: '#3185FC'
     },
     {
       title: '3xx',
       data: getRpmValues(rpmPerStatusClass.dates, rpmPerStatusClass['3xx']),
-      legendValue: `${getFormattedRequestsPerMinute(
-        rpmPerStatusClassAverage['3xx']
-      )}`,
+      legendValue: `${asRpm(rpmPerStatusClassAverage['3xx'])}`,
       type: 'line',
       color: '#ECAE23'
     },
     {
       title: '4xx',
       data: getRpmValues(rpmPerStatusClass.dates, rpmPerStatusClass['4xx']),
-      legendValue: `${getFormattedRequestsPerMinute(
-        rpmPerStatusClassAverage['4xx']
-      )}`,
+      legendValue: `${asRpm(rpmPerStatusClassAverage['4xx'])}`,
       type: 'line',
       color: '#00B3A4'
     },
     {
       title: '5xx',
       data: getRpmValues(rpmPerStatusClass.dates, rpmPerStatusClass['5xx']),
-      legendValue: `${getFormattedRequestsPerMinute(
-        rpmPerStatusClassAverage['5xx']
-      )}`,
+      legendValue: `${asRpm(rpmPerStatusClassAverage['5xx'])}`,
       type: 'line',
       color: '#DB1374'
     }
@@ -99,7 +88,7 @@ function _getRpmSeries(rpmPerStatusClass, rpmPerStatusClassAverage) {
 function getResponseTimeValues(dates = [], yValues = []) {
   return dates.map((x, i) => ({
     x: new Date(x).getTime(),
-    y: yValues[i] / 1000 // convert to ms
+    y: yValues[i]
   }));
 }
 

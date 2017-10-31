@@ -14,11 +14,7 @@ import { RelativeLink, legacyEncodeURIComponent } from '../../../../utils/url';
 
 import { get } from 'lodash';
 import { TRANSACTION_NAME } from '../../../../../common/constants';
-
-import {
-  getFormattedResponseTime,
-  getFormattedRequestsPerMinute
-} from '../../../shared/charts/TransactionCharts/utils';
+import { asMillisWithDefault, asRpm } from '../../../../utils/formatters';
 
 const TransactionNameCell = styled(KuiTableRowCell)`
   font-family: ${fontFamilyCode};
@@ -62,15 +58,9 @@ function TransactionListItem({ appName, transaction, type, impact }) {
           {transactionName || 'N/A'}
         </RelativeLink>
       </TransactionNameCell>
-      <KuiTableRowCell>
-        {getFormattedResponseTime(transaction.avg / 1000)}
-      </KuiTableRowCell>
-      <KuiTableRowCell>
-        {getFormattedResponseTime(transaction.p95 / 1000)}
-      </KuiTableRowCell>
-      <KuiTableRowCell>
-        {getFormattedRequestsPerMinute(transaction.rpm)}
-      </KuiTableRowCell>
+      <KuiTableRowCell>{asMillisWithDefault(transaction.avg)}</KuiTableRowCell>
+      <KuiTableRowCell>{asMillisWithDefault(transaction.p95)}</KuiTableRowCell>
+      <KuiTableRowCell>{asRpm(transaction.rpm)}</KuiTableRowCell>
       <KuiTableRowCell>
         <ImpactSparkline impact={impact} />
       </KuiTableRowCell>
