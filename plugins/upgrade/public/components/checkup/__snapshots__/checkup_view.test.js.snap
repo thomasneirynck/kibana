@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`CheckupView renders an ErrorPanel when the loadingStatus indicates forbidden access 1`] = `undefined`;

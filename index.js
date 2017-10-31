@@ -10,7 +10,6 @@ import { watcher } from './plugins/watcher';
 import { grokdebugger } from './plugins/grokdebugger';
 import { dashboardMode } from './plugins/dashboard_mode';
 import { logstash } from './plugins/logstash';
-import { upgrade } from './plugins/upgrade';
 import { apm } from './plugins/apm';
 
 module.exports = function (kibana) {
@@ -27,7 +26,6 @@ module.exports = function (kibana) {
     grokdebugger(kibana),
     dashboardMode(kibana),
     logstash(kibana),
-    upgrade(kibana),
     apm(kibana)
   ];
 };

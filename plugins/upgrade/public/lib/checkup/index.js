@@ -1,4 +1,0 @@
-export {
-  getDeprecations,
-} from './deprecations';
-

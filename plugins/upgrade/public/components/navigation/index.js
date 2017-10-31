@@ -1,1 +1,0 @@
-export { UpgradeSectionNavigation } from './navigation';

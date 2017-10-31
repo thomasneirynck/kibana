@@ -1,1 +1,0 @@
-export { UpgradeSection } from './section';
