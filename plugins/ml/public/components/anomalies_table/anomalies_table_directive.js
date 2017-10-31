@@ -21,6 +21,8 @@ import moment from 'moment';
 import _ from 'lodash';
 import rison from 'rison-node';
 
+import { notify } from 'ui/notify';
+import { ES_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
 import { replaceStringTokens } from 'plugins/ml/util/string_utils';
 import { isTimeSeriesViewDetector } from 'plugins/ml/util/job_utils';
 import {
@@ -218,49 +220,51 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
         const datafeedTypes = job.datafeed_config.types;
 
         // Find the mapping type of the categorization field i.e. text (preferred) or keyword.
-        // Find the first matching field in the datafeed_config indices.
-        const indices = mlESMappingService.indices;
-        let categorizationFieldType;
-        let indexPattern;
-        indexLoop:
-          for (let i = 0; datafeedIndices.length; i++) {
-            const index = indices[datafeedIndices[i]];
-            for (let t = 0; datafeedTypes.length; t++) {
-              categorizationFieldType = _.get(index,
-                ['types', datafeedTypes[t], 'properties', categorizationFieldName, 'type']);
-              if (categorizationFieldType !== undefined) {
-                // Use the first matching datafeed_config index as the Kibana
-                // index pattern of the drilldown Disover tab.
-                // TODO - provide warnings if no index pattern exists.
-                indexPattern = datafeedIndices[i];
-                break indexLoop;
-              }
-            }
+        // Uses the first matching field found in the list of indices in the datafeed_config.
+        let categorizationFieldType = undefined;
+        let index = undefined;
+        const typeFound = datafeedIndices.some((datafeedIndex) => {
+          categorizationFieldType = mlESMappingService.getFieldTypeFromMapping(
+            datafeedIndex,
+            categorizationFieldName,
+            datafeedTypes);
+          if (categorizationFieldType !== undefined) {
+            index = datafeedIndex;
           }
+          return (categorizationFieldType !== undefined);
+        });
 
         // Find the ID of the index pattern with a title attribute which matches the
         // index configured in the datafeed. If a Kibana index pattern has not been created
         // for this index, then the user will see a warning message on the Discover tab advising
         // them that no matching index pattern has been configured.
         const indexPatterns = $route.current.locals.indexPatterns;
-        let indexPatternId = indexPattern;
+        let indexPatternId = index;
         for (let i = 0; i < indexPatterns.length; i++) {
-          if (indexPatterns[i].get('title') === indexPattern) {
+          if (indexPatterns[i].get('title') === index) {
             indexPatternId = indexPatterns[i].id;
             break;
           }
         }
 
-        // Get the definition of the category and use the terms or regex to view the
-        // matching events in the Kibana Discover tab depending on whether the
-        // categorization field is of mapping type text (preferred) or keyword.
-        mlResultsService.getCategoryDefinition(record.job_id, categoryId)
+        if (typeFound === true) {
+          // Get the definition of the category and use the terms or regex to view the
+          // matching events in the Kibana Discover tab depending on whether the
+          // categorization field is of mapping type text (preferred) or keyword.
+          mlResultsService.getCategoryDefinition(record.job_id, categoryId)
           .then((resp) => {
-            let query = `${categorizationFieldName}:`;
-            if (categorizationFieldType === 'keyword') {
-              query += `/${resp.regex}/`;
+            let query = null;
+            // Build query using categorization regex (if keyword type) or terms (if text type).
+            // Check for terms or regex in case categoryId represents an anomaly from the absence of the
+            // categorization field in documents (usually indicated by a categoryId of -1).
+            if (categorizationFieldType === ES_FIELD_TYPES.KEYWORD) {
+              if (resp.regex) {
+                query = `${categorizationFieldName}:/${resp.regex}/`;
+              }
             } else {
-              query += resp.terms.split(' ').join(` AND ${categorizationFieldName}:`);
+              if (resp.terms) {
+                query = `${categorizationFieldName}:` + resp.terms.split(' ').join(` AND ${categorizationFieldName}:`);
+              }
             }
 
             const recordTime = moment(record[scope.timeFieldName]);
@@ -281,16 +285,19 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
               }
             });
 
-            const _a = rison.encode({
+            const appStateProps = {
               index: indexPatternId,
-              filters: [],
-              query: {
+              filters: []
+            };
+            if (query !== null) {
+              appStateProps.query = {
                 query_string: {
                   analyze_wildcard: true,
                   query: query
                 }
-              }
-            });
+              };
+            }
+            const _a = rison.encode(appStateProps);
 
             // Need to encode the _a parameter as it will contain characters such as '+' if using the regex.
             let path = chrome.getBasePath();
@@ -302,7 +309,13 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
           }).catch((resp) => {
             console.log('viewExamples(): error loading categoryDefinition:', resp);
           });
-
+        } else {
+          console.log(`viewExamples(): error finding type of field ${categorizationFieldName} in indices:`,
+            datafeedIndices);
+          notify.error(`Unable to view examples of documents with mlcategory ${categoryId} ` +
+            `as no mapping could be found for the categorization field ${categorizationFieldName}`,
+          { lifetime: 30000 });
+        }
       };
 
       scope.openCustomUrl = function (customUrl, record) {
