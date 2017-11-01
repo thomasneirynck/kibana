@@ -1,0 +1,34 @@
+[role="xpack"]
+[[monitoring-data]]
+== Viewing Monitoring Data in {kib}
+++++
+<titleabbrev>Viewing Monitoring Data</titleabbrev>
+++++
+
+Monitoring is automatically enabled when you
+{xpack-ref}/installing-xpack.html[install {xpack}] into {es}, Logstash, and
+{kib}. By default, the monitoring agents on {es} index data within the same
+cluster.
+
+TIP: If you have a
+{xpack-ref}/monitoring-cluster.html[dedicated monitoring cluster],
+the information is accessible even if the {es} cluster you're monitoring
+is not. You can send data from multiple clusters to the same monitoring cluster
+and view them all through the same instance of {kib}.
+
+To view and analyze the health and performance of {es}, Logstash, and {kib}:
+
+. Open {kib} in your web browser and log in. If you are running {kib}
+locally, go to `http://localhost:5601/`. To access {kib} and view the
+monitoring dashboards, you must log in as a user who has the `kibana_user`
+and `monitoring_user` roles.
+
+. Click **Monitoring** in the side navigation. This displays any
+{xpack-ref}/monitoring-details.html#cluster-alerts[cluster alerts] that require
+your attention and a summary of the available monitoring metrics for {es},
+Logstash, and {kib}. To view additional information, click the Overview, Nodes,
+Indices, or Instances links.
+
+image::monitoring/images/monitoring.jpg["Monitoring Dashboards",link="images/monitoring.jpg"]
+
+include::cluster-alerts-license.asciidoc[]

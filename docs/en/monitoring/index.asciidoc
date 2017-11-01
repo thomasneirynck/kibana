@@ -15,11 +15,5 @@ For more information, see
 {xpack-ref}/xpack-monitoring.html[Monitoring the Elastic Stack].
 --
 
-[role="xpack"]
-== Getting Started
-
-Monitoring is automatically enabled when you install {xpack} into {kib}. For
-more information, see <<installing-xpack-kb>>.
-
-For more information, see
-{xpack-ref}/monitoring-getting-started.html[Getting Started with Monitoring].
+include::viewing-metrics.asciidoc[]
+include::monitoring-xkib.asciidoc[]
