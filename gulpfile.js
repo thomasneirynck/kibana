@@ -66,18 +66,18 @@ gulp.task('lint-staged', () => {
     // including the period in the extension allows whole names (e.g., build.gradle) to be whitelisted
     const whitelist = [
       '\.asciidoc',
+      '\.css',
+      '\.gradle',
+      '\.gz',
+      '\.html',
+      '\.jpg',
       '\.js',
       '\.js\.snap',
-      '\.html',
-      '\.less',
-      '\.css',
       '\.json',
-      '\.jpg',
+      '\.less',
+      '\.md',
       '\.png',
       '\.svg',
-      '\.gz',
-      '\.asciidoc',
-      '\.gradle',
       '\.yml' // rename .yaml to .yml if you run into this; don't add .yaml
     ];
 

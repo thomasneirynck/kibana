@@ -41,6 +41,27 @@ npm start -- --plugin-path=../path/to/x-pack-kibana/build/kibana/x-pack
 
 This is also a useful way to test the build. The downside is that **changes are not automatically synced for you**, so you will need to re-run the build every time you want to use the changes you've made (Kibana will automatically restart when you do, if running in dev mode).
 
+#### Alternate: Run Kibana with a config file
+
+You can create an X-Pack-specific config file in your Kibana directory, e.g. `config/xpack.yml`:
+
+```
+elasticsearch.username: "elastic"
+elasticsearch.password: "password"
+
+xpack.reporting.kibanaServer.port: 5601
+
+plugins.paths:
+  - /Users/you/path/to/x-pack-kibana
+```
+
+And then from the command line, you can run:
+
+```
+# in kibana
+bin/kibana --config=config/xpack.yml --dev
+```
+
 #### Running server code in debugger
 
 ```
