@@ -1,3 +1,4 @@
+import { noop } from 'lodash';
 import React from 'react';
 import {
   KuiToolBar,
@@ -33,13 +34,12 @@ export function MonitoringTableSearchBar(props) {
   return (
     <KuiToolBar>
       { searchBox }
-      { props.toolBarSections }
-
+      { props.renderToolBarSections(props) }
       { paginationSection }
     </KuiToolBar>
   );
 }
 MonitoringTableSearchBar.defaultProps = {
-  toolBarSections: [],
+  renderToolBarSections: noop,
   showSearchBox: true
 };

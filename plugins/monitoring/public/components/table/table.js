@@ -2,7 +2,9 @@ import React from 'react';
 import { camelCase, isEqual, sortByOrder, get, includes } from 'lodash';
 import {
   DEFAULT_NO_DATA_MESSAGE,
-  DEFAULT_NO_DATA_MESSAGE_WITH_FILTER
+  DEFAULT_NO_DATA_MESSAGE_WITH_FILTER,
+  TABLE_ACTION_UPDATE_FILTER,
+  TABLE_ACTION_RESET_PAGING,
 } from 'monitoring-constants';
 import {
   KuiControlledTable,
@@ -65,6 +67,56 @@ export class MonitoringTable extends React.Component {
       filterText: props.filterText || '',
       pageIndex: props.pageIndex || 1
     };
+
+    this.paginationOnPrevious = this.paginationOnPrevious.bind(this);
+    this.paginationOnNext = this.paginationOnNext.bind(this);
+    this.onFilterChange = this.onFilterChange.bind(this);
+    this.dispatchTableAction = this.dispatchTableAction.bind(this);
+  }
+
+  setFilter(filterText) {
+    this.setState(prevState => {
+      const newState = {
+        ...prevState,
+        pageIndex: 1,
+        filterText
+      };
+
+      this.onNewState(newState);
+      return newState;
+    });
+  }
+
+  resetPaging() {
+    this.setState(prevState => {
+      const newState = {
+        ...prevState,
+        pageIndex: 1
+      };
+
+      this.onNewState(newState);
+      return newState;
+    });
+  }
+
+  /*
+   * This function is passed to child components, and called when something in
+   * this state needs to change
+   * @param {String} action - A constant to identify the action
+   * @param {Any} value - Payload data for the action, if any is needed
+   */
+  dispatchTableAction(action, value) {
+    // handle the action
+    switch (action) {
+      case TABLE_ACTION_UPDATE_FILTER:
+        this.setFilter(value);
+        break;
+      case TABLE_ACTION_RESET_PAGING:
+        this.resetPaging();
+        break;
+      default:
+        throw new Error(`Unknown table action type ${action}! This shouldn't happen!`);
+    }
   }
 
   /*
@@ -117,16 +169,7 @@ export class MonitoringTable extends React.Component {
    * @param {Object} event - UI event data
    */
   onFilterChange(filterText) {
-    this.setState(prevState => {
-      const newState = {
-        ...prevState,
-        pageIndex: 1,
-        filterText
-      };
-
-      this.onNewState(newState);
-      return newState;
-    });
+    this.setFilter(filterText);
   }
 
   paginationHasPrevious() {
@@ -179,15 +222,12 @@ export class MonitoringTable extends React.Component {
     const hasPrevious = this.paginationHasPrevious();
     const hasNext = this.paginationHasNext(numAvailableRows);
 
-    const onPrevious = this.paginationOnPrevious.bind(this);
-    const onNext = this.paginationOnNext.bind(this);
-
     return (
       <KuiPagerButtonGroup
         hasNext={hasNext}
         hasPrevious={hasPrevious}
-        onNext={onNext}
-        onPrevious={onPrevious}
+        onPrevious={this.paginationOnPrevious}
+        onNext={this.paginationOnNext}
       />
     );
   }
@@ -216,9 +256,10 @@ export class MonitoringTable extends React.Component {
         rowsFiltered={numAvailableRows}
         filterText={this.state.filterText}
         placeholder={this.props.placeholder}
-        toolBarSections={this.props.toolBarSections}
         paginationControls={this.getPaginationControls(numAvailableRows)}
-        onFilterChange={this.onFilterChange.bind(this)}
+        onFilterChange={this.onFilterChange}
+        renderToolBarSections={this.props.renderToolBarSections}
+        dispatchTableAction={this.dispatchTableAction}
       />
     );
   }
@@ -365,7 +406,13 @@ export class MonitoringTable extends React.Component {
       // data has some rows, show them
       const RowComponent = this.props.rowComponent;
       const tBody = visibleRows.map((rowData, rowIndex) => {
-        return <RowComponent {...rowData} key={`rowData-${rowIndex}`} />;
+        return (
+          <RowComponent
+            {...rowData}
+            key={`rowData-${rowIndex}`}
+            dispatchTableAction={this.dispatchTableAction}
+          />
+        );
       });
 
       table = (

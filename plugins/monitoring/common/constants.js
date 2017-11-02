@@ -171,3 +171,6 @@ export const DEFAULT_NO_DATA_MESSAGE = 'There are no records that match your que
 export const DEFAULT_NO_DATA_MESSAGE_WITH_FILTER = (
   'There are no records that match your query with the filter [{{FILTER}}]. Try changing the filter or the time range selection.'
 );
+
+export const TABLE_ACTION_UPDATE_FILTER = 'UPDATE_FILTER';
+export const TABLE_ACTION_RESET_PAGING  = 'RESET_PAGING';

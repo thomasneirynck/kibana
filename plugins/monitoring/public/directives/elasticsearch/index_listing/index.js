@@ -6,49 +6,13 @@ import { LARGE_FLOAT, LARGE_BYTES, LARGE_ABBREVIATED } from 'monitoring-formatti
 import { uiModules } from 'ui/modules';
 import {
   KuiKeyboardAccessible,
-  KuiToolBarSection,
-  KuiToolBarText,
   KuiTableRowCell,
-  KuiTableRow
+  KuiTableRow,
 } from 'ui_framework/components';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
+import { ShowSytemIndicesCheckbox } from 'plugins/monitoring/components/elasticsearch/index_listing';
 import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';
 import { formatMetric } from '../../../lib/format_number';
-
-const showSystemIndicesComponentFactory = scope => {
-  return class ShowSytemIndicesCheckbox extends React.Component {
-    constructor(props) {
-      super();
-      this.state = { showSystemIndices: props.showSystemIndices };
-      this.toggleShowSystemIndices = this.toggleShowSystemIndices.bind(this);
-    }
-    // See also directives/shard_allocation/components/tableHead
-    toggleShowSystemIndices(e) {
-      const isChecked = Boolean(e.target.checked);
-      this.setState({ showSystemIndices: isChecked });
-      scope.$evalAsync(() => {
-        scope.toggleShowSystemIndices(isChecked);
-      });
-    }
-    render() {
-      return (
-        <KuiToolBarSection>
-          <KuiToolBarText>
-            <label className="kuiCheckBoxLabel">
-              <input
-                className="kuiCheckBox"
-                type="checkbox"
-                onChange={this.toggleShowSystemIndices}
-                checked={this.state.showSystemIndices}
-              />
-              <span className="kuiCheckBoxLabel__text">Show system indices</span>
-            </label>
-          </KuiToolBarText>
-        </KuiToolBarSection>
-      );
-    }
-  };
-};
 
 const filterFields = ['name', 'status'];
 const cols = [
@@ -151,11 +115,16 @@ uiModule.directive('monitoringIndexListing', kbnUrl => {
       toggleShowSystemIndices: '='
     },
     link(scope, $el) {
-      const ShowSytemIndicesCheckbox = showSystemIndicesComponentFactory(scope);
-      const toolBarSection = (
+      const toggleShowSystemIndices = isChecked => {
+        scope.$evalAsync(() => {
+          scope.toggleShowSystemIndices(isChecked);
+        });
+      };
+      const renderToolBarSection = props => (
         <ShowSytemIndicesCheckbox
-          key="toolbarSection-1"
           showSystemIndices={scope.showSystemIndices}
+          toggleShowSystemIndices={toggleShowSystemIndices}
+          {...props}
         />
       );
 
@@ -171,7 +140,7 @@ uiModule.directive('monitoringIndexListing', kbnUrl => {
             onNewState={scope.onNewState}
             placeholder="Filter Indices..."
             filterFields={filterFields}
-            toolBarSections={[ toolBarSection ]}
+            renderToolBarSections={renderToolBarSection}
             columns={cols}
             rowComponent={indexRowFactory(scope, kbnUrl)}
             getNoDataMessage={getNoDataMessage}
