@@ -19,6 +19,26 @@ import expect from 'expect.js';
 
 import { chartLimits } from 'plugins/ml/util/chart_utils.js';
 
+/*
+ * This demonstrates two different ways to set up the necessary boilerplate to
+ * write unit tests for Angular Directives when you want to test the rendered
+ * result.
+ *
+ * Note that the first two tests don't append the directive to the browser's
+ * DOM. The boilerplate is simpler there because the tests don't rely on
+ * checking DOM elements/attributes in their rendered state, the tests just
+ * work if the correct rendered structure is present.
+ *
+ * The other two tests use a init(<data>, <tests>) helper function to append the
+ * directive to the DOM and correctly initialize it. Otherwise the rendering of
+ * the directive would fail because its link() function is dependent on certain
+ * DOM attributes (e.g. the dynamic width and height of an element).
+ * The init() function takes care of running the tests only after the initialize
+ * $scope.$digest() is run.
+ * Also note the use of done() with these tests, this is required if tests are
+ * run in an asynchronous manner like using a callback in this case.
+ */
+
 describe('ML - <ml-explorer-chart>', function () {
   let $scope;
   let $compile;
@@ -84,7 +104,7 @@ describe('ML - <ml-explorer-chart>', function () {
     expect($element.find('ml-loading-indicator .loading-indicator').length).to.be(0);
   });
 
-  it('Loading status active, no chart', function () {
+  it('Loading status active, no chart', () => {
     $scope.seriesConfig = {
       loading: true
     };
@@ -96,27 +116,37 @@ describe('ML - <ml-explorer-chart>', function () {
     expect($element.find('ml-loading-indicator .loading-indicator').length).to.be(1);
   });
 
-  describe('ML - <ml-explorer-chart> data rendering', function () {
+  describe('ML - <ml-explorer-chart> data rendering', () => {
     // For the following tests the directive needs to be rendered in the actual DOM,
     // because otherwise there wouldn't be a width available which would
     // trigger SVG errors. We use a fixed width to be able to test for
     // fine grained attributes of the chart.
-    beforeEach(function () {
+
+    // basically a parameterized beforeEach
+    function init(chartData, tests) {
       // First we create the element including a wrapper which sets the width:
       $element = angular.element('<div style="width: 500px"><ml-explorer-chart series-config="seriesConfig" /></div>');
       // Add the element to the body so it gets rendered
       $element.appendTo(document.body);
+
+      $scope.seriesConfig = {
+        ...seriesConfig,
+        chartData,
+        chartLimits: chartLimits(chartData)
+      };
+
       // Compile the directive and run a $digest()
       $compile($element)($scope);
-      $scope.$apply();
-    });
+      $scope.$evalAsync(tests);
+      $scope.$digest();
+    }
 
     afterEach(function () {
       // remove the element from the DOM
       $element.remove();
     });
 
-    it('Anomaly Explorer Chart with multiple data points', function () {
+    it('Anomaly Explorer Chart with multiple data points', (done) => {
       // prepare data for the test case
       const chartData = [
         {
@@ -138,14 +168,8 @@ describe('ML - <ml-explorer-chart>', function () {
           actual: [201039318], typical: [132739.5267403542]
         }
       ];
-      $scope.seriesConfig = {
-        ...seriesConfig,
-        chartData: chartData,
-        chartLimits: chartLimits(chartData)
-      };
 
-      // Now the chart should be loaded correctly and we're set up to run the tests
-      $scope.$on('renderComplete', () => {
+      init(chartData, () => {
         // the loading indicator should not be shown
         expect($element.find('ml-loading-indicator .loading-indicator').length).to.be(0);
 
@@ -197,10 +221,12 @@ describe('ML - <ml-explorer-chart>', function () {
         const chartMarkers = lineChart.find('g.chart-markers circle');
         expect(chartMarkers.length).to.be(3);
         expect(chartMarkers.toArray().map(d => +angular.element(d).attr('r'))).to.eql([7, 7, 7]);
+
+        done();
       });
     });
 
-    it('Anomaly Explorer Chart with single data point', function () {
+    it('Anomaly Explorer Chart with single data point', (done) => {
       const chartData = [
         {
           date: new Date('2017-02-23T08:00:00.000Z'),
@@ -208,17 +234,13 @@ describe('ML - <ml-explorer-chart>', function () {
           actual: [228243469], typical: [228243469]
         }
       ];
-      $scope.seriesConfig = {
-        ...seriesConfig,
-        chartData: chartData,
-        chartLimits: chartLimits(chartData)
-      };
 
-      $scope.$on('renderComplete', () => {
+      init(chartData, () => {
         const svg = $element.find('svg');
         const lineChart = svg.find('g.line-chart');
         const yAxisTicks = lineChart.find('.y.axis .tick');
         expect(yAxisTicks.length).to.be(13);
+        done();
       });
     });
   });

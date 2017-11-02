@@ -286,7 +286,7 @@ module.directive('mlExplorerChart', function (Private, formatValueFilter, mlChar
   }
 
   return {
-  	restrict: 'E',
+    restrict: 'E',
     scope: {
       seriesConfig: '='
     },

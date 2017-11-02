@@ -19,7 +19,7 @@ import moment from 'moment';
 
 const MAX_LABEL_WIDTH = 100;
 
-export function chartLimits(data) {
+export function chartLimits(data = []) {
   const limits = { max: 0, min: 0 };
 
   limits.max = d3.max(data, (d) => d.value);
