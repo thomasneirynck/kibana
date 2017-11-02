@@ -32,6 +32,7 @@ export function graph(kibana) {
         ]
       },
       hacks: ['plugins/graph/hacks/toggle_app_link_in_nav'],
+      home: ['plugins/graph/register_feature'],
       mappings
     },
 

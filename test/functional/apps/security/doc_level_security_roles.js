@@ -16,16 +16,11 @@ export default function ({ getService, getPageObjects }) {
 
   describe('dls', function () {
     before('initialize tests', async () => {
+      await esArchiver.load('empty_kibana');
       await esArchiver.loadIfNeeded('security/dlstest');
       remote.setWindowSize(1600, 1000);
 
-      await PageObjects.settings.navigateTo();
-      await PageObjects.settings.clickKibanaIndices();
-      await retry.try(async () => {
-        await PageObjects.settings.navigateTo();
-        await PageObjects.settings.clickKibanaIndices();
-        await PageObjects.settings.createIndexPattern('dlstest', null);
-      });
+      await PageObjects.settings.createIndexPattern('dlstest', null);
 
       await PageObjects.settings.navigateTo();
       await PageObjects.security.clickElasticsearchRoles();
@@ -61,6 +56,7 @@ export default function ({ getService, getPageObjects }) {
     it('user East should only see EAST doc', async function () {
       await PageObjects.security.logout();
       await PageObjects.security.login('userEast', 'changeme');
+      await PageObjects.common.navigateToApp('discover');
       await retry.try(async () => {
         const hitCount = await PageObjects.discover.getHitCount();
         expect(hitCount).to.be('1');

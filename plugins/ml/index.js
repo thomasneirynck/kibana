@@ -51,7 +51,8 @@ export const ml = (kibana) => {
           'savedObjectTypes',
         ]
       },
-      hacks: ['plugins/ml/hacks/toggle_app_link_in_nav']
+      hacks: ['plugins/ml/hacks/toggle_app_link_in_nav'],
+      home: ['plugins/ml/register_feature']
 
     },
 

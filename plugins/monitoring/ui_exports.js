@@ -53,5 +53,6 @@ export const uiExports = {
     'plugins/monitoring/hacks/welcome_banner',
     'plugins/monitoring/hacks/phone_home_trigger',
     'plugins/monitoring/hacks/toggle_app_link_in_nav'
-  ]
+  ],
+  home: ['plugins/monitoring/register_feature']
 };

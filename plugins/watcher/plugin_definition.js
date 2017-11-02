@@ -21,7 +21,8 @@ export const pluginDefinition = {
       'plugins/watcher/sections/watch_edit',
       'plugins/watcher/sections/watch_list',
       'plugins/watcher/sections/watch_history_item',
-    ]
+    ],
+    home: ['plugins/watcher/register_feature']
   },
   init: function (server) {
     registerLicenseChecker(server);
