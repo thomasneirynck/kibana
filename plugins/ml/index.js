@@ -15,7 +15,6 @@
 
 import { resolve } from 'path';
 import Boom from 'boom';
-import { initializationChecks } from './server/lib/initialization_checks';
 import { checkLicense } from './server/lib/check_license';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 import { jobRoutes } from './server/routes/anomaly_detectors';
@@ -88,10 +87,7 @@ export const ml = (kibana) => {
       systemRoutes(server, commonRouteConfig);
       dataRecognizer(server, commonRouteConfig);
       dataVisualizerRoutes(server, commonRouteConfig);
-
-      initializationChecks(this, server).start();
     }
-
 
   });
 };
