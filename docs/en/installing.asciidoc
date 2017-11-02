@@ -12,10 +12,9 @@ see https://www.elastic.co/products/x-pack.
 
 
 NOTE: You must run the version of {xpack} that matches the version of {kib}
-you are running.
-
-//TBD: Is it a requirement that you install X-Pack on ES before you install it
-//on Kibana? i.e. is the order important?
+you are running. See the
+https://www.elastic.co/support/matrix#matrix_compatibility[Elastic Support Matrix]
+for more information about product compatibility. 
 
 To install {xpack} in {kib}:
 
