@@ -8,9 +8,20 @@ export function VisualizePageProvider({ getService, getPageObjects }) {
   const find = getService('find');
   const log = getService('log');
   const PageObjects = getPageObjects(['common', 'header']);
+
+
+  const screenshotter = getService('screenshots');
+
   const defaultFindTimeout = config.get('timeouts.find');
 
   class VisualizePage {
+
+
+    async takeScreenshot(){
+
+      await screenshotter.take('foobar');
+
+    }
 
     async clickAreaChart() {
       await find.clickByPartialLinkText('Area');
@@ -137,6 +148,11 @@ export function VisualizePageProvider({ getService, getPageObjects }) {
       const input = await find.byCssSelector('input[ng-model="absolute.to"]', defaultFindTimeout * 2);
       await input.clearValue();
       await input.type(timeString);
+    }
+
+    async getCanvas(){
+      const canvas = await find.byCssSelector('.leaflet-pane .leaflet-overlay-pane > canvas');
+      return canvas;
     }
 
     async setReactSelect(className, value) {
@@ -318,6 +334,8 @@ export function VisualizePageProvider({ getService, getPageObjects }) {
     async selectFieldById(fieldValue, id) {
       await find.clickByCssSelector(`#${id} > option[label="${fieldValue}"]`);
     }
+
+
 
     async orderBy(fieldValue) {
       await find.clickByCssSelector(

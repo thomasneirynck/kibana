@@ -18,6 +18,8 @@ export default class ChoroplethLayer extends KibanaMapLayer {
     this._boundsOfData = null;
 
     this._geojsonUrl = geojsonUrl;
+
+    console.log('do thinag');
     this._leafletLayer = L.geoJson(null, {
       onEachFeature: (feature, layer) => {
         layer.on('click', () => {
@@ -45,21 +47,27 @@ export default class ChoroplethLayer extends KibanaMapLayer {
       style: emptyStyle
     });
 
+    console.log('after thing', geojsonUrl);
+
     this._loaded = false;
     this._error = false;
     $.ajax({
       dataType: 'json',
       url: geojsonUrl,
       success: (data) => {
+        console.log('loaded');
         this._leafletLayer.addData(data);
         this._loaded = true;
         this._setStyle();
       },
       error: () => {
+        console.log('not loaded');
         this._loaded = true;
         this._error = true;
       }
     });
+
+    console.log('da thing after load', geojsonUrl);
   }
 
   _setStyle() {

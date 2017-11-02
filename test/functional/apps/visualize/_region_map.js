@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-
+import pixelmatch from 'pixelmatch';
 
 export default function ({ getService, getPageObjects }) {
 
@@ -75,6 +75,19 @@ export default function ({ getService, getPageObjects }) {
         const actualData = await PageObjects.visualize.getDataTableData();
         const expectedData = 'CN,2,592,IN,2,373,US,1,194,ID,489,BR,415';
         expect(actualData.trim().split('\n').join(',')).to.eql(expectedData);
+
+
+      });
+
+      it('should take screenshot', async function(){
+
+        console.log('thang!!!!');
+
+        await PageObjects.visualize.takeScreenshot();
+
+        await PageObjects.common.sleep(2000);//need some time for the data to load
+
+
 
 
       });
