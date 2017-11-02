@@ -1,5 +1,6 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
+import { merge } from 'lodash';
 import { createStubs } from './fixtures/create_stubs';
 import { alertsClustersAggregation } from '../alerts_clusters_aggregation';
 import { INVALID_LICENSE } from '../../../common/constants';
@@ -61,6 +62,50 @@ describe('Alerts Clusters Aggregation', () => {
               count: 1,
               high: 0,
               low: 1,
+              medium: 0
+            },
+            'cluster-abc2': {
+              count: 2,
+              high: 0,
+              low: 0,
+              medium: 2
+            },
+            'cluster-abc3': {
+              count: 3,
+              high: 3,
+              low: 0,
+              medium: 0
+            },
+            'cluster-no-license': undefined,
+            'cluster-invalid': undefined,
+          }
+        );
+      });
+    });
+
+    it('aggregates alert count summary by cluster include static alert', () => {
+      const { mockReq } = createStubs(mockQueryResult, featureStub);
+      const clusterLicenseNeedsTLS = { license: { cluster_needs_tls: true } };
+      const newClusters = Array.from(clusters);
+
+      newClusters[0] = merge({ }, clusters[0], clusterLicenseNeedsTLS);
+      newClusters[1] = merge({ }, clusters[1], clusterLicenseNeedsTLS);
+
+      return alertsClustersAggregation(mockReq, '.monitoring-alerts', newClusters, checkLicense)
+      .then(result => {
+        expect(result).to.eql(
+          {
+            alertsMeta: { enabled: true },
+            'cluster-abc0': {
+              count: 1,
+              high: 0,
+              medium: 0,
+              low: 1
+            },
+            'cluster-abc1': {
+              count: 2,
+              high: 0,
+              low: 2,
               medium: 0
             },
             'cluster-abc2': {

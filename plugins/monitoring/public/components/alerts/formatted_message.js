@@ -6,13 +6,20 @@ import { formatTimestampToDuration } from '../../lib/format_number';
 import { CALCULATE_DURATION_UNTIL } from 'monitoring-constants';
 
 export function FormattedMessage({ prefix, suffix, message, metadata, changeUrl }) {
-  const goToLink = () => {
-    if (metadata && metadata.link) {
-      changeUrl(`/${metadata.link}`);
-    }
-  };
   const formattedMessage = (() => {
-    if (metadata.link) {
+    if (metadata && metadata.link) {
+      if (metadata.link.startsWith('https')) {
+        return (
+          <KuiKeyboardAccessible>
+            <a className="kuiLink" href={metadata.link} target="_blank" data-test-subj="alertAction">
+              { message }
+            </a>
+          </KuiKeyboardAccessible>
+        );
+      }
+
+      const goToLink = () => changeUrl(`/${metadata.link}`);
+
       return (
         <KuiKeyboardAccessible>
           <a className="kuiLink" onClick={goToLink} data-test-subj="alertAction">
@@ -21,10 +28,11 @@ export function FormattedMessage({ prefix, suffix, message, metadata, changeUrl 
         </KuiKeyboardAccessible>
       );
     }
+
     return message;
   })();
 
-  if (metadata.time) {
+  if (metadata && metadata.time) {
     // scan message prefix and replace relative times
     // \w: Matches any alphanumeric character from the basic Latin alphabet, including the underscore. Equivalent to [A-Za-z0-9_].
     prefix = prefix.replace(/{{#relativeTime}}metadata\.([\w\.]+){{\/relativeTime}}/, (_match, field) => {

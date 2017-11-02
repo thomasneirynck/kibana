@@ -41,6 +41,36 @@ describe('Alerts Cluster Search', () => {
         expect(callWithRequestStub.getCall(0).args[2].body.size).to.be(3);
       });
     });
+
+    it('should report static info-level alert when relevent', () => {
+      const { mockReq, callWithRequestStub } = createStubs(mockQueryResult, featureStub);
+      const cluster = {
+        cluster_uuid: 'cluster-1234',
+        timestamp: 'fake-timestamp',
+        version: '6.1.0-throwmeaway2',
+        license: {
+          cluster_needs_tls: true,
+          issue_date: 'fake-issue_date'
+        }
+      };
+      return alertsClusterSearch(mockReq, '.monitoring-alerts', cluster, checkLicense, { size: 3 })
+      .then(alerts => {
+        expect(alerts).to.have.length(2);
+        expect(alerts[0]).to.eql({ alertsClusterSearchTest: true });
+        expect(alerts[1]).to.eql({
+          metadata: {
+            severity: 0,
+            cluster_uuid: cluster.cluster_uuid,
+            link: 'https://www.elastic.co/guide/en/x-pack/6.1/ssl-tls.html'
+          },
+          update_timestamp: cluster.timestamp,
+          timestamp: cluster.license.issue_date,
+          prefix: 'Configuring TLS will be required to apply a Gold or Platinum license when security is enabled.',
+          message: 'See documentation for details.'
+        });
+        expect(callWithRequestStub.getCall(0).args[2].body.size).to.be(3);
+      });
+    });
   });
 
   describe('License checks fail', () => {

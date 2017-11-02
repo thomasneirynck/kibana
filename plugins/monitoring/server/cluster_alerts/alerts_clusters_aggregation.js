@@ -71,22 +71,27 @@ export function alertsClustersAggregation(req, alertsIndex, clusters, checkLicen
       // check the license type of the production cluster for alerts feature support
       const prodLicenseInfo = checkLicense(license.type, license.status === 'active', 'production');
       if (prodLicenseInfo.clusterAlerts.enabled) {
+        const clusterNeedsTLS = get(license, 'cluster_needs_tls', false);
+        const staticAlertCount = clusterNeedsTLS ? 1 : 0;
         const bucket = find(buckets, { key: cluster.cluster_uuid });
+        const bucketDocCount = get(bucket, 'doc_count', 0);
         let severities = {};
-        if (bucket) {
-          if (bucket.doc_count > 0) {
-            const lowGroup = find(bucket.group_by_severity.buckets, { key: 'low' }) || {};
-            const mediumGroup = find(bucket.group_by_severity.buckets, { key: 'medium' }) || {};
-            const highGroup = find(bucket.group_by_severity.buckets, { key: 'high' }) || {};
+
+        if (bucket || staticAlertCount > 0) {
+          if (bucketDocCount > 0 || staticAlertCount > 0) {
+            const groupBySeverityBuckets = get(bucket, 'group_by_severity.buckets', []);
+            const lowGroup = find(groupBySeverityBuckets, { key: 'low' }) || {};
+            const mediumGroup = find(groupBySeverityBuckets, { key: 'medium' }) || {};
+            const highGroup = find(groupBySeverityBuckets, { key: 'high' }) || {};
             severities = {
-              low: lowGroup.doc_count || 0,
+              low: (lowGroup.doc_count || 0) + staticAlertCount,
               medium: mediumGroup.doc_count || 0,
               high: highGroup.doc_count || 0
             };
           }
 
           alerts = {
-            count: bucket.doc_count,
+            count: bucketDocCount + staticAlertCount,
             ...severities
           };
         }
