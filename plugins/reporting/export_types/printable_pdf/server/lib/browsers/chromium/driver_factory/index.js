@@ -25,7 +25,7 @@ export class HeadlessChromiumDriverFactory {
       const driverFactoryLogger = logger.clone(['chromium-driver-factory']);
 
       const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'chromium-'));
-      const chromiumArgs = args({ userDataDir, bridgePort, viewport, disableSandbox: config.disableSandbox });
+      const chromiumArgs = args({ userDataDir, bridgePort, viewport, disableSandbox: config.disableSandbox, proxyConfig: config.proxy });
       driverFactoryLogger.debug(`spawning chromium process at ${this.binaryPath} with arguments ${chromiumArgs}`);
       let chromium;
       try {

@@ -61,7 +61,20 @@ export const reporting = (kibana) => {
           browser: Joi.object({
             type: Joi.any().valid('phantom', 'chromium').default('phantom'),
             chromium: Joi.object({
-              disableSandbox: Joi.boolean().default(false)
+              disableSandbox: Joi.boolean().default(false),
+              proxy: Joi.object({
+                enabled: Joi.boolean().default(false),
+                server: Joi.string().uri({ scheme: ['http', 'https'] }).when('enabled', {
+                  is: Joi.valid(false),
+                  then: Joi.valid(null),
+                  else: Joi.required()
+                }),
+                bypass: Joi.array().items(Joi.string().regex(/^[^\s]+$/)).when('enabled', {
+                  is: Joi.valid(false),
+                  then: Joi.valid(null),
+                  else: Joi.default([])
+                })
+              })
             }).default()
           }).default()
         }).default(),

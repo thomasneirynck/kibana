@@ -107,6 +107,18 @@ docker container as the seccomp-bpf filters and AppArmor profiles that the Docke
 prevent the Sandboxing techniques and cause Chromium to crash on startup.
 Default to `false`
 
+`xpack.reporting.capture.browser.chromium.proxy.enabled`::
+Enable the proxy for Chromium to use. When this is set to `true`, the
+`xpack.reporting.capture.browser.chromium.proxy.server` setting must be specified.
+Defaults to `false`
+
+`xpack.reporting.capture.browser.chromium.proxy.server`::
+The uri for the proxy server.
+
+`xpack.reporting.capture.browser.chromium.proxy.bypass`::
+An array of hosts that shouldn't go through the proxy server and instead use a direct connection.
+Examples of valid entries: "elastic.co", "*.elastic.co", ".elastic.co", ".elastic.co:5601"
+
 
 [float]
 [[reporting-csv-settings]]

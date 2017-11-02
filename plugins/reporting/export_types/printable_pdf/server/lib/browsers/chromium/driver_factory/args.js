@@ -1,4 +1,4 @@
-export const args = ({ userDataDir, bridgePort, viewport, disableSandbox }) => {
+export const args = ({ userDataDir, bridgePort, viewport, disableSandbox, proxyConfig }) => {
   const flags = [
     // Disable built-in Google Translate service
     '--disable-translate',
@@ -26,6 +26,13 @@ export const args = ({ userDataDir, bridgePort, viewport, disableSandbox }) => {
     `--window-size=${viewport.width},${viewport.height}`,
     `--remote-debugging-port=${bridgePort}`,
   ];
+
+  if (proxyConfig.enabled) {
+    flags.push(`--proxy-server=${proxyConfig.server}`);
+    if (proxyConfig.bypass) {
+      flags.push(`--proxy-bypass-list=${proxyConfig.bypass.join(',')}`);
+    }
+  }
 
   if (disableSandbox) {
     flags.push('--no-sandbox');
