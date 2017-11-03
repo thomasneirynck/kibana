@@ -5,19 +5,7 @@
 <titleabbrev>Configuring {xpack}</titleabbrev>
 ++++
 
-You can configure {kib} settings for {xpack} features in the `kibana.yml` file.
-
-There are also settings in the `elasticsearch.yml` file. See
-{ref}/settings-xpack.html[Configuring {xpack}].
-
-The following settings pertain to specific {xpack} features:
-
-* <<dev-settings-kb,Development Tools Settings>>
-* <<graph-settings-kb,Graph Settings>>
-* <<ml-settings-kb,Machine Learning Settings>>
-* <<monitoring-settings-kb,Monitoring Settings>>
-* <<reporting-settings-kb,Reporting Settings>>
-* <<security-settings-kb,Security Settings>>
+include::{asciidoc-dir}/../../shared/settings.asciidoc[]
 
 For more {kib} configuration settings, see <<settings>>.
 
