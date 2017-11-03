@@ -94,6 +94,13 @@
     text-align: center;
   }
 
+  .sampled-message {
+    font-size: 11px;
+    color: #555555;
+    text-align: center;
+    padding-top: 3px;
+  }
+
   .text-code {
     font-family: "Lucida Console", Monaco, monospace;
   }
@@ -138,7 +145,7 @@
 
   ml-document-count-chart {
     display: block;
-    padding: 18px 15px 10px 15px;
+    padding: 18px 15px 0px 15px;
     rect.bar {
       fill: #db1374;
     }
@@ -155,6 +162,9 @@
   }
 
   .top-value {
+    height: 21px;
+    font-size: 13px;
+
     .field-label {
       display: inline-block;
       width: 100px;
@@ -162,7 +172,6 @@
       overflow-x: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      font-size: 13px;
     }
 
     .count-label {
@@ -171,7 +180,6 @@
       text-align: left;
       overflow-x: hidden;
       text-overflow: ellipsis;
-      font-size: 13px;
     }
 
     .top-value-bar-holder {
@@ -180,7 +188,7 @@
     }
 
     .top-value-bar {
-      height: 16px;
+      height: 15px;
       min-width: 3px;
     }
   }

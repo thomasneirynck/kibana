@@ -16,10 +16,6 @@
     <div class="main-container">
 
       <div class="kuiPanel kuiVerticalRhythm datavisualizer-panel">
-        <div>
-          <span class="field-emphasis">{{ overallStats.totalCount }}</span>
-          <ng-pluralize count="overallStats.totalCount" when="{'1':'document', 'other':'documents'}">documents</ng-pluralize>
-        </div>
 
         <form
           ng-submit="submitSearchQuery()"
@@ -45,6 +41,22 @@
             </button>
           </div>
         </form>
+
+        <div class="document-count-container">
+          <label for="sampleShardSize">Sample</label>
+          <select id="sampleShardSize" class="kuiSelect type-input" ng-model="samplerShardSize" ng-change="samplerShardSizeChanged(samplerShardSize)">
+            <option ng-value="1000">1000</option>
+            <option ng-value="5000">5000</option>
+            <option ng-value="10000">10000</option>
+            <option ng-value="100000">100000</option>
+            <option ng-value="-1">all</option>
+          </select>
+          <span>documents per shard from a total of</span>
+          <span class="field-emphasis">{{ overallStats.totalCount }}</span>
+          <ng-pluralize count="overallStats.totalCount" when="{'1':'document', 'other':'documents'}">documents</ng-pluralize>
+          <i aria-hidden="true" class="fa fa-info-circle" tooltip-placement="right"
+            tooltip="Selecting a smaller sample size will reduce query run times and the load on the cluster."></i>
+        </div>
 
       </div>
 

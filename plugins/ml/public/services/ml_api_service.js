@@ -232,6 +232,7 @@ module.service('ml', function (prlHttpService) {
       'timeFieldName',
       'earliest',
       'latest',
+      'samplerShardSize',
       'interval',
       'fields',
       'maxExamples'
@@ -250,6 +251,7 @@ module.service('ml', function (prlHttpService) {
       'timeFieldName',
       'earliest',
       'latest',
+      'samplerShardSize',
       'aggregatableFields',
       'nonAggregatableFields'
     ]);

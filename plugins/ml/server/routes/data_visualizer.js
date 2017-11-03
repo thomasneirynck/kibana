@@ -24,6 +24,7 @@ function getOverallStats(
   query,
   aggregatableFields,
   nonAggregatableFields,
+  samplerShardSize,
   timeFieldName,
   earliestMs,
   latestMs) {
@@ -33,6 +34,7 @@ function getOverallStats(
     query,
     aggregatableFields,
     nonAggregatableFields,
+    samplerShardSize,
     timeFieldName,
     earliestMs,
     latestMs
@@ -44,6 +46,7 @@ function getStatsForFields(
   indexPatternTitle,
   query,
   fields,
+  samplerShardSize,
   timeFieldName,
   earliestMs,
   latestMs,
@@ -54,6 +57,7 @@ function getStatsForFields(
     indexPatternTitle,
     query,
     fields,
+    samplerShardSize,
     timeFieldName,
     earliestMs,
     latestMs,
@@ -77,6 +81,7 @@ export function dataVisualizerRoutes(server, commonRouteConfig) {
         indexPatternTitle,
         payload.query,
         payload.fields,
+        payload.samplerShardSize,
         payload.timeFieldName,
         payload.earliest,
         payload.latest,
@@ -103,6 +108,7 @@ export function dataVisualizerRoutes(server, commonRouteConfig) {
         payload.query,
         payload.aggregatableFields,
         payload.nonAggregatableFields,
+        payload.samplerShardSize,
         payload.timeFieldName,
         payload.earliest,
         payload.latest)

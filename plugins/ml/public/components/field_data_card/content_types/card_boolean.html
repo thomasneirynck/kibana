@@ -2,7 +2,7 @@
   <div class="stats">
     <div class="stat"><i class="fa fa-files-o" aria-hidden="true"></i>
     {{ card.stats.count }} <ng-pluralize count="card.stats.count" when="{'1':'document', 'other':'documents'}">documents</ng-pluralize>
-      ({{ 100 * card.stats.count / card.stats.totalCount | number:1 }}%)
+      ({{ 100 * card.stats.count / card.stats.sampleCount | number:1 }}%)
     </div>
   </div>
 
@@ -18,7 +18,7 @@
         <div class="top-value-bar-holder">
           <div class="top-value-bar boolean"
             ng-attr-style="width: {{card.stats.count > 0 ? 100 * card.stats.trueCount/card.stats.count : 0}}%;"
-            tooltip-html-unsafe="{{ card.stats.count > 0 ? 100 * card.stats.trueCount/stats.count : 0 | number:1 }}%"
+            tooltip-html-unsafe="{{ card.stats.count > 0 ? 100 * card.stats.trueCount/card.stats.count : 0 | number:1 }}%"
             tooltip-placement="right"
             tooltip-append-to-body="true">
           </div>
