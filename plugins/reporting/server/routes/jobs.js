@@ -76,17 +76,28 @@ export function jobs(server) {
   });
 
   // trigger a download of the output from a job
+  // NOTE: We're disabling range request for downloading the PDF. There's a bug in Firefox's PDF.js viewer
+  // (https://github.com/mozilla/pdf.js/issues/8958) where they're using a range request to retrieve the
+  // TOC at the end of the PDF, but it's sending multiple cookies and causing our auth to fail with a 401.
+  // Additionally, the range-request doesn't alleviate any performance issues on the server as the entire
+  // download is loaded into memory.
   server.route({
     path: `${mainEntry}/download/{docId}`,
     method: 'GET',
-    handler: (request, reply) => {
+    handler: async (request, reply) => {
       const { docId } = request.params;
 
-      jobResponseHandler(request.pre.management.jobTypes, request.pre.user, reply, { docId });
+      const response = await jobResponseHandler(request.pre.management.jobTypes, request.pre.user, reply, { docId });
+      if (!response.isBoom) {
+        response.header('accept-ranges', 'none');
+      }
     },
     config: {
       ...getRouteConfig(),
       tags: [API_TAG],
+      response: {
+        ranges: false
+      }
     },
   });
 }

@@ -10,7 +10,7 @@ function jobResponseHandlerFn(server) {
 
   return function jobResponseHandler(validJobTypes, user, reply, params, opts = {}) {
     const { docId } = params;
-    jobsQuery.get(user, docId, { includeContent: !opts.excludeContent })
+    return jobsQuery.get(user, docId, { includeContent: !opts.excludeContent })
     .then((doc) => {
       if (!doc) return reply(boom.notFound());
 
@@ -34,6 +34,8 @@ function jobResponseHandlerFn(server) {
           response.header(key, output.headers[key]);
         });
       }
+
+      return response;
     });
   };
 }

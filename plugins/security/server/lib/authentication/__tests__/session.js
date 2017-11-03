@@ -70,6 +70,14 @@ describe('Session', () => {
       expect(await session.get(request)).to.be(null);
     });
 
+    it('returns null if multiple session cookies are detected.', async () => {
+      const request = {};
+      const sessions = [{ value: { token: 'token' } }, { value: { token: 'token' } }];
+      server.auth.test.withArgs('security-cookie', request, sinon.match.func).yields(null, sessions);
+
+      expect(await session.get(request)).to.be(null);
+    });
+
     it('returns what validation function returns', async () => {
       const request = {};
       const rawSessionValue = { value: { token: 'token' } };

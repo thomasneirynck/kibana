@@ -48,6 +48,12 @@ export class Session {
 
     return new Promise((resolve) => {
       this._server.auth.test(HAPI_STRATEGY_NAME, request, (err, session) => {
+        if (Array.isArray(session)) {
+          const warning = `Found ${session.length} auth sessions when we were only expecting 1.`;
+          this._server.log(['warning', 'security', 'auth', 'session'], warning);
+          return resolve(null);
+        }
+
         resolve(err ? null : session.value);
       });
     });
