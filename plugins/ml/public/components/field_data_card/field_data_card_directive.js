@@ -49,7 +49,6 @@ module.directive('mlFieldDataCard', function () {
     }
 
     if (scope.card.type === ML_JOB_FIELD_TYPES.DATE) {
-
       scope.$watch('card.stats', () => {
         // Convert earliest and latest to Dates for formatting with moment filter in the template.
         if (_.has(scope, 'card.stats.earliest')) {
@@ -58,7 +57,7 @@ module.directive('mlFieldDataCard', function () {
         if (_.has(scope, 'card.stats.latest')) {
           scope.card.stats.latest = new Date(scope.card.stats.latest);
         }
-      });
+      }, true);
     }
 
     scope.getCardUrl = function () {

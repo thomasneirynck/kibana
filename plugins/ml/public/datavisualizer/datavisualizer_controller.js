@@ -25,6 +25,7 @@ import 'plugins/kibana/visualize/styles/main.less';
 
 import chrome from 'ui/chrome';
 import uiRoutes from 'ui/routes';
+import { notify } from 'ui/notify';
 import { luceneStringToDsl } from 'ui/courier/data_source/build_query/lucene_string_to_dsl.js';
 import { DecorateQueryProvider } from 'ui/courier/data_source/_decorate_query';
 
@@ -96,6 +97,9 @@ module
   const decorateQuery = Private(DecorateQueryProvider);
   $scope.searchQuery = buildSearchQuery();
 
+  $scope.samplerShardSize = $scope.appState.samplerShardSize ?
+    $scope.appState.samplerShardSize : 5000;     // -1 indicates no sampling.
+
   const MlTimeBuckets = Private(IntervalHelperProvider);
 
   let metricFieldRegexp;
@@ -119,6 +123,7 @@ module
       .value();
   $scope.indexedFieldTypes = indexedFieldTypes.sort();
 
+
   // Refresh the data when the time range is altered.
   $scope.$listen(timefilter, 'fetch', function () {
     $scope.earliest = timefilter.getActiveBounds().min.valueOf();
@@ -132,6 +137,11 @@ module
     loadOverallStats();
   };
 
+  $scope.samplerShardSizeChanged = function () {
+    saveAppState();
+    loadOverallStats();
+  };
+
   $scope.toggleAllMetrics = function () {
     $scope.showAllMetrics = !$scope.showAllMetrics;
     createMetricCards();
@@ -139,12 +149,12 @@ module
 
   $scope.toggleAllFields = function () {
     $scope.showAllFields = !$scope.showAllFields;
-    loadNonMetricFieldList();
+    createNonMetricCards();
   };
 
   $scope.filterFieldTypeChanged = function (fieldType) {
     $scope.filterFieldType = fieldType;
-    loadNonMetricFieldList();
+    createNonMetricCards();
   };
 
   $scope.metricFieldFilterChanged = function () {
@@ -198,7 +208,7 @@ module
         fieldRegexp = undefined;
       }
 
-      loadNonMetricFieldList();
+      createNonMetricCards();
       fieldFilterTimeout = undefined;
     }, 1500);
 
@@ -213,7 +223,7 @@ module
   $scope.clearFieldFilter = function () {
     $scope.fieldFilter = '';
     fieldRegexp = undefined;
-    loadNonMetricFieldList();
+    createNonMetricCards();
   };
 
   function buildSearchQuery() {
@@ -227,6 +237,7 @@ module
       language: 'lucene',
       query: $scope.searchQueryText
     };
+    $scope.appState.samplerShardSize = $scope.samplerShardSize;
     $scope.appState.save();
   }
 
@@ -249,7 +260,7 @@ module
     }
 
     const metricExistsFields = _.filter(allMetricFields, (f) => {
-      return aggregatableExistsFields.indexOf(f.displayName) > -1;
+      return _.find(aggregatableExistsFields, { fieldName: f.displayName });
     });
 
     const metricCards = [];
@@ -269,22 +280,31 @@ module
       $scope.showAllMetrics = true;
     }
 
+    let aggregatableFields = $scope.overallStats.aggregatableExistsFields;
+    if ($scope.showAllMetrics === true) {
+      aggregatableFields = aggregatableFields.concat($scope.overallStats.aggregatableNotExistsFields);
+    }
+
     const metricFields = $scope.showAllMetrics ? allMetricFields : metricExistsFields;
     _.each(metricFields, (field) => {
-      metricCards.push({
-        fieldName: field.displayName,
+      const fieldData = _.find(aggregatableFields, { fieldName: field.displayName });
+
+      const card = {
+        ...fieldData,
         fieldFormat: field.format,
         type: ML_JOB_FIELD_TYPES.NUMBER,
-        existsInDocs: aggregatableExistsFields.indexOf(field.displayName) > -1,
         loading: true
-      });
+      };
+
+      metricCards.push(card);
+
     });
 
     $scope.metricCards = metricCards;
     loadMetricFieldStats();
   }
 
-  function loadNonMetricFieldList() {
+  function createNonMetricCards() {
     $scope.fieldCards.length = 0;
 
     let allNonMetricFields = [];
@@ -319,40 +339,50 @@ module
 
     // Obtain the list of all non-metric fields which appear in documents
     // (aggregatable or not aggregatable).
-    const nonMetricFields = [];
-    const nonMetricExistsFieldNames = [];
+    const populatedNonMetricFields = [];    // Kibana index pattern non metric fields.
+    let nonMetricFieldData = [];            // Basic non metric field data loaded from requesting overall stats.
+    let populatedNonMetricFieldCount = 0;
     _.each(allNonMetricFields, (f) => {
-      if ($scope.overallStats.aggregatableExistsFields.indexOf(f.displayName) > -1 ||
-          $scope.overallStats.nonAggregatableExistsFields.indexOf(f.displayName) > -1) {
-        nonMetricFields.push(f);
-        nonMetricExistsFieldNames.push(f.displayName);
+      const checkAggregatableField = _.find($scope.overallStats.aggregatableExistsFields, { fieldName: f.displayName });
+      if (checkAggregatableField !== undefined) {
+        populatedNonMetricFields.push(f);
+        nonMetricFieldData.push(checkAggregatableField);
+        populatedNonMetricFieldCount++;
+      } else {
+        const checkNonAggregatableField = _.find($scope.overallStats.nonAggregatableExistsFields, { fieldName: f.displayName });
+        if (checkNonAggregatableField !== undefined) {
+          populatedNonMetricFields.push(f);
+          nonMetricFieldData.push(checkNonAggregatableField);
+          populatedNonMetricFieldCount++;
+        }
       }
     });
 
-    $scope.populatedNonMetricFieldCount = nonMetricFields.length;
+    $scope.populatedNonMetricFieldCount = populatedNonMetricFieldCount;
     if ($scope.totalNonMetricFieldCount === $scope.populatedNonMetricFieldCount) {
       $scope.showAllFields = true;
     }
 
-    if ($scope.showAllFields) {
-      createNonMetricFieldConfigurations(allNonMetricFields, nonMetricExistsFieldNames);
-    } else {
-      createNonMetricFieldConfigurations(nonMetricFields, nonMetricExistsFieldNames);
+    const nonMetricFieldsToShow = $scope.showAllFields === true ? allNonMetricFields : populatedNonMetricFields;
+
+    // Combine the field data obtained from Elasticsearch into a single array.
+    if ($scope.showAllFields === true) {
+      nonMetricFieldData = nonMetricFieldData.concat(
+        $scope.overallStats.aggregatableNotExistsFields,
+        $scope.overallStats.nonAggregatableNotExistsFields);
     }
 
-  }
-
-  function createNonMetricFieldConfigurations(nonMetricFields, nonMetricExistsFieldNames) {
     const fieldCards = [];
 
-    _.each(nonMetricFields, (field) => {
+    _.each(nonMetricFieldsToShow, (field) => {
+      const fieldData = _.find(nonMetricFieldData, { fieldName: field.displayName });
+
       const card = {
-        fieldName: field.displayName,
+        ...fieldData,
         fieldFormat: field.format,
         aggregatable: field.aggregatable,
         scripted: field.scripted,
-        existsInDocs: nonMetricExistsFieldNames.indexOf(field.displayName) > -1,
-        loading: true
+        loading: !fieldData.existInDocs
       };
 
       // Map the field type from the Kibana index pattern to the field type
@@ -372,12 +402,21 @@ module
 
     $scope.fieldCards = _.sortBy(fieldCards, 'fieldName');
     loadNonMetricFieldStats();
+
   }
 
   function loadMetricFieldStats() {
-    // Request data for all the metric cards.
-    const numberFields = _.map($scope.metricCards, (card) => {
-      return { fieldName: card.fieldName, type: card.type };
+    // Only request data for fields that exist in documents.
+    let numberFields = _.filter($scope.metricCards, { existsInDocs: true });
+
+    // Pass the field name, type and cardinality in the request.
+    // Top values will be obtained on a sample if cardinality > 100000.
+    numberFields = _.map(numberFields, (card) => {
+      const props = { fieldName: card.fieldName, type: card.type };
+      if (_.has(card, ['stats', 'cardinality'])) {
+        props.cardinality = card.stats.cardinality;
+      }
+      return props;
     });
 
     // Obtain the interval to use for date histogram aggregations
@@ -397,15 +436,17 @@ module
       timeFieldName: indexPattern.timeFieldName,
       earliest: $scope.earliest,
       latest: $scope.latest,
+      samplerShardSize: $scope.samplerShardSize,
       interval: aggInterval.expression,
       fields: numberFields
     })
     .then((resp) => {
       //console.log(`loadMetricFieldStats response received at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
-      // Match up the data to the card.
+
+      // Add the metric stats to the existing stats in the corresponding card.
       _.each($scope.metricCards, (card) => {
         if (card.fieldName !== undefined) {
-          card.stats = _.find(resp, { fieldName: card.fieldName });
+          card.stats = { ...card.stats, ...(_.find(resp, { fieldName: card.fieldName })) };
         } else {
           // Document count card.
           card.stats = _.find(resp, (stats) => {
@@ -419,41 +460,74 @@ module
       // Clear the filter spinner if it's running.
       $scope.metricFilterIcon = 0;
     })
-    .catch((resp) => {
+    .catch((err) => {
       // TODO - display error in cards saying data could not be loaded.
-      console.log('DataVisualizer - error getting stats for metric cards from elasticsearch:', resp);
+      console.log('DataVisualizer - error getting stats for metric cards from elasticsearch:', err);
+      if (err.statusCode === 500) {
+        notify.error(`Error loading data for metrics in index ${indexPattern.title}. ${err.message}. ` +
+          'The request may have timed out. Try using a smaller sample size or narrowing the time range.',
+          { lifetime: 30000 });
+      } else {
+        notify.error(`Error loading data for metrics in index ${indexPattern.title}. ${err.message}`,
+          { lifetime: 30000 });
+      }
     });
-
 
   }
 
   function loadNonMetricFieldStats() {
-    const fields = _.map($scope.fieldCards, (card) => {
-      return { fieldName: card.fieldName, type: card.type };
+    // Only request data for fields that exist in documents.
+    let fields = _.filter($scope.fieldCards, { existsInDocs: true });
+
+    // Pass the field name, type and cardinality in the request.
+    // Top values will be obtained on a sample if cardinality > 100000.
+    fields = _.map(fields, (card) => {
+      const props = { fieldName: card.fieldName, type: card.type };
+      if (_.has(card, ['stats', 'cardinality'])) {
+        props.cardinality = card.stats.cardinality;
+      }
+      return props;
     });
 
-    //console.log(`loadNonMetricFieldStats called at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
-    ml.getVisualizerFieldStats({
-      indexPatternTitle: indexPattern.title,
-      query: $scope.searchQuery,
-      fields: fields,
-      timeFieldName: indexPattern.timeFieldName,
-      earliest: $scope.earliest,
-      latest: $scope.latest,
-      maxExamples: 10
-    })
-    .then((resp) => {
-      //console.log(`loadNonMetricFieldStats response received at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
+    if (fields.length > 0) {
+      //console.log(`loadNonMetricFieldStats called at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
+      ml.getVisualizerFieldStats({
+        indexPatternTitle: indexPattern.title,
+        query: $scope.searchQuery,
+        fields: fields,
+        timeFieldName: indexPattern.timeFieldName,
+        earliest: $scope.earliest,
+        latest: $scope.latest,
+        samplerShardSize: $scope.samplerShardSize,
+        maxExamples: 10
+      })
+      .then((resp) => {
+        //console.log(`loadNonMetricFieldStats response received at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
 
-      // Match up the data to the card.
-      _.each($scope.fieldCards, (card) => {
-        card.stats = _.find(resp, { fieldName: card.fieldName });
-        card.loading = false;
+        // Add the metric stats to the existing stats in the corresponding card.
+        _.each($scope.fieldCards, (card) => {
+          card.stats = { ...card.stats, ...(_.find(resp, { fieldName: card.fieldName })) };
+          card.loading = false;
+        });
+
+        // Clear the filter spinner if it's running.
+        $scope.fieldFilterIcon = 0;
+      })
+      .catch((err) => {
+        // TODO - display error in cards saying data could not be loaded.
+        console.log('DataVisualizer - error getting non metric field stats from elasticsearch:', err);
+        if (err.statusCode === 500) {
+          notify.error(`Error loading data for fields in index ${indexPattern.title}. ${err.message}. ` +
+            'The request may have timed out. Try using a smaller sample size or narrowing the time range.',
+            { lifetime: 30000 });
+        } else {
+          notify.error(`Error loading data for fields in index ${indexPattern.title}. ${err.message}`,
+            { lifetime: 30000 });
+        }
       });
-
-      // Clear the filter spinner if it's running.
+    } else {
       $scope.fieldFilterIcon = 0;
-    });
+    }
   }
 
   function loadOverallStats() {
@@ -480,6 +554,7 @@ module
       indexPatternTitle: indexPattern.title,
       query: $scope.searchQuery,
       timeFieldName: indexPattern.timeFieldName,
+      samplerShardSize: $scope.samplerShardSize,
       earliest: $scope.earliest,
       latest: $scope.latest,
       aggregatableFields: aggregatableFields,
@@ -489,11 +564,19 @@ module
       //console.log(`loadOverallStats server response received at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
       $scope.overallStats = resp;
       createMetricCards();
-      loadNonMetricFieldList();
+      createNonMetricCards();
     })
-    .catch((resp) => {
+    .catch((err) => {
       // TODO - display error in cards saying data could not be loaded.
-      console.log('DataVisualizer - error getting overall stats from elasticsearch:', resp);
+      console.log('DataVisualizer - error getting overall stats from elasticsearch:', err);
+      if (err.statusCode === 500) {
+        notify.error(`Error loading data for fields in index ${indexPattern.title}. ${err.message}. ` +
+          'The request may have timed out. Try using a smaller sample size or narrowing the time range.',
+          { lifetime: 30000 });
+      } else {
+        notify.error(`Error loading data for fields in index ${indexPattern.title}. ${err.message}`,
+          { lifetime: 30000 });
+      }
     });
 
   }

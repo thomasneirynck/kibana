@@ -16,7 +16,11 @@
 import _ from 'lodash';
 import { ML_JOB_FIELD_TYPES } from '../../../common/constants/field_types';
 
+const SAMPLER_TOP_TERMS_THRESHOLD = 100000;
+const SAMPLER_TOP_TERMS_SHARD_SIZE = 5000;
+
 export class DataVisualizer {
+
   constructor(callWithRequest) {
     this.callWithRequest = callWithRequest;
   }
@@ -24,11 +28,13 @@ export class DataVisualizer {
   // Obtains overall stats on the fields in the supplied index pattern, returning an object
   // containing the total document count, and four arrays showing which of the supplied
   // aggregatable and non-aggregatable fields do or do not exist in documents.
+  // Sampling will be used if supplied samplerShardSize > 0.
   async getOverallStats(
     indexPatternTitle,
     query,
     aggregatableFields,
     nonAggregatableFields,
+    samplerShardSize,
     timeFieldName,
     earliestMs,
     latestMs) {
@@ -42,24 +48,31 @@ export class DataVisualizer {
       indexPatternTitle,
       query,
       aggregatableFields,
-      nonAggregatableFields,
+      samplerShardSize,
       timeFieldName,
       earliestMs,
       latestMs);
     stats = _.extend(stats, aggregatableFieldStats);
 
     await Promise.all(nonAggregatableFields.map(async (field) => {
-      const exists = await this.checkNonAggregatableFieldExists(
+      const existsInDocs = await this.checkNonAggregatableFieldExists(
         indexPatternTitle,
         query,
         field,
         timeFieldName,
         earliestMs,
         latestMs);
-      if (exists === true) {
-        stats.nonAggregatableExistsFields.push(field);
+
+      const fieldData = {
+        fieldName: field,
+        existsInDocs,
+        stats: {}
+      };
+
+      if (existsInDocs === true) {
+        stats.nonAggregatableExistsFields.push(fieldData);
       } else {
-        stats.nonAggregatableNotExistsFields.push(field);
+        stats.nonAggregatableNotExistsFields.push(fieldData);
       }
     }));
 
@@ -68,10 +81,12 @@ export class DataVisualizer {
 
   // Obtains statistics for supplied list of fields. The statistics for each field in the
   // returned array depend on the type of the field (keyword, number, date etc).
+  // Sampling will be used if supplied samplerShardSize > 0.
   async getStatsForFields(
     indexPatternTitle,
     query,
     fields,
+    samplerShardSize,
     timeFieldName,
     earliestMs,
     latestMs,
@@ -89,6 +104,8 @@ export class DataVisualizer {
               indexPatternTitle,
               query,
               field.fieldName,
+              _.get(field, 'cardinality', 0),
+              samplerShardSize,
               timeFieldName,
               earliestMs,
               latestMs);
@@ -108,6 +125,8 @@ export class DataVisualizer {
             indexPatternTitle,
             query,
             field.fieldName,
+            _.get(field, 'cardinality', 0),
+            samplerShardSize,
             timeFieldName,
             earliestMs,
             latestMs);
@@ -117,6 +136,7 @@ export class DataVisualizer {
             indexPatternTitle,
             query,
             field.fieldName,
+            samplerShardSize,
             timeFieldName,
             earliestMs,
             latestMs);
@@ -126,6 +146,7 @@ export class DataVisualizer {
             indexPatternTitle,
             query,
             field.fieldName,
+            samplerShardSize,
             timeFieldName,
             earliestMs,
             latestMs);
@@ -163,7 +184,7 @@ export class DataVisualizer {
     indexPatternTitle,
     query,
     aggregatableFields,
-    nonAggregatableFields,
+    samplerShardSize,
     timeFieldName,
     earliestMs,
     latestMs) {
@@ -171,11 +192,16 @@ export class DataVisualizer {
     const index = indexPatternTitle;
     const size = 0;
     const filterCriteria = this.buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
-    const aggs = {};
 
-    aggregatableFields.forEach((fieldName, i) => {
-      aggs[i] = {
-        filter: { exists: { field: fieldName } }
+    // Value count aggregation faster way of checking if field exists than using
+    // filter aggregation with exists query.
+    const aggs = {};
+    aggregatableFields.forEach((field) => {
+      aggs[`${field}_count`] = {
+        value_count: { field }
+      };
+      aggs[`${field}_cardinality`] = {
+        cardinality: { field }
       };
     });
 
@@ -185,22 +211,38 @@ export class DataVisualizer {
           filter: filterCriteria
         }
       },
-      aggs
+      aggs: this.buildSamplerAggregation(aggs, samplerShardSize)
     };
 
     const resp = await this.callWithRequest('search', { index, size, body });
     const aggregations = resp.aggregations;
+    const totalCount = _.get(resp, ['hits', 'total'], 0);
     const stats =  {
-      totalCount: resp.hits.total,
+      totalCount,
       aggregatableExistsFields: [],
       aggregatableNotExistsFields: []
     };
 
-    _.each(aggregations, (value, key) => {
-      if (value.doc_count > 0) {
-        stats.aggregatableExistsFields.push(aggregatableFields[key]);
+    const aggsPath = this.getResponseAggregationsPath(samplerShardSize);
+    const sampleCount = samplerShardSize > 0 ? _.get(aggregations, ['sample', 'doc_count'], 0) : totalCount;
+    aggregatableFields.forEach((field) => {
+      const count = _.get(aggregations, [...aggsPath, `${field}_count`, 'value'], 0);
+      if (count > 0) {
+        const cardinality = _.get(aggregations, [...aggsPath, `${field}_cardinality`, 'value'], 0);
+        stats.aggregatableExistsFields.push({
+          fieldName: field,
+          existsInDocs: true,
+          stats: {
+            sampleCount,
+            count,
+            cardinality
+          }
+        });
       } else {
-        stats.aggregatableNotExistsFields.push(aggregatableFields[key]);
+        stats.aggregatableNotExistsFields.push({
+          fieldName: field,
+          existsInDocs: false
+        });
       }
     });
 
@@ -245,6 +287,8 @@ export class DataVisualizer {
     const size = 0;
     const filterCriteria = this.buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
 
+    // Don't use the sampler aggregation as this can lead to some potentially
+    // confusing date histogram results depending on the date range of data amongst shards.
     const aggs = {
       eventRate: {
         date_histogram: {
@@ -287,6 +331,8 @@ export class DataVisualizer {
     indexPatternTitle,
     query,
     field,
+    cardinality,
+    samplerShardSize,
     timeFieldName,
     earliestMs,
     latestMs) {
@@ -303,21 +349,12 @@ export class DataVisualizer {
     let count = 0;
     const percents = Array.from(Array(MAX_PERCENT / PERCENTILE_SPACING), () => count += PERCENTILE_SPACING);
 
+    // If cardinality >= SAMPLE_TOP_TERMS_THRESHOLD, run the top terms aggregation
+    // in a sampler aggregation, even if no sampling has been specified (samplerShardSize < 1).
+
     const aggs = {
-      cardinality: {
-        cardinality: { field }
-      },
       field_stats: {
         stats: { field }
-      },
-      top: {
-        terms: {
-          field,
-          size: 10,
-          order: {
-            _count: 'desc'
-          }
-        }
       },
       percentiles: {
         percentiles: {
@@ -328,31 +365,63 @@ export class DataVisualizer {
       }
     };
 
+    const top = {
+      terms: {
+        field,
+        size: 10,
+        order: {
+          _count: 'desc'
+        }
+      }
+    };
+
+    const aggsPath = this.getResponseAggregationsPath(samplerShardSize);
+    let topAggsPath = aggsPath;
+    let topValuesSamplerShardSize = samplerShardSize;
+    if (samplerShardSize < 1 && cardinality >= SAMPLER_TOP_TERMS_THRESHOLD) {
+      aggs.sample = {
+        sampler: {
+          shard_size: SAMPLER_TOP_TERMS_SHARD_SIZE
+        },
+        aggs: {
+          top
+        }
+      };
+      topAggsPath = ['sample'];
+      topValuesSamplerShardSize = SAMPLER_TOP_TERMS_SHARD_SIZE;
+    } else {
+      aggs.top = top;
+    }
+
     const body = {
       query: {
         bool: {
           filter: filterCriteria
         }
       },
-      aggs: aggs
+      aggs: this.buildSamplerAggregation(aggs, samplerShardSize)
     };
 
     const resp = await this.callWithRequest('search', { index, size, body });
     const aggregations = resp.aggregations;
     const stats = {
       fieldName: field,
-      totalCount: _.get(resp, ['hits', 'total'], 0),
-      cardinality: _.get(aggregations, ['cardinality', 'value'], 0),
-      count: _.get(aggregations, ['field_stats', 'count'], 0),
-      min: _.get(aggregations, ['field_stats', 'min'], 0),
-      max: _.get(aggregations, ['field_stats', 'max'], 0),
-      avg: _.get(aggregations, ['field_stats', 'avg'], 0),
-      topValues: _.get(aggregations, ['top', 'buckets'], []),
+      count: _.get(aggregations, [...aggsPath, 'field_stats', 'count'], 0),
+      min: _.get(aggregations, [...aggsPath, 'field_stats', 'min'], 0),
+      max: _.get(aggregations, [...aggsPath, 'field_stats', 'max'], 0),
+      avg: _.get(aggregations, [...aggsPath, 'field_stats', 'avg'], 0),
+      isTopValuesSampled: cardinality >= SAMPLER_TOP_TERMS_THRESHOLD || samplerShardSize > 0
     };
 
-    // TODO - check this is the same as using median agg.
+    stats.topValues = _.get(aggregations, [...topAggsPath, 'top', 'buckets'], []);
+    stats.topValuesSampleSize = _.get(aggregations, [...topAggsPath, 'top', 'sum_other_doc_count'], 0);
+    stats.topValuesSamplerShardSize = topValuesSamplerShardSize;
+    stats.topValues.forEach((bucket) => {
+      stats.topValuesSampleSize += bucket.doc_count;
+    });
+
     if (stats.count > 0) {
-      const percentiles = _.get(aggregations, ['percentiles', 'values'], []);
+      const percentiles = _.get(aggregations, [...aggsPath, 'percentiles', 'values'], []);
       const medianPercentile = _.find(percentiles, { key: 50 });
       stats.median = medianPercentile !== undefined ? medianPercentile.value : 0;
       stats.distribution = this.processDistributionData(percentiles, PERCENTILE_SPACING, stats.min);
@@ -365,6 +434,8 @@ export class DataVisualizer {
     indexPatternTitle,
     query,
     field,
+    cardinality,
+    samplerShardSize,
     timeFieldName,
     earliestMs,
     latestMs) {
@@ -372,23 +443,39 @@ export class DataVisualizer {
     const index = indexPatternTitle;
     const size = 0;
     const filterCriteria = this.buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
-    const aggs = {
-      value_count: {
-        value_count: { field }
-      },
-      cardinality: {
-        cardinality: { field }
-      },
-      top: {
-        terms: {
-          field,
-          size: 10,
-          order: {
-            _count: 'desc'
-          }
+
+    // If cardinality >= SAMPLE_TOP_TERMS_THRESHOLD, run the top terms aggregation
+    // in a sampler aggregation, even if no sampling has been specified (samplerShardSize < 1).
+
+    const aggs = {};
+
+    const top = {
+      terms: {
+        field,
+        size: 10,
+        order: {
+          _count: 'desc'
         }
       }
     };
+
+    const aggsPath = this.getResponseAggregationsPath(samplerShardSize);
+    let topAggsPath = aggsPath;
+    let topValuesSamplerShardSize = samplerShardSize;
+    if (samplerShardSize < 1 && cardinality >= SAMPLER_TOP_TERMS_THRESHOLD) {
+      aggs.sample = {
+        sampler: {
+          shard_size: SAMPLER_TOP_TERMS_SHARD_SIZE
+        },
+        aggs: {
+          top
+        }
+      };
+      topAggsPath = ['sample'];
+      topValuesSamplerShardSize = SAMPLER_TOP_TERMS_SHARD_SIZE;
+    } else {
+      aggs.top = top;
+    }
 
     const body = {
       query: {
@@ -396,18 +483,22 @@ export class DataVisualizer {
           filter: filterCriteria
         }
       },
-      aggs: aggs
+      aggs: this.buildSamplerAggregation(aggs, samplerShardSize)
     };
 
     const resp = await this.callWithRequest('search', { index, size, body });
     const aggregations = resp.aggregations;
     const stats = {
       fieldName: field,
-      totalCount: _.get(resp, ['hits', 'total'], 0),
-      count: _.get(aggregations, ['value_count', 'value'], 0),
-      cardinality: _.get(aggregations, ['cardinality', 'value'], 0),
-      topValues: _.get(aggregations, ['top', 'buckets'], [])
+      isTopValuesSampled: cardinality >= SAMPLER_TOP_TERMS_THRESHOLD || samplerShardSize > 0
     };
+
+    stats.topValues = _.get(aggregations, [...topAggsPath, 'top', 'buckets'], []);
+    stats.topValuesSampleSize = _.get(aggregations, [...topAggsPath, 'top', 'sum_other_doc_count'], 0);
+    stats.topValuesSamplerShardSize = topValuesSamplerShardSize;
+    stats.topValues.forEach((bucket) => {
+      stats.topValuesSampleSize += bucket.doc_count;
+    });
 
     return stats;
   }
@@ -416,6 +507,7 @@ export class DataVisualizer {
     indexPatternTitle,
     query,
     field,
+    samplerShardSize,
     timeFieldName,
     earliestMs,
     latestMs) {
@@ -435,19 +527,18 @@ export class DataVisualizer {
           filter: filterCriteria
         }
       },
-      aggs: aggs
+      aggs: this.buildSamplerAggregation(aggs, samplerShardSize)
     };
 
     const resp = await this.callWithRequest('search', { index, size, body });
     const aggregations = resp.aggregations;
-    const min = _.get(aggregations, ['field_stats', 'min']);
-    const max = _.get(aggregations, ['field_stats', 'max']);
+    const aggsPath = this.getResponseAggregationsPath(samplerShardSize);
     const stats = {
       fieldName: field,
       totalCount: _.get(resp, ['hits', 'total'], 0),
-      count: _.get(aggregations, ['field_stats', 'count'], 0),
-      earliest: min,
-      latest: max
+      count: _.get(aggregations, [...aggsPath, 'field_stats', 'count'], 0),
+      earliest: _.get(aggregations, [...aggsPath, 'field_stats', 'min']),
+      latest: _.get(aggregations, [...aggsPath, 'field_stats', 'max'])
     };
 
     return stats;
@@ -457,6 +548,7 @@ export class DataVisualizer {
     indexPatternTitle,
     query,
     field,
+    samplerShardSize,
     timeFieldName,
     earliestMs,
     latestMs) {
@@ -471,7 +563,7 @@ export class DataVisualizer {
       values: {
         terms: {
           field,
-          size: 10,
+          size: 2,
           order: {
             _count: 'desc'
           }
@@ -485,17 +577,20 @@ export class DataVisualizer {
           filter: filterCriteria
         }
       },
-      aggs: aggs
+      aggs: this.buildSamplerAggregation(aggs, samplerShardSize)
     };
 
     const resp = await this.callWithRequest('search', { index, size, body });
     const aggregations = resp.aggregations;
+    const aggsPath = this.getResponseAggregationsPath(samplerShardSize);
     const stats = {
       fieldName: field,
       totalCount: _.get(resp, ['hits', 'total'], 0),
-      count: _.get(aggregations, ['value_count', 'value'], 0)
+      count: _.get(aggregations, [...aggsPath, 'value_count', 'value'], 0),
+      trueCount: 0,
+      falseCount: 0
     };
-    const valueBuckets = _.get(aggregations, ['values', 'buckets'], []);
+    const valueBuckets = _.get(aggregations, [...aggsPath, 'values', 'buckets'], []);
     _.each(valueBuckets, (bucket) => {
       stats[`${bucket.key_as_string}Count`] = bucket.doc_count;
     });
@@ -512,6 +607,9 @@ export class DataVisualizer {
     latestMs,
     maxExamples) {
 
+    // Just return some examples of the field which will be displayed together with basic information
+    // returned from the call to get overall stats on each field.
+
     const index = indexPatternTitle;
 
     // Request at least 100 docs so that we have a chance of obtaining
@@ -524,32 +622,19 @@ export class DataVisualizer {
       exists: { field }
     });
 
-    const aggs = {
-      value_count: {
-        value_count: { field }
-      },
-      cardinality: {
-        cardinality: { field }
-      }
-    };
-
     const body = {
       _source: field,
       query: {
         bool: {
           filter: filterCriteria
         }
-      },
-      aggs
+      }
     };
 
     const resp = await this.callWithRequest('search', { index, size, body });
-    const aggregations = resp.aggregations;
     const stats = {
       fieldName: field,
       totalCount: _.get(resp, ['hits', 'total'], 0),
-      count: _.get(aggregations, ['value_count', 'value'], 0),
-      cardinality: _.get(aggregations, ['cardinality', 'value'], 0),
       examples: []
     };
 
@@ -648,6 +733,29 @@ export class DataVisualizer {
     }
 
     return filterCriteria;
+  }
+
+  // Wraps the supplied aggregations in a sampler aggregation.
+  // samplerShardSize < 1 indicates no sampling.
+  buildSamplerAggregation(aggs, samplerShardSize) {
+    if (samplerShardSize < 1) {
+      return aggs;
+    }
+
+    return {
+      sample: {
+        sampler: {
+          shard_size: samplerShardSize
+        },
+        aggs
+      }
+    };
+  }
+
+  // Returns the aggregation path, depending on whether
+  // sampling is being used (samplerShardSize < 1 indicates no sampling).
+  getResponseAggregationsPath(samplerShardSize) {
+    return samplerShardSize > 0 ? ['sample'] : [];
   }
 
   processDistributionData(percentiles, percentileSpacing, minValue) {

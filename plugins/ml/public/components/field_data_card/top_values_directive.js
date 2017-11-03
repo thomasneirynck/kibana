@@ -13,10 +13,14 @@
  * strictly prohibited.
  */
 
-import './document_count_chart_directive';
-import './field_data_card_directive';
-import './metric_distribution_chart_directive';
-import './top_values_directive';
-import './styles/main.less';
-import 'plugins/ml/components/field_type_icon';
-import 'plugins/ml/components/chart_tooltip';
+import template from './top_values.html';
+
+import { uiModules } from 'ui/modules';
+const module = uiModules.get('apps/ml');
+
+module.directive('mlTopValues', function () {
+  return {
+    restrict: 'E',
+    template
+  };
+});

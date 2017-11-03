@@ -2,7 +2,7 @@
   <div class="stats">
     <div class="stat"><i class="fa fa-files-o" aria-hidden="true"></i>
       {{ card.stats.count }} <ng-pluralize count="card.stats.count" when="{'1':'document', 'other':'documents'}">documents</ng-pluralize>
-      ({{ 100 * card.stats.count / card.stats.totalCount | number:1 }}%)
+      ({{ 100 * card.stats.count / card.stats.sampleCount | number:1 }}%)
     </div>
     <div class="stat"><i class="fa fa-cubes" aria-hidden="true"></i> {{ card.stats.cardinality }} distinct
       <ng-pluralize count="card.stats.cardinality" when="{'1':'value', 'other':'values'}">values</ng-pluralize>
@@ -29,21 +29,8 @@
     <ml-metric-distribution-chart ng-switch-when="distribution" width="325" height="220">
       <div class="content-wrapper" />
     </ml-metric-distribution-chart>
-    <div ng-switch-default ng-repeat="value in card.stats.topValues" class="top-value">
-      <div class="field-label"
-        tooltip-html-unsafe="{{value.key | formatField:card.fieldFormat}}"
-        tooltip-placement="right"
-        tooltip-append-to-body="true">
-        {{value.key | formatField:card.fieldFormat}}
-      </div>
-      <div class="top-value-bar-holder">
-        <div class="top-value-bar {{card.type}}" ng-attr-style="width: {{100 * value.doc_count/card.stats.count}}%;"
-          tooltip-html-unsafe="{{ 100 * value.doc_count/card.stats.count | number:1 }}%"
-          tooltip-append-to-body="true"
-          tooltip-placement="right">
-        </div>
-      </div>
-      <div class="count-label">{{value.doc_count}}</div>
+    <div ng-switch-default>
+      <ml-top-values></ml-top-values>
     </div>
   </div>
 </div>
