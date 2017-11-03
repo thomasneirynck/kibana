@@ -1,8 +1,8 @@
 [role="xpack"]
 [[settings-xpack-kb]]
-== Configuring X-Pack in Kibana
+== {xpack} Settings in {kib}
 ++++
-<titleabbrev>Configuring {xpack}</titleabbrev>
+<titleabbrev>{xpack} Settings</titleabbrev>
 ++++
 
 include::{asciidoc-dir}/../../shared/settings.asciidoc[]
