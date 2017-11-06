@@ -53,6 +53,17 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
       });
     }
 
+    async closeTab(tabIndex) {
+      return await retry.try(async () => {
+        log.debug(`reportingPage.closeTab(${tabIndex}`);
+        const handles = await remote.getAllWindowHandles();
+        log.debug(`Switching to window ${handles[tabIndex]}`);
+        await remote.switchToWindow(handles[tabIndex]);
+        await remote.closeCurrentWindow();
+        await remote.switchToWindow(handles[0]);
+      });
+    }
+
     getRawPdfReportData(url) {
       log.debug(`getRawPdfReportData for ${url}`);
       let data = []; // List of Buffer objects
