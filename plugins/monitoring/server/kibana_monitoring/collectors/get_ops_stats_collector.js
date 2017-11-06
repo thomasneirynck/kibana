@@ -1,4 +1,4 @@
-import { KIBANA_STATS_TYPE } from '../../common/constants';
+import { KIBANA_STATS_TYPE } from '../../../common/constants';
 import { opsBuffer } from './ops_buffer';
 
 /*

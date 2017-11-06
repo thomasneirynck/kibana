@@ -1,6 +1,6 @@
-import { LOGGING_TAG, KIBANA_MONITORING_LOGGING_TAG } from '../../../common/constants';
+import { LOGGING_TAG, KIBANA_MONITORING_LOGGING_TAG } from '../../../../common/constants';
 import { rollupEvent } from './rollup_event';
-import { CloudDetector } from '../../cloud';
+import { CloudDetector } from '../../../cloud';
 
 /**
  * Manage the buffer of Kibana Ops events

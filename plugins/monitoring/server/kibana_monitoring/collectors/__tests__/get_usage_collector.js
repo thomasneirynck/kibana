@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
 
-import { BasicCredentials } from '../../../../security/server/lib/authentication/providers/basic';
+import { BasicCredentials } from '../../../../../security/server/lib/authentication/providers/basic';
 import { getUsageCollector } from '../get_usage_collector';
 
 describe('getUsageCollector', () => {

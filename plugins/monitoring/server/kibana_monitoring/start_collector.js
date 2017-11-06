@@ -1,7 +1,7 @@
 import { TypeCollector } from './lib/type_collector';
-import { getOpsStatsCollector } from './get_ops_stats_collector';
-import { getSettingsCollector } from './get_settings_collector';
-import { getUsageCollector } from './get_usage_collector';
+import { getOpsStatsCollector } from './collectors/get_ops_stats_collector';
+import { getSettingsCollector } from './collectors/get_settings_collector';
+import { getUsageCollector } from './collectors/get_usage_collector';
 import { sendBulkPayload } from './lib/send_bulk_payload';
 import { getCollectorTypesCombiner } from './lib/get_collector_types_combiner';
 

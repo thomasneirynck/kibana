@@ -23,6 +23,8 @@ describe('Get Kibana Stats', () => {
                       visualization: { total: 0 },
                       search: { total: 0 },
                       index_pattern: { total: 0 },
+                      graph_workspace: { total: 1 },
+                      timelion_sheet: { total: 1 },
                       index: '.kibana-test-01'
                     }
                   }
@@ -36,6 +38,8 @@ describe('Get Kibana Stats', () => {
               visualization: { total: 0 },
               search: { total: 0 },
               index_pattern: { total: 0 },
+              graph_workspace: { total: 1 },
+              timelion_sheet: { total: 1 },
               indices: 1
             }
           };
@@ -56,6 +60,8 @@ describe('Get Kibana Stats', () => {
                       visualization: { total: 3 },
                       search: { total: 1 },
                       index_pattern: { total: 1 },
+                      graph_workspace: { total: 1 },
+                      timelion_sheet: { total: 1 },
                       index: '.kibana-test-01'
                     }
                   }
@@ -69,6 +75,8 @@ describe('Get Kibana Stats', () => {
               visualization: { total: 3 },
               search: { total: 1 },
               index_pattern: { total: 1 },
+              graph_workspace: { total: 1 },
+              timelion_sheet: { total: 1 },
               indices: 1
             }
           };
@@ -91,6 +99,8 @@ describe('Get Kibana Stats', () => {
                       visualization: { total: 3 },
                       search: { total: 1 },
                       index_pattern: { total: 1 },
+                      graph_workspace: { total: 1 },
+                      timelion_sheet: { total: 1 },
                       index: '.kibana-test-01'
                     }
                   }
@@ -105,6 +115,8 @@ describe('Get Kibana Stats', () => {
                       visualization: { total: 3 },
                       search: { total: 1 },
                       index_pattern: { total: 1 },
+                      graph_workspace: { total: 1 },
+                      timelion_sheet: { total: 1 },
                       index: '.kibana-test-01'
                     }
                   }
@@ -119,6 +131,8 @@ describe('Get Kibana Stats', () => {
                       visualization: { total: 0 },
                       search: { total: 0 },
                       index_pattern: { total: 0 },
+                      graph_workspace: { total: 1 },
+                      timelion_sheet: { total: 1 },
                       index: '.kibana-test-02'
                     }
                   }
@@ -132,6 +146,8 @@ describe('Get Kibana Stats', () => {
               visualization: { total: 3 },
               search: { total: 1 },
               index_pattern: { total: 1 },
+              graph_workspace: { total: 2 },
+              timelion_sheet: { total: 2 },
               indices: 2
             }
           };
@@ -152,6 +168,8 @@ describe('Get Kibana Stats', () => {
                       visualization: { total: 3 },
                       search: { total: 1 },
                       index_pattern: { total: 1 },
+                      graph_workspace: { total: 1 },
+                      timelion_sheet: { total: 1 },
                       index: '.kibana-test-01'
                     }
                   }
@@ -166,6 +184,8 @@ describe('Get Kibana Stats', () => {
                       visualization: { total: 3 },
                       search: { total: 1 },
                       index_pattern: { total: 1 },
+                      graph_workspace: { total: 1 },
+                      timelion_sheet: { total: 1 },
                       index: '.kibana-test-01'
                     }
                   }
@@ -180,6 +200,8 @@ describe('Get Kibana Stats', () => {
                       visualization: { total: 5 },
                       search: { total: 3 },
                       index_pattern: { total: 3 },
+                      graph_workspace: { total: 1 },
+                      timelion_sheet: { total: 1 },
                       index: '.kibana-test-02'
                     }
                   }
@@ -193,6 +215,8 @@ describe('Get Kibana Stats', () => {
               visualization: { total: 8 },
               search: { total: 4 },
               index_pattern: { total: 4 },
+              graph_workspace: { total: 2 },
+              timelion_sheet: { total: 2 },
               indices: 2
             }
           };
@@ -217,6 +241,8 @@ describe('Get Kibana Stats', () => {
                       visualization: { total: 3 },
                       search: { total: 1 },
                       index_pattern: { total: 1 },
+                      graph_workspace: { total: 3 },
+                      timelion_sheet: { total: 4 },
                       index: '.kibana-test-01'
                     }
                   }
@@ -231,6 +257,8 @@ describe('Get Kibana Stats', () => {
                       visualization: { total: 3 },
                       search: { total: 1 },
                       index_pattern: { total: 1 },
+                      graph_workspace: { total: 3 },
+                      timelion_sheet: { total: 4 },
                       index: '.kibana-test-01'
                     }
                   }
@@ -245,6 +273,8 @@ describe('Get Kibana Stats', () => {
                       visualization: { total: 5 },
                       search: { total: 3 },
                       index_pattern: { total: 3 },
+                      graph_workspace: { total: 3 },
+                      timelion_sheet: { total: 4 },
                       index: '.kibana-test-02'
                     }
                   }
@@ -259,6 +289,8 @@ describe('Get Kibana Stats', () => {
                       visualization: { total: 500 },
                       search: { total: 300 },
                       index_pattern: { total: 300 },
+                      graph_workspace: { total: 3 },
+                      timelion_sheet: { total: 4 },
                       index: '.kibana-test-03'
                     }
                   }
@@ -272,6 +304,8 @@ describe('Get Kibana Stats', () => {
               visualization: { total: 8 },
               search: { total: 4 },
               index_pattern: { total: 4 },
+              graph_workspace: { total: 6 },
+              timelion_sheet: { total: 8 },
               indices: 2
             },
             clustertwo: {
@@ -279,6 +313,8 @@ describe('Get Kibana Stats', () => {
               visualization: { total: 500 },
               search: { total: 300 },
               index_pattern: { total: 300 },
+              graph_workspace: { total: 3 },
+              timelion_sheet: { total: 4 },
               indices: 1
             }
           };

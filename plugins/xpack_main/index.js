@@ -1,13 +1,13 @@
-import { join, resolve } from 'path';
+import { resolve } from 'path';
 import {
   XPACK_DEFAULT_ADMIN_EMAIL_UI_SETTING,
   XPACK_INFO_API_DEFAULT_POLL_FREQUENCY_IN_MILLIS
 } from '../../server/lib/constants';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
-import { requireAllAndApply } from '../../server/lib/require_all_and_apply';
 import { replaceInjectedVars } from './server/lib/replace_injected_vars';
 import { setupXPackMain } from './server/lib/setup_xpack_main';
 import { xpackInfo } from '../../server/lib/xpack_info';
+import { xpackInfoRoute, kibanaStatsRoute } from './server/routes/api/v1';
 
 export const xpackMain = (kibana) => {
   return new kibana.Plugin({
@@ -43,7 +43,9 @@ export const xpackMain = (kibana) => {
       mirrorPluginStatus(elasticsearchPlugin, this, 'yellow', 'red');
       elasticsearchPlugin.status.on('green', () => setupXPackMain(server, this, xpackInfo));
 
-      return requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server);
+      // register routes
+      xpackInfoRoute(server);
+      kibanaStatsRoute(server);
     }
   });
 };

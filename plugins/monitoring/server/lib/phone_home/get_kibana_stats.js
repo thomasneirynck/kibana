@@ -33,6 +33,8 @@ export function getUsageStats(rawStats) {
           visualization: rollUpTotals(rolledUpStats, currUsage, 'visualization'),
           search: rollUpTotals(rolledUpStats, currUsage, 'search'),
           index_pattern: rollUpTotals(rolledUpStats, currUsage, 'index_pattern'),
+          graph_workspace: rollUpTotals(rolledUpStats, currUsage, 'graph_workspace'),
+          timelion_sheet: rollUpTotals(rolledUpStats, currUsage, 'timelion_sheet'),
           indices: ++rolledUpStats.indices
         }
       };
@@ -48,6 +50,8 @@ export function getUsageStats(rawStats) {
         visualization: currUsage.visualization,
         search: currUsage.search,
         index_pattern: currUsage.index_pattern,
+        graph_workspace: currUsage.graph_workspace,
+        timelion_sheet: currUsage.timelion_sheet,
         indices: 1
       }
     };

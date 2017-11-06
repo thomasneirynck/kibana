@@ -51,6 +51,7 @@ export function phoneHomeRoutes(server) {
       .then(reply)
       .catch(() => {
         // ignore errors, return empty set and a 200
+        // TODO: don't ignore errors when running in dev mode
         reply([]).code(200);
       });
     }
