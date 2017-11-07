@@ -37,11 +37,11 @@ Array [
 
 exports[`when response has data Initially should have correct markup 1`] = `
 "
-<div class=\\"sc-gzVnrw jDjjeJ\\">
-  <div class=\\"sc-htoDjs dYZUib\\">
-    <div class=\\"sc-dnqmqq dZBzGE\\">
+<div class=\\"sc-htoDjs kmTboT\\">
+  <div class=\\"sc-dnqmqq hYQUsn\\">
+    <div class=\\"sc-iwsKbI fKhDNd\\">
     </div>
-    <div class=\\"sc-iwsKbI hQBmBE\\">
+    <div class=\\"sc-gZMcBi hhbgDr\\">
       <div class=\\"sc-bdVaJa eWvHJG\\"
            font-size=\\"12px\\"
       >
@@ -50,13 +50,13 @@ exports[`when response has data Initially should have correct markup 1`] = `
               radius=\\"11\\"
         >
         </span>
-        <span class=\\"sc-gqjmRU dfPhNS\\">
+        <span class=\\"sc-VigVT jZHsHQ\\">
           <!-- react-text: 8 -->
           Avg.
           <!-- /react-text -->
           <!-- react-text: 9 -->
           <!-- /react-text -->
-          <span class=\\"sc-gZMcBi krukmu\\">
+          <span class=\\"sc-gqjmRU eRtNVe\\">
             468 ms
           </span>
         </span>
@@ -69,7 +69,7 @@ exports[`when response has data Initially should have correct markup 1`] = `
               radius=\\"11\\"
         >
         </span>
-        <span class=\\"sc-gqjmRU dfPhNS\\">
+        <span class=\\"sc-VigVT jZHsHQ\\">
           <!-- react-text: 14 -->
           95th percentile
           <!-- /react-text -->
@@ -85,7 +85,7 @@ exports[`when response has data Initially should have correct markup 1`] = `
               radius=\\"11\\"
         >
         </span>
-        <span class=\\"sc-gqjmRU dfPhNS\\">
+        <span class=\\"sc-VigVT jZHsHQ\\">
           <!-- react-text: 19 -->
           99th percentile
           <!-- /react-text -->
@@ -971,29 +971,29 @@ exports[`when response has data when setting hoverIndex should display tooltip 1
 Array [
   Object {
     "color": "#3185FC",
-    "x": 1502283720000,
-    "y": 438704.4,
+    "text": "Avg.",
+    "value": 438704.4,
   },
   Object {
     "color": "#ECAE23",
-    "x": 1502283720000,
-    "y": 1557383.999999999,
+    "text": "95th",
+    "value": 1557383.999999999,
   },
   Object {
     "color": "#F98510",
-    "x": 1502283720000,
-    "y": 1820377.1200000006,
+    "text": "99th",
+    "value": 1820377.1200000006,
   },
 ]
 `;
 
 exports[`when response has data when setting hoverIndex should match snapshots 1`] = `
 "
-<div class=\\"sc-gzVnrw jDjjeJ\\">
-  <div class=\\"sc-htoDjs dYZUib\\">
-    <div class=\\"sc-dnqmqq dZBzGE\\">
+<div class=\\"sc-htoDjs kmTboT\\">
+  <div class=\\"sc-dnqmqq hYQUsn\\">
+    <div class=\\"sc-iwsKbI fKhDNd\\">
     </div>
-    <div class=\\"sc-iwsKbI hQBmBE\\">
+    <div class=\\"sc-gZMcBi hhbgDr\\">
       <div class=\\"sc-bdVaJa eWvHJG\\"
            font-size=\\"12px\\"
       >
@@ -1002,13 +1002,13 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
               radius=\\"11\\"
         >
         </span>
-        <span class=\\"sc-gqjmRU dfPhNS\\">
+        <span class=\\"sc-VigVT jZHsHQ\\">
           <!-- react-text: 8 -->
           Avg.
           <!-- /react-text -->
           <!-- react-text: 9 -->
           <!-- /react-text -->
-          <span class=\\"sc-gZMcBi krukmu\\">
+          <span class=\\"sc-gqjmRU eRtNVe\\">
             468 ms
           </span>
         </span>
@@ -1021,7 +1021,7 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
               radius=\\"11\\"
         >
         </span>
-        <span class=\\"sc-gqjmRU dfPhNS\\">
+        <span class=\\"sc-VigVT jZHsHQ\\">
           <!-- react-text: 14 -->
           95th percentile
           <!-- /react-text -->
@@ -1037,7 +1037,7 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
               radius=\\"11\\"
         >
         </span>
-        <span class=\\"sc-gqjmRU dfPhNS\\">
+        <span class=\\"sc-VigVT jZHsHQ\\">
           <!-- react-text: 19 -->
           99th percentile
           <!-- /react-text -->
@@ -1341,12 +1341,12 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
              style=\\"left: 420px; bottom: 40px; position: absolute;\\"
         >
           <div class=\\"sc-htpNat jejoiB\\">
-            <div class=\\"sc-bxivhb huCpvI\\">
+            <div class=\\"sc-bxivhb etAnDE\\">
               1502283720
             </div>
-            <div class=\\"sc-ifAKCX QtqkI\\">
-              <div class=\\"sc-EHOje cdiTaI\\">
-                <div class=\\"sc-bdVaJa eWvHJG\\"
+            <div class=\\"sc-ifAKCX gVdyMJ\\">
+              <div class=\\"sc-EHOje hxHpbH\\">
+                <div class=\\"sc-bZQynM bHRdln sc-bdVaJa eWvHJG\\"
                      font-size=\\"12px\\"
                 >
                   <span class=\\"sc-bwzfXH bzaemo\\"
@@ -1358,12 +1358,12 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
                   Avg.
                   <!-- /react-text -->
                 </div>
-                <div class=\\"sc-bZQynM kYmudQ\\">
+                <div class=\\"sc-gzVnrw zwJEr\\">
                   438704.4
                 </div>
               </div>
-              <div class=\\"sc-EHOje cdiTaI\\">
-                <div class=\\"sc-bdVaJa eWvHJG\\"
+              <div class=\\"sc-EHOje hxHpbH\\">
+                <div class=\\"sc-bZQynM bHRdln sc-bdVaJa eWvHJG\\"
                      font-size=\\"12px\\"
                 >
                   <span class=\\"sc-bwzfXH jmAhPm\\"
@@ -1375,12 +1375,12 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
                   95th
                   <!-- /react-text -->
                 </div>
-                <div class=\\"sc-bZQynM kYmudQ\\">
+                <div class=\\"sc-gzVnrw zwJEr\\">
                   1557383.999999999
                 </div>
               </div>
-              <div class=\\"sc-EHOje cdiTaI\\">
-                <div class=\\"sc-bdVaJa eWvHJG\\"
+              <div class=\\"sc-EHOje hxHpbH\\">
+                <div class=\\"sc-bZQynM bHRdln sc-bdVaJa eWvHJG\\"
                      font-size=\\"12px\\"
                 >
                   <span class=\\"sc-bwzfXH klrMPo\\"
@@ -1392,7 +1392,7 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
                   99th
                   <!-- /react-text -->
                 </div>
-                <div class=\\"sc-bZQynM kYmudQ\\">
+                <div class=\\"sc-gzVnrw zwJEr\\">
                   1820377.1200000006
                 </div>
               </div>
@@ -2017,11 +2017,11 @@ Object {
 
 exports[`when response has no data Initially should have correct markup 1`] = `
 "
-<div class=\\"sc-gzVnrw jDjjeJ\\">
-  <div class=\\"sc-htoDjs dYZUib\\">
-    <div class=\\"sc-dnqmqq dZBzGE\\">
+<div class=\\"sc-htoDjs kmTboT\\">
+  <div class=\\"sc-dnqmqq hYQUsn\\">
+    <div class=\\"sc-iwsKbI fKhDNd\\">
     </div>
-    <div class=\\"sc-iwsKbI hQBmBE\\">
+    <div class=\\"sc-gZMcBi hhbgDr\\">
     </div>
   </div>
   <div style=\\"position: relative; height: 250px;\\">

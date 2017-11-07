@@ -1,0 +1,670 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Histogram Initially should have default markup 1`] = `
+"
+<div class=\\"rv-xy-plot \\"
+     style=\\"width: 800px; height: 120px;\\"
+>
+  <svg class=\\"rv-xy-plot__inner\\"
+       width=\\"800\\"
+       height=\\"120\\"
+  >
+    <g transform=\\"translate(50,20)\\"
+       class=\\"rv-xy-plot__grid-lines\\"
+    >
+      <line y1=\\"60\\"
+            y2=\\"60\\"
+            x1=\\"0\\"
+            x2=\\"740\\"
+            class=\\"rv-xy-plot__grid-lines__line\\"
+      >
+      </line>
+      <line y1=\\"30\\"
+            y2=\\"30\\"
+            x1=\\"0\\"
+            x2=\\"740\\"
+            class=\\"rv-xy-plot__grid-lines__line\\"
+      >
+      </line>
+      <line y1=\\"0\\"
+            y2=\\"0\\"
+            x1=\\"0\\"
+            x2=\\"740\\"
+            class=\\"rv-xy-plot__grid-lines__line\\"
+      >
+      </line>
+    </g>
+    <g transform=\\"translate(50,80)\\"
+       class=\\"rv-xy-plot__axis rv-xy-plot__axis--horizontal \\"
+       style=\\"stroke-width: 1px;\\"
+    >
+      <line x1=\\"0\\"
+            x2=\\"740\\"
+            y1=\\"0\\"
+            y2=\\"0\\"
+            class=\\"rv-xy-plot__axis__line\\"
+            style=\\"stroke-width: 1px;\\"
+      >
+      </line>
+      <g transform=\\"translate(0, 0)\\"
+         class=\\"rv-xy-plot__axis__ticks\\"
+      >
+        <g transform=\\"translate(0, 0)\\"
+           class=\\"rv-xy-plot__axis__tick\\"
+           style=\\"stroke-width: 1px;\\"
+        >
+          <line x1=\\"0\\"
+                x2=\\"0\\"
+                y1=\\"0\\"
+                y2=\\"10\\"
+                class=\\"rv-xy-plot__axis__tick__line\\"
+                style=\\"stroke-width: 1px;\\"
+          >
+          </line>
+          <text text-anchor=\\"middle\\"
+                dy=\\"0.72em\\"
+                transform=\\"translate(0, 18)\\"
+                class=\\"rv-xy-plot__axis__tick__text\\"
+                style=\\"stroke-width: 1px;\\"
+          >
+            0
+          </text>
+        </g>
+        <g transform=\\"translate(114.04603267757892, 0)\\"
+           class=\\"rv-xy-plot__axis__tick\\"
+           style=\\"stroke-width: 1px;\\"
+        >
+          <line x1=\\"0\\"
+                x2=\\"0\\"
+                y1=\\"0\\"
+                y2=\\"10\\"
+                class=\\"rv-xy-plot__axis__tick__line\\"
+                style=\\"stroke-width: 1px;\\"
+          >
+          </line>
+          <text text-anchor=\\"middle\\"
+                dy=\\"0.72em\\"
+                transform=\\"translate(0, 18)\\"
+                class=\\"rv-xy-plot__axis__tick__text\\"
+                style=\\"stroke-width: 1px;\\"
+          >
+            500 ms
+          </text>
+        </g>
+        <g transform=\\"translate(228.09206535515784, 0)\\"
+           class=\\"rv-xy-plot__axis__tick\\"
+           style=\\"stroke-width: 1px;\\"
+        >
+          <line x1=\\"0\\"
+                x2=\\"0\\"
+                y1=\\"0\\"
+                y2=\\"10\\"
+                class=\\"rv-xy-plot__axis__tick__line\\"
+                style=\\"stroke-width: 1px;\\"
+          >
+          </line>
+          <text text-anchor=\\"middle\\"
+                dy=\\"0.72em\\"
+                transform=\\"translate(0, 18)\\"
+                class=\\"rv-xy-plot__axis__tick__text\\"
+                style=\\"stroke-width: 1px;\\"
+          >
+            1,000 ms
+          </text>
+        </g>
+        <g transform=\\"translate(342.13809803273676, 0)\\"
+           class=\\"rv-xy-plot__axis__tick\\"
+           style=\\"stroke-width: 1px;\\"
+        >
+          <line x1=\\"0\\"
+                x2=\\"0\\"
+                y1=\\"0\\"
+                y2=\\"10\\"
+                class=\\"rv-xy-plot__axis__tick__line\\"
+                style=\\"stroke-width: 1px;\\"
+          >
+          </line>
+          <text text-anchor=\\"middle\\"
+                dy=\\"0.72em\\"
+                transform=\\"translate(0, 18)\\"
+                class=\\"rv-xy-plot__axis__tick__text\\"
+                style=\\"stroke-width: 1px;\\"
+          >
+            1,500 ms
+          </text>
+        </g>
+        <g transform=\\"translate(456.1841307103157, 0)\\"
+           class=\\"rv-xy-plot__axis__tick\\"
+           style=\\"stroke-width: 1px;\\"
+        >
+          <line x1=\\"0\\"
+                x2=\\"0\\"
+                y1=\\"0\\"
+                y2=\\"10\\"
+                class=\\"rv-xy-plot__axis__tick__line\\"
+                style=\\"stroke-width: 1px;\\"
+          >
+          </line>
+          <text text-anchor=\\"middle\\"
+                dy=\\"0.72em\\"
+                transform=\\"translate(0, 18)\\"
+                class=\\"rv-xy-plot__axis__tick__text\\"
+                style=\\"stroke-width: 1px;\\"
+          >
+            2,000 ms
+          </text>
+        </g>
+        <g transform=\\"translate(570.2301633878945, 0)\\"
+           class=\\"rv-xy-plot__axis__tick\\"
+           style=\\"stroke-width: 1px;\\"
+        >
+          <line x1=\\"0\\"
+                x2=\\"0\\"
+                y1=\\"0\\"
+                y2=\\"10\\"
+                class=\\"rv-xy-plot__axis__tick__line\\"
+                style=\\"stroke-width: 1px;\\"
+          >
+          </line>
+          <text text-anchor=\\"middle\\"
+                dy=\\"0.72em\\"
+                transform=\\"translate(0, 18)\\"
+                class=\\"rv-xy-plot__axis__tick__text\\"
+                style=\\"stroke-width: 1px;\\"
+          >
+            2,500 ms
+          </text>
+        </g>
+        <g transform=\\"translate(684.2761960654735, 0)\\"
+           class=\\"rv-xy-plot__axis__tick\\"
+           style=\\"stroke-width: 1px;\\"
+        >
+          <line x1=\\"0\\"
+                x2=\\"0\\"
+                y1=\\"0\\"
+                y2=\\"10\\"
+                class=\\"rv-xy-plot__axis__tick__line\\"
+                style=\\"stroke-width: 1px;\\"
+          >
+          </line>
+          <text text-anchor=\\"middle\\"
+                dy=\\"0.72em\\"
+                transform=\\"translate(0, 18)\\"
+                class=\\"rv-xy-plot__axis__tick__text\\"
+                style=\\"stroke-width: 1px;\\"
+          >
+            3,000 ms
+          </text>
+        </g>
+      </g>
+    </g>
+    <g transform=\\"translate(0,20)\\"
+       class=\\"rv-xy-plot__axis rv-xy-plot__axis--vertical \\"
+    >
+      <g transform=\\"translate(50, 0)\\"
+         class=\\"rv-xy-plot__axis__ticks\\"
+      >
+        <g transform=\\"translate(0, 60)\\"
+           class=\\"rv-xy-plot__axis__tick\\"
+        >
+          <line y1=\\"0\\"
+                y2=\\"0\\"
+                x1=\\"0\\"
+                x2=\\"0\\"
+                class=\\"rv-xy-plot__axis__tick__line\\"
+          >
+          </line>
+          <text text-anchor=\\"end\\"
+                dy=\\"0.32em\\"
+                transform=\\"translate(-8, 0)\\"
+                class=\\"rv-xy-plot__axis__tick__text\\"
+          >
+            0.0
+          </text>
+        </g>
+        <g transform=\\"translate(0, 30)\\"
+           class=\\"rv-xy-plot__axis__tick\\"
+        >
+          <line y1=\\"0\\"
+                y2=\\"0\\"
+                x1=\\"0\\"
+                x2=\\"0\\"
+                class=\\"rv-xy-plot__axis__tick__line\\"
+          >
+          </line>
+          <text text-anchor=\\"end\\"
+                dy=\\"0.32em\\"
+                transform=\\"translate(-8, 0)\\"
+                class=\\"rv-xy-plot__axis__tick__text\\"
+          >
+            27.5 rpm
+          </text>
+        </g>
+        <g transform=\\"translate(0, 0)\\"
+           class=\\"rv-xy-plot__axis__tick\\"
+        >
+          <line y1=\\"0\\"
+                y2=\\"0\\"
+                x1=\\"0\\"
+                x2=\\"0\\"
+                class=\\"rv-xy-plot__axis__tick__line\\"
+          >
+          </line>
+          <text text-anchor=\\"end\\"
+                dy=\\"0.32em\\"
+                transform=\\"translate(-8, 0)\\"
+                class=\\"rv-xy-plot__axis__tick__text\\"
+          >
+            55.0 rpm
+          </text>
+        </g>
+      </g>
+    </g>
+    <g class=\\"rv-xy-plot__series rv-xy-plot__series--rect \\"
+       transform=\\"translate(50,20)\\"
+    >
+      <rect x=\\"1.3214285714285714\\"
+            width=\\"23.78571428571429\\"
+            y=\\"60\\"
+            height=\\"0\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"27.75\\"
+            width=\\"23.785714285714285\\"
+            y=\\"60\\"
+            height=\\"0\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"54.17857142857143\\"
+            width=\\"23.785714285714278\\"
+            y=\\"60\\"
+            height=\\"0\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"80.60714285714286\\"
+            width=\\"23.785714285714278\\"
+            y=\\"60\\"
+            height=\\"0\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"107.03571428571429\\"
+            width=\\"23.785714285714263\\"
+            y=\\"60\\"
+            height=\\"0\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"133.46428571428572\\"
+            width=\\"23.785714285714278\\"
+            y=\\"51.27272727272727\\"
+            height=\\"8.727272727272727\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"159.89285714285714\\"
+            width=\\"23.785714285714306\\"
+            y=\\"34.90909090909091\\"
+            height=\\"25.090909090909093\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"186.32142857142856\\"
+            width=\\"23.785714285714306\\"
+            y=\\"6.545454545454547\\"
+            height=\\"53.45454545454545\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"212.75000000000003\\"
+            width=\\"23.78571428571425\\"
+            y=\\"4.363636363636367\\"
+            height=\\"55.63636363636363\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"239.1785714285714\\"
+            width=\\"23.785714285714334\\"
+            y=\\"9.81818181818182\\"
+            height=\\"50.18181818181818\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"265.60714285714283\\"
+            width=\\"23.785714285714334\\"
+            y=\\"45.81818181818182\\"
+            height=\\"14.18181818181818\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"292.0357142857143\\"
+            width=\\"23.785714285714334\\"
+            y=\\"52.36363636363637\\"
+            height=\\"7.636363636363633\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"318.46428571428567\\"
+            width=\\"23.785714285714334\\"
+            y=\\"54.43636363636364\\"
+            height=\\"5.563636363636363\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"344.8928571428571\\"
+            width=\\"23.785714285714334\\"
+            y=\\"54.43636363636364\\"
+            height=\\"5.563636363636363\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"371.32142857142856\\"
+            width=\\"23.785714285714278\\"
+            y=\\"60\\"
+            height=\\"0\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"397.75\\"
+            width=\\"23.785714285714278\\"
+            y=\\"54.43636363636364\\"
+            height=\\"5.563636363636363\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"424.1785714285714\\"
+            width=\\"23.78571428571439\\"
+            y=\\"60\\"
+            height=\\"0\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"450.60714285714283\\"
+            width=\\"23.785714285714334\\"
+            y=\\"60\\"
+            height=\\"0\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"477.0357142857142\\"
+            width=\\"23.78571428571439\\"
+            y=\\"54.43636363636364\\"
+            height=\\"5.563636363636363\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"503.4642857142857\\"
+            width=\\"23.785714285714278\\"
+            y=\\"60\\"
+            height=\\"0\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"529.8928571428571\\"
+            width=\\"23.785714285714334\\"
+            y=\\"60\\"
+            height=\\"0\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"556.3214285714286\\"
+            width=\\"23.785714285714334\\"
+            y=\\"60\\"
+            height=\\"0\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"582.75\\"
+            width=\\"23.78571428571422\\"
+            y=\\"60\\"
+            height=\\"0\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"609.1785714285714\\"
+            width=\\"23.785714285714334\\"
+            y=\\"60\\"
+            height=\\"0\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"635.6071428571428\\"
+            width=\\"23.785714285714448\\"
+            y=\\"54.43636363636364\\"
+            height=\\"5.563636363636363\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"662.0357142857142\\"
+            width=\\"23.785714285714334\\"
+            y=\\"54.43636363636364\\"
+            height=\\"5.563636363636363\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"688.4642857142858\\"
+            width=\\"23.78571428571422\\"
+            y=\\"60\\"
+            height=\\"0\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+      <rect x=\\"714.8928571428571\\"
+            width=\\"23.785714285714334\\"
+            y=\\"54.43636363636364\\"
+            height=\\"5.563636363636363\\"
+            style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+      >
+      </rect>
+    </g>
+    <g class=\\" rv-voronoi\\">
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M76.42857149999999,120L76.42857149999999,20L50,20L50,120Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M76.42857149999999,20L76.42857149999999,120L102.857143,120L102.857143,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M102.857143,20L102.857143,120L129.28571449999998,120L129.28571449999998,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M129.28571449999998,20L129.28571449999998,120L155.71428550000002,120L155.71428550000002,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M155.71428550000002,20L155.71428550000002,120L182.142857,120L182.142857,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M182.142857,20L182.142857,120L208.57142849999997,120L208.57142849999997,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M208.57142849999997,20L208.57142849999997,120L235,120L235,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M235,20L235,120L261.4285715,120L261.4285715,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M261.4285715,20L261.4285715,120L287.85714299999995,120L287.85714299999995,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M287.85714299999995,20L287.85714299999995,120L314.2857145,120L314.2857145,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M314.2857145,20L314.2857145,120L340.71428549999996,120L340.71428549999996,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M340.71428549999996,20L340.71428549999996,120L367.142857,120L367.142857,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M367.142857,20L367.142857,120L393.5714285,120L393.5714285,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M393.5714285,20L393.5714285,120L420,120L420,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M420,20L420,120L446.4285715,120L446.4285715,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M446.4285715,20L446.4285715,120L472.85714299999995,120L472.85714299999995,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M472.85714299999995,20L472.85714299999995,120L499.2857145,120L499.2857145,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M499.2857145,20L499.2857145,120L525.7142855,120L525.7142855,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M525.7142855,20L525.7142855,120L552.1428569999999,120L552.1428569999999,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M552.1428569999999,20L552.1428569999999,120L578.5714284999999,120L578.5714284999999,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M578.5714284999999,20L578.5714284999999,120L605,120L605,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M605,20L605,120L631.4285715,120L631.4285715,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M631.4285715,20L631.4285715,120L657.857143,120L657.857143,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M657.857143,20L657.857143,120L684.2857145,120L684.2857145,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M684.2857145,20L684.2857145,120L710.7142855,120L710.7142855,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M710.7142855,20L710.7142855,120L737.1428569999999,120L737.1428569999999,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M737.1428569999999,20L737.1428569999999,120L763.5714284999999,120L763.5714284999999,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+      <path class=\\"rv-voronoi__cell\\"
+            d=\\"M763.5714284999999,20L763.5714284999999,120L800,120L800,20Z\\"
+            fill=\\"none\\"
+            style=\\"pointer-events: all;\\"
+      >
+      </path>
+    </g>
+  </svg>
+</div>
+"
+`;
+
+exports[`Histogram when hovering over a non-empty bucket should have correct markup for tooltip 1`] = `
+"
+<div class=\\"rv-hint  rv-hint--horizontalAlign-right
+     rv-hint--verticalAlign-bottom\\"
+     style=\\"margin-left: 1%; margin-right: 1%; left: 248.21428571428572px; top: 50px; position: absolute;\\"
+>
+  <div class=\\"sc-htpNat jejoiB\\">
+    <div class=\\"sc-bxivhb etAnDE\\">
+      811 - 869 ms
+    </div>
+    <div class=\\"sc-ifAKCX gVdyMJ\\">
+      <div class=\\"sc-EHOje hxHpbH\\">
+        <div class=\\"sc-bZQynM bHRdln sc-bdVaJa eWvHJG\\"
+             font-size=\\"12px\\"
+        >
+          <span class=\\"sc-bwzfXH eKfWHj\\"
+                color=\\"rgb(172, 189, 216)\\"
+                radius=\\"8\\"
+          >
+          </span>
+          <!-- react-text: 108 -->
+          Requests
+          <!-- /react-text -->
+        </div>
+        <div class=\\"sc-gzVnrw zwJEr\\">
+          49.0
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+"
+`;

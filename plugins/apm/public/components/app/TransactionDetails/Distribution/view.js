@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import d3 from 'd3';
 import Histogram from '../../../shared/charts/Histogram';
 import { toQuery, fromQuery } from '../../../../utils/url';
 import { withRouter } from 'react-router-dom';
 import EmptyMessage from '../../../shared/EmptyMessage';
+import { getTimeFormatter, asRpm, getUnit } from '../../../../utils/formatters';
 
 export function getFormattedBuckets(buckets, bucketSize) {
   if (!buckets) {
@@ -53,6 +55,9 @@ class Distribution extends Component {
     );
 
     const isEmpty = distribution.data.totalHits === 0;
+    const xMax = d3.max(buckets, d => d.x);
+    const timeFormatter = getTimeFormatter(xMax);
+    const unit = getUnit(xMax);
 
     if (isEmpty) {
       return (
@@ -63,7 +68,6 @@ class Distribution extends Component {
     return (
       <div>
         <Histogram
-          formatYValue={value => `${value} reqs.`}
           buckets={buckets}
           bucketSize={distribution.data.bucketSize}
           transactionId={this.props.urlParams.transactionId}
@@ -76,6 +80,14 @@ class Distribution extends Component {
               })
             });
           }}
+          formatXValue={timeFormatter}
+          formatYValue={asRpm}
+          formatTooltipHeader={(hoveredX0, hoveredX) =>
+            `${timeFormatter(hoveredX0, false)} - ${timeFormatter(
+              hoveredX,
+              false
+            )} ${unit}`}
+          tooltipLegendTitle="Requests"
         />
       </div>
     );

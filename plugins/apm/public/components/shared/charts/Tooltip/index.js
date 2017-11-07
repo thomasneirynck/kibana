@@ -1,8 +1,9 @@
 import React from 'react';
 import _ from 'lodash';
-import moment from 'moment';
 import { Hint } from 'react-vis';
+import moment from 'moment';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import {
   colors,
   unit,
@@ -29,57 +30,65 @@ const Header = styled.div`
   border-bottom: 1px solid ${colors.gray4};
   border-radius: ${borderRadius} ${borderRadius} 0 0;
   padding: ${px(units.half)};
-  color: ${colors.black2};
+  color: ${colors.gray3};
 `;
 
 const Legends = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
   padding: ${px(units.half)};
-`;
-
-const LegendAndValueWrap = styled.div`
-  min-width: ${px(units.minus * 6)};
+  padding: ${px(units.quarter)} ${px(unit)} ${px(units.quarter)}
+    ${px(units.half)};
   font-size: ${fontSizes.small};
 `;
 
+const LegendContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin: ${px(units.quarter)} 0;
+  justify-content: space-between;
+`;
+
+const LegendGray = styled(Legend)`
+  color: ${colors.gray3};
+`;
+
 const Value = styled.div`
-  color: ${colors.black};
+  color: ${colors.gray2};
   font-size: ${fontSize};
 `;
 
-export function Tooltip({
-  hoveredPoints,
-  series,
-  seriesValueType,
-  valueFormatter,
-  y,
-  ...props
-}) {
-  if (_.isEmpty(hoveredPoints)) {
+export default function Tooltip({ header, tooltipPoints, x, y, ...props }) {
+  if (_.isEmpty(tooltipPoints)) {
     return null;
   }
-  const x = hoveredPoints[0].x;
-  const timestamp = moment(x).format('MMMM Do YYYY, HH:mm');
-
   return (
     <Hint {...props} value={{ x, y }}>
       <TooltipElm>
-        <Header>{timestamp}</Header>
+        <Header>{header || moment(x).format('MMMM Do YYYY, HH:mm')}</Header>
         <Legends>
-          {hoveredPoints.map((point, i) => (
-            <LegendAndValueWrap key={i}>
-              <Legend
+          {tooltipPoints.map((point, i) => (
+            <LegendContainer key={i}>
+              <LegendGray
                 fontSize={fontSize.tiny}
                 radius={units.half}
-                color={series[i].color}
-                text={series[i].titleShort || series[i].title}
+                color={point.color}
+                text={point.text}
               />
-              <Value>{valueFormatter(point.y)}</Value>
-            </LegendAndValueWrap>
+              <Value>{point.value}</Value>
+            </LegendContainer>
           ))}
         </Legends>
       </TooltipElm>
     </Hint>
   );
 }
+
+Tooltip.propTypes = {
+  header: PropTypes.string,
+  tooltipPoints: PropTypes.array.isRequired,
+  x: PropTypes.number,
+  y: PropTypes.number
+};
+
+Tooltip.defaultProps = {};

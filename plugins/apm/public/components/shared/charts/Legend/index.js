@@ -34,7 +34,8 @@ export default class Legend extends PureComponent {
       fontSize = fontSizes.small,
       radius = units.minus - 1,
       disabled = false,
-      clickable = true
+      clickable = true,
+      className
     } = this.props;
     return (
       <Container
@@ -42,6 +43,7 @@ export default class Legend extends PureComponent {
         disabled={disabled}
         clickable={clickable}
         fontSize={fontSize}
+        className={className}
       >
         <Indicator color={color} radius={radius} />
         {text}

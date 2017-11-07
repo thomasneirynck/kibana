@@ -54,9 +54,10 @@ class Distribution extends Component {
       <div>
         <Histogram
           xType="time"
-          formatYValue={value => `${value} err.`}
           buckets={buckets}
           bucketSize={distribution.data.bucketSize}
+          formatYValue={value => `${value} err.`}
+          tooltipLegendTitle="Occurences"
         />
       </div>
     );
