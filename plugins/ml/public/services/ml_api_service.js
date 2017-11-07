@@ -226,6 +226,19 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
+  this.saveDataRecognizerConfig = function (obj) {
+    const data = {};
+    if (obj.label !== undefined) {
+      data.label = obj.label;
+    }
+
+    return http.request({
+      url: `${basePath}/data_recognizer/save/${obj.configId}`,
+      method: 'POST',
+      data
+    });
+  };
+
   this.getVisualizerFieldStats = function (obj) {
     const data = pick(obj, [
       'query',

@@ -28,6 +28,11 @@ function getConfigs(callWithRequest, configId) {
   return dr.getConfigs(configId);
 }
 
+function saveConfigItems(callWithRequest, configId, label, request) {
+  const dr = new DataRecognizer(callWithRequest);
+  return dr.saveDataRecognizerConfig(configId, label, request);
+}
+
 export function dataRecognizer(server, commonRouteConfig) {
 
   server.route({
@@ -54,6 +59,22 @@ export function dataRecognizer(server, commonRouteConfig) {
       return getConfigs(callWithRequest, configId)
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
+    },
+    config: {
+      ...commonRouteConfig
+    }
+  });
+
+  server.route({
+    method: 'POST',
+    path: '/api/ml/data_recognizer/save/{configId}',
+    handler(request, reply) {
+      const callWithRequest = callWithRequestFactory(server, request);
+      const configId = request.params.configId;
+      const label = (request.payload) ? request.payload.label : undefined;
+      return saveConfigItems(callWithRequest, configId, label, request)
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
     },
     config: {
       ...commonRouteConfig
