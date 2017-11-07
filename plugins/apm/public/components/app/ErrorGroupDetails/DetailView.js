@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import moment from 'moment';
 import {
-  unit,
   units,
   px,
   colors,
@@ -10,12 +10,12 @@ import {
 } from '../../../style/variables';
 import { get, capitalize, isEmpty } from 'lodash';
 import { STATUS } from '../../../constants';
+
 import {
   PropertiesTable,
   getLevelOneProps
 } from '../../shared/PropertiesTable';
-
-import moment from 'moment';
+import DiscoverButton from '../../shared/DiscoverButton';
 import Tab from '../../shared/Tab';
 import Stacktrace from '../../shared/Stacktrace';
 
@@ -29,6 +29,10 @@ const Container = styled.div`
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
+`;
+
+const Title = styled.h3`
+  margin-top: -${px(units.quarter)};
 `;
 
 const Properties = styled.div`
@@ -52,37 +56,6 @@ const PropertyValue = styled.div`
   font-weight: bold;
   font-size: ${fontSizes.large};
 `;
-
-function AllOccurrencesLink({ errorGroup, appName }) {
-  const groupId = errorGroup.group_id;
-  const occurrencesCount = errorGroup.occurrences_count;
-
-  if (!appName || !groupId) {
-    return null;
-  }
-
-  const DiscoverLink = styled.a`
-    margin: ${px(units.plus)} ${px(unit)} 0;
-  `;
-
-  const DiscoverIcon = styled.img`
-    height: 18px;
-    margin-top: -3px;
-    margin-right: 6px;
-    background: ${colors.blue1};
-    padding: 2px;
-    border-radius: 4px;
-    vertical-align: middle;
-  `;
-
-  const discoverRoute = `/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-24h,mode:quick,to:now))&_a=(interval:auto,query:(language:lucene,query:'context.app.name:${appName}%20AND%20error.grouping_key:${groupId}'),sort:!('@timestamp',desc))`;
-  return (
-    <DiscoverLink href={discoverRoute}>
-      <DiscoverIcon src="/plugins/kibana/assets/discover.svg" />
-      View {occurrencesCount} occurrences
-    </DiscoverLink>
-  );
-}
 
 const STACKTRACE_TAB = 'stacktrace';
 
@@ -114,11 +87,27 @@ function DetailView({ errorGroup, urlParams }) {
   const tabs = getTabs(errorGroup);
   const currentTab = getCurrentTab(tabs, urlParams.detailTab);
 
+  const occurencesCount = errorGroup.data.occurrencesCount;
+  const groupId = errorGroup.data.groupId;
+
+  const discoverQuery = {
+    _a: {
+      interval: 'auto',
+      query: {
+        language: 'lucene',
+        query: `context.app.name:${appName} AND error.grouping_key:${groupId}`
+      },
+      sort: { '@timestamp': 'desc' }
+    }
+  };
+
   return (
     <Container>
       <Header>
-        <h3>Error occurrence</h3>
-        <AllOccurrencesLink errorGroup={errorGroup.data} appName={appName} />
+        <Title>Error occurrence</Title>
+        <DiscoverButton query={discoverQuery}>
+          {`View ${occurencesCount} occurences in Discover`}
+        </DiscoverButton>
       </Header>
       <Properties>
         <Property>

@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import numeral from 'numeral';
 import { get } from 'lodash';
-import { KuiButton } from 'ui_framework/components';
 import Stacktrace from '../../../../../shared/Stacktrace';
+import DiscoverButton from '../../../../../shared/DiscoverButton';
 import { asMillis } from '../../../../../../utils/formatters';
 import {
   TRACE_DURATION,
@@ -48,6 +48,17 @@ function TraceDetails({ trace, totalDuration }) {
   const stackframes = trace.stacktrace;
   const codeLanguage = get(trace, 'context.app.language.name');
 
+  const discoverQuery = {
+    _a: {
+      interval: 'auto',
+      query: {
+        language: 'lucene',
+        query: `transaction.id:${trace.transactionId} OR trace.transaction_id:${trace.transactionId}`
+      },
+      sort: { '@timestamp': 'desc' }
+    }
+  };
+
   return (
     <div>
       <DetailsWrapper>
@@ -63,7 +74,9 @@ function TraceDetails({ trace, totalDuration }) {
           <DetailsHeader>% of total time</DetailsHeader>
           <DetailsText>{numeral(relativeDuration).format('0.00%')}</DetailsText>
         </div>
-        <KuiButton buttonType="secondary">Open trace in Discover</KuiButton>
+        <DiscoverButton query={discoverQuery}>
+          {`View traces in Discover`}
+        </DiscoverButton>
       </DetailsWrapper>
 
       <StackTraceContainer>

@@ -1,8 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import qs from 'querystring';
+import url from 'url';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
+import rison from 'rison-node';
 
 export function toQuery(search) {
   return qs.parse(search.slice(1));
@@ -12,14 +14,16 @@ export function fromQuery(query) {
   return qs.stringify(query);
 }
 
+function fromQueryWithoutEncoding(query) {
+  return qs.stringify(query, null, null, {
+    encodeURIComponent: v => v
+  });
+}
+
 function RelativeLinkComponent({ location, path, query, disabled, ...props }) {
   if (disabled) {
     return (
-      <a
-        aria-disabled="true"
-        {...props}
-        className={`${props.className || ''}`}
-      />
+      <a aria-disabled="true" {...props} className={props.className || ''} />
     );
   }
 
@@ -45,8 +49,32 @@ function RelativeLinkComponent({ location, path, query, disabled, ...props }) {
   );
 }
 
+export function KibanaLinkComponent({
+  location,
+  pathname,
+  hash,
+  query,
+  ...props
+}) {
+  const currentQuery = toQuery(location.search);
+  const nextQuery = {
+    _g: query._g ? rison.encode(query._g) : currentQuery._g,
+    _a: query._a ? rison.encode(query._a) : ''
+  };
+  const search = fromQueryWithoutEncoding(nextQuery);
+  const href = url.format({
+    pathname,
+    hash: `${hash}?${search}`
+  });
+
+  return (
+    <a {...props} href={href} className={`kuiLink ${props.className || ''}`} />
+  );
+}
+
 const withLocation = connect(({ location }) => ({ location }), {});
 export const RelativeLink = withLocation(RelativeLinkComponent);
+export const KibanaLink = withLocation(KibanaLinkComponent);
 
 // This is downright horrible 😭 💔
 // Angular decodes encoded url tokens like "%2F" to "/" which causes the route to change.
