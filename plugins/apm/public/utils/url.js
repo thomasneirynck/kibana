@@ -12,7 +12,17 @@ export function fromQuery(query) {
   return qs.stringify(query);
 }
 
-function RelativeLinkComponent({ location, path, query, ...props }) {
+function RelativeLinkComponent({ location, path, query, disabled, ...props }) {
+  if (disabled) {
+    return (
+      <a
+        aria-disabled="true"
+        {...props}
+        className={`${props.className || ''}`}
+      />
+    );
+  }
+
   // Shorthand for pathname
   const pathname = path || _.get(props.to, 'pathname') || location.pathname;
 

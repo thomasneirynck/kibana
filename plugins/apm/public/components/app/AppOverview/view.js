@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import withErrorHandler from '../../shared/withErrorHandler';
-import List from './List';
+import { STATUS } from '../../../constants';
+import { isEmpty } from 'lodash';
+import { loadAgentStatus } from '../../../services/rest';
+import { RelativeLink } from '../../../utils/url';
 
 import styled from 'styled-components';
+import { KuiButton } from 'ui_framework/components';
 import { units, px, fontSizes } from '../../../style/variables';
+import List from './List';
 
 function fetchData(props) {
   const { start, end } = props.urlParams;
@@ -12,9 +18,30 @@ function fetchData(props) {
   }
 }
 
+function redirectIfNoData({ appList, history }) {
+  if (appList.status === STATUS.SUCCESS && isEmpty(appList.data)) {
+    loadAgentStatus().then(result => {
+      if (!result.dataFound) {
+        history.push({
+          pathname: '/getting-started'
+        });
+      }
+    });
+  }
+}
+
+const HeaderWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
 const Header = styled.h1`
   margin: ${px(units.plus)} 0 ${px(units.plus)} 0;
   font-size: ${fontSizes.xxlarge};
+`;
+
+const GettingStartedLink = styled(RelativeLink)`
+  margin-top: ${px(units.double)};
 `;
 
 class AppOverview extends Component {
@@ -24,6 +51,7 @@ class AppOverview extends Component {
 
   componentWillReceiveProps(nextProps) {
     fetchData(nextProps);
+    redirectIfNoData(nextProps);
   }
 
   render() {
@@ -31,7 +59,12 @@ class AppOverview extends Component {
 
     return (
       <div>
-        <Header>Apps</Header>
+        <HeaderWrapper>
+          <Header>Apps</Header>
+          <GettingStartedLink path="/getting-started">
+            <KuiButton buttonType="secondary">Setup Instructions</KuiButton>
+          </GettingStartedLink>
+        </HeaderWrapper>
 
         <List
           items={appList.data}
@@ -43,4 +76,4 @@ class AppOverview extends Component {
   }
 }
 
-export default withErrorHandler(AppOverview, ['appList']);
+export default withErrorHandler(withRouter(AppOverview), ['appList']);

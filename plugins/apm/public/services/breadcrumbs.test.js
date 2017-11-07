@@ -3,6 +3,7 @@ import { legacyDecodeURIComponent } from '../utils/url';
 
 const routes = {
   '/': 'APM',
+  '/getting-started': 'Getting Started',
   '/:appName': {
     url: params => `/${params.appName}/transactions`,
     label: params => params.appName
@@ -22,6 +23,13 @@ describe('breadcrumbs', () => {
     expect(setupRoutes(routes)('/opbeans-backend')).toEqual([
       { label: 'APM', url: '/' },
       { label: 'opbeans-backend', url: '/opbeans-backend/transactions' }
+    ]);
+  });
+
+  it('/getting-started', () => {
+    expect(setupRoutes(routes)('/getting-started')).toEqual([
+      { label: 'APM', url: '/' },
+      { label: 'Getting Started', url: '/getting-started' }
     ]);
   });
 

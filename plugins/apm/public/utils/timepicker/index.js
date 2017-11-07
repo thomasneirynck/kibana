@@ -9,6 +9,7 @@ import { legacyDecodeURIComponent, toQuery } from '../../utils/url';
 
 const routes = {
   '/': 'APM',
+  '/getting-started': 'Getting Started',
   '/:appName': {
     url: params => `/${params.appName}/transactions`,
     label: params => params.appName

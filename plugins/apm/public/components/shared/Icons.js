@@ -32,6 +32,10 @@ export function Info({ style, ...props }) {
   );
 }
 
-export function Close({ style, ...props }) {
-  return <Icon style={style} name="fa-times" {...props} />;
+export function Check({ ...props }) {
+  return <Icon name="fa-check" {...props} />;
+}
+
+export function Close({ ...props }) {
+  return <Icon name="fa-times" {...props} />;
 }

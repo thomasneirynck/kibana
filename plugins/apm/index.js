@@ -2,6 +2,7 @@ import { resolve } from 'path';
 import { initTransactionsApi } from './server/routes/transactions';
 import { initAppsApi } from './server/routes/apps';
 import { initErrorsApi } from './server/routes/errors';
+import { initStatusApi } from './server/routes/status_check';
 
 export function apm(kibana) {
   return new kibana.Plugin({
@@ -32,6 +33,7 @@ export function apm(kibana) {
       initTransactionsApi(server);
       initAppsApi(server);
       initErrorsApi(server);
+      initStatusApi(server);
     }
   });
 }

@@ -50,6 +50,18 @@ export async function loadLicense() {
   return response.license;
 }
 
+export async function loadServerStatus() {
+  return callApi({
+    pathname: `../api/apm/status/server`
+  });
+}
+
+export async function loadAgentStatus() {
+  return callApi({
+    pathname: `../api/apm/status/agent`
+  });
+}
+
 export async function loadAppList({ start, end, query }) {
   return callApi({
     pathname: `../api/apm/apps`,
