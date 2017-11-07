@@ -1,6 +1,7 @@
 import expect from 'expect.js';
 
 export default function ({ getService, getPageObjects }) {
+  const remote = getService('remote');
   const esArchiver = getService('esArchiver');
   const random = getService('random');
   const pipelineList = getService('pipelineList');
@@ -8,12 +9,17 @@ export default function ({ getService, getPageObjects }) {
   const PageObjects = getPageObjects(['logstash']);
 
   describe('pipeline create new', () => {
+    let originalWindowSize;
+
     before(async () => {
+      originalWindowSize = await remote.getWindowSize();
+      await remote.setWindowSize(1600, 1000);
       await esArchiver.load('logstash/empty');
     });
 
     after(async () => {
       await esArchiver.unload('logstash/empty');
+      await remote.setWindowSize(originalWindowSize.width, originalWindowSize.height);
     });
 
     it('starts with the default values', async () => {

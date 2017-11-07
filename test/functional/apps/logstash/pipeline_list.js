@@ -2,19 +2,25 @@ import expect from 'expect.js';
 import { omit } from 'lodash';
 
 export default function ({ getService, getPageObjects }) {
+  const remote = getService('remote');
   const esArchiver = getService('esArchiver');
   const pipelineList = getService('pipelineList');
   const pipelineEditor = getService('pipelineEditor');
   const PageObjects = getPageObjects(['logstash']);
 
   describe('pipeline list route', () => {
+    let originalWindowSize;
+
     before(async () => {
+      originalWindowSize = await remote.getWindowSize();
+      await remote.setWindowSize(1600, 1000);
       await esArchiver.load('logstash/example_pipelines');
       await PageObjects.logstash.gotoPipelineList();
     });
 
     after(async () => {
       await esArchiver.unload('logstash/example_pipelines');
+      await remote.setWindowSize(originalWindowSize.width, originalWindowSize.height);
     });
 
     it('shows example pipelines', async () => {
