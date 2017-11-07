@@ -429,7 +429,6 @@ module
     buckets.setBarTarget(BAR_TARGET);
     const aggInterval = buckets.getInterval();
 
-    //console.log(`loadMetricFieldStats called at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
     ml.getVisualizerFieldStats({
       indexPatternTitle: indexPattern.title,
       query: $scope.searchQuery,
@@ -441,8 +440,6 @@ module
       fields: numberFields
     })
     .then((resp) => {
-      //console.log(`loadMetricFieldStats response received at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
-
       // Add the metric stats to the existing stats in the corresponding card.
       _.each($scope.metricCards, (card) => {
         if (card.fieldName !== undefined) {
@@ -490,7 +487,6 @@ module
     });
 
     if (fields.length > 0) {
-      //console.log(`loadNonMetricFieldStats called at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
       ml.getVisualizerFieldStats({
         indexPatternTitle: indexPattern.title,
         query: $scope.searchQuery,
@@ -502,8 +498,6 @@ module
         maxExamples: 10
       })
       .then((resp) => {
-        //console.log(`loadNonMetricFieldStats response received at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
-
         // Add the metric stats to the existing stats in the corresponding card.
         _.each($scope.fieldCards, (card) => {
           card.stats = { ...card.stats, ...(_.find(resp, { fieldName: card.fieldName })) };
@@ -531,8 +525,6 @@ module
   }
 
   function loadOverallStats() {
-    //console.log(`loadOverallStats called at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
-
     const aggregatableFields = [];
     const nonAggregatableFields = [];
     _.each(indexPattern.fields, (field) => {
@@ -561,7 +553,6 @@ module
       nonAggregatableFields: nonAggregatableFields
     })
     .then((resp) => {
-      //console.log(`loadOverallStats server response received at`, moment().format('MMMM Do YYYY, HH:mm:ss:SS'));
       $scope.overallStats = resp;
       createMetricCards();
       createNonMetricCards();

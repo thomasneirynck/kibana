@@ -14,10 +14,16 @@
  */
 
 import _ from 'lodash';
+import {
+  buildBaseFilterCriteria,
+  buildSamplerAggregation,
+  getSamplerAggregationsResponsePath } from '../../lib/query_utils';
 import { ML_JOB_FIELD_TYPES } from '../../../common/constants/field_types';
 
 const SAMPLER_TOP_TERMS_THRESHOLD = 100000;
 const SAMPLER_TOP_TERMS_SHARD_SIZE = 5000;
+const AGGREGATABLE_EXISTS_REQUEST_BATCH_SIZE = 200;
+const FIELDS_REQUEST_BATCH_SIZE = 10;
 
 export class DataVisualizer {
 
@@ -39,20 +45,43 @@ export class DataVisualizer {
     earliestMs,
     latestMs) {
 
-    let stats =  {
+    const stats =  {
+      totalCount: 0,
+      aggregatableExistsFields: [],
+      aggregatableNotExistsFields: [],
       nonAggregatableExistsFields: [],
       nonAggregatableNotExistsFields: []
     };
 
-    const aggregatableFieldStats = await this.checkAggregatableFieldsExist(
-      indexPatternTitle,
-      query,
-      aggregatableFields,
-      samplerShardSize,
-      timeFieldName,
-      earliestMs,
-      latestMs);
-    stats = _.extend(stats, aggregatableFieldStats);
+    // To avoid checking for the existence of too many aggregatable fields in one request,
+    // split the check into multiple batches (max 200 fields per request).
+    const batches = [[]];
+    _.each(aggregatableFields, (field) => {
+      let lastArray = _.last(batches);
+      if (lastArray.length === AGGREGATABLE_EXISTS_REQUEST_BATCH_SIZE) {
+        lastArray = [];
+        batches.push(lastArray);
+      }
+      lastArray.push(field);
+    });
+
+    await Promise.all(batches.map(async (fields) => {
+      const batchStats = await this.checkAggregatableFieldsExist(
+        indexPatternTitle,
+        query,
+        fields,
+        samplerShardSize,
+        timeFieldName,
+        earliestMs,
+        latestMs);
+
+      // Total count will be returned with each batch of fields. Just overwrite.
+      stats.totalCount = batchStats.totalCount;
+
+      // Add to the lists of fields which do and do not exist.
+      stats.aggregatableExistsFields.push(...batchStats.aggregatableExistsFields);
+      stats.aggregatableNotExistsFields.push(...batchStats.aggregatableNotExistsFields);
+    }));
 
     await Promise.all(nonAggregatableFields.map(async (field) => {
       const existsInDocs = await this.checkNonAggregatableFieldExists(
@@ -92,89 +121,112 @@ export class DataVisualizer {
     latestMs,
     interval,
     maxExamples) {
-    const results = [];
 
-    await Promise.all(fields.map(async (field) => {
-      let stats = { fieldName: field.fieldName };
-      switch(field.type) {
+    // Batch up fields by type, getting stats for multiple fields at a time.
+    const batches = [];
+    const batchedFields = {};
+    _.each(fields, (field) => {
+      if (field.fieldName === undefined) {
+        // undefined fieldName is used for a document count request.
+        batches.push([field]);
+      } else {
+        const fieldType = field.type;
+        if (batchedFields[fieldType] === undefined) {
+          batchedFields[fieldType] = [[]];
+        }
+        let lastArray = _.last(batchedFields[fieldType]);
+        if (lastArray.length === FIELDS_REQUEST_BATCH_SIZE) {
+          lastArray = [];
+          batchedFields[fieldType].push(lastArray);
+        }
+        lastArray.push(field);
+      }
+    });
+
+    _.each(batchedFields, (lists) => {
+      batches.push(...lists);
+    });
+
+
+    let results = [];
+    await Promise.all(batches.map(async (batch) => {
+      let batchStats = [];
+      const first = batch[0];
+      switch (first.type) {
         case ML_JOB_FIELD_TYPES.NUMBER:
           // undefined fieldName is used for a document count request.
-          if (field.fieldName !== undefined) {
-            stats = await this.getNumericFieldStats(
+          if (first.fieldName !== undefined) {
+            batchStats = await this.getNumericFieldsStats(
               indexPatternTitle,
               query,
-              field.fieldName,
-              _.get(field, 'cardinality', 0),
+              batch,
               samplerShardSize,
               timeFieldName,
               earliestMs,
               latestMs);
           } else {
-            stats = await this.getDocumentCountStats(
+            // Will only ever be one document count card,
+            // so no value in batching up the single request.
+            const stats = await this.getDocumentCountStats(
               indexPatternTitle,
               query,
               timeFieldName,
               earliestMs,
               latestMs,
               interval);
+            batchStats.push(stats);
           }
           break;
         case ML_JOB_FIELD_TYPES.KEYWORD:
         case ML_JOB_FIELD_TYPES.IP:
-          stats = await this.getStringFieldStats(
+          batchStats = await this.getStringFieldsStats(
             indexPatternTitle,
             query,
-            field.fieldName,
-            _.get(field, 'cardinality', 0),
+            batch,
             samplerShardSize,
             timeFieldName,
             earliestMs,
             latestMs);
           break;
         case ML_JOB_FIELD_TYPES.DATE:
-          stats = await this.getDateFieldStats(
+          batchStats = await this.getDateFieldsStats(
             indexPatternTitle,
             query,
-            field.fieldName,
+            batch,
             samplerShardSize,
             timeFieldName,
             earliestMs,
             latestMs);
           break;
         case ML_JOB_FIELD_TYPES.BOOLEAN:
-          stats = await this.getBooleanFieldStats(
+          batchStats = await this.getBooleanFieldsStats(
             indexPatternTitle,
             query,
-            field.fieldName,
+            batch,
             samplerShardSize,
             timeFieldName,
             earliestMs,
             latestMs);
           break;
         case ML_JOB_FIELD_TYPES.TEXT:
-          stats = await this.getFieldExamples(
-            indexPatternTitle,
-            query,
-            field.fieldName,
-            timeFieldName,
-            earliestMs,
-            latestMs,
-            maxExamples);
-          break;
         default:
-          stats = await this.getDefaultAggregatableFieldStats(
-            indexPatternTitle,
-            query,
-            field.fieldName,
-            timeFieldName,
-            earliestMs,
-            latestMs,
-            maxExamples);
+          // Use an exists filter on the the field name to get
+          // examples of the field, so cannot batch up.
+          await Promise.all(batch.map(async (field) => {
+            const stats = await this.getFieldExamples(
+              indexPatternTitle,
+              query,
+              field.fieldName,
+              timeFieldName,
+              earliestMs,
+              latestMs,
+              maxExamples);
+            batchStats.push(stats);
+          }));
           break;
       }
 
-      results.push(stats);
-
+      results = [...results, ...batchStats];
     }));
 
     return results;
@@ -191,7 +243,7 @@ export class DataVisualizer {
 
     const index = indexPatternTitle;
     const size = 0;
-    const filterCriteria = this.buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
+    const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
 
     // Value count aggregation faster way of checking if field exists than using
     // filter aggregation with exists query.
@@ -211,7 +263,7 @@ export class DataVisualizer {
           filter: filterCriteria
         }
       },
-      aggs: this.buildSamplerAggregation(aggs, samplerShardSize)
+      aggs: buildSamplerAggregation(aggs, samplerShardSize)
     };
 
     const resp = await this.callWithRequest('search', { index, size, body });
@@ -223,7 +275,7 @@ export class DataVisualizer {
       aggregatableNotExistsFields: []
     };
 
-    const aggsPath = this.getResponseAggregationsPath(samplerShardSize);
+    const aggsPath = getSamplerAggregationsResponsePath(samplerShardSize);
     const sampleCount = samplerShardSize > 0 ? _.get(aggregations, ['sample', 'doc_count'], 0) : totalCount;
     aggregatableFields.forEach((field) => {
       const count = _.get(aggregations, [...aggsPath, `${field}_count`, 'value'], 0);
@@ -259,7 +311,7 @@ export class DataVisualizer {
 
     const index = indexPatternTitle;
     const size = 0;
-    const filterCriteria = this.buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
+    const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
 
     const body = {
       query: {
@@ -285,7 +337,7 @@ export class DataVisualizer {
 
     const index = indexPatternTitle;
     const size = 0;
-    const filterCriteria = this.buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
+    const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
 
     // Don't use the sampler aggregation as this can lead to some potentially
     // confusing date histogram results depending on the date range of data amongst shards.
@@ -327,11 +379,10 @@ export class DataVisualizer {
     return stats;
   }
 
-  async getNumericFieldStats(
+  async getNumericFieldsStats(
     indexPatternTitle,
     query,
-    field,
-    cardinality,
+    fields,
     samplerShardSize,
     timeFieldName,
     earliestMs,
@@ -339,7 +390,7 @@ export class DataVisualizer {
 
     const index = indexPatternTitle;
     const size = 0;
-    const filterCriteria = this.buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
+    const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
 
     // Build the percents parameter which defines the percentiles to query
     // for the metric distribution data.
@@ -349,227 +400,45 @@ export class DataVisualizer {
     let count = 0;
     const percents = Array.from(Array(MAX_PERCENT / PERCENTILE_SPACING), () => count += PERCENTILE_SPACING);
 
-    // If cardinality >= SAMPLE_TOP_TERMS_THRESHOLD, run the top terms aggregation
-    // in a sampler aggregation, even if no sampling has been specified (samplerShardSize < 1).
-
-    const aggs = {
-      field_stats: {
-        stats: { field }
-      },
-      percentiles: {
+    const aggs = {};
+    fields.forEach((field) => {
+      aggs[`${field.fieldName}_field_stats`] = {
+        stats: { field: field.fieldName }
+      };
+      aggs[`${field.fieldName}_percentiles`] = {
         percentiles: {
-          field,
+          field: field.fieldName,
           percents: percents,
           keyed: false
         }
-      }
-    };
-
-    const top = {
-      terms: {
-        field,
-        size: 10,
-        order: {
-          _count: 'desc'
-        }
-      }
-    };
-
-    const aggsPath = this.getResponseAggregationsPath(samplerShardSize);
-    let topAggsPath = aggsPath;
-    let topValuesSamplerShardSize = samplerShardSize;
-    if (samplerShardSize < 1 && cardinality >= SAMPLER_TOP_TERMS_THRESHOLD) {
-      aggs.sample = {
-        sampler: {
-          shard_size: SAMPLER_TOP_TERMS_SHARD_SIZE
-        },
-        aggs: {
-          top
-        }
       };
-      topAggsPath = ['sample'];
-      topValuesSamplerShardSize = SAMPLER_TOP_TERMS_SHARD_SIZE;
-    } else {
-      aggs.top = top;
-    }
 
-    const body = {
-      query: {
-        bool: {
-          filter: filterCriteria
-        }
-      },
-      aggs: this.buildSamplerAggregation(aggs, samplerShardSize)
-    };
-
-    const resp = await this.callWithRequest('search', { index, size, body });
-    const aggregations = resp.aggregations;
-    const stats = {
-      fieldName: field,
-      count: _.get(aggregations, [...aggsPath, 'field_stats', 'count'], 0),
-      min: _.get(aggregations, [...aggsPath, 'field_stats', 'min'], 0),
-      max: _.get(aggregations, [...aggsPath, 'field_stats', 'max'], 0),
-      avg: _.get(aggregations, [...aggsPath, 'field_stats', 'avg'], 0),
-      isTopValuesSampled: cardinality >= SAMPLER_TOP_TERMS_THRESHOLD || samplerShardSize > 0
-    };
-
-    stats.topValues = _.get(aggregations, [...topAggsPath, 'top', 'buckets'], []);
-    stats.topValuesSampleSize = _.get(aggregations, [...topAggsPath, 'top', 'sum_other_doc_count'], 0);
-    stats.topValuesSamplerShardSize = topValuesSamplerShardSize;
-    stats.topValues.forEach((bucket) => {
-      stats.topValuesSampleSize += bucket.doc_count;
-    });
-
-    if (stats.count > 0) {
-      const percentiles = _.get(aggregations, [...aggsPath, 'percentiles', 'values'], []);
-      const medianPercentile = _.find(percentiles, { key: 50 });
-      stats.median = medianPercentile !== undefined ? medianPercentile.value : 0;
-      stats.distribution = this.processDistributionData(percentiles, PERCENTILE_SPACING, stats.min);
-    }
-
-    return stats;
-  }
-
-  async getStringFieldStats(
-    indexPatternTitle,
-    query,
-    field,
-    cardinality,
-    samplerShardSize,
-    timeFieldName,
-    earliestMs,
-    latestMs) {
-
-    const index = indexPatternTitle;
-    const size = 0;
-    const filterCriteria = this.buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
-
-    // If cardinality >= SAMPLE_TOP_TERMS_THRESHOLD, run the top terms aggregation
-    // in a sampler aggregation, even if no sampling has been specified (samplerShardSize < 1).
-
-    const aggs = {};
-
-    const top = {
-      terms: {
-        field,
-        size: 10,
-        order: {
-          _count: 'desc'
-        }
-      }
-    };
-
-    const aggsPath = this.getResponseAggregationsPath(samplerShardSize);
-    let topAggsPath = aggsPath;
-    let topValuesSamplerShardSize = samplerShardSize;
-    if (samplerShardSize < 1 && cardinality >= SAMPLER_TOP_TERMS_THRESHOLD) {
-      aggs.sample = {
-        sampler: {
-          shard_size: SAMPLER_TOP_TERMS_SHARD_SIZE
-        },
-        aggs: {
-          top
-        }
-      };
-      topAggsPath = ['sample'];
-      topValuesSamplerShardSize = SAMPLER_TOP_TERMS_SHARD_SIZE;
-    } else {
-      aggs.top = top;
-    }
-
-    const body = {
-      query: {
-        bool: {
-          filter: filterCriteria
-        }
-      },
-      aggs: this.buildSamplerAggregation(aggs, samplerShardSize)
-    };
-
-    const resp = await this.callWithRequest('search', { index, size, body });
-    const aggregations = resp.aggregations;
-    const stats = {
-      fieldName: field,
-      isTopValuesSampled: cardinality >= SAMPLER_TOP_TERMS_THRESHOLD || samplerShardSize > 0
-    };
-
-    stats.topValues = _.get(aggregations, [...topAggsPath, 'top', 'buckets'], []);
-    stats.topValuesSampleSize = _.get(aggregations, [...topAggsPath, 'top', 'sum_other_doc_count'], 0);
-    stats.topValuesSamplerShardSize = topValuesSamplerShardSize;
-    stats.topValues.forEach((bucket) => {
-      stats.topValuesSampleSize += bucket.doc_count;
-    });
-
-    return stats;
-  }
-
-  async getDateFieldStats(
-    indexPatternTitle,
-    query,
-    field,
-    samplerShardSize,
-    timeFieldName,
-    earliestMs,
-    latestMs) {
-
-    const index = indexPatternTitle;
-    const size = 0;
-    const filterCriteria = this.buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
-    const aggs = {
-      field_stats: {
-        stats: { field }
-      }
-    };
-
-    const body = {
-      query: {
-        bool: {
-          filter: filterCriteria
-        }
-      },
-      aggs: this.buildSamplerAggregation(aggs, samplerShardSize)
-    };
-
-    const resp = await this.callWithRequest('search', { index, size, body });
-    const aggregations = resp.aggregations;
-    const aggsPath = this.getResponseAggregationsPath(samplerShardSize);
-    const stats = {
-      fieldName: field,
-      totalCount: _.get(resp, ['hits', 'total'], 0),
-      count: _.get(aggregations, [...aggsPath, 'field_stats', 'count'], 0),
-      earliest: _.get(aggregations, [...aggsPath, 'field_stats', 'min']),
-      latest: _.get(aggregations, [...aggsPath, 'field_stats', 'max'])
-    };
-
-    return stats;
-  }
-
-  async getBooleanFieldStats(
-    indexPatternTitle,
-    query,
-    field,
-    samplerShardSize,
-    timeFieldName,
-    earliestMs,
-    latestMs) {
-
-    const index = indexPatternTitle;
-    const size = 0;
-    const filterCriteria = this.buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
-    const aggs = {
-      value_count: {
-        value_count: { field }
-      },
-      values: {
+      const top = {
         terms: {
-          field,
-          size: 2,
+          field: field.fieldName,
+          size: 10,
           order: {
             _count: 'desc'
           }
         }
+      };
+
+      // If cardinality >= SAMPLE_TOP_TERMS_THRESHOLD, run the top terms aggregation
+      // in a sampler aggregation, even if no sampling has been specified (samplerShardSize < 1).
+      if (samplerShardSize < 1 && field.cardinality >= SAMPLER_TOP_TERMS_THRESHOLD) {
+        aggs[`${field.fieldName}_top`] = {
+          sampler: {
+            shard_size: SAMPLER_TOP_TERMS_SHARD_SIZE
+          },
+          aggs: {
+            top
+          }
+        };
+      } else {
+        aggs[`${field.fieldName}_top`] = top;
       }
-    };
+
+    });
 
     const body = {
       query: {
@@ -577,85 +446,233 @@ export class DataVisualizer {
           filter: filterCriteria
         }
       },
-      aggs: this.buildSamplerAggregation(aggs, samplerShardSize)
+      aggs: buildSamplerAggregation(aggs, samplerShardSize)
     };
 
     const resp = await this.callWithRequest('search', { index, size, body });
     const aggregations = resp.aggregations;
-    const aggsPath = this.getResponseAggregationsPath(samplerShardSize);
-    const stats = {
-      fieldName: field,
-      totalCount: _.get(resp, ['hits', 'total'], 0),
-      count: _.get(aggregations, [...aggsPath, 'value_count', 'value'], 0),
-      trueCount: 0,
-      falseCount: 0
-    };
-    const valueBuckets = _.get(aggregations, [...aggsPath, 'values', 'buckets'], []);
-    _.each(valueBuckets, (bucket) => {
-      stats[`${bucket.key_as_string}Count`] = bucket.doc_count;
+    const aggsPath = getSamplerAggregationsResponsePath(samplerShardSize);
+    const batchStats = [];
+    fields.forEach((field) => {
+      const fieldStatsResp =
+        _.get(aggregations, [...aggsPath, `${field.fieldName}_field_stats`], {});
+      const stats = {
+        fieldName: field.fieldName,
+        count: _.get(fieldStatsResp, 'count', 0),
+        min: _.get(fieldStatsResp, 'min', 0),
+        max: _.get(fieldStatsResp, 'max', 0),
+        avg: _.get(fieldStatsResp, 'avg', 0),
+        isTopValuesSampled: field.cardinality >= SAMPLER_TOP_TERMS_THRESHOLD || samplerShardSize > 0
+      };
+
+      const topAggsPath = [...aggsPath, `${field.fieldName}_top`];
+      if (samplerShardSize < 1 && field.cardinality >= SAMPLER_TOP_TERMS_THRESHOLD) {
+        topAggsPath.push('top');
+      }
+
+      stats.topValues = _.get(aggregations, [...topAggsPath, 'buckets'], []);
+      stats.topValuesSampleSize = _.get(aggregations, [...topAggsPath, 'sum_other_doc_count'], 0);
+      stats.topValuesSamplerShardSize = field.cardinality >= SAMPLER_TOP_TERMS_THRESHOLD ?
+        SAMPLER_TOP_TERMS_SHARD_SIZE : samplerShardSize;
+      stats.topValues.forEach((bucket) => {
+        stats.topValuesSampleSize += bucket.doc_count;
+      });
+
+      if (stats.count > 0) {
+        const percentiles = _.get(aggregations, [...aggsPath, `${field.fieldName}_percentiles`, 'values'], []);
+        const medianPercentile = _.find(percentiles, { key: 50 });
+        stats.median = medianPercentile !== undefined ? medianPercentile.value : 0;
+        stats.distribution = this.processDistributionData(percentiles, PERCENTILE_SPACING, stats.min);
+      }
+
+      batchStats.push(stats);
     });
 
-    return stats;
+    return batchStats;
   }
 
-  async getDefaultAggregatableFieldStats(
+  async getStringFieldsStats(
     indexPatternTitle,
     query,
-    field,
+    fields,
+    samplerShardSize,
     timeFieldName,
     earliestMs,
-    latestMs,
-    maxExamples) {
-
-    // Just return some examples of the field which will be displayed together with basic information
-    // returned from the call to get overall stats on each field.
+    latestMs) {
 
     const index = indexPatternTitle;
+    const size = 0;
+    const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
 
-    // Request at least 100 docs so that we have a chance of obtaining
-    // 'maxExamples' of the field.
-    const size = Math.max(100, maxExamples);
-    const filterCriteria = this.buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
+    const aggs = {};
+    fields.forEach((field) => {
+      const top = {
+        terms: {
+          field: field.fieldName,
+          size: 10,
+          order: {
+            _count: 'desc'
+          }
+        }
+      };
 
-    // Use an exists filter to return examples of the field.
-    filterCriteria.push({
-      exists: { field }
+      // If cardinality >= SAMPLE_TOP_TERMS_THRESHOLD, run the top terms aggregation
+      // in a sampler aggregation, even if no sampling has been specified (samplerShardSize < 1).
+      if (samplerShardSize < 1 && field.cardinality >= SAMPLER_TOP_TERMS_THRESHOLD) {
+        aggs[`${field.fieldName}_top`] = {
+          sampler: {
+            shard_size: SAMPLER_TOP_TERMS_SHARD_SIZE
+          },
+          aggs: {
+            top
+          }
+        };
+      } else {
+        aggs[`${field.fieldName}_top`] = top;
+      }
+
     });
 
     const body = {
-      _source: field,
       query: {
         bool: {
           filter: filterCriteria
         }
-      }
+      },
+      aggs: buildSamplerAggregation(aggs, samplerShardSize)
     };
 
     const resp = await this.callWithRequest('search', { index, size, body });
-    const stats = {
-      fieldName: field,
-      totalCount: _.get(resp, ['hits', 'total'], 0),
-      examples: []
+    const aggregations = resp.aggregations;
+    const aggsPath = getSamplerAggregationsResponsePath(samplerShardSize);
+    const batchStats = [];
+    fields.forEach((field) => {
+      const stats = {
+        fieldName: field.fieldName,
+        isTopValuesSampled: field.cardinality >= SAMPLER_TOP_TERMS_THRESHOLD || samplerShardSize > 0
+      };
+
+      const topAggsPath = [...aggsPath, `${field.fieldName}_top`];
+      if (samplerShardSize < 1 && field.cardinality >= SAMPLER_TOP_TERMS_THRESHOLD) {
+        topAggsPath.push('top');
+      }
+
+      stats.topValues = _.get(aggregations, [...topAggsPath, 'buckets'], []);
+      stats.topValuesSampleSize = _.get(aggregations, [...topAggsPath, 'sum_other_doc_count'], 0);
+      stats.topValuesSamplerShardSize = field.cardinality >= SAMPLER_TOP_TERMS_THRESHOLD ?
+        SAMPLER_TOP_TERMS_SHARD_SIZE : samplerShardSize;
+      stats.topValues.forEach((bucket) => {
+        stats.topValuesSampleSize += bucket.doc_count;
+      });
+
+      batchStats.push(stats);
+    });
+
+    return batchStats;
+  }
+
+  async getDateFieldsStats(
+    indexPatternTitle,
+    query,
+    fields,
+    samplerShardSize,
+    timeFieldName,
+    earliestMs,
+    latestMs) {
+
+    const index = indexPatternTitle;
+    const size = 0;
+    const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
+
+    const aggs = {};
+    fields.forEach((field) => {
+      aggs[`${field.fieldName}_field_stats`] = {
+        stats: { field: field.fieldName }
+      };
+    });
+
+    const body = {
+      query: {
+        bool: {
+          filter: filterCriteria
+        }
+      },
+      aggs: buildSamplerAggregation(aggs, samplerShardSize)
     };
 
-    if (resp.hits.total !== 0) {
-      const hits = resp.hits.hits;
-      for (let i = 0; i < hits.length; i++) {
-        // Look in the _source for the field value.
-        // If the field is not in the _source (as will happen if the
-        // field is populated using copy_to in the index mapping),
-        // there will be no example to add.
-        const example = _.get(hits[i]._source, field);
-        if (example !== undefined && stats.examples.indexOf(example) === -1) {
-          stats.examples.push(example);
-          if (stats.examples.length === maxExamples) {
-            break;
-          }
-        }
-      }
-    }
+    const resp = await this.callWithRequest('search', { index, size, body });
+    const aggregations = resp.aggregations;
+    const aggsPath = getSamplerAggregationsResponsePath(samplerShardSize);
+    const batchStats = [];
+    fields.forEach((field) => {
+      const fieldStatsResp =
+        _.get(aggregations, [...aggsPath, `${field.fieldName}_field_stats`], {});
+      batchStats.push({
+        fieldName: field.fieldName,
+        count: _.get(fieldStatsResp, 'count', 0),
+        earliest: _.get(fieldStatsResp, 'min', 0),
+        latest: _.get(fieldStatsResp, 'max', 0)
+      });
+    });
 
-    return stats;
+    return batchStats;
+  }
+
+  async getBooleanFieldsStats(
+    indexPatternTitle,
+    query,
+    fields,
+    samplerShardSize,
+    timeFieldName,
+    earliestMs,
+    latestMs) {
+    const index = indexPatternTitle;
+    const size = 0;
+    const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
+
+    const aggs = {};
+    fields.forEach((field) => {
+      aggs[`${field.fieldName}_value_count`] = {
+        value_count: { field: field.fieldName },
+      };
+      aggs[`${field.fieldName}_values`] = {
+        terms: {
+          field: field.fieldName,
+          size: 2
+        }
+      };
+    });
+
+    const body = {
+      query: {
+        bool: {
+          filter: filterCriteria
+        }
+      },
+      aggs: buildSamplerAggregation(aggs, samplerShardSize)
+    };
+
+    const resp = await this.callWithRequest('search', { index, size, body });
+    const aggregations = resp.aggregations;
+    const aggsPath = getSamplerAggregationsResponsePath(samplerShardSize);
+    const batchStats = [];
+    fields.forEach((field) => {
+      const stats = {
+        fieldName: field.fieldName,
+        count: _.get(aggregations, [...aggsPath, `${field.fieldName}_value_count`, 'value'], 0),
+        trueCount: 0,
+        falseCount: 0
+      };
+
+      const valueBuckets = _.get(aggregations, [...aggsPath, `${field.fieldName}_values`, 'buckets'], []);
+      _.each(valueBuckets, (bucket) => {
+        stats[`${bucket.key_as_string}Count`] = bucket.doc_count;
+      });
+
+      batchStats.push(stats);
+    });
+
+    return batchStats;
   }
 
   async getFieldExamples(
@@ -672,7 +689,7 @@ export class DataVisualizer {
     // Request at least 100 docs so that we have a chance of obtaining
     // 'maxExamples' of the field.
     const size = Math.max(100, maxExamples);
-    const filterCriteria = this.buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
+    const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
 
     // Use an exists filter to return examples of the field.
     filterCriteria.push({
@@ -713,49 +730,6 @@ export class DataVisualizer {
 
     return stats;
 
-  }
-
-  // Builds the base filter criteria used in queries,
-  // adding criteria for the time range and an optional query.
-  buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query) {
-    const filterCriteria = [{
-      range: {
-        [timeFieldName]: {
-          gte: earliestMs,
-          lte: latestMs,
-          format: 'epoch_millis'
-        }
-      }
-    }];
-
-    if (query) {
-      filterCriteria.push(query);
-    }
-
-    return filterCriteria;
-  }
-
-  // Wraps the supplied aggregations in a sampler aggregation.
-  // samplerShardSize < 1 indicates no sampling.
-  buildSamplerAggregation(aggs, samplerShardSize) {
-    if (samplerShardSize < 1) {
-      return aggs;
-    }
-
-    return {
-      sample: {
-        sampler: {
-          shard_size: samplerShardSize
-        },
-        aggs
-      }
-    };
-  }
-
-  // Returns the aggregation path, depending on whether
-  // sampling is being used (samplerShardSize < 1 indicates no sampling).
-  getResponseAggregationsPath(samplerShardSize) {
-    return samplerShardSize > 0 ? ['sample'] : [];
   }
 
   processDistributionData(percentiles, percentileSpacing, minValue) {
