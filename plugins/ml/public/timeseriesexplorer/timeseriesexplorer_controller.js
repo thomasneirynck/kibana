@@ -276,7 +276,7 @@ module.controller('MlTimeSeriesExplorerController', function (
       let aggType = undefined;
       const detector = $scope.selectedJob.analysis_config.detectors[detectorIndex];
       const esAgg = mlFunctionToESAggregation(detector.function);
-      if ($scope.modelPlotEnabled === false && esAgg === 'sum') {
+      if ($scope.modelPlotEnabled === false && (esAgg === 'sum' || esAgg === 'count')) {
         aggType = { avg: 'sum', max: 'sum', min: 'sum' };
       }
       mlForecastService.getForecastData(
@@ -401,7 +401,7 @@ module.controller('MlTimeSeriesExplorerController', function (
       let aggType = undefined;
       const detector = $scope.selectedJob.analysis_config.detectors[detectorIndex];
       const esAgg = mlFunctionToESAggregation(detector.function);
-      if ($scope.modelPlotEnabled === false && esAgg === 'sum') {
+      if ($scope.modelPlotEnabled === false && (esAgg === 'sum' || esAgg === 'count')) {
         aggType = { avg: 'sum', max: 'sum', min: 'sum' };
       }
       mlForecastService.getForecastData(
@@ -657,9 +657,8 @@ module.controller('MlTimeSeriesExplorerController', function (
     $scope.entities = entities;
 
     // Don't enable forecasting for now if:
-    //   - more than 1 detector
     //   - partition, by or over fields
-    $scope.forecastingEnabled = (jobDetectors.length === 1 && entities.length === 0);
+    $scope.forecastingEnabled = (entities.length === 0);
 
     $scope.refresh();
   }

@@ -59,12 +59,6 @@ module.service('mlForecastService', function ($q, es, ml) {
       }
     }];
 
-    // TODO - add criteria for detector index when model forecast results
-    // are tagged with detectorIndex.
-
-    // TODO - add criteria for partitioning fields (partition, by and over)
-    // when this is supported on the back-end.
-
     es.search({
       index: ML_RESULTS_INDEX_PATTERN,
       size: 0,
@@ -231,7 +225,7 @@ module.service('mlForecastService', function ($q, es, ml) {
     };
 
     // Build the criteria to use in the bool filter part of the request.
-    // Add criteria for the job ID, forecast ID, result type and time range.
+    // Add criteria for the job ID, forecast ID, detector index, result type and time range.
     const filterCriteria = [{
       query_string: {
         query: 'result_type:model_forecast',
@@ -243,6 +237,9 @@ module.service('mlForecastService', function ($q, es, ml) {
     },
     {
       term: { forecast_id: forecastId }
+    },
+    {
+      term: { detector_index: detectorIndex }
     },
     {
       range: {
