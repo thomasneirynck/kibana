@@ -12,8 +12,9 @@ how monitoring data is displayed in the Monitoring UI by configuring
 To control how data is collected from your Elasticsearch nodes, you configure
 {ref}/monitoring-settings.html[`xpack.monitoring.collection`
 settings] in `elasticsearch.yml`. To control how monitoring data is collected
-from Logstash, you configure {logstash-ref}/settings-xpack.html#monitoring-settings[
-`xpack.monitoring` settings]  in `logstash.yml`.
+from Logstash, you configure
+{logstash-ref}/configuring-logstash.html#monitoring-settings[`xpack.monitoring` settings]
+in `logstash.yml`.
 
 For more information, see
 {xpack-ref}/xpack-monitoring.html[Monitoring the Elastic Stack].
@@ -100,4 +101,3 @@ Cgroup CPU Utilization to the Node Overview page instead of the overall operatin
 Utilization. Defaults to `false`.
 +
 image::settings/images/monitoring-es-cgroup-true.png["Elasticsearch Inside a Container",link="images/monitoring-es-cgroup-true.png"]
-
