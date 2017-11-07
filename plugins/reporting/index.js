@@ -74,7 +74,7 @@ export const reporting = (kibana) => {
                   then: Joi.valid(null),
                   else: Joi.default([])
                 })
-              })
+              }).default()
             }).default()
           }).default()
         }).default(),
