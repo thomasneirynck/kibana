@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
-import { first, get, zipObject, difference } from 'lodash';
+import { first, get, zipObject, difference, uniq } from 'lodash';
 import Trace from './Trace';
 import TimelineHeader from './TimelineHeader';
 import { TRACE_ID } from '../../../../../../common/constants';
@@ -47,7 +47,9 @@ class Traces extends PureComponent {
       );
     }
 
-    const traceTypes = traces.data.traceTypes.map(({ type }) => type);
+    const traceTypes = uniq(
+      traces.data.traceTypes.map(({ type }) => getPrimaryType(type))
+    );
     const getTraceColor = getColorByType(traceTypes);
 
     const totalDuration = traces.data.duration;
@@ -60,9 +62,10 @@ class Traces extends PureComponent {
           <Timeline
             header={
               <TimelineHeader
-                traceTypes={traceTypes}
-                getTraceColor={getTraceColor}
-                getTraceLabel={getTraceLabel}
+                legends={traceTypes.map(type => ({
+                  label: getTraceLabel(type),
+                  color: getTraceColor(type)
+                }))}
                 transactionName={this.props.urlParams.transactionName}
               />
             }
@@ -79,7 +82,7 @@ class Traces extends PureComponent {
               <Trace
                 timelineMargins={TIMELINE_MARGINS}
                 key={get({ trace }, TRACE_ID)}
-                color={getTraceColor(trace.type)}
+                color={getTraceColor(getPrimaryType(trace.type))}
                 trace={trace}
                 totalDuration={totalDuration}
                 isSelected={
@@ -111,10 +114,7 @@ function getColorByType(types) {
     db: '#f98510'
   };
 
-  const unknownTypes = difference(
-    types.map(getPrimaryType),
-    Object.keys(colors)
-  );
+  const unknownTypes = difference(types, Object.keys(colors));
   const fallbackColors = zipObject(unknownTypes, [
     '#feb6db',
     '#ecae23',
@@ -122,15 +122,11 @@ function getColorByType(types) {
     '#461a0a'
   ]);
 
-  return type => {
-    const primaryType = getPrimaryType(type);
-    return definedColors[primaryType] || fallbackColors[primaryType];
-  };
+  return type => definedColors[type] || fallbackColors[type];
 }
 
 function getTraceLabel(type) {
-  const primaryType = getPrimaryType(type);
-  switch (primaryType) {
+  switch (type) {
     case 'db':
       return 'DB';
     default:

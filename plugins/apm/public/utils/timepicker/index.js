@@ -89,7 +89,7 @@ function updateRefreshRate(dispatch, timefilter) {
     clearInterval(currentInterval);
   }
 
-  if (refreshInterval > 0) {
+  if (refreshInterval > 0 && !timefilter.refreshInterval.pause) {
     currentInterval = setInterval(
       () => dispatch(getAction(timefilter)),
       refreshInterval

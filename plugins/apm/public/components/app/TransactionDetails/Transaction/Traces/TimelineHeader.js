@@ -18,27 +18,14 @@ const Legends = styled.div`
   display: flex;
 `;
 
-export default function TimelineHeader({
-  traceTypes,
-  getTraceColor,
-  getTraceLabel,
-  transactionName
-}) {
+export default function TimelineHeader({ legends, transactionName }) {
   return (
     <TimelineHeaderContainer>
       <Heading>{transactionName}</Heading>
       <Legends>
-        {traceTypes.map(type => {
-          const color = getTraceColor(type);
-          return (
-            <Legend
-              clickable={false}
-              key={color}
-              color={color}
-              text={getTraceLabel(type)}
-            />
-          );
-        })}
+        {legends.map(({ color, label }) => (
+          <Legend clickable={false} key={color} color={color} text={label} />
+        ))}
       </Legends>
     </TimelineHeaderContainer>
   );
