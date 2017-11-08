@@ -141,10 +141,11 @@ export class InnerCustomPlot extends PureComponent {
 
   onMouseUp = () => {
     if (this.state.selectionEnd !== null) {
-      this.props.onSelectionEnd({
-        start: this.state.selectionStart,
-        end: this.state.selectionEnd
-      });
+      const [start, end] = [
+        this.state.selectionStart,
+        this.state.selectionEnd
+      ].sort();
+      this.props.onSelectionEnd({ start, end });
     }
     this.setState({ isDrawing: false });
   };

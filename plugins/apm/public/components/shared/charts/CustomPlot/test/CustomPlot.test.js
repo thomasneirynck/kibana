@@ -14,11 +14,14 @@ import InteractivePlot from '../InteractivePlot';
 
 describe('when response has data', () => {
   let wrapper;
-  const onHover = jest.fn();
-  const onMouseLeave = jest.fn();
-  const onSelectionEnd = jest.fn();
+  let onHover;
+  let onMouseLeave;
+  let onSelectionEnd;
 
   beforeEach(() => {
+    onHover = jest.fn();
+    onMouseLeave = jest.fn();
+    onSelectionEnd = jest.fn();
     wrapper = mount(
       <InnerCustomPlot
         series={getSeries({
@@ -179,6 +182,74 @@ describe('when response has data', () => {
     it('should match snapshots', () => {
       expect(toDiffableHtml(wrapper.html())).toMatchSnapshot();
       expect(wrapper.state()).toMatchSnapshot();
+    });
+  });
+
+  describe('when dragging without releasing', () => {
+    beforeEach(() => {
+      wrapper
+        .find('.rv-voronoi__cell')
+        .at(10)
+        .simulate('mouseDown');
+
+      wrapper
+        .find('.rv-voronoi__cell')
+        .at(20)
+        .simulate('mouseOver');
+    });
+
+    it('should display drag marker', () => {
+      expect(
+        toDiffableHtml(wrapper.find('DragMarker').html())
+      ).toMatchSnapshot();
+    });
+
+    it('should not call onSelectionEnd', () => {
+      expect(onSelectionEnd).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('when dragging from left to right and releasing', () => {
+    beforeEach(() => {
+      wrapper
+        .find('.rv-voronoi__cell')
+        .at(10)
+        .simulate('mouseDown');
+
+      wrapper
+        .find('.rv-voronoi__cell')
+        .at(20)
+        .simulate('mouseOver')
+        .simulate('mouseUp');
+    });
+
+    it('should call onSelectionEnd', () => {
+      expect(onSelectionEnd).toHaveBeenCalledWith({
+        start: 1502283420000,
+        end: 1502284020000
+      });
+    });
+  });
+
+  describe('when dragging from right to left and releasing', () => {
+    beforeEach(() => {
+      wrapper
+        .find('.rv-voronoi__cell')
+        .at(20)
+        .simulate('mouseDown');
+
+      wrapper
+        .find('.rv-voronoi__cell')
+        .at(10)
+        .simulate('mouseOver')
+        .simulate('mouseUp');
+    });
+
+    it('should call onSelectionEnd', () => {
+      expect(onSelectionEnd).toHaveBeenCalledWith({
+        start: 1502283420000,
+        end: 1502284020000
+      });
     });
   });
 

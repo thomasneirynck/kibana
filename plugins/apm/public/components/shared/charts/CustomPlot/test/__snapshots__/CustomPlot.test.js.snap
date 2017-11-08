@@ -967,6 +967,20 @@ Object {
 }
 `;
 
+exports[`when response has data when dragging without releasing should display drag marker 1`] = `
+"
+<rect pointer-events=\\"none\\"
+      fill=\\"black\\"
+      opacity=\\"0.2\\"
+      x=\\"308.3333333333333\\"
+      y=\\"25\\"
+      width=\\"238.33333333333331\\"
+      height=\\"185\\"
+>
+</rect>
+"
+`;
+
 exports[`when response has data when setting hoverIndex should display tooltip 1`] = `
 Array [
   Object {
