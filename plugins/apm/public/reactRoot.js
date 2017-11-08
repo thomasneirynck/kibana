@@ -1,7 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { Router, Route, Redirect, Switch } from 'react-router-dom';
-import createHistory from 'history/createHashHistory';
 
 import GettingStarted from './components/app/GettingStarted';
 import AppOverview from './components/app/AppOverview';
@@ -10,16 +9,9 @@ import ErrorGroupOverview from './components/app/ErrorGroupOverview';
 import Main from './components/app/Main';
 import TransactionDetails from './components/app/TransactionDetails';
 import TransactionOverview from './components/app/TransactionOverview';
-
-import configureStore from './store/config/configureStore';
-import connectTimeFilterToStore from './utils/timepicker/connectToStore';
 import connectHistoryToStore from './utils/connectHistoryToStore';
 
-const store = configureStore();
-const history = createHistory();
-
-function Root({ timefilter }) {
-  connectTimeFilterToStore(timefilter, store.dispatch);
+function Root({ history, store }) {
   connectHistoryToStore(history, store.dispatch);
 
   return (

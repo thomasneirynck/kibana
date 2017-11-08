@@ -2,10 +2,10 @@ import moment from 'moment';
 import { uiModules } from 'ui/modules';
 import 'ui/chrome';
 import 'ui/autoload/all';
-import { set } from 'lodash';
-import createHistory from 'history/createHashHistory';
+import { debounce, set } from 'lodash';
 import { setupRoutes } from '../../services/breadcrumbs';
 import { legacyDecodeURIComponent, toQuery } from '../../utils/url';
+import { updateTimePicker } from '../../store/urlParams';
 
 const routes = {
   '/': 'APM',
@@ -26,9 +26,9 @@ const routes = {
 const getBreadcrumbs = setupRoutes(routes);
 
 let globalTimefilter;
+let currentInterval;
 
-export function initTimepicker(callback) {
-  const history = createHistory();
+export function initTimepicker(history, dispatch, callback) {
   uiModules.get('kibana').run(uiSettings => {
     set(
       uiSettings,
@@ -47,6 +47,8 @@ export function initTimepicker(callback) {
       $scope.searchQueryTime = toQuery(history.location.search)._g;
 
       history.listen(location => {
+        updateRefreshRate(dispatch, timefilter);
+
         $scope.$apply(() => {
           $scope.breadcrumbs = getBreadcrumbs(location.pathname);
           $scope.searchQueryTime = toQuery(history.location.search)._g;
@@ -60,11 +62,39 @@ export function initTimepicker(callback) {
       };
       timefilter.enabled = true;
       timefilter.init();
-      callback(timefilter);
+
+      updateRefreshRate(dispatch, timefilter);
+
+      timefilter.on(
+        'update',
+        debounce(() => dispatch(getAction(timefilter)), 10)
+      );
 
       // hack to access timefilter outside Angular
       globalTimefilter = timefilter;
+      callback();
     });
+}
+
+function getAction(timefilter) {
+  return updateTimePicker({
+    min: timefilter.getBounds().min.toISOString(),
+    max: timefilter.getBounds().max.toISOString()
+  });
+}
+
+function updateRefreshRate(dispatch, timefilter) {
+  const refreshInterval = timefilter.refreshInterval.value;
+  if (currentInterval) {
+    clearInterval(currentInterval);
+  }
+
+  if (refreshInterval > 0) {
+    currentInterval = setInterval(
+      () => dispatch(getAction(timefilter)),
+      refreshInterval
+    );
+  }
 }
 
 export function getTimefilter() {

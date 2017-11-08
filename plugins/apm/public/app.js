@@ -9,12 +9,17 @@ import ReactRoot from './reactRoot';
 import 'ui/autoload/all';
 
 import { initTimepicker } from './utils/timepicker';
+import configureStore from './store/config/configureStore';
+import createHistory from 'history/createHashHistory';
 
 chrome.setRootTemplate(template);
 
-initTimepicker(timefilter => {
+const store = configureStore();
+const history = createHistory();
+
+initTimepicker(history, store.dispatch, () => {
   ReactDOM.render(
-    <ReactRoot timefilter={timefilter} />,
+    <ReactRoot history={history} store={store} />,
     document.getElementById('react-apm-root')
   );
 });
