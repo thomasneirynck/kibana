@@ -56,7 +56,7 @@ export class DataRecognizer {
     });
   }
 
-  async loadConfigs() {
+  async loadIndexFiles() {
     const configs = [];
     const dirs = await this.listDirs(this.configDir);
     await Promise.all(dirs.map(async (dir) => {
@@ -72,17 +72,17 @@ export class DataRecognizer {
 
   // called externally by an endpoint
   async findMatches(indexPattern) {
-    const configs = await this.loadConfigs();
+    const indexFiles = await this.loadIndexFiles();
     const results = [];
 
-    await Promise.all(configs.map(async (c) => {
-      const config = c.json;
+    await Promise.all(indexFiles.map(async (i) => {
+      const config = i.json;
       const match = await this.searchForFields(config, indexPattern);
       if (match) {
         let logo = null;
         if (config.logoFile) {
           try {
-            logo = await this.readFile(`${this.configDir}/${c.dirName}/${config.logoFile}`);
+            logo = await this.readFile(`${this.configDir}/${i.dirName}/${config.logoFile}`);
             logo = JSON.parse(logo);
           } catch(e) {
             logo = null;
@@ -115,12 +115,12 @@ export class DataRecognizer {
   async getConfigs(id) {
     let indexJSON = null;
     let dirName = null;
-    const configs = await this.loadConfigs();
+    const indexFiles = await this.loadIndexFiles();
 
-    const results = configs.filter(c => c.json.id === id);
-    if (results.length) {
-      indexJSON = results[0].json;
-      dirName = results[0].dirName;
+    const indexFile = indexFiles.find(i => i.json.id === id);
+    if (indexFile !== undefined) {
+      indexJSON = indexFile.json;
+      dirName = indexFile.dirName;
     }
     else {
       // should throw an error here.
@@ -135,9 +135,8 @@ export class DataRecognizer {
     await Promise.all(indexJSON.jobs.map(async (job) => {
       const jobConfig = await this.readFile(`${this.configDir}/${dirName}/${ML_DIR}/${job.file}`);
       // use the file name for the id
-      const jobId = job.file.replace('.json', '');
       jobs.push({
-        id: jobId,
+        id: job.id,
         config: JSON.parse(jobConfig)
       });
     }));
@@ -145,14 +144,12 @@ export class DataRecognizer {
     // load all of the datafeed configs
     await Promise.all(indexJSON.datafeeds.map(async (datafeed) => {
       const datafeedConfig = await this.readFile(`${this.configDir}/${dirName}/${ML_DIR}/${datafeed.file}`);
-      const datafeedId = datafeed.file.replace('.json', '');
-      // use the file name, minus "datafeed_" for the id
-      const jobId = datafeedId.replace(/^datafeed_/, '');
       const config = JSON.parse(datafeedConfig);
-      config.job_id = jobId;
+      // use the job id from the indexFile
+      config.job_id = datafeed.job_id;
 
       datafeeds.push({
-        id: datafeedId,
+        id: datafeed.id,
         config
       });
     }));

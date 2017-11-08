@@ -142,7 +142,10 @@
    },
    "forecasting_modal_view_list": {
       "text": "Lists a maximum of five of the most recently run forecasts."
-   }
+   },
+   "new_job_recognizer_job_prefix": {
+    "text": "A prefix which will be added to the beginning of each job ID"
+  }
 }
 
 

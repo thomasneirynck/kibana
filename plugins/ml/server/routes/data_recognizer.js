@@ -28,9 +28,9 @@ function getConfigs(callWithRequest, configId) {
   return dr.getConfigs(configId);
 }
 
-function saveConfigItems(callWithRequest, configId, label, request) {
+function saveConfigItems(callWithRequest, configId, prefix, request) {
   const dr = new DataRecognizer(callWithRequest);
-  return dr.saveDataRecognizerConfig(configId, label, request);
+  return dr.saveDataRecognizerConfig(configId, prefix, request);
 }
 
 export function dataRecognizer(server, commonRouteConfig) {
@@ -71,8 +71,8 @@ export function dataRecognizer(server, commonRouteConfig) {
     handler(request, reply) {
       const callWithRequest = callWithRequestFactory(server, request);
       const configId = request.params.configId;
-      const label = (request.payload) ? request.payload.label : undefined;
-      return saveConfigItems(callWithRequest, configId, label, request)
+      const prefix = (request.payload) ? request.payload.prefix : undefined;
+      return saveConfigItems(callWithRequest, configId, prefix, request)
         .then(resp => reply(resp))
         .catch(resp => reply(wrapError(resp)));
     },

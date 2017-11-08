@@ -58,27 +58,27 @@
   ],
   "datafeeds": [
     {
-      "id": "datafeed_visitor_rate",
+      "id": "datafeed-visitor_rate",
       "file": "datafeed_visitor_rate.json",
       "job_id": "visitor_rate"
     },
     {
-      "id": "datafeed_response_code",
+      "id": "datafeed-response_code",
       "file": "datafeed_response_code.json",
       "job_id": "response_code"
     },
     {
-      "id": "datafeed_remote_ip_url_count",
+      "id": "datafeed-remote_ip_url_count",
       "file": "datafeed_remote_ip_url_count.json",
       "job_id": "remote_ip_url_count"
     },
     {
-      "id": "datafeed_remote_ip_request_rate",
+      "id": "datafeed-remote_ip_request_rate",
       "file": "datafeed_remote_ip_request_rate.json",
       "job_id": "remote_ip_request_rate"
     },
     {
-      "id": "datafeed_low_request_rate",
+      "id": "datafeed-low_request_rate",
       "file": "datafeed_low_request_rate.json",
       "job_id": "low_request_rate"
     }

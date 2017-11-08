@@ -213,91 +213,116 @@ module
     $scope.formConfig.jobLabel = $scope.formConfig.jobLabel.toLowerCase();
   };
 
-  // save everything
   $scope.save = function () {
     if (validateJobs()) {
+      msgs.clear();
       $scope.overallState = SAVE_STATE.SAVING;
       angular.element('.results').css('opacity', 1);
       // wait 500ms for the results section to fade in.
       window.setTimeout(() => {
-        // save jobs
-        createJobs()
+        // save jobs,datafeeds and kibana savedObjects
+        saveDataRecognizerItems()
         .then(() => {
-          // save saved objects
-          createSavedObjects()
-          .then(() => {
+          // open jobs and save start datafeeds
+          if ($scope.formConfig.startDatafeedAfterSave) {
+            startDatafeeds()
+              .then(() => {
+                // everything saved correctly and datafeeds have started.
+                $scope.overallState = SAVE_STATE.SAVED;
+                createResultsUrl();
+              }).catch(() => {
+                $scope.overallState = SAVE_STATE.FAILED;
+              });
+          } else {
+            // datafeeds didn't need to be started so finish
             $scope.overallState = SAVE_STATE.SAVED;
             createResultsUrl();
-          })
-          .catch(() => {
-            $scope.overallState = SAVE_STATE.FAILED;
-          });
-        })
-        .catch(() => {
-          $scope.overallState = SAVE_STATE.FAILED;
+          }
         });
       }, 500);
     }
   };
 
-  function createJobs() {
-    return $q((resolve, reject) => {
+  // call the the saveDataRecognizerConfig endpoint to create the jobs, datafeeds and saved objects
+  function saveDataRecognizerItems() {
+    return $q((resolve) => {
+      // set all jobs, datafeeds and saved objects to a SAVING state
+      // i.e. display spinners
+      setAllToSaving();
 
-      let jobsCounter = $scope.formConfig.jobs.length;
-
-      function checkFinished() {
-        jobsCounter--;
-        if (jobsCounter === 0) {
-          if ($scope.formConfig.startDatafeedAfterSave) {
-            startDatafeeds()
-            .then(() => {
-              resolve();
-            }).catch(() => {
-              reject();
-            });
-          } else {
-            resolve();
-          }
-        }
-      }
-
-      msgs.clear();
-
-      // change the custom urls in each job to use the indexpattern id rather than title
-      updateJobUrls();
-
-      $scope.formConfig.jobs.forEach((job) => {
-        job.jobState = SAVE_STATE.SAVING;
-        job.errors = [];
-        mlCreateRecognizerJobsService.createJob(job, $scope.formConfig)
-        .then(() =>{
-          job.jobState = SAVE_STATE.SAVED;
-          job.datafeedState = SAVE_STATE.SAVING;
-          mlCreateRecognizerJobsService.createDatafeed(job, $scope.formConfig)
-          .then(() =>{
-            job.datafeedState = SAVE_STATE.SAVED;
-            checkFinished();
-          })
-          .catch((resp) => {
-            job.datafeedState = SAVE_STATE.FAILED;
-            if (resp.resp && resp.resp.message) {
-              job.errors.push(resp.resp.message);
+      const prefix = $scope.formConfig.jobLabel;
+      ml.saveDataRecognizerConfig({ configId, prefix })
+      .then((resp) => {
+        if (resp.jobs) {
+          $scope.formConfig.jobs.forEach((job) => {
+            // check results from saving the jobs
+            const jobResult = resp.jobs.find(j => j.id === `${prefix}${job.id}`);
+            if (jobResult !== undefined) {
+              if (jobResult.success) {
+                job.jobState = SAVE_STATE.SAVED;
+              } else {
+                job.jobState = SAVE_STATE.FAILED;
+                if (jobResult.error && jobResult.error.msg) {
+                  job.errors.push(jobResult.error.msg);
+                }
+              }
+            } else {
+              job.jobState = SAVE_STATE.FAILED;
+              job.errors.push(`Could not save job ${prefix}${job.id}`);
             }
-            console.log('Saving datafeed failed', resp);
-            checkFinished();
-          });
-        })
-        .catch((resp) => {
-          job.jobState = SAVE_STATE.FAILED;
-          job.datafeedState = SAVE_STATE.FAILED;
-          if (resp.resp && resp.resp.message) {
-            job.errors.push(resp.resp.message);
-          }
-          console.log('Saving job failed', resp);
-          checkFinished();
-        });
-      });
 
+            // check results from saving the datafeeds
+            const datafeedResult = resp.datafeeds.find(d => d.id === `${prefix}${job.datafeedId}`);
+            if (datafeedResult !== undefined) {
+              if (datafeedResult.success) {
+                job.datafeedState = SAVE_STATE.SAVED;
+              } else {
+                job.datafeedState = SAVE_STATE.FAILED;
+                if (datafeedResult.error && datafeedResult.error.msg) {
+                  job.errors.push(datafeedResult.error.msg);
+                }
+              }
+            } else {
+              job.datafeedState = SAVE_STATE.FAILED;
+              job.errors.push(`Could not save datafeed ${prefix}${job.datafeedId}`);
+            }
+          });
+        }
+
+        if (resp.kibana) {
+          _.each($scope.formConfig.kibanaObjects, (kibanaObject, objName) => {
+            kibanaObject.forEach((obj) => {
+              // check the results from saving the saved objects
+              const kibanaObjectResult = resp.kibana[objName].find(o => o.id === obj.id);
+              if (kibanaObjectResult !== undefined) {
+                if (kibanaObjectResult.success || kibanaObjectResult.success === false && kibanaObjectResult.exists === true) {
+                  obj.saveState = SAVE_STATE.SAVED;
+                } else {
+                  obj.saveState = SAVE_STATE.FAILED;
+                }
+              } else {
+                obj.saveState = SAVE_STATE.FAILED;
+                obj.errors.push(`Could not save ${objName} ${obj.id}`);
+              }
+            });
+          });
+        }
+        resolve();
+      });
+    });
+  }
+
+  // loop through all jobs, datafeeds and saved objects and set the save state to SAVING
+  function setAllToSaving() {
+    $scope.formConfig.jobs.forEach((j) => {
+      j.jobState = SAVE_STATE.SAVING;
+      j.datafeedState = SAVE_STATE.SAVING;
+    });
+
+    _.each($scope.formConfig.kibanaObjects, (kibanaObject) => {
+      kibanaObject.forEach((obj) => {
+        obj.saveState = SAVE_STATE.SAVING;
+      });
     });
   }
 
@@ -374,141 +399,6 @@ module
     });
   }
 
-  function createSavedObjects() {
-    return saveAllKibanaObjects($scope.formConfig.kibanaObjects);
-  }
-
-  function saveAllKibanaObjects(kibanaObjects) {
-    return $q((resolve) => {
-
-      let numberOfObjects = 0;
-      // keep count of the number of saved objects to save
-      _.each(kibanaObjects, (objects) => {
-        objects.forEach(obj => {
-          if (!obj.exists) {
-            numberOfObjects++;
-            obj.saveState = SAVE_STATE.SAVING;
-          }
-        });
-      });
-
-      function checkFinished() {
-        if (numberOfObjects > 0) {
-          numberOfObjects--;
-        }
-        if (numberOfObjects === 0) {
-          resolve();
-        }
-      }
-
-      _.each(kibanaObjects, (objects, type) => {
-        objects.forEach(obj => {
-          // if the kibana object doesn't already exist
-          if (!obj.exists) {
-
-            // update index id inside each object
-            const searchSource = JSON.parse(obj.config.kibanaSavedObjectMeta.searchSourceJSON);
-            if (searchSource.index && searchSource.index === $scope.formConfig.indexPattern.title) {
-              searchSource.index = $scope.formConfig.indexPattern.id;
-              obj.config.kibanaSavedObjectMeta.searchSourceJSON = JSON.stringify(searchSource);
-            }
-
-            // save the object
-            mlCreateRecognizerJobsService.createSavedObjectWithId(type, obj.id, obj.config)
-            .then(() => {
-              obj.saveState = SAVE_STATE.SAVED;
-              checkFinished();
-            })
-            .catch((e) => {
-              console.log('Saving saved object failed', e);
-              checkFinished();
-            });
-          } else {
-            checkFinished();
-          }
-        });
-      });
-
-      /*
-      saveKibanaObjects(kibanaObjects, 'search')
-      .then(() => {
-        saveKibanaObjects(kibanaObjects, 'visualization')
-        .then(() => {
-          saveKibanaObjects(kibanaObjects, 'dashboard')
-          .then(() => {
-
-          })
-          .catch(() => {
-
-          });
-        })
-        .catch(() => {
-
-        });
-      })
-      .catch(() => {
-
-      });
-      */
-    });
-  }
-
-  // function saveKibanaObjects(kibanaObjects, type) {
-  //   return $q((resolve, reject) => {
-  //     let count = 0;
-  //     save(kibanaObjects[type][0]);
-
-  //     function save(savedObject) {
-  //       if (!savedObject.exists) {
-  //         mlCreateRecognizerJobsService.createSavedObject(type, savedObject.config)
-  //         .then((resp) => {
-  //           if (resp) {
-  //             // console.log(resp);
-  //             savedObject.saveState = SAVE_STATE.SAVED;
-  //             updateKibanaObjectIds(kibanaObjects, type, savedObject, resp.id);
-  //             count++;
-  //             if (count < kibanaObjects[type].length) {
-  //               save(kibanaObjects[type][count]);
-  //             } else {
-  //               resolve();
-  //             }
-  //           }
-  //         })
-  //         .catch((resp) => {
-  //           console.log(resp);
-  //           savedObject.saveState = SAVE_STATE.FAILED;
-  //           reject();
-  //         });
-  //       }
-  //     }
-  //   });
-  // }
-
-  // function updateKibanaObjectIds(kibanaObjects, type, savedObject, newId) {
-  //   const oldId = savedObject.id;
-  //   savedObject.id = newId;
-  //   if (type === 'search') {
-  //     kibanaObjects.visualization.forEach(obj => {
-  //       if (obj.config.savedSearchId && obj.config.savedSearchId === oldId) {
-  //         obj.config.savedSearchId = newId;
-  //       }
-  //     });
-  //   }
-  //   if (type === 'visualization') {
-  //     kibanaObjects.dashboard.forEach(obj => {
-  //       const panels = JSON.parse(obj.config.panelsJSON);
-  //       panels.forEach(panel => {
-  //         if (panel.id === oldId) {
-  //           panel.id = newId;
-  //         }
-  //       });
-  //       obj.config.panelsJSON = JSON.stringify(panels);
-  //     });
-  //   }
-  //   // if (type === 'dashboard') {
-  //   // }
-
-  // }
 
   function checkIfKibanaObjectsExist(kibanaObjects) {
     _.each(kibanaObjects, (objects, type) => {
@@ -541,23 +431,6 @@ module
         console.log('Could not load saved objects', resp);
         reject(resp);
       });
-    });
-  }
-
-  // update custom urls inside jobs.
-  // replacing index title for index id
-  function updateJobUrls() {
-    const title = $scope.formConfig.indexPattern.title;
-    const id = $scope.formConfig.indexPattern.id;
-
-    $scope.formConfig.jobs.forEach((job) => {
-      if (job.jobConfig.custom_settings &&
-        job.jobConfig.custom_settings.custom_urls &&
-        job.jobConfig.custom_settings.custom_urls.length) {
-        job.jobConfig.custom_settings.custom_urls.forEach(url => {
-          url.url_value = url.url_value.replace(title, id);
-        });
-      }
     });
   }
 

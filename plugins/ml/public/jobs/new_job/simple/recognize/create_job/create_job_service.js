@@ -68,8 +68,8 @@ module.service('mlCreateRecognizerJobsService', function (
 
   this.startDatafeed = function (job, formConfig) {
     const jobId = formConfig.jobLabel + job.id;
-    const datafeedId = mlJobService.getDatafeedId(jobId);
-    return mlJobService.startDatafeed(datafeedId, job.id, formConfig.start, formConfig.end);
+    const datafeedId = formConfig.jobLabel + job.datafeedId;
+    return mlJobService.startDatafeed(datafeedId, jobId, formConfig.start, formConfig.end);
   };
 
   this.stopDatafeed = function (formConfig) {

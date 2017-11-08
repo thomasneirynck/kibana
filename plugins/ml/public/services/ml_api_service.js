@@ -228,8 +228,8 @@ module.service('ml', function (prlHttpService) {
 
   this.saveDataRecognizerConfig = function (obj) {
     const data = {};
-    if (obj.label !== undefined) {
-      data.label = obj.label;
+    if (obj.prefix !== undefined) {
+      data.prefix = obj.prefix;
     }
 
     return http.request({
