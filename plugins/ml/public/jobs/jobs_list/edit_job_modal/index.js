@@ -14,3 +14,4 @@
  */
 
 import './edit_job_modal_controller';
+import 'plugins/ml/components/job_group_select';

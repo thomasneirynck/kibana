@@ -166,6 +166,11 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
       jobData.description = $scope.job.description;
     }
 
+    // if groups exist, add it to the jobData json
+    if (Array.isArray($scope.job.groups)) {
+      jobData.groups = $scope.job.groups;
+    }
+
     // check each detector. if the description or filters have changed, add it to the jobData json
     _.each($scope.job.analysis_config.detectors, (d, i) => {
       let changes = 0;

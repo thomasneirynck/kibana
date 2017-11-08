@@ -27,6 +27,15 @@
     <hr />
 
     <div class="form-group">
+      <label>Job groups</label>
+      <ml-job-group-select
+        job-groups='job.groups'
+      ></ml-job-group-select>
+    </div>
+
+    <hr />
+
+    <div class="form-group">
       <label>Custom URLs</label>
       <div ng-if="job.custom_settings && job.custom_settings.custom_urls">
         <div ng-repeat="item in job.custom_settings.custom_urls track by $index" class="custom-url">
