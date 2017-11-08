@@ -15,12 +15,12 @@ import VoronoiPlot from './VoronoiPlot';
 const XY_HEIGHT = 250;
 const XY_MARGIN = {
   top: 25,
-  left: 55,
+  left: 70,
   right: 15
 };
 
 const ChartWrapper = styled.div`
-  padding: ${px(units.half)};
+  padding: ${px(units.half)} 0;
 `;
 
 const Header = styled.div`

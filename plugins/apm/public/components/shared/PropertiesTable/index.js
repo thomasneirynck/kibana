@@ -105,22 +105,20 @@ function recursiveSort(propData, levelTwoKey, level) {
     <div>
       <Table>
         <tbody>
-          {getSortedProps(
-            propData,
-            levelTwoKey,
-            level
-          ).map(({ key, value }) => {
-            return (
-              <Row key={key}>
-                <Cell>{formatKey(key, value)}</Cell>
-                <Cell>
-                  {level < 3 && _.isObject(value)
-                    ? recursiveSort(value, levelTwoKey, level + 1)
-                    : formatValue(value)}
-                </Cell>
-              </Row>
-            );
-          })}
+          {getSortedProps(propData, levelTwoKey, level).map(
+            ({ key, value }) => {
+              return (
+                <Row key={key}>
+                  <Cell>{formatKey(key, value)}</Cell>
+                  <Cell>
+                    {level < 3 && _.isObject(value)
+                      ? recursiveSort(value, levelTwoKey, level + 1)
+                      : formatValue(value)}
+                  </Cell>
+                </Row>
+              );
+            }
+          )}
         </tbody>
       </Table>
 

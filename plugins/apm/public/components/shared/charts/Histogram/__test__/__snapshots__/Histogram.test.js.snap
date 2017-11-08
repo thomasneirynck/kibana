@@ -9,37 +9,37 @@ exports[`Histogram Initially should have default markup 1`] = `
        width=\\"800\\"
        height=\\"120\\"
   >
-    <g transform=\\"translate(50,20)\\"
+    <g transform=\\"translate(70,20)\\"
        class=\\"rv-xy-plot__grid-lines\\"
     >
       <line y1=\\"60\\"
             y2=\\"60\\"
             x1=\\"0\\"
-            x2=\\"740\\"
+            x2=\\"720\\"
             class=\\"rv-xy-plot__grid-lines__line\\"
       >
       </line>
       <line y1=\\"30\\"
             y2=\\"30\\"
             x1=\\"0\\"
-            x2=\\"740\\"
+            x2=\\"720\\"
             class=\\"rv-xy-plot__grid-lines__line\\"
       >
       </line>
       <line y1=\\"0\\"
             y2=\\"0\\"
             x1=\\"0\\"
-            x2=\\"740\\"
+            x2=\\"720\\"
             class=\\"rv-xy-plot__grid-lines__line\\"
       >
       </line>
     </g>
-    <g transform=\\"translate(50,80)\\"
+    <g transform=\\"translate(70,80)\\"
        class=\\"rv-xy-plot__axis rv-xy-plot__axis--horizontal \\"
        style=\\"stroke-width: 1px;\\"
     >
       <line x1=\\"0\\"
-            x2=\\"740\\"
+            x2=\\"720\\"
             y1=\\"0\\"
             y2=\\"0\\"
             class=\\"rv-xy-plot__axis__line\\"
@@ -70,7 +70,7 @@ exports[`Histogram Initially should have default markup 1`] = `
             0
           </text>
         </g>
-        <g transform=\\"translate(114.04603267757892, 0)\\"
+        <g transform=\\"translate(110.96370747007678, 0)\\"
            class=\\"rv-xy-plot__axis__tick\\"
            style=\\"stroke-width: 1px;\\"
         >
@@ -91,7 +91,7 @@ exports[`Histogram Initially should have default markup 1`] = `
             500 ms
           </text>
         </g>
-        <g transform=\\"translate(228.09206535515784, 0)\\"
+        <g transform=\\"translate(221.92741494015357, 0)\\"
            class=\\"rv-xy-plot__axis__tick\\"
            style=\\"stroke-width: 1px;\\"
         >
@@ -112,7 +112,7 @@ exports[`Histogram Initially should have default markup 1`] = `
             1,000 ms
           </text>
         </g>
-        <g transform=\\"translate(342.13809803273676, 0)\\"
+        <g transform=\\"translate(332.89112241023037, 0)\\"
            class=\\"rv-xy-plot__axis__tick\\"
            style=\\"stroke-width: 1px;\\"
         >
@@ -133,7 +133,7 @@ exports[`Histogram Initially should have default markup 1`] = `
             1,500 ms
           </text>
         </g>
-        <g transform=\\"translate(456.1841307103157, 0)\\"
+        <g transform=\\"translate(443.85482988030714, 0)\\"
            class=\\"rv-xy-plot__axis__tick\\"
            style=\\"stroke-width: 1px;\\"
         >
@@ -154,7 +154,7 @@ exports[`Histogram Initially should have default markup 1`] = `
             2,000 ms
           </text>
         </g>
-        <g transform=\\"translate(570.2301633878945, 0)\\"
+        <g transform=\\"translate(554.8185373503838, 0)\\"
            class=\\"rv-xy-plot__axis__tick\\"
            style=\\"stroke-width: 1px;\\"
         >
@@ -175,7 +175,7 @@ exports[`Histogram Initially should have default markup 1`] = `
             2,500 ms
           </text>
         </g>
-        <g transform=\\"translate(684.2761960654735, 0)\\"
+        <g transform=\\"translate(665.7822448204607, 0)\\"
            class=\\"rv-xy-plot__axis__tick\\"
            style=\\"stroke-width: 1px;\\"
         >
@@ -201,7 +201,7 @@ exports[`Histogram Initially should have default markup 1`] = `
     <g transform=\\"translate(0,20)\\"
        class=\\"rv-xy-plot__axis rv-xy-plot__axis--vertical \\"
     >
-      <g transform=\\"translate(50, 0)\\"
+      <g transform=\\"translate(70, 0)\\"
          class=\\"rv-xy-plot__axis__ticks\\"
       >
         <g transform=\\"translate(0, 60)\\"
@@ -261,199 +261,199 @@ exports[`Histogram Initially should have default markup 1`] = `
       </g>
     </g>
     <g class=\\"rv-xy-plot__series rv-xy-plot__series--rect \\"
-       transform=\\"translate(50,20)\\"
+       transform=\\"translate(70,20)\\"
     >
-      <rect x=\\"1.3214285714285714\\"
-            width=\\"23.78571428571429\\"
+      <rect x=\\"1.2857142857142856\\"
+            width=\\"23.142857142857146\\"
             y=\\"60\\"
             height=\\"0\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"27.75\\"
-            width=\\"23.785714285714285\\"
+      <rect x=\\"27\\"
+            width=\\"23.142857142857146\\"
             y=\\"60\\"
             height=\\"0\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"54.17857142857143\\"
-            width=\\"23.785714285714278\\"
+      <rect x=\\"52.714285714285715\\"
+            width=\\"23.14285714285713\\"
             y=\\"60\\"
             height=\\"0\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"80.60714285714286\\"
-            width=\\"23.785714285714278\\"
+      <rect x=\\"78.42857142857143\\"
+            width=\\"23.14285714285714\\"
             y=\\"60\\"
             height=\\"0\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"107.03571428571429\\"
-            width=\\"23.785714285714263\\"
+      <rect x=\\"104.14285714285715\\"
+            width=\\"23.142857142857125\\"
             y=\\"60\\"
             height=\\"0\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"133.46428571428572\\"
-            width=\\"23.785714285714278\\"
+      <rect x=\\"129.85714285714286\\"
+            width=\\"23.14285714285714\\"
             y=\\"51.27272727272727\\"
             height=\\"8.727272727272727\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"159.89285714285714\\"
-            width=\\"23.785714285714306\\"
+      <rect x=\\"155.57142857142858\\"
+            width=\\"23.14285714285714\\"
             y=\\"34.90909090909091\\"
             height=\\"25.090909090909093\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"186.32142857142856\\"
-            width=\\"23.785714285714306\\"
+      <rect x=\\"181.28571428571428\\"
+            width=\\"23.14285714285714\\"
             y=\\"6.545454545454547\\"
             height=\\"53.45454545454545\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"212.75000000000003\\"
-            width=\\"23.78571428571425\\"
+      <rect x=\\"207.00000000000003\\"
+            width=\\"23.142857142857082\\"
             y=\\"4.363636363636367\\"
             height=\\"55.63636363636363\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"239.1785714285714\\"
-            width=\\"23.785714285714334\\"
+      <rect x=\\"232.7142857142857\\"
+            width=\\"23.142857142857167\\"
             y=\\"9.81818181818182\\"
             height=\\"50.18181818181818\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"265.60714285714283\\"
-            width=\\"23.785714285714334\\"
+      <rect x=\\"258.4285714285714\\"
+            width=\\"23.142857142857224\\"
             y=\\"45.81818181818182\\"
             height=\\"14.18181818181818\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"292.0357142857143\\"
-            width=\\"23.785714285714334\\"
+      <rect x=\\"284.1428571428571\\"
+            width=\\"23.142857142857224\\"
             y=\\"52.36363636363637\\"
             height=\\"7.636363636363633\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"318.46428571428567\\"
-            width=\\"23.785714285714334\\"
+      <rect x=\\"309.85714285714283\\"
+            width=\\"23.142857142857167\\"
             y=\\"54.43636363636364\\"
             height=\\"5.563636363636363\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"344.8928571428571\\"
-            width=\\"23.785714285714334\\"
+      <rect x=\\"335.57142857142856\\"
+            width=\\"23.142857142857167\\"
             y=\\"54.43636363636364\\"
             height=\\"5.563636363636363\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"371.32142857142856\\"
-            width=\\"23.785714285714278\\"
+      <rect x=\\"361.2857142857143\\"
+            width=\\"23.142857142857167\\"
             y=\\"60\\"
             height=\\"0\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"397.75\\"
-            width=\\"23.785714285714278\\"
+      <rect x=\\"387\\"
+            width=\\"23.14285714285711\\"
             y=\\"54.43636363636364\\"
             height=\\"5.563636363636363\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"424.1785714285714\\"
-            width=\\"23.78571428571439\\"
+      <rect x=\\"412.71428571428567\\"
+            width=\\"23.142857142857224\\"
             y=\\"60\\"
             height=\\"0\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"450.60714285714283\\"
-            width=\\"23.785714285714334\\"
+      <rect x=\\"438.4285714285714\\"
+            width=\\"23.142857142857224\\"
             y=\\"60\\"
             height=\\"0\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"477.0357142857142\\"
-            width=\\"23.78571428571439\\"
+      <rect x=\\"464.1428571428571\\"
+            width=\\"23.142857142857224\\"
             y=\\"54.43636363636364\\"
             height=\\"5.563636363636363\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"503.4642857142857\\"
-            width=\\"23.785714285714278\\"
+      <rect x=\\"489.8571428571429\\"
+            width=\\"23.14285714285711\\"
             y=\\"60\\"
             height=\\"0\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"529.8928571428571\\"
-            width=\\"23.785714285714334\\"
+      <rect x=\\"515.5714285714286\\"
+            width=\\"23.14285714285711\\"
             y=\\"60\\"
             height=\\"0\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"556.3214285714286\\"
-            width=\\"23.785714285714334\\"
+      <rect x=\\"541.2857142857143\\"
+            width=\\"23.14285714285711\\"
             y=\\"60\\"
             height=\\"0\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"582.75\\"
-            width=\\"23.78571428571422\\"
+      <rect x=\\"567\\"
+            width=\\"23.14285714285711\\"
             y=\\"60\\"
             height=\\"0\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"609.1785714285714\\"
-            width=\\"23.785714285714334\\"
+      <rect x=\\"592.7142857142857\\"
+            width=\\"23.142857142857224\\"
             y=\\"60\\"
             height=\\"0\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"635.6071428571428\\"
-            width=\\"23.785714285714448\\"
+      <rect x=\\"618.4285714285714\\"
+            width=\\"23.14285714285711\\"
             y=\\"54.43636363636364\\"
             height=\\"5.563636363636363\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"662.0357142857142\\"
-            width=\\"23.785714285714334\\"
+      <rect x=\\"644.1428571428571\\"
+            width=\\"23.142857142857224\\"
             y=\\"54.43636363636364\\"
             height=\\"5.563636363636363\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"688.4642857142858\\"
-            width=\\"23.78571428571422\\"
+      <rect x=\\"669.8571428571429\\"
+            width=\\"23.14285714285711\\"
             y=\\"60\\"
             height=\\"0\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
       >
       </rect>
-      <rect x=\\"714.8928571428571\\"
-            width=\\"23.785714285714334\\"
+      <rect x=\\"695.5714285714286\\"
+            width=\\"23.14285714285711\\"
             y=\\"54.43636363636364\\"
             height=\\"5.563636363636363\\"
             style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
@@ -462,169 +462,169 @@ exports[`Histogram Initially should have default markup 1`] = `
     </g>
     <g class=\\" rv-voronoi\\">
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M76.42857149999999,120L76.42857149999999,20L50,20L50,120Z\\"
+            d=\\"M95.71428599999999,120L95.71428599999999,20L70,20L70,120Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M76.42857149999999,20L76.42857149999999,120L102.857143,120L102.857143,20Z\\"
+            d=\\"M95.71428599999999,20L95.71428599999999,120L121.42857149999999,120L121.42857149999999,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M102.857143,20L102.857143,120L129.28571449999998,120L129.28571449999998,20Z\\"
+            d=\\"M121.42857149999999,20L121.42857149999999,120L147.142857,120L147.142857,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M129.28571449999998,20L129.28571449999998,120L155.71428550000002,120L155.71428550000002,20Z\\"
+            d=\\"M147.142857,20L147.142857,120L172.857143,120L172.857143,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M155.71428550000002,20L155.71428550000002,120L182.142857,120L182.142857,20Z\\"
+            d=\\"M172.857143,20L172.857143,120L198.57142849999997,120L198.57142849999997,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M182.142857,20L182.142857,120L208.57142849999997,120L208.57142849999997,20Z\\"
+            d=\\"M198.57142849999997,20L198.57142849999997,120L224.28571399999998,120L224.28571399999998,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M208.57142849999997,20L208.57142849999997,120L235,120L235,20Z\\"
+            d=\\"M224.28571399999998,20L224.28571399999998,120L250,120L250,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M235,20L235,120L261.4285715,120L261.4285715,20Z\\"
+            d=\\"M250,20L250,120L275.714286,120L275.714286,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M261.4285715,20L261.4285715,120L287.85714299999995,120L287.85714299999995,20Z\\"
+            d=\\"M275.714286,20L275.714286,120L301.4285715,120L301.4285715,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M287.85714299999995,20L287.85714299999995,120L314.2857145,120L314.2857145,20Z\\"
+            d=\\"M301.4285715,20L301.4285715,120L327.142857,120L327.142857,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M314.2857145,20L314.2857145,120L340.71428549999996,120L340.71428549999996,20Z\\"
+            d=\\"M327.142857,20L327.142857,120L352.85714299999995,120L352.85714299999995,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M340.71428549999996,20L340.71428549999996,120L367.142857,120L367.142857,20Z\\"
+            d=\\"M352.85714299999995,20L352.85714299999995,120L378.57142849999997,120L378.57142849999997,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M367.142857,20L367.142857,120L393.5714285,120L393.5714285,20Z\\"
+            d=\\"M378.57142849999997,20L378.57142849999997,120L404.285714,120L404.285714,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M393.5714285,20L393.5714285,120L420,120L420,20Z\\"
+            d=\\"M404.285714,20L404.285714,120L430,120L430,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M420,20L420,120L446.4285715,120L446.4285715,20Z\\"
+            d=\\"M430,20L430,120L455.714286,120L455.714286,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M446.4285715,20L446.4285715,120L472.85714299999995,120L472.85714299999995,20Z\\"
+            d=\\"M455.714286,20L455.714286,120L481.4285715,120L481.4285715,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M472.85714299999995,20L472.85714299999995,120L499.2857145,120L499.2857145,20Z\\"
+            d=\\"M481.4285715,20L481.4285715,120L507.142857,120L507.142857,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M499.2857145,20L499.2857145,120L525.7142855,120L525.7142855,20Z\\"
+            d=\\"M507.142857,20L507.142857,120L532.857143,120L532.857143,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M525.7142855,20L525.7142855,120L552.1428569999999,120L552.1428569999999,20Z\\"
+            d=\\"M532.857143,20L532.857143,120L558.5714284999999,120L558.5714284999999,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M552.1428569999999,20L552.1428569999999,120L578.5714284999999,120L578.5714284999999,20Z\\"
+            d=\\"M558.5714284999999,20L558.5714284999999,120L584.2857139999999,120L584.2857139999999,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M578.5714284999999,20L578.5714284999999,120L605,120L605,20Z\\"
+            d=\\"M584.2857139999999,20L584.2857139999999,120L610,120L610,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M605,20L605,120L631.4285715,120L631.4285715,20Z\\"
+            d=\\"M610,20L610,120L635.7142859999999,120L635.7142859999999,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M631.4285715,20L631.4285715,120L657.857143,120L657.857143,20Z\\"
+            d=\\"M635.7142859999999,20L635.7142859999999,120L661.4285715,120L661.4285715,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M657.857143,20L657.857143,120L684.2857145,120L684.2857145,20Z\\"
+            d=\\"M661.4285715,20L661.4285715,120L687.142857,120L687.142857,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M684.2857145,20L684.2857145,120L710.7142855,120L710.7142855,20Z\\"
+            d=\\"M687.142857,20L687.142857,120L712.857143,120L712.857143,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M710.7142855,20L710.7142855,120L737.1428569999999,120L737.1428569999999,20Z\\"
+            d=\\"M712.857143,20L712.857143,120L738.5714284999999,120L738.5714284999999,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M737.1428569999999,20L737.1428569999999,120L763.5714284999999,120L763.5714284999999,20Z\\"
+            d=\\"M738.5714284999999,20L738.5714284999999,120L764.2857139999999,120L764.2857139999999,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
       </path>
       <path class=\\"rv-voronoi__cell\\"
-            d=\\"M763.5714284999999,20L763.5714284999999,120L800,120L800,20Z\\"
+            d=\\"M764.2857139999999,20L764.2857139999999,120L800,120L800,20Z\\"
             fill=\\"none\\"
             style=\\"pointer-events: all;\\"
       >
@@ -639,7 +639,7 @@ exports[`Histogram when hovering over a non-empty bucket should have correct mar
 "
 <div class=\\"rv-hint  rv-hint--horizontalAlign-right
      rv-hint--verticalAlign-bottom\\"
-     style=\\"margin-left: 1%; margin-right: 1%; left: 248.21428571428572px; top: 50px; position: absolute;\\"
+     style=\\"margin-left: 1%; margin-right: 1%; left: 262.8571428571429px; top: 50px; position: absolute;\\"
 >
   <div class=\\"sc-htpNat jejoiB\\">
     <div class=\\"sc-bxivhb etAnDE\\">

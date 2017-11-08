@@ -53,7 +53,9 @@ function TraceDetails({ trace, totalDuration }) {
       interval: 'auto',
       query: {
         language: 'lucene',
-        query: `transaction.id:${trace.transactionId} OR trace.transaction_id:${trace.transactionId}`
+        query: `transaction.id:${trace.transactionId} OR trace.transaction_id:${
+          trace.transactionId
+        }`
       },
       sort: { '@timestamp': 'desc' }
     }

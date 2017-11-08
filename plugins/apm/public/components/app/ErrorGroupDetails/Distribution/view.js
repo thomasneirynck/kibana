@@ -7,15 +7,12 @@ export function getFormattedBuckets(buckets, bucketSize) {
     return null;
   }
 
-  const yMax = Math.max(...buckets.map(item => item.count));
-  const yMin = yMax * 0.1;
-
   return buckets.map(({ count, key }, i) => {
     return {
       i,
       x0: key,
       x: key + bucketSize,
-      y: count > 0 ? Math.max(count, yMin) : 0
+      y: count
     };
   });
 }

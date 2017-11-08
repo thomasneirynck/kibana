@@ -22,7 +22,7 @@ const barColor = 'rgb(172, 189, 216)';
 const XY_HEIGHT = 120;
 const XY_MARGIN = {
   top: 20,
-  left: 50,
+  left: 70,
   right: 10
 };
 
@@ -51,15 +51,19 @@ export class HistogramInner extends PureComponent {
   };
 
   getChartData(items, selectedItem) {
-    return items
-      .map(item => ({
+    const yMax = Math.max(...items.map(item => item.y));
+    const yMin = yMax * 0.1;
+
+    return items.map(item => {
+      const padding = (item.x - item.x0) / 20;
+      return {
         ...item,
-        color: item === selectedItem ? colors.blue1 : undefined
-      }))
-      .map(item => {
-        const padding = (item.x - item.x0) / 20;
-        return { ...item, x: item.x - padding, x0: item.x0 + padding };
-      });
+        color: item === selectedItem ? colors.blue1 : undefined,
+        x0: item.x0 + padding,
+        x: item.x - padding,
+        y: item.y > 0 ? Math.max(item.y, yMin) : 0
+      };
+    });
   }
 
   render() {
@@ -98,11 +102,10 @@ export class HistogramInner extends PureComponent {
     const xDomain = x.domain();
     const yDomain = y.domain();
     const yTickValues = [0, yDomain[1] / 2, yDomain[1]];
-    const hoveredX = _.get(this.state.hoveredBucket, 'x', 0);
-    const hoveredX0 = _.get(this.state.hoveredBucket, 'x0', 0);
-    const hoveredY = _.get(this.state.hoveredBucket, 'y', 0);
+    const hoveredBucket = this.state.hoveredBucket || {};
     const isTimeSeries = this.props.xType === 'time';
-    const shouldShowTooltip = hoveredX > 0 && (hoveredY > 0 || isTimeSeries);
+    const shouldShowTooltip =
+      hoveredBucket.x > 0 && (hoveredBucket.y > 0 || isTimeSeries);
 
     return (
       <XYPlot
@@ -145,15 +148,15 @@ export class HistogramInner extends PureComponent {
               marginLeft: '1%',
               marginRight: '1%'
             }}
-            header={formatTooltipHeader(hoveredX0, hoveredX)}
+            header={formatTooltipHeader(hoveredBucket.x0, hoveredBucket.x)}
             tooltipPoints={[
               {
                 color: barColor,
-                value: formatYValue(hoveredY, false),
+                value: formatYValue(hoveredBucket.y, false),
                 text: tooltipLegendTitle
               }
             ]}
-            x={hoveredX}
+            x={hoveredBucket.x}
             y={yDomain[1] / 2}
           />
         )}
@@ -177,7 +180,9 @@ export class HistogramInner extends PureComponent {
           }}
         />
         {isTimeSeries &&
-          hoveredX > 0 && <VerticalGridLines tickValues={[hoveredX]} />}
+          hoveredBucket.x > 0 && (
+            <VerticalGridLines tickValues={[hoveredBucket.x]} />
+          )}
         <Voronoi
           extent={[[XY_MARGIN.left, XY_MARGIN.top], [XY_WIDTH, XY_HEIGHT]]}
           nodes={this.props.buckets.map(item => ({

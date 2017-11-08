@@ -144,7 +144,7 @@ function CodePreview({ stackframe, codeLanguage, isLibraryFrame }) {
     <Container hasContext={hasContext} isLibraryFrame={isLibraryFrame}>
       <FileDetails>
         <FileDetail>{stackframe.filename}</FileDetail> in{' '}
-        <FileDetail>{stackframe.function}</FileDetail> at {' '}
+        <FileDetail>{stackframe.function}</FileDetail> at{' '}
         <FileDetail>line {stackframe.line.number}</FileDetail>
       </FileDetails>
 

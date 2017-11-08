@@ -76,10 +76,7 @@ function Libraryframes({ visible, stackframes, codeLanguage, onClick }) {
     <div>
       <div>
         <a style={{ cursor: 'pointer' }} onClick={onClick}>
-          <Ellipsis
-            horizontal={visible}
-            style={{ marginRight: units.half }}
-          />{' '}
+          <Ellipsis horizontal={visible} style={{ marginRight: units.half }} />{' '}
           {stackframes.length} library frames
         </a>
       </div>

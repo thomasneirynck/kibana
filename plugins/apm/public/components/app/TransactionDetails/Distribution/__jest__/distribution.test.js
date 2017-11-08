@@ -17,7 +17,7 @@ describe('Distribution', () => {
       { x: 20, x0: 0, y: 0 },
       { x: 40, x0: 20, y: 0 },
       { x: 60, x0: 40, y: 0 },
-      { transactionId: 'someTransactionId', x: 80, x0: 60, y: 10 },
+      { transactionId: 'someTransactionId', x: 80, x0: 60, y: 5 },
       { transactionId: 'anotherTransactionId', x: 100, x0: 80, y: 100 }
     ]);
   });
