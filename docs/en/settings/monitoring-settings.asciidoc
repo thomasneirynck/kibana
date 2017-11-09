@@ -64,14 +64,6 @@ The minimum number of seconds that a time bucket in a chart can represent.
 Defaults to 10. If you modify the `xpack.monitoring.collection.interval`
 in `elasticsearch.yml`, set this option to the same value.
 
-`xpack.monitoring.node_resolver`::
-
-The node resolver controls how nodes are considered unique. This can be set to either `uuid`,
-`transport_address`, or `name`. `uuid` controls uniqueness based on the node's persistent ID.
-`transport_address` controls uniqueness based on the node's published
-hostname/IP and port. `name` controls uniqueness based on the node's `node.name` setting. Defaults to
-`uuid`.
-
 `xpack.monitoring.report_stats`::
 
 Whether or not to send cluster statistics to Elastic. Reporting your cluster statistics
