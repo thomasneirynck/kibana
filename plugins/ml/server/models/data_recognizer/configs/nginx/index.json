@@ -3,6 +3,7 @@
   "title": "Filebeat NGINX",
   "type": "Web Access Logs",
   "logoFile": "logo.json",
+  "defaultIndexPattern": "filebeat-*",
   "query": {
     "bool": {
       "filter": [

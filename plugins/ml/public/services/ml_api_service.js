@@ -226,14 +226,14 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
-  this.saveDataRecognizerConfig = function (obj) {
-    const data = {};
-    if (obj.prefix !== undefined) {
-      data.prefix = obj.prefix;
-    }
+  this.setupDataRecognizerConfig = function (obj) {
+    const data = pick(obj, [
+      'prefix',
+      'indexPatternName'
+    ]);
 
     return http.request({
-      url: `${basePath}/data_recognizer/save/${obj.configId}`,
+      url: `${basePath}/data_recognizer/setup/${obj.configId}`,
       method: 'POST',
       data
     });

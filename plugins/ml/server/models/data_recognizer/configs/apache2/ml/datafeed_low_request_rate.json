@@ -3,7 +3,7 @@
     "query_delay": "60s",
     "frequency": "450s",
     "indexes": [
-      "filebeat-*"
+      "INDEX_PATTERN_NAME"
     ],
     "query": {
       "bool": {

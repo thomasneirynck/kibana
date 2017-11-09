@@ -3,6 +3,7 @@
   "title": "Filebeat apache2",
   "type": "Web Access Logs",
   "logoFile": "logo.json",
+  "defaultIndexPattern": "filebeat-*",
   "query": {
     "bool": {
       "filter": [

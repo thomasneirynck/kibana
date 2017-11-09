@@ -3,11 +3,11 @@
     "query_delay": "60s",
     "frequency": "450s",
     "indexes": [
-      "filebeat-*"
+      "INDEX_PATTERN_NAME"
     ],
     "query": {
       "bool": {
-        "filter": [  
+        "filter": [
           { "term":  { "fileset.module": "apache2" } },
           { "term":  { "fileset.name": "access" } }
         ]

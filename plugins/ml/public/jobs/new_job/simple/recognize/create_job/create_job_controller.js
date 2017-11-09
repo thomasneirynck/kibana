@@ -243,7 +243,7 @@ module
     }
   };
 
-  // call the the saveDataRecognizerConfig endpoint to create the jobs, datafeeds and saved objects
+  // call the the setupDataRecognizerConfig endpoint to create the jobs, datafeeds and saved objects
   function saveDataRecognizerItems() {
     return $q((resolve) => {
       // set all jobs, datafeeds and saved objects to a SAVING state
@@ -251,7 +251,7 @@ module
       setAllToSaving();
 
       const prefix = $scope.formConfig.jobLabel;
-      ml.saveDataRecognizerConfig({ configId, prefix })
+      ml.setupDataRecognizerConfig({ configId, prefix })
       .then((resp) => {
         if (resp.jobs) {
           $scope.formConfig.jobs.forEach((job) => {

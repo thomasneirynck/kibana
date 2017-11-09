@@ -28,9 +28,9 @@ function getConfigs(callWithRequest, configId) {
   return dr.getConfigs(configId);
 }
 
-function saveConfigItems(callWithRequest, configId, prefix, request) {
+function saveConfigItems(callWithRequest, configId, prefix, indexPatternName, request) {
   const dr = new DataRecognizer(callWithRequest);
-  return dr.saveDataRecognizerConfig(configId, prefix, request);
+  return dr.setupDataRecognizerConfig(configId, prefix, indexPatternName, request);
 }
 
 export function dataRecognizer(server, commonRouteConfig) {
@@ -67,12 +67,13 @@ export function dataRecognizer(server, commonRouteConfig) {
 
   server.route({
     method: 'POST',
-    path: '/api/ml/data_recognizer/save/{configId}',
+    path: '/api/ml/data_recognizer/setup/{configId}',
     handler(request, reply) {
       const callWithRequest = callWithRequestFactory(server, request);
       const configId = request.params.configId;
       const prefix = (request.payload) ? request.payload.prefix : undefined;
-      return saveConfigItems(callWithRequest, configId, prefix, request)
+      const indexPatternName = (request.payload) ? request.payload.indexPatternName : undefined;
+      return saveConfigItems(callWithRequest, configId, prefix, indexPatternName, request)
         .then(resp => reply(resp))
         .catch(resp => reply(wrapError(resp)));
     },
