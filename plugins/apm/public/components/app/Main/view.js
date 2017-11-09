@@ -22,10 +22,17 @@ class Main extends Component {
   }
 
   render() {
+    const { children, location } = this.props;
     const isActive = get(this.props, 'license.data.isActive');
+
+    // Necessary to manually add location to child <Route>'s. See: https://github.com/ReactTraining/react-router/issues/4671
+    const childrenWithLocation = React.Children.map(children, child =>
+      React.cloneElement(child, { location })
+    );
+
     return (
       <MainContainer>
-        {isActive ? this.props.children : 'No active license was found'}
+        {isActive ? childrenWithLocation : 'No active license was found'}
       </MainContainer>
     );
   }

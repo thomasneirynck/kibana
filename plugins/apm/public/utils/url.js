@@ -11,16 +11,32 @@ export function toQuery(search) {
 }
 
 export function fromQuery(query) {
-  return qs.stringify(query);
+  const encodedQuery = encodeQuery(query, ['_g', '_a']);
+  return stringifyWithoutEncoding(encodedQuery);
 }
 
-function fromQueryWithoutEncoding(query) {
+export function encodeQuery(query, exclude = []) {
+  return _.mapValues(query, (value, key) => {
+    if (exclude.includes(key)) {
+      return value;
+    }
+    return qs.escape(value);
+  });
+}
+
+function stringifyWithoutEncoding(query) {
   return qs.stringify(query, null, null, {
     encodeURIComponent: v => v
   });
 }
 
-function RelativeLinkComponent({ location, path, query, disabled, ...props }) {
+export function RelativeLinkComponent({
+  location,
+  path,
+  query,
+  disabled,
+  ...props
+}) {
   if (disabled) {
     return (
       <a aria-disabled="true" {...props} className={props.className || ''} />
@@ -33,7 +49,7 @@ function RelativeLinkComponent({ location, path, query, disabled, ...props }) {
   // Add support for querystring as object
   const search =
     query || _.get(props.to, 'query')
-      ? qs.stringify({
+      ? fromQuery({
           ...toQuery(location.search),
           ...query,
           ..._.get(props.to, 'query')
@@ -61,7 +77,7 @@ export function KibanaLinkComponent({
     _g: query._g ? rison.encode(query._g) : currentQuery._g,
     _a: query._a ? rison.encode(query._a) : ''
   };
-  const search = fromQueryWithoutEncoding(nextQuery);
+  const search = stringifyWithoutEncoding(nextQuery);
   const href = url.format({
     pathname,
     hash: `${hash}?${search}`
@@ -80,9 +96,13 @@ export const KibanaLink = withLocation(KibanaLinkComponent);
 // Angular decodes encoded url tokens like "%2F" to "/" which causes the route to change.
 // It was supposedly fixed in https://github.com/angular/angular.js/commit/1b779028fdd339febaa1fff5f3bd4cfcda46cc09 but still seeing the issue
 export function legacyEncodeURIComponent(url) {
-  return url && encodeURIComponent(url.replace(/\//g, '~2F'));
+  return (
+    url && encodeURIComponent(url.replace(/\//g, '~2F').replace(/ /g, '~20'))
+  );
 }
 
 export function legacyDecodeURIComponent(url) {
-  return url && decodeURIComponent(url.replace(/~2F/g, '/'));
+  return (
+    url && decodeURIComponent(url.replace(/~2F/g, '/').replace(/~20/g, ' '))
+  );
 }

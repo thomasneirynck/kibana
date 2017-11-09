@@ -9,3 +9,13 @@ exports[`KibanaLinkComponent should render correct markup 1`] = `
 </a>
 "
 `;
+
+exports[`RelativeLinkComponent should render correct markup 1`] = `
+"
+<a class=\\"kuiLink \\"
+   href=\\"/opbeans-backend/errors?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-2y,mode:quick,to:now))\\"
+>
+  Errors
+</a>
+"
+`;

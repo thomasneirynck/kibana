@@ -2,9 +2,8 @@ export const LOCATION_UPDATE = 'LOCATION_UPDATE';
 
 function location(state = {}, action) {
   switch (action.type) {
-    case LOCATION_UPDATE: {
+    case LOCATION_UPDATE:
       return action.location;
-    }
     default:
       return state;
   }

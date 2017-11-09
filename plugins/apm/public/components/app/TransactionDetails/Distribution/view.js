@@ -69,7 +69,7 @@ class Distribution extends Component {
           bucketSize={distribution.data.bucketSize}
           transactionId={this.props.urlParams.transactionId}
           onClick={bucket => {
-            history.replace({
+            history.push({
               ...location,
               search: fromQuery({
                 ...toQuery(location.search),

@@ -2,7 +2,7 @@ import moment from 'moment';
 import { uiModules } from 'ui/modules';
 import 'ui/chrome';
 import 'ui/autoload/all';
-import { debounce, set } from 'lodash';
+import { set } from 'lodash';
 import { setupRoutes } from '../../services/breadcrumbs';
 import { legacyDecodeURIComponent, toQuery } from '../../utils/url';
 import { updateTimePicker } from '../../store/urlParams';
@@ -51,7 +51,7 @@ export function initTimepicker(history, dispatch, callback) {
 
         $scope.$apply(() => {
           $scope.breadcrumbs = getBreadcrumbs(location.pathname);
-          $scope.searchQueryTime = toQuery(history.location.search)._g;
+          $scope.searchQueryTime = toQuery(location.search)._g;
         });
         globalState.fetch();
       });
@@ -65,10 +65,7 @@ export function initTimepicker(history, dispatch, callback) {
 
       updateRefreshRate(dispatch, timefilter);
 
-      timefilter.on(
-        'update',
-        debounce(() => dispatch(getAction(timefilter)), 10)
-      );
+      timefilter.on('update', () => dispatch(getAction(timefilter)));
 
       // hack to access timefilter outside Angular
       globalTimefilter = timefilter;
