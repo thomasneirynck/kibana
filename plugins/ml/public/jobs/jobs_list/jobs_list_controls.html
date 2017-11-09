@@ -14,6 +14,7 @@
         <i ng-show="job.datafeed_config && job.datafeed_config.state==='stopped' && job.state==='closed'" aria-hidden="true" class="fa fa-play"></i>
 
         <i ng-show="job.datafeed_config && job.datafeed_config.state==='stopped' && job.state==='opened'" aria-hidden="true" class="fa fa-times"></i>
+        <i ng-show="job.datafeed_config && job.datafeed_config.state==='stopped' && (job.state==='closing' || job.state==='opening')" aria-hidden="true" class="fa fa-clock-o"></i>
         <i ng-show="job.datafeed_config && job.datafeed_config.state===undefined" aria-hidden="true" class="fa fa-play"></i>
     </button>
   </div>
