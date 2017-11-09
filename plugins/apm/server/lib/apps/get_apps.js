@@ -52,8 +52,7 @@ export async function getApps({ setup }) {
 
   const resp = await client('search', params);
 
-  const { buckets } = resp.aggregations.apps;
-
+  const buckets = get(resp.aggregations, 'apps.buckets', []);
   return buckets.map(bucket => {
     const eventTypes = bucket.events.buckets;
 
