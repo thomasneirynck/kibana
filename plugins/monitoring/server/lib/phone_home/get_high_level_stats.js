@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { createQuery } from '../create_query';
-import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { ElasticsearchMetric } from '../metrics';
 
 /**
  * Update a counter associated with the {@code key}.

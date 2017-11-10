@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import { QuotaMetric } from '../metric_classes';
+import { QuotaMetric } from '..';
 
 describe('Quota Metric Calculation', () => {
   it('When bucket is invalid, returns undefined', () => {

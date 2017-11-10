@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import { checkParam } from '../../error_missing_required';
 import { createQuery } from '../../create_query.js';
-import { ElasticsearchMetric } from '../../metrics/metric_classes';
+import { ElasticsearchMetric } from '../../metrics';
 
 export function handleResponse(shardStats, indexUuid) {
   return response => {

@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query';
-import { LogstashClusterMetric } from '../metrics/metric_classes';
+import { LogstashClusterMetric } from '../metrics';
 
 function fetchPipelines(req, config, lsIndexPattern, start, end, clusterUuid, logstashUuid) {
   const filters = [];

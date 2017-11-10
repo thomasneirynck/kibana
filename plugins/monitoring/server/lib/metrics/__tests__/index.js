@@ -1,5 +1,4 @@
-import { metrics } from '../../metrics';
-import { LatencyMetric } from '../metric_classes';
+import { metrics, LatencyMetric } from '../';
 import expect from 'expect.js';
 import _ from 'lodash';
 import { Model } from './model';

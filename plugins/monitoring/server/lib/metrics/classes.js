@@ -330,7 +330,7 @@ export class LogstashClusterMetric extends Metric {
   }
 }
 
-export class EventsLatencyMetric extends LogstashMetric {
+export class LogstashEventsLatencyMetric extends LogstashMetric {
 
   constructor(opts) {
     super({
@@ -365,7 +365,7 @@ export class EventsLatencyMetric extends LogstashMetric {
 
 }
 
-export class EventsLatencyClusterMetric extends LogstashClusterMetric {
+export class LogstashEventsLatencyClusterMetric extends LogstashClusterMetric {
 
   constructor(opts) {
     super({

@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 import { set } from 'lodash';
 import { MissingRequiredError } from '../error_missing_required';
-import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { ElasticsearchMetric } from '../metrics';
 import { createTypeFilter, createQuery } from '../create_query.js';
 
 let metric;

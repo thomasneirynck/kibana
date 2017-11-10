@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { createQuery } from '../create_query';
-import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { ElasticsearchMetric } from '../metrics';
 
 /**
  * Get a list of Cluster UUIDs that exist within the specified timespan.
