@@ -49,10 +49,16 @@ export function phoneHomeRoutes(server) {
 
       return getAllStats(req, start, end)
       .then(reply)
-      .catch(() => {
-        // ignore errors, return empty set and a 200
-        // TODO: don't ignore errors when running in dev mode
-        reply([]).code(200);
+      .catch(err => {
+        const config = req.server.config();
+
+        if (config.get('env.dev')) {
+          // don't ignore errors when running in dev mode
+          reply(handleError(err, req));
+        } else {
+          // ignore errors, return empty set and a 200
+          reply([]).code(200);
+        }
       });
     }
   });
