@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query.js';
-import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { ElasticsearchMetric } from '../metrics';
 
 /**
  * Filter out shard activity that we do not care about.

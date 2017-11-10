@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import { checkParam } from '../../error_missing_required';
 import { createQuery } from '../../create_query';
-import { ElasticsearchMetric } from '../../metrics/metric_classes';
+import { ElasticsearchMetric } from '../../metrics';
 import { normalizeIndexShards, normalizeNodeShards } from './normalize_shard_objects';
 import { getShardAggs } from './get_shard_stat_aggs';
 import { calculateIndicesTotals } from './calculate_shard_stat_indices_totals';

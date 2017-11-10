@@ -1,5 +1,5 @@
 import { createQuery } from '../create_query';
-import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { ElasticsearchMetric } from '../metrics';
 
 function scalarCounterAggregation(field, fieldPath, ephemeralIdField, maxBucketSize) {
   const fullPath = `${fieldPath}.${field}`;

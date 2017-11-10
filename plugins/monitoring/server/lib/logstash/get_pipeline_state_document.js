@@ -1,5 +1,5 @@
 import { createQuery } from '../create_query';
-import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { ElasticsearchMetric } from '../metrics';
 import { get } from 'lodash';
 
 export async function getPipelineStateDocument(callWithRequest, req, logstashIndexPattern,

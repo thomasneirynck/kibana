@@ -3,7 +3,7 @@ import moment from 'moment';
 import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query';
 import { calculateAvailability } from '../calculate_availability';
-import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { ElasticsearchMetric } from '../metrics';
 
 /*
  * Get detailed info for Kibanas in the cluster

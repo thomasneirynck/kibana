@@ -2,7 +2,7 @@ import { get } from 'lodash';
 import { INVALID_LICENSE, LOGGING_TAG } from '../../../common/constants';
 import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query';
-import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { ElasticsearchMetric } from '../metrics';
 import { parseCrossClusterPrefix } from '../ccs_utils';
 import { validateMonitoringLicense } from './validate_monitoring_license';
 import { getClustersState } from './get_clusters_state';

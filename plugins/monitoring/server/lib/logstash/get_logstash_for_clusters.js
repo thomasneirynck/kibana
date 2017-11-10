@@ -2,7 +2,7 @@ import Promise from 'bluebird';
 import { get } from 'lodash';
 import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query.js';
-import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { ElasticsearchMetric } from '../metrics';
 
 /*
  * Get high-level info for Logstashs in a set of clusters
