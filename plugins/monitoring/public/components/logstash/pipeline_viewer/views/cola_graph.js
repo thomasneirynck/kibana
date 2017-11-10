@@ -239,7 +239,12 @@ export class ColaGraph extends React.Component {
     // only accessible via d3 setting 'this' AFAIK
     this.booleanLabels.each(function () {
       const path = d3.select(this.parentNode).select('path')[0][0];
-      const center = path.getPointAtLength(path.getTotalLength() / 2);
+      const pathLength = path.getTotalLength();
+      if (pathLength === 0) {
+        return;
+      }
+
+      const center = path.getPointAtLength(pathLength / 2);
       const group = d3.select(this);
       group.select('circle')
         .attr('cx', center.x)
