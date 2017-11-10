@@ -15,13 +15,19 @@
 
 import _ from 'lodash';
 
+import { FieldsServiceProvider } from 'plugins/ml/services/fields_service';
 import { isModelPlotEnabled } from 'plugins/ml/util/job_utils';
 import { buildConfigFromDetector } from 'plugins/ml/util/chart_config_builder';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('mlTimeSeriesSearchService', function ($q, $timeout, es, mlResultsService) {
+module.service('mlTimeSeriesSearchService', function (
+  $q,
+  $timeout,
+  Private,
+  es,
+  mlResultsService) {
 
   this.getMetricData = function (job, detectorIndex, entityFields, earliestMs, latestMs, interval) {
     // For now only use model plot data if there is only one detector.
@@ -120,57 +126,33 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es, mlResult
     }
     obj.results.functionLabel = functionLabel;
 
-    // Build the aggregations for any blank entityField objects with blank values
-    // so we can obtain the number of distinct entity values over the specified time.
-    const aggs = {};
-    _.each(entityFields, (entity) => {
-      if (entity.fieldValue.length === 0) {
-        aggs[entity.fieldName] = { 'cardinality': { 'field': entity.fieldName } };
-      }
+    const blankEntityFields = _.filter(entityFields, (entity) => {
+      return entity.fieldValue.length === 0;
     });
 
-    if (_.keys(aggs).length === 0) {
+    // Look to see if any of the entity fields have defined values
+    // (i.e. blank input), and if so obtain the cardinality.
+    if (blankEntityFields.length === 0) {
       obj.results.entityData.count = 1;
       obj.results.entityData.entities = entityFields;
       deferred.resolve(obj);
     } else {
-      // Build the criteria to use in the bool filter part of the request.
-      // Add criteria for the time range and the datafeed config query.
-      const mustCriteria = [];
-      mustCriteria.push(chartConfig.datafeedConfig.query);
-
-      const timeRangeCriteria = { 'range': {} };
-      timeRangeCriteria.range[chartConfig.timeField] = {
-        'gte': earliestMs,
-        'lte': latestMs,
-        'format': 'epoch_millis'
-      };
-      mustCriteria.push(timeRangeCriteria);
-
-      mustCriteria.push({ 'terms': { '_type': chartConfig.datafeedConfig.types } });
-
-      const searchBody = {
-        'query': {
-          'bool': {
-            'must': mustCriteria
-          }
-        },
-        'size': 0,
-        '_source': {
-          'excludes': []
-        },
-        'aggs': aggs
-      };
-
-      es.search({
-        index: chartConfig.datafeedConfig.indices,
-        body: searchBody
-      })
-      .then((resp) => {
-        const aggregations = resp.aggregations;
-        const entityFieldNames = _.keys(aggs);
-        _.each(entityFieldNames, (fieldName) => {
-          obj.results.entityData.entities.push({ fieldName: fieldName, count: aggregations[fieldName].value });
+      const entityFieldNames = _.map(blankEntityFields, 'fieldName');
+      const fieldsService = Private(FieldsServiceProvider);
+      fieldsService.getCardinalityOfFields(
+        chartConfig.datafeedConfig.indices,
+        chartConfig.datafeedConfig.types,
+        entityFieldNames,
+        chartConfig.datafeedConfig.query,
+        chartConfig.timeField,
+        earliestMs,
+        latestMs)
+      .then((results) => {
+        _.each(blankEntityFields, (field) => {
+          obj.results.entityData.entities.push({
+            fieldName: field.fieldName,
+            cardinality: _.get(results, field.fieldName, 0)
+          });
         });
 
         deferred.resolve(obj);
@@ -182,6 +164,5 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es, mlResult
 
     return deferred.promise;
   };
-
 
 });

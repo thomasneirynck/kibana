@@ -481,8 +481,6 @@ module.controller('MlTimeSeriesExplorerController', function (
     // Allow forecast data to be viewed from the start of the dashboard bounds.
     const bounds = timefilter.getActiveBounds();
 
-    // Filter any entity fields (by, over, partition) with non-blank values.
-    const nonBlankEntities = _.filter($scope.entities, (entity) => { return entity.fieldValue.length > 0; });
     $modal.open({
       template: forecastingModalTemplate,
       controller: 'MlForecastingModal',
@@ -495,7 +493,7 @@ module.controller('MlTimeSeriesExplorerController', function (
             pscope: $scope,
             job: $scope.selectedJob,
             detectorIndex: +$scope.detectorId,
-            entities: nonBlankEntities,
+            entities: $scope.chartDetails.entityData.entities,
             earliest: bounds.min.valueOf()
           };
         }
@@ -656,9 +654,9 @@ module.controller('MlTimeSeriesExplorerController', function (
 
     $scope.entities = entities;
 
-    // Don't enable forecasting for now if:
-    //   - partition, by or over fields
-    $scope.forecastingEnabled = (entities.length === 0);
+    // Disable forecasting only if the detector has an 'over' field as
+    // forecasting is not currently supported for these kinds of models.
+    $scope.forecastingEnabled = (overFieldName === undefined);
 
     $scope.refresh();
   }

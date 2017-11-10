@@ -73,7 +73,7 @@
       </span>
       <span ng-if="chartDetails.entityData.count !== 1" class="entity-count-text">
         <span ng-repeat="countData in chartDetails.entityData.entities">
-          {{$first ? '(' : ''}}{{countData.count}} distinct {{countData.fieldName}}{{countData.count > 1 ? ' values' : ''}}{{$last ? ')' : ', '}}
+          {{$first ? '(' : ''}}{{countData.cardinality}} distinct {{countData.fieldName}}{{countData.cardinality > 1 ? ' values' : ''}}{{$last ? ')' : ', '}}
         </span>
       </span>
 

@@ -23,6 +23,7 @@ import moment from 'moment';
 
 import './styles/main.less';
 
+import { FieldsServiceProvider } from 'plugins/ml/services/fields_service';
 import { parseInterval } from 'ui/utils/parse_interval';
 
 import { uiModules } from 'ui/modules';
@@ -34,9 +35,13 @@ module.controller('MlForecastingModal', function (
   $modalInstance,
   $modal,
   params,
+  Private,
   mlForecastService,
   mlJobService,
   mlMessageBarService) {
+
+  const FORECASTS_VIEW_MAX = 5;       // Display links to a maximum of 5 forecasts.
+  const WARN_NUM_PARTITIONS = 100;    // Warn about running a forecast with this number of field values.
 
   $scope.newForecastDuration = '1d';
   $scope.newForecastDurationValid = true;
@@ -44,14 +49,14 @@ module.controller('MlForecastingModal', function (
   $scope.showFrom = params.earliest;
   $scope.previousForecasts = [];
   $scope.privileges = params.pscope.privileges;
+  $scope.partitionsWarningNumber = WARN_NUM_PARTITIONS;
+  $scope.showNumPartitionsWarning = false;
 
   const job = params.job;
   const detectorIndex = params.detectorIndex;
   const entities = params.entities;
   const loadForForecastId = params.pscope.loadForForecastId;
   let forecastChecker = null;
-
-  const FORECASTS_VIEW_MAX = 5;       // Display links to a maximum of 5 forecasts.
 
   const msgs = mlMessageBarService;
   msgs.clear();
@@ -78,6 +83,32 @@ module.controller('MlForecastingModal', function (
       console.log('Time series forecast modal - error obtaining forecasts summary:', resp);
       msgs.error('Error obtaining list of previous forecasts.', resp);
     });
+
+  // Display a warning about running a forecast if there is high number
+  // of partitioning fields.
+  const entityFieldNames = _.map(entities, 'fieldName');
+  if (entityFieldNames.length > 0) {
+    const fieldsService = Private(FieldsServiceProvider);
+    fieldsService.getCardinalityOfFields(
+      job.datafeed_config.indices,
+      job.datafeed_config.types,
+      entityFieldNames,
+      job.datafeed_config.query,
+      job.data_description.time_field,
+      job.data_counts.earliest_record_timestamp,
+      job.data_counts.latest_record_timestamp)
+    .then((results) => {
+      let numPartitions = 1;
+      _.each(results, (cardinality) => {
+        numPartitions = numPartitions * cardinality;
+      });
+      $scope.showNumPartitionsWarning = (numPartitions > WARN_NUM_PARTITIONS);
+      $scope.$apply();
+    })
+    .catch((resp) => {
+      console.log('Time series forecast modal - error obtaining cardinality of fields:', resp);
+    });
+  }
 
   $scope.viewForecast = function (forecastId) {
     loadForForecastId(forecastId);
@@ -160,12 +191,18 @@ module.controller('MlForecastingModal', function (
     // Attempt to load 6 hours of forecast data up to the specified end time.
     // As soon as we have results, trigger the time series explorer to refresh
     // to show the forecast data.
+
+    // No need to filter on entity - a forecast will be generated for all
+    // partitioning field values (partition and by fields). We are only
+    // checking that data has been created.
+    // TODO - replace by calling the forecast statistics endpoint once available.
+
     forecastChecker = $interval(() => {
       mlForecastService.getForecastData(
         job,
         detectorIndex,
         forecastId,
-        entities,
+        [],
         forecastEnd.subtract(6, 'h').valueOf(),
         forecastEnd.add(6, 'h').valueOf(),
         '1h')

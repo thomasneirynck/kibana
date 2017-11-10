@@ -26,6 +26,10 @@
   </div>
 
   <h4>Run a new forecast</h4>
+  <div ng-show="showNumPartitionsWarning" class="warning-text">
+    Note that this data contains more than {{partitionsWarningNumber}} partitions
+    so running a forecast may take a long time and consume a high amount of resource.
+  </div>
   <div class="form-group">
     <label for="forecastDuration" class="kuiLabel">Duration</label>
     <div ng-class="privileges.canForecastJob && invalidJobState === undefined ? 'control-wrapper' : ['control-wrapper', 'disabled']"
