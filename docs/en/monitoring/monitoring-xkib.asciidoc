@@ -1,28 +1,28 @@
 [role="xpack"]
 [[monitoring-xpack-kibana]]
-== Monitoring {kib}
+== Configuring Monitoring in {kib}
+++++
+<titleabbrev>Configuring Monitoring</titleabbrev>
+++++
 
 To monitor {kib}:
 
-. Install {xpack}. See <<installing-xpack-kb,Installing {xpack}>>.
+. <<installing-xpack-kb,Install {xpack}>>.
 
-. {kib} automatically sends metrics to the {es} cluster specified in the
-`elasticsearch.url` property in `kibana.yml`, which defaults to
-`http://localhost:9200`.
-+
-NOTE: You can set the `xpack.monitoring.elasticsearch.url` in `kibana.yml`
-to specify the {es} cluster that {kib} should _retrieve_ monitoring
-data from. This enables you to use a single {kib} instance to search and
-visualize data in your production cluster as well as monitor data sent
-to a dedicated monitoring cluster.
+. Identify where to send monitoring data. {kib} automatically
+sends metrics to the {es} cluster specified in the `elasticsearch.url` property
+in `kibana.yml`. This property has a default value of `http://localhost:9200`.
+
+. Identify where to retrieve monitoring data from. You can optionally set the
+`xpack.monitoring.elasticsearch.url` in `kibana.yml`. This property enables you
+to use a single {kib} instance to search and visualize data in your production
+cluster as well as monitor data sent to a dedicated monitoring cluster.
 
 . Restart {kib}.
 
-. To verify your {monitoring} configuration, point your web browser at your {kib}
-host, and select **Monitoring** from the side navigation. Metrics reported from
-{kib} should be visible in the {kib} section. When security is
-enabled, to view the monitoring dashboards you must log in to {kib} as a user
-who has both the `kibana_user` and `monitoring_user` roles. For example:
+. If {security} is enabled, to view the monitoring dashboards you must log in to
+{kib} as a user who has both the `kibana_user` and `monitoring_user` roles. For
+example:
 +
 --
 [source,js]
@@ -34,6 +34,6 @@ POST /_xpack/security/user/stack-monitor
 }
 --------------------------------------------------
 // CONSOLE
-
-image:monitoring/images/monitoring.jpg["Monitoring",link="images/monitoring.jpg"]
 --
+
+See also <<monitoring-data>>.

@@ -16,4 +16,3 @@ For more information, see
 --
 
 include::viewing-metrics.asciidoc[]
-include::monitoring-xkib.asciidoc[]

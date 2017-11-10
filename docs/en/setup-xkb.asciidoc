@@ -29,4 +29,5 @@ see https://www.elastic.co/products/x-pack.
 
 include::installing.asciidoc[]
 include::settings/settings-xkb.asciidoc[]
+include::monitoring/monitoring-xkib.asciidoc[]
 include::security/securing-kibana.asciidoc[]

@@ -18,6 +18,16 @@ and view them all through the same instance of {kib}.
 
 To view and analyze the health and performance of {es}, Logstash, and {kib}:
 
+. {ref}/installing-xpack-es.html[Install {xpack} in {es}]. If you want to use a
+separate monitoring cluster, see
+{ref}/monitoring-production.html[Monitoring in a Production Environment].
+
+. <<installing-xpack-kb,Install {xpack} in {kib}>> and
+<<monitoring-xpack-kibana,configure monitoring>>.
+
+. {logstash-ref}/installing-xpack-log.html[Install {xpack} in Logstash] and
+{logstash-ref}/configuring-logstash.html[configure monitoring].
+
 . Open {kib} in your web browser and log in. If you are running {kib}
 locally, go to `http://localhost:5601/`. To access {kib} and view the
 monitoring dashboards, you must log in as a user who has the `kibana_user`
