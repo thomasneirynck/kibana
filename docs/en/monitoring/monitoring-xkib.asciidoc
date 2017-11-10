@@ -37,3 +37,5 @@ POST /_xpack/security/user/stack-monitor
 --
 
 See also <<monitoring-data>>.
+
+include::{xkb-repo-dir}/settings/monitoring-settings.asciidoc[]

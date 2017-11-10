@@ -12,6 +12,4 @@ For more {kib} configuration settings, see <<settings>>.
 include::dev-settings.asciidoc[]
 include::graph-settings.asciidoc[]
 include::ml-settings.asciidoc[]
-include::monitoring-settings.asciidoc[]
 include::reporting-settings.asciidoc[]
-include::security-settings.asciidoc[]
