@@ -11,8 +11,8 @@ export function handleResponse(resp, min, max) {
     const stats = get(hit, '_source.index_stats');
     const earliestStats = get(hit, 'inner_hits.earliest.hits.hits[0]._source.index_stats');
 
-    const options = {
-      hitTimestamp: get(resp, 'hits.hits[0]._source.timestamp'),
+    const rateOptions = {
+      hitTimestamp: get(hit, '_source.timestamp'),
       earliestHitTimestamp: get(hit, 'inner_hits.earliest.hits.hits[0]._source.timestamp'),
       timeWindowMin: min,
       timeWindowMax: max
@@ -22,14 +22,14 @@ export function handleResponse(resp, min, max) {
     const indexRate = calculateRate({
       latestTotal: get(stats, 'primaries.indexing.index_total'),
       earliestTotal: get(earliestIndexingHit, 'index_total'),
-      ...options
+      ...rateOptions
     });
 
     const earliestSearchHit = get(earliestStats, 'total.search');
     const searchRate = calculateRate({
       latestTotal: get(stats, 'total.search.query_total'),
       earliestTotal: get(earliestSearchHit, 'query_total'),
-      ...options
+      ...rateOptions
     });
 
     return {
@@ -67,13 +67,13 @@ export function getIndices(req, esIndexPattern, showSystemIndices = false) {
     // https://github.com/elastic/x-pack-kibana/issues/376
     size: config.get('xpack.monitoring.max_bucket_size'),
     ignoreUnavailable: true,
-    filterPath: [
-      'hits.hits._source.timestamp',
+    filterPath: [ // only filter path can filter for inner_hits
       'hits.hits._source.index_stats.index',
       'hits.hits._source.index_stats.primaries.docs.count',
       'hits.hits._source.index_stats.total.store.size_in_bytes',
 
       // latest hits for calculating metrics
+      'hits.hits._source.timestamp',
       'hits.hits._source.index_stats.primaries.indexing.index_total',
       'hits.hits._source.index_stats.total.search.query_total',
 
