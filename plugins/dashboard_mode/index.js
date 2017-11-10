@@ -38,7 +38,7 @@ export function dashboardMode(kibana) {
           'visRequestHandlers',
           'visEditorTypes',
           'savedObjectTypes',
-          'embeddableHandlers',
+          'embeddableFactories',
           'spyModes',
           'navbarExtensions',
           'docViews',
