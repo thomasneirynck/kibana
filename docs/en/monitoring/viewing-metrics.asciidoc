@@ -20,7 +20,7 @@ To view and analyze the health and performance of {es}, Logstash, and {kib}:
 
 . {ref}/installing-xpack-es.html[Install {xpack} in {es}]. If you want to use a
 separate monitoring cluster, see
-{ref}/monitoring-production.html[Monitoring in a Production Environment].
+{xpack-ref}/monitoring-production.html[Monitoring in a Production Environment].
 
 . <<installing-xpack-kb,Install {xpack} in {kib}>> and
 <<monitoring-xpack-kibana,configure monitoring>>.
