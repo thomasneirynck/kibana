@@ -14,7 +14,6 @@
  */
 
 import _ from 'lodash';
-import 'ui/courier';
 
 import 'plugins/kibana/visualize/styles/main.less';
 import { AggTypesIndexProvider } from 'ui/agg_types/index';
@@ -55,18 +54,14 @@ module
 .controller('MlCreateSingleMetricJob', function (
   $scope,
   $route,
-  $location,
   $filter,
   $q,
-  $window,
-  courier,
   timefilter,
   Private,
   mlJobService,
   mlSingleMetricJobService,
   mlMessageBarService,
   mlFullTimeRangeSelectorService,
-  mlESMappingService,
   AppState) {
 
   timefilter.enabled = true;
@@ -79,7 +74,6 @@ module
   const appState = new AppState(stateDefaults);
 
   const aggTypes = Private(AggTypesIndexProvider);
-  $scope.courier = courier;
 
   $scope.index = $route.current.params.index;
   $scope.chartData = mlSingleMetricJobService.chartData;
@@ -217,7 +211,6 @@ module
     jobId: undefined,
     description: undefined,
     jobGroups: [],
-    mappingTypes: [],
     useDedicatedIndex: false,
     isSparseData: false
   };
@@ -230,7 +223,6 @@ module
     loadFields();
     $scope.ui.isFormValid();
     $scope.ui.dirty = true;
-    mlESMappingService.getMappings();
 
     $scope.ui.isCountOrSum = ($scope.formConfig.agg.type.dslName === 'count' || $scope.formConfig.agg.type.dslName === 'sum');
   };
@@ -390,7 +382,6 @@ module
   $scope.createJob = function () {
     if (validateJobId($scope.formConfig.jobId)) {
       msgs.clear();
-      $scope.formConfig.mappingTypes = mlESMappingService.getTypesFromMapping($scope.formConfig.indexPattern.title);
       // create the new job
       mlSingleMetricJobService.createJob($scope.formConfig)
       .then((job) => {

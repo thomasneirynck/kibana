@@ -14,7 +14,6 @@
  */
 
 import _ from 'lodash';
-import 'ui/courier';
 
 import 'plugins/kibana/visualize/styles/main.less';
 import { AggTypesIndexProvider } from 'ui/agg_types/index';
@@ -54,19 +53,14 @@ module
 .controller('MlCreatePopulationJob', function (
   $scope,
   $route,
-  $location,
-  $filter,
-  $window,
   $timeout,
   $q,
-  courier,
   timefilter,
   Private,
   mlJobService,
   mlPopulationJobService,
   mlMessageBarService,
   mlFullTimeRangeSelectorService,
-  mlESMappingService,
   AppState) {
 
   timefilter.enabled = true;
@@ -79,7 +73,6 @@ module
   const appState = new AppState(stateDefaults);
 
   const aggTypes = Private(AggTypesIndexProvider);
-  $scope.courier = courier;
 
   mlPopulationJobService.clearChartData();
   $scope.chartData = mlPopulationJobService.chartData;
@@ -225,7 +218,6 @@ module
     jobId: undefined,
     description: undefined,
     jobGroups: [],
-    mappingTypes: [],
     useDedicatedIndex: false
   };
 
@@ -524,7 +516,6 @@ module
   $scope.createJob = function () {
     if (validateJobId($scope.formConfig.jobId)) {
       msgs.clear();
-      $scope.formConfig.mappingTypes = mlESMappingService.getTypesFromMapping($scope.formConfig.indexPattern.title);
       // create the new job
       mlPopulationJobService.createJob($scope.formConfig)
       .then((job) => {
@@ -770,16 +761,14 @@ module
     mlFullTimeRangeSelectorService.setFullTimeRange($scope.ui.indexPattern, $scope.formConfig.combinedQuery);
   };
 
-  mlESMappingService.getMappings().then(() => {
-    initAgg();
-    createFields($scope, indexPattern);
+  initAgg();
+  createFields($scope, indexPattern);
 
-    $scope.loadVis();
+  $scope.loadVis();
 
-    $scope.$evalAsync(() => {
-      // populate the fields with any settings from the URL
-      populateAppStateSettings(appState, $scope);
-    });
+  $scope.$evalAsync(() => {
+    // populate the fields with any settings from the URL
+    populateAppStateSettings(appState, $scope);
   });
 
   $scope.$listen(timefilter, 'fetch', $scope.loadVis);

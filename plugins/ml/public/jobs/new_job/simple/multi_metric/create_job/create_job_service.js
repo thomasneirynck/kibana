@@ -15,7 +15,6 @@
 
 import _ from 'lodash';
 import angular from 'angular';
-import 'ui/timefilter';
 
 import { parseInterval } from 'ui/utils/parse_interval';
 
@@ -233,8 +232,6 @@ module.service('mlMultiMetricJobService', function (
   }
 
   function getJobFromConfig(formConfig) {
-    const mappingTypes = formConfig.mappingTypes;
-
     const job = mlJobService.getBlankJob();
     job.data_description.time_field = formConfig.timeField;
 
@@ -287,7 +284,6 @@ module.service('mlMultiMetricJobService', function (
 
     job.datafeed_config = {
       query,
-      types: mappingTypes,
       frequency: calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) + 's',
       indices: [formConfig.indexPattern.title],
       scroll_size: 1000

@@ -188,8 +188,6 @@ module.service('mlSingleMetricJobService', function (
   }
 
   function getJobFromConfig(formConfig) {
-    const mappingTypes = formConfig.mappingTypes;
-
     const job = mlJobService.getBlankJob();
     job.data_description.time_field = formConfig.timeField;
 
@@ -227,7 +225,6 @@ module.service('mlSingleMetricJobService', function (
 
     job.datafeed_config = {
       query,
-      types: mappingTypes,
       frequency: calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) + 's',
       indices: [formConfig.indexPattern.title],
       scroll_size: 1000

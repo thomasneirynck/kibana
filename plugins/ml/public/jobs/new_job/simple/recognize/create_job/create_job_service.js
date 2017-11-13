@@ -14,7 +14,6 @@
  */
 
 import angular from 'angular';
-import 'ui/timefilter';
 
 import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
 import { SavedObjectsClientProvider } from 'ui/saved_objects';
@@ -24,7 +23,6 @@ const module = uiModules.get('apps/ml');
 
 module.service('mlCreateRecognizerJobsService', function (
   es,
-  timefilter,
   Private,
   $http,
   $q,

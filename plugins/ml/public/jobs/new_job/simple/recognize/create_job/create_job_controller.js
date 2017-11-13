@@ -16,7 +16,6 @@
 import _ from 'lodash';
 import moment from 'moment';
 import angular from 'angular';
-import 'ui/courier';
 import dateMath from '@elastic/datemath';
 import { isJobIdValid } from 'plugins/ml/util/job_utils';
 
@@ -52,7 +51,6 @@ module
   Private,
   mlCreateRecognizerJobsService,
   mlJobService,
-  mlESMappingService,
   mlMessageBarService) {
 
   timefilter.enabled = false;
