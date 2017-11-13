@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import withErrorHandler from '../../shared/withErrorHandler';
-import PageHeader from '../../shared/PageHeader';
+import { PageHeader } from '../../shared/UIComponents';
 import TabNavigation from '../../shared/TabNavigation';
 import List from './List';
 
@@ -26,7 +26,7 @@ class ErrorGroupOverview extends Component {
     const { changeErrorGroupSorting, errorGroupSorting } = this.props;
     return (
       <div>
-        <PageHeader title={`Errors for ${appName}`} />
+        <PageHeader>Errors for {appName}</PageHeader>
         <TabNavigation />
 
         <List

@@ -4,29 +4,19 @@ import { fontSize, unit, px } from '../../style/variables';
 import { KuiTableInfo } from 'ui_framework/components';
 import { Info } from './Icons';
 
-const TipMessage = styled(KuiTableInfo)`
+const Container = styled(KuiTableInfo)`
   padding: ${px(unit)} 0 0;
   text-align: center;
   font-size: ${fontSize};
 `;
 
-const Link = styled.div`
-  display: inline-block;
-`;
-
-function tipMessage({ heading, link }) {
+function TipMessage({ children }) {
   return (
-    <TipMessage>
+    <Container>
       <Info />
-      {heading || ''}
-      {heading && ' – '}
-      <Link>
-        <a href={link || '#'} target="_blank">
-          Learn more in the documentation
-        </a>
-      </Link>
-    </TipMessage>
+      {children}
+    </Container>
   );
 }
 
-export default tipMessage;
+export default TipMessage;

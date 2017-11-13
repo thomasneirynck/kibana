@@ -7,21 +7,24 @@ import { scaleLinear } from 'd3-scale';
 import { XYPlot, makeWidthFlexible } from 'react-vis';
 import Legend from '../Legend';
 import styled from 'styled-components';
-import { units, fontSizes, px, colors } from '../../../../style/variables';
+import {
+  unit,
+  units,
+  fontSizes,
+  px,
+  colors
+} from '../../../../style/variables';
 import StaticPlot from './StaticPlot';
 import InteractivePlot from './InteractivePlot';
 import VoronoiPlot from './VoronoiPlot';
 
-const XY_HEIGHT = 250;
+const XY_HEIGHT = unit * 16;
 const XY_MARGIN = {
-  top: 25,
-  left: 70,
-  right: 15
+  top: unit,
+  left: unit * 5,
+  right: unit,
+  bottom: unit * 2
 };
-
-const ChartWrapper = styled.div`
-  padding: ${px(units.half)} 0;
-`;
 
 const Header = styled.div`
   display: flex;
@@ -194,7 +197,7 @@ export class InnerCustomPlot extends PureComponent {
     const { enabledSeries } = this.state;
 
     return (
-      <ChartWrapper>
+      <div>
         <Header>
           <Title>{chartTitle}</Title>
           <Legends>
@@ -253,7 +256,7 @@ export class InnerCustomPlot extends PureComponent {
             onMouseUp={this.onMouseUp}
           />
         </div>
-      </ChartWrapper>
+      </div>
     );
   }
 }

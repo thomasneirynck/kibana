@@ -1,5 +1,5 @@
 import React from 'react';
-import Tab from '../Tab';
+import { Tab } from '../UIComponents';
 import styled from 'styled-components';
 import withApp from '../withApp';
 import { unit, units, px, colors } from '../../../style/variables';

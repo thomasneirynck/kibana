@@ -8,8 +8,9 @@ import { RelativeLink } from '../../../utils/url';
 
 import styled from 'styled-components';
 import { KuiButton } from 'ui_framework/components';
-import { units, px, fontSizes } from '../../../style/variables';
+import { units, px } from '../../../style/variables';
 import List from './List';
+import { PageHeader } from '../../shared/UIComponents';
 
 function fetchData(props) {
   const { start, end } = props.urlParams;
@@ -35,11 +36,6 @@ const HeaderWrapper = styled.div`
   justify-content: space-between;
 `;
 
-const Header = styled.h1`
-  margin: ${px(units.plus)} 0 ${px(units.plus)} 0;
-  font-size: ${fontSizes.xxlarge};
-`;
-
 const GettingStartedLink = styled(RelativeLink)`
   margin-top: ${px(units.double)};
 `;
@@ -60,7 +56,7 @@ class AppOverview extends Component {
     return (
       <div>
         <HeaderWrapper>
-          <Header>Apps</Header>
+          <PageHeader>Apps</PageHeader>
           <GettingStartedLink path="/getting-started">
             <KuiButton buttonType="secondary">Setup Instructions</KuiButton>
           </GettingStartedLink>

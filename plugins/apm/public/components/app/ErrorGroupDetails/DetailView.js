@@ -16,7 +16,7 @@ import {
   getLevelOneProps
 } from '../../shared/PropertiesTable';
 import DiscoverButton from '../../shared/DiscoverButton';
-import Tab from '../../shared/Tab';
+import { Tab } from '../../shared/UIComponents';
 import Stacktrace from '../../shared/Stacktrace';
 
 const Container = styled.div`

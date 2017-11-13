@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import withErrorHandler from '../../shared/withErrorHandler';
-import PageHeader from '../../shared/PageHeader';
+import { PageHeader } from '../../shared/UIComponents';
 import TabNavigation from '../../shared/TabNavigation';
 import Charts from './Charts';
 import List from './List';
@@ -33,7 +33,7 @@ export class TransactionOverview extends Component {
     const { changeTransactionSorting, transactionSorting } = this.props;
     return (
       <div>
-        <PageHeader title={appName} />
+        <PageHeader>{appName}</PageHeader>
         <TabNavigation />
         <Charts />
         <h2>Requests</h2>

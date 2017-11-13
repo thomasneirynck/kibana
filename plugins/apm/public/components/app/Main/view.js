@@ -4,7 +4,7 @@ import { get } from 'lodash';
 import { units, px } from '../../../style/variables';
 
 const MainContainer = styled.div`
-  padding: ${px(units.plus)};
+  padding: ${px(units.minus)} ${px(units.plus)};
 `;
 function fetchLicense(props) {
   if (!props.license.status) {

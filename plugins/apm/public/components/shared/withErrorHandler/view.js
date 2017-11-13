@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { fontSizes } from '../../style/variables';
+import { fontSizes } from '../../../style/variables';
 
-function LoadingError({ names }) {
+function ErrorHandler({ names }) {
   const ErrorWrap = styled.div`
     font-size: ${fontSizes.large};
   `;
@@ -16,4 +16,4 @@ function LoadingError({ names }) {
   );
 }
 
-export default LoadingError;
+export default ErrorHandler;

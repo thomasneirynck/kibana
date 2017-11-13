@@ -1,27 +1,25 @@
 import React from 'react';
 import { STATUS } from '../../../constants';
-import LoadingError from '../../shared/LoadingError';
+import ErrorHandler from './view';
 import { getDisplayName } from '../HOCUtils';
 import { isEmpty } from 'lodash';
 
 function withErrorHandler(WrappedComponent, dataNames) {
-  function WithErrorHandler(props) {
+  function HOC(props) {
     const unavailableNames = dataNames.filter(
       name => props[name].status === STATUS.FAILURE
     );
 
     if (!isEmpty(unavailableNames)) {
-      return <LoadingError names={unavailableNames} />;
+      return <ErrorHandler names={unavailableNames} />;
     }
 
     return <WrappedComponent {...props} />;
   }
 
-  WithErrorHandler.displayName = `WithErrorHandler(${getDisplayName(
-    WrappedComponent
-  )})`;
+  HOC.displayName = `WithErrorHandler(${getDisplayName(WrappedComponent)})`;
 
-  return WithErrorHandler;
+  return HOC;
 }
 
 export default withErrorHandler;

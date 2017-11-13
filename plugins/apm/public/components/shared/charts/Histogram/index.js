@@ -3,6 +3,7 @@ import d3 from 'd3';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { scaleLinear } from 'd3-scale';
+import styled from 'styled-components';
 import SingleRect from './SingleRect';
 import 'react-vis/dist/style.css';
 import {
@@ -15,18 +16,23 @@ import {
   makeWidthFlexible,
   VerticalGridLines
 } from 'react-vis';
-import { colors } from '../../../../style/variables';
+import { unit, colors } from '../../../../style/variables';
 import Tooltip from '../Tooltip';
 
 const barColor = 'rgb(172, 189, 216)';
-const XY_HEIGHT = 120;
+const XY_HEIGHT = unit * 8;
 const XY_MARGIN = {
-  top: 20,
-  left: 70,
-  right: 10
+  top: unit,
+  left: unit * 5,
+  right: unit,
+  bottom: unit * 2
 };
 
 const X_TICK_TOTAL = 10;
+
+const ChartsWrapper = styled.div`
+  user-select: none;
+`;
 
 export class HistogramInner extends PureComponent {
   constructor(props) {
@@ -108,94 +114,96 @@ export class HistogramInner extends PureComponent {
       hoveredBucket.x > 0 && (hoveredBucket.y > 0 || isTimeSeries);
 
     return (
-      <XYPlot
-        xType={this.props.xType}
-        width={XY_WIDTH}
-        height={XY_HEIGHT}
-        margin={XY_MARGIN}
-        xDomain={xDomain}
-        yDomain={yDomain}
-      >
-        <HorizontalGridLines tickValues={yTickValues} />
-        <XAxis
-          style={{ strokeWidth: '1px' }}
-          marginRight={10}
-          tickSizeOuter={10}
-          tickSizeInner={0}
-          tickTotal={X_TICK_TOTAL}
-          tickFormat={formatXValue}
-        />
-        <YAxis
-          tickSize={0}
-          hideLine
-          tickValues={yTickValues}
-          tickFormat={formatYValue}
-        />
-        {this.props.onClick &&
-          _.get(this.state.hoveredBucket, 'y') > 0 && (
+      <ChartsWrapper>
+        <XYPlot
+          xType={this.props.xType}
+          width={XY_WIDTH}
+          height={XY_HEIGHT}
+          margin={XY_MARGIN}
+          xDomain={xDomain}
+          yDomain={yDomain}
+        >
+          <HorizontalGridLines tickValues={yTickValues} />
+          <XAxis
+            style={{ strokeWidth: '1px' }}
+            marginRight={10}
+            tickSizeOuter={10}
+            tickSizeInner={0}
+            tickTotal={X_TICK_TOTAL}
+            tickFormat={formatXValue}
+          />
+          <YAxis
+            tickSize={0}
+            hideLine
+            tickValues={yTickValues}
+            tickFormat={formatYValue}
+          />
+          {this.props.onClick &&
+            _.get(this.state.hoveredBucket, 'y') > 0 && (
+              <SingleRect
+                x={x(this.state.hoveredBucket.x0)}
+                width={x(bucketSize) - x(0)}
+                style={{
+                  fill: colors.gray4
+                }}
+              />
+            )}
+
+          {shouldShowTooltip && (
+            <Tooltip
+              style={{
+                marginLeft: '1%',
+                marginRight: '1%'
+              }}
+              header={formatTooltipHeader(hoveredBucket.x0, hoveredBucket.x)}
+              tooltipPoints={[
+                {
+                  color: barColor,
+                  value: formatYValue(hoveredBucket.y, false),
+                  text: tooltipLegendTitle
+                }
+              ]}
+              x={hoveredBucket.x}
+              y={yDomain[1] / 2}
+            />
+          )}
+          {selectedBucket && (
             <SingleRect
-              x={x(this.state.hoveredBucket.x0)}
+              x={x(selectedBucket.x0)}
               width={x(bucketSize) - x(0)}
               style={{
-                fill: colors.gray4
+                fill: 'transparent',
+                stroke: 'rgb(172, 189, 220)'
               }}
             />
           )}
-
-        {shouldShowTooltip && (
-          <Tooltip
+          <VerticalRectSeries
+            colorType="literal"
+            color="rgb(172, 189, 216)"
+            data={chartData}
             style={{
-              marginLeft: '1%',
-              marginRight: '1%'
-            }}
-            header={formatTooltipHeader(hoveredBucket.x0, hoveredBucket.x)}
-            tooltipPoints={[
-              {
-                color: barColor,
-                value: formatYValue(hoveredBucket.y, false),
-                text: tooltipLegendTitle
-              }
-            ]}
-            x={hoveredBucket.x}
-            y={yDomain[1] / 2}
-          />
-        )}
-        {selectedBucket && (
-          <SingleRect
-            x={x(selectedBucket.x0)}
-            width={x(bucketSize) - x(0)}
-            style={{
-              fill: 'transparent',
-              stroke: 'rgb(172, 189, 220)'
+              rx: '2px',
+              ry: '2px'
             }}
           />
-        )}
-        <VerticalRectSeries
-          colorType="literal"
-          color="rgb(172, 189, 216)"
-          data={chartData}
-          style={{
-            rx: '2px',
-            ry: '2px'
-          }}
-        />
-        {isTimeSeries &&
-          hoveredBucket.x > 0 && (
-            <VerticalGridLines tickValues={[hoveredBucket.x]} />
-          )}
-        <Voronoi
-          extent={[[XY_MARGIN.left, XY_MARGIN.top], [XY_WIDTH, XY_HEIGHT]]}
-          nodes={this.props.buckets.map(item => ({
-            ...item,
-            x: (item.x0 + item.x) / 2
-          }))}
-          onClick={this.onClick}
-          onHover={this.onHover}
-          onBlur={this.onBlur}
-          x={d => x(d.x)}
-          y={() => 1}
-        />
-      </XYPlot>
+          {isTimeSeries &&
+            hoveredBucket.x > 0 && (
+              <VerticalGridLines tickValues={[hoveredBucket.x]} />
+            )}
+          <Voronoi
+            extent={[[XY_MARGIN.left, XY_MARGIN.top], [XY_WIDTH, XY_HEIGHT]]}
+            nodes={this.props.buckets.map(item => ({
+              ...item,
+              x: (item.x0 + item.x) / 2
+            }))}
+            onClick={this.onClick}
+            onHover={this.onHover}
+            onBlur={this.onBlur}
+            x={d => x(d.x)}
+            y={() => 1}
+          />
+        </XYPlot>
+      </ChartsWrapper>
     );
   }
 }

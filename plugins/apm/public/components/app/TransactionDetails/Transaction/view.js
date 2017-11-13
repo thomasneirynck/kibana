@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { STATUS } from '../../../../constants';
 import { units, colors } from '../../../../style/variables';
-import Tab from '../../../shared/Tab';
+import { Tab } from '../../../shared/UIComponents';
 import { capitalize, get } from 'lodash';
 import {
   PropertiesTable,

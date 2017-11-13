@@ -82,7 +82,7 @@ function getLevelTwoProps(dynamicProps, currentKey) {
   }));
 }
 
-function getTip(propertyKey) {
+function getTipText(propertyKey) {
   switch (propertyKey) {
     case 'user':
       return 'You can configure your agent to add contextual information about your users';
@@ -99,7 +99,7 @@ function getTip(propertyKey) {
 }
 
 function recursiveSort(propData, levelTwoKey, level) {
-  const tipHeading = getTip(levelTwoKey);
+  const tipText = getTipText(levelTwoKey);
 
   return (
     <div>
@@ -122,11 +122,16 @@ function recursiveSort(propData, levelTwoKey, level) {
         </tbody>
       </Table>
 
-      {tipHeading && (
-        <TipMessage
-          heading={tipHeading}
-          link="https://www.elastic.co/guide/en/apm/get-started/current/index.html"
-        />
+      {tipText && (
+        <TipMessage>
+          {tipText} -{' '}
+          <a
+            href="https://www.elastic.co/guide/en/apm/get-started/current/index.html"
+            target="_blank"
+          >
+            Learn more in the documentation
+          </a>
+        </TipMessage>
       )}
     </div>
   );

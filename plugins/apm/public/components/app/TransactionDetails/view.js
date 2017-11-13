@@ -1,5 +1,5 @@
 import React from 'react';
-import PageHeader from '../../shared/PageHeader';
+import { PageHeader } from '../../shared/UIComponents';
 import Transaction from './Transaction';
 import Distribution from './Distribution';
 import Charts from './Charts';
@@ -7,7 +7,7 @@ import Charts from './Charts';
 function TransactionDetails({ urlParams }) {
   return (
     <div>
-      <PageHeader title={urlParams.transactionName} />
+      <PageHeader>{urlParams.transactionName}</PageHeader>
       <Charts />
       <Distribution />
       <Transaction />
