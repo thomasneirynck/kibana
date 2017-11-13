@@ -251,7 +251,8 @@ module
       setAllToSaving();
 
       const prefix = $scope.formConfig.jobLabel;
-      ml.setupDataRecognizerConfig({ configId, prefix })
+      const indexPatternName = $scope.formConfig.indexPattern.title;
+      ml.setupDataRecognizerConfig({ configId, prefix, indexPatternName })
       .then((resp) => {
         if (resp.jobs) {
           $scope.formConfig.jobs.forEach((job) => {
