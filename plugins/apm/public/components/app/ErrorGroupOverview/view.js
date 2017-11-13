@@ -26,7 +26,7 @@ class ErrorGroupOverview extends Component {
     const { changeErrorGroupSorting, errorGroupSorting } = this.props;
     return (
       <div>
-        <PageHeader>Errors for {appName}</PageHeader>
+        <PageHeader>{appName}</PageHeader>
         <TabNavigation />
 
         <List
