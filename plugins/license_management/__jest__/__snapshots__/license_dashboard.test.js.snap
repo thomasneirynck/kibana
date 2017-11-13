@@ -1,0 +1,446 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LicenseDashboard should display all panels for a trial license 1`] = `
+<div
+  className="kuiViewContent kuiViewContent--constrainedWidth"
+>
+  <div
+    className="kuiNotice"
+  >
+    <div
+      className="kuiInfoPanel kuiVerticalRhythm kuiInfoPanel--success"
+    >
+      <div
+        className="kuiInfoPanelHeader__title kuiVerticalRhythmSmall"
+      >
+        <span
+          aria-label="Check"
+          className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--success fa-check"
+          role="img"
+        />
+        Your 
+        trial
+         license is 
+        Active
+      </div>
+      <div
+        className="kuiInfoPanelBody"
+      >
+        <div
+          className="kuiInfoPanelBody__message"
+        >
+          Your license will expire on 
+          <strong>
+            October 12, 2099 7:00 PM EST
+          </strong>
+          .
+        </div>
+      </div>
+    </div>
+    <div
+      className="kuiCardGroup kuiCardGroup--united kuiVerticalRhythm"
+    >
+      <div
+        className="kuiCard"
+      >
+        <div
+          className="kuiCard__description"
+        >
+          <div
+            className="kuiCard__descriptionTitle"
+          >
+            Register for a Basic License
+          </div>
+          <div
+            className="kuiCard__descriptionText"
+          >
+            Monitoring is available for free with a Basic License. Simply register, check your inbox, and enjoy!
+          </div>
+        </div>
+        <div
+          className="kuiCard__footer"
+        >
+          <a
+            className="kuiButton kuiButton--secondary"
+            href="https://register.elastic.co/xpack_register"
+            target="_blank"
+          >
+            Get Basic
+          </a>
+        </div>
+      </div>
+      <div
+        className="kuiCard"
+      >
+        <div
+          className="kuiCard__description"
+        >
+          <div
+            className="kuiCard__descriptionTitle"
+            role="heading"
+          >
+            Unlock the Full Functionality
+          </div>
+          <div
+            className="kuiCard__descriptionText"
+          >
+            Get all X-Pack has to offer: security, monitoring, alerting, reporting, and Graph, plus support from the engineers behind the Elastic Stack.
+          </div>
+        </div>
+        <div
+          className="kuiCard__footer"
+        >
+          <a
+            className="kuiButton kuiButton--primary"
+            href="https://www.elastic.co/subscriptions/xpack"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Get It All
+          </a>
+        </div>
+      </div>
+    </div>
+    <p
+      className="kuiText kuiVerticalRhythm text-center"
+    >
+      Have a newer license? Splendid! 
+      <a
+        href="#/management/elasticsearch/license_management/upload_license"
+      >
+        Install it now.
+      </a>
+    </p>
+  </div>
+</div>
+`;
+
+exports[`should display basic registration pitch for license expiring in 25 days 1`] = `
+<div
+  className="kuiViewContent kuiViewContent--constrainedWidth"
+>
+  <div
+    className="kuiNotice"
+  >
+    <div
+      className="kuiInfoPanel kuiVerticalRhythm kuiInfoPanel--success"
+    >
+      <div
+        className="kuiInfoPanelHeader__title kuiVerticalRhythmSmall"
+      >
+        <span
+          aria-label="Check"
+          className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--success fa-check"
+          role="img"
+        />
+        Your 
+        gold
+         license is 
+        Active
+      </div>
+      <div
+        className="kuiInfoPanelBody"
+      >
+        <div
+          className="kuiInfoPanelBody__message"
+        >
+          Your license will expire on 
+          <strong>
+            October 25, 2017 9:21 AM EDT
+          </strong>
+          .
+        </div>
+      </div>
+    </div>
+    <div
+      className="kuiCardGroup kuiCardGroup--united kuiVerticalRhythm"
+    >
+      <div
+        className="kuiCard"
+      >
+        <div
+          className="kuiCard__description"
+        >
+          <div
+            className="kuiCard__descriptionTitle"
+          >
+            Register for a Basic License
+          </div>
+          <div
+            className="kuiCard__descriptionText"
+          >
+            Monitoring is available for free with a Basic License. Simply register, check your inbox, and enjoy!
+          </div>
+        </div>
+        <div
+          className="kuiCard__footer"
+        >
+          <a
+            className="kuiButton kuiButton--secondary"
+            href="https://register.elastic.co/xpack_register"
+            target="_blank"
+          >
+            Get Basic
+          </a>
+        </div>
+      </div>
+    </div>
+    <p
+      className="kuiText kuiVerticalRhythm text-center"
+    >
+      Have a newer license? Splendid! 
+      <a
+        href="#/management/elasticsearch/license_management/upload_license"
+      >
+        Install it now.
+      </a>
+    </p>
+  </div>
+</div>
+`;
+
+exports[`should display expiration notice for expired license 1`] = `
+<div
+  className="kuiViewContent kuiViewContent--constrainedWidth"
+>
+  <div
+    className="kuiNotice"
+  >
+    <div
+      className="kuiVerticalRhythm"
+    >
+      <h1
+        className="kuiTitle kuiVerticalRhythmSmall"
+      >
+        <span
+          className="kuiIcon fa-warning kuiIcon--error"
+        />
+        Your 
+        gold
+         license has expired
+      </h1>
+      <p
+        className="kuiText kuiVerticalRhythmSmall"
+      >
+        Your license expired on 
+        December 31, 1969 7:00 PM EST
+        .
+      </p>
+    </div>
+    <div
+      className="kuiCardGroup kuiCardGroup--united kuiVerticalRhythm"
+    >
+      <div
+        className="kuiCard"
+      >
+        <div
+          className="kuiCard__description"
+        >
+          <div
+            className="kuiCard__descriptionTitle"
+          >
+            Register for a Basic License
+          </div>
+          <div
+            className="kuiCard__descriptionText"
+          >
+            Monitoring is available for free with a Basic License. Simply register, check your inbox, and enjoy!
+          </div>
+        </div>
+        <div
+          className="kuiCard__footer"
+        >
+          <a
+            className="kuiButton kuiButton--secondary"
+            href="https://register.elastic.co/xpack_register"
+            target="_blank"
+          >
+            Get Basic
+          </a>
+        </div>
+      </div>
+      <div
+        className="kuiCard"
+      >
+        <div
+          className="kuiCard__description"
+        >
+          <div
+            className="kuiCard__descriptionTitle"
+            role="heading"
+          >
+            Unlock the Full Functionality
+          </div>
+          <div
+            className="kuiCard__descriptionText"
+          >
+            Get all X-Pack has to offer: security, monitoring, alerting, reporting, and Graph, plus support from the engineers behind the Elastic Stack.
+          </div>
+        </div>
+        <div
+          className="kuiCard__footer"
+        >
+          <a
+            className="kuiButton kuiButton--primary"
+            href="https://www.elastic.co/subscriptions/xpack"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Get It All
+          </a>
+        </div>
+      </div>
+    </div>
+    <p
+      className="kuiText kuiVerticalRhythm text-center"
+    >
+      Already have your license? Splendid! 
+      <a
+        href="#/management/elasticsearch/license_management/upload_license"
+      >
+        Install it now.
+      </a>
+    </p>
+  </div>
+</div>
+`;
+
+exports[`should display just license status and subscription for basic license 1`] = `
+<div
+  className="kuiViewContent kuiViewContent--constrainedWidth"
+>
+  <div
+    className="kuiNotice"
+  >
+    <div
+      className="kuiInfoPanel kuiVerticalRhythm kuiInfoPanel--success"
+    >
+      <div
+        className="kuiInfoPanelHeader__title kuiVerticalRhythmSmall"
+      >
+        <span
+          aria-label="Check"
+          className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--success fa-check"
+          role="img"
+        />
+        Your 
+        basic
+         license is 
+        Active
+      </div>
+      <div
+        className="kuiInfoPanelBody"
+      >
+        <div
+          className="kuiInfoPanelBody__message"
+        >
+          Your license will expire on 
+          <strong>
+            October 12, 2099 7:00 PM EST
+          </strong>
+          .
+        </div>
+      </div>
+    </div>
+    <div
+      className="kuiCardGroup kuiCardGroup--united kuiVerticalRhythm"
+    >
+      <div
+        className="kuiCard"
+      >
+        <div
+          className="kuiCard__description"
+        >
+          <div
+            className="kuiCard__descriptionTitle"
+            role="heading"
+          >
+            Unlock the Full Functionality
+          </div>
+          <div
+            className="kuiCard__descriptionText"
+          >
+            Get all X-Pack has to offer: security, monitoring, alerting, reporting, and Graph, plus support from the engineers behind the Elastic Stack.
+          </div>
+        </div>
+        <div
+          className="kuiCard__footer"
+        >
+          <a
+            className="kuiButton kuiButton--primary"
+            href="https://www.elastic.co/subscriptions/xpack"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Get It All
+          </a>
+        </div>
+      </div>
+    </div>
+    <p
+      className="kuiText kuiVerticalRhythm text-center"
+    >
+      Have a newer license? Splendid! 
+      <a
+        href="#/management/elasticsearch/license_management/upload_license"
+      >
+        Install it now.
+      </a>
+    </p>
+  </div>
+</div>
+`;
+
+exports[`should display just license status for gold license 1`] = `
+<div
+  className="kuiViewContent kuiViewContent--constrainedWidth"
+>
+  <div
+    className="kuiNotice"
+  >
+    <div
+      className="kuiInfoPanel kuiVerticalRhythm kuiInfoPanel--success"
+    >
+      <div
+        className="kuiInfoPanelHeader__title kuiVerticalRhythmSmall"
+      >
+        <span
+          aria-label="Check"
+          className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--success fa-check"
+          role="img"
+        />
+        Your 
+        gold
+         license is 
+        Active
+      </div>
+      <div
+        className="kuiInfoPanelBody"
+      >
+        <div
+          className="kuiInfoPanelBody__message"
+        >
+          Your license will expire on 
+          <strong>
+            October 12, 2099 7:00 PM EST
+          </strong>
+          .
+        </div>
+      </div>
+    </div>
+    <div
+      className="kuiCardGroup kuiCardGroup--united kuiVerticalRhythm"
+    />
+    <p
+      className="kuiText kuiVerticalRhythm text-center"
+    >
+      Have a newer license? Splendid! 
+      <a
+        href="#/management/elasticsearch/license_management/upload_license"
+      >
+        Install it now.
+      </a>
+    </p>
+  </div>
+</div>
+`;

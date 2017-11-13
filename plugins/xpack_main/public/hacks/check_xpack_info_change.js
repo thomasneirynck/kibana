@@ -26,7 +26,9 @@ module.factory('checkXPackInfoChange', ($q, Private) => {
     if (currentSignature && cachedSignature !== currentSignature) {
       // Signature from the server differ from the signature of our
       // cached info, so we need to refresh it.
-      xpackInfo.refresh();
+      // Intentionally swallowing this error
+      // because nothing catches it and it's an ugly console error.
+      xpackInfo.refresh().catch(()=> {});
     }
 
     return handleResponse(response);

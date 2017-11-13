@@ -131,6 +131,7 @@
     "react-syntax-highlighter": "5.7.0",
     "react-vis": "^1.7.5",
     "redux": "^3.7.2",
+    "redux-actions": "2.2.1",
     "redux-thunk": "^2.2.0",
     "reselect": "3.0.1",
     "rison-node": "0.3.1",

@@ -1,0 +1,381 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UploadLicense should display a modal when license requires acknowledgement 1`] = `
+<div
+  className="kuiNotice"
+>
+  <div
+    className="kuiPanel"
+  >
+    <div
+      className="kuiModalOverlay"
+    >
+      <div>
+        <div
+          className="kuiModal kuiModal--confirmation"
+          onKeyDown={[Function]}
+          tabIndex={0}
+        >
+          <div
+            className="kuiModalHeader"
+          >
+            <div
+              className="kuiModalHeader__title"
+              data-test-subj="confirmModalTitleText"
+            >
+              Confirm License Upload
+            </div>
+          </div>
+          <div
+            className="kuiModalBody"
+          >
+            <div
+              data-test-subj="confirmModalBodyText"
+            >
+              <div>
+                <p>
+                  Some functionality will be lost if you replace your 
+        TRIAL license with a
+        BASIC license.  Review the list of features below.
+                </p>
+                <ul>
+                  <li>
+                    Watcher will be disabled
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div
+            className="kuiModalFooter"
+          >
+            <button
+              autoFocus={false}
+              className="kuiButton kuiButton--hollow"
+              data-test-subj="confirmModalCancelButton"
+              onClick={[Function]}
+            >
+              <span
+                className="kuiButton__inner"
+              >
+                <span>
+                  Cancel
+                </span>
+              </span>
+            </button>
+            <button
+              autoFocus={false}
+              className="kuiButton kuiButton--primary"
+              data-test-subj="confirmModalConfirmButton"
+              onClick={[Function]}
+            >
+              <span
+                className="kuiButton__inner"
+              >
+                <span>
+                  Confirm
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="kuiPanelHeader"
+    >
+      <div
+        className="kuiPanelHeader__title"
+      >
+        Upload a license
+      </div>
+    </div>
+    <div
+      className="kuiPanelBody"
+    >
+      <p>
+        Your license key is a JSON file with a signature attached.
+      </p>
+      <p>
+        Uploading a license will replace your current 
+        <b>
+          
+        </b>
+         license.
+      </p>
+      <form>
+        <div
+          className="kuiVerticalRhythm"
+        >
+          <p>
+            <input
+              name="licenseFile"
+              onChange={[Function]}
+              type="file"
+            />
+          </p>
+        </div>
+        <button
+          className="kuiButton kuiButton--primary"
+          disabled={false}
+          onClick={[Function]}
+        >
+          <span
+            className="kuiButton__inner"
+          >
+            <span>
+              Upload
+            </span>
+          </span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`UploadLicense should display an error when ES says license is invalid 1`] = `
+<div
+  className="kuiNotice"
+>
+  <div
+    className="kuiPanel"
+  >
+    <div
+      className="kuiPanelHeader"
+    >
+      <div
+        className="kuiPanelHeader__title"
+      >
+        Upload a license
+      </div>
+    </div>
+    <div
+      className="kuiPanelBody"
+    >
+      <p>
+        Your license key is a JSON file with a signature attached.
+      </p>
+      <p>
+        Uploading a license will replace your current 
+        <b>
+          
+        </b>
+         license.
+      </p>
+      <form>
+        <div
+          className="kuiInfoPanel kuiInfoPanel--error kuiVerticalRhythm"
+        >
+          <div
+            className="kuiInfoPanelHeader"
+          >
+            <span
+              aria-label="Warning"
+              className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--error fa-warning"
+              role="img"
+            />
+            <span
+              className="kuiInfoPanelHeader__title"
+            >
+              The supplied license is not valid for this product.
+            </span>
+          </div>
+        </div>
+        <div
+          className="kuiVerticalRhythm"
+        >
+          <p>
+            <input
+              name="licenseFile"
+              onChange={[Function]}
+              type="file"
+            />
+          </p>
+        </div>
+        <button
+          className="kuiButton kuiButton--primary kuiButton--iconText"
+          disabled={true}
+          onClick={[Function]}
+        >
+          <span
+            className="kuiButton__inner"
+          >
+            <span
+              aria-hidden="true"
+              className="kuiButton__icon kuiIcon fa-spinner fa-spin"
+            />
+            <span>
+              Uploading...
+            </span>
+          </span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`UploadLicense should display an error when submitting invalid JSON 1`] = `
+<div
+  className="kuiNotice"
+>
+  <div
+    className="kuiPanel"
+  >
+    <div
+      className="kuiPanelHeader"
+    >
+      <div
+        className="kuiPanelHeader__title"
+      >
+        Upload a license
+      </div>
+    </div>
+    <div
+      className="kuiPanelBody"
+    >
+      <p>
+        Your license key is a JSON file with a signature attached.
+      </p>
+      <p>
+        Uploading a license will replace your current 
+        <b>
+          
+        </b>
+         license.
+      </p>
+      <form>
+        <div
+          className="kuiInfoPanel kuiInfoPanel--error kuiVerticalRhythm"
+        >
+          <div
+            className="kuiInfoPanelHeader"
+          >
+            <span
+              aria-label="Warning"
+              className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--error fa-warning"
+              role="img"
+            />
+            <span
+              className="kuiInfoPanelHeader__title"
+            >
+              Error encountered uploading license: Check your license file.
+            </span>
+          </div>
+        </div>
+        <div
+          className="kuiVerticalRhythm"
+        >
+          <p>
+            <input
+              name="licenseFile"
+              onChange={[Function]}
+              type="file"
+            />
+          </p>
+        </div>
+        <button
+          className="kuiButton kuiButton--primary kuiButton--iconText"
+          disabled={true}
+          onClick={[Function]}
+        >
+          <span
+            className="kuiButton__inner"
+          >
+            <span
+              aria-hidden="true"
+              className="kuiButton__icon kuiIcon fa-spinner fa-spin"
+            />
+            <span>
+              Uploading...
+            </span>
+          </span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`UploadLicense should display error when ES returns error 1`] = `
+<div
+  className="kuiNotice"
+>
+  <div
+    className="kuiPanel"
+  >
+    <div
+      className="kuiPanelHeader"
+    >
+      <div
+        className="kuiPanelHeader__title"
+      >
+        Upload a license
+      </div>
+    </div>
+    <div
+      className="kuiPanelBody"
+    >
+      <p>
+        Your license key is a JSON file with a signature attached.
+      </p>
+      <p>
+        Uploading a license will replace your current 
+        <b>
+          
+        </b>
+         license.
+      </p>
+      <form>
+        <div
+          className="kuiInfoPanel kuiInfoPanel--error kuiVerticalRhythm"
+        >
+          <div
+            className="kuiInfoPanelHeader"
+          >
+            <span
+              aria-label="Warning"
+              className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--error fa-warning"
+              role="img"
+            />
+            <span
+              className="kuiInfoPanelHeader__title"
+            >
+              Error encountered uploading license: Can not upgrade to a production license unless TLS is configured or security is disabled
+            </span>
+          </div>
+        </div>
+        <div
+          className="kuiVerticalRhythm"
+        >
+          <p>
+            <input
+              name="licenseFile"
+              onChange={[Function]}
+              type="file"
+            />
+          </p>
+        </div>
+        <button
+          className="kuiButton kuiButton--primary kuiButton--iconText"
+          disabled={true}
+          onClick={[Function]}
+        >
+          <span
+            className="kuiButton__inner"
+          >
+            <span
+              aria-hidden="true"
+              className="kuiButton__icon kuiIcon fa-spinner fa-spin"
+            />
+            <span>
+              Uploading...
+            </span>
+          </span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+`;
