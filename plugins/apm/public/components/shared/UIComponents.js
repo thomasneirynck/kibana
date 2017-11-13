@@ -9,6 +9,11 @@ export const PageHeader = styled.h1`
   line-height: ${px(unit * 2.5)};
 `;
 
+export const SectionHeader = styled.h2`
+  margin: ${px(units.plus)} 0;
+  font-size: ${fontSizes.xlarge};
+`;
+
 export const Tab = styled(RelativeLink)`
   display: inline-block;
   font-size: ${fontSizes.large};
