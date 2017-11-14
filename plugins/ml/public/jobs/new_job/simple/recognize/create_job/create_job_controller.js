@@ -18,7 +18,7 @@ import moment from 'moment';
 import angular from 'angular';
 import dateMath from '@elastic/datemath';
 import { isJobIdValid } from 'plugins/ml/util/job_utils';
-import { createSearchItems } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
+import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 
 import 'plugins/kibana/visualize/styles/main.less';
 

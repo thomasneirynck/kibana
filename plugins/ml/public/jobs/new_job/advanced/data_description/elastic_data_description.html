@@ -2,12 +2,12 @@
   <div ng-show="ui.esServerOk === 1">
 
     <div class="form-group">
-      <div><label><input type="radio" name="indexRadio" ng-model="ui.wizard.indexInputType" value="TEXT" /> Input index</label></div>
-      <div><label><input type="radio" name="indexRadio" ng-model="ui.wizard.indexInputType" value="LIST" /> Choose index from list</label></div>
+      <div><label><input type="radio" name="indexRadio" ng-model="ui.wizard.indexInputType" value="{{INDEX_INPUT_TYPE.TEXT}}" /> Input index</label></div>
+      <div><label><input type="radio" name="indexRadio" ng-model="ui.wizard.indexInputType" value="{{INDEX_INPUT_TYPE.LIST}}" /> Choose index from list</label></div>
     </div>
 
     <!-- text input index list -->
-    <div ng-show="ui.wizard.indexInputType === 'TEXT'" class="form-group">
+    <div ng-show="ui.wizard.indexInputType === INDEX_INPUT_TYPE.TEXT" class="form-group">
       <label>Index</label>
       <div class="input-group">
       <input
@@ -28,7 +28,7 @@
     </div>
 
     <!-- checkbox index list -->
-    <div ng-show="ui.wizard.indexInputType === 'LIST'" class="form-group">
+    <div ng-show="ui.wizard.indexInputType === INDEX_INPUT_TYPE.LIST" class="form-group">
       <label>Indices</label>
       <div>
         <div class="index-list-container">

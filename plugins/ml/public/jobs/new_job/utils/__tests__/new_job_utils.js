@@ -14,9 +14,9 @@
  */
 
 import expect from 'expect.js';
-import { getSafeFieldName } from '../simple_job_utils';
+import { getSafeFieldName } from '../new_job_utils';
 
-describe('ML - simple job utils', () => {
+describe('ML - new job utils', () => {
 
   describe('getSafeFieldName', () => {
     it('"foo" should be "foo"', () => {

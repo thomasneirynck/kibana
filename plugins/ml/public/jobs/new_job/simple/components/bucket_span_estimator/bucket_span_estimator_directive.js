@@ -17,7 +17,7 @@ import _ from 'lodash';
 
 import template from './bucket_span_estimator.html';
 import { BucketSpanEstimatorProvider } from './bucket_span_estimator';
-import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
+import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { EVENT_RATE_COUNT_FIELD } from 'plugins/ml/jobs/new_job/simple/components/constants/general';
 
 import { uiModules } from 'ui/modules';

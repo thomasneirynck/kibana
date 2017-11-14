@@ -40,7 +40,17 @@ module.directive('mlElasticDataDescription', function () {
     },
     template,
     controller: function ($scope, $q, $location, mlJobService) {
-      const MODE = { NEW: 0, EDIT: 1, CLONE: 2 };
+      const MODE = {
+        NEW: 0,
+        EDIT: 1,
+        CLONE: 2
+      };
+      const INDEX_INPUT_TYPE = {
+        TEXT: 'TEXT',
+        LIST: 'LIST'
+      };
+      $scope.INDEX_INPUT_TYPE = INDEX_INPUT_TYPE;
+
       $scope.saveLock = false;
       let keyPressTimeout = null;
 
@@ -76,7 +86,11 @@ module.directive('mlElasticDataDescription', function () {
         // if this is a datafeed job being cloned
         // load the indices and types
         getMappings().then(() => {
-          if ($scope.mode === MODE.CLONE && $scope.ui.isDatafeed) {
+          if ($scope.ui.datafeed.indicesText !== '') {
+            // if the index pattern has been pre-populated from the url,
+            // trigger the field extraction
+            $scope.extractFields();
+          } else if ($scope.mode === MODE.CLONE && $scope.ui.isDatafeed) {
            // first load mappings, then extract types and fields.
             setUpClonedJob();
           }
@@ -200,7 +214,7 @@ module.directive('mlElasticDataDescription', function () {
       // create $scope.ui.types based on the indices selected
       // called when extracting fields and when cloning a job
       function extractTypesFromIndices(fromClone) {
-        if ($scope.ui.wizard.indexInputType === 'TEXT') {
+        if ($scope.ui.wizard.indexInputType === INDEX_INPUT_TYPE.TEXT) {
           clear($scope.indices);
           // parse comma separated list of indices
           const indices = $scope.ui.datafeed.indicesText.split(',');
@@ -324,13 +338,13 @@ module.directive('mlElasticDataDescription', function () {
         if ($scope.allTypesSelected()) {
           clear($scope.types);
         } else {
-          // otherwsise, select all
+          // otherwise, select all
           $scope.uiTypeKeys().forEach((key) => {
             $scope.types[key] = $scope.ui.types[key];
           });
         }
 
-        // trigger field extraction and timeformat guessing
+        // trigger field extraction and time format guessing
         $scope.extractFields({ types: $scope.types });
         guessTimeField();
       };

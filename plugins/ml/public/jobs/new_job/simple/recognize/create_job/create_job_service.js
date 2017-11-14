@@ -15,7 +15,7 @@
 
 import angular from 'angular';
 
-import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
+import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { SavedObjectsClientProvider } from 'ui/saved_objects';
 
 import { uiModules } from 'ui/modules';

@@ -15,7 +15,7 @@
 
 import { EVENT_RATE_COUNT_FIELD } from 'plugins/ml/jobs/new_job/simple/components/constants/general';
 import { ML_JOB_FIELD_TYPES, KBN_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
-import { getSafeFieldName } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
+import { getSafeFieldName } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
 
 export function createFields(scope, indexPattern) {

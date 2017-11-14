@@ -26,20 +26,26 @@ import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import template from './new_job.html';
 import saveStatusTemplate from 'plugins/ml/jobs/new_job/advanced/save_status_modal/save_status_modal.html';
+import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
+
 
 uiRoutes
 .when('/jobs/new_job/advanced', {
   template,
   resolve: {
     CheckLicense: checkLicense,
-    privileges: checkCreateJobsPrivilege
+    privileges: checkCreateJobsPrivilege,
+    indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index),
+    savedSearch: (courier, $route, savedSearches) => savedSearches.get($route.current.params.savedSearchId)
   }
 })
 .when('/jobs/new_job/advanced/:jobId', {
   template,
   resolve: {
     CheckLicense: checkLicense,
-    privileges: checkCreateJobsPrivilege
+    privileges: checkCreateJobsPrivilege,
+    indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index),
+    savedSearch: (courier, $route, savedSearches) => savedSearches.get($route.current.params.savedSearchId)
   }
 });
 
@@ -77,6 +83,11 @@ function (
     EDIT: 1,
     CLONE: 2
   };
+
+  const INDEX_INPUT_TYPE = {
+    TEXT: 'TEXT',
+    LIST: 'LIST'
+  };
   // ui model, used to store and control job data that wont be posted to the server.
   const msgs = mlMessageBarService;
   const mlConfirm = mlConfirmModalService;
@@ -102,7 +113,7 @@ function (
       stepHovering: 0,
       CHAR_LIMIT: 500,
       dataLocation: 'ES',
-      indexInputType: 'LIST',
+      indexInputType: INDEX_INPUT_TYPE.LIST,
       dataPreview: '',
       dataReady: false,
       setDataLocation: function (loc) {
@@ -209,7 +220,7 @@ function (
         $scope.job.job_id = '';
         setDatafeedUIText();
         setFieldDelimiterControlsFromText();
-        $scope.ui.wizard.indexInputType = 'TEXT';
+        $scope.ui.wizard.indexInputType = INDEX_INPUT_TYPE.TEXT;
 
         // if the datafeedConfig doesn't exist, assume we're cloning from a job with no datafeed
         if (!$scope.job.datafeed_config) {
@@ -233,6 +244,8 @@ function (
       $scope.mode = MODE.NEW;
       console.log('Creating new job');
       $scope.job = mlJobService.getBlankJob();
+
+      populateFormFromUrl();
     }
 
     calculateDatafeedFrequencyDefaultSeconds();
@@ -441,7 +454,7 @@ function (
   };
 
   $scope.indexSelected = function () {
-    if ($scope.ui.wizard.indexInputType === 'TEXT') {
+    if ($scope.ui.wizard.indexInputType === INDEX_INPUT_TYPE.TEXT) {
       // if the user is entering index text manually, check that the text isn't blank
       // and a match to an index has been made resulting in some fields.
       return ($scope.ui.datafeed.indicesText.length && Object.keys($scope.properties).length) ? true : false;
@@ -449,6 +462,24 @@ function (
       return Object.keys($scope.indices).length ? true : false;
     }
   };
+
+  // if an index pattern or saved search has been added to the url
+  // populate those items in the form and datafeed config
+  function populateFormFromUrl() {
+    const {
+      indexPattern,
+      savedSearch,
+      combinedQuery } = createSearchItems($route);
+
+    if (indexPattern.id !== undefined) {
+      $scope.ui.wizard.indexInputType = INDEX_INPUT_TYPE.TEXT;
+      $scope.ui.datafeed.indicesText = indexPattern.title;
+
+      if (savedSearch.id !== undefined) {
+        $scope.ui.datafeed.queryText = JSON.stringify(combinedQuery);
+      }
+    }
+  }
 
   $scope.timeFieldSelected = function () {
     return ($scope.job.data_description.time_field === '') ? false : true;
