@@ -29,7 +29,7 @@ const ImpactBarBackground = styled.div`
 
 const ImpactBar = styled.div`
   height: ${px(units.minus)};
-  background: ${colors.blue1};
+  background: ${colors.blue2};
   border-radius: ${borderRadius};
 `;
 
