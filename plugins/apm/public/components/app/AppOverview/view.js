@@ -37,7 +37,7 @@ const HeaderWrapper = styled.div`
 `;
 
 const GettingStartedLink = styled(RelativeLink)`
-  margin-top: ${px(units.double)};
+  margin-top: ${px(units.minus)};
 `;
 
 class AppOverview extends Component {
