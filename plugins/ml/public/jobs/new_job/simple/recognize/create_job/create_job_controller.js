@@ -18,6 +18,7 @@ import moment from 'moment';
 import angular from 'angular';
 import dateMath from '@elastic/datemath';
 import { isJobIdValid } from 'plugins/ml/util/job_utils';
+import { createSearchItems } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
 
 import 'plugins/kibana/visualize/styles/main.less';
 
@@ -73,18 +74,13 @@ module
     FAILED: 5
   };
 
-  const query = {
-    query_string: {
-      analyze_wildcard: true,
-      query: '*'
-    }
-  };
 
   $scope.SAVE_STATE = SAVE_STATE;
   $scope.DATAFEED_STATE = DATAFEED_STATE;
 
   $scope.overallState = SAVE_STATE.NOT_SAVED;
-  const indexPattern = $route.current.locals.indexPattern;
+
+  const { indexPattern, query } = createSearchItems($route);
 
   const pageTitle = `index pattern ${indexPattern.title}`;
 

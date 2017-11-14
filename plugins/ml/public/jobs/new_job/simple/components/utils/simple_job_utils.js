@@ -47,3 +47,44 @@ export function getQueryFromSavedSearch(formConfig) {
 export function getSafeFieldName(displayName, index) {
   return displayName.match(/^[a-zA-Z0-9-_.]+$/) ? displayName : `field_${index}`;
 }
+
+// create items used for searching and job creation.
+// takes the $route object to retrieve the indexPattern and savedSearch from the url
+export function createSearchItems($route) {
+  let indexPattern = $route.current.locals.indexPattern;
+  const query = {
+    query_string: {
+      analyze_wildcard: true,
+      query: '*'
+    }
+  };
+
+  let filters = [];
+  const savedSearch = $route.current.locals.savedSearch;
+  const searchSource = savedSearch.searchSource;
+
+
+  if (indexPattern.id === undefined &&
+    savedSearch.id !== undefined) {
+    indexPattern = searchSource.get('index');
+    const q = searchSource.get('query');
+    if (q !== undefined && q.language === 'lucene' && q.query !== '') {
+      query.query_string.query = q.query;
+    }
+
+    const fs = searchSource.get('filter');
+    if (fs.length) {
+      filters = fs;
+    }
+
+  }
+  const combinedQuery = getQueryFromSavedSearch({ query, filters });
+
+  return {
+    indexPattern,
+    savedSearch,
+    filters,
+    query,
+    combinedQuery
+  };
+}

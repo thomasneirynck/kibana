@@ -29,7 +29,7 @@ import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/components/utils/filter_agg_types';
 import { isJobIdValid } from 'plugins/ml/util/job_utils';
-import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
+import { createSearchItems } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
 import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/components/utils/app_state_settings';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
 import { createFields } from 'plugins/ml/jobs/new_job/simple/components/utils/create_fields';
@@ -96,36 +96,15 @@ module
   // flag to stop all results polling if the user navigates away from this page
   let globalForceStop = false;
 
-  let indexPattern = $route.current.locals.indexPattern;
-  const query = {
-    query_string: {
-      analyze_wildcard: true,
-      query: '*'
-    }
-  };
+  const {
+    indexPattern,
+    savedSearch,
+    query,
+    filters,
+    combinedQuery } = createSearchItems($route);
 
-  let filters = [];
-  const savedSearch = $route.current.locals.savedSearch;
-  const searchSource = savedSearch.searchSource;
-
-  let pageTitle = `index pattern ${indexPattern.title}`;
-
-  if (indexPattern.id === undefined &&
-    savedSearch.id !== undefined) {
-    indexPattern = searchSource.get('index');
-    const q = searchSource.get('query');
-    if(q !== undefined && q.language === 'lucene' && q.query !== '') {
-      query.query_string.query = q.query;
-    }
-
-    const fs = searchSource.get('filter');
-    if(fs.length) {
-      filters = fs;
-    }
-
-    pageTitle = `saved search ${savedSearch.title}`;
-  }
-  const combinedQuery = getQueryFromSavedSearch({ query, filters });
+  const pageTitle = (indexPattern.id === undefined && savedSearch.id !== undefined) ?
+    `saved search ${savedSearch.title}` : `index pattern ${indexPattern.title}`;
 
   $scope.ui = {
     indexPattern,
