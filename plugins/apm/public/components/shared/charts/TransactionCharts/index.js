@@ -12,7 +12,7 @@ const ChartsWrapper = styled.div`
 `;
 
 const Chart = styled.div`
-  width: calc(50% - ${px(units.half)});
+  width: calc(50% - ${px(units.plus)});
 `;
 
 export class Charts extends Component {
