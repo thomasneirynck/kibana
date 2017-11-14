@@ -13,4 +13,4 @@
  * strictly prohibited.
  */
 
-import './create_job';
+import './job_type_controller';

@@ -1,15 +1,15 @@
-<ml-nav-menu name="new_job_multi_metric"></ml-nav-menu>
-<ml-new-job-multi-metric>
+<ml-nav-menu name="new_job"></ml-nav-menu>
+<ml-new-job>
   <ml-message-bar></ml-message-bar>
   <div class='kuiViewContent kuiViewContent--constrainedWidth' >
-    <div ng-controller="MlNewJobMultiStep1" class="wizard">
+    <div ng-controller="MlNewJobStepIndexOrSearch" class="wizard">
       <div class="wizard-column wizard-column--small">
         <h3 class="wizard-sub-title">From a New Search, Select Index</h3>
         <paginated-selectable-list
           per-page="20"
-          list="indexPattern.list"
+          list="indexPatterns"
           list-property="attributes.title"
-          user-make-url="makeUrl"
+          user-make-url="withIndexPatternUrl"
           class="wizard-row visualizeWizardPaginatedSelectableList kuiVerticalRhythm"
         ></paginated-selectable-list>
       </div>
@@ -20,9 +20,9 @@
           title="Saved Searches"
           type="searches"
           class="wizard-row visualizeWizardSavedObjectFinder kuiVerticalRhythm"
-          make-url="step2WithSearchUrl"
+          make-url="withSavedSearchUrl"
         ></saved-object-finder>
        </div>
     </div>
     </div>
-</ml-new-job-multi-metric>
+</ml-new-job>

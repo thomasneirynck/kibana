@@ -13,12 +13,4 @@
  * strictly prohibited.
  */
 
-import './wizard/wizard';
 import './create_job';
-
-import uiRoutes from 'ui/routes';
-
-uiRoutes
-.when('/jobs/new_job/simple/population', {
-  redirectTo: '/jobs/new_job/simple/population/step/1'
-});

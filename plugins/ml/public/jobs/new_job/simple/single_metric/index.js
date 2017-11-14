@@ -13,13 +13,4 @@
  * strictly prohibited.
  */
 
-import './wizard/wizard';
 import './create_job';
-
-import uiRoutes from 'ui/routes';
-
-uiRoutes
-.when('/jobs/new_job/simple/single_metric', {
-  redirectTo: '/jobs/new_job/simple/single_metric/step/1'
-});
-

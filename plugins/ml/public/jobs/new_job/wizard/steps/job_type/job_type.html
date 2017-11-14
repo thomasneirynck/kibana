@@ -1,12 +1,12 @@
 <ml-nav-menu name="new_job"></ml-nav-menu>
 <ml-new-job>
   <ml-message-bar></ml-message-bar>
-  <div ng-controller="MlNewJobWizard" class="container">
-    <!-- first view of wizard -->
-    <div ng-show="ui.wizard.step === 0" class="new-job-gallery">
+  <div ng-controller="MlNewJobStepJobType" class="container">
+    <!-- Presents the various options for creating a job -->
+    <div class="new-job-gallery">
       <div>
         <h1 class='kuiTitle kuiVerticalRhythm kuiVerticalRhythm--medium'>Select job type</h1>
-        <a class="new-job-gallery-button" href='#jobs/new_job/simple/single_metric'>
+        <a class="new-job-gallery-button" ng-href="{{getCreateSimpleJobUrl('#jobs/new_job/simple/single_metric')}}">
           <div class="job-type-icon">
             <i aria-hidden="true" class="fa fa-area-chart"></i>
           </div>
@@ -14,7 +14,7 @@
           <div class='sub-title'>Based on a kibana index pattern or saved search</div>
         </a>
 
-        <a class="new-job-gallery-button" href='#jobs/new_job/simple/multi_metric'>
+        <a class="new-job-gallery-button" ng-href="{{getCreateSimpleJobUrl('#jobs/new_job/simple/multi_metric')}}">
           <div class="job-type-icon">
             <i aria-hidden="true" class="fa fa-area-chart"></i>
           </div>
@@ -22,7 +22,7 @@
           <div class='sub-title'>Based on a kibana index pattern or saved search</div>
         </a>
 
-        <a class="new-job-gallery-button" href='#jobs/new_job/simple/population'>
+        <a class="new-job-gallery-button" ng-href="{{getCreateSimpleJobUrl('#jobs/new_job/simple/population')}}">
           <div class="job-type-icon">
             <i aria-hidden="true" class="fa fa-area-chart"></i>
           </div>
@@ -30,7 +30,7 @@
           <div class='sub-title'>Based on a kibana index pattern or saved search</div>
         </a>
 
-        <a class="new-job-gallery-button" href='#jobs/new_job/advanced'>
+        <a class="new-job-gallery-button" ng-href="{{getCreateAdvancedJobUrl('#jobs/new_job/advanced')}}">
           <div class="job-type-icon">
             <i aria-hidden="true" class="fa fa-cog"></i>
           </div>
@@ -39,6 +39,5 @@
         </a>
       </div>
     </div>
-
   </div>
 </ml-new-job>

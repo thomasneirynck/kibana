@@ -14,4 +14,5 @@
  */
 
 import './styles/main.less';
-import './wizard_controller';
+import './steps/index_or_search';
+import './steps/job_type';

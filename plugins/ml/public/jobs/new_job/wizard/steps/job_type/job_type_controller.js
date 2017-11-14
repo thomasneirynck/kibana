@@ -13,49 +13,49 @@
  * strictly prohibited.
  */
 
+/*
+ * Controller for the second step in the Create Job wizard, allowing
+ * the user to select the type of job they wish to create.
+ */
+
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
-import { preConfiguredJobRedirect } from 'plugins/ml/jobs/new_job/wizard/preconfigured_job_redirect';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
-import template from './wizard.html';
+import template from './job_type.html';
 
 uiRoutes
-.when('/jobs/new_job', {
+.when('/jobs/new_job/step/job_type', {
   template,
   resolve: {
     CheckLicense: checkLicense,
-    privileges: checkCreateJobsPrivilege,
-    preConfiguredJobRedirect
+    privileges: checkCreateJobsPrivilege
   }
 });
+
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('MlNewJobWizard',
+module.controller('MlNewJobStepJobType',
 function (
   $scope,
   $route,
-  $location,
   timefilter) {
 
   timefilter.enabled = false; // remove time picker from top of page
 
-  $scope.ui = {
-    pageTitle: 'Create a new job',
-    wizard: {
-      step: 0,
-      forward: function () {
-        wizardStep(1);
-      },
-      back: function () {
-        wizardStep(-1);
-      }
-    }
+  const indexPatternId = $route.current.params.index;
+  const savedSearchId = $route.current.params.savedSearchId;
+
+  $scope.getCreateSimpleJobUrl = function (basePath) {
+    return indexPatternId !== undefined ? `${basePath}/create?index=${indexPatternId}` :
+        `${basePath}/create?savedSearchId=${savedSearchId}`;
   };
 
-  function wizardStep(step) {
-    $scope.ui.wizard.step += step;
-  }
+  $scope.getCreateAdvancedJobUrl = function (basePath) {
+    // TODO - use the supplied index pattern or saved search in the Advanced Job page.
+    return indexPatternId !== undefined ? `${basePath}?index=${indexPatternId}` :
+        `${basePath}?savedSearchId=${savedSearchId}`;
+  };
 
 });
