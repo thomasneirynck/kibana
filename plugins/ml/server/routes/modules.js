@@ -23,21 +23,21 @@ function recognize(callWithRequest, indexPatternTitle) {
   return dr.findMatches(indexPatternTitle);
 }
 
-function getConfigs(callWithRequest, configId) {
+function getModule(callWithRequest, moduleId) {
   const dr = new DataRecognizer(callWithRequest);
-  return dr.getConfigs(configId);
+  return dr.getModule(moduleId);
 }
 
-function saveConfigItems(callWithRequest, configId, prefix, indexPatternName, request) {
+function saveModuleItems(callWithRequest, moduleId, prefix, indexPatternName, request) {
   const dr = new DataRecognizer(callWithRequest);
-  return dr.setupDataRecognizerConfig(configId, prefix, indexPatternName, request);
+  return dr.setupModuleItems(moduleId, prefix, indexPatternName, request);
 }
 
 export function dataRecognizer(server, commonRouteConfig) {
 
   server.route({
     method: 'GET',
-    path: '/api/ml/data_recognizer/recognize/{indexPatternTitle}',
+    path: '/api/ml/modules/recognize/{indexPatternTitle}',
     handler(request, reply) {
       const callWithRequest = callWithRequestFactory(server, request);
       const indexPatternTitle = request.params.indexPatternTitle;
@@ -52,11 +52,11 @@ export function dataRecognizer(server, commonRouteConfig) {
 
   server.route({
     method: 'GET',
-    path: '/api/ml/data_recognizer/get_configs/{configId}',
+    path: '/api/ml/modules/get_module/{moduleId}',
     handler(request, reply) {
       const callWithRequest = callWithRequestFactory(server, request);
-      const configId = request.params.configId;
-      return getConfigs(callWithRequest, configId)
+      const moduleId = request.params.moduleId;
+      return getModule(callWithRequest, moduleId)
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
     },
@@ -67,13 +67,13 @@ export function dataRecognizer(server, commonRouteConfig) {
 
   server.route({
     method: 'POST',
-    path: '/api/ml/data_recognizer/setup/{configId}',
+    path: '/api/ml/modules/setup/{moduleId}',
     handler(request, reply) {
       const callWithRequest = callWithRequestFactory(server, request);
-      const configId = request.params.configId;
+      const moduleId = request.params.moduleId;
       const prefix = (request.payload) ? request.payload.prefix : undefined;
       const indexPatternName = (request.payload) ? request.payload.indexPatternName : undefined;
-      return saveConfigItems(callWithRequest, configId, prefix, indexPatternName, request)
+      return saveModuleItems(callWithRequest, moduleId, prefix, indexPatternName, request)
         .then(resp => reply(resp))
         .catch(resp => reply(wrapError(resp)));
     },

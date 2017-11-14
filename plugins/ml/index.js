@@ -22,7 +22,7 @@ import { dataFeedRoutes } from './server/routes/datafeeds';
 import { indicesRoutes } from './server/routes/indices';
 import { notificationRoutes } from './server/routes/notification_settings';
 import { systemRoutes } from './server/routes/system';
-import { dataRecognizer } from './server/routes/data_recognizer';
+import { dataRecognizer } from './server/routes/modules';
 import { dataVisualizerRoutes } from './server/routes/data_visualizer';
 
 export const ml = (kibana) => {
@@ -67,7 +67,7 @@ export const ml = (kibana) => {
         xpackMainPlugin.info.feature(thisPlugin.id).registerLicenseCheckResultsGenerator(checkLicense);
       });
 
-      // Add server routes and initalize the plugin here
+      // Add server routes and initialize the plugin here
       const commonRouteConfig = {
         pre: [
           function forbidApiAccess(request, reply) {

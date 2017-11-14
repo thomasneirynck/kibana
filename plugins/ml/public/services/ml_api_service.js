@@ -214,14 +214,14 @@ module.service('ml', function (prlHttpService) {
 
   this.recognizeIndex = function (obj) {
     return http.request({
-      url: `${basePath}/data_recognizer/recognize/${obj.indexPatternTitle}`,
+      url: `${basePath}/modules/recognize/${obj.indexPatternTitle}`,
       method: 'GET'
     });
   };
 
-  this.getRecognizerConfigs = function (obj) {
+  this.getDataRecognizerModule = function (obj) {
     return http.request({
-      url: `${basePath}/data_recognizer/get_configs/${obj.configId}`,
+      url: `${basePath}/modules/get_module/${obj.moduleId}`,
       method: 'GET'
     });
   };
@@ -233,7 +233,7 @@ module.service('ml', function (prlHttpService) {
     ]);
 
     return http.request({
-      url: `${basePath}/data_recognizer/setup/${obj.configId}`,
+      url: `${basePath}/modules/setup/${obj.moduleId}`,
       method: 'POST',
       data
     });

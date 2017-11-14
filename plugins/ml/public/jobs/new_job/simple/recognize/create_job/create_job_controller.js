@@ -123,7 +123,7 @@ module
 
   $scope.resultsUrl = '';
 
-  const configId = $route.current.params.id;
+  const moduleId = $route.current.params.id;
 
   $scope.resetJob = function () {
     $scope.overallState = SAVE_STATE.NOT_SAVED;
@@ -139,7 +139,7 @@ module
   function loadJobConfigs() {
     // load the job and datafeed configs as well as the kibana saved objects
     // from the recognizer endpoint
-    ml.getRecognizerConfigs({ configId })
+    ml.getDataRecognizerModule({ moduleId })
     .then(resp => {
       // populate the jobs and datafeeds
       if (resp.jobs && resp.jobs.length) {
@@ -237,7 +237,7 @@ module
     }
   };
 
-  // call the the setupDataRecognizerConfig endpoint to create the jobs, datafeeds and saved objects
+  // call the the setupModuleConfigs endpoint to create the jobs, datafeeds and saved objects
   function saveDataRecognizerItems() {
     return $q((resolve) => {
       // set all jobs, datafeeds and saved objects to a SAVING state
@@ -246,7 +246,7 @@ module
 
       const prefix = $scope.formConfig.jobLabel;
       const indexPatternName = $scope.formConfig.indexPattern.title;
-      ml.setupDataRecognizerConfig({ configId, prefix, indexPatternName })
+      ml.setupDataRecognizerConfig({ moduleId, prefix, indexPatternName })
       .then((resp) => {
         if (resp.jobs) {
           $scope.formConfig.jobs.forEach((job) => {

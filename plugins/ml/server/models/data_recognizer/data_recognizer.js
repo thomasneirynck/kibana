@@ -24,7 +24,7 @@ const INDEX_PATTERN_NAME = 'INDEX_PATTERN_NAME';
 export class DataRecognizer {
   constructor(callWithRequest) {
     this.callWithRequest = callWithRequest;
-    this.configDir = `${__dirname}/configs`;
+    this.modulesDir = `${__dirname}/modules`;
     this.savedObjectsClient = null;
   }
 
@@ -59,11 +59,11 @@ export class DataRecognizer {
     });
   }
 
-  async loadIndexFiles() {
+  async loadManifestFiles() {
     const configs = [];
-    const dirs = await this.listDirs(this.configDir);
+    const dirs = await this.listDirs(this.modulesDir);
     await Promise.all(dirs.map(async (dir) => {
-      const file = await this.readFile(`${this.configDir}/${dir}/index.json`);
+      const file = await this.readFile(`${this.modulesDir}/${dir}/manifest.json`);
       configs.push({
         dirName: dir,
         json: JSON.parse(file)
@@ -73,34 +73,34 @@ export class DataRecognizer {
     return configs;
   }
 
-  // get the index.json file for a specified id, e.g. "nginx"
-  async getIndexFile(id) {
-    const indexFiles = await this.loadIndexFiles();
-    return indexFiles.find(i => i.json.id === id);
+  // get the manifest.json file for a specified id, e.g. "nginx"
+  async getManifestFile(id) {
+    const manifestFiles = await this.loadManifestFiles();
+    return manifestFiles.find(i => i.json.id === id);
   }
 
   // called externally by an endpoint
   async findMatches(indexPattern) {
-    const indexFiles = await this.loadIndexFiles();
+    const manifestFiles = await this.loadManifestFiles();
     const results = [];
 
-    await Promise.all(indexFiles.map(async (i) => {
-      const config = i.json;
-      const match = await this.searchForFields(config, indexPattern);
+    await Promise.all(manifestFiles.map(async (i) => {
+      const moduleConfig = i.json;
+      const match = await this.searchForFields(moduleConfig, indexPattern);
       if (match) {
         let logo = null;
-        if (config.logoFile) {
+        if (moduleConfig.logoFile) {
           try {
-            logo = await this.readFile(`${this.configDir}/${i.dirName}/${config.logoFile}`);
+            logo = await this.readFile(`${this.modulesDir}/${i.dirName}/${moduleConfig.logoFile}`);
             logo = JSON.parse(logo);
           } catch(e) {
             logo = null;
           }
         }
         results.push({
-          id: config.id,
-          title: config.title,
-          query: config.query,
+          id: moduleConfig.id,
+          title: moduleConfig.title,
+          query: moduleConfig.query,
           logo
         });
       }
@@ -109,11 +109,11 @@ export class DataRecognizer {
     return results;
   }
 
-  async searchForFields(config, indexPattern) {
+  async searchForFields(moduleConfig, indexPattern) {
     const index = indexPattern;
     const size = 0;
     const body = {
-      query: config.query
+      query: moduleConfig.query
     };
 
     const resp = await this.callWithRequest('search', { index, size, body });
@@ -121,25 +121,25 @@ export class DataRecognizer {
   }
 
   // called externally by an endpoint
-  async getConfigs(id) {
-    let indexJSON = null;
+  async getModule(id) {
+    let manifestJSON = null;
     let dirName = null;
 
-    const indexFile = await this.getIndexFile(id);
-    if (indexFile !== undefined) {
-      indexJSON = indexFile.json;
-      dirName = indexFile.dirName;
+    const manifestFile = await this.getManifestFile(id);
+    if (manifestFile !== undefined) {
+      manifestJSON = manifestFile.json;
+      dirName = manifestFile.dirName;
     }
     else {
-      return Boom.notFound(`Config with the id "${id}" not found`);
+      return Boom.notFound(`Module with the id "${id}" not found`);
     }
 
     const jobs = [];
     const datafeeds = [];
     const kibana = {};
     // load all of the job configs
-    await Promise.all(indexJSON.jobs.map(async (job) => {
-      const jobConfig = await this.readFile(`${this.configDir}/${dirName}/${ML_DIR}/${job.file}`);
+    await Promise.all(manifestJSON.jobs.map(async (job) => {
+      const jobConfig = await this.readFile(`${this.modulesDir}/${dirName}/${ML_DIR}/${job.file}`);
       // use the file name for the id
       jobs.push({
         id: job.id,
@@ -148,10 +148,10 @@ export class DataRecognizer {
     }));
 
     // load all of the datafeed configs
-    await Promise.all(indexJSON.datafeeds.map(async (datafeed) => {
-      const datafeedConfig = await this.readFile(`${this.configDir}/${dirName}/${ML_DIR}/${datafeed.file}`);
+    await Promise.all(manifestJSON.datafeeds.map(async (datafeed) => {
+      const datafeedConfig = await this.readFile(`${this.modulesDir}/${dirName}/${ML_DIR}/${datafeed.file}`);
       const config = JSON.parse(datafeedConfig);
-      // use the job id from the indexFile
+      // use the job id from the manifestFile
       config.job_id = datafeed.job_id;
 
       datafeeds.push({
@@ -161,11 +161,11 @@ export class DataRecognizer {
     }));
 
     // load all of the kibana saved objects
-    const kKeys = Object.keys(indexJSON.kibana);
+    const kKeys = Object.keys(manifestJSON.kibana);
     await Promise.all(kKeys.map(async (key) => {
       kibana[key] = [];
-      await Promise.all(indexJSON.kibana[key].map(async (obj) => {
-        const kConfig = await this.readFile(`${this.configDir}/${dirName}/${KIBANA_DIR}/${key}/${obj.file}`);
+      await Promise.all(manifestJSON.kibana[key].map(async (obj) => {
+        const kConfig = await this.readFile(`${this.modulesDir}/${dirName}/${KIBANA_DIR}/${key}/${obj.file}`);
         // use the file name for the id
         const kId = obj.file.replace('.json', '');
         const config = JSON.parse(kConfig);
@@ -185,53 +185,53 @@ export class DataRecognizer {
   }
 
   // called externally by an endpoint
-  // takes a config id, an optional jobPrefix and the request object
-  // creates all of the jobs, datafeeds and savedObjects  listed in the config.
+  // takes a module config id, an optional jobPrefix and the request object
+  // creates all of the jobs, datafeeds and savedObjects  listed in the module config.
   // if any of the savedObjects already exist, they will not be overwritten.
-  async setupDataRecognizerConfig(configId, jobPrefix, indexPatternName, request) {
+  async setupModuleItems(moduleId, jobPrefix, indexPatternName, request) {
     this.savedObjectsClient = request.getSavedObjectsClient();
     this.indexPatterns = await this.loadIndexPatterns();
 
     // load the config from disk
-    const config = await this.getConfigs(configId);
-    const indexFile = await this.getIndexFile(configId);
+    const moduleConfig = await this.getModule(moduleId);
+    const manifestFile = await this.getManifestFile(moduleId);
 
     if (indexPatternName === undefined &&
-      indexFile && indexFile.json &&
-      indexFile.json.defaultIndexPattern === undefined) {
+      manifestFile && manifestFile.json &&
+      manifestFile.json.defaultIndexPattern === undefined) {
 
-      return Boom.badRequest(`No index pattern configured in "${configId}" configuration file and no index pattern passed to the endpoint`);
+      return Boom.badRequest(`No index pattern configured in "${moduleId}" configuration file and no index pattern passed to the endpoint`);
     }
-    this.indexPatternName = (indexPatternName === undefined) ? indexFile.json.defaultIndexPattern : indexPatternName;
+    this.indexPatternName = (indexPatternName === undefined) ? manifestFile.json.defaultIndexPattern : indexPatternName;
     this.indexPatternId = this.getIndexPatternId(this.indexPatternName);
 
     jobPrefix = (jobPrefix === undefined) ? '' : jobPrefix;
     // create an empty results object
-    const results = this.createResultsTemplate(config, jobPrefix);
+    const results = this.createResultsTemplate(moduleConfig, jobPrefix);
     const saveResults = {
       jobs: [],
       datafeeds: [],
       savedObjects: []
     };
-    this.updateDatafeedIndices(config);
-    this.updateJobUrlIndexPatterns(config);
+    this.updateDatafeedIndices(moduleConfig);
+    this.updateJobUrlIndexPatterns(moduleConfig);
 
     // create the jobs
-    if (config.jobs && config.jobs.length) {
-      saveResults.jobs = await this.saveJobs(config.jobs, jobPrefix);
+    if (moduleConfig.jobs && moduleConfig.jobs.length) {
+      saveResults.jobs = await this.saveJobs(moduleConfig.jobs, jobPrefix);
     }
 
     // create the datafeeds
-    if (config.datafeeds && config.datafeeds.length) {
-      saveResults.datafeeds = await this.saveDatafeeds(config.datafeeds, jobPrefix);
+    if (moduleConfig.datafeeds && moduleConfig.datafeeds.length) {
+      saveResults.datafeeds = await this.saveDatafeeds(moduleConfig.datafeeds, jobPrefix);
     }
 
     // create the savedObjects
-    if (config.kibana) {
+    if (moduleConfig.kibana) {
       // update the saved objects with the index pattern id
-      this.updateSavedObjectIndexPatterns(config);
+      this.updateSavedObjectIndexPatterns(moduleConfig);
 
-      const savedObjects = await this.createSavedObjectsToSave(config);
+      const savedObjects = await this.createSavedObjectsToSave(moduleConfig);
       // update the exists flag in the results
       this.updateKibanaResults(results.kibana, savedObjects);
       // create the savedObjects
@@ -259,13 +259,13 @@ export class DataRecognizer {
   // create a list of objects which are used to save the savedObjects.
   // each has an exists flag and those which do not already exist
   // contain a savedObject object which is sent to the server to save
-  async createSavedObjectsToSave(config) {
+  async createSavedObjectsToSave(moduleConfig) {
     // first check if the saved objects already exist.
-    const savedObjectExistResults = await this.checkIfSavedObjectsExist(config.kibana, this.request);
+    const savedObjectExistResults = await this.checkIfSavedObjectsExist(moduleConfig.kibana, this.request);
     // loop through the kibanaSaveResults and update
-    Object.keys(config.kibana).forEach((type) => {
+    Object.keys(moduleConfig.kibana).forEach((type) => {
       // type e.g. dashboard, search ,visualization
-      config.kibana[type].forEach((configItem) => {
+      moduleConfig.kibana[type].forEach((configItem) => {
         const existsResult = savedObjectExistResults.find(o => o.id === configItem.id);
         if (existsResult !== undefined) {
           configItem.exists = existsResult.exists;
@@ -420,7 +420,7 @@ export class DataRecognizer {
 
   // creates an empty results object,
   // listing each job/datafeed/savedObject with a save success boolean
-  createResultsTemplate(config, jobPrefix) {
+  createResultsTemplate(moduleConfig, jobPrefix) {
     const results = {};
     function createResultsItems(configItems, resultItems, index, lab = '') {
       resultItems[index] = [];
@@ -432,13 +432,13 @@ export class DataRecognizer {
       });
     }
 
-    Object.keys(config).forEach((i) => {
-      if (Array.isArray(config[i])) {
-        createResultsItems(config[i], results, i, jobPrefix);
+    Object.keys(moduleConfig).forEach((i) => {
+      if (Array.isArray(moduleConfig[i])) {
+        createResultsItems(moduleConfig[i], results, i, jobPrefix);
       } else {
         results[i] = {};
-        Object.keys(config[i]).forEach((k) => {
-          createResultsItems(config[i][k], results[i], k);
+        Object.keys(moduleConfig[i]).forEach((k) => {
+          createResultsItems(moduleConfig[i][k], results[i], k);
         });
       }
     });
@@ -447,11 +447,11 @@ export class DataRecognizer {
 
   // if an override index pattern has been specified,
   // update all of the datafeeds.
-  updateDatafeedIndices(config) {
+  updateDatafeedIndices(moduleConfig) {
     // only use the override index pattern if it actually exists in kibana
     const idxId = this.getIndexPatternId(this.indexPatternName);
     if (idxId !== undefined) {
-      config.datafeeds.forEach((df) => {
+      moduleConfig.datafeeds.forEach((df) => {
         df.config.indexes = df.config.indexes.map(idx => (idx === INDEX_PATTERN_NAME ? this.indexPatternName : idx));
       });
     }
@@ -459,10 +459,10 @@ export class DataRecognizer {
 
   // loop through the custom urls in each job and replace the INDEX_PATTERN_ID
   // marker for the id of the specified index pattern
-  updateJobUrlIndexPatterns(config) {
-    if (config.jobs && config.jobs.length) {
+  updateJobUrlIndexPatterns(moduleConfig) {
+    if (moduleConfig.jobs && moduleConfig.jobs.length) {
       // find the job associated with the datafeed
-      config.jobs.forEach((job) => {
+      moduleConfig.jobs.forEach((job) => {
         // if the job has custom_urls
         if (job.config.custom_settings && job.config.custom_settings.custom_urls) {
           // loop through each url, replacing the INDEX_PATTERN_ID marker
@@ -481,10 +481,10 @@ export class DataRecognizer {
 
   // loop through each kibana saved objects and replace the INDEX_PATTERN_ID
   // marker for the id of the specified index pattern
-  updateSavedObjectIndexPatterns(config) {
-    if (config.kibana) {
-      Object.keys(config.kibana).forEach((category) => {
-        config.kibana[category].forEach((item) => {
+  updateSavedObjectIndexPatterns(moduleConfig) {
+    if (moduleConfig.kibana) {
+      Object.keys(moduleConfig.kibana).forEach((category) => {
+        moduleConfig.kibana[category].forEach((item) => {
           let jsonString = item.config.kibanaSavedObjectMeta.searchSourceJSON;
           if (jsonString.match(INDEX_PATTERN_ID)) {
             jsonString = jsonString.replace(new RegExp(INDEX_PATTERN_ID, 'g'), this.indexPatternId);
