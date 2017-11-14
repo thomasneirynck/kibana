@@ -108,7 +108,7 @@ describe('monitoring plugin deprecations', function () {
 
   it('should log when deprecating node_resolver', function () {
     const settings = {
-      node_resolver: 'name'
+      node_resolver: 'uuid'
     };
 
     const log = sinon.spy();

@@ -28,7 +28,7 @@ export const deprecations = ({ rename }) => {
     (settings, log) => {
       if (has(settings, 'node_resolver')) {
         log('Config key "xpack.monitoring.node_resolver" is deprecated. ' +
-            'The default value of "uuid" will become the only value starting in 6.0.');
+            'The only possible value is "uuid". This config key will be removed in 7.0.');
       }
     }
   ];

@@ -48,7 +48,7 @@ export const config = (Joi) => {
     min_interval_seconds: number().default(10),
     show_license_expiration: boolean().default(true),
     report_stats: boolean().default(true),
-    node_resolver: string().regex(/^(?:transport_address|name|uuid)$/).default('uuid'),
+    node_resolver: string().valid('uuid').default('uuid'), // deprecated in 5.6; we can make them set it properly before we remove it
     stats_report_url: Joi.when('$dev', { // `when` can't be deconstructed
       is: true,
       then: string().default('../api/monitoring/v1/phone-home'),
