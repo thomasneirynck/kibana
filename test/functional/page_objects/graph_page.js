@@ -1,11 +1,11 @@
 export function GraphPageProvider({ getService, getPageObjects }) {
   const remote = getService('remote');
   const config = getService('config');
-  // const retry = getService('retry');
   const log = getService('log');
   const testSubjects = getService('testSubjects');
   const defaultFindTimeout = config.get('timeouts.find');
   const PageObjects = getPageObjects(['common', 'header', 'settings']);
+  const retry = getService('retry');
 
 
   class GraphPage {
@@ -16,8 +16,12 @@ export function GraphPageProvider({ getService, getPageObjects }) {
     }
 
     async clickAddField() {
-      await remote.setFindTimeout(defaultFindTimeout).findById('addVertexFieldButton')
-      .click();
+      await retry.try(async () => {
+        await remote.setFindTimeout(defaultFindTimeout).findById('addVertexFieldButton')
+        .click();
+        // make sure the fieldSelectionList is not hidden
+        await remote.setFindTimeout(defaultFindTimeout).findDisplayedByCssSelector('[data-test-subj="fieldSelectionList"]');
+      });
     }
 
     async selectField(field) {
@@ -27,7 +31,9 @@ export function GraphPageProvider({ getService, getPageObjects }) {
     }
 
     async addField(field) {
+      log.debug('click Add Field icon');
       await this.clickAddField();
+      log.debug('select field ' + field);
       await this.selectField(field);
     }
 
@@ -71,6 +77,7 @@ export function GraphPageProvider({ getService, getPageObjects }) {
       log.debug('Click New Workspace');
       await remote.setFindTimeout(defaultFindTimeout)
       .findByCssSelector('[aria-label="New Workspace"]').click();
+      await PageObjects.common.sleep(1000);
       const modal = await remote.setFindTimeout(defaultFindTimeout).findByCssSelector('#kibana-body');
       const page = await modal.getVisibleText();
       if (page.includes('This will clear the workspace - are you sure?')) {

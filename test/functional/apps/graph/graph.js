@@ -70,6 +70,7 @@ export default function ({ getService, getPageObjects }) {
     ];
 
     async function buildGraph() {
+      log.debug('select index pattern secrepo*');
       await PageObjects.graph.selectIndexPattern('secrepo*');
       // select fields url.parts, url, params and src
       await PageObjects.graph.addField('url.parts');
