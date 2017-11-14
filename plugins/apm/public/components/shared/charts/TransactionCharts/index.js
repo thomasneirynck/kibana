@@ -52,7 +52,7 @@ export class Charts extends Component {
         <Chart>
           <CustomPlot
             isEmpty={isEmpty}
-            chartTitle="Response Times"
+            chartTitle="Response times"
             series={responseTimeSeries}
             onHover={this.onHover}
             onMouseLeave={this.onMouseLeave}

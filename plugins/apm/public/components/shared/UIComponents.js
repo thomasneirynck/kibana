@@ -14,6 +14,11 @@ export const SectionHeader = styled.h2`
   font-size: ${fontSizes.xlarge};
 `;
 
+export const GraphHeader = styled.h3`
+  margin: ${px(units.plus)} 0;
+  font-size: ${fontSizes.large};
+`;
+
 export const Tab = styled(RelativeLink)`
   display: inline-block;
   font-size: ${fontSizes.large};

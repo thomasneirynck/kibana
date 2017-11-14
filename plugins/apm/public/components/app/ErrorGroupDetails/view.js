@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { get } from 'lodash';
 import withErrorHandler from '../../shared/withErrorHandler';
-import { PageHeader } from '../../shared/UIComponents';
+import { PageHeader, GraphHeader } from '../../shared/UIComponents';
 import DetailView from './DetailView';
 import Distribution from './Distribution';
 
@@ -55,6 +55,7 @@ class ErrorGroupDetails extends Component {
           <Message>{message}</Message>
           <Culprit>{culprit}</Culprit>
         </Titles>
+        <GraphHeader>Occurrences</GraphHeader>
         <Distribution />
         <DetailView errorGroup={errorGroup} urlParams={this.props.urlParams} />
       </div>
