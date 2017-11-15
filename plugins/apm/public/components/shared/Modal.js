@@ -30,7 +30,7 @@ const ModalFixed = styled.div`
 
 const ModalOverlay = styled(ModalFixed)`
   z-index: 10;
-  background: rgba(45, 45, 45, 0.9);
+  background: rgba(45, 45, 45, 0.8);
   height: 100%;
 `;
 
