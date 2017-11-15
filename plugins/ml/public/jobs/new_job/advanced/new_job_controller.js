@@ -116,14 +116,14 @@ function (
       indexInputType: INDEX_INPUT_TYPE.LIST,
       dataPreview: '',
       dataReady: false,
-      setDataLocation: function (loc) {
+      setDataLocation(loc) {
         $scope.ui.wizard.dataLocation = loc;
         wizardStep(1);
       },
-      forward: function () {
+      forward() {
         wizardStep(1);
       },
-      back: function () {
+      back() {
         wizardStep(-1);
       },
     },
@@ -599,12 +599,12 @@ function (
 
 
       clear($scope.types);
-      _.each(datafeedConfig.types, function (type) {
+      _.each(datafeedConfig.types, (type) => {
         $scope.types[type] = $scope.ui.types[type];
       });
 
       clear($scope.indices);
-      _.each(datafeedConfig.indices, function (index) {
+      _.each(datafeedConfig.indices, (index) => {
         $scope.indices[index] = $scope.ui.indices[index];
       });
 
@@ -716,6 +716,14 @@ function (
           types[i] = types[i].trim();
         }
       }
+      // if the selected types is different to all types
+      // the user must have edited the json, so use the types object
+      // otherwise, the types object is the same as all types, so set
+      // types to an empty array
+      const typeKeys = Object.keys($scope.ui.types);
+      if (_.difference(typeKeys, types).length === 0) {
+        types = [];
+      }
 
       // create datafeedConfig if it doesn't already exist
       if (!$scope.job.datafeed_config) {
@@ -724,15 +732,15 @@ function (
 
       const config = $scope.job.datafeed_config;
 
-      config.query =       query;
+      config.query = query;
       config.query_delay = ((df.queryDelayText === '' || df.queryDelayText === null || df.queryDelayText === undefined) ?
         df.queryDelayDefault : df.queryDelayText);
-      config.frequency =   ((df.frequencyText === '' || df.frequencyText === null || df.frequencyText === undefined) ?
+      config.frequency = ((df.frequencyText === '' || df.frequencyText === null || df.frequencyText === undefined) ?
         df.frequencyDefault : df.frequencyText);
       config.scroll_size = ((df.scrollSizeText === '' || df.scrollSizeText === null || df.scrollSizeText === undefined) ?
         df.scrollSizeDefault : df.scrollSizeText);
-      config.indices =     indices;
-      config.types =       types;
+      config.indices = indices;
+      config.types = types;
     }
   }
 

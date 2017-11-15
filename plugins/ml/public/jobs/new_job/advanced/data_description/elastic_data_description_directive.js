@@ -90,6 +90,10 @@ module.directive('mlElasticDataDescription', function () {
             // if the index pattern has been pre-populated from the url,
             // trigger the field extraction
             $scope.extractFields();
+            if ($scope.ui.wizard.step < 2) {
+              // skip to the final stage of the wizard
+              $scope.ui.wizard.forward();
+            }
           } else if ($scope.mode === MODE.CLONE && $scope.ui.isDatafeed) {
            // first load mappings, then extract types and fields.
             setUpClonedJob();
@@ -139,7 +143,12 @@ module.directive('mlElasticDataDescription', function () {
         // typesIn gets passed in when types checkboxes get toggled
         // use this list, or empty the list entirely
         if (typesIn && typesIn.hasOwnProperty('types')) {
-          $scope.types = typesIn.types;
+          if (Object.keys(typesIn.types).length === 0) {
+            // if the types array is empty, set $scope.types to be all types
+            $scope.types = $scope.ui.types;
+          } else {
+            $scope.types = typesIn.types;
+          }
         } else {
           clear($scope.types);
         }
@@ -192,7 +201,6 @@ module.directive('mlElasticDataDescription', function () {
 
         const keys = Object.keys($scope.types);
         $scope.ui.datafeed.typesText  = keys.join(', ');
-        // $scope.ui.influencers = Object.keys($scope.properties);
 
         // influencers is an array of property names.
         // properties of a certain type (nonInfluencerTypes) are rejected.

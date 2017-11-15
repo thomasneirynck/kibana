@@ -42,24 +42,6 @@
       </div>
     </div>
 
-
-    <!-- checkbox index list -->
-    <div ng-show="ui.indexTextOk" class="form-group">
-      <label>Types</label>
-      <div>
-        <div class="types-list-container">
-          <div class="all-types" ng-show="(uiTypeKeys().length > 1)"><label><input type="checkbox" ng-checked="allTypesSelected()" ng-click="toggleAllTypes()" >All types</label></div>
-          <div ng-class="{checkbox: (uiTypeKeys().length > 1)}" ></div>
-          <div ng-repeat="(key, value) in ui.types" >
-            <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
-              <input class='kuiCheckBox' type="checkbox" ng-checked="types[key] !== undefined" ng-click="toggleTypes(key, value)" >
-              <span class='kuiCheckBoxLabel__text'>{{key}}</span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div ng-show="ui.indexTextOk" class="form-group">
       <label>Time-field name</label>
       <select
