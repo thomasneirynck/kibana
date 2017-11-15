@@ -22,7 +22,6 @@ export const GraphHeader = styled.h3`
 export const Tab = styled(RelativeLink)`
   display: inline-block;
   font-size: ${fontSizes.large};
-  margin: 0 0 ${px(units.plus)} 0;
   padding: ${px(unit)} ${px(unit + units.quarter)};
   text-align: center;
 

@@ -5,7 +5,8 @@ import withApp from '../withApp';
 import { unit, units, px, colors } from '../../../style/variables';
 
 const Container = styled.div`
-  height: ${px(unit * 5)};
+  box-shadow: 0 1px 0 ${colors.gray4};
+  margin: 0 0 ${px(units.double)} 0;
 `;
 
 const Divider = styled.div`
