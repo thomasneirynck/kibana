@@ -12,7 +12,7 @@
 include::{kib-repo-dir}/index-shared1.asciidoc[]
 
 :edit_url!:
-include::setup-xkb.asciidoc[]
+include::setup/setup-xkb.asciidoc[]
 
 :edit_url:
 include::{kib-repo-dir}/index-shared2.asciidoc[]

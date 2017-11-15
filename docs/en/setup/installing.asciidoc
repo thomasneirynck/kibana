@@ -14,7 +14,12 @@ see https://www.elastic.co/products/x-pack.
 NOTE: You must run the version of {xpack} that matches the version of {kib}
 you are running. See the
 https://www.elastic.co/support/matrix#matrix_compatibility[Elastic Support Matrix]
-for more information about product compatibility. 
+for more information about product compatibility.
+
+The following diagram provides an overview of the steps that are required to
+set up {xpack} on {kib}:
+
+image::setup/images/KibanaFlow.jpg[Installation overview on {kib}]
 
 To install {xpack} in {kib}:
 
