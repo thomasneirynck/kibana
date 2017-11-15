@@ -3,7 +3,7 @@ import Portal from 'react-portal';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Close } from './Icons';
-import { fontSizes, unit, units } from '../../style/variables';
+import { fontSizes, units } from '../../style/variables';
 
 const Header = styled.div`
   display: flex;
@@ -30,7 +30,7 @@ const ModalFixed = styled.div`
 
 const ModalOverlay = styled(ModalFixed)`
   z-index: 10;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(45, 45, 45, 0.9);
   height: 100%;
 `;
 
@@ -44,10 +44,10 @@ const ModalInnerContainer = styled.div`
   position: relative;
   background: white;
   min-width: 800px;
-  width: 50%;
+  width: 80%;
   left: 50%;
   transform: translateX(-50%);
-  padding: ${unit}px;
+  padding: ${units.double}px;
   border-radius: ${units.quarter}px;
   margin: ${units.quadruple}px 0;
 `;
