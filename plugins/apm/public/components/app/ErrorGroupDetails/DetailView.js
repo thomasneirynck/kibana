@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
 import {
+  unit,
   units,
   px,
   colors,
@@ -24,6 +25,7 @@ const Container = styled.div`
   border: 1px solid ${colors.gray4};
   border-radius: ${borderRadius};
   padding: ${px(units.plus)};
+  margin-top: ${px(units.plus)};
 `;
 
 const Header = styled.div`
@@ -37,7 +39,7 @@ const Title = styled.h3`
 
 const Properties = styled.div`
   display: flex;
-  margin: ${px(units.double)} 0;
+  margin: ${px(unit)} 0;
   width: 100%;
   justify-content: space-between;
   flex-flow: row wrap;
@@ -50,11 +52,8 @@ const Property = styled.div`
 
 const PropertyLabel = styled.div`
   margin-bottom: ${px(units.quarter)};
-`;
-
-const PropertyValue = styled.div`
-  font-weight: bold;
-  font-size: ${fontSizes.large};
+  font-size: ${fontSizes.small};
+  color: ${colors.gray3};
 `;
 
 const STACKTRACE_TAB = 'stacktrace';
@@ -111,14 +110,14 @@ function DetailView({ errorGroup, urlParams }) {
       </Header>
       <Properties>
         <Property>
-          <PropertyLabel>Occurrence recorded</PropertyLabel>
-          <PropertyValue>{timestamp}</PropertyValue>
+          <PropertyLabel>@timestamp</PropertyLabel>
+          <div>{timestamp}</div>
         </Property>
         {[1, 2, 3, 4, 5].map(item => {
           return (
             <Property key={item}>
               <PropertyLabel>Data label</PropertyLabel>
-              <PropertyValue>Value</PropertyValue>
+              <div>Value</div>
             </Property>
           );
         })}
