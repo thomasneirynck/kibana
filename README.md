@@ -23,9 +23,9 @@ $ ls $PATH_TO_REPOS
 ```
 
 Start elasticsearch with x-pack plugins. Follow x-pack-elasticsearch [Setup Instructions](https://github.com/elastic/x-pack-elasticsearch#setup). Execute `gradle run` from within `elasticsearch-extra/x-pack-elasticsearch`.
-Seed elasticsearch with some log data by running `node scripts/makelogs --auth elastic:changeme` from within `kibana`.
+Seed elasticsearch with some log data by running `node scripts/makelogs --auth elastic:password` from within `kibana`.
 
-Simply run `npm start` from within `x-pack-kibana`, and it will bring up Kibana with X-Pack. Default username `elastic` and password `changeme`.
+Simply run `npm start` from within `x-pack-kibana`, and it will bring up Kibana with X-Pack. Default username `elastic` and password `password`.
 
 #### Alternate: Run the build
 
@@ -93,6 +93,14 @@ Flags
 
 #### Running single test file
 Edit test file, changing top level `describe` to `describe.only`. Run tests with normal commands.
+
+#### Debugging browser tests
+```
+npm run test:browser:dev
+```
+Initializes an environment for debugging the browser tests. Includes an dedicated instance of the kibana server for building the test bundle, and a karma server. When running this task the build is optimized for the first time and then a karma-owned instance of the browser is opened. Click the "debug" button to open a new tab that executes the unit tests.
+
+Run single tests by appending `grep` parameter to the end of the URL. For example `http://localhost:9876/debug.html?grep=ML%20-%20Explorer%20Controller` will only run tests with 'ML - Explorer Controller' in the describe block.
 
 #### Running server unit tests
 You can run server-side unit tests by running:
