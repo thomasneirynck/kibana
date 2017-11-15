@@ -192,7 +192,8 @@ function (
     _.each(rowScopes, (rs) => {
       rowStates[rs.job.job_id] = {
         open: rs.open,
-        $expandElement: rs.$expandElement
+        $expandElement: rs.$expandElement,
+        currentTab: rs.currentTab
       };
     });
 
@@ -220,9 +221,13 @@ function (
     let rows = jobs.map((job) => {
       const rowScope = $scope.$new();
       rowScope.job = job;
-      rowScope.jobAudit = { messages: '', update: () => {}, jobWarningClass: '', jobWarningText: '' };
-
-      // rowScope.unsafeHtml = '<ml-job-preview ml-job-id=''+job.job_id+''></ml-job-preview>';
+      rowScope.currentTab = { index: 0 };
+      rowScope.jobAudit = {
+        messages: '',
+        update: () => loadAuditMessages(jobs, [rowScope], rowScope.job.job_id),
+        jobWarningClass: '',
+        jobWarningText: ''
+      };
 
       rowScope.expandable = true;
       rowScope.expandElement = 'ml-job-list-expanded-row-container';
@@ -230,7 +235,8 @@ function (
         // function called when row is opened for the first time
         if (rowScope.$expandElement &&
            rowScope.$expandElement.children().length === 0) {
-          const $el = $(document.createElement('ml-job-list-expanded-row')).appendTo(this.$expandElement);
+          const $el = $('<ml-job-list-expanded-row>', { 'current-tab': 'currentTab', 'job-audit': 'jobAudit' });
+          $el.appendTo(this.$expandElement);
           $compile($el)(this);
         }
       };
@@ -311,6 +317,7 @@ function (
       if (rowStates[rs.job.job_id]) {
         rs.open = rowStates[rs.job.job_id].open;
         rs.$expandElement = rowStates[rs.job.job_id].$expandElement;
+        rs.currentTab = rowStates[rs.job.job_id].currentTab;
       }
     });
 
@@ -487,14 +494,6 @@ function (
 
       // loop over the rowScopesIn and add icons if applicable
       _.each(rowScopesIn, (rs) => {
-        // create the update function,
-        // this is called when the messages tab is clicked for this row
-        rs.jobAudit.update = function () {
-          // return the promise chain from mlNotificationService.getJobAuditMessages
-          // so we can scroll to the bottom of the list once it has loaded
-          return loadAuditMessages(jobs, [rs], rs.job.job_id);
-        };
-
         const job = jobMessages[rs.job.job_id];
         if (job && job.msgTime >= createTimes[job.job_id]) {
           rs.jobAudit.jobWarningClass = '';

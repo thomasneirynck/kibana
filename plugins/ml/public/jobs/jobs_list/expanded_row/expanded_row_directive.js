@@ -29,7 +29,10 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
   return {
     restrict: 'AE',
     replace: false,
-    scope: {},
+    scope: {
+      currentTab: '=',
+      jobAudit: '='
+    },
     template,
     link: function ($scope, $element) {
       const msgs = mlMessageBarService; // set a reference to the message bar service
@@ -43,7 +46,6 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
       // scope population is inside a function so it can be called later from somewhere else
       $scope.init = function () {
         $scope.job = $scope.$parent.job;
-        $scope.jobAudit = $scope.$parent.jobAudit;
         $scope.jobJson = angular.toJson($scope.job, true);
         $scope.jobAuditText = '';
         $scope.datafeedPreview = {
@@ -54,7 +56,7 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
         $scope.detectorToString = detectorToString;
 
         $scope.ui = {
-          currentTab: 0,
+          currentTab: $scope.currentTab,
           tabs: [
             { index: 0, title: 'Job settings' },
             { index: 1, title: 'Job config' },
@@ -64,7 +66,7 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
             { index: 6, title: 'Datafeed preview' },
           ],
           changeTab: function (tab) {
-            this.currentTab = tab.index;
+            this.currentTab.index = tab.index;
 
             if (tab.index === 5) {
               // when Job Message tab is clicked, load all the job messages for the last month
@@ -103,6 +105,12 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
             $scope.job.endpoints[i] = replaceHost(url);
           });
         }
+
+        // call changeTab on initialization.
+        // as the current tab may not be 0, if the list has been redrawn.
+        // calling changeTab causes the audit or datafeed preview to be triggered
+        // and thus refreshes the content if the current tab is 5 or 6
+        $scope.ui.changeTab($scope.ui.currentTab);
       };
 
       function updateDatafeedPreview() {
