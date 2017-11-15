@@ -105,7 +105,7 @@ module
     filters,
     combinedQuery } = createSearchItems($route);
 
-  const pageTitle = (indexPattern.id === undefined && savedSearch.id !== undefined) ?
+  const pageTitle = (savedSearch.id !== undefined) ?
     `saved search ${savedSearch.title}` : `index pattern ${indexPattern.title}`;
 
   $scope.ui = {
