@@ -63,4 +63,4 @@ include::reporting/index.asciidoc[]
 include::{kib-repo-dir}/index-shared6.asciidoc[]
 
 :edit_url!:
-include::release-notes/xpack.asciidoc[]
+include::release-notes/index.asciidoc[]

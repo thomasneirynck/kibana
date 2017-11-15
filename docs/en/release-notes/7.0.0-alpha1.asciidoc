@@ -1,12 +1,12 @@
-[float]
+[role="xpack"]
 [[xkb-7.0.0-alpha1]]
-=== 7.0.0-alpha1
+== 7.0.0-alpha1
 
 [float]
 [[xkb-breaking-7.0.0-alpha1]]
-==== Breaking Changes
+=== Breaking Changes
 
-No breaking changes have been made yet. 
+No breaking changes have been made yet.
 ////
 [float]
 [[features-7.0.0-alpha1]]
