@@ -105,24 +105,24 @@ function loadTraces(props) {
 }
 
 function getColorByType(types) {
-  const definedColors = {
-    app: '#3185fc',
-    cache: '#00b3a4',
-    ext: '#490092',
-    template: '#db1374',
-    custom: '#bfa180',
-    db: '#f98510'
+  const assignedColors = {
+    app: colors.apmBlue,
+    cache: colors.apmGreen,
+    ext: colors.apmPurple,
+    template: colors.apmRed2,
+    custom: colors.apmTan,
+    db: colors.apmTan
   };
 
-  const unknownTypes = difference(types, Object.keys(colors));
-  const fallbackColors = zipObject(unknownTypes, [
-    '#feb6db',
-    '#ecae23',
-    '#920000',
-    '#461a0a'
+  const unknownTypes = difference(types, Object.keys(assignedColors));
+  const unassignedColors = zipObject(unknownTypes, [
+    colors.apmPink,
+    colors.apmYellow,
+    colors.apmRed,
+    colors.apmBrown
   ]);
 
-  return type => definedColors[type] || fallbackColors[type];
+  return type => assignedColors[type] || unassignedColors[type];
 }
 
 function getTraceLabel(type) {

@@ -17,12 +17,11 @@ export function createReducer(actionTypes, initialState) {
       case LOADING:
         return { ...initialState, status: STATUS.LOADING };
 
-      case SUCCESS: {
+      case SUCCESS:
         return {
           data: action.response || initialState.data,
           status: STATUS.SUCCESS
         };
-      }
 
       case FAILURE:
         return {

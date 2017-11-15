@@ -5,8 +5,7 @@ import {
   TRANSACTION_TYPE,
   TRANSACTION_NAME
 } from '../../../../common/constants';
-import moment from 'moment';
-import { isNumber, get } from 'lodash';
+import { isNumber, get, sortBy } from 'lodash';
 import { getBucketSize } from '../../helpers/get_bucket_size';
 
 export async function getTimeseriesData({
@@ -65,20 +64,9 @@ export async function getTimeseriesData({
         overall_avg: {
           avg: { field: TRANSACTION_DURATION }
         },
-        rpm_per_status_class: {
-          filters: {
-            filters: {
-              '2xx': {
-                range: { [TRANSACTION_RESULT]: { gte: 200, lte: 299 } }
-              },
-              '3xx': {
-                range: { [TRANSACTION_RESULT]: { gte: 300, lte: 399 } }
-              },
-              '4xx': {
-                range: { [TRANSACTION_RESULT]: { gte: 400, lte: 499 } }
-              },
-              '5xx': { range: { [TRANSACTION_RESULT]: { gte: 500, lte: 599 } } }
-            }
+        transaction_results: {
+          terms: {
+            field: TRANSACTION_RESULT
           },
           aggs: {
             overall_avg: {
@@ -124,44 +112,42 @@ export async function getTimeseriesData({
 
   const resp = await client('search', params);
   const responseTimeBuckets = get(resp, 'aggregations.response_times.buckets');
-  const statusBuckets = get(resp, 'aggregations.rpm_per_status_class.buckets');
+  const transactionResultBuckets = get(
+    resp,
+    'aggregations.transaction_results.buckets'
+  );
   const overallAvg = get(resp, 'aggregations.overall_avg.value');
 
-  function getDataFor(key) {
-    return get(statusBuckets, `${key}.timeseries.buckets`).map(bucket => {
-      return get(bucket, 'rpm.normalized_value', 0) || 0;
-    });
-  }
+  const tpmBuckets = sortBy(
+    transactionResultBuckets.map(({ key, timeseries, overall_avg }) => ({
+      key,
+      avg: overall_avg.avg,
+      values: timeseries.buckets.map(
+        bucket => get(bucket.rpm, 'normalized_value') || 0
+      )
+    })),
+    bucket => bucket.key.replace(/^HTTP (\d)xx$/, '00$1') // ensure that HTTP 3xx are sorted at the top
+  );
 
   return {
     total_hits: resp.hits.total,
+    dates: get(transactionResultBuckets, '[0].timeseries.buckets').map(
+      bucket => bucket.key
+    ),
     response_times: responseTimeBuckets.reduce(
       (acc, bucket) => {
         const p95 = bucket.pct.values['95.0'];
         const p99 = bucket.pct.values['99.0'];
-        acc.dates.push(moment.utc(bucket.key).toISOString());
+
         acc.avg.push(bucket.avg.value || 0);
         acc.p95.push((isNumber(p95) && p95) || 0);
         acc.p99.push((isNumber(p99) && p99) || 0);
         return acc;
       },
-      { avg: [], p95: [], p99: [], dates: [] }
+      { avg: [], p95: [], p99: [] }
     ),
-    rpm_per_status_class: {
-      dates: get(statusBuckets, '2xx.timeseries.buckets').map(bucket => {
-        return moment.utc(bucket.key).toISOString();
-      }),
-      '2xx': getDataFor('2xx'),
-      '3xx': getDataFor('3xx'),
-      '4xx': getDataFor('4xx'),
-      '5xx': getDataFor('5xx')
-    },
-    rpm_per_status_class_average: {
-      '2xx': get(statusBuckets, '2xx.overall_avg.avg', 0) || 0,
-      '3xx': get(statusBuckets, '3xx.overall_avg.avg', 0) || 0,
-      '4xx': get(statusBuckets, '4xx.overall_avg.avg', 0) || 0,
-      '5xx': get(statusBuckets, '5xx.overall_avg.avg', 0) || 0
-    },
+    tpm_buckets: tpmBuckets,
+
     weighted_average: overallAvg || 0
   };
 }

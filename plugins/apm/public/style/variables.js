@@ -42,6 +42,18 @@ export const colors = {
   blue1: colorBlue1,
   blue2: colorBlue2,
 
+  // custom APM palette
+  apmBrown: '#461a0a',
+  apmPurple: '#490092',
+  apmBlue: '#3185fc',
+  apmRed: '#920000',
+  apmRed2: '#db1374',
+  apmGreen: '#00b3a4',
+  apmPink: '#feb6db',
+  apmOrange: '#f98510',
+  apmTan: '#bfa180',
+  apmYellow: '#ecae23',
+
   // Semantic colors
   link: colorBlue2,
   linkHover: colorBlue1
