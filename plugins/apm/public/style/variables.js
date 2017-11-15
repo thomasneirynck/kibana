@@ -49,7 +49,8 @@ export const colors = {
 
 // Fonts
 export const fontFamily = '"Open Sans", Helvetica, Arial, sans-serif';
-export const fontFamilyCode = 'Inconsolata, monospace, serif';
+export const fontFamilyCode =
+  '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace';
 
 // Font sizes
 export const fontSize = '14px';

@@ -2,11 +2,18 @@ import React from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 import STATIC_PROPS from './staticProperties.json';
-import { unit, units, colors } from '../../../style/variables';
+import {
+  unit,
+  units,
+  colors,
+  fontFamilyCode,
+  fontSizes
+} from '../../../style/variables';
 import TipMessage from '../TipMessage';
 
 const Table = styled.table`
-  font-family: monospace;
+  font-family: ${fontFamilyCode};
+  font-size: ${fontSizes.small};
   width: 100%;
 `;
 const Row = styled.tr`
@@ -17,7 +24,7 @@ const Row = styled.tr`
 `;
 const Cell = styled.td`
   vertical-align: top;
-  padding: ${units.quarter}px 0;
+  padding: ${units.half}px 0;
 
   ${Row}:first-child> & {
     padding-top: 0;
@@ -33,7 +40,7 @@ const Cell = styled.td`
   }
 `;
 const EmptyValue = styled.span`
-  color: ${colors.gray4};
+  color: ${colors.gray3};
 `;
 
 function getSortedProps(propData, levelTwoKey, level) {

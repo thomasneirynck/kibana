@@ -6,6 +6,7 @@ import {
   px,
   colors,
   fontFamilyCode,
+  fontSizes,
   borderRadius
 } from '../../../style/variables';
 
@@ -24,9 +25,10 @@ registerLanguage('python', python);
 
 const FileDetails = styled.div`
   color: ${colors.gray3};
-  padding: ${px(units.quarter)} ${px(unit)};
+  padding: ${px(units.quarter)} ${px(units.half)};
   border-bottom: 1px solid ${colors.gray4};
   border-radius: ${borderRadius} ${borderRadius} 0 0;
+  font-size: ${fontSizes.small};
 `;
 
 const FileDetail = styled.span`
@@ -43,6 +45,7 @@ const Container = styled.div`
   border: 1px solid ${colors.gray4};
   border-radius: ${borderRadius};
   background: ${props => (props.isLibraryFrame ? colors.white : colors.gray5)};
+  font-size: ${fontSizes.small};
 
   ${FileDetails} {
     ${props => (!props.hasContext ? 'border-bottom: 0' : null)};
