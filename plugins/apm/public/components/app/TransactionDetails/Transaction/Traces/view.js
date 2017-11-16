@@ -111,7 +111,7 @@ function getColorByType(types) {
     ext: colors.apmPurple,
     template: colors.apmRed2,
     custom: colors.apmTan,
-    db: colors.apmTan
+    db: colors.apmOrange
   };
 
   const unknownTypes = difference(types, Object.keys(assignedColors));
