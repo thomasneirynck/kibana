@@ -22,6 +22,7 @@ export function handleAdvancedStatsResponse(response) {
 export function getKibanaAdvancedStats(callCluster, kibanaIndex) {
   const advancedStatsParams = {
     index: kibanaIndex,
+    ignoreUnavailable: true,
     filterPath: 'aggregations.types.buckets',
     body: {
       size: 0,
