@@ -12,3 +12,8 @@ node scripts/jest.js apm --watch
 ```
 npx eslint ./plugins/apm
 ```
+
+### Ensure everything from master has been backported to 6.x
+```
+git checkout 6.x && git diff origin/6.x..master ./plugins/apm | git apply
+```
