@@ -9,7 +9,7 @@ function renderBanner($injector) {
   const notify = new Notifier('X-Pack');
   const directive = {
     template: (`
-      <h3>Welcome to X-Pack!</h3>
+      <h3>X-Pack is installed</h3>
       <p>
         Sharing your cluster statistics with us helps us improve. Your data is never shared with anyone.
         <span ng-switch="welcome.allowReport">

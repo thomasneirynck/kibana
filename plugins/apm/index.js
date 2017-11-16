@@ -17,7 +17,8 @@ export function apm(kibana) {
         description: 'APM for the Elastic Stack',
         main: 'plugins/apm/app',
         icon: 'plugins/apm/icon.svg'
-      }
+      },
+      home: ['plugins/apm/register_feature']
     },
 
     config(Joi) {
