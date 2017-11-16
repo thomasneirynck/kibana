@@ -5,12 +5,14 @@ import { pdf } from './pdf';
 import { oncePerServer } from '../../../../server/lib/once_per_server';
 import { screenshotsObservableFactory } from './screenshots';
 import { getAbsoluteUrlFactory } from './get_absolute_url';
+import { getLayoutFactory } from './layouts';
 
 function generatePdfObservableFn(server) {
   const getAbsoluteUrl = getAbsoluteUrlFactory(server);
   const screenshotsObservable = screenshotsObservableFactory(server);
   const config = server.config();
   const captureConcurrency = config.get('xpack.reporting.capture.concurrency');
+  const getLayout = getLayoutFactory(server);
 
   const getUrl = (savedObj) => {
     if (savedObj.urlHash) {
@@ -24,7 +26,7 @@ function generatePdfObservableFn(server) {
     throw new Error(`Unable to generate report for url ${savedObj.url}, it's not a Kibana URL`);
   };
 
-  const savedObjectsScreenshotsObservable = (savedObjects, headers) => {
+  const savedObjectsScreenshotsObservable = (savedObjects, headers, layout) => {
     return Rx.Observable
       .from(savedObjects)
       .mergeMap(
@@ -33,7 +35,7 @@ function generatePdfObservableFn(server) {
             return Rx.Observable.of({ savedObject });
           }
 
-          return screenshotsObservable(getUrl(savedObject), headers);
+          return screenshotsObservable(getUrl(savedObject), headers, layout);
         },
         (savedObject, { isTimepickerEnabled, screenshots }) => ({ savedObject, isTimepickerEnabled, screenshots }),
         captureConcurrency
@@ -41,8 +43,8 @@ function generatePdfObservableFn(server) {
   };
 
 
-  const createPdfWithScreenshots = async ({ title, query, objects, browserTimezone }) => {
-    const pdfOutput = pdf.create();
+  const createPdfWithScreenshots = async ({ title, query, objects, browserTimezone, layout }) => {
+    const pdfOutput = pdf.create(layout);
 
     if (title) {
       const timeRange = some(objects, { isTimepickerEnabled: true }) ? getTimeFilterRange(browserTimezone, query) : null;
@@ -70,12 +72,13 @@ function generatePdfObservableFn(server) {
     return buffer;
   };
 
-  return function generatePdfObservable(title, savedObjects, query, headers, browserTimezone) {
-    const screenshots$ = savedObjectsScreenshotsObservable(savedObjects, headers);
+  return function generatePdfObservable(title, savedObjects, query, headers, browserTimezone, layoutParams) {
+    const layout = getLayout(layoutParams);
+    const screenshots$ = savedObjectsScreenshotsObservable(savedObjects, headers, layout);
 
     return screenshots$
       .toArray()
-      .mergeMap(objects => createPdfWithScreenshots({ title, query, browserTimezone, objects }));
+      .mergeMap(objects => createPdfWithScreenshots({ title, query, browserTimezone, objects, layout }));
 
   };
 }

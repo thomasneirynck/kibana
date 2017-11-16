@@ -88,8 +88,8 @@ export class HeadlessChromiumDriver {
     const { Emulation } = this._client;
 
     await Emulation.setDeviceMetricsOverride({
-      width: width / zoom,
-      height: height / zoom,
+      width: Math.floor(width / zoom),
+      height: Math.floor(height / zoom),
       deviceScaleFactor: zoom,
       mobile: false,
     });

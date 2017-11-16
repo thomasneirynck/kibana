@@ -5,23 +5,28 @@ import { uiModules } from 'ui/modules';
 
 
 uiModules.get('xpack/reporting')
-.service('reportingDocumentControl', function (Private, $http, reportingJobCompletionNotifications) {
+.service('reportingDocumentControl', function (Private, $http, reportingJobCompletionNotifications, $injector) {
+  const $Promise = $injector.get('Promise');
   const mainEntry = '/api/reporting/generate';
   const reportPrefix = chrome.addBasePath(mainEntry);
 
-  const getJobParams = (exportType, controller) => {
+  const getJobParams = (exportType, controller, options) => {
     const jobParamsProvider = Private(exportType.JobParamsProvider);
-    return jobParamsProvider(controller);
+    return $Promise.resolve(jobParamsProvider(controller, options));
   };
 
-  this.getPath = async (exportType, controller) => {
-    const jobParams = await getJobParams(exportType, controller);
-    return `${reportPrefix}/${exportType.id}?jobParams=${rison.encode(jobParams)}`;
+  this.getPath = (exportType, controller, options) => {
+    return getJobParams(exportType, controller, options)
+      .then(jobParams => {
+        return `${reportPrefix}/${exportType.id}?jobParams=${rison.encode(jobParams)}`;
+      });
   };
 
-  this.create = async (relativePath) => {
-    const { data } = await $http.post(relativePath, {});
-    reportingJobCompletionNotifications.add(data.job.id);
-    return data;
+  this.create = (relativePath) => {
+    return $http.post(relativePath, {})
+      .then(({ data }) => {
+        reportingJobCompletionNotifications.add(data.job.id);
+        return data;
+      });
   };
 });

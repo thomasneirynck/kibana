@@ -21,7 +21,8 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
         'dateFormat:tz': 'UTC',
         'defaultIndex': 'logstash-*'
       });
-      remote.setWindowSize(1600, 850);
+
+      await remote.setWindowSize(1600, 850);
     }
 
     async clickTopNavReportingLink() {
@@ -62,6 +63,22 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
         await remote.closeCurrentWindow();
         await remote.switchToWindow(handles[0]);
       });
+    }
+
+    async forceSharedItemsContainerSize({ width }) {
+      await remote.execute(`
+        var el = document.querySelector('[data-shared-items-container]');
+        el.style.flex="none";
+        el.style.width="${width}px";
+      `);
+    }
+
+    async removeForceSharedItemsContainerSize() {
+      await remote.execute(`
+        var el = document.querySelector('[data-shared-items-container]');
+        el.style.flex = null;
+        el.style.width = null;
+      `);
     }
 
     getRawPdfReportData(url) {
@@ -111,8 +128,8 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
       });
     }
 
-    async clickDownloadReportButton() {
-      await testSubjects.click('downloadCompletedReportButton');
+    async clickDownloadReportButton(timeout) {
+      await testSubjects.click('downloadCompletedReportButton', timeout);
     }
 
     async getUnsavedChangesWarningExists() {
@@ -125,6 +142,10 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
 
     async getGenerateReportButton() {
       return await retry.try(() => testSubjects.find('generateReportButton'));
+    }
+
+    async clickPreserveLayoutOption() {
+      await retry.try(() => testSubjects.click('preserveLayoutOption'));
     }
 
     async clickGenerateReportButton() {

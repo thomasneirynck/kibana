@@ -120,7 +120,7 @@ visualize .metric-vis {
  * 2. React grid item's transform affects the visualizations, even when they are using fixed positioning. Chrome seems
  * to handle this fine, but firefox moves the visualizations around, as I suspect Phantom since it had a problem.
  */
-dashboard-app .react-grid-item {
+ dashboard-app .react-grid-item {
   height: 0 !important; /* 1. */
   width: 0 !important; /* 1. */
   transform: none !important; /* 2. */

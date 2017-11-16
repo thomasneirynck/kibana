@@ -72,7 +72,9 @@ export default function ({ getService, getPageObjects }) {
           await PageObjects.header.clickToastOK();
           await expectEnabledGenerateReportButton();
         });
+      });
 
+      describe('Print Layout', () => {
         it('matches baseline report', async function () {
           // Generating and then comparing reports can take longer than the default 60s timeout because the comparePngs
           // function is taking about 15 seconds per comparison in jenkins.
@@ -93,13 +95,12 @@ export default function ({ getService, getPageObjects }) {
           await PageObjects.header.clickToastOK();
           await PageObjects.reporting.openReportingPanel();
           await PageObjects.reporting.clickGenerateReportButton();
-          await PageObjects.reporting.clickDownloadReportButton();
+          await PageObjects.reporting.clickDownloadReportButton(60000);
 
           const url = await PageObjects.reporting.getUrlOfTab(1);
-          const reportData = await PageObjects.reporting.getRawPdfReportData(url);
-
           await PageObjects.reporting.closeTab(1);
-          const reportFileName = 'baseline_chart';
+          const reportData = await PageObjects.reporting.getRawPdfReportData(url);
+          const reportFileName = 'dashboard_print';
           const sessionReportPath = await writeSessionReport(reportFileName, reportData);
           const diffCount = await checkIfPdfsMatch(
             sessionReportPath,
@@ -121,13 +122,13 @@ export default function ({ getService, getPageObjects }) {
           await PageObjects.header.clickToastOK();
           await PageObjects.reporting.openReportingPanel();
           await PageObjects.reporting.clickGenerateReportButton();
-          await PageObjects.reporting.clickDownloadReportButton();
+          await PageObjects.reporting.clickDownloadReportButton(60000);
 
           const url = await PageObjects.reporting.getUrlOfTab(1);
           const reportData = await PageObjects.reporting.getRawPdfReportData(url);
 
           await PageObjects.reporting.closeTab(1);
-          const reportFileName = 'baseline_chart';
+          const reportFileName = 'dashboard_print';
           const sessionReportPath = await writeSessionReport(reportFileName, reportData);
           const diffCount = await checkIfPdfsMatch(
             sessionReportPath,
@@ -137,6 +138,37 @@ export default function ({ getService, getPageObjects }) {
           );
           expect(diffCount).to.be(0);
         });
+      });
+
+      describe('Preserve Layout', () => {
+        it('matches baseline report', async function () {
+          // Generating and then comparing reports can take longer than the default 60s timeout because the comparePngs
+          // function is taking about 15 seconds per comparison in jenkins.
+          this.timeout(180000);
+
+          await PageObjects.reporting.openReportingPanel();
+          await PageObjects.reporting.forceSharedItemsContainerSize({ width: 1405 });
+          await PageObjects.reporting.clickPreserveLayoutOption();
+          await PageObjects.reporting.clickGenerateReportButton();
+          await PageObjects.reporting.removeForceSharedItemsContainerSize();
+
+          await PageObjects.reporting.clickDownloadReportButton(60000);
+          const url = await PageObjects.reporting.getUrlOfTab(1);
+          await PageObjects.reporting.closeTab(1);
+          const reportData = await PageObjects.reporting.getRawPdfReportData(url);
+
+          const reportFileName = 'dashboard_preserve_layout';
+          const sessionReportPath = await writeSessionReport(reportFileName, reportData);
+          const diffCount = await checkIfPdfsMatch(
+            sessionReportPath,
+            getBaselineReportPath(reportFileName),
+            config.get('screenshots.directory'),
+            log
+          );
+          expect(diffCount).to.be(0);
+        });
+
+
       });
     });
 

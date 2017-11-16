@@ -1,8 +1,14 @@
 import Rx from 'rxjs/Rx';
 import path from 'path';
+import fs from 'fs';
 import moment from 'moment';
 import getPort from 'get-port';
+import { promisify } from 'bluebird';
 import { LevelLogger } from './level_logger';
+
+const fsp = {
+  readFile: promisify(fs.readFile, fs)
+};
 
 export function screenshotsObservableFactory(server) {
   const config = server.config();
@@ -12,11 +18,7 @@ export function screenshotsObservableFactory(server) {
   const captureConfig = config.get('xpack.reporting.capture');
   const browserDriverConfig = captureConfig.browser[browserDriverFactory.type];
 
-  const basePath = config.get('server.basePath');
   const dataDirectory = config.get('path.data');
-
-  const itemSelector = '[data-shared-item]';
-  const itemsCountAttribute = 'data-shared-items-count';
 
   const asyncDurationLogger = async (description, promise) => {
     const start = new Date();
@@ -42,32 +44,30 @@ export function screenshotsObservableFactory(server) {
       headers,
       waitForSelector,
     });
-    return browser;
   };
 
-  const injectCustomCss = async (browser) => {
+  const injectCustomCss = async (browser, layout) => {
+    const filePath = layout.getCssOverridesPath();
+    const buffer = await fsp.readFile(filePath);
     await browser.evaluate({
-      fn: function (cssBasePath) {
-        const cssPath = cssBasePath + '/plugins/reporting/styles/reporting-overrides.css';
-        const node = document.createElement('link');
-        node.rel = 'stylesheet';
-        node.href = cssPath;
+      fn: function (css) {
+        const node = document.createElement('style');
+        node.type = "text/css";
+        node.innerHTML = css;
         document.getElementsByTagName('head')[0].appendChild(node);
       },
-      args: [basePath],
+      args: [buffer.toString()],
     });
-    return browser;
   };
 
-  const waitForElementOrItemsCountAttribute = async (browser) => {
+  const waitForElementOrItemsCountAttribute = async (browser, layout) => {
     // the dashboard is using the `itemsCountAttribute` attribute to let us
     // know how many items to expect since gridster incrementally adds panels
     // we have to use this hint to wait for all of them
-    await browser.waitForSelector(`${itemSelector},[${itemsCountAttribute}]`);
-    return browser;
+    await browser.waitForSelector(`${layout.selectors.renderComplete},[${layout.selectors.itemsCountAttribute}]`);
   };
 
-  const getNumberOfItems = async (browser) => {
+  const getNumberOfItems = async (browser, layout) => {
     // returns the value of the `itemsCountAttribute` if it's there, otherwise
     // we just count the number of `itemSelector`
     const itemsCount = await browser.evaluate({
@@ -79,34 +79,28 @@ export function screenshotsObservableFactory(server) {
 
         return document.querySelectorAll(selector).length;
       },
-      args: [itemSelector, itemsCountAttribute],
+      args: [layout.selectors.renderComplete, layout.selectors.itemsCountAttribute],
     });
-    return { browser, itemsCount };
+    return itemsCount;
   };
 
-  const waitForElementsToBeInDOM = async ({ browser, itemsCount }) => {
+  const waitForElementsToBeInDOM = async (browser, itemsCount, layout) => {
     await browser.waitFor({
       fn: function (selector) {
         return document.querySelectorAll(selector).length;
       },
-      args: [itemSelector],
+      args: [layout.selectors.renderComplete],
       toEqual: itemsCount
     });
-    return { browser, itemsCount };
   };
 
-  const setViewport = async ({ browser, itemsCount }) => {
-    // we set the viewport of PhantomJS based on the number of visualizations
-    // so that when we position them with fixed-positioning below, they're all visible
-    await browser.setViewport({
-      zoom: captureConfig.zoom,
-      width: captureConfig.viewport.width,
-      height: captureConfig.viewport.height * itemsCount,
-    });
-    return browser;
+  const setViewport = async (browser, itemsCount, layout) => {
+    const viewport = layout.getViewport(itemsCount);
+    await browser.setViewport(viewport);
   };
 
-  const positionElements = async (browser) => {
+  const positionElements = async (browser, layout) => {
+    const elementSize = layout.getElementSize();
     await browser.evaluate({
       fn: function (selector, height, width) {
         const visualizations = document.querySelectorAll(selector);
@@ -124,12 +118,11 @@ export function screenshotsObservableFactory(server) {
           style.backgroundColor = 'inherit';
         }
       },
-      args: [itemSelector, captureConfig.viewport.height / captureConfig.zoom, captureConfig.viewport.width / captureConfig.zoom],
+      args: [layout.selectors.screenshot, elementSize.height, elementSize.width],
     });
-    return browser;
   };
 
-  const waitForRenderComplete = async (browser) => {
+  const waitForRenderComplete = async (browser, layout) => {
     await browser.evaluate({
       fn: function (selector, visLoadDelay, visSettleTime) {
         // wait for visualizations to finish loading
@@ -183,23 +176,22 @@ export function screenshotsObservableFactory(server) {
 
         return Promise.all(renderedTasks);
       },
-      args: [itemSelector, captureConfig.loadDelay, captureConfig.settleTime],
+      args: [layout.selectors.renderComplete, captureConfig.loadDelay, captureConfig.settleTime],
       awaitPromise: true,
     });
-    return browser;
   };
 
-  const getIsTimepickerEnabled = async (browser) => {
+  const getIsTimepickerEnabled = async (browser, layout) => {
     const isTimepickerEnabled = await browser.evaluate({
       fn: function (selector) {
         return document.querySelector(selector) !== null;
       },
-      args: ['[data-shared-timefilter=true]']
+      args: [layout.selectors.isTimepickerEnabled]
     });
-    return { browser, isTimepickerEnabled };
+    return isTimepickerEnabled;
   };
 
-  const getElementPositionAndAttributes = async ({ browser, isTimepickerEnabled }) => {
+  const getElementPositionAndAttributes = async (browser, layout) => {
     const elementsPositionAndAttributes = await browser.evaluate({
       fn: function (selector, attributes) {
         const elements = document.querySelectorAll(selector);
@@ -232,26 +224,27 @@ export function screenshotsObservableFactory(server) {
         return results;
 
       },
-      args: [itemSelector, { title: 'data-title', description: 'data-description' }],
+      args: [layout.selectors.screenshot, { title: 'data-title', description: 'data-description' }],
       returnByValue: true,
     });
-    return { browser, isTimepickerEnabled, elementsPositionAndAttributes, };
+    return elementsPositionAndAttributes;
   };
 
-  const getScreenshots = async ({ browser, isTimepickerEnabled, elementsPositionAndAttributes }) => {
+  const getScreenshots = async ({ browser, elementsPositionAndAttributes }) => {
     const screenshots = [];
     for (const item of elementsPositionAndAttributes) {
       const base64EncodedData = await asyncDurationLogger('screenshot', browser.screenshot(item.position));
+
       screenshots.push({
         base64EncodedData,
         title: item.attributes.title,
         description: item.attributes.description
       });
     }
-    return { screenshots, isTimepickerEnabled };
+    return screenshots;
   };
 
-  return function screenshotsObservable(url, headers) {
+  return function screenshotsObservable(url, headers, layout) {
 
     return Rx.Observable
       .defer(async () => {
@@ -260,8 +253,8 @@ export function screenshotsObservableFactory(server) {
       .mergeMap(bridgePort => {
         return browserDriverFactory.create({
           bridgePort,
-          viewport: captureConfig.viewport,
-          zoom: captureConfig.zoom,
+          viewport: layout.getBrowserViewport(),
+          zoom: layout.getBrowserZoom(),
           logger,
           config: browserDriverConfig
         });
@@ -276,30 +269,66 @@ export function screenshotsObservableFactory(server) {
           logger.debug(line, ['browserConsole']);
         });
 
+
         const screenshot$ = driver$
-          .do(startRecording)
+          .do(browser => startRecording(browser))
           .do(() => logger.debug(`opening ${url}`))
-          .mergeMap(browser => openUrl(browser, url, headers))
+          .mergeMap(
+            browser => openUrl(browser, url, headers),
+            browser => browser
+          )
           .do(() => logger.debug('injecting custom css'))
-          .mergeMap(injectCustomCss)
+          .mergeMap(
+            browser => injectCustomCss(browser, layout),
+            browser => browser
+          )
           .do(() => logger.debug('waiting for elements or items count attribute'))
-          .mergeMap(waitForElementOrItemsCountAttribute)
+          .mergeMap(
+            browser => waitForElementOrItemsCountAttribute(browser, layout),
+            browser => browser
+          )
           .do(() => logger.debug('determining how many items we have'))
-          .mergeMap(getNumberOfItems)
+          .mergeMap(
+            browser => getNumberOfItems(browser, layout),
+            (browser, itemsCount) => ({ browser, itemsCount })
+          )
           .do(({ itemsCount }) => logger.debug(`waiting for ${itemsCount} to be in the DOM`))
-          .mergeMap(waitForElementsToBeInDOM)
+          .mergeMap(
+            ({ browser, itemsCount }) => waitForElementsToBeInDOM(browser, itemsCount, layout),
+            ({ browser, itemsCount }) => ({ browser, itemsCount })
+          )
           .do(() => logger.debug('setting viewport'))
-          .mergeMap(setViewport)
+          .mergeMap(
+            ({ browser, itemsCount }) => setViewport(browser, itemsCount, layout),
+            ({ browser }) => browser
+          )
           .do(() => logger.debug('positioning elements'))
-          .mergeMap(positionElements)
+          .mergeMap(
+            browser => positionElements(browser, layout),
+            browser => browser
+          )
           .do(() => logger.debug('waiting for rendering to complete'))
-          .mergeMap(waitForRenderComplete)
+          .mergeMap(
+            browser => waitForRenderComplete(browser, layout),
+            browser => browser
+          )
           .do(() => logger.debug('rendering is complete'))
-          .mergeMap(getIsTimepickerEnabled)
+          .mergeMap(
+            browser => getIsTimepickerEnabled(browser, layout),
+            (browser, isTimepickerEnabled) => ({ browser, isTimepickerEnabled })
+          )
           .do(({ isTimepickerEnabled }) => logger.debug(`the time picker ${isTimepickerEnabled ? 'is' : `isn't`} enabled`))
-          .mergeMap(getElementPositionAndAttributes)
+          .mergeMap(
+            ({ browser }) => getElementPositionAndAttributes(browser, layout),
+            ({ browser, isTimepickerEnabled }, elementsPositionAndAttributes) => {
+              return { browser, isTimepickerEnabled, elementsPositionAndAttributes };
+            }
+          )
           .do(() => logger.debug(`taking screenshots`))
-          .mergeMap(getScreenshots);
+          .mergeMap(
+            ({ browser, elementsPositionAndAttributes }) => getScreenshots({ browser, elementsPositionAndAttributes }),
+            ({ isTimepickerEnabled }, screenshots) => ({ isTimepickerEnabled, screenshots })
+          );
 
         return Rx.Observable.race(screenshot$, exit$);
       })

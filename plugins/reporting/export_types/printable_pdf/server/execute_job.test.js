@@ -53,7 +53,7 @@ test(`passes in decrypted headers to generatePdf`, async () => {
   const executeJob = executeJobFactory(mockServer);
   await executeJob({ headers: encryptedHeaders }, cancellationToken);
 
-  expect(generatePdfObservable).toBeCalledWith(undefined, undefined, undefined, headers, undefined);
+  expect(generatePdfObservable).toBeCalledWith(undefined, undefined, undefined, headers, undefined, undefined);
 });
 
 test(`omits blacklisted headers`, async () => {
@@ -80,7 +80,7 @@ test(`omits blacklisted headers`, async () => {
   const executeJob = executeJobFactory(mockServer);
   await executeJob({ headers: encryptedHeaders }, cancellationToken);
 
-  expect(generatePdfObservable).toBeCalledWith(undefined, undefined, undefined, permittedHeaders, undefined);
+  expect(generatePdfObservable).toBeCalledWith(undefined, undefined, undefined, permittedHeaders, undefined, undefined);
 });
 
 test(`returns content_type of application/pdf`, async () => {

@@ -8,7 +8,7 @@ function createJobFn(server) {
   const getSavedObject = getSavedObjectFactory(server);
   const crypto = cryptoFactory(server);
 
-  return async function createJob({ objectType, savedObjectId, queryString, browserTimezone }, headers, request) {
+  return async function createJob({ objectType, savedObjectId, queryString, browserTimezone, layout }, headers, request) {
     const date = moment().toISOString();
     const query = querystring.parse(decodeURIComponent(queryString));
 
@@ -29,7 +29,8 @@ function createJobFn(server) {
       date,
       query,
       headers: serializedEncryptedHeaders,
-      browserTimezone
+      browserTimezone,
+      layout
     };
   };
 }

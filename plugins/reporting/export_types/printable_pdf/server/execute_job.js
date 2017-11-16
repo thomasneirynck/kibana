@@ -32,7 +32,7 @@ function executeJobFn(server) {
       .catch(() => Rx.Observable.throw('Failed to decrypt report job data. Please re-generate this report.'))
       .map(omitBlacklistedHeaders)
       .mergeMap(({ job, filteredHeaders }) => {
-        return generatePdfObservable(job.title, job.objects, job.query, filteredHeaders, job.browserTimezone);
+        return generatePdfObservable(job.title, job.objects, job.query, filteredHeaders, job.browserTimezone, job.layout);
       })
       .map(buffer => ({
         content_type: 'application/pdf',

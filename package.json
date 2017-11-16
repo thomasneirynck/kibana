@@ -115,7 +115,7 @@
     "moment-timezone": "0.5.4",
     "object-hash": "1.1.8",
     "path-match": "1.2.4",
-    "pdfmake": "0.1.18",
+    "pdfmake": "0.1.33",
     "pluralize": "3.1.0",
     "prop-types": "^15.5.10",
     "pui-react-overlay-trigger": "7.0.0",

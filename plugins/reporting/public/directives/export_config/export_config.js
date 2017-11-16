@@ -1,3 +1,5 @@
+import angular from 'angular';
+import { debounce } from 'lodash';
 import 'plugins/reporting/services/document_control';
 import 'plugins/reporting/services/export_types';
 import './export_config.less';
@@ -9,8 +11,12 @@ import url from 'url';
 
 const module = uiModules.get('xpack/reporting');
 
-module.directive('exportConfig', (reportingDocumentControl, reportingExportTypes, $location) => {
+module.directive('exportConfig', ($rootScope, reportingDocumentControl, reportingExportTypes, $location, $compile) => {
   const reportingNotifier = new Notifier({ location: 'Reporting' });
+
+  const createAbsoluteUrl = relativePath => {
+    return url.resolve($location.absUrl(), relativePath);
+  };
 
   return {
     restrict: 'E',
@@ -18,6 +24,7 @@ module.directive('exportConfig', (reportingDocumentControl, reportingExportTypes
     require: ['?^dashboardApp', '?^visualizeApp', '?^discoverApp'],
     controllerAs: 'exportConfig',
     template,
+    transclude: true,
     async link($scope, $el, $attr, controllers) {
       const actualControllers = controllers.filter(c => c !== null);
       if (actualControllers.length !== 1) {
@@ -33,27 +40,51 @@ module.directive('exportConfig', (reportingDocumentControl, reportingExportTypes
       $scope.exportConfig.exportType = reportingExportTypes.getById(exportTypeId);
       $scope.exportConfig.objectType = $attr.objectType;
 
-      $scope.updateUrls = async () => {
-        const path = await reportingDocumentControl.getPath($scope.exportConfig.exportType, controller);
-        $scope.exportConfig.relativePath = path;
-        $scope.exportConfig.absoluteUrl = url.resolve($location.absUrl(), path);
+      $scope.options = {};
+      if ($scope.exportConfig.exportType.optionsTemplate) {
+        $el.find('.options').append($compile($scope.exportConfig.exportType.optionsTemplate)($scope));
+      }
+
+      $scope.getRelativePath = (options) => {
+        return reportingDocumentControl.getPath($scope.exportConfig.exportType, controller, options || $scope.options);
       };
 
-      await $scope.updateUrls();
+      $scope.updateUrl = (options) => {
+        return $scope.getRelativePath(options)
+        .then(relativePath => {
+          $scope.exportConfig.absoluteUrl = createAbsoluteUrl(relativePath);
+        });
+      };
+
+      $scope.$watch('options', newOptions => $scope.updateUrl(newOptions), true);
+
+      await $scope.updateUrl();
     },
-    controller($scope, $document, globalState) {
+    controller($scope, $document, $window, $timeout, globalState) {
       const stateMonitor = stateMonitorFactory.create(globalState);
       stateMonitor.onChange(() => {
         if ($scope.exportConfig.isDirty()) {
           return;
         }
 
-        $scope.updateUrls();
+        this.updateUrl();
       });
-      $scope.$on('$destroy', () => stateMonitor.destroy());
 
-      this.export = (relativePath) => {
-        reportingDocumentControl.create(relativePath)
+      const onResize = debounce(() => {
+        $scope.updateUrl();
+      }, 200);
+
+      angular.element($window).on('resize', onResize);
+      $scope.$on('$destroy', () => {
+        angular.element($window).off('resize', onResize);
+        stateMonitor.destroy();
+      });
+
+      this.export = () => {
+        return $scope.getRelativePath()
+        .then(relativePath => {
+          return reportingDocumentControl.create(relativePath);
+        })
         .then(() => {
           reportingNotifier.info(`${this.objectType} generation has been queued. You can track its progress under Management.`);
         })
@@ -67,20 +98,28 @@ module.directive('exportConfig', (reportingDocumentControl, reportingExportTypes
       };
 
       this.copyToClipboard = selector => {
-        // Select the text to be copied. If the copy fails, the user can easily copy it manually.
-        const copyTextarea = $document.find(selector)[0];
-        copyTextarea.select();
+        // updating the URL in the input because it could have potentially changed and we missed the update
+        $scope.updateUrl()
+          .then(() => {
 
-        try {
-          const isCopied = document.execCommand('copy');
-          if (isCopied) {
-            reportingNotifier.info('URL copied to clipboard.');
-          } else {
-            reportingNotifier.info('URL selected. Press Ctrl+C to copy.');
-          }
-        } catch (err) {
-          reportingNotifier.info('URL selected. Press Ctrl+C to copy.');
-        }
+            // we're using $timeout to make sure the URL has been updated in the HTML as this is where
+            // we're copying the ext from
+            $timeout(() => {
+              const copyTextarea = $document.find(selector)[0];
+              copyTextarea.select();
+
+              try {
+                const isCopied = document.execCommand('copy');
+                if (isCopied) {
+                  reportingNotifier.info('URL copied to clipboard.');
+                } else {
+                  reportingNotifier.info('URL selected. Press Ctrl+C to copy.');
+                }
+              } catch (err) {
+                reportingNotifier.info('URL selected. Press Ctrl+C to copy.');
+              }
+            });
+          });
       };
     }
   };
