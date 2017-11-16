@@ -1,5 +1,5 @@
 [role="xpack"]
-[[breaking-changes-xpackkb]]
+[[breaking-changes-xkb]]
 = {xpack} Breaking Changes
 
 [partintro]
