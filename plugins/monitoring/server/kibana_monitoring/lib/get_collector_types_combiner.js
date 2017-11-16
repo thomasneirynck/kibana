@@ -1,8 +1,9 @@
-import { get, omit } from 'lodash';
+import { get, set, omit } from 'lodash';
 import {
   KIBANA_STATS_TYPE,
   KIBANA_SETTINGS_TYPE,
-  KIBANA_USAGE_TYPE
+  KIBANA_USAGE_TYPE,
+  KIBANA_REPORTING_TYPE,
 } from '../../../common/constants';
 import { sourceKibana } from './source_kibana';
 
@@ -21,6 +22,7 @@ export function getCollectorTypesCombiner(kbnServer, config, _sourceKibana = sou
     // kibana usage and stats
     let statsResult;
     const [ statsHeader, statsPayload ] = findItem(KIBANA_STATS_TYPE);
+    const [ reportingHeader, reportingPayload ] = findItem(KIBANA_REPORTING_TYPE);
 
     // sourceKibana uses "host" from the kibana stats payload
     const host = get(statsPayload, 'host');
@@ -28,14 +30,21 @@ export function getCollectorTypesCombiner(kbnServer, config, _sourceKibana = sou
 
     if (statsHeader && statsPayload) {
       const [ usageHeader, usagePayload ] = findItem(KIBANA_USAGE_TYPE);
+      const kibanaUsage = (usageHeader && usagePayload) ? usagePayload : null;
+      const reportingUsage = (reportingHeader && reportingPayload) ? reportingPayload : null;
       statsResult = [
         statsHeader,
         {
           ...omit(statsPayload, 'host'), // remove the temp host field
           kibana,
-          usage: (usageHeader && usagePayload) ? usagePayload : undefined
         }
       ];
+      if (kibanaUsage) {
+        set(statsResult, '[1].usage', kibanaUsage);
+      }
+      if (reportingUsage) {
+        set(statsResult, '[1].usage.xpack.reporting', reportingUsage);
+      }
     }
 
     // kibana settings

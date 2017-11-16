@@ -13,15 +13,20 @@ export const KIBANA_MONITORING_LOGGING_TAG = 'kibana-monitoring';
  */
 export const MONITORING_SYSTEM_API_VERSION = '6';
 /**
- * The name of the Kibana System ID used to publish and lookup Kibana stats through the Monitoring system.
+ * The name of the Kibana System ID used to publish and look up Kibana stats through the Monitoring system.
  * @type {string}
  */
 export const KIBANA_SYSTEM_ID = 'kibana';
 /**
- * The name of the Kibana System ID used to lookup Kibana stats through the Monitoring system.
+ * The name of the Kibana System ID used to look up Logstash stats through the Monitoring system.
  * @type {string}
  */
 export const LOGSTASH_SYSTEM_ID = 'logstash';
+/**
+ * The name of the Kibana System ID used to look up Reporting stats through the Monitoring system.
+ * @type {string}
+ */
+export const REPORTING_SYSTEM_ID = 'reporting';
 /**
  * The type name used within the Monitoring index to publish Kibana ops stats.
  * @type {string}
@@ -37,6 +42,11 @@ export const KIBANA_SETTINGS_TYPE = 'kibana_settings';
  * @type {string}
  */
 export const KIBANA_USAGE_TYPE = 'kibana';
+/**
+ * The type name used within the Monitoring index to publish reporting stats.
+ * @type {string}
+ */
+export const KIBANA_REPORTING_TYPE = 'reporting_stats';
 
 /*
  * Key for the localStorage service

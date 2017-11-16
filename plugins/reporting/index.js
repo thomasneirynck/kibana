@@ -8,7 +8,8 @@ import { createQueueFactory } from './server/lib/create_queue';
 import { config as appConfig } from './server/config/config';
 import { checkLicenseFactory } from './server/lib/check_license';
 import { validateConfig } from './server/lib/validate_config';
-import { createExportTypesRegistryFactory } from './server/lib/create_export_types_registry';
+import { exportTypesRegistryFactory } from './server/lib/export_types_registry';
+export { getReportingUsage } from './server/usage';
 
 export const reporting = (kibana) => {
   return new kibana.Plugin({
@@ -104,8 +105,7 @@ export const reporting = (kibana) => {
     },
 
     init: async function (server) {
-      const createExportTypesRegistry = createExportTypesRegistryFactory(server);
-      const exportTypesRegistry = await createExportTypesRegistry(resolve(__dirname, './export_types/*/server/index.js'));
+      const exportTypesRegistry = await exportTypesRegistryFactory(server);
       server.expose('exportTypesRegistry', exportTypesRegistry);
 
       const config = server.config();

@@ -41,6 +41,22 @@ const getInitial = () => {
       }
     ],
     [
+      { 'index': { '_type': 'reporting_stats' } },
+      {
+        'available': true,
+        'enabled': false,
+        '_all': 55,
+        'csv': {
+          'available': true,
+          'count': 25
+        },
+        'printable_pdf': {
+          'available': true,
+          'count': 30
+        }
+      }
+    ],
+    [
       { 'index': { '_type': 'kibana_settings' } },
       { 'xpack': { 'defaultAdminEmail': 'tim@elastic.co' } }
     ]
@@ -88,7 +104,22 @@ const getResult = () => {
           'visualization': { 'total': 0 },
           'search': { 'total': 0 },
           'index_pattern': { 'total': 2 },
-          'index': '.kibana'
+          'index': '.kibana',
+          'xpack': {
+            'reporting': {
+              '_all': 55,
+              'available': true,
+              'csv': {
+                'available': true,
+                'count': 25,
+              },
+              'enabled': false,
+              'printable_pdf': {
+                'available': true,
+                'count': 30,
+              }
+            }
+          }
         }
       }
     ],
@@ -138,7 +169,7 @@ describe('Collector Types Combiner', () => {
     it('provides combined stats/usage data', () => {
       // default gives all the data types
       const initial = getInitial();
-      const trimmedInitial = [ initial[0], initial[1] ]; // just stats and usage
+      const trimmedInitial = [ initial[0], initial[1], initial[2] ]; // just stats, usage and reporting, no settings
       const combiner = getCollectorTypesCombiner(kbnServerMock, configMock, sourceKibanaMock);
       const result = combiner(trimmedInitial);
       const expectedResult = getResult();
@@ -150,11 +181,11 @@ describe('Collector Types Combiner', () => {
     it('provides settings, and stats data', () => {
       // default gives all the data types
       const initial = getInitial();
-      const trimmedInitial = [ initial[0], initial[2] ]; // just stats and settings
+      const trimmedInitial = [ initial[0], initial[3] ]; // just stats and settings, no usage or reporting
       const combiner = getCollectorTypesCombiner(kbnServerMock, configMock, sourceKibanaMock);
       const result = combiner(trimmedInitial);
       const expectedResult = getResult();
-      expectedResult[0][1].usage = undefined; // usage stats should not be present in the result
+      delete expectedResult[0][1].usage; // usage stats should not be present in the result
       const trimmedExpectedResult = [ expectedResult[0], expectedResult[1] ];
       expect(result).to.eql(trimmedExpectedResult);
     });
@@ -163,7 +194,7 @@ describe('Collector Types Combiner', () => {
     it('provides settings data', () => {
       // default gives all the data types
       const initial = getInitial();
-      const trimmedInitial = [ initial[2] ]; // just settings
+      const trimmedInitial = [ initial[3] ]; // just settings
       const combiner = getCollectorTypesCombiner(kbnServerMock, configMock, sourceKibanaMock);
       const result = combiner(trimmedInitial);
       const expectedResult = getResult();

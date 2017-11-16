@@ -2,6 +2,7 @@ import { TypeCollector } from './lib/type_collector';
 import { getOpsStatsCollector } from './collectors/get_ops_stats_collector';
 import { getSettingsCollector } from './collectors/get_settings_collector';
 import { getUsageCollector } from './collectors/get_usage_collector';
+import { getReportingCollector } from './collectors/get_reporting_collector';
 import { sendBulkPayload } from './lib/send_bulk_payload';
 import { getCollectorTypesCombiner } from './lib/get_collector_types_combiner';
 
@@ -32,6 +33,7 @@ export function startCollector(kbnServer, server, client, _sendBulkPayload = sen
   collector.register(getUsageCollector(server, config));
   collector.register(getOpsStatsCollector(server));
   collector.register(getSettingsCollector(server, config));
+  collector.register(getReportingCollector(server, config));
 
   // Startup Kibana cleanly or reconnect to Elasticsearch
   server.plugins.elasticsearch.status.on('green', () => {

@@ -71,6 +71,21 @@ describe('ExportTypesRegistry', function () {
     });
   });
 
+  describe('getSize', function () {
+    it('returns 0 initially', function () {
+      const size = exportTypesRegistry.getSize();
+      expect(size).to.be(0);
+    });
+
+    it('returns the number of objects that have been added', function () {
+      exportTypesRegistry.register({ id: 'foo' });
+      exportTypesRegistry.register({ id: 'bar' });
+      exportTypesRegistry.register({ id: 'baz' });
+      const size = exportTypesRegistry.getSize();
+      expect(size).to.be(3);
+    });
+  });
+
   describe('get', function () {
     it('returns obj that matches the predicate', function () {
       const prop = 'fooProp';

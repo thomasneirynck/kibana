@@ -1,5 +1,5 @@
 import { handleError } from '../../../../../monitoring/server/lib/errors';
-import { getUsageCollector } from '../../../../../monitoring/server/kibana_monitoring';
+import { getUsageCollector, getReportingCollector } from '../../../../../monitoring/server/kibana_monitoring';
 
 export function kibanaStatsRoute(server) {
   server.route({
@@ -9,8 +9,16 @@ export function kibanaStatsRoute(server) {
 
       try {
         const kibanaUsageCollector = getUsageCollector(req.server, req.server.config());
+        const reportingCollector = getReportingCollector(req.server, req.server.config());
+
+        const [ kibana, reporting ] = await Promise.all([
+          kibanaUsageCollector.fetch(),
+          reportingCollector.fetch(),
+        ]);
+
         reply({
-          kibana: await kibanaUsageCollector.fetch()
+          kibana,
+          reporting,
         });
       } catch(err) {
         reply(handleError(err, req));

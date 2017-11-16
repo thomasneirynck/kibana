@@ -22,6 +22,10 @@ export class ExportTypesRegistry {
     return this._map.values();
   }
 
+  getSize() {
+    return this._map.size;
+  }
+
   getById(id) {
     if (!this._map.has(id)) {
       throw new Error(`Unknown id ${id}`);
