@@ -80,8 +80,8 @@ export async function getTimeseriesData({
                 interval: intervalString,
                 min_doc_count: 0,
                 extended_bounds: {
-                  min: start.valueOf(),
-                  max: end.valueOf()
+                  min: start,
+                  max: end
                 }
               },
               aggs: {
@@ -118,36 +118,43 @@ export async function getTimeseriesData({
   );
   const overallAvg = get(resp, 'aggregations.overall_avg.value');
 
+  const dates = get(transactionResultBuckets, '[0].timeseries.buckets')
+    .slice(1, -1)
+    .map(bucket => bucket.key);
+
+  const responseTime = responseTimeBuckets.slice(1, -1).reduce(
+    (acc, bucket) => {
+      const p95 = bucket.pct.values['95.0'];
+      const p99 = bucket.pct.values['99.0'];
+
+      acc.avg.push(bucket.avg.value || 0);
+      acc.p95.push((isNumber(p95) && p95) || 0);
+      acc.p99.push((isNumber(p99) && p99) || 0);
+      return acc;
+    },
+    { avg: [], p95: [], p99: [] }
+  );
+
   const tpmBuckets = sortBy(
     transactionResultBuckets.map(({ key, timeseries, overall_avg }) => ({
       key,
       avg: overall_avg.avg,
-      values: timeseries.buckets.map(
-        bucket => get(bucket.rpm, 'normalized_value') || 0
-      )
+      values: timeseries.buckets
+        .slice(1, -1)
+        .map(bucket => get(bucket.rpm, 'normalized_value') || 0)
     })),
     bucket => bucket.key.replace(/^HTTP (\d)xx$/, '00$1') // ensure that HTTP 3xx are sorted at the top
   );
 
   return {
     total_hits: resp.hits.total,
-    dates: get(transactionResultBuckets, '[0].timeseries.buckets').map(
-      bucket => bucket.key
-    ),
-    response_times: responseTimeBuckets.reduce(
-      (acc, bucket) => {
-        const p95 = bucket.pct.values['95.0'];
-        const p99 = bucket.pct.values['99.0'];
-
-        acc.avg.push(bucket.avg.value || 0);
-        acc.p95.push((isNumber(p95) && p95) || 0);
-        acc.p99.push((isNumber(p99) && p99) || 0);
-        return acc;
-      },
-      { avg: [], p95: [], p99: [] }
-    ),
+    dates: dates,
+    response_times: {
+      avg: responseTime.avg,
+      p95: responseTime.p95,
+      p99: responseTime.p99
+    },
     tpm_buckets: tpmBuckets,
-
     weighted_average: overallAvg || 0
   };
 }

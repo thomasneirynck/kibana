@@ -1,5 +1,6 @@
+import _ from 'lodash';
 import { getTimeseriesData } from '../get_timeseries_data';
-import response from './response.json';
+import elasticSearchResponse from './response.json';
 
 describe('get_timeseries_data', () => {
   let res;
@@ -11,7 +12,7 @@ describe('get_timeseries_data', () => {
       setup: {
         start: 1510673413814,
         end: 1510674313814,
-        client: jest.fn(() => Promise.resolve(response)),
+        client: jest.fn(() => Promise.resolve(elasticSearchResponse)),
         config: {
           get: () => 'myIndex'
         }
@@ -19,8 +20,15 @@ describe('get_timeseries_data', () => {
     });
   });
 
-  it('should match snapshot', () => {
-    expect(res).toMatchSnapshot();
+  it('should not contain first and last bucket', () => {
+    const datesBefore = elasticSearchResponse.aggregations.transaction_results.buckets[0].timeseries.buckets.map(
+      bucket => bucket.key
+    );
+
+    const [firstBucket, lastBucket] = _.difference(datesBefore, res.dates);
+
+    expect(firstBucket).toEqual(_.first(datesBefore));
+    expect(lastBucket).toEqual(_.last(datesBefore));
   });
 
   it('should have correct order', () => {
@@ -30,5 +38,9 @@ describe('get_timeseries_data', () => {
       'HTTP 5xx',
       '3CustomStuff'
     ]);
+  });
+
+  it('should match snapshot', () => {
+    expect(res).toMatchSnapshot();
   });
 });
