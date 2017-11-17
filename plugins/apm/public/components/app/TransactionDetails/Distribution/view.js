@@ -4,7 +4,12 @@ import Histogram from '../../../shared/charts/Histogram';
 import { toQuery, fromQuery } from '../../../../utils/url';
 import { withRouter } from 'react-router-dom';
 import EmptyMessage from '../../../shared/EmptyMessage';
-import { getTimeFormatter, asRpm, getUnit } from '../../../../utils/formatters';
+import {
+  getTimeFormatter,
+  timeUnit,
+  asDecimal,
+  tpmUnit
+} from '../../../../utils/formatters';
 
 export function getFormattedBuckets(buckets, bucketSize) {
   if (!buckets) {
@@ -44,6 +49,10 @@ class Distribution extends Component {
     loadTransactionDistribution(nextProps);
   }
 
+  formatYValue = t => {
+    return `${asDecimal(t)} ${tpmUnit(this.props.urlParams.transactionType)}`;
+  };
+
   render() {
     const { history, location, distribution } = this.props;
     const buckets = getFormattedBuckets(
@@ -54,7 +63,7 @@ class Distribution extends Component {
     const isEmpty = distribution.data.totalHits === 0;
     const xMax = d3.max(buckets, d => d.x);
     const timeFormatter = getTimeFormatter(xMax);
-    const unit = getUnit(xMax);
+    const unit = timeUnit(xMax);
 
     if (isEmpty) {
       return (
@@ -78,18 +87,24 @@ class Distribution extends Component {
             });
           }}
           formatXValue={timeFormatter}
-          formatYValue={asRpm}
+          formatYValue={this.formatYValue}
           formatTooltipHeader={(hoveredX0, hoveredX) =>
             `${timeFormatter(hoveredX0, false)} - ${timeFormatter(
               hoveredX,
               false
             )} ${unit}`
           }
-          tooltipLegendTitle="Requests"
+          tooltipLegendTitle={transactionLabel(
+            this.props.urlParams.transactionType
+          )}
         />
       </div>
     );
   }
+}
+
+function transactionLabel(type) {
+  return type === 'request' ? 'Requests' : 'Transactions';
 }
 
 export default withRouter(Distribution);

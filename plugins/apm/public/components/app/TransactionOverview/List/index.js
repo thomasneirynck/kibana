@@ -10,6 +10,7 @@ import { OverlayTrigger } from 'pui-react-overlay-trigger';
 
 import APMTable from '../../../shared/APMTable';
 import ListItem from './ListItem';
+import { tpmUnit } from '../../../../utils/formatters';
 
 const TooltipWrapper = styled.div`
   position: relative;
@@ -59,7 +60,7 @@ class List extends Component {
         { key: 'name', label: 'Name' },
         { key: 'avg', label: 'Avg. resp. time' },
         { key: 'p95', label: '95th percentile' },
-        { key: 'rpm', label: getTpmLabel(type) }
+        { key: 'rpm', label: tpmUnit(type).toUpperCase() }
       ].map(({ key, label }) => (
         <KuiTableHeaderCell
           key={key}
@@ -114,10 +115,6 @@ class List extends Component {
       />
     );
   }
-}
-
-function getTpmLabel(type) {
-  return type === 'request' ? 'RPM' : 'TPM';
 }
 
 export default List;

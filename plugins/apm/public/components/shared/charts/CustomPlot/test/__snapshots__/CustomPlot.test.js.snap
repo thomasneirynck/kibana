@@ -8,7 +8,6 @@ Array [
     "onClick": [Function],
     "text": <styled.span>
       Avg.
-       
       <styled.span>
         468 ms
       </styled.span>
@@ -20,7 +19,6 @@ Array [
     "onClick": [Function],
     "text": <styled.span>
       95th percentile
-       
     </styled.span>,
   },
   Object {
@@ -29,7 +27,6 @@ Array [
     "onClick": [Function],
     "text": <styled.span>
       99th percentile
-       
     </styled.span>,
   },
 ]
@@ -38,10 +35,10 @@ Array [
 exports[`when response has data Initially should have correct markup 1`] = `
 "
 <div>
-  <div class=\\"sc-htoDjs dYZUib\\">
-    <div class=\\"sc-dnqmqq dZBzGE\\">
+  <div>
+    <div class=\\"sc-htoDjs kTDeMd\\">
     </div>
-    <div class=\\"sc-iwsKbI hQBmBE\\">
+    <div class=\\"sc-dnqmqq jHYWyk\\">
       <div class=\\"sc-bdVaJa eWvHJG\\"
            font-size=\\"12px\\"
       >
@@ -50,13 +47,11 @@ exports[`when response has data Initially should have correct markup 1`] = `
               radius=\\"11\\"
         >
         </span>
-        <span class=\\"sc-gqjmRU dfPhNS\\">
+        <span class=\\"sc-iwsKbI ehWbsd\\">
           <!-- react-text: 8 -->
           Avg.
           <!-- /react-text -->
-          <!-- react-text: 9 -->
-          <!-- /react-text -->
-          <span class=\\"sc-gZMcBi krukmu\\">
+          <span class=\\"sc-gqjmRU eRtNVe\\">
             468 ms
           </span>
         </span>
@@ -69,11 +64,9 @@ exports[`when response has data Initially should have correct markup 1`] = `
               radius=\\"11\\"
         >
         </span>
-        <span class=\\"sc-gqjmRU dfPhNS\\">
-          <!-- react-text: 14 -->
+        <span class=\\"sc-iwsKbI ehWbsd\\">
+          <!-- react-text: 13 -->
           95th percentile
-          <!-- /react-text -->
-          <!-- react-text: 15 -->
           <!-- /react-text -->
         </span>
       </div>
@@ -85,14 +78,13 @@ exports[`when response has data Initially should have correct markup 1`] = `
               radius=\\"11\\"
         >
         </span>
-        <span class=\\"sc-gqjmRU dfPhNS\\">
-          <!-- react-text: 19 -->
+        <span class=\\"sc-iwsKbI ehWbsd\\">
+          <!-- react-text: 17 -->
           99th percentile
-          <!-- /react-text -->
-          <!-- react-text: 20 -->
           <!-- /react-text -->
         </span>
       </div>
+      <!-- react-empty: 18 -->
     </div>
   </div>
   <div style=\\"position: relative; height: 256px;\\">
@@ -1004,10 +996,10 @@ Array [
 exports[`when response has data when setting hoverIndex should match snapshots 1`] = `
 "
 <div>
-  <div class=\\"sc-htoDjs dYZUib\\">
-    <div class=\\"sc-dnqmqq dZBzGE\\">
+  <div>
+    <div class=\\"sc-htoDjs kTDeMd\\">
     </div>
-    <div class=\\"sc-iwsKbI hQBmBE\\">
+    <div class=\\"sc-dnqmqq jHYWyk\\">
       <div class=\\"sc-bdVaJa eWvHJG\\"
            font-size=\\"12px\\"
       >
@@ -1016,13 +1008,11 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
               radius=\\"11\\"
         >
         </span>
-        <span class=\\"sc-gqjmRU dfPhNS\\">
+        <span class=\\"sc-iwsKbI ehWbsd\\">
           <!-- react-text: 8 -->
           Avg.
           <!-- /react-text -->
-          <!-- react-text: 9 -->
-          <!-- /react-text -->
-          <span class=\\"sc-gZMcBi krukmu\\">
+          <span class=\\"sc-gqjmRU eRtNVe\\">
             468 ms
           </span>
         </span>
@@ -1035,11 +1025,9 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
               radius=\\"11\\"
         >
         </span>
-        <span class=\\"sc-gqjmRU dfPhNS\\">
-          <!-- react-text: 14 -->
+        <span class=\\"sc-iwsKbI ehWbsd\\">
+          <!-- react-text: 13 -->
           95th percentile
-          <!-- /react-text -->
-          <!-- react-text: 15 -->
           <!-- /react-text -->
         </span>
       </div>
@@ -1051,14 +1039,13 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
               radius=\\"11\\"
         >
         </span>
-        <span class=\\"sc-gqjmRU dfPhNS\\">
-          <!-- react-text: 19 -->
+        <span class=\\"sc-iwsKbI ehWbsd\\">
+          <!-- react-text: 17 -->
           99th percentile
-          <!-- /react-text -->
-          <!-- react-text: 20 -->
           <!-- /react-text -->
         </span>
       </div>
+      <!-- react-empty: 18 -->
     </div>
   </div>
   <div style=\\"position: relative; height: 256px;\\">
@@ -1368,7 +1355,7 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
                         radius=\\"8\\"
                   >
                   </span>
-                  <!-- react-text: 116 -->
+                  <!-- react-text: 114 -->
                   Avg.
                   <!-- /react-text -->
                 </div>
@@ -1385,7 +1372,7 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
                         radius=\\"8\\"
                   >
                   </span>
-                  <!-- react-text: 121 -->
+                  <!-- react-text: 119 -->
                   95th
                   <!-- /react-text -->
                 </div>
@@ -1402,7 +1389,7 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
                         radius=\\"8\\"
                   >
                   </span>
-                  <!-- react-text: 126 -->
+                  <!-- react-text: 124 -->
                   99th
                   <!-- /react-text -->
                 </div>
@@ -2032,10 +2019,11 @@ Object {
 exports[`when response has no data Initially should have correct markup 1`] = `
 "
 <div>
-  <div class=\\"sc-htoDjs dYZUib\\">
-    <div class=\\"sc-dnqmqq dZBzGE\\">
+  <div>
+    <div class=\\"sc-htoDjs kTDeMd\\">
     </div>
-    <div class=\\"sc-iwsKbI hQBmBE\\">
+    <div class=\\"sc-dnqmqq jHYWyk\\">
+      <!-- react-empty: 5 -->
     </div>
   </div>
   <div style=\\"position: relative; height: 256px;\\">
@@ -2407,7 +2395,7 @@ exports[`when response has no data Initially should have correct markup 1`] = `
         </svg>
       </div>
     </div>
-    <!-- react-empty: 71 -->
+    <!-- react-empty: 72 -->
   </div>
 </div>
 "

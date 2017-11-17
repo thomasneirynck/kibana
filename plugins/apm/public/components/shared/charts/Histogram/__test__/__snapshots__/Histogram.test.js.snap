@@ -238,7 +238,7 @@ exports[`Histogram Initially should have default markup 1`] = `
                   transform=\\"translate(-8, 0)\\"
                   class=\\"rv-xy-plot__axis__tick__text\\"
             >
-              27.5 rpm
+              27.5
             </text>
           </g>
           <g transform=\\"translate(0, 0)\\"
@@ -256,7 +256,7 @@ exports[`Histogram Initially should have default markup 1`] = `
                   transform=\\"translate(-8, 0)\\"
                   class=\\"rv-xy-plot__axis__tick__text\\"
             >
-              55.0 rpm
+              55.0
             </text>
           </g>
         </g>

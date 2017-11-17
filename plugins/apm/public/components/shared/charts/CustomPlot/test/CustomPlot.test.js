@@ -5,10 +5,7 @@ import moment from 'moment';
 import { InnerCustomPlot } from '../index';
 import responseWithData from './responseWithData.json';
 import responseWithoutData from './responseWithoutData.json';
-import {
-  getResponseTimeSeries,
-  getSeries
-} from '../../TransactionCharts/selectors';
+import { getResponseTimeSeries } from '../../TransactionCharts/selectors';
 import VoronoiPlot from '../VoronoiPlot';
 import InteractivePlot from '../InteractivePlot';
 
@@ -24,9 +21,8 @@ describe('when response has data', () => {
     onSelectionEnd = jest.fn();
     wrapper = mount(
       <InnerCustomPlot
-        series={getSeries({
-          chartsData: responseWithData,
-          handler: getResponseTimeSeries
+        series={getResponseTimeSeries({
+          chartsData: responseWithData
         })}
         onHover={onHover}
         onMouseLeave={onMouseLeave}
@@ -265,11 +261,10 @@ describe('when response has no data', () => {
   const onSelectionEnd = jest.fn();
   let wrapper;
   beforeEach(() => {
-    const series = getSeries({
+    const series = getResponseTimeSeries({
       start: 1451606400000,
       end: 1451610000000,
-      chartsData: responseWithoutData,
-      handler: getResponseTimeSeries
+      chartsData: responseWithoutData
     });
 
     wrapper = mount(

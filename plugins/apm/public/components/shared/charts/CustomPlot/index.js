@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import d3 from 'd3';
 import { scaleLinear } from 'd3-scale';
 import { XYPlot, makeWidthFlexible } from 'react-vis';
+import { createSelector } from 'reselect';
 import Legend from '../Legend';
 import styled from 'styled-components';
 import {
@@ -14,10 +15,13 @@ import {
   px,
   colors
 } from '../../../../style/variables';
+import { truncate } from '../../../../style/utils';
+
 import StaticPlot from './StaticPlot';
 import InteractivePlot from './InteractivePlot';
 import VoronoiPlot from './VoronoiPlot';
 
+const VISIBLE_SERIES = 5;
 const XY_HEIGHT = unit * 16;
 const XY_MARGIN = {
   top: unit,
@@ -26,11 +30,6 @@ const XY_MARGIN = {
   bottom: unit * 2
 };
 
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
 const Title = styled.div`
   font-size: ${fontSizes.large};
 `;
@@ -38,17 +37,24 @@ const Title = styled.div`
 const Legends = styled.div`
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+`;
+
+const LegendContent = styled.span`
+  white-space: nowrap;
+  color: ${colors.gray3};
+  display: flex;
+`;
+
+const TruncatedLabel = styled.span`
+  display: inline-block;
+  ${truncate(px(units.half * 10))};
 `;
 
 const SeriesValue = styled.span`
   margin-left: ${px(units.quarter)};
   color: ${colors.black};
   display: inline-block;
-`;
-
-const LegendContent = styled.span`
-  white-space: nowrap;
-  color: ${colors.gray3};
 `;
 
 const getXScale = _.memoize(
@@ -95,8 +101,13 @@ const getXYPlot = _.memoize(
   (x, y, width) => [...x.domain(), ...y.domain(), width].join('_')
 );
 
-const getEnabledSeries = (series, seriesVisibility) => {
-  return series.filter((serie, i) => !seriesVisibility[i]);
+const topSeries = createSelector(
+  props => props.series,
+  series => series.slice(0, VISIBLE_SERIES)
+);
+
+const getEnabledSeries = (props, seriesVisibility) => {
+  return topSeries(props).filter((serie, i) => !seriesVisibility[i]);
 };
 
 export class InnerCustomPlot extends PureComponent {
@@ -110,20 +121,14 @@ export class InnerCustomPlot extends PureComponent {
 
   componentWillMount() {
     this.setState({
-      enabledSeries: getEnabledSeries(
-        this.props.series,
-        this.state.seriesVisibility
-      )
+      enabledSeries: getEnabledSeries(this.props, this.state.seriesVisibility)
     });
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.series !== nextProps.series) {
       this.setState({
-        enabledSeries: getEnabledSeries(
-          nextProps.series,
-          this.state.seriesVisibility
-        )
+        enabledSeries: getEnabledSeries(nextProps, this.state.seriesVisibility)
       });
     }
   }
@@ -173,13 +178,20 @@ export class InnerCustomPlot extends PureComponent {
 
       return {
         seriesVisibility: nextSeriesVisibility,
-        enabledSeries: getEnabledSeries(this.props.series, nextSeriesVisibility)
+        enabledSeries: getEnabledSeries(this.props, nextSeriesVisibility)
       };
     });
   };
 
   render() {
-    const { chartTitle, series, width } = this.props;
+    const {
+      chartTitle,
+      series: allSeries,
+      width,
+      truncateLegends
+    } = this.props;
+    const series = topSeries(this.props);
+    const hiddenSeries = allSeries.length - VISIBLE_SERIES;
     if (_.isEmpty(series)) {
       return null;
     }
@@ -198,13 +210,19 @@ export class InnerCustomPlot extends PureComponent {
 
     return (
       <div>
-        <Header>
+        <div>
           <Title>{chartTitle}</Title>
           <Legends>
             {series.filter(serie => !serie.isEmpty).map((serie, i) => {
               const text = (
                 <LegendContent>
-                  {serie.title}{' '}
+                  {truncateLegends ? (
+                    <TruncatedLabel title={serie.title}>
+                      {serie.title}
+                    </TruncatedLabel>
+                  ) : (
+                    serie.title
+                  )}
                   {serie.legendValue && (
                     <SeriesValue>{serie.legendValue}</SeriesValue>
                   )}
@@ -220,8 +238,9 @@ export class InnerCustomPlot extends PureComponent {
                 />
               );
             })}
+            <MoreSeries hiddenSeries={hiddenSeries} />
           </Legends>
-        </Header>
+        </div>
 
         <div style={{ position: 'relative', height: XY_HEIGHT }}>
           <StaticPlot
@@ -268,11 +287,25 @@ InnerCustomPlot.propTypes = {
   onMouseLeave: PropTypes.func.isRequired,
   onSelectionEnd: PropTypes.func.isRequired,
   hoverIndex: PropTypes.number,
-  tickFormatY: PropTypes.func
+  tickFormatY: PropTypes.func,
+  truncateLegends: PropTypes.bool
 };
 
 InnerCustomPlot.defaultProps = {
-  tickFormatY: y => y
+  tickFormatY: y => y,
+  truncateLegends: false
 };
 
 export default makeWidthFlexible(InnerCustomPlot);
+
+const MoreSeriesContainer = styled.div`
+  font-size: ${fontSizes.small};
+  color: ${colors.gray3};
+`;
+function MoreSeries({ hiddenSeries }) {
+  if (hiddenSeries <= 0) {
+    return null;
+  }
+
+  return <MoreSeriesContainer>(+{hiddenSeries})</MoreSeriesContainer>;
+}

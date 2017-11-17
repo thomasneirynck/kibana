@@ -14,7 +14,11 @@ import { RelativeLink, legacyEncodeURIComponent } from '../../../../utils/url';
 
 import { get } from 'lodash';
 import { TRANSACTION_NAME } from '../../../../../common/constants';
-import { asMillisWithDefault, asRpm } from '../../../../utils/formatters';
+import {
+  asMillisWithDefault,
+  asDecimal,
+  tpmUnit
+} from '../../../../utils/formatters';
 
 const TransactionNameCell = styled(KuiTableRowCell)`
   font-family: ${fontFamilyCode};
@@ -60,7 +64,9 @@ function TransactionListItem({ appName, transaction, type, impact }) {
       </TransactionNameCell>
       <KuiTableRowCell>{asMillisWithDefault(transaction.avg)}</KuiTableRowCell>
       <KuiTableRowCell>{asMillisWithDefault(transaction.p95)}</KuiTableRowCell>
-      <KuiTableRowCell>{asRpm(transaction.rpm)}</KuiTableRowCell>
+      <KuiTableRowCell>
+        {asDecimal(transaction.rpm)} {tpmUnit(type)}
+      </KuiTableRowCell>
       <KuiTableRowCell>
         <ImpactSparkline impact={impact} />
       </KuiTableRowCell>

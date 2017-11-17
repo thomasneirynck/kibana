@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import CustomPlot from '../CustomPlot';
 import { getTimefilter } from '../../../../utils/timepicker';
-import { asMillis, asRpm } from '../../../../utils/formatters';
+import { asMillis, asDecimal, tpmUnit } from '../../../../utils/formatters';
 import styled from 'styled-components';
 import { units, px } from '../../../../style/variables';
 
@@ -41,7 +41,8 @@ export class Charts extends Component {
   };
 
   getRequestPerMinuteFormatter = t => {
-    return this.props.isEmpty ? '- rpm' : asRpm(t);
+    const unit = tpmUnit(this.props.urlParams.transactionType);
+    return this.props.isEmpty ? `- ${unit}` : `${asDecimal(t)} ${unit}`;
   };
 
   render() {
@@ -65,13 +66,14 @@ export class Charts extends Component {
         <Chart>
           <CustomPlot
             isEmpty={isEmpty}
-            chartTitle={getTpmTitle(urlParams.transactionType)}
+            chartTitle={tpmLabel(urlParams.transactionType)}
             series={rpmSeries}
             onHover={this.onHover}
             onMouseLeave={this.onMouseLeave}
             onSelectionEnd={this.onSelectionEnd}
             hoverIndex={this.state.hoverIndex}
             tickFormatY={this.getRequestPerMinuteFormatter}
+            truncateLegends
           />
         </Chart>
       </ChartsWrapper>
@@ -79,7 +81,7 @@ export class Charts extends Component {
   }
 }
 
-function getTpmTitle(type) {
+function tpmLabel(type) {
   return type === 'request' ? 'Requests per minute' : 'Transactions per minute';
 }
 

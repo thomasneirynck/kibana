@@ -36,7 +36,7 @@ export class TransactionOverview extends Component {
         <PageHeader>{appName}</PageHeader>
         <TabNavigation />
         <Charts />
-        <SectionHeader>{getTitle(transactionType)}</SectionHeader>
+        <SectionHeader>{transactionTypeLabel(transactionType)}</SectionHeader>
         <List
           appName={appName}
           type={transactionType}
@@ -49,7 +49,7 @@ export class TransactionOverview extends Component {
   }
 }
 
-function getTitle(type) {
+function transactionTypeLabel(type) {
   return type === 'request' ? 'Request' : type;
 }
 

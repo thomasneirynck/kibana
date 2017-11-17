@@ -2,9 +2,13 @@ import d3 from 'd3';
 import { zipObject, difference } from 'lodash';
 import { createSelector } from 'reselect';
 import { colors } from '../../../../style/variables';
-import { asMillisWithDefault, asRpm } from '../../../../utils/formatters';
+import {
+  asMillisWithDefault,
+  asDecimal,
+  tpmUnit
+} from '../../../../utils/formatters';
 
-export const getResponseTimeSeries = createSelector(
+const getResponseTimeSeriesSelector = createSelector(
   data => data.dates,
   data => data.responseTimes.avg,
   data => data.responseTimes.p95,
@@ -12,6 +16,19 @@ export const getResponseTimeSeries = createSelector(
   data => data.weightedAverage,
   _getResponseTimeSeries
 );
+
+const getRpmSeriesSelector = createSelector(
+  chartData => chartData.dates,
+  chartData => chartData.tpmBuckets,
+  (chartData, props) => props.transactionType,
+  _getRpmSeries
+);
+
+export function getResponseTimeSeries({ start, end, chartsData }) {
+  return chartsData.totalHits === 0
+    ? getEmptySerie(start, end)
+    : getResponseTimeSeriesSelector(chartsData);
+}
 
 function _getResponseTimeSeries(dates, avg, p95, p99, weightedAverage) {
   return [
@@ -42,17 +59,25 @@ function _getResponseTimeSeries(dates, avg, p95, p99, weightedAverage) {
   ];
 }
 
-export const getRpmSeries = createSelector(
-  chartData => chartData.dates,
-  chartData => chartData.tpmBuckets,
-  _getRpmSeries
-);
-
-export const getSeries = ({ start, end, chartsData, handler }) => {
+export function getRpmSeries({ start, end, chartsData, transactionType }) {
   return chartsData.totalHits === 0
     ? getEmptySerie(start, end)
-    : handler(chartsData);
-};
+    : getRpmSeriesSelector(chartsData, { transactionType });
+}
+
+function _getRpmSeries(dates, tpmBuckets, transactionType) {
+  const getColor = getColorByKey(tpmBuckets.map(({ key }) => key));
+
+  return tpmBuckets.map(bucket => {
+    return {
+      title: bucket.key,
+      data: getChartValues(dates, bucket.values),
+      legendValue: `${asDecimal(bucket.avg)} ${tpmUnit(transactionType)}`,
+      type: 'line',
+      color: getColor(bucket.key)
+    };
+  });
+}
 
 function getColorByKey(keys) {
   const assignedColors = {
@@ -73,20 +98,6 @@ function getColorByKey(keys) {
   ]);
 
   return key => assignedColors[key] || unassignedColors[key];
-}
-
-function _getRpmSeries(dates, tpmBuckets) {
-  const getColor = getColorByKey(tpmBuckets.map(({ key }) => key));
-
-  return tpmBuckets.map(bucket => {
-    return {
-      title: bucket.key,
-      data: getChartValues(dates, bucket.values),
-      legendValue: `${asRpm(bucket.avg)}`,
-      type: 'line',
-      color: getColor(bucket.key)
-    };
-  });
 }
 
 function getChartValues(dates = [], yValues = []) {

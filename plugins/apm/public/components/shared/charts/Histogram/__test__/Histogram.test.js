@@ -6,8 +6,8 @@ import { HistogramInner } from '../index';
 import response from './response.json';
 import {
   getTimeFormatter,
-  asRpm,
-  getUnit
+  asDecimal,
+  timeUnit
 } from '../../../../../utils/formatters';
 
 // TODO: Remove duplication of this method
@@ -34,7 +34,7 @@ describe('Histogram', () => {
     const buckets = getFormattedBuckets(response.buckets, response.bucketSize);
     const xMax = d3.max(buckets, d => d.x);
     const timeFormatter = getTimeFormatter(xMax);
-    const unit = getUnit(xMax);
+    const unit = timeUnit(xMax);
 
     wrapper = mount(
       <HistogramInner
@@ -43,7 +43,7 @@ describe('Histogram', () => {
         transactionId="myTransactionId"
         onClick={onClick}
         formatXValue={timeFormatter}
-        formatYValue={asRpm}
+        formatYValue={asDecimal}
         formatTooltipHeader={(hoveredX0, hoveredX) =>
           `${timeFormatter(hoveredX0, false)} - ${timeFormatter(
             hoveredX,
