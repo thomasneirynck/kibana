@@ -8,7 +8,7 @@ import { getBucketSize } from '../helpers/get_bucket_size';
 
 export async function getApp({ appName, setup }) {
   const { start, end, client, config } = setup;
-  const { intervalString } = getBucketSize(start, end, '1m');
+  const { intervalString } = getBucketSize(start, end, 'auto');
 
   const params = {
     index: config.get('xpack.apm.indexPattern'),

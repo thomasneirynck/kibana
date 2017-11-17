@@ -15,7 +15,7 @@ export async function getTimeseriesData({
   setup
 }) {
   const { start, end, client, config } = setup;
-  const { intervalString } = getBucketSize(start, end, '1m');
+  const { intervalString } = getBucketSize(start, end, 'auto');
 
   const params = {
     index: config.get('xpack.apm.indexPattern'),
