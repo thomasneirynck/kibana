@@ -176,6 +176,8 @@ function (
     types: {},
     isDatafeed: false,
     useDedicatedIndex: false,
+    modelMemoryLimit: '',
+    modelMemoryLimitDefault: '1024MB',
 
     datafeed: {
       queryText: '{"match_all":{}}',
@@ -504,6 +506,7 @@ function (
 
       setFieldDelimiterControlsFromText();
       setDatafeedUIText();
+      setAnalysisLimitsUIText();
 
       // if results_index_name exists, tick the dedicated index checkbox
       if ($scope.job.results_index_name !== undefined) {
@@ -581,22 +584,21 @@ function (
 
       const queryDelayDefault = $scope.ui.datafeed.queryDelayDefault;
       let queryDelay = datafeedConfig.query_delay;
-      if ($scope.ui.datafeed.queryDelayDefault === datafeedConfig.query_delay) {
+      if (datafeedConfig.query_delay === undefined || $scope.ui.datafeed.queryDelayDefault === datafeedConfig.query_delay) {
         queryDelay = '';
       }
 
       const frequencyDefault = $scope.ui.datafeed.frequencyDefault;
       let freq = datafeedConfig.frequency;
-      if ($scope.ui.datafeed.frequencyDefault === datafeedConfig.frequency) {
+      if (datafeedConfig.frequency === undefined || $scope.ui.datafeed.frequencyDefault === datafeedConfig.frequency) {
         freq = '';
       }
 
       const scrollSizeDefault = $scope.ui.datafeed.scrollSizeDefault;
       let scrollSize = datafeedConfig.scroll_size;
-      if ($scope.ui.datafeed.scrollSizeDefault === datafeedConfig.scroll_size) {
+      if (datafeedConfig.scroll_size === undefined || $scope.ui.datafeed.scrollSizeDefault === datafeedConfig.scroll_size) {
         scrollSize = '';
       }
-
 
       clear($scope.types);
       _.each(datafeedConfig.types, (type) => {
@@ -631,6 +633,15 @@ function (
     } else {
       $scope.ui.isDatafeed = false;
       $scope.ui.tabs[2].hidden = false;
+    }
+  }
+
+  // set the analysis limits items, such as model memory limit
+  function setAnalysisLimitsUIText() {
+    if ($scope.job.analysis_limits !== undefined) {
+      if ($scope.job.analysis_limits.model_memory_limit !== undefined) {
+        $scope.ui.modelMemoryLimitText = $scope.job.analysis_limits.model_memory_limit;
+      }
     }
   }
 
@@ -686,6 +697,31 @@ function (
     }
   }
 
+  // create the analysis limits section of the job
+  // if there are no settings (e.g. model_memory_limit is not set) delete the
+  // analysis_limits section entirely
+  function getAnalysisLimitsSelection() {
+    const ui = $scope.ui;
+    const job = $scope.job;
+    if (ui.modelMemoryLimitText === '' || ui.modelMemoryLimitText === null || ui.modelMemoryLimitText === undefined) {
+      if (job.analysis_limits !== undefined) {
+        delete job.analysis_limits.model_memory_limit;
+
+        if (Object.keys(job.analysis_limits).length === 0) {
+          // analysis_limits section is empty, so delete it
+          delete job.analysis_limits;
+        }
+      }
+    }
+    else {
+      // create the analysis_limits section if it doesn't already exist
+      if (job.analysis_limits === undefined) {
+        job.analysis_limits = {};
+      }
+      job.analysis_limits.model_memory_limit = ui.modelMemoryLimitText;
+    }
+  }
+
   // create the datafeedConfig section of the job config
   function getDatafeedSelection() {
     if ($scope.ui.isDatafeed) {
@@ -733,12 +769,28 @@ function (
       const config = $scope.job.datafeed_config;
 
       config.query = query;
-      config.query_delay = ((df.queryDelayText === '' || df.queryDelayText === null || df.queryDelayText === undefined) ?
-        df.queryDelayDefault : df.queryDelayText);
-      config.frequency = ((df.frequencyText === '' || df.frequencyText === null || df.frequencyText === undefined) ?
-        df.frequencyDefault : df.frequencyText);
-      config.scroll_size = ((df.scrollSizeText === '' || df.scrollSizeText === null || df.scrollSizeText === undefined) ?
-        df.scrollSizeDefault : df.scrollSizeText);
+
+      if (df.queryDelayText === '' || df.queryDelayText === null || df.queryDelayText === undefined) {
+        delete config.query_delay;
+      }
+      else {
+        config.query_delay = df.queryDelayText;
+      }
+
+      if (df.frequencyText === '' || df.frequencyText === null || df.frequencyText === undefined) {
+        delete config.frequency;
+      }
+      else {
+        config.frequency = df.frequencyText;
+      }
+
+      if (df.scrollSizeText === '' || df.scrollSizeText === null || df.scrollSizeText === undefined) {
+        delete config.scroll_size;
+      }
+      else {
+        config.scroll_size = df.scrollSizeText;
+      }
+
       config.indices = indices;
       config.types = types;
     }
@@ -764,6 +816,7 @@ function (
 
   function createJSONText() {
     getDelimiterSelection();
+    getAnalysisLimitsSelection();
     getDatafeedSelection();
     getCustomUrlSelection();
     getCategorizationFilterSelection();

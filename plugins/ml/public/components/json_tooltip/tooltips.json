@@ -108,7 +108,7 @@
     "text": "Select to store results in a separate index for this job."
   },
   "new_job_model_memory_limit": {
-    "text": "Override the maximum memory the analytics are allowed to use."
+    "text": "An approximate limit for the amount of memory used by the analytical models."
   },
   "new_filter_ruleaction": {
     "text": "A string specifying the rule action. Initially, the only valid option is 'filter_results' but it provisions for expansion to actions like 'disable_modeling'."
