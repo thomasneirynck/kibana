@@ -62,6 +62,32 @@
     </div>
     <div ng-hide="newForecastDurationValid" class="validation-error">Invalid duration format</div>
 
+    <div ng-show="runStatus.forecastRequested === true" class="status-item-list">
+      <div class="status-item" ng-show="runStatus.jobOpening !== undefined">Opening job...
+        <i ng-show="runStatus.jobOpening === REQUEST_STATES.ERROR" aria-hidden="true" style="color:red;" class="fa fa-remove"></i>
+        <i ng-show="runStatus.jobOpening === REQUEST_STATES.WAITING" aria-hidden="true" class="fa fa-spinner fa-spin"></i>
+        <i ng-show="runStatus.jobOpening === REQUEST_STATES.DONE" aria-hidden="true" style="color:green;" class="fa fa-check"></i>
+      </div>
+
+      <div class="status-item" ng-show="runStatus.forecastProgress !== undefined">Running forecast...
+        <progressbar
+            ng-show="runStatus.forecastProgress >= 0"
+            ng-class="runStatus.forecastProgress < 3 ? 'empty-progress' : ''"
+            animate="true"
+            value="runStatus.forecastProgress"
+            type="success">
+          <b>{{runStatus.forecastProgress}}%</b>
+        </progressbar>
+        <i ng-show="runStatus.forecastProgress === REQUEST_STATES.ERROR" aria-hidden="true" style="color:red;" class="fa fa-remove"></i>
+      </div>
+
+      <div class="status-item" ng-show="runStatus.jobClosing !== undefined">Closing job...
+        <i ng-show="runStatus.jobClosing === REQUEST_STATES.ERROR" aria-hidden="true" style="color:red;" class="fa fa-remove"></i>
+        <i ng-show="runStatus.jobClosing === REQUEST_STATES.WAITING" aria-hidden="true" class="fa fa-spinner fa-spin"></i>
+        <i ng-show="runStatus.jobClosing === REQUEST_STATES.DONE" aria-hidden="true" style="color:green;" class="fa fa-check"></i>
+      </div>
+    </div>
+
     <hr />
 </div>
 

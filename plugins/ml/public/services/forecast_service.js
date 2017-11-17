@@ -347,4 +347,54 @@ module.service('mlForecastService', function ($q, es, ml) {
     return deferred.promise;
   };
 
+  // Gets stats for a forecast that has been run on the specified job.
+  // Returned response contains a stats property, including
+  // forecast_progress (a value from 0 to 1),
+  // and forecast_status ('finished' when complete) properties.
+  this.getForecastRequestStats = function (job, forecastId) {
+    const deferred = $q.defer();
+    const obj = {
+      success: true,
+      stats: {}
+    };
+
+    // Build the criteria to use in the bool filter part of the request.
+    // Add criteria for the job ID, result type and earliest time.
+    const filterCriteria = [{
+      query_string: {
+        query: 'result_type:model_forecast_request_stats',
+        analyze_wildcard: true
+      }
+    },
+    {
+      term: { job_id: job.job_id }
+    },
+    {
+      term: { forecast_id: forecastId }
+    }];
+
+    es.search({
+      index: ML_RESULTS_INDEX_PATTERN,
+      size: 1,
+      body: {
+        query: {
+          bool: {
+            filter: filterCriteria
+          }
+        }
+      }
+    })
+    .then((resp) => {
+      if (resp.hits.total !== 0) {
+        obj.stats = _.first(resp.hits.hits)._source;
+      }
+      deferred.resolve(obj);
+    })
+    .catch((resp) => {
+      deferred.reject(resp);
+    });
+
+    return deferred.promise;
+  };
+
 });

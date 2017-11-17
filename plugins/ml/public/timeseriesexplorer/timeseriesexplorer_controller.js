@@ -492,7 +492,6 @@ module.controller('MlTimeSeriesExplorerController', function (
           return {
             pscope: $scope,
             job: $scope.selectedJob,
-            detectorIndex: +$scope.detectorId,
             entities: $scope.chartDetails.entityData.entities,
             earliest: bounds.min.valueOf()
           };

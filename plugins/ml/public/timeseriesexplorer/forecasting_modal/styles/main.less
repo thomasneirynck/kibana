@@ -1,3 +1,6 @@
+@import (reference) "~ui/styles/theme";
+@import (reference) "~ui/styles/variables";
+
 .forecasting-modal {
   padding:20px;
 
@@ -45,6 +48,33 @@
         }
       }
     }
+  }
+
+  .status-item-list {
+    margin-bottom: 10px;
+
+    .status-item {
+      padding-top:8px;
+      font-weight: bold;
+    }
+  }
+
+  .progress {
+    background-color: @globalColorLightGray;
+    margin-bottom: 0px;
+
+    .progress-bar {
+      font-size: 12px;
+      line-height: 20px;
+    }
+
+    .progress-bar-success {
+      background-color: #0079a5;
+    }
+  }
+
+  .progress.empty-progress .progress-bar {
+    color: #2d2d2d;
   }
 
   .control-wrapper {
