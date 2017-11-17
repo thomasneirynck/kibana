@@ -82,7 +82,7 @@ uiModules.get('kibana')
       jobIds.forEach(async jobId => {
         const job = jobs.find(j => j._id === jobId);
         if (!job) {
-          reportingJobCompletionNotifications.remove(job.id);
+          reportingJobCompletionNotifications.remove(jobId);
           return;
         }
 
