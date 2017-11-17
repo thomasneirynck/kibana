@@ -41,7 +41,7 @@ const Title = styled.h3`
 `;
 
 const Description = styled.div`
-  max-width: 70%;
+  max-width: 80%;
 `;
 
 const CheckStatusButton = styled(KuiButton)`

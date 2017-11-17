@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { px, unit, units } from '../../../style/variables';
+import { px, unit, units, colors, fontSizes } from '../../../style/variables';
 
 const IntroductionWrapper = styled.div`
-  padding: ${px(unit)} 0;
-  margin-bottom: ${px(units.plus)};
+  padding: ${px(units.plus)};
+  margin-bottom: ${px(unit)};
 `;
 
 const Icon = styled.div`
@@ -19,10 +19,17 @@ const Icon = styled.div`
 
 const Title = styled.h1`
   display: inline-block;
+  margin: ${px(units.half)} 0;
 `;
 
 const Description = styled.div`
   margin: ${px(unit)} 0;
+`;
+
+const Subtitle = styled.h2`
+  font-size: ${fontSizes.large};
+  margin: ${px(units.half)} 0;
+  color: ${colors.gray1};
 `;
 
 function Introduction() {
@@ -30,12 +37,33 @@ function Introduction() {
     <IntroductionWrapper>
       <Icon />
       <Title>APM</Title>
+      <Subtitle>
+        APM (Application Performance Management) automatically collects in-depth
+        performance metrics and errors from inside your applications.
+      </Subtitle>
       <Description>
-        Elastic APM consists of three components - the Agents, the Server, and
-        the UI. The Agents are libraries in your application that run inside of
-        your application process. <br /> The Server processes data from agents
-        and stores the application data in Elasticsearch. The UI is this
-        dedicated Kibana app.
+        APM consists of three components - the Agents, the Server, and the UI:<br
+        />
+        <br />
+        <ul>
+          <li>
+            The Agents are libraries in your application that run inside of your
+            application process.
+          </li>
+          <li>
+            The Server processes data from agents and stores the application
+            data in Elasticsearch.
+          </li>
+          <li>
+            The UI is this dedicated Kibana APM plugin and customizable
+            dashboards.
+          </li>
+        </ul>
+        For more information,{' '}
+        <a href="https://www.elastic.co/guide/en/apm/get-started/current/index.html">
+          please see our documentation.
+        </a>{' '}
+        To get started, follow the steps below.
       </Description>
     </IntroductionWrapper>
   );
