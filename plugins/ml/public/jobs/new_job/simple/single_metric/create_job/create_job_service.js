@@ -216,6 +216,10 @@ module.service('mlSingleMetricJobService', function (
     job.analysis_config.detectors.push(dtr);
     job.analysis_config.bucket_span = formConfig.bucketSpan;
 
+    job.analysis_limits = {
+      model_memory_limit: formConfig.modelMemoryLimit
+    };
+
     delete job.data_description.field_delimiter;
     delete job.data_description.quote_character;
     delete job.data_description.time_format;

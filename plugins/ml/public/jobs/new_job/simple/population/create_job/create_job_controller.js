@@ -83,6 +83,7 @@ module
   const REFRESH_INTERVAL_MS = 100;
   const MAX_BUCKET_DIFF = 3;
   const METRIC_AGG_TYPE = 'metrics';
+  const DEFAULT_MODEL_MEMORY_LIMIT = '1024MB';
 
   let refreshCounter = 0;
 
@@ -197,7 +198,8 @@ module
     jobId: undefined,
     description: undefined,
     jobGroups: [],
-    useDedicatedIndex: false
+    useDedicatedIndex: false,
+    modelMemoryLimit: DEFAULT_MODEL_MEMORY_LIMIT
   };
 
   $scope.formChange = function (refreshCardLayout) {

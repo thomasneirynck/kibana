@@ -85,6 +85,7 @@ module
   const REFRESH_INTERVAL_MS = 100;
   const MAX_BUCKET_DIFF = 3;
   const METRIC_AGG_TYPE = 'metrics';
+  const DEFAULT_MODEL_MEMORY_LIMIT = '10MB';
 
   const jobProgressChecks = {
     25: false,
@@ -192,7 +193,8 @@ module
     description: undefined,
     jobGroups: [],
     useDedicatedIndex: false,
-    isSparseData: false
+    isSparseData: false,
+    modelMemoryLimit: DEFAULT_MODEL_MEMORY_LIMIT
   };
 
   // this is passed into the bucketspan estimator and  reference to the guessBucketSpan function is inserted

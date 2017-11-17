@@ -26,6 +26,7 @@ import angular from 'angular';
 import uiRoutes from 'ui/routes';
 import { checkLicenseExpired } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
+import { CalculateModelMemoryLimitProvider } from 'plugins/ml/jobs/new_job/simple/components/utils/calculate_memory_limit';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/components/utils/filter_agg_types';
 import { isJobIdValid } from 'plugins/ml/util/job_utils';
@@ -64,6 +65,7 @@ module
   timefilter.enabled = true;
   const msgs = mlMessageBarService;
   const MlTimeBuckets = Private(IntervalHelperProvider);
+  const calculateModelMemoryLimit = Private(CalculateModelMemoryLimitProvider);
 
   const stateDefaults = {
     mlJobSettings: {}
@@ -81,6 +83,7 @@ module
   const REFRESH_INTERVAL_MS = 100;
   const MAX_BUCKET_DIFF = 3;
   const METRIC_AGG_TYPE = 'metrics';
+  const DEFAULT_MODEL_MEMORY_LIMIT = '10MB';
 
   let refreshCounter = 0;
 
@@ -187,7 +190,7 @@ module
     splitField: undefined,
     influencerFields: [],
     firstSplitFieldName: undefined,
-    indexPattern: indexPattern,
+    indexPattern,
     query,
     filters,
     combinedQuery,
@@ -195,7 +198,8 @@ module
     description: undefined,
     jobGroups: [],
     useDedicatedIndex: false,
-    isSparseData: false
+    isSparseData: false,
+    modelMemoryLimit: DEFAULT_MODEL_MEMORY_LIMIT
   };
 
   $scope.formChange = function () {
@@ -224,9 +228,12 @@ module
         drawCards(resp.results.values);
         $scope.formChange();
       });
+
+      setModelMemoryLimit($scope.formConfig);
     } else {
       setFieldsChartStates(CHART_STATE.LOADING);
       $scope.ui.splitText = '';
+      $scope.formConfig.modelMemoryLimit = DEFAULT_MODEL_MEMORY_LIMIT;
       destroyCards();
       $scope.formChange();
     }
@@ -640,6 +647,23 @@ module
     $scope.jobState = JOB_STATE.STOPPING;
     mlMultiMetricJobService.stopDatafeed($scope.formConfig);
   };
+
+  function setModelMemoryLimit(formConfig) {
+    calculateModelMemoryLimit(
+      formConfig.indexPattern.title,
+      formConfig.splitField.name,
+      formConfig.query,
+      formConfig.timeField,
+      formConfig.start,
+      formConfig.end
+    )
+    .then((resp) => {
+      formConfig.modelMemoryLimit = resp;
+    })
+    .catch(() => {
+      formConfig.modelMemoryLimit = DEFAULT_MODEL_MEMORY_LIMIT;
+    });
+  }
 
   function createResultsUrl() {
     let jobIds = [`'${$scope.formConfig.jobId}'`];
