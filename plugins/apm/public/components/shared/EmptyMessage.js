@@ -20,8 +20,17 @@ function EmptyMessage({ heading, subheading, link }) {
       {heading || 'No data found.'}
       <HelpMessage>
         {subheading}
-        {' If you were expecting something more here, please refer to our '}
-        <a href={link || '#'}>Troubleshooting Guide</a>.
+        {
+          " Oops! You should try another time range. If that's no good, there's always the "
+        }
+        <a
+          href={
+            link ||
+            'https://www.elastic.co/guide/en/apm/get-started/6.0/index.html'
+          }
+        >
+          documentation
+        </a>.
       </HelpMessage>
     </Container>
   );
