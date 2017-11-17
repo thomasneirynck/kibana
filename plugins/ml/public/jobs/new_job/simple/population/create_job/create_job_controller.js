@@ -24,7 +24,7 @@ import moment from 'moment';
 import angular from 'angular';
 
 import uiRoutes from 'ui/routes';
-import { checkLicense } from 'plugins/ml/license/check_license';
+import { checkLicenseExpired } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/components/utils/filter_agg_types';
@@ -39,7 +39,7 @@ uiRoutes
 .when('/jobs/new_job/simple/population/create', {
   template,
   resolve: {
-    CheckLicense: checkLicense,
+    CheckLicense: checkLicenseExpired,
     privileges: checkCreateJobsPrivilege,
     indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index),
     savedSearch: (courier, $route, savedSearches) => savedSearches.get($route.current.params.savedSearchId)

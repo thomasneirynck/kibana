@@ -79,6 +79,8 @@ function (
 
   $scope.kbnUrl = kbnUrl;
   $scope.privileges = $route.current.locals.privileges;
+  $scope.licenseDetails = $route.current.locals.CheckLicense;
+
   $scope.jobStats = mlJobService.jobStats;
 
   // functions for job list buttons
@@ -628,6 +630,25 @@ function (
   $scope.$on('jobsUpdated', () => {
     refreshJobs();
   });
+
+  // create the text for the button's tooltips if the user's license has
+  // expired or if they don't have the privilege to press that button
+  $scope.createPermissionFailureMessage = function (privilegeType) {
+    let message = '';
+    if ($scope.licenseDetails.hasExpired) {
+      message = 'Your license has expired.';
+    } else if (privilegeType === 'canCreateJob') {
+      message = 'You do not have permission to create Machine Learning jobs.';
+    } else if (privilegeType === 'canStartStopDatafeed') {
+      message = 'You do not have permission to start or stop datafeeds.';
+    } else if (privilegeType === 'canUpdateJob') {
+      message = 'You do not have permission to edit jobs.';
+    } else if (privilegeType === 'canDeleteJob') {
+      message = 'You do not have permission to delete jobs.';
+    }
+
+    return `${message} Please contact your administrator.`;
+  };
 
 
   // create watch modal is triggered after the start datafeed modal,

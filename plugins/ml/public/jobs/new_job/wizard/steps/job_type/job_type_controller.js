@@ -19,7 +19,7 @@
  */
 
 import uiRoutes from 'ui/routes';
-import { checkLicense } from 'plugins/ml/license/check_license';
+import { checkLicenseExpired } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import template from './job_type.html';
 
@@ -27,7 +27,7 @@ uiRoutes
 .when('/jobs/new_job/step/job_type', {
   template,
   resolve: {
-    CheckLicense: checkLicense,
+    CheckLicense: checkLicenseExpired,
     privileges: checkCreateJobsPrivilege
   }
 });

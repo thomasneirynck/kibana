@@ -19,7 +19,7 @@
  */
 
 import uiRoutes from 'ui/routes';
-import { checkLicense } from 'plugins/ml/license/check_license';
+import { checkLicenseExpired } from 'plugins/ml/license/check_license';
 import { preConfiguredJobRedirect } from 'plugins/ml/jobs/new_job/wizard/preconfigured_job_redirect';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { getIndexPatterns } from 'plugins/ml/util/index_utils';
@@ -34,7 +34,7 @@ uiRoutes
 .when('/jobs/new_job/step/index_or_search', {
   template,
   resolve: {
-    CheckLicense: checkLicense,
+    CheckLicense: checkLicenseExpired,
     privileges: checkCreateJobsPrivilege,
     indexPatterns: getIndexPatterns,
     preConfiguredJobRedirect

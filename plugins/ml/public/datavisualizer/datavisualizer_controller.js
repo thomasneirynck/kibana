@@ -32,14 +32,14 @@ import { DecorateQueryProvider } from 'ui/courier/data_source/_decorate_query';
 import { ML_JOB_FIELD_TYPES, KBN_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
 import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
-import { checkLicense } from 'plugins/ml/license/check_license';
+import { checkLicenseExpired } from 'plugins/ml/license/check_license';
 import template from './datavisualizer.html';
 
 uiRoutes
 .when('/datavisualizer/view', {
   template,
   resolve: {
-    CheckLicense: checkLicense,
+    CheckLicense: checkLicenseExpired,
     indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index)
   }
 });
