@@ -21,6 +21,7 @@
 import uiRoutes from 'ui/routes';
 import { checkLicenseExpired } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
+import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import template from './job_type.html';
 
 uiRoutes
@@ -28,7 +29,9 @@ uiRoutes
   template,
   resolve: {
     CheckLicense: checkLicenseExpired,
-    privileges: checkCreateJobsPrivilege
+    privileges: checkCreateJobsPrivilege,
+    indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index),
+    savedSearch: (courier, $route, savedSearches) => savedSearches.get($route.current.params.savedSearchId)
   }
 });
 
@@ -44,18 +47,31 @@ function (
 
   timefilter.enabled = false; // remove time picker from top of page
 
-  const indexPatternId = $route.current.params.index;
-  const savedSearchId = $route.current.params.savedSearchId;
+  const {
+    indexPattern,
+    savedSearch } = createSearchItems($route);
+
+  $scope.pageTitleLabel = (savedSearch.id !== undefined) ?
+    `saved search ${savedSearch.title}` : `index pattern ${indexPattern.title}`;
 
   $scope.getCreateSimpleJobUrl = function (basePath) {
-    return indexPatternId !== undefined ? `${basePath}/create?index=${indexPatternId}` :
-        `${basePath}/create?savedSearchId=${savedSearchId}`;
+    return (savedSearch.id === undefined) ? `${basePath}/create?index=${indexPattern.id}` :
+        `${basePath}/create?savedSearchId=${savedSearch.id}`;
   };
 
   $scope.getCreateAdvancedJobUrl = function (basePath) {
-    // TODO - use the supplied index pattern or saved search in the Advanced Job page.
-    return indexPatternId !== undefined ? `${basePath}?index=${indexPatternId}` :
-        `${basePath}?savedSearchId=${savedSearchId}`;
+    return (savedSearch.id === undefined) ? `${basePath}?index=${indexPattern.id}` :
+        `${basePath}?savedSearchId=${savedSearch.id}`;
+  };
+
+  $scope.getDataRecognizerUrl = function (basePath) {
+    return (savedSearch.id === undefined) ? `${basePath}&index=${indexPattern.id}` :
+        `${basePath}?savedSearchId=${savedSearch.id}`;
+  };
+
+  $scope.getDataVisualizerUrl = function (basePath) {
+    return (savedSearch.id === undefined) ? `${basePath}?index=${indexPattern.id}` :
+        `${basePath}?savedSearchId=${savedSearch.id}`;
   };
 
 });

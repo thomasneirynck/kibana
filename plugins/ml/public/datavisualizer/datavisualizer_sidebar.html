@@ -4,16 +4,12 @@
   </div>
 
   <div class="create-job-content">
-    Select the metrics you want to analyze in a job and
-    optionally a field to split the analysis by.
-
-    <div class="create-job-fields">
-      <div><span class="field-emphasis">Metrics:</span></div>
-      <div><span class="field-emphasis">Split by:</span></div>
-    </div>
+    Use the Advanced job wizard to create a job to find anomalies in this data.
 
     <div class="button-container">
-      <button aria-label="Create job" ng-disabled="true" type="button" class="kuiButton kuiButton--primary">
+      <button aria-label="Create job" type="button"
+        class="kuiButton kuiButton--primary"
+        ng-click="createJob()">
         Create job
       </button>
     </div>

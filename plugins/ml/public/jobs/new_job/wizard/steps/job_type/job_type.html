@@ -1,43 +1,152 @@
 <ml-nav-menu name="new_job"></ml-nav-menu>
-<ml-new-job>
+<ml-new-job class="job-type-gallery kuiView">
   <ml-message-bar></ml-message-bar>
-  <div ng-controller="MlNewJobStepJobType" class="container">
+  <div ng-controller="MlNewJobStepJobType">
     <!-- Presents the various options for creating a job -->
-    <div class="new-job-gallery">
-      <div>
-        <h1 class='kuiTitle kuiVerticalRhythm kuiVerticalRhythm--medium'>Select job type</h1>
-        <a class="new-job-gallery-button" ng-href="{{getCreateSimpleJobUrl('#jobs/new_job/simple/single_metric')}}">
-          <div class="job-type-icon">
-            <i aria-hidden="true" class="fa fa-area-chart"></i>
-          </div>
-          <div class='title'>Create a single metric job</div>
-          <div class='sub-title'>Based on a kibana index pattern or saved search</div>
-        </a>
 
-        <a class="new-job-gallery-button" ng-href="{{getCreateSimpleJobUrl('#jobs/new_job/simple/multi_metric')}}">
-          <div class="job-type-icon">
-            <i aria-hidden="true" class="fa fa-area-chart"></i>
-          </div>
-          <div class='title'>Create a multi metric job</div>
-          <div class='sub-title'>Based on a kibana index pattern or saved search</div>
-        </a>
+    <div class="kuiViewContent">
 
-        <a class="new-job-gallery-button" ng-href="{{getCreateSimpleJobUrl('#jobs/new_job/simple/population')}}">
-          <div class="job-type-icon">
-            <i aria-hidden="true" class="fa fa-area-chart"></i>
+      <div class="kuiViewContentItem kuiVerticalRhythmXLarge">
+        <div class="kuiFlexGroup kuiFlexGroup--gutterLarge kuiFlexGroup--alignItemsEnd kuiFlexGroup--justifyContentSpaceBetween kuiVerticalRhythmSmall">
+          <div class="kuiFlexItem">
+            <h1 class="kuiTitle">Create a job from the {{pageTitleLabel}}</h1>
           </div>
-          <div class='title'>Create a population job</div>
-          <div class='sub-title'>Based on a kibana index pattern or saved search</div>
-        </a>
-
-        <a class="new-job-gallery-button" ng-href="{{getCreateAdvancedJobUrl('#jobs/new_job/advanced')}}">
-          <div class="job-type-icon">
-            <i aria-hidden="true" class="fa fa-cog"></i>
-          </div>
-          <div class='title'>Create an advanced job</div>
-          <div class='sub-title'>Advanced configuration options for creating a job</div>
-        </a>
+        </div>
       </div>
+
+      <div ng-show="false" class="kuiViewContentItem kuiVerticalRhythmXLarge">
+        <h3 class="kuiSubTitle kuiVerticalRhythm">Use a supplied configuration</h3>
+        <p class="kuiSubText">
+          The fields in your data have been recognized as matching known configurations.
+          Use one of these turn-key configurations to create Machine Learning jobs and Kibana dashboards
+          which have been specially built to detect anomalies in these data sets.
+        </p>
+
+        <div class="kuiFlexGroup kuiFlexGroup--gutterLarge kuiVerticalRhythm">
+
+          <div class="kuiFlexGrid kuiFlexGrid--gutterLarge kuiVerticalRhythmSmall top-features">
+
+            <div class="kuiFlexItem kuiPanel options-panel">
+              <div class="kuiFlexGroup kuiFlexGroup--gutterLarge">
+                <div class="kuiFlexItem kuiFlexItem--flexGrowZero">
+                  <i aria-hidden="true" class="synopsisIcon fa fa-cubes"></i>
+                </div>
+                <div class="kuiFlexItem synopsis">
+                  <h4 class="kuiTextTitle synopsisTitle">
+                    <a ng-href="{{getDataRecognizerUrl('#/jobs/new_job/simple/recognize/create?id=nginx')}}" class="kuiLink">NGINX</a>
+                  </h4>
+                  <p class="kuiText kuiSubduedText">
+                    Creates Machine Learning jobs and dashboards fine-tuned for NGINX data.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <div class="kuiViewContentItem kuiVerticalRhythmXLarge">
+        <h3 class="kuiSubTitle kuiVerticalRhythm">Use a wizard</h3>
+        <p class="kuiSubText">
+          Use one of the wizards to create a Machine Learning job to find anomalies in your data.
+        </p>
+
+        <div class="kuiFlexGroup kuiFlexGroup--gutterLarge kuiVerticalRhythm">
+
+          <div class="kuiFlexGrid kuiFlexGrid--gutterLarge kuiVerticalRhythmSmall top-features">
+
+            <div class="kuiFlexItem kuiPanel options-panel">
+              <div class="kuiFlexGroup kuiFlexGroup--gutterLarge">
+                <div class="kuiFlexItem kuiFlexItem--flexGrowZero">
+                  <i aria-hidden="true" class="synopsisIcon fa fa-line-chart"></i>
+                </div>
+                <div class="kuiFlexItem synopsis">
+                  <h4 class="kuiTextTitle synopsisTitle">
+                    <a ng-href="{{getCreateSimpleJobUrl('#jobs/new_job/simple/single_metric')}}" class="kuiLink">Single metric</a>
+                  </h4>
+                  <p class="kuiText kuiSubduedText">Detect anomalies in a single time series.</p>
+                </div>
+              </div>
+            </div>
+            <div class="kuiFlexItem kuiPanel options-panel">
+              <div class="kuiFlexGroup kuiFlexGroup--gutterLarge">
+                <div class="kuiFlexItem kuiFlexItem--flexGrowZero">
+                  <i aria-hidden="true" class="synopsisIcon fa fa-area-chart"></i>
+                </div>
+                <div class="kuiFlexItem synopsis">
+                  <h4 class="kuiTextTitle synopsisTitle">
+                    <a ng-href="{{getCreateSimpleJobUrl('#jobs/new_job/simple/multi_metric')}}" class="kuiLink">Multi metric</a>
+                  </h4>
+                  <p class="kuiText kuiSubduedText">Find anomalies in multiple metrics by splitting time series by a categorical field.</p>
+                </div>
+              </div>
+            </div>
+            <div class="kuiFlexItem kuiPanel options-panel">
+              <div class="kuiFlexGroup kuiFlexGroup--gutterLarge">
+                <div class="kuiFlexItem kuiFlexItem--flexGrowZero">
+                  <i aria-hidden="true" class="synopsisIcon fa fa-users"></i>
+                </div>
+                <div class="kuiFlexItem synopsis">
+                  <h4 class="kuiTextTitle synopsisTitle">
+                    <a ng-href="{{getCreateSimpleJobUrl('#jobs/new_job/simple/population')}}" class="kuiLink">Population</a>
+                  </h4>
+                  <p class="kuiText kuiSubduedText">Detect unusual behaviors by a member of a population.</p>
+                </div>
+              </div>
+            </div>
+            <div class="kuiFlexItem kuiPanel options-panel">
+              <div class="kuiFlexGroup kuiFlexGroup--gutterLarge">
+                <div class="kuiFlexItem kuiFlexItem--flexGrowZero">
+                  <i aria-hidden="true" class="synopsisIcon fa fa-cog"></i>
+                </div>
+                <div class="kuiFlexItem synopsis">
+                  <h4 class="kuiTextTitle synopsisTitle">
+                    <a ng-href="{{getCreateAdvancedJobUrl('#jobs/new_job/advanced')}}" class="kuiLink">Advanced</a>
+                  </h4>
+                  <p class="kuiText kuiSubduedText">Use the full range of options to create a job for advanced use cases.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <div class="kuiViewContentItem kuiVerticalRhythmXLarge">
+        <h3 class="kuiSubTitle kuiVerticalRhythm">Learn more about your data</h3>
+        <p class="kuiSubText">
+          If you're not sure what type of job to create, first explore the fields and metrics in your data.
+        </p>
+
+        <div class="kuiFlexGroup kuiFlexGroup--gutterLarge kuiVerticalRhythm">
+
+          <div class="kuiFlexGrid kuiFlexGrid--gutterLarge kuiVerticalRhythmSmall top-features">
+
+            <div class="kuiFlexItem kuiPanel options-panel">
+              <div class="kuiFlexGroup kuiFlexGroup--gutterLarge">
+                <div class="kuiFlexItem kuiFlexItem--flexGrowZero">
+                  <i aria-hidden="true" class="synopsisIcon fa fa-eye"></i>
+                </div>
+                <div class="kuiFlexItem synopsis">
+                  <h4 class="kuiTextTitle synopsisTitle">
+                    <a ng-href="{{getDataVisualizerUrl('#jobs/new_job/datavisualizer')}}" class="kuiLink">Data Visualizer</a>
+                  </h4>
+                  <p class="kuiText kuiSubduedText">
+                    Use the Data Visualizer tool to learn more about your data and identify the fields you want to analyze in a Machine Learning job.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
     </div>
+
   </div>
 </ml-new-job>

@@ -19,10 +19,11 @@
   */
 
 import _ from 'lodash';
-import 'ui/courier';
+import rison from 'rison-node';
 
 import 'plugins/kibana/visualize/styles/main.less';
 
+import 'ui/courier';
 import chrome from 'ui/chrome';
 import uiRoutes from 'ui/routes';
 import { notify } from 'ui/notify';
@@ -33,14 +34,16 @@ import { ML_JOB_FIELD_TYPES, KBN_FIELD_TYPES } from 'plugins/ml/../common/consta
 import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { checkLicenseExpired } from 'plugins/ml/license/check_license';
+import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import template from './datavisualizer.html';
 
 uiRoutes
-.when('/datavisualizer/view', {
+.when('/jobs/new_job/datavisualizer', {
   template,
   resolve: {
     CheckLicense: checkLicenseExpired,
-    indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index)
+    indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index),
+    savedSearch: (courier, $route, savedSearches) => savedSearches.get($route.current.params.savedSearchId)
   }
 });
 
@@ -52,13 +55,16 @@ module
   $scope,
   $route,
   $timeout,
+  $window,
   Private,
   timefilter,
   AppState,
   ml) {
 
   timefilter.enabled = true;
-  const indexPattern = $route.current.locals.indexPattern;
+  const {
+    indexPattern,
+    query } = createSearchItems($route);
 
   // List of system fields we don't want to display.
   // TODO - are we happy to ignore these fields?
@@ -86,14 +92,23 @@ module
   $scope.fieldFilterIcon = 0;
   $scope.fieldFilter = '';
 
-  // Check for a saved query in the AppState.
+  // Check for a saved query in the AppState or via a savedSearchId in the URL.
   $scope.searchQueryText = '';
   if (_.has($scope.appState, 'query')) {
     // Currently only support lucene syntax.
     if (_.get($scope.appState, 'query.language') === 'lucene') {
       $scope.searchQueryText = _.get($scope.appState, 'query.query', '');
     }
+  } else {
+    // Use the query built from the savedSearchId supplied in the URL.
+    // If no savedSearchId, the query will default to '*'.
+    // TODO - when filtering is supported, use the filters part too.
+    const queryString = _.get(query, 'query_string.query', '');
+    if (queryString !== '*') {
+      $scope.searchQueryText = queryString;
+    }
   }
+
   const decorateQuery = Private(DecorateQueryProvider);
   $scope.searchQuery = buildSearchQuery();
 
@@ -226,10 +241,25 @@ module
     createNonMetricCards();
   };
 
+  $scope.createJob = function () {
+    // TODO - allow the user to select metrics and fields and use
+    // the selection to open the appropriate job wizard (single, multi-metric etc).
+    // For now just open the Advanced wizard, passing in the index pattern ID.
+    const _a = rison.encode({
+      query: {
+        language: 'lucene',
+        query: $scope.searchQueryText
+      }
+    });
+
+    const path = `${$scope.urlBasePath}/app/ml#/jobs/new_job/advanced?index=${$scope.indexPattern}&_a=${_a}`;
+    $window.open(path, '_self');
+  };
+
   function buildSearchQuery() {
-    const query = luceneStringToDsl($scope.searchQueryText);
-    decorateQuery(query);
-    return query;
+    const searchQuery = luceneStringToDsl($scope.searchQueryText);
+    decorateQuery(searchQuery);
+    return searchQuery;
   }
 
   function saveAppState() {

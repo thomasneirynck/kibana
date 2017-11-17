@@ -44,9 +44,11 @@ module.directive('mlNavMenu', function () {
       const crumbNames = {
         jobs: { label: 'Job Management', url: '#/jobs' },
         new_job: { label: 'Create New Job', url: '#/jobs/new_job' },
-        single_metric: { label: 'Single Metric Job', url: '#/jobs/new_job/simple/single_metric' },
-        multi_metric: { label: 'Multi Metric job', url: '#/jobs/new_job/simple/multi_metric' },
-        advanced: { label: 'Advanced Job Configuration', url: '#/jobs/new_job/advanced' },
+        single_metric: { label: 'Single Metric Job', url: '' },
+        multi_metric: { label: 'Multi Metric job', url: '' },
+        population: { label: 'Population job', url: '' },
+        advanced: { label: 'Advanced Job Configuration', url: '' },
+        datavisualizer: { label: 'Data Visualizer', url: '' },
         explorer: { label: 'Anomaly Explorer', url: '#/explorer' },
         timeseriesexplorer: { label: 'Single Metric Viewer', url: '#/timeseriesexplorer' },
       };
