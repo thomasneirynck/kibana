@@ -45,7 +45,7 @@ export class Charts extends Component {
   };
 
   render() {
-    const { isEmpty, responseTimeSeries, rpmSeries } = this.props;
+    const { isEmpty, responseTimeSeries, rpmSeries, urlParams } = this.props;
 
     return (
       <ChartsWrapper>
@@ -65,7 +65,7 @@ export class Charts extends Component {
         <Chart>
           <CustomPlot
             isEmpty={isEmpty}
-            chartTitle="Requests per minute"
+            chartTitle={getTpmTitle(urlParams.transactionType)}
             series={rpmSeries}
             onHover={this.onHover}
             onMouseLeave={this.onMouseLeave}
@@ -77,6 +77,10 @@ export class Charts extends Component {
       </ChartsWrapper>
     );
   }
+}
+
+function getTpmTitle(type) {
+  return type === 'request' ? 'Requests per minute' : 'Transactions per minute';
 }
 
 export default Charts;

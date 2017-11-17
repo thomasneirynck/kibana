@@ -17,6 +17,10 @@ const Divider = styled.div`
   vertical-align: middle;
 `;
 
+function getLabel(type) {
+  return type === 'request' ? 'Request' : type;
+}
+
 function TabNavigation({ urlParams, location, app }) {
   const { appName, transactionType } = urlParams;
   const errorsSelected = location.pathname.includes('/errors');
@@ -31,7 +35,7 @@ function TabNavigation({ urlParams, location, app }) {
             selected={transactionType === type && !errorsSelected}
             key={type}
           >
-            {type}
+            {getLabel(type)}
           </Tab>
         );
       })}
