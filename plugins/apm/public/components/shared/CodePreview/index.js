@@ -6,7 +6,6 @@ import {
   px,
   colors,
   fontFamilyCode,
-  fontSizes,
   borderRadius
 } from '../../../style/variables';
 
@@ -25,10 +24,9 @@ registerLanguage('python', python);
 
 const FileDetails = styled.div`
   color: ${colors.gray3};
-  padding: ${px(units.quarter)} ${px(units.half)};
+  padding: ${px(units.half)};
   border-bottom: 1px solid ${colors.gray4};
   border-radius: ${borderRadius} ${borderRadius} 0 0;
-  font-size: ${fontSizes.small};
 `;
 
 const FileDetail = styled.span`
@@ -45,7 +43,6 @@ const Container = styled.div`
   border: 1px solid ${colors.gray4};
   border-radius: ${borderRadius};
   background: ${props => (props.isLibraryFrame ? colors.white : colors.gray5)};
-  font-size: ${fontSizes.small};
 
   ${FileDetails} {
     ${props => (!props.hasContext ? 'border-bottom: 0' : null)};
@@ -83,7 +80,7 @@ const LineNumber = styled.div`
   position: relative;
   min-width: ${px(units.eighth * 21)};
   padding-left: ${px(units.half)};
-  padding-right: ${px(units.half)};
+  padding-right: ${px(units.quarter)};
   color: ${colors.gray3};
   line-height: ${px(unit + units.eighth)};
   text-align: right;
