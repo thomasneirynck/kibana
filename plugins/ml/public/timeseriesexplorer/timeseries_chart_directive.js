@@ -128,12 +128,12 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       unhighlightFocusChartAnomaly(record);
     };
 
-    mlAnomaliesTableService.addAnomalyRecordMouseenterListener(tableRecordMousenterListener);
-    mlAnomaliesTableService.addAnomalyRecordMouseleaveListener(tableRecordMouseleaveListener);
+    mlAnomaliesTableService.anomalyRecordMouseenter.watch(tableRecordMousenterListener);
+    mlAnomaliesTableService.anomalyRecordMouseleave.watch(tableRecordMouseleaveListener);
 
     element.on('$destroy', () => {
-      mlAnomaliesTableService.removeAnomalyRecordMouseenterListener(tableRecordMousenterListener);
-      mlAnomaliesTableService.removeAnomalyRecordMouseleaveListener(tableRecordMouseleaveListener);
+      mlAnomaliesTableService.anomalyRecordMouseenter.unwatch(tableRecordMousenterListener);
+      mlAnomaliesTableService.anomalyRecordMouseleave.unwatch(tableRecordMouseleaveListener);
       resizeChecker.destroy();
       scope.$destroy();
     });

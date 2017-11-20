@@ -41,10 +41,10 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
       }
     }
 
-    mlExplorerDashboardService.addSwimlaneDataChangeListener(swimlaneDataChangeListener);
+    mlExplorerDashboardService.swimlaneDataChange.watch(swimlaneDataChangeListener);
 
     element.on('$destroy', () => {
-      mlExplorerDashboardService.removeSwimlaneDataChangeListener(swimlaneDataChangeListener);
+      mlExplorerDashboardService.swimlaneDataChange.unwatch(swimlaneDataChangeListener);
       scope.$destroy();
     });
 
@@ -336,7 +336,7 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
       scope.appState.mlExplorerSwimlane.selectedTime = time;
       scope.appState.save();
 
-      mlExplorerDashboardService.fireSwimlaneCellClick({
+      mlExplorerDashboardService.swimlaneCellClick.changed({
         fieldName: scope.swimlaneData.fieldName,
         laneLabel: laneLabel,
         time: time,
@@ -355,7 +355,7 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
       delete scope.appState.mlExplorerSwimlane.selectedTime;
       scope.appState.save();
 
-      mlExplorerDashboardService.fireSwimlaneCellClick({});
+      mlExplorerDashboardService.swimlaneCellClick.changed({});
     }
   }
 

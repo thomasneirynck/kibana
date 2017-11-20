@@ -31,6 +31,9 @@ export default () => {
         if (index > -1) {
           listeners.splice(index, 1);
         }
+      },
+      unwatchAll() {
+        listeners.splice(0);
       }
     };
   };

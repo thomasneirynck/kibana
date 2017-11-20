@@ -537,11 +537,11 @@ module.controller('MlTimeSeriesExplorerController', function (
     }
   };
 
-  mlAnomaliesTableService.addFilterChangeListener(filterChangeListener);
+  mlAnomaliesTableService.filterChange.watch(filterChangeListener);
 
   $scope.$on('$destroy', () => {
     refreshWatcher.cancel();
-    mlAnomaliesTableService.removeFilterChangeListener(filterChangeListener);
+    mlAnomaliesTableService.filterChange.unwatch(filterChangeListener);
   });
 
   // When inside a dashboard in the ML plugin, listen for changes to job selection.

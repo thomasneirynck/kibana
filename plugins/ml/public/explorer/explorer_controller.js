@@ -155,7 +155,7 @@ module.controller('MlExplorerController', function (
       $scope.anomalyChartRecords = resp.records;
       console.log('Explorer anomaly charts data set:', $scope.anomalyChartRecords);
 
-      mlExplorerDashboardService.fireAnomalyDataChange($scope.anomalyChartRecords, earliestMs, latestMs);
+      mlExplorerDashboardService.anomalyDataChange.changed($scope.anomalyChartRecords, earliestMs, latestMs);
     });
   };
 
@@ -262,8 +262,8 @@ module.controller('MlExplorerController', function (
     $scope.swimlaneWidth = getSwimlaneContainerWidth();
     $scope.$apply();
 
-    mlExplorerDashboardService.fireSwimlaneDataChange('overall');
-    mlExplorerDashboardService.fireSwimlaneDataChange('viewBy');
+    mlExplorerDashboardService.swimlaneDataChange.changed('overall');
+    mlExplorerDashboardService.swimlaneDataChange.changed('viewBy');
   }
 
   // Refresh the data when the dashboard filters are updated.
@@ -319,10 +319,10 @@ module.controller('MlExplorerController', function (
     }
   };
 
-  mlExplorerDashboardService.addSwimlaneCellClickListener(swimlaneCellClickListener);
+  mlExplorerDashboardService.swimlaneCellClick.watch(swimlaneCellClickListener);
 
   $scope.$on('$destroy', () => {
-    mlExplorerDashboardService.removeSwimlaneCellClickListener(swimlaneCellClickListener);
+    mlExplorerDashboardService.swimlaneCellClick.unwatch(swimlaneCellClickListener);
     refreshWatcher.cancel();
     // Cancel listening for updates to the global nav state.
     navListener();
@@ -465,7 +465,7 @@ module.controller('MlExplorerController', function (
         // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
         $timeout(() => {
           $scope.$broadcast('render');
-          mlExplorerDashboardService.fireSwimlaneDataChange('overall');
+          mlExplorerDashboardService.swimlaneDataChange.changed('overall');
         }, 0);
       }
     }
@@ -522,7 +522,7 @@ module.controller('MlExplorerController', function (
       // Fire event to indicate swimlane data has changed.
       // Need to use $timeout to ensure this happens after the child scope is updated with the new data.
       $timeout(() => {
-        mlExplorerDashboardService.fireSwimlaneDataChange('viewBy');
+        mlExplorerDashboardService.swimlaneDataChange.changed('viewBy');
       }, 0);
     }
 
@@ -613,7 +613,7 @@ module.controller('MlExplorerController', function (
     const bounds = timefilter.getActiveBounds();
     const earliestMs = bounds.min.valueOf();
     const latestMs = bounds.max.valueOf();
-    mlExplorerDashboardService.fireAnomalyDataChange($scope.anomalyChartRecords, earliestMs, latestMs);
+    mlExplorerDashboardService.anomalyDataChange.changed($scope.anomalyChartRecords, earliestMs, latestMs);
     $scope.loadAnomaliesTable(jobIds, [], earliestMs, latestMs);
   }
 

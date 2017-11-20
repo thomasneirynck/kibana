@@ -235,10 +235,10 @@ module.controller('MlExplorerChartsContainerController', function ($scope, $inje
       });
   };
 
-  mlExplorerDashboardService.addAnomalyDataChangeListener(anomalyDataChangeListener);
+  mlExplorerDashboardService.anomalyDataChange.watch(anomalyDataChangeListener);
 
   $scope.$on('$destroy', () => {
-    mlExplorerDashboardService.removeAnomalyDataChangeListener(anomalyDataChangeListener);
+    mlExplorerDashboardService.anomalyDataChange.unwatch(anomalyDataChangeListener);
   });
 
   function processRecordsForDisplay(anomalyRecords) {

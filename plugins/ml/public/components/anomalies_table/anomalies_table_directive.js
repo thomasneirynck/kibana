@@ -385,7 +385,7 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
       };
 
       scope.filter = function (field, value, operator) {
-        mlAnomaliesTableService.fireFilterChange(field, value, operator);
+        mlAnomaliesTableService.filterChange.changed(field, value, operator);
       };
 
       function updateTableData() {
@@ -755,13 +755,13 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
         rowScope.mouseenterRow = function () {
           // Publish that a record is being hovered over, so that the corresponding marker
           // in the model plot chart can be highlighted.
-          mlAnomaliesTableService.fireAnomalyRecordMouseenter(record);
+          mlAnomaliesTableService.anomalyRecordMouseenter.changed(record);
         };
 
         rowScope.mouseleaveRow = function () {
           // Publish that a record is no longer being hovered over, so that the corresponding marker in the
           // model plot chart can be unhighlighted.
-          mlAnomaliesTableService.fireAnomalyRecordMouseleave(record);
+          mlAnomaliesTableService.anomalyRecordMouseleave.changed(record);
         };
 
         // Create a table row with the following columns:
