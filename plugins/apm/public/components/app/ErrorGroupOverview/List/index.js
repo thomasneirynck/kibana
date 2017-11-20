@@ -54,6 +54,7 @@ class List extends Component {
         searchableFields={['groupId', 'culprit', 'message']}
         items={items}
         emptyMessageHeading="No errors in the selected time range."
+        resultsLimitOrder="latest occurrence in group"
         renderHead={renderHead}
         renderBody={renderBody}
       />

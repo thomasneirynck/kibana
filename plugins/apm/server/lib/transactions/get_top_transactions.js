@@ -40,7 +40,7 @@ export async function getTopTransactions({ transactionType, appName, setup }) {
           terms: {
             field: `${TRANSACTION_NAME}.keyword`,
             order: { avg: 'desc' },
-            size: 10000
+            size: 100
           },
           aggs: {
             sample: {

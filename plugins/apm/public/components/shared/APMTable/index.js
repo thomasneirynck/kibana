@@ -5,9 +5,7 @@ import {
   KuiTable,
   KuiControlledTable,
   KuiToolBar,
-  KuiToolBarSection,
   KuiToolBarSearchBox,
-  KuiPager,
   KuiTableBody,
   KuiTableHeader,
   KuiTableHeaderCell,
@@ -15,6 +13,7 @@ import {
   KuiToolBarFooter,
   KuiToolBarFooterSection
 } from 'ui_framework/components';
+import { colors, fontSizes } from '../../../style/variables';
 
 import EmptyMessage from '../EmptyMessage';
 
@@ -23,6 +22,11 @@ export const AlignmentKuiTableHeaderCell = styled(KuiTableHeaderCell)`
     justify-content: flex-end;
   }
 `; // Fixes alignment for sortable KuiTableHeaderCell children
+
+const ResultsLimitMessage = styled.div`
+  font-size: ${fontSizes.small};
+  color: ${colors.gray3};
+`;
 
 class APMTable extends Component {
   state = { searchQuery: '' };
@@ -35,6 +39,8 @@ class APMTable extends Component {
     const {
       searchableFields = [],
       items = [],
+      resultsLimit = 100,
+      resultsLimitOrder = '',
       emptyMessageHeading,
       renderHead,
       renderBody
@@ -53,17 +59,23 @@ class APMTable extends Component {
       return isEmpty || isMatch;
     });
 
-    const Pagination = (
-      <KuiPager
-        startNumber={0} // TODO: Change back to variable once pagination is implemented.
-        endNumber={filteredItems.length}
-        totalItems={filteredItems.length}
-        hasNextPage={false}
-        hasPreviousPage={false}
-        onNextPage={() => {}}
-        onPreviousPage={() => {}}
-      />
-    );
+    const ConditionalFooter = () => {
+      if (items.length !== resultsLimit) {
+        return null;
+      }
+
+      return (
+        <KuiToolBarFooter>
+          <KuiToolBarFooterSection>
+            <ResultsLimitMessage>
+              Showing first {items.length} results{resultsLimitOrder &&
+                ', ordered by ' + resultsLimitOrder}
+            </ResultsLimitMessage>
+          </KuiToolBarFooterSection>
+          <KuiToolBarFooterSection />
+        </KuiToolBarFooter>
+      );
+    };
 
     return (
       <KuiControlledTable>
@@ -73,8 +85,6 @@ class APMTable extends Component {
             onFilter={this.onFilter}
             placeholder="Filter…"
           />
-
-          <KuiToolBarSection>{Pagination}</KuiToolBarSection>
         </KuiToolBar>
 
         {filteredItems.length === 0 && (
@@ -90,9 +100,7 @@ class APMTable extends Component {
           </KuiTable>
         )}
 
-        <KuiToolBarFooter>
-          <KuiToolBarFooterSection>{Pagination}</KuiToolBarFooterSection>
-        </KuiToolBarFooter>
+        <ConditionalFooter />
       </KuiControlledTable>
     );
   }

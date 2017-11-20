@@ -12,6 +12,7 @@ export async function getErrors({ appName, setup }) {
   const params = {
     index: config.get('xpack.apm.indexPattern'),
     body: {
+      size: 100,
       query: {
         bool: {
           must: [

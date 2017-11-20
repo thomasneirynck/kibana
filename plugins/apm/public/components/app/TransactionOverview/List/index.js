@@ -110,6 +110,7 @@ class List extends Component {
         searchableFields={['name']}
         items={items}
         emptyMessageHeading="No transactions in the selected time range."
+        resultsLimitOrder="response time"
         renderHead={renderHead}
         renderBody={renderBody}
       />

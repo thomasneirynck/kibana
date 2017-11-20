@@ -32,7 +32,7 @@ export async function getApps({ setup }) {
         apps: {
           terms: {
             field: APP_NAME,
-            size: 100
+            size: 500
           },
           aggs: {
             avg: {

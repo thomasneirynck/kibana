@@ -48,6 +48,7 @@ class List extends Component {
 
     return (
       <APMTable
+        resultsLimit={500}
         searchableFields={['appName', 'agentName']}
         items={items}
         emptyMessageHeading="No apps with data in the selected time range."
