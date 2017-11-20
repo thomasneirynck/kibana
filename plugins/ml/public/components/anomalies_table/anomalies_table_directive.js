@@ -34,6 +34,7 @@ import {
 } from 'plugins/ml/util/anomaly_utils';
 import template from './anomalies_table.html';
 
+import 'plugins/ml/components/controls';
 import 'plugins/ml/components/paginated_table';
 import 'plugins/ml/filters/format_value';
 import 'plugins/ml/filters/metric_change_description';
@@ -47,8 +48,18 @@ import openRowArrow from 'plugins/ml/components/paginated_table/open.html';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
-  mlJobService, mlESMappingService, mlResultsService, mlAnomaliesTableService, formatValueFilter, AppState) {
+module.directive('mlAnomaliesTable', function (
+  $window,
+  $route,
+  timefilter,
+  mlJobService,
+  mlESMappingService,
+  mlResultsService,
+  mlAnomaliesTableService,
+  mlSelectIntervalService,
+  mlSelectSeverityService,
+  formatValueFilter) {
+
   return {
     restrict: 'E',
     scope: {
@@ -59,49 +70,7 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
     },
     template,
     link: function (scope, element) {
-      const appState = new AppState();
-      appState.fetch();
-
-      scope.thresholdOptions = [
-        { display: 'critical', val: 75 },
-        { display: 'major', val: 50 },
-        { display: 'minor', val: 25 },
-        { display: 'warning', val: 0 }];
-
-      scope.intervalOptions = [
-        { display: 'Auto', val: 'auto' },
-        { display: '1 hour', val: 'hour' },
-        { display: '1 day', val: 'day' },
-        { display: 'Show all', val: 'second' }];
-
-      // Store the threshold and aggregation interval in the AppState so that they
-      // are restored on page refresh.
-      if (appState.mlAnomaliesTable === undefined) {
-        appState.mlAnomaliesTable = {};
-      }
-
-      let thresholdValue = _.get(appState, 'mlAnomaliesTable.thresholdValue', 0);
-      let thresholdOption = _.findWhere(scope.thresholdOptions, { val: thresholdValue });
-      if (thresholdOption === undefined) {
-        // Attempt to set value in URL which doesn't map to one of the options.
-        thresholdOption = _.findWhere(scope.thresholdOptions, { val: 0 });
-        thresholdValue = 0;
-      }
-      scope.threshold = thresholdOption;
-
-      let intervalValue = _.get(appState, 'mlAnomaliesTable.intervalValue', 'auto');
-      let intervalOption = _.findWhere(scope.intervalOptions, { val: intervalValue });
-      if (intervalOption === undefined) {
-        // Attempt to set value in URL which doesn't map to one of the options.
-        intervalOption = _.findWhere(scope.intervalOptions, { val: 'auto' });
-        intervalValue = 'auto';
-      }
-      scope.interval = intervalOption;
       scope.momentInterval = 'second';
-
-      appState.mlAnomaliesTable.thresholdValue = thresholdValue;
-      appState.mlAnomaliesTable.intervalValue = intervalValue;
-      appState.save();
 
       scope.table = {};
       scope.table.perPage = 25;
@@ -112,30 +81,20 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
       scope.categoryExamplesByJob = {};
       const MAX_NUMBER_CATEGORY_EXAMPLES = 10;  // Max number of examples to show in table cell or expanded row (engine default is to store 4).
 
-      scope.$on('renderTable', () => {
-        updateTableData();
-      });
+      mlSelectIntervalService.state.watch(updateTableData);
+      mlSelectSeverityService.state.watch(updateTableData);
+
+      scope.$on('renderTable', updateTableData);
 
       element.on('$destroy', () => {
+        mlSelectIntervalService.state.unwatch(updateTableData);
+        mlSelectSeverityService.state.unwatch(updateTableData);
         scope.$destroy();
       });
 
       scope.isShowingAggregatedData = function () {
-        return (scope.interval.display !== 'Show all');
-      };
-
-      scope.setThreshold = function (threshold) {
-        scope.threshold = threshold;
-        appState.mlAnomaliesTable.thresholdValue = threshold.val;
-        appState.save();
-        updateTableData();
-      };
-
-      scope.setInterval = function (interval) {
-        scope.interval = interval;
-        appState.mlAnomaliesTable.intervalValue = interval.val;
-        appState.save();
-        updateTableData();
+        const interval = mlSelectIntervalService.state.get('interval');
+        return (interval.display !== 'Show all');
       };
 
       scope.getExamplesForCategory = function (jobId, categoryId) {
@@ -395,9 +354,11 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
           summaryRecords = aggregateAnomalies();
         } else {
           // Show all anomaly records.
-          scope.momentInterval = scope.interval.val;
+          const interval = mlSelectIntervalService.state.get('interval');
+          scope.momentInterval = interval.val;
+          const threshold = mlSelectSeverityService.state.get('threshold');
           const filteredRecords = _.filter(scope.anomalyRecords, (record) => {
-            return Number(record.record_score) >= scope.threshold.val;
+            return Number(record.record_score) >= threshold.val;
           });
 
           _.each(filteredRecords, (record) => {
@@ -522,19 +483,21 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
         }
 
         // Determine the aggregation interval - records in scope are in descending time order.
-        if (scope.interval.val === 'auto') {
+        const interval = mlSelectIntervalService.state.get('interval');
+        if (interval.val === 'auto') {
           const earliest = moment(_.last(scope.anomalyRecords)[scope.timeFieldName]);
           const latest = moment(_.first(scope.anomalyRecords)[scope.timeFieldName]);
           const daysDiff = latest.diff(earliest, 'days');
           scope.momentInterval = (daysDiff < 2 ? 'hour' : 'day');
         } else {
-          scope.momentInterval = scope.interval.val;
+          scope.momentInterval = interval.val;
         }
 
         // Only show records passing the severity threshold.
+        const threshold = mlSelectSeverityService.state.get('threshold');
         const filteredRecords = _.filter(scope.anomalyRecords, (record) => {
 
-          return Number(record.record_score) >= scope.threshold.val;
+          return Number(record.record_score) >= threshold.val;
         });
 
         const aggregatedData = {};
@@ -797,9 +760,9 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
           },
           {
             markup: parseInt(record['max severity']) >= 1 ?
-              '<i class="fa fa-exclamation-triangle icon-severity-' + getSeverity(record['max severity']) +
+              '<i class="fa fa-exclamation-triangle ml-icon-severity-' + getSeverity(record['max severity']) +
                 '" aria-hidden="true"></i> ' + Math.floor(record['max severity']) :
-              '<i class="fa fa-exclamation-triangle icon-severity-' + getSeverity(record['max severity']) +
+              '<i class="fa fa-exclamation-triangle ml-icon-severity-' + getSeverity(record['max severity']) +
                 '" aria-hidden="true"></i> &lt; 1',
             value: record['max severity']
           },

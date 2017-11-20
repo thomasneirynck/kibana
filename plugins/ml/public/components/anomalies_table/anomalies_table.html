@@ -1,28 +1,7 @@
 <div class="anomalies-table">
-  <div class="table-controls">
-    <label for="selectSeverity">Severity threshold:</label>
-    <div class="dropdown-group" dropdown>
-      <button id="selectSeverity" type="button" class="form-control dropdown-toggle" dropdown-toggle ng-disabled="disabled">
-        <span><i class="fa fa-exclamation-triangle icon-severity-{{threshold.display}}"></i> {{threshold.display}}</span> <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" role="menu">
-        <li ng-repeat="thresholdOption in thresholdOptions">
-          <a href="" ng-click="setThreshold(thresholdOption)"><i class="fa fa-exclamation-triangle icon-severity-{{thresholdOption.display}}"></i> {{thresholdOption.display}}</a>
-        </li>
-      </ul>
-    </div>
-
-    <label for="selectInterval" style="padding-left: 15px;">Interval:</label>
-    <div class="dropdown-group" dropdown>
-      <button id="selectInterval" type="button" class="form-control dropdown-toggle" dropdown-toggle ng-disabled="disabled">
-        <span>{{interval.display}}</span> <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" role="menu">
-        <li ng-repeat="intervalOption in intervalOptions">
-          <a href="" ng-click="setInterval(intervalOption)">{{intervalOption.display}}</a>
-        </li>
-      </ul>
-    </div>
+  <div class="ml-table-controls">
+    <ml-select-severity />
+    <ml-select-interval />
   </div>
 
   <div class="no-results-item" ng-if="table.rows.length === 0">
