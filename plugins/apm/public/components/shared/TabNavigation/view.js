@@ -2,7 +2,8 @@ import React from 'react';
 import { Tab } from '../UIComponents';
 import styled from 'styled-components';
 import withApp from '../withApp';
-import { unit, units, px, colors } from '../../../style/variables';
+import { unit, units, px, colors, fontSizes } from '../../../style/variables';
+import { isEmpty } from 'lodash';
 
 const Container = styled.div`
   box-shadow: 0 1px 0 ${colors.gray4};
@@ -15,6 +16,14 @@ const Divider = styled.div`
   margin: 0 ${px(unit)};
   display: inline-block;
   vertical-align: middle;
+`;
+
+const EmptyMessage = styled.div`
+  display: inline-block;
+  font-size: ${fontSizes.large};
+  color: ${colors.gray3};
+  padding: ${px(unit)} ${px(unit + units.quarter)};
+  border-bottom: 2px solid transparent;
 `;
 
 function transactionTypeLabel(type) {
@@ -39,6 +48,7 @@ function TabNavigation({ urlParams, location, app }) {
           </Tab>
         );
       })}
+      {isEmpty(types) && <EmptyMessage>No transactions available</EmptyMessage>}
       <Divider />
       <Tab path={`${appName}/errors`} selected={errorsSelected}>
         Errors
