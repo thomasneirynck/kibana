@@ -143,6 +143,9 @@
   "new_action_valuelist": {
     "text": "A string that is a unique identifier to a list. Only applicable and required when conditionType is categorical."
   },
+  "forecasting_modal_run_duration": {
+    "text": "Length of forecast, up to a maximum of 8 weeks. Use s for seconds, m for minutes, h for hours, d for days, w for weeks."
+  },
   "forecasting_modal_view_list": {
     "text": "Lists a maximum of five of the most recently run forecasts."
   },

@@ -165,8 +165,8 @@ module.service('ml', function (prlHttpService) {
 
   this.forecast = function (obj) {
     const data = {};
-    if(obj.end !== undefined) {
-      data.end = obj.end;
+    if(obj.duration !== undefined) {
+      data.duration = obj.duration;
     }
 
     return http.request({

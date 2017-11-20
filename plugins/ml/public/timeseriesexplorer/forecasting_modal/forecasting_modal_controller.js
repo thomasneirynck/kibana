@@ -43,6 +43,7 @@ module.controller('MlForecastingModal', function (
   mlMessageBarService) {
 
   const FORECASTS_VIEW_MAX = 5;       // Display links to a maximum of 5 forecasts.
+  const FORECAST_DURATION_MAX_MS = 4838400000; // Max forecast duration of 8 weeks.
   const WARN_NUM_PARTITIONS = 100;    // Warn about running a forecast with this number of field values.
   const FORECAST_STATS_POLL_FREQUENCY = 250;  // Frequency in ms at which to poll for forecast request stats.
   const WARN_NO_PROGRESS_MS = 120000; // If no progress in forecast request, abort check and warn.
@@ -55,7 +56,7 @@ module.controller('MlForecastingModal', function (
   $scope.REQUEST_STATES = REQUEST_STATES;
 
   $scope.newForecastDuration = '1d';
-  $scope.newForecastDurationValid = true;
+  $scope.newForecastDurationError = null;
   $scope.isForecastRunning = false;
   $scope.showFrom = params.earliest;
   $scope.previousForecasts = [];
@@ -129,9 +130,14 @@ module.controller('MlForecastingModal', function (
   };
 
   $scope.newForecastDurationChange = function () {
-    $scope.newForecastDurationValid = true;
-    if(parseInterval($scope.newForecastDuration) === null) {
-      $scope.newForecastDurationValid = false;
+    $scope.newForecastDurationError = null;
+    const duration = parseInterval($scope.newForecastDuration);
+    if(duration === null) {
+      $scope.newForecastDurationError = 'Invalid duration format';
+    } else {
+      if (duration.asMilliseconds() > FORECAST_DURATION_MAX_MS) {
+        $scope.newForecastDurationError = 'Forecast duration must not be greater than 8 weeks';
+      }
     }
   };
 
@@ -184,11 +190,11 @@ module.controller('MlForecastingModal', function (
     $scope.isForecastRunning = true;
     $scope.runStatus.forecastProgress = 0;
 
-    const forecastDuration = parseInterval($scope.newForecastDuration);
-    const jobLatest = job.data_counts.latest_record_timestamp;
-    const forecastEnd = moment(jobLatest).add(forecastDuration.asMilliseconds(), 'ms');
+    // Always supply the duration to the endpoint in seconds as some of the moment duration
+    // formats accepted by Kibana (w, M, y) are not valid formats in Elasticsearch.
+    const durationInSeconds = parseInterval($scope.newForecastDuration).asSeconds();
 
-    mlForecastService.runForecast(job.job_id, forecastEnd.valueOf())
+    mlForecastService.runForecast(job.job_id, `${durationInSeconds}s`)
     .then((resp) => {
       // Endpoint will return { acknowledged:true, id: <now timestamp> } before forecast is complete.
       // So wait for results and then refresh the dashboard to the end of the forecast.

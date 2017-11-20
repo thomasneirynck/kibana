@@ -31,7 +31,7 @@
     so running a forecast may take a long time and consume a high amount of resource.
   </div>
   <div class="form-group">
-    <label for="forecastDuration" class="kuiLabel">Duration</label>
+    <label for="forecastDuration" class="kuiLabel">Duration</label><i ml-info-icon="forecasting_modal_run_duration" />
     <div ng-class="privileges.canForecastJob && invalidJobState === undefined ? 'control-wrapper' : ['control-wrapper', 'disabled']"
       data-toggle="tooltip"
       ng-attr-tooltip="{{privileges.canForecastJob === false ? 'You do not have permission to run forecasts. Please contact your administrator.' :
@@ -54,13 +54,13 @@
       <button
         class="kuiButton kuiButton--primary run-button"
         ng-click="checkJobStateAndRunForecast()"
-        ng-disabled="newForecastDurationValid === false || isForecastRunning === true ||
+        ng-disabled="newForecastDurationError !== null || isForecastRunning === true ||
           privileges.canForecastJob === false || invalidJobState !== undefined" >
         <i ng-if="isForecastRunning === false" class="fa fa-play" ></i>
         <i ng-if="isForecastRunning === true" class="fa fa-spinner fa-spin" ></i>
       </button>
     </div>
-    <div ng-hide="newForecastDurationValid" class="validation-error">Invalid duration format</div>
+    <div ng-show="newForecastDurationError !== null" class="validation-error">{{newForecastDurationError}}</div>
 
     <div ng-show="runStatus.forecastRequested === true" class="status-item-list">
       <div class="status-item" ng-show="runStatus.jobOpening !== undefined">Opening job...

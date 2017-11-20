@@ -330,14 +330,13 @@ module.service('mlForecastService', function ($q, es, ml) {
   };
 
   // Runs a forecast
-  this.runForecast = function (jobId, end) {
-    // TODO - pass detector index when this is added in the back end.
-    console.log('ML forecast service run forecast with end:', end);
+  this.runForecast = function (jobId, duration) {
+    console.log('ML forecast service run forecast with duration:', duration);
     const deferred = $q.defer();
 
     ml.forecast({
       jobId,
-      end
+      duration
     })
     .then((resp) => {
       deferred.resolve(resp);
