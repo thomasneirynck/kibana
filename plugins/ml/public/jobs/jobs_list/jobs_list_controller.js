@@ -657,8 +657,6 @@ function (
     $scope.openCreateWatchWindow(job);
   });
 
-  $scope.$emit('application.load');
-
   $scope.$on('$destroy', () => {
     clearTimeout(refreshJobsTimeout);
   });
