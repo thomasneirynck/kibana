@@ -207,6 +207,11 @@ module
     $scope.ui.dirty = true;
 
     $scope.ui.isCountOrSum = ($scope.formConfig.agg.type.dslName === 'count' || $scope.formConfig.agg.type.dslName === 'sum');
+
+    // clear the field if count is selected
+    if ($scope.formConfig.agg.type.dslName === 'count') {
+      $scope.formConfig.field = null;
+    }
   };
 
   $scope.fieldChange = function () {
