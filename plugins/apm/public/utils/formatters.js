@@ -46,3 +46,7 @@ export function asInteger(value) {
 export function tpmUnit(type) {
   return type === 'request' ? 'rpm' : 'tpm';
 }
+
+export function distributionUnit(type) {
+  return type === 'request' ? 'req.' : 'trans.';
+}

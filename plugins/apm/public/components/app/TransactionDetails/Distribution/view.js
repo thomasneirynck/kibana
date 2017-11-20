@@ -7,8 +7,7 @@ import EmptyMessage from '../../../shared/EmptyMessage';
 import {
   getTimeFormatter,
   timeUnit,
-  asDecimal,
-  tpmUnit
+  distributionUnit
 } from '../../../../utils/formatters';
 
 export function getFormattedBuckets(buckets, bucketSize) {
@@ -50,7 +49,7 @@ class Distribution extends Component {
   }
 
   formatYValue = t => {
-    return `${asDecimal(t)} ${tpmUnit(this.props.urlParams.transactionType)}`;
+    return `${t} ${distributionUnit(this.props.urlParams.transactionType)}`;
   };
 
   render() {
