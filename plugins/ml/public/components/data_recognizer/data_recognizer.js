@@ -29,6 +29,8 @@ export function dataRecognizerProvider(ml) {
       };
 
       this.indexPattern = props.indexPattern;
+      this.className = props.className;
+      this.results = props.results;
     }
 
     componentDidMount() {
@@ -42,6 +44,9 @@ export function dataRecognizerProvider(ml) {
             indexPattern={this.indexPattern}
           />
         ));
+        if (typeof this.results === 'object') {
+          this.results.count = results.length;
+        }
 
         this.setState({
           results
@@ -50,15 +55,9 @@ export function dataRecognizerProvider(ml) {
     }
 
     render() {
-      let label = null;
-      if (this.state.results.length !== 0) {
-        label = <div>Index contains recognized data:</div>;
-      }
-
       return (
-        <div>
-          { label }
-          <div>{this.state.results}</div>
+        <div className={this.className}>
+          {this.state.results}
         </div>
       );
     }
@@ -66,6 +65,8 @@ export function dataRecognizerProvider(ml) {
 
   DataRecognizer.propTypes = {
     indexPattern: PropTypes.object,
+    className: PropTypes.string,
+    results: PropTypes.object,
   };
 
   return DataRecognizer;

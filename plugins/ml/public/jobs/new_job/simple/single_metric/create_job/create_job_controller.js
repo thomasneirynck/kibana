@@ -37,7 +37,7 @@ import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
 import template from './create_job.html';
 
 uiRoutes
-.when('/jobs/new_job/simple/single_metric/create', {
+.when('/jobs/new_job/simple/single_metric', {
   template,
   resolve: {
     CheckLicense: checkLicenseExpired,

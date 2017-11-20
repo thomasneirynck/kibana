@@ -51,27 +51,14 @@ function (
     indexPattern,
     savedSearch } = createSearchItems($route);
 
+  $scope.indexPattern = indexPattern;
+  $scope.recognizerResults = { count: 0 };
+
   $scope.pageTitleLabel = (savedSearch.id !== undefined) ?
     `saved search ${savedSearch.title}` : `index pattern ${indexPattern.title}`;
 
-  $scope.getCreateSimpleJobUrl = function (basePath) {
-    return (savedSearch.id === undefined) ? `${basePath}/create?index=${indexPattern.id}` :
-        `${basePath}/create?savedSearchId=${savedSearch.id}`;
-  };
-
-  $scope.getCreateAdvancedJobUrl = function (basePath) {
+  $scope.getUrl = function (basePath) {
     return (savedSearch.id === undefined) ? `${basePath}?index=${indexPattern.id}` :
         `${basePath}?savedSearchId=${savedSearch.id}`;
   };
-
-  $scope.getDataRecognizerUrl = function (basePath) {
-    return (savedSearch.id === undefined) ? `${basePath}&index=${indexPattern.id}` :
-        `${basePath}?savedSearchId=${savedSearch.id}`;
-  };
-
-  $scope.getDataVisualizerUrl = function (basePath) {
-    return (savedSearch.id === undefined) ? `${basePath}?index=${indexPattern.id}` :
-        `${basePath}?savedSearchId=${savedSearch.id}`;
-  };
-
 });

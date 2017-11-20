@@ -37,7 +37,7 @@ import { createFields } from 'plugins/ml/jobs/new_job/simple/components/utils/cr
 import template from './create_job.html';
 
 uiRoutes
-.when('/jobs/new_job/simple/multi_metric/create', {
+.when('/jobs/new_job/simple/multi_metric', {
   template,
   resolve: {
     CheckLicense: checkLicenseExpired,

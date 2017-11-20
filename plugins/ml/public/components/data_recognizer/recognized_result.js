@@ -20,7 +20,7 @@ export const RecognizedResult = ({
   config,
   indexPattern,
 }) => {
-  const href = `#/jobs/new_job/simple/recognize/create?id=${config.id}&index=${indexPattern.id}`;
+  const href = `#/jobs/new_job/simple/recognize?id=${config.id}&index=${indexPattern.id}`;
   let logo = null;
   // if a logo is available, use that, otherwise display the id
   // the logo should be a base64 encoded image
@@ -31,12 +31,21 @@ export const RecognizedResult = ({
   }
 
   return (
-    <a className="recognizer-result" href={href}>
-      { logo }
-      <div>
-        <span >Create {config.title} jobs</span>
+    <div className="kuiFlexItem kuiPanel options-panel recognizer-result">
+      <div className="kuiFlexGroup kuiFlexGroup--gutterLarge">
+        <div className="kuiFlexItem kuiFlexItem--flexGrowZero">
+          {logo}
+        </div>
+        <div className="kuiFlexItem synopsis">
+          <h4 className="kuiTextTitle synopsisTitle">
+            <a href={href} className="kuiLink">{config.title}</a>
+          </h4>
+          <p className="kuiText kuiSubduedText">
+            {config.description}
+          </p>
+        </div>
       </div>
-    </a>
+    </div>
   );
 };
 

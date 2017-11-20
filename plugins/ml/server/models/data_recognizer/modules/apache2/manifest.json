@@ -1,6 +1,7 @@
 {
   "id": "apache2",
   "title": "Filebeat apache2",
+  "description": "Find unusual activity in Apache web access logs.",
   "type": "Web Access Logs",
   "logoFile": "logo.json",
   "defaultIndexPattern": "filebeat-*",

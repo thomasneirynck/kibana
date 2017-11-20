@@ -1,6 +1,7 @@
 {
   "id": "nginx",
   "title": "Filebeat NGINX",
+  "description": "Find unusual activity in NGINX web access logs.",
   "type": "Web Access Logs",
   "logoFile": "logo.json",
   "defaultIndexPattern": "filebeat-*",

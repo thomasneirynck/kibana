@@ -21,5 +21,5 @@ import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml', ['react']);
 module.directive('mlDataRecognizer', function (reactDirective, Private) {
   const DataRecognizer = Private(dataRecognizerProvider);
-  return reactDirective(DataRecognizer);
+  return reactDirective(DataRecognizer, undefined, { restrict: 'AE' });
 });

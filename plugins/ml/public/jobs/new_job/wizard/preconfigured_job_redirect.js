@@ -48,7 +48,7 @@ function getRedirectUrl(appState) {
         page = 'single_metric';
       }
     }
-    return `jobs/new_job/simple/${page}/create`;
+    return `jobs/new_job/simple/${page}`;
   } else {
     return null;
   }

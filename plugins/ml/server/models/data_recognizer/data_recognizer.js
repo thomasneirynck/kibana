@@ -101,6 +101,7 @@ export class DataRecognizer {
           id: moduleConfig.id,
           title: moduleConfig.title,
           query: moduleConfig.query,
+          description: moduleConfig.description,
           logo
         });
       }

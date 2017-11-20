@@ -28,7 +28,7 @@ import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import template from './create_job.html';
 
 uiRoutes
-.when('/jobs/new_job/simple/recognize/create', {
+.when('/jobs/new_job/simple/recognize', {
   template,
   resolve: {
     CheckLicense: checkLicenseExpired,
