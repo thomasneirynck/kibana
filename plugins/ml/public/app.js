@@ -20,6 +20,8 @@ import 'ui/autoload/all';
 
 import 'plugins/ml/styles/main.less';
 import 'plugins/ml/access_denied';
+import 'plugins/ml/factories/listener_factory';
+import 'plugins/ml/factories/state_factory';
 import 'plugins/ml/lib/angular_bootstrap_patch';
 import 'plugins/ml/jobs/index';
 import 'plugins/ml/services/ml_clipboard_service';
