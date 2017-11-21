@@ -1,8 +1,16 @@
 import React, { PureComponent } from 'react';
+import styled from 'styled-components';
 import CodePreview from '../../shared/CodePreview';
 import { Ellipsis } from '../../shared/Icons';
-import { units } from '../../../style/variables';
+import { units, px } from '../../../style/variables';
 import EmptyMessage from '../../shared/EmptyMessage';
+
+const LibraryFrameToggle = styled.div`
+  margin: 0 0 ${px(units.plus)} 0;
+  user-select: none;
+`;
+
+const LibraryFrames = styled.div``;
 
 function getCollapsedLibraryFrames(stackframes) {
   return stackframes.reduce((acc, stackframe) => {
@@ -74,14 +82,14 @@ class Stacktrace extends PureComponent {
 function Libraryframes({ visible, stackframes, codeLanguage, onClick }) {
   return (
     <div>
-      <div>
+      <LibraryFrameToggle>
         <a style={{ cursor: 'pointer' }} onClick={onClick}>
           <Ellipsis horizontal={visible} style={{ marginRight: units.half }} />{' '}
           {stackframes.length} library frames
         </a>
-      </div>
+      </LibraryFrameToggle>
 
-      <div>
+      <LibraryFrames>
         {visible &&
           stackframes.map((stackframe, i) => (
             <CodePreview
@@ -91,7 +99,7 @@ function Libraryframes({ visible, stackframes, codeLanguage, onClick }) {
               codeLanguage={codeLanguage}
             />
           ))}
-      </div>
+      </LibraryFrames>
     </div>
   );
 }

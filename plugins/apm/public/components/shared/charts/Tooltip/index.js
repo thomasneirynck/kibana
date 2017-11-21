@@ -65,7 +65,7 @@ export default function Tooltip({ header, tooltipPoints, x, y, ...props }) {
   return (
     <Hint {...props} value={{ x, y }}>
       <TooltipElm>
-        <Header>{header || moment(x).format('MMMM Do YYYY, HH:mm')}</Header>
+        <Header>{header || moment(x).format('MMMM Do YYYY, HH:mm:ss')}</Header>
         <Legends>
           {tooltipPoints.map((point, i) => (
             <LegendContainer key={i}>

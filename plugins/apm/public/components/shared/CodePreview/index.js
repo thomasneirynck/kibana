@@ -34,10 +34,7 @@ const FileDetail = styled.span`
 `;
 
 const Container = styled.div`
-  margin: ${props =>
-    props.isLibraryFrame
-      ? `${px(units.minus * 1.5)} 0 ${px(units.plus)} 0`
-      : `${px(units.plus)} 0`};
+  margin: 0 0 ${px(units.plus)} 0;
   position: relative;
   font-family: ${fontFamilyCode};
   border: 1px solid ${colors.gray4};

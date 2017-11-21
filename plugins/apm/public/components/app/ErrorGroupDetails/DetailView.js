@@ -1,59 +1,43 @@
 import React from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
-import {
-  unit,
-  units,
-  px,
-  colors,
-  fontSizes,
-  borderRadius
-} from '../../../style/variables';
+import { units, px, colors, borderRadius } from '../../../style/variables';
 import { get, capitalize, isEmpty } from 'lodash';
 import { STATUS } from '../../../constants';
 
+import { Properties } from '../../shared/ContextProperties';
+import { Tab } from '../../shared/UIComponents';
+import DiscoverButton from '../../shared/DiscoverButton';
 import {
   PropertiesTable,
   getLevelOneProps
 } from '../../shared/PropertiesTable';
-import DiscoverButton from '../../shared/DiscoverButton';
-import { Tab } from '../../shared/UIComponents';
 import Stacktrace from '../../shared/Stacktrace';
 
 const Container = styled.div`
   position: relative;
   border: 1px solid ${colors.gray4};
   border-radius: ${borderRadius};
-  padding: ${px(units.plus)};
   margin-top: ${px(units.plus)};
 `;
 
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
+  padding: ${px(units.plus)};
 `;
 
 const Title = styled.h3`
   margin-top: -${px(units.quarter)};
 `;
 
-const Properties = styled.div`
-  display: flex;
-  margin: ${px(unit)} 0;
-  width: 100%;
-  justify-content: space-between;
-  flex-flow: row wrap;
+const TabContainer = styled.div`
+  padding: 0 ${px(units.plus)};
+  border-bottom: 1px solid ${colors.gray4};
 `;
 
-const Property = styled.div`
-  width: 30%;
-  margin-bottom: ${px(units.plus)};
-`;
-
-const PropertyLabel = styled.div`
-  margin-bottom: ${px(units.quarter)};
-  font-size: ${fontSizes.small};
-  color: ${colors.gray3};
+const TabContentContainer = styled.div`
+  padding: ${px(units.plus)} ${px(units.plus)} 0;
 `;
 
 const STACKTRACE_TAB = 'stacktrace';
@@ -78,7 +62,10 @@ function DetailView({ errorGroup, urlParams }) {
   }
 
   const { appName } = urlParams;
-  const timestamp = moment(get(errorGroup, 'data.error.@timestamp')).format();
+
+  const timestamp = moment(get(errorGroup, 'data.error.@timestamp'));
+  const timestampFull = timestamp.format('MMMM Do YYYY, HH:mm:ss.SSS');
+  const timestampAgo = timestamp.fromNow();
 
   const stackframes = get(errorGroup.data.error.error.exception, 'stacktrace');
   const codeLanguage = get(errorGroup.data.error, 'context.app.language.name');
@@ -88,6 +75,8 @@ function DetailView({ errorGroup, urlParams }) {
 
   const occurencesCount = errorGroup.data.occurrencesCount;
   const groupId = errorGroup.data.groupId;
+
+  const url = get(errorGroup.data.error, 'context.request.url.raw', 'N/A');
 
   const discoverQuery = {
     _a: {
@@ -108,34 +97,28 @@ function DetailView({ errorGroup, urlParams }) {
           {`View ${occurencesCount} occurences in Discover`}
         </DiscoverButton>
       </Header>
-      <Properties>
-        <Property>
-          <PropertyLabel>@timestamp</PropertyLabel>
-          <div>{timestamp}</div>
-        </Property>
-        {[1, 2, 3, 4, 5].map(item => {
+
+      <Properties
+        timestampAgo={timestampAgo}
+        timestampFull={timestampFull}
+        url={url}
+      />
+
+      <TabContainer>
+        {tabs.map(key => {
           return (
-            <Property key={item}>
-              <PropertyLabel>Data label</PropertyLabel>
-              <div>Value</div>
-            </Property>
+            <Tab
+              query={{ detailTab: key }}
+              selected={currentTab === key}
+              key={key}
+            >
+              {capitalize(key)}
+            </Tab>
           );
         })}
-      </Properties>
+      </TabContainer>
 
-      {tabs.map(key => {
-        return (
-          <Tab
-            query={{ detailTab: key }}
-            selected={currentTab === key}
-            key={key}
-          >
-            {capitalize(key)}
-          </Tab>
-        );
-      })}
-
-      <div>
+      <TabContentContainer>
         {currentTab === STACKTRACE_TAB ? (
           <Stacktrace stackframes={stackframes} codeLanguage={codeLanguage} />
         ) : (
@@ -144,7 +127,7 @@ function DetailView({ errorGroup, urlParams }) {
             propKey={currentTab}
           />
         )}
-      </div>
+      </TabContentContainer>
     </Container>
   );
 }

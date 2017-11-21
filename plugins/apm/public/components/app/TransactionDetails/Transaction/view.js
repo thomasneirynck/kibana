@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import moment from 'moment';
 import { STATUS } from '../../../../constants';
-import { units, colors, px } from '../../../../style/variables';
+import { units, colors, px, borderRadius } from '../../../../style/variables';
 import { Tab } from '../../../shared/UIComponents';
 import { capitalize, get } from 'lodash';
+
+import { Properties } from '../../../shared/ContextProperties';
 import {
   PropertiesTable,
   getLevelOneProps
@@ -25,23 +28,35 @@ function loadTransaction(props) {
 }
 
 const Container = styled.div`
-  margin-top: ${px(units.triple)};
+  position: relative;
+  border: 1px solid ${colors.gray4};
+  border-radius: ${borderRadius};
+  margin-top: ${px(units.plus)};
+`;
+
+const TabContainer = styled.div`
+  padding: 0 ${px(units.plus)};
+  border-bottom: 1px solid ${colors.gray4};
 `;
 
 const TabContentContainer = styled.div`
-  border: 1px solid ${colors.gray4};
-  border-radius: ${units.quarter}px;
   background-color: ${colors.white};
   overflow: hidden;
+  border-radius: 0 0 ${borderRadius} ${borderRadius};
 `;
 
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
+  padding: ${px(units.plus)};
 `;
 
 const Title = styled.h3`
   margin-top: -${px(units.quarter)};
+`;
+
+const PropertiesTableContainer = styled.div`
+  padding: ${px(units.plus)} ${px(units.plus)} 0;
 `;
 
 const DEFAULT_TAB = 'timeline';
@@ -73,6 +88,12 @@ class Transaction extends Component {
       return null;
     }
 
+    const timestamp = moment(get(transaction, 'data.@timestamp'));
+    const timestampFull = timestamp.format('MMMM Do YYYY, HH:mm:ss.SSS');
+    const timestampAgo = timestamp.fromNow();
+
+    const url = get(transaction.data, 'context.request.url.raw', 'N/A');
+
     const tabs = getTabs(transaction.data);
     const currentTab = getCurrentTab(tabs, this.props.urlParams.detailTab);
 
@@ -98,26 +119,36 @@ class Transaction extends Component {
           </DiscoverButton>
         </Header>
 
-        {[DEFAULT_TAB, ...tabs].map(key => {
-          return (
-            <Tab
-              query={{ detailTab: key }}
-              selected={currentTab === key}
-              key={key}
-            >
-              {capitalize(key)}
-            </Tab>
-          );
-        })}
+        <Properties
+          timestampAgo={timestampAgo}
+          timestampFull={timestampFull}
+          url={url}
+        />
+
+        <TabContainer>
+          {[DEFAULT_TAB, ...tabs].map(key => {
+            return (
+              <Tab
+                query={{ detailTab: key }}
+                selected={currentTab === key}
+                key={key}
+              >
+                {capitalize(key)}
+              </Tab>
+            );
+          })}
+        </TabContainer>
 
         <TabContentContainer>
           {currentTab === DEFAULT_TAB ? (
             <Traces />
           ) : (
-            <PropertiesTable
-              propData={get(transaction.data.context, currentTab)}
-              propKey={currentTab}
-            />
+            <PropertiesTableContainer>
+              <PropertiesTable
+                propData={get(transaction.data.context, currentTab)}
+                propKey={currentTab}
+              />
+            </PropertiesTableContainer>
           )}
         </TabContentContainer>
       </Container>

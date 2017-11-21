@@ -3,25 +3,31 @@ import styled from 'styled-components';
 import _ from 'lodash';
 import STATIC_PROPS from './staticProperties.json';
 import {
-  unit,
   units,
   colors,
+  px,
   fontFamilyCode,
   fontSizes
 } from '../../../style/variables';
 import TipMessage from '../TipMessage';
+
+const TableContainer = styled.div`
+  padding-bottom: ${px(units.double)};
+`;
 
 const Table = styled.table`
   font-family: ${fontFamilyCode};
   font-size: ${fontSizes.small};
   width: 100%;
 `;
+
 const Row = styled.tr`
   border-bottom: 1px solid ${colors.gray4};
   &:last-child {
     border: 0;
   }
 `;
+
 const Cell = styled.td`
   vertical-align: top;
   padding: ${units.half}px 0;
@@ -39,6 +45,7 @@ const Cell = styled.td`
     font-weight: bold;
   }
 `;
+
 const EmptyValue = styled.span`
   color: ${colors.gray3};
 `;
@@ -149,9 +156,5 @@ export function PropertiesTable({ propData, propKey }) {
     return <div>No data</div>;
   }
 
-  return (
-    <div style={{ padding: `${unit}px` }}>
-      {recursiveSort(propData, propKey, 2)}
-    </div>
-  );
+  return <TableContainer>{recursiveSort(propData, propKey, 2)}</TableContainer>;
 }
