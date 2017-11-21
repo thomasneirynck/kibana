@@ -18,8 +18,8 @@ import { FeatureCatalogueRegistryProvider, FeatureCatalogueCategory } from 'ui/r
 FeatureCatalogueRegistryProvider.register(() => {
   return {
     id: 'security',
-    title: 'Users and Roles',
-    description: 'Manage who has access to your system.',
+    title: 'Security Settings',
+    description: 'Protect your data and easily manage who has access to what with users and roles.',
     icon: '/plugins/kibana/assets/app_security.svg',
     path: '/app/kibana#/management/security',
     showOnHomePage: true,

@@ -17,12 +17,12 @@ import { FeatureCatalogueRegistryProvider, FeatureCatalogueCategory } from 'ui/r
 
 FeatureCatalogueRegistryProvider.register(() => {
   return {
-    id: 'graph',
-    title: 'Graph',
-    description: 'Surface and analyze relevant relationships in your Elasticsearch data.',
-    icon: '/plugins/graph/assets/app_graph.svg',
-    path: '/app/graph',
-    showOnHomePage: true,
-    category: FeatureCatalogueCategory.DATA
+    id: 'searchprofiler',
+    title: 'Search Profiler',
+    description: 'Quickly check the performance of any Elasticsearch query.',
+    icon: '/plugins/searchprofiler/assets/app_search_profiler.svg',
+    path: '/app/kibana#/dev_tools/searchprofiler',
+    showOnHomePage: false,
+    category: FeatureCatalogueCategory.ADMIN
   };
 });

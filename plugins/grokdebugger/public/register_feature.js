@@ -17,12 +17,12 @@ import { FeatureCatalogueRegistryProvider, FeatureCatalogueCategory } from 'ui/r
 
 FeatureCatalogueRegistryProvider.register(() => {
   return {
-    id: 'graph',
-    title: 'Graph',
-    description: 'Surface and analyze relevant relationships in your Elasticsearch data.',
-    icon: '/plugins/graph/assets/app_graph.svg',
-    path: '/app/graph',
-    showOnHomePage: true,
-    category: FeatureCatalogueCategory.DATA
+    id: 'grokdebugger',
+    title: 'Grok Debugger',
+    description: 'Simulate and debug grok patterns for data transformation on ingestion.',
+    icon: '/plugins/grokdebugger/assets/app_grok.svg',
+    path: '/app/kibana#/dev_tools/grokdebugger',
+    showOnHomePage: false,
+    category: FeatureCatalogueCategory.ADMIN
   };
 });

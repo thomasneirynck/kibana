@@ -19,7 +19,7 @@ FeatureCatalogueRegistryProvider.register(() => {
   return {
     id: 'ml',
     title: 'Machine Learning',
-    description: 'Predict the future by analyzing the past.',
+    description: 'Automatically model the normal behavior of your time series data to detect anomalies.',
     icon: '/plugins/ml/assets/app_ml.svg',
     path: '/app/ml',
     showOnHomePage: true,

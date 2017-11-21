@@ -17,12 +17,12 @@ import { FeatureCatalogueRegistryProvider, FeatureCatalogueCategory } from 'ui/r
 
 FeatureCatalogueRegistryProvider.register(() => {
   return {
-    id: 'graph',
-    title: 'Graph',
-    description: 'Surface and analyze relevant relationships in your Elasticsearch data.',
-    icon: '/plugins/graph/assets/app_graph.svg',
-    path: '/app/graph',
-    showOnHomePage: true,
-    category: FeatureCatalogueCategory.DATA
+    id: 'reporting',
+    title: 'Reporting',
+    description: 'Manage your reports generated from Discover, Visualize, and Dashboard.',
+    icon: '/plugins/reporting/assets/app_reporting.svg',
+    path: '/app/kibana#/management/kibana/reporting',
+    showOnHomePage: false,
+    category: FeatureCatalogueCategory.ADMIN
   };
 });

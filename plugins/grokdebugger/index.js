@@ -13,7 +13,8 @@ export const grokdebugger = (kibana) => new kibana.Plugin({
   },
   uiExports: {
     devTools: ['plugins/grokdebugger/sections/grokdebugger'],
-    hacks: ['plugins/grokdebugger/sections/grokdebugger/register']
+    hacks: ['plugins/grokdebugger/sections/grokdebugger/register'],
+    home: ['plugins/grokdebugger/register_feature'],
   },
   init: (server) => {
     registerGrokdebuggerRoutes(server);

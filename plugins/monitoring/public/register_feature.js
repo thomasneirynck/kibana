@@ -19,7 +19,7 @@ FeatureCatalogueRegistryProvider.register(() => {
   return {
     id: 'monitoring',
     title: 'Monitoring',
-    description: 'Measure the performance of your infrastructure.',
+    description: 'Track the real-time health and performance of your Elastic Stack.',
     icon: '/plugins/kibana/assets/app_monitoring.svg',
     path: '/app/monitoring',
     showOnHomePage: true,

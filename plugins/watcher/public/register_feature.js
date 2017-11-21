@@ -18,9 +18,9 @@ import { FeatureCatalogueRegistryProvider, FeatureCatalogueCategory } from 'ui/r
 FeatureCatalogueRegistryProvider.register(() => {
   return {
     id: 'watcher',
-    title: 'Watches',
-    description: 'Set up actions based upon specifc conditions.',
-    icon: '/plugins/kibana/assets/app_dashboard.svg',
+    title: 'Watcher',
+    description: 'Detect changes in your data by creating, managing, and monitoring alerts.',
+    icon: '/plugins/watcher/assets/app_watches.svg',
     path: '/app/kibana#/management/elasticsearch/watcher/watches',
     showOnHomePage: true,
     category: FeatureCatalogueCategory.ADMIN

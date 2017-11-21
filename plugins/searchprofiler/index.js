@@ -16,7 +16,8 @@ export const searchprofiler = (kibana) => {
 
     uiExports: {
       devTools: ['plugins/searchprofiler/app'],
-      hacks: ['plugins/searchprofiler/register']
+      hacks: ['plugins/searchprofiler/register'],
+      home: ['plugins/searchprofiler/register_feature'],
     },
     init: function (server) {
       const thisPlugin = this;
