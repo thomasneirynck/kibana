@@ -16,10 +16,8 @@
 import _ from 'lodash';
 import angular from 'angular';
 
-import { parseInterval } from 'ui/utils/parse_interval';
-
 import { EVENT_RATE_COUNT_FIELD } from 'plugins/ml/jobs/new_job/simple/components/constants/general';
-import { calculateDatafeedFrequencyDefaultSeconds, ML_MEDIAN_PERCENTS } from 'plugins/ml/util/job_utils';
+import { ML_MEDIAN_PERCENTS } from 'plugins/ml/util/job_utils';
 import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 
@@ -373,13 +371,9 @@ module.service('mlPopulationJobService', function (
     delete job.data_description.time_format;
     delete job.data_description.format;
 
-    const bucketSpanSeconds = parseInterval(formConfig.bucketSpan).asSeconds();
-
     job.datafeed_config = {
       query,
-      frequency: calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) + 's',
       indices: [formConfig.indexPattern.title],
-      scroll_size: 1000
     };
     job.job_id = formConfig.jobId;
     job.description = formConfig.description;
