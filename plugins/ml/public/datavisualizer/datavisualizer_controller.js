@@ -35,6 +35,7 @@ import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { checkLicenseExpired } from 'plugins/ml/license/check_license';
 import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
+import { getIndexPattern, getSavedSearch, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
 import template from './datavisualizer.html';
 
 uiRoutes
@@ -42,8 +43,8 @@ uiRoutes
   template,
   resolve: {
     CheckLicense: checkLicenseExpired,
-    indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index),
-    savedSearch: (courier, $route, savedSearches) => savedSearches.get($route.current.params.savedSearchId)
+    indexPattern: getIndexPattern,
+    savedSearch: getSavedSearch
   }
 });
 
@@ -65,6 +66,7 @@ module
   const {
     indexPattern,
     query } = createSearchItems($route);
+  timeBasedIndexCheck(indexPattern, true);
 
   // List of system fields we don't want to display.
   // TODO - are we happy to ignore these fields?

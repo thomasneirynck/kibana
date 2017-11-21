@@ -34,6 +34,7 @@ import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/compone
 import { changeJobIDCase } from 'plugins/ml/jobs/new_job/simple/components/general_job_details/change_job_id_case';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
 import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
+import { getIndexPattern, getSavedSearch, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
 import template from './create_job.html';
 
 uiRoutes
@@ -42,8 +43,8 @@ uiRoutes
   resolve: {
     CheckLicense: checkLicenseExpired,
     privileges: checkCreateJobsPrivilege,
-    indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index),
-    savedSearch: (courier, $route, savedSearches) => savedSearches.get($route.current.params.savedSearchId)
+    indexPattern: getIndexPattern,
+    savedSearch: getSavedSearch
   }
 });
 
@@ -110,6 +111,8 @@ module
     query,
     filters,
     combinedQuery } = createSearchItems($route);
+
+  timeBasedIndexCheck(indexPattern, true);
 
   const pageTitle = (savedSearch.id !== undefined) ?
     `saved search ${savedSearch.title}` : `index pattern ${indexPattern.title}`;

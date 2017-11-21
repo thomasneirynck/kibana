@@ -27,6 +27,8 @@ import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import template from './new_job.html';
 import saveStatusTemplate from 'plugins/ml/jobs/new_job/advanced/save_status_modal/save_status_modal.html';
 import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
+import { getIndexPattern, getSavedSearch, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
+
 
 
 uiRoutes
@@ -35,8 +37,8 @@ uiRoutes
   resolve: {
     CheckLicense: checkLicense,
     privileges: checkCreateJobsPrivilege,
-    indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index),
-    savedSearch: (courier, $route, savedSearches) => savedSearches.get($route.current.params.savedSearchId)
+    indexPattern: getIndexPattern,
+    savedSearch: getSavedSearch
   }
 })
 .when('/jobs/new_job/advanced/:jobId', {
@@ -44,8 +46,8 @@ uiRoutes
   resolve: {
     CheckLicense: checkLicense,
     privileges: checkCreateJobsPrivilege,
-    indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index),
-    savedSearch: (courier, $route, savedSearches) => savedSearches.get($route.current.params.savedSearchId)
+    indexPattern: getIndexPattern,
+    savedSearch: getSavedSearch
   }
 });
 
@@ -472,6 +474,8 @@ function (
       indexPattern,
       savedSearch,
       combinedQuery } = createSearchItems($route);
+
+    timeBasedIndexCheck(indexPattern, true);
 
     if (indexPattern.id !== undefined) {
       $scope.ui.wizard.indexInputType = INDEX_INPUT_TYPE.TEXT;

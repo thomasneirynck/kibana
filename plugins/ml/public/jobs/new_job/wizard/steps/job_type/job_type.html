@@ -14,6 +14,32 @@
         </div>
       </div>
 
+      <div class="kuiViewContentItem kuiVerticalRhythmXLarge" ng-if="isTimeBasedIndex===false">
+
+        <div class="kuiFlexGroup kuiFlexGroup--gutterLarge kuiVerticalRhythm">
+
+          <div class="kuiFlexGrid kuiFlexGrid--gutterLarge kuiVerticalRhythmSmall top-features index-warning">
+
+            <div class="kuiFlexItem kuiPanel options-panel index-warning">
+              <div class="kuiFlexGroup kuiFlexGroup--gutterLarge">
+                <div class="kuiFlexItem kuiFlexItem--flexGrowZero">
+                  <i aria-hidden="true" class="warning-icon fa fa fa-warning"></i>
+                </div>
+                <div class="kuiFlexItem synopsis">
+                  <h4 class="kuiTextTitle synopsisTitle">
+                    <div>
+                       {{indexWarningTitle}}
+                    </div>
+                  </h4>
+                  <p class="kuiText kuiSubduedText">Anomaly detection can only be run over indices which are time based.</p>
+                  <p class="kuiText kuiSubduedText"><a href="#jobs/new_job">Select a different index.</a></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div ng-show="recognizerResults.count!==0" class="kuiViewContentItem kuiVerticalRhythmXLarge">
         <h3 class="kuiSubTitle kuiVerticalRhythm">Use a supplied configuration</h3>
         <p class="kuiSubText">
@@ -49,7 +75,7 @@
                 </div>
                 <div class="kuiFlexItem synopsis">
                   <h4 class="kuiTextTitle synopsisTitle">
-                    <a ng-href="{{getUrl('#jobs/new_job/simple/single_metric')}}" class="kuiLink">Single metric</a>
+                    <a ng-href="{{getUrl('#jobs/new_job/simple/single_metric')}}" ng-class='{disabled: isTimeBasedIndex===false}' class="kuiLink">Single metric</a>
                   </h4>
                   <p class="kuiText kuiSubduedText">Detect anomalies in a single time series.</p>
                 </div>
@@ -62,7 +88,7 @@
                 </div>
                 <div class="kuiFlexItem synopsis">
                   <h4 class="kuiTextTitle synopsisTitle">
-                    <a ng-href="{{getUrl('#jobs/new_job/simple/multi_metric')}}" class="kuiLink">Multi metric</a>
+                    <a ng-href="{{getUrl('#jobs/new_job/simple/multi_metric')}}" ng-class='{disabled: isTimeBasedIndex===false}' class="kuiLink">Multi metric</a>
                   </h4>
                   <p class="kuiText kuiSubduedText">Detect anomalies in multiple metrics by splitting a time series by a categorical field.</p>
                 </div>
@@ -75,7 +101,7 @@
                 </div>
                 <div class="kuiFlexItem synopsis">
                   <h4 class="kuiTextTitle synopsisTitle">
-                    <a ng-href="{{getUrl('#jobs/new_job/simple/population')}}" class="kuiLink">Population</a>
+                    <a ng-href="{{getUrl('#jobs/new_job/simple/population')}}" ng-class='{disabled: isTimeBasedIndex===false}' class="kuiLink">Population</a>
                   </h4>
                   <p class="kuiText kuiSubduedText">Detect activity that is unusual compared to the behavior of the population.</p>
                 </div>
@@ -88,7 +114,7 @@
                 </div>
                 <div class="kuiFlexItem synopsis">
                   <h4 class="kuiTextTitle synopsisTitle">
-                    <a ng-href="{{getUrl('#jobs/new_job/advanced')}}" class="kuiLink">Advanced</a>
+                    <a ng-href="{{getUrl('#jobs/new_job/advanced')}}" ng-class='{disabled: isTimeBasedIndex===false}' class="kuiLink">Advanced</a>
                   </h4>
                   <p class="kuiText kuiSubduedText">Use the full range of options to create a job for more advanced use cases.</p>
                 </div>
@@ -117,7 +143,7 @@
                 </div>
                 <div class="kuiFlexItem synopsis">
                   <h4 class="kuiTextTitle synopsisTitle">
-                    <a ng-href="{{getUrl('#jobs/new_job/datavisualizer')}}" class="kuiLink">Data Visualizer</a>
+                    <a ng-href="{{getUrl('#jobs/new_job/datavisualizer')}}" ng-class='{disabled: isTimeBasedIndex===false}' class="kuiLink">Data Visualizer</a>
                   </h4>
                   <p class="kuiText kuiSubduedText">
                     Learn more about the characteristics of your data and identify the fields for analysis with machine learning.

@@ -22,6 +22,7 @@ import uiRoutes from 'ui/routes';
 import { checkLicenseExpired } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
+import { getIndexPattern, getSavedSearch, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
 import template from './job_type.html';
 
 uiRoutes
@@ -30,8 +31,8 @@ uiRoutes
   resolve: {
     CheckLicense: checkLicenseExpired,
     privileges: checkCreateJobsPrivilege,
-    indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index),
-    savedSearch: (courier, $route, savedSearches) => savedSearches.get($route.current.params.savedSearchId)
+    indexPattern: getIndexPattern,
+    savedSearch: getSavedSearch
   }
 });
 
@@ -50,6 +51,15 @@ function (
   const {
     indexPattern,
     savedSearch } = createSearchItems($route);
+
+  // check to see that the index pattern is time based.
+  // if it isn't, display a warning and disable all links
+  $scope.indexWarningTitle = '';
+  $scope.isTimeBasedIndex = timeBasedIndexCheck(indexPattern);
+  if ($scope.isTimeBasedIndex === false) {
+    $scope.indexWarningTitle = (savedSearch.id === undefined) ? `Index pattern ${indexPattern.title} is not time based` :
+      `${savedSearch.title} uses index pattern ${indexPattern.title} which is not time based`;
+  }
 
   $scope.indexPattern = indexPattern;
   $scope.recognizerResults = { count: 0 };
