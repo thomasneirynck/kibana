@@ -35,6 +35,7 @@ module.controller('MlExplorerChartsContainerController', function ($scope, $inje
   const mlJobService = $injector.get('mlJobService');
   const mlExplorerDashboardService = $injector.get('mlExplorerDashboardService');
   const mlResultsService = $injector.get('mlResultsService');
+  const mlSelectSeverityService = $injector.get('mlSelectSeverityService');
   const $q = $injector.get('$q');
 
   $scope.seriesToPlot = [];
@@ -47,7 +48,11 @@ module.controller('MlExplorerChartsContainerController', function ($scope, $inje
   const USE_OVERALL_CHART_LIMITS = false;
 
   const anomalyDataChangeListener = function (anomalyRecords, earliestMs, latestMs) {
-    const allSeriesRecords = processRecordsForDisplay(anomalyRecords);
+    const threshold = mlSelectSeverityService.state.get('threshold');
+    const filteredRecords = _.filter(anomalyRecords, (record) => {
+      return Number(record.record_score) >= threshold.val;
+    });
+    const allSeriesRecords = processRecordsForDisplay(filteredRecords);
     // Calculate the number of charts per row, depending on the width available, to a max of 4.
     const chartsContainerWidth = $chartContainer.width();
     const chartsPerRow = Math.min(Math.max(Math.floor(chartsContainerWidth / 550), 1), 4);

@@ -35,7 +35,11 @@ import loadingIndicatorWrapperTemplate from 'plugins/ml/components/loading_indic
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlExplorerChart', function (Private, formatValueFilter, mlChartTooltipService) {
+module.directive('mlExplorerChart', function (
+  Private,
+  formatValueFilter,
+  mlChartTooltipService,
+  mlSelectSeverityService) {
 
   function link(scope, element) {
     console.log('ml-explorer-chart directive link series config:', scope.seriesConfig);
@@ -231,11 +235,12 @@ module.directive('mlExplorerChart', function (Private, formatValueFilter, mlChar
         .on('mouseout', () => mlChartTooltipService.hide());
 
       // Update all dots to new positions.
+      const threshold = mlSelectSeverityService.state.get('threshold');
       dots.attr('cx', function (d) { return lineChartXScale(d.date); })
         .attr('cy', function (d) { return lineChartYScale(d.value); })
         .attr('class', function (d) {
           let markerClass = 'metric-value';
-          if (_.has(d, 'anomalyScore')) {
+          if (_.has(d, 'anomalyScore') && Number(d.anomalyScore) >= threshold.val) {
             markerClass += ' anomaly-marker ';
             markerClass += getSeverityWithLow(d.anomalyScore);
           }

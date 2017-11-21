@@ -63,7 +63,8 @@ module.controller('MlExplorerController', function (
   mlJobService,
   mlResultsService,
   mlJobSelectService,
-  mlExplorerDashboardService) {
+  mlExplorerDashboardService,
+  mlSelectSeverityService) {
 
   $scope.timeFieldName = 'timestamp';
   $scope.loading = true;
@@ -267,6 +268,14 @@ module.controller('MlExplorerController', function (
     return $scope.viewBySwimlaneData !== null && $scope.viewBySwimlaneData.laneLabels && $scope.viewBySwimlaneData.laneLabels.length > 0;
   };
 
+  const getTimeRange = function (cellData) {
+    // Time range for charts should be maximum time span at job bucket span, centred on the selected cell.
+    const bounds = timefilter.getActiveBounds();
+    const earliestMs = cellData.time !== undefined ? cellData.time * 1000 : bounds.min.valueOf();
+    const latestMs = cellData.time !== undefined ? ((cellData.time  + cellData.interval) * 1000) - 1 : bounds.max.valueOf();
+    return { earliestMs, latestMs };
+  };
+
   // Listener for click events in the swimlane and load corresponding anomaly data.
   // Empty cellData is passed on clicking outside a cell with score > 0.
   const swimlaneCellClickListener = function (cellData) {
@@ -280,17 +289,13 @@ module.controller('MlExplorerController', function (
     } else {
       let jobIds = [];
       const influencers = [];
-
-      // Time range for charts should be maximum time span at job bucket span, centred on the selected cell.
-      const bounds = timefilter.getActiveBounds();
-      const earliestMs = cellData.time !== undefined ? cellData.time * 1000 : bounds.min.valueOf();
-      const latestMs = cellData.time !== undefined ? ((cellData.time  + cellData.interval) * 1000) - 1 : bounds.max.valueOf();
+      const timerange = getTimeRange(cellData);
 
       if (cellData.fieldName === undefined) {
         // Click is in one of the cells in the Overall swimlane - reload the 'view by' swimlane
         // to show the top 'view by' values for the selected time.
-        loadViewBySwimlaneForSelectedTime(earliestMs, latestMs);
-        $scope.viewByLoadedForTimeFormatted = moment(earliestMs).format('MMMM Do YYYY, HH:mm');
+        loadViewBySwimlaneForSelectedTime(timerange.earliestMs, timerange.latestMs);
+        $scope.viewByLoadedForTimeFormatted = moment(timerange.earliestMs).format('MMMM Do YYYY, HH:mm');
       }
 
       if (cellData.fieldName === VIEW_BY_JOB_LABEL) {
@@ -304,32 +309,45 @@ module.controller('MlExplorerController', function (
       }
 
       $scope.cellData = cellData;
-      $scope.loadAnomaliesTable(jobIds, influencers, earliestMs, latestMs);
-      $scope.loadAnomaliesForCharts(jobIds, influencers, earliestMs, latestMs);
+      const args = [jobIds, influencers, timerange.earliestMs, timerange.latestMs];
+      $scope.loadAnomaliesTable(...args);
+      $scope.loadAnomaliesForCharts(...args);
     }
   };
-
   mlExplorerDashboardService.swimlaneCellClick.watch(swimlaneCellClickListener);
 
+  const checkboxShowChartsListener = function () {
+    const showCharts = mlCheckboxShowChartsService.state.get('showCharts');
+    if (showCharts && $scope.cellData !== undefined) {
+      swimlaneCellClickListener($scope.cellData);
+    } else {
+      const timerange = getTimeRange($scope.cellData);
+      mlExplorerDashboardService.anomalyDataChange.changed(
+        [], timerange.earliestMs, timerange.latestMs
+      );
+    }
+  };
+  mlCheckboxShowChartsService.state.watch(checkboxShowChartsListener);
+
+  const anomalyChartsSeverityListener = function () {
+    const showCharts = mlCheckboxShowChartsService.state.get('showCharts');
+    if (showCharts && $scope.cellData !== undefined) {
+      const timerange = getTimeRange($scope.cellData);
+      mlExplorerDashboardService.anomalyDataChange.changed(
+        $scope.anomalyChartRecords, timerange.earliestMs, timerange.latestMs
+      );
+    }
+  };
+  mlSelectSeverityService.state.watch(anomalyChartsSeverityListener);
+
   $scope.$on('$destroy', () => {
+    mlCheckboxShowChartsService.state.unwatch(checkboxShowChartsListener);
     mlExplorerDashboardService.swimlaneCellClick.unwatch(swimlaneCellClickListener);
+    mlSelectSeverityService.state.unwatch(anomalyChartsSeverityListener);
     $scope.cellData = undefined;
     refreshWatcher.cancel();
     // Cancel listening for updates to the global nav state.
     navListener();
-  });
-
-  let showCharts = mlCheckboxShowChartsService.state.get('showCharts');
-  mlCheckboxShowChartsService.state.watch(() => {
-    showCharts = mlCheckboxShowChartsService.state.get('showCharts');
-    if (showCharts && $scope.cellData !== undefined) {
-      swimlaneCellClickListener($scope.cellData);
-    } else {
-      const bounds = timefilter.getActiveBounds();
-      const earliestMs = bounds.min.valueOf();
-      const latestMs = bounds.max.valueOf();
-      mlExplorerDashboardService.anomalyDataChange.changed([], earliestMs, latestMs);
-    }
   });
 
   $scope.loadAnomaliesForCharts = function (jobIds, influencers, earliestMs, latestMs) {
@@ -341,7 +359,7 @@ module.controller('MlExplorerController', function (
       $scope.anomalyChartRecords = resp.records;
       console.log('Explorer anomaly charts data set:', $scope.anomalyChartRecords);
 
-      if (showCharts) {
+      if (mlCheckboxShowChartsService.state.get('showCharts')) {
         mlExplorerDashboardService.anomalyDataChange.changed(
           $scope.anomalyChartRecords, earliestMs, latestMs
         );
