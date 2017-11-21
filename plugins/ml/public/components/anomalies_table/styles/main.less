@@ -21,10 +21,6 @@ ml-anomalies-table {
           font-size: 12px;
         }
 
-        .dropdown-menu > li > a, .dropdown-menu > li > a:hover, .dropdown-menu > li > a:active {
-          font-size: 12px;
-        }
-
         .fa.fa-arrow-up, .fa.fa-arrow-down {
           font-size: 11px;
           color: #686868;
@@ -43,7 +39,7 @@ ml-anomalies-table {
     }
 
     .agg-table-paginated {
-      overflow-x: visible;
+      overflow-x: auto;
       .dropdown-menu {
         left: -60px;
       }
@@ -99,4 +95,21 @@ ml-anomalies-table {
     }
 
   }
+}
+
+.dropdown-menu {
+  min-width: 120px;
+  font-size: 12px;
+}
+
+.dropdown-menu > li > a {
+  color: #444444;
+  text-decoration: none;
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:active,
+.dropdown-menu > li > a:focus {
+  color: #ffffff;
+  box-shadow: none;
 }
