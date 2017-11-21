@@ -59,6 +59,7 @@ module.controller('MlExplorerController', function (
   AppState,
   Private,
   timefilter,
+  mlCheckboxShowChartsService,
   mlJobService,
   mlResultsService,
   mlJobSelectService,
@@ -132,8 +133,9 @@ module.controller('MlExplorerController', function (
   }
 
   $scope.loadAnomaliesTable = function (jobIds, influencers, earliestMs, latestMs) {
-    mlResultsService.getRecordsForInfluencer(jobIds, influencers,
-      0, earliestMs, latestMs, 500)
+    mlResultsService.getRecordsForInfluencer(
+      jobIds, influencers, 0, earliestMs, latestMs, 500
+    )
     .then((resp) => {
       // Sort in descending time order before storing in scope.
       $scope.anomalyRecords = _.chain(resp.records).sortBy(record => record[$scope.timeFieldName]).reverse().value();
@@ -143,19 +145,6 @@ module.controller('MlExplorerController', function (
       $timeout(() => {
         $scope.$broadcast('renderTable');
       }, 0);
-    });
-  };
-
-  $scope.loadAnomaliesForCharts = function (jobIds, influencers, earliestMs, latestMs) {
-    // Load the top anomalies (by record_score) which will be displayed in the charts.
-    // TODO - combine this with loadAnomaliesTable() if the table is being retained.
-    mlResultsService.getRecordsForInfluencer(jobIds, influencers,
-      0, earliestMs, latestMs, 500)
-    .then((resp) => {
-      $scope.anomalyChartRecords = resp.records;
-      console.log('Explorer anomaly charts data set:', $scope.anomalyChartRecords);
-
-      mlExplorerDashboardService.anomalyDataChange.changed($scope.anomalyChartRecords, earliestMs, latestMs);
     });
   };
 
@@ -314,6 +303,7 @@ module.controller('MlExplorerController', function (
         }
       }
 
+      $scope.cellData = cellData;
       $scope.loadAnomaliesTable(jobIds, influencers, earliestMs, latestMs);
       $scope.loadAnomaliesForCharts(jobIds, influencers, earliestMs, latestMs);
     }
@@ -323,10 +313,41 @@ module.controller('MlExplorerController', function (
 
   $scope.$on('$destroy', () => {
     mlExplorerDashboardService.swimlaneCellClick.unwatch(swimlaneCellClickListener);
+    $scope.cellData = undefined;
     refreshWatcher.cancel();
     // Cancel listening for updates to the global nav state.
     navListener();
   });
+
+  let showCharts = mlCheckboxShowChartsService.state.get('showCharts');
+  mlCheckboxShowChartsService.state.watch(() => {
+    showCharts = mlCheckboxShowChartsService.state.get('showCharts');
+    if (showCharts && $scope.cellData !== undefined) {
+      swimlaneCellClickListener($scope.cellData);
+    } else {
+      const bounds = timefilter.getActiveBounds();
+      const earliestMs = bounds.min.valueOf();
+      const latestMs = bounds.max.valueOf();
+      mlExplorerDashboardService.anomalyDataChange.changed([], earliestMs, latestMs);
+    }
+  });
+
+  $scope.loadAnomaliesForCharts = function (jobIds, influencers, earliestMs, latestMs) {
+    // Load the top anomalies (by record_score) which will be displayed in the charts.
+    // TODO - combine this with loadAnomaliesTable() if the table is being retained.
+    mlResultsService.getRecordsForInfluencer(
+      jobIds, influencers, 0, earliestMs, latestMs, 500
+    ).then((resp) => {
+      $scope.anomalyChartRecords = resp.records;
+      console.log('Explorer anomaly charts data set:', $scope.anomalyChartRecords);
+
+      if (showCharts) {
+        mlExplorerDashboardService.anomalyDataChange.changed(
+          $scope.anomalyChartRecords, earliestMs, latestMs
+        );
+      }
+    });
+  };
 
   function loadViewBySwimlaneOptions() {
     // Obtain the list of 'View by' fields per job.

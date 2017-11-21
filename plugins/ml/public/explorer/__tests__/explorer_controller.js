@@ -28,6 +28,7 @@ describe('ML - Explorer Controller', function () {
 
       expect(scope.limitSwimlaneOptions).to.eql([5, 10, 25, 50]);
       expect(scope.swimlaneLimit).to.equal(10);
+      expect(scope.showCharts).to.be.true;
     });
   });
 });

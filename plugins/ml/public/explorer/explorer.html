@@ -114,6 +114,14 @@
           Anomalies
         </span>
 
+        <div class="ml-table-controls">
+          <ml-select-severity />
+          <ml-select-interval />
+          <ml-checkbox-show-charts
+            visible="anomalyChartRecords.length > 0"
+          />
+        </div>
+
         <div ng-controller="MlExplorerChartsContainerController">
           <ml-explorer-charts-container
             series-to-plot="seriesToPlot"
@@ -128,13 +136,11 @@
           </ml-explorer-charts-container>
         </div>
 
-        <div>
-          <ml-anomalies-table
-            anomaly-records="anomalyRecords"
-            time-field-name="timeFieldName"
-            show-view-series-link="true">
-          </ml-anomalies-table>
-        </div>
+        <ml-anomalies-table
+          anomaly-records="anomalyRecords"
+          time-field-name="timeFieldName"
+          show-view-series-link="true">
+        </ml-anomalies-table>
 
       </div>
 
