@@ -46,6 +46,8 @@ export const colors = {
   apmBrown: '#461a0a',
   apmPurple: '#490092',
   apmBlue: '#3185fc',
+  apmBetaBlue: '#e5f1f5',
+  apmBetaDarkBlue: '#0078a5',
   apmRed: '#920000',
   apmRed2: '#db1374',
   apmGreen: '#00b3a4',

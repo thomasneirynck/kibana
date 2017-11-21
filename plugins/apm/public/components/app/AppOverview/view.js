@@ -7,8 +7,8 @@ import { loadAgentStatus } from '../../../services/rest';
 import { RelativeLink } from '../../../utils/url';
 
 import styled from 'styled-components';
+import { px, unit, units, colors, fontSizes } from '../../../style/variables';
 import { KuiButton } from 'ui_framework/components';
-import { units, px } from '../../../style/variables';
 import List from './List';
 import { PageHeader } from '../../shared/UIComponents';
 
@@ -40,7 +40,27 @@ const GettingStartedLink = styled(RelativeLink)`
   margin-top: ${px(units.minus)};
 `;
 
+const BetaCallout = styled.div`
+  padding: ${px(unit)};
+  background: ${colors.apmBetaBlue};
+  margin: 0 0 ${px(units.double)} 0;
+  border-left: solid 2px ${colors.apmBetaDarkBlue};
+
+  strong {
+    font-size: ${fontSizes.large};
+    color: ${colors.apmBetaDarkBlue};
+  }
+
+  p {
+    margin: ${units.half} 0 0 0;
+  }
+`;
+
 class AppOverview extends Component {
+  state = {
+    hideBetaCallout: false
+  };
+
   componentDidMount() {
     fetchData(this.props);
   }
@@ -49,6 +69,19 @@ class AppOverview extends Component {
     fetchData(nextProps);
     redirectIfNoData(nextProps);
   }
+
+  componentWillMount() {
+    const hideBetaCallout = localStorage.getItem('xpack.apm.hideBetaCallout');
+
+    if (hideBetaCallout) {
+      this.setState({ hideBetaCallout: true });
+    }
+  }
+
+  dismissCallout = () => {
+    this.setState({ hideBetaCallout: true });
+    localStorage.setItem('xpack.apm.hideBetaCallout', true);
+  };
 
   render() {
     const { appList, changeAppSorting, appSorting } = this.props;
@@ -61,6 +94,19 @@ class AppOverview extends Component {
             <KuiButton buttonType="secondary">Setup Instructions</KuiButton>
           </GettingStartedLink>
         </HeaderWrapper>
+
+        {this.state.hideBetaCallout === false && (
+          <BetaCallout>
+            <strong>Welcome to the APM beta!</strong>
+            <p>
+              We would love your feedback. To get in touch, please follow the
+              &quot;Beta feedback&quot; link in the header. Thanks!
+            </p>
+            <KuiButton buttonType="primary" onClick={this.dismissCallout}>
+              Got it
+            </KuiButton>
+          </BetaCallout>
+        )}
 
         <List
           items={appList.data}

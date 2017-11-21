@@ -7,9 +7,9 @@ export const serverInstructions = [
         indicatorNumber: 1,
         title: 'Download and unpack the APM Server',
         textPre:
-          '[Download 32-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-i386.deb) – [Download 64-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-amd64.deb)',
-        code: `32-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-i386.deb
-64-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-amd64.deb`
+          '[Download 32-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-i386.deb) – [Download 64-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-amd64.deb)',
+        code: `32-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-i386.deb
+64-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-amd64.deb`
       },
       {
         indicatorNumber: 2,
@@ -43,9 +43,9 @@ export const serverInstructions = [
         indicatorNumber: 1,
         title: 'Download and unpack the APM Server',
         textPre:
-          '[Download 32-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-i686.rpm) – [Download 64-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-x86_64.rpm)',
-        code: `32-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-amd64.deb
-64-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-x86_64.rpm`
+          '[Download 32-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-i686.rpm) – [Download 64-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-x86_64.rpm)',
+        code: `32-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-amd64.deb
+64-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-x86_64.rpm`
       },
       {
         indicatorNumber: 2,
@@ -79,9 +79,9 @@ export const serverInstructions = [
         indicatorNumber: 1,
         title: 'Download and unpack the APM Server',
         textPre:
-          '[Download 32-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-linux-x86.tar.gz) – [Download 64-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-linux-x86_64.tar.gz)',
-        code: `32-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-linux-x86.tar.gz
-64-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-linux-x86_64.tar.gz`
+          '[Download 32-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-linux-x86.tar.gz) – [Download 64-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-linux-x86_64.tar.gz)',
+        code: `32-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-linux-x86.tar.gz
+64-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-linux-x86_64.tar.gz`
       },
       {
         indicatorNumber: 2,
@@ -115,9 +115,9 @@ export const serverInstructions = [
         indicatorNumber: 1,
         title: 'Download and unpack the APM Server',
         textPre:
-          '[Download link](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-darwin-x86_64.tar.gz)',
+          '[Download link](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-darwin-x86_64.tar.gz)',
         code:
-          'https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-darwin-x86_64.tar.gz'
+          'https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-darwin-x86_64.tar.gz'
       },
       {
         indicatorNumber: 2,
@@ -151,9 +151,9 @@ export const serverInstructions = [
         indicatorNumber: 1,
         title: 'Download and unpack the APM Server',
         textPre:
-          '[Download 32-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-windows-x86.zip) – [Download 64-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-windows-x86_64.zip)',
-        code: `32-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-windows-x86.zip
-64-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.0.0-windows-x86_64.zip`
+          '[Download 32-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-windows-x86.zip) – [Download 64-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-windows-x86_64.zip)',
+        code: `32-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-windows-x86.zip
+64-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-windows-x86_64.zip`
       },
       {
         indicatorNumber: 2,

@@ -1,6 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { px, unit, units, colors, fontSizes } from '../../../style/variables';
+import {
+  px,
+  unit,
+  units,
+  colors,
+  fontSizes,
+  borderRadius
+} from '../../../style/variables';
 
 const IntroductionWrapper = styled.div`
   padding: ${px(units.plus)};
@@ -22,6 +29,19 @@ const Title = styled.h1`
   margin: ${px(units.half)} 0;
 `;
 
+const TitleLabel = styled.div`
+  display: inline-block;
+  margin: 0 ${px(units.half)};
+  font-size: ${fontSizes.small};
+  padding: ${px(units.quarter)} ${px(units.half)};
+  background: ${colors.apmBetaBlue};
+  border-radius: ${borderRadius};
+  vertical-align: ${px(units.half)};
+  font-weight: bold;
+  text-transform: uppercase;
+  color: ${colors.blue1};
+`;
+
 const Description = styled.div`
   margin: ${px(unit)} 0;
 `;
@@ -37,6 +57,7 @@ function Introduction() {
     <IntroductionWrapper>
       <Icon />
       <Title>APM</Title>
+      <TitleLabel>Beta</TitleLabel>
       <Subtitle>
         APM (Application Performance Management) automatically collects in-depth
         performance metrics and errors from inside your applications.
