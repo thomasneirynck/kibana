@@ -27,11 +27,7 @@ export function logstashPipelineRoute(server) {
           pipelineHash: Joi.string().required()
         }),
         payload: Joi.object({
-          ccs: Joi.string().optional(),
-          timeRange: Joi.object({
-            min: Joi.date().required(),
-            max: Joi.date().required()
-          }).required()
+          ccs: Joi.string().optional()
         })
       }
     },
@@ -43,9 +39,8 @@ export function logstashPipelineRoute(server) {
 
       const pipelineId = req.params.pipelineId;
       const pipelineHash = req.params.pipelineHash;
-      const timeRange = req.payload.timeRange;
 
-      return getPipeline(req, lsIndexPattern, clusterUuid, pipelineId, pipelineHash, timeRange)
+      return getPipeline(req, lsIndexPattern, clusterUuid, pipelineId, pipelineHash)
       .then(reply)
       .catch(err => reply(handleError(err, req)));
     }

@@ -72,6 +72,21 @@ function outerAggs(pipelineId, pipelineHash, maxBucketSize) {
         field: 'logstash_stats.pipelines.events.duration_in_millis'
       }
     },
+    timebounds: {
+      reverse_nested: {},
+      aggs: {
+        first_seen: {
+          min: {
+            field: 'logstash_stats.timestamp'
+          }
+        },
+        last_seen: {
+          max: {
+            field: 'logstash_stats.timestamp'
+          }
+        }
+      }
+    },
     vertices: nestedVertices(maxBucketSize)
   };
 

@@ -11,21 +11,15 @@ import template from './index.html';
 function getPageData($injector) {
   const $route = $injector.get('$route');
   const $http = $injector.get('$http');
-  const timefilter = $injector.get('timefilter');
   const globalState = $injector.get('globalState');
   const Private = $injector.get('Private');
 
   const { ccs, cluster_uuid: clusterUuid } = globalState;
-  const timeBounds = timefilter.getBounds();
   const pipelineId = $route.current.params.id;
   const pipelineHash = $route.current.params.hash;
   const url = `../api/monitoring/v1/clusters/${clusterUuid}/logstash/pipeline/${pipelineId}/${pipelineHash}`;
   return $http.post(url, {
-    ccs,
-    timeRange: {
-      min: timeBounds.min.toISOString(),
-      max: timeBounds.max.toISOString()
-    }
+    ccs
   })
   .then(response => response.data)
   .catch((err) => {
@@ -53,7 +47,7 @@ uiModule.controller('logstashPipeline', ($injector, $scope) => {
   const title = $injector.get('title');
   const timefilter = $injector.get('timefilter');
 
-  timefilter.enabled = true;
+  timefilter.enabled = false; // Do not display time picker in UI
 
   function setClusters(clusters) {
     $scope.clusters = clusters;

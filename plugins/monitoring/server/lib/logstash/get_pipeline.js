@@ -4,7 +4,7 @@ import { checkParam } from '../error_missing_required';
 import { getPipelineStateDocument } from './get_pipeline_state_document';
 import { getPipelineStatsAggregation } from './get_pipeline_stats_aggregation';
 
-export function _vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timePickerDurationMillis) {
+export function _vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timeboundsInMillis) {
 
   const isInput = vertex.plugin_type === 'input';
   const isProcessor = vertex.plugin_type === 'filter' || vertex.plugin_type === 'output';
@@ -31,17 +31,20 @@ export function _vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationI
     events_in: eventsInTotal,
     events_out: eventsOutTotal,
     duration_in_millis: durationInMillis,
-    events_per_millisecond: eventsTotal / timePickerDurationMillis,
+    events_per_millisecond: eventsTotal / timeboundsInMillis,
     millis_per_event: durationInMillis / eventsTotal,
     ...inputStats,
     ...processorStats
   };
 }
 
-export function _enrichStateWithStatsAggregation(stateDocument, statsAggregation, timePickerDurationMillis) {
+export function _enrichStateWithStatsAggregation(stateDocument, statsAggregation) {
   const vertexStatsByIdBuckets = statsAggregation.aggregations.pipelines.scoped.vertices.vertex_id.buckets;
   const logstashState = stateDocument.logstash_state;
   const vertices = logstashState.pipeline.representation.graph.vertices;
+
+  const timebounds = statsAggregation.aggregations.pipelines.scoped.timebounds;
+  const timeboundsInMillis = timebounds.last_seen.value - timebounds.first_seen.value;
 
   const rootAgg = statsAggregation.aggregations;
   const scopedAgg = rootAgg.pipelines.scoped;
@@ -64,28 +67,23 @@ export function _enrichStateWithStatsAggregation(stateDocument, statsAggregation
     const vertex = verticesById[id];
 
     if (vertex !== undefined) {
-      vertex.stats = _vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timePickerDurationMillis);
+      vertex.stats = _vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timeboundsInMillis);
     }
   });
 
   return stateDocument.logstash_state;
 }
 
-export async function getPipeline(req, lsIndexPattern, clusterUuid, pipelineId, pipelineHash, timeRange) {
+export async function getPipeline(req, lsIndexPattern, clusterUuid, pipelineId, pipelineHash) {
   checkParam(lsIndexPattern, 'lsIndexPattern in getPipeline');
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
 
-  const start = timeRange.min;
-  const end = timeRange.max;
   const options = {
     clusterUuid,
-    start,
-    end,
     pipelineId,
     pipelineHash
   };
-  const timePickerDurationMillis = end - start;
 
   const [ stateDocument, statsAggregation ] = await Promise.all([
     getPipelineStateDocument(callWithRequest, req, lsIndexPattern, options),
@@ -96,6 +94,6 @@ export async function getPipeline(req, lsIndexPattern, clusterUuid, pipelineId, 
     return boom.notFound(`Pipeline [${pipelineId} @ ${pipelineHash}] not found in the selected time range for cluster [${clusterUuid}].`);
   }
 
-  const result = _enrichStateWithStatsAggregation(stateDocument, statsAggregation, timePickerDurationMillis);
+  const result = _enrichStateWithStatsAggregation(stateDocument, statsAggregation);
   return result;
 }

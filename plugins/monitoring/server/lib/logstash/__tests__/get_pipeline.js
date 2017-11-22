@@ -9,7 +9,7 @@ describe('get_pipeline', () => {
     let vertex;
     let vertexStatsBucket;
     let totalProcessorsDurationInMillis;
-    let timePickerDurationMillis;
+    let timeboundsInMillis;
 
     beforeEach(() => {
       vertex = {
@@ -25,11 +25,11 @@ describe('get_pipeline', () => {
       };
 
       totalProcessorsDurationInMillis = 24000;
-      timePickerDurationMillis = 15 * 60 * 1000;
+      timeboundsInMillis = 15 * 60 * 1000;
     });
 
     it('returns correct stats', () => {
-      const result = _vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timePickerDurationMillis);
+      const result = _vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timeboundsInMillis);
       expect(result).to.eql({
         events_in: 10000,
         events_out: 9000,
@@ -49,7 +49,7 @@ describe('get_pipeline', () => {
       });
 
       it('returns correct stats', () => {
-        const result = _vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timePickerDurationMillis);
+        const result = _vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timeboundsInMillis);
         expect(result).to.eql({
           events_in: 10000,
           events_out: 9000,
@@ -69,7 +69,7 @@ describe('get_pipeline', () => {
       });
 
       it('returns correct stats', () => {
-        const result = _vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timePickerDurationMillis);
+        const result = _vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timeboundsInMillis);
         expect(result).to.eql({
           events_in: 10000,
           events_out: 9000,
@@ -87,7 +87,7 @@ describe('get_pipeline', () => {
       });
 
       it ('eventsTotal falls back to events_in_total', () => {
-        const result = _vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timePickerDurationMillis);
+        const result = _vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timeboundsInMillis);
         expect(result).to.eql({
           events_out: null,
           events_in: 10000,
@@ -104,7 +104,7 @@ describe('get_pipeline', () => {
   describe('_enrichStateWithStatsAggregation function', () => {
     let stateDocument;
     let statsAggregation;
-    let timePickerDurationMillis;
+    let timeboundsInMillis;
 
     beforeEach(() => {
       stateDocument = {
@@ -181,6 +181,17 @@ describe('get_pipeline', () => {
                 avg: 9820,
                 sum: 137480
               },
+              timebounds: {
+                doc_count: 633,
+                first_seen: {
+                  value: 1511275538320,
+                  value_as_string: '2017-11-21T14:45:38.320Z'
+                },
+                last_seen: {
+                  value: 1511286565801,
+                  value_as_string: '2017-11-21T17:49:25.801Z'
+                }
+              },
               vertices: {
                 doc_count: 98,
                 vertex_id: {
@@ -212,11 +223,11 @@ describe('get_pipeline', () => {
         }
       };
 
-      timePickerDurationMillis = 15 * 60 * 1000;
+      timeboundsInMillis = 11027481; // last_seen - first_seen in aggs response
     });
 
-    it ('enriches the state document correctly with stats', () => {
-      const enrichedStateDocument = _enrichStateWithStatsAggregation(stateDocument, statsAggregation, timePickerDurationMillis);
+    it('enriches the state document correctly with stats', () => {
+      const enrichedStateDocument = _enrichStateWithStatsAggregation(stateDocument, statsAggregation, timeboundsInMillis);
       expect(enrichedStateDocument).to.eql({
         events_in: 2900,
         events_out: 2801,
@@ -241,7 +252,7 @@ describe('get_pipeline', () => {
                     duration_in_millis: 7000,
                     events_in: 29,
                     events_out: 28,
-                    events_per_millisecond: 0.00003111111111111111,
+                    events_per_millisecond: 0.0000025391111533087203,
                     millis_per_event: 250,
                     queue_push_duration_in_millis: 600,
                     queue_push_duration_in_millis_per_event: 21.428571428571427
@@ -256,7 +267,7 @@ describe('get_pipeline', () => {
                     duration_in_millis: 6500,
                     events_in: 28,
                     events_out: 27,
-                    events_per_millisecond: 0.00003,
+                    events_per_millisecond: 0.000002448428612119123,
                     millis_per_event: 240.74074074074073,
                     percent_of_total_processor_duration: 0.5497758606106741
                   }
