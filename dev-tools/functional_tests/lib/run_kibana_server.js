@@ -4,6 +4,7 @@ import {
   PROJECT_ROOT,
   KIBANA_ROOT,
   KIBANA_EXEC,
+  KIBANA_EXEC_PATH,
   OPTIMIZE_BUNDLE_DIR
 } from './paths';
 
@@ -12,6 +13,7 @@ export async function runKibanaServer({ procs, ftrConfig, devMode = false }) {
   await procs.run('kibana', {
     cmd: KIBANA_EXEC,
     args: [
+      KIBANA_EXEC_PATH,
       devMode ? '--dev' : '--env=development',
       `--plugin-path=${PROJECT_ROOT}`,
       '--logging.json=false',

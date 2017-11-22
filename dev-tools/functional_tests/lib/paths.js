@@ -12,8 +12,8 @@ function resolveRelative(path) {
 function useBat(bin) {
   return getPlatform().startsWith('win') ? `${bin}.bat` : bin;
 }
-
-export const KIBANA_EXEC = useBat(resolveKibanaPath('bin/kibana'));
+export const KIBANA_EXEC = 'node';
+export const KIBANA_EXEC_PATH = resolveKibanaPath('scripts/kibana');
 export const KIBANA_ROOT = resolveKibanaPath('');
 export const XPACK_KIBANA_ROOT = resolve(KIBANA_ROOT, '../x-pack-kibana');
 export const GULP_COMMAND_PATH = resolve(XPACK_KIBANA_ROOT, 'node_modules/.bin/gulp');
