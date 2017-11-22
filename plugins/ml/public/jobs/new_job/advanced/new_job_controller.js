@@ -233,6 +233,10 @@ function (
           $scope.ui.influencers = angular.copy($scope.job.analysis_config.influencers);
         }
 
+        if ($scope.job.analysis_limits && $scope.job.analysis_limits.model_memory_limit) {
+          $scope.ui.modelMemoryLimitText = $scope.job.analysis_limits.model_memory_limit;
+        }
+
         if ($scope.job.results_index_name === 'shared') {
           delete $scope.job.results_index_name;
         } else {
@@ -302,6 +306,7 @@ function (
     msgs.clear();
     getDelimiterSelection();
     getDatafeedSelection();
+    getAnalysisLimitsSelection();
 
     const jobValid = validateJob();
 
