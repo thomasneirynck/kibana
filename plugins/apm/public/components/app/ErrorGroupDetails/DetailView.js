@@ -78,6 +78,8 @@ function DetailView({ errorGroup, urlParams }) {
 
   const url = get(errorGroup.data.error, 'context.request.url.raw', 'N/A');
 
+  const agentName = get(errorGroup.data.error, 'context.app.agent.name');
+
   const discoverQuery = {
     _a: {
       interval: 'auto',
@@ -125,6 +127,7 @@ function DetailView({ errorGroup, urlParams }) {
           <PropertiesTable
             propData={errorGroup.data.error.context[currentTab]}
             propKey={currentTab}
+            agentName={agentName}
           />
         )}
       </TabContentContainer>

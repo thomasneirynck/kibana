@@ -88,6 +88,8 @@ class Transaction extends Component {
       return null;
     }
 
+    const agentName = get(transaction, 'data.context.app.agent.name');
+
     const timestamp = moment(get(transaction, 'data.@timestamp'));
     const timestampFull = timestamp.format('MMMM Do YYYY, HH:mm:ss.SSS');
     const timestampAgo = timestamp.fromNow();
@@ -147,6 +149,7 @@ class Transaction extends Component {
               <PropertiesTable
                 propData={get(transaction.data.context, currentTab)}
                 propKey={currentTab}
+                agentName={agentName}
               />
             </PropertiesTableContainer>
           )}

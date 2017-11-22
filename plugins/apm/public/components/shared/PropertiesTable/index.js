@@ -96,24 +96,72 @@ function getLevelTwoProps(dynamicProps, currentKey) {
   }));
 }
 
-function getTipText(propertyKey) {
-  switch (propertyKey) {
-    case 'user':
-      return 'You can configure your agent to add contextual information about your users';
+function getTipText(propertyKey, agentName) {
+  switch (agentName) {
+    case 'nodejs':
+      switch (propertyKey) {
+        case 'user':
+          return {
+            text:
+              'You can configure your agent to add contextual information about your users',
+            url:
+              'https://www.elastic.co/guide/en/apm/agent/nodejs/current/agent-api.html#apm-set-user-context'
+          };
 
-    case 'tags':
-      return 'You can configure your agent to add filterable tags on transactions';
+        case 'tags':
+          return {
+            text:
+              'You can configure your agent to add filterable tags on transactions',
+            url:
+              'https://www.elastic.co/guide/en/apm/agent/nodejs/current/agent-api.html#apm-set-tag'
+          };
 
-    case 'custom':
-      return 'You can configure your agent to add custom contextual information on transactions';
+        case 'custom':
+          return {
+            text:
+              'You can configure your agent to add custom contextual information on transactions',
+            url:
+              'https://www.elastic.co/guide/en/apm/agent/nodejs/current/agent-api.html#apm-set-custom-context'
+          };
 
-    default:
-      return null;
+        default:
+          return null;
+      }
+
+    case 'elasticapm-python':
+      switch (propertyKey) {
+        case 'user':
+          return {
+            text:
+              'You can configure your agent to add contextual information about your users',
+            url:
+              'https://www.elastic.co/guide/en/apm/agent/python/current/index.html'
+          };
+
+        case 'tags':
+          return {
+            text:
+              'You can configure your agent to add filterable tags on transactions',
+            url:
+              'https://www.elastic.co/guide/en/apm/agent/python/current/index.html'
+          };
+
+        case 'custom':
+          return {
+            text:
+              'You can configure your agent to add custom contextual information on transactions',
+            url:
+              'https://www.elastic.co/guide/en/apm/agent/python/current/index.html'
+          };
+
+        default:
+          return null;
+      }
   }
 }
 
-function recursiveSort(propData, levelTwoKey, level) {
-  const tipText = getTipText(levelTwoKey);
+function recursiveSort(propData, levelTwoKey, level, agentName) {
+  const tipText = getTipText(levelTwoKey, agentName);
 
   return (
     <div>
@@ -126,7 +174,7 @@ function recursiveSort(propData, levelTwoKey, level) {
                   <Cell>{formatKey(key, value)}</Cell>
                   <Cell>
                     {level < 3 && _.isObject(value)
-                      ? recursiveSort(value, levelTwoKey, level + 1)
+                      ? recursiveSort(value, levelTwoKey, level + 1, agentName)
                       : formatValue(value)}
                   </Cell>
                 </Row>
@@ -138,11 +186,8 @@ function recursiveSort(propData, levelTwoKey, level) {
 
       {tipText && (
         <TipMessage>
-          {tipText} -{' '}
-          <a
-            href="https://www.elastic.co/guide/en/apm/get-started/current/index.html"
-            target="_blank"
-          >
+          {tipText.text} -{' '}
+          <a href={tipText.url} target="_blank">
             Learn more in the documentation
           </a>
         </TipMessage>
@@ -151,10 +196,18 @@ function recursiveSort(propData, levelTwoKey, level) {
   );
 }
 
-export function PropertiesTable({ propData, propKey }) {
+export function PropertiesTable({ propData = {}, propKey, agentName }) {
   if (!propData) {
-    return <div>No data</div>;
+    return (
+      <TableContainer>
+        <TipMessage>No data available</TipMessage>
+      </TableContainer>
+    );
   }
 
-  return <TableContainer>{recursiveSort(propData, propKey, 2)}</TableContainer>;
+  return (
+    <TableContainer>
+      {recursiveSort(propData, propKey, 2, agentName)}
+    </TableContainer>
+  );
 }
