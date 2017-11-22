@@ -54,6 +54,24 @@
         </div>
       </div>
 
+      <div ng-repeat="(key, value) in job">
+        <div ng-switch="key">
+          <div ng-switch-when="analysis_limits">
+            <div class="ml_sub_heading">Analysis Limits</div>
+            <div class='ml_job_section_container'>
+              <div>
+                <ml-job-item ng-repeat="(key1, value1) in value | filterObjects">
+                  <div class="ml_job_row row">
+                    <div class="col-md-6">{{key1}}</div>
+                    <div class="col-md-6">{{value1}}</div>
+                  </div>
+                </ml-job-item>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div ng-show="(job.analysis_config.categorization_filters && job.analysis_config.categorization_filters.length)"
         ng-repeat="(key, value) in job">
         <div ng-switch="key">
