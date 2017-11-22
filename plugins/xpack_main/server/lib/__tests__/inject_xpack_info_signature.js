@@ -1,61 +1,106 @@
+import sinon from 'sinon';
 import expect from 'expect.js';
 import { injectXPackInfoSignature } from '../inject_xpack_info_signature';
 
 describe('injectXPackInfoSignature()', () => {
-
   class MockErrorResponse extends Error {
     constructor() {
       super();
       this.output = {
         headers: {}
       };
-    }
-  }
 
-  class MockResponse {
-    constructor() {
       this.headers = {};
     }
   }
 
-  let mockInfo;
   let mockReply;
-
+  let mockXPackInfo;
   beforeEach(() => {
-    mockInfo = {
-      refreshNow() {
-        return new Promise((resolve) => {
-          this.signature = 'changed-signature';
-          resolve(this);
-        });
-      },
-      getSignature() {
-        return this.signature || 'initial-signature';
-      }
-    };
+    mockXPackInfo = sinon.stub({
+      isAvailable() {},
+      getSignature() {},
+      refreshNow() {}
+    });
 
-    mockReply = {
+    mockReply = sinon.stub({
       continue() {}
-    };
-  });
-
-  it ('sets the kbn-xpack-sig header for error responses', () => {
-    const mockRequest = {
-      response: new MockErrorResponse()
-    };
-
-    return injectXPackInfoSignature(mockInfo, mockRequest, mockReply)
-    .then(() => {
-      expect(mockRequest.response.output.headers['kbn-xpack-sig']).to.be('changed-signature');
     });
   });
 
-  it ('sets the kbn-xpack-sig header for success responses', () => {
-    const mockRequest = {
-      response: new MockResponse()
-    };
+  describe('error response', () => {
+    it('refreshes `xpackInfo` and do not inject signature if it is not available.', async () => {
+      mockXPackInfo.isAvailable.returns(true);
+      mockXPackInfo.getSignature.returns('this-should-never-be-set');
 
-    injectXPackInfoSignature(mockInfo, mockRequest, mockReply);
-    expect(mockRequest.response.headers['kbn-xpack-sig']).to.be('initial-signature');
+      // We need this to make sure the code waits for `refreshNow` to complete before it tries
+      // to access its properties.
+      mockXPackInfo.refreshNow = () => {
+        return new Promise((resolve) => {
+          mockXPackInfo.isAvailable.returns(false);
+          resolve();
+        });
+      };
+
+      const mockResponse = new MockErrorResponse();
+      await injectXPackInfoSignature(mockXPackInfo, { response: mockResponse }, mockReply);
+
+      expect(mockResponse.headers).to.eql({});
+      expect(mockResponse.output.headers).to.eql({});
+      sinon.assert.calledOnce(mockReply.continue);
+    });
+
+    it('refreshes `xpackInfo` and injects its updated signature.', async () => {
+      mockXPackInfo.isAvailable.returns(true);
+      mockXPackInfo.getSignature.returns('old-signature');
+
+      // We need this to make sure the code waits for `refreshNow` to complete before it tries
+      // to access its properties.
+      mockXPackInfo.refreshNow = () => {
+        return new Promise((resolve) => {
+          mockXPackInfo.getSignature.returns('new-signature');
+          resolve();
+        });
+      };
+
+      const mockResponse = new MockErrorResponse();
+      await injectXPackInfoSignature(mockXPackInfo, { response: mockResponse }, mockReply);
+
+      expect(mockResponse.headers).to.eql({});
+      expect(mockResponse.output.headers).to.eql({
+        'kbn-xpack-sig': 'new-signature'
+      });
+      sinon.assert.calledOnce(mockReply.continue);
+    });
+  });
+
+  describe('non-error response', () => {
+    it('do not inject signature if `xpackInfo` is not available.', async () => {
+      mockXPackInfo.isAvailable.returns(false);
+      mockXPackInfo.getSignature.returns('this-should-never-be-set');
+
+      const mockResponse = { headers: {}, output: { headers: {} } };
+      await injectXPackInfoSignature(mockXPackInfo, { response: mockResponse }, mockReply);
+
+      expect(mockResponse.headers).to.eql({});
+      expect(mockResponse.output.headers).to.eql({});
+      sinon.assert.notCalled(mockXPackInfo.refreshNow);
+      sinon.assert.calledOnce(mockReply.continue);
+    });
+
+    it('injects signature if `xpackInfo` is available.', async () => {
+      mockXPackInfo.isAvailable.returns(true);
+      mockXPackInfo.getSignature.returns('available-signature');
+
+      const mockResponse = { headers: {}, output: { headers: {} } };
+      await injectXPackInfoSignature(mockXPackInfo, { response: mockResponse }, mockReply);
+
+      expect(mockResponse.headers).to.eql({
+        'kbn-xpack-sig': 'available-signature'
+      });
+      expect(mockResponse.output.headers).to.eql({});
+      sinon.assert.notCalled(mockXPackInfo.refreshNow);
+      sinon.assert.calledOnce(mockReply.continue);
+    });
   });
 });

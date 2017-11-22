@@ -4,7 +4,7 @@ import { isFunction } from 'lodash';
 
 export function requireAllAndApply(path, server) {
   return new Promise(function (resolve, reject) {
-    glob(path, { ignore: '**/__test__/**' }, function (err, files) {
+    glob(path, { ignore: '**/__tests__/**' }, function (err, files) {
       if (err) return reject(err);
       const modules = files.map(require);
       modules.forEach(function (imports) {

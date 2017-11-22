@@ -11,11 +11,6 @@ import { authenticateFactory } from './auth_redirect';
  */
 export function createScheme({ redirectUrl }) {
   return (server) => {
-    const authenticate = authenticateFactory({
-      redirectUrl,
-      xpackMainPlugin: server.plugins.xpack_main,
-      server
-    });
-    return { authenticate };
+    return { authenticate: authenticateFactory({ redirectUrl, server }) };
   };
 }

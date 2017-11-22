@@ -1,4 +1,3 @@
-import { _xpackInfo } from '../../../server/lib/_xpack_info';
 import { checkLicenseGenerator } from './cluster_alerts/check_license';
 import { LOGGING_TAG } from '../common/constants';
 
@@ -7,9 +6,11 @@ import { LOGGING_TAG } from '../common/constants';
  */
 export const initMonitoringXpackInfo = async server => {
   const config = server.config();
-  const xpackApiPollingFrequency = config.get('xpack.monitoring.xpack_api_polling_frequency_millis');
-  const xpackInfoOptions = { clusterSource: 'monitoring' };
-  const xpackInfo = await _xpackInfo(server, xpackApiPollingFrequency, xpackInfoOptions);
+  const xpackInfoOptions = {
+    clusterSource: 'monitoring',
+    pollFrequencyInMillis: config.get('xpack.monitoring.xpack_api_polling_frequency_millis')
+  };
+  const xpackInfo = server.plugins.xpack_main.createXPackInfo(xpackInfoOptions);
 
   xpackInfo.feature('monitoring').registerLicenseCheckResultsGenerator(checkLicenseGenerator);
   server.expose('info', xpackInfo);

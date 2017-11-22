@@ -2,7 +2,7 @@ export async function replaceInjectedVars(originalInjectedVars, request, server)
   const xpackInfo = server.plugins.xpack_main.info;
   const withXpackInfo = () => ({
     ...originalInjectedVars,
-    xpackInitialInfo: xpackInfo ? xpackInfo.toJSON() : undefined
+    xpackInitialInfo: xpackInfo.isAvailable() ? xpackInfo.toJSON() : undefined
   });
 
   // security feature is disabled
@@ -11,7 +11,7 @@ export async function replaceInjectedVars(originalInjectedVars, request, server)
   }
 
   // not enough license info to make decision one way or another
-  if (!xpackInfo || !xpackInfo.feature('security').getLicenseCheckResults()) {
+  if (!xpackInfo.isAvailable() || !xpackInfo.feature('security').getLicenseCheckResults()) {
     return originalInjectedVars;
   }
 

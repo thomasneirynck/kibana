@@ -188,23 +188,110 @@ describe('Authenticator', () => {
       });
     });
 
-    it('clears session set by provider if it failed to authenticate with active session.', async () => {
-      const request = { headers: { } };
-      session.clear.withArgs(request).returns(Promise.resolve());
+    it('replaces existing session with the one returned by provider only for non-system API calls.', async () => {
+      const user = { username: 'user' };
+      const systemAPIRequest = { headers: { authorization: 'Basic xxx-new' } };
+      const notSystemAPIRequest = { headers: { authorization: 'Basic yyy-new' } };
 
-      session.get.withArgs(request).returns(Promise.resolve({
-        state: { authorization: 'Basic ***' },
+      session.get.withArgs(systemAPIRequest).returns(Promise.resolve({
+        state: { authorization: 'Basic xxx-old' },
         provider: 'basic'
       }));
 
-      server.plugins.security.getUser
-        .withArgs(request).returns(Promise.reject(new Error('Not Authorized')));
+      session.get.withArgs(notSystemAPIRequest).returns(Promise.resolve({
+        state: { authorization: 'Basic yyy-old' },
+        provider: 'basic'
+      }));
 
-      const authenticationResult = await authenticate(request);
-      expect(authenticationResult.failed()).to.be(true);
+      server.plugins.kibana.systemApi.isSystemApiRequest
+        .withArgs(systemAPIRequest).returns(true)
+        .withArgs(notSystemAPIRequest).returns(false);
+
+      server.plugins.security.getUser
+        .withArgs(systemAPIRequest).returns(Promise.resolve(user))
+        .withArgs(notSystemAPIRequest).returns(Promise.resolve(user));
+
+      const systemAPIAuthenticationResult = await authenticate(systemAPIRequest);
+      expect(systemAPIAuthenticationResult.succeeded()).to.be(true);
+      expect(systemAPIAuthenticationResult.user).to.be.eql({
+        ...user,
+        scope: []
+      });
+      sinon.assert.notCalled(session.set);
+
+      const notSystemAPIAuthenticationResult = await authenticate(notSystemAPIRequest);
+      expect(notSystemAPIAuthenticationResult.succeeded()).to.be(true);
+      expect(notSystemAPIAuthenticationResult.user).to.be.eql({
+        ...user,
+        scope: []
+      });
+      sinon.assert.calledOnce(session.set);
+      sinon.assert.calledWithExactly(session.set, notSystemAPIRequest, {
+        state: { authorization: 'Basic yyy-new' },
+        provider: 'basic'
+      });
+    });
+
+    it('clears session if provider failed to authenticate with active session for any request.', async () => {
+      const systemAPIRequest = { headers: { xCustomHeader: 'xxx' } };
+      const notSystemAPIRequest = { headers: { xCustomHeader: 'yyy' } };
+
+      session.get.withArgs(systemAPIRequest).returns(Promise.resolve({
+        state: { authorization: 'Basic xxx' },
+        provider: 'basic'
+      }));
+
+      session.get.withArgs(notSystemAPIRequest).returns(Promise.resolve({
+        state: { authorization: 'Basic yyy' },
+        provider: 'basic'
+      }));
+
+      session.clear.returns(Promise.resolve());
+
+      server.plugins.security.getUser
+        .withArgs(systemAPIRequest).returns(Promise.reject(new Error('Not Authorized')))
+        .withArgs(notSystemAPIRequest).returns(Promise.reject(new Error('Not Authorized')));
+
+      const systemAPIAuthenticationResult = await authenticate(systemAPIRequest);
+      expect(systemAPIAuthenticationResult.failed()).to.be(true);
 
       sinon.assert.calledOnce(session.clear);
-      sinon.assert.calledWithExactly(session.clear, request);
+      sinon.assert.calledWithExactly(session.clear, systemAPIRequest);
+
+      const notSystemAPIAuthenticationResult = await authenticate(notSystemAPIRequest);
+      expect(notSystemAPIAuthenticationResult.failed()).to.be(true);
+
+      sinon.assert.calledTwice(session.clear);
+      sinon.assert.calledWithExactly(session.clear, notSystemAPIRequest);
+    });
+
+    it('clears session if provider can not handle authentication with active session for any request.', async () => {
+      const systemAPIRequest = { headers: { xCustomHeader: 'xxx' } };
+      const notSystemAPIRequest = { headers: { xCustomHeader: 'yyy' } };
+
+      session.get.withArgs(systemAPIRequest).returns(Promise.resolve({
+        state: { authorization: 'Some weird authentication schema...' },
+        provider: 'basic'
+      }));
+
+      session.get.withArgs(notSystemAPIRequest).returns(Promise.resolve({
+        state: { authorization: 'Some weird authentication schema...' },
+        provider: 'basic'
+      }));
+
+      session.clear.returns(Promise.resolve());
+
+      const systemAPIAuthenticationResult = await authenticate(systemAPIRequest);
+      expect(systemAPIAuthenticationResult.notHandled()).to.be(true);
+
+      sinon.assert.calledOnce(session.clear);
+      sinon.assert.calledWithExactly(session.clear, systemAPIRequest);
+
+      const notSystemAPIAuthenticationResult = await authenticate(notSystemAPIRequest);
+      expect(notSystemAPIAuthenticationResult.notHandled()).to.be(true);
+
+      sinon.assert.calledTwice(session.clear);
+      sinon.assert.calledWithExactly(session.clear, notSystemAPIRequest);
     });
 
     it('complements user with `scope` property.', async () => {

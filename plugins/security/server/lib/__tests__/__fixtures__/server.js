@@ -30,7 +30,11 @@ export function serverFixture() {
 
       xpack_main: {
         info: {
-          isAvailable: stub()
+          isAvailable: stub(),
+          feature: stub(),
+          license: {
+            isOneOf: stub()
+          }
         }
       }
     }

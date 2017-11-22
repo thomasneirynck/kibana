@@ -1,26 +1,19 @@
-export function injectXPackInfoSignature(info, request, reply) {
-
-  function addSignatureHeader(response, signature) {
-    if (signature) {
-      response.headers['kbn-xpack-sig'] = signature;
-    }
-    return reply.continue();
+export async function injectXPackInfoSignature(info, request, reply) {
+  // If we're returning an error response, refresh xpack info from
+  // Elasticsearch in case the error is due to a change in license information
+  // in Elasticsearch.
+  const isErrorResponse = request.response instanceof Error;
+  if (isErrorResponse) {
+    await info.refreshNow();
   }
 
-  // If we're returning an error response, refresh xpack info
-  // from Elastisearch in case the error is due to a change in
-  // license information in Elasticsearch
-  if (request.response instanceof Error) {
-    return info.refreshNow()
-    .then((refreshedInfo) => {
-      const signature = refreshedInfo.getSignature();
-      // Note: request.response.output is used instead of request.response
-      // because evidently HAPI does not allow headers to be set on the latter
-      // in case of error responses.
-      return addSignatureHeader(request.response.output, signature);
-    });
-  } else {
-    const signature = info.getSignature();
-    return addSignatureHeader(request.response, signature);
+  if (info.isAvailable()) {
+    // Note: request.response.output is used instead of request.response because
+    // evidently HAPI does not allow headers to be set on the latter in case of
+    // error responses.
+    const response = isErrorResponse ? request.response.output : request.response;
+    response.headers['kbn-xpack-sig'] = info.getSignature();
   }
+
+  return reply.continue();
 }

@@ -8,16 +8,14 @@ export function xpackInfoRoute(server) {
   server.route({
     method: 'GET',
     path: '/api/xpack/v1/info',
-    handler: (req, reply) => {
-      let status;
-      let response;
-      if (server.plugins.xpack_main.info) {
-        response = server.plugins.xpack_main.info.toJSON();
-      } else {
-        status = Boom.notFound();
-        response = {};
-      }
-      return reply(status, convertKeysToSnakeCaseDeep(response));
+    handler(req, reply) {
+      const xPackInfo = server.plugins.xpack_main.info;
+
+      return reply(
+        xPackInfo.isAvailable()
+          ? convertKeysToSnakeCaseDeep(xPackInfo.toJSON())
+          : Boom.notFound()
+      );
     }
   });
 }

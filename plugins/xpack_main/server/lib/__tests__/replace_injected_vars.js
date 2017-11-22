@@ -65,7 +65,7 @@ describe('replaceInjectedVars uiExport', () => {
     const originalInjectedVars = { a: 1 };
     const request = {};
     const server = mockServer();
-    delete server.plugins.xpack_main.info;
+    server.plugins.xpack_main.info.isAvailable.returns(false);
 
     const newVars = await replaceInjectedVars(originalInjectedVars, request, server);
     expect(newVars).to.be(originalInjectedVars);
@@ -76,7 +76,7 @@ describe('replaceInjectedVars uiExport', () => {
     const request = {};
     const server = mockServer();
     delete server.plugins.security;
-    delete server.plugins.xpack_main.info;
+    server.plugins.xpack_main.info.isAvailable.returns(false);
 
     const newVars = await replaceInjectedVars(originalInjectedVars, request, server);
     expect(newVars).to.eql({
@@ -107,6 +107,7 @@ function mockServer() {
       },
       xpack_main: {
         info: {
+          isAvailable: sinon.stub().returns(true),
           feature: () => ({
             getLicenseCheckResults
           }),

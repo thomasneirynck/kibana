@@ -1,109 +1,125 @@
-import expect from 'expect.js';
-import { set } from 'lodash';
 import sinon from 'sinon';
-import { _xpackInfo } from '../../../../../server/lib/_xpack_info';
+import { XPackInfo } from '../xpack_info';
 import { setupXPackMain } from '../setup_xpack_main';
+import * as InjectXPackInfoSignatureNS from '../inject_xpack_info_signature';
 
 describe('setupXPackMain()', () => {
-
-  class MockErrorResponse extends Error {
-    constructor(status) {
-      super();
-      this.status = status;
-    }
-  }
+  const sandbox = sinon.sandbox.create();
 
   let mockServer;
+  let mockElasticsearchPlugin;
   let mockXPackMainPlugin;
 
   beforeEach(() => {
-    mockServer = {
-      plugins: {
-        elasticsearch: {
-          getCluster: sinon.stub().withArgs('data').returns({
-            callWithInternalUser: sinon.stub()
-          })
-        }
-      },
-      log() {},
-      config: () => ({ get: sinon.stub() }),
-      expose(key, value) {
-        set(this, [ 'pluginProperties', key ], value);
-      },
-      ext(e, handler) {
-        set(this, [ 'eventHandlers', e ], handler);
-      }
+    sandbox.useFakeTimers();
+    sandbox.stub(InjectXPackInfoSignatureNS, 'injectXPackInfoSignature');
+
+    mockElasticsearchPlugin = {
+      getCluster: sinon.stub(),
+      status: sinon.stub({
+        on() {}
+      })
     };
 
     mockXPackMainPlugin = {
-      status: {
-        green(message) {
-          this.message = message;
-          this.state = 'green';
-        },
-        red(message) {
-          this.message = message;
-          this.state = 'red';
-        }
-      }
+      status: sinon.stub({
+        green() {},
+        red() {}
+      })
     };
+
+    mockServer = sinon.stub({
+      plugins: {
+        elasticsearch: mockElasticsearchPlugin,
+        xpack_main: mockXPackMainPlugin
+      },
+      log() {},
+      config() {},
+      expose() {},
+      ext() {}
+    });
+
+    // Make sure we don't misspell config key.
+    const configGetStub = sinon.stub().throws(new Error('`config.get` is called with unexpected key.'));
+    configGetStub.withArgs('xpack.xpack_main.xpack_api_polling_frequency_millis').returns(1234);
+    mockServer.config.returns({ get: configGetStub });
   });
 
-  afterEach(() => mockServer.pluginProperties.info.stopPolling());
+  afterEach(() => sandbox.restore());
 
-  describe('Elasticsearch APIs return successful responses with license', () => {
+  it('all extension hooks should be properly initialized.', () => {
+    setupXPackMain(mockServer);
 
+    sinon.assert.calledWithExactly(mockServer.expose, 'info', sinon.match.instanceOf(XPackInfo));
+    sinon.assert.calledWithExactly(mockServer.ext, 'onPreResponse', sinon.match.func);
+    sinon.assert.calledWithExactly(mockElasticsearchPlugin.status.on, 'change', sinon.match.func);
+  });
+
+  it('onPreResponse hook calls `injectXPackInfoSignature` for every request.', () => {
+    setupXPackMain(mockServer);
+
+    const xPackInfo = mockServer.expose.firstCall.args[1];
+    const onPreResponse = mockServer.ext.firstCall.args[1];
+
+    const mockRequest = {};
+    const mockReply = sinon.stub();
+
+    onPreResponse(mockRequest, mockReply);
+
+    sinon.assert.calledWithExactly(
+      InjectXPackInfoSignatureNS.injectXPackInfoSignature,
+      xPackInfo,
+      sinon.match.same(mockRequest),
+      sinon.match.same(mockReply)
+    );
+  });
+
+  describe('Elasticsearch plugin state changes cause XPackMain plugin state change.', () => {
+    let xPackInfo;
+    let onElasticsearchPluginStatusChange;
     beforeEach(() => {
-      mockServer.plugins.elasticsearch.getCluster('data').callWithInternalUser.returns(Promise.resolve({ license: {} }));
+      setupXPackMain(mockServer);
+
+      onElasticsearchPluginStatusChange = mockElasticsearchPlugin.status.on
+        .withArgs('change').firstCall.args[1];
+      xPackInfo = mockServer.expose.firstCall.args[1];
     });
 
-    it ('server should have an onPreResponse event handler registered', () => {
-      return setupXPackMain(mockServer, mockXPackMainPlugin, _xpackInfo)
-      .then(() => {
-        expect(mockServer.eventHandlers.onPreResponse).to.be.a(Function);
+    it('if `XPackInfo` is available status will become `green`.', async () => {
+      sinon.stub(xPackInfo, 'isAvailable').returns(false);
+      // We need this to make sure the code waits for `refreshNow` to complete before it tries
+      // to access its properties.
+      sinon.stub(xPackInfo, 'refreshNow', () => {
+        return new Promise((resolve) => {
+          xPackInfo.isAvailable.returns(true);
+          resolve();
+        });
       });
+
+      await onElasticsearchPluginStatusChange();
+
+      sinon.assert.calledWithExactly(mockXPackMainPlugin.status.green, 'Ready');
+      sinon.assert.notCalled(mockXPackMainPlugin.status.red);
     });
 
-    it ('xpack_main plugin should expose the xpack info property', () => {
-      return setupXPackMain(mockServer, mockXPackMainPlugin, _xpackInfo)
-      .then(() => {
-        expect(mockServer.pluginProperties.info).to.be.an(Object);
-        expect(mockServer.pluginProperties.info.isAvailable).to.be.a(Function);
-      });
-    });
+    it('if `XPackInfo` is not available status will become `red`.', async () => {
+      sinon.stub(xPackInfo, 'isAvailable').returns(true);
+      sinon.stub(xPackInfo, 'unavailableReason').returns('');
 
-    it ('xpack_main plugin status should be green', () => {
-      return setupXPackMain(mockServer, mockXPackMainPlugin, _xpackInfo)
-      .then(() => {
-        expect(mockXPackMainPlugin.status.state).to.be('green');
-        expect(mockXPackMainPlugin.status.message).to.be('Ready');
+      // We need this to make sure the code waits for `refreshNow` to complete before it tries
+      // to access its properties.
+      sinon.stub(xPackInfo, 'refreshNow', () => {
+        return new Promise((resolve) => {
+          xPackInfo.isAvailable.returns(false);
+          xPackInfo.unavailableReason.returns('Some weird error.');
+          resolve();
+        });
       });
+
+      await onElasticsearchPluginStatusChange();
+
+      sinon.assert.calledWithExactly(mockXPackMainPlugin.status.red, 'Some weird error.');
+      sinon.assert.notCalled(mockXPackMainPlugin.status.green);
     });
   });
-
-  describe('Elasticsearch APIs return a non-400 error response', () => {
-    it ('xpack_main plugin status should be red', () => {
-      mockServer.plugins.elasticsearch.getCluster('data').callWithInternalUser.returns(Promise.reject(new MockErrorResponse(500)));
-
-      return setupXPackMain(mockServer, mockXPackMainPlugin, _xpackInfo)
-      .then(() => {
-        expect(mockServer.eventHandlers).to.be(undefined);
-        expect(mockXPackMainPlugin.status.state).to.be('red');
-      });
-    });
-  });
-
-  describe('Elasticsearch APIs return a 400 response', () => {
-    it ('xpack_main plugin status should be red and x-pack not installed error message should be set', () => {
-      mockServer.plugins.elasticsearch.getCluster('data').callWithInternalUser.returns(Promise.reject(new MockErrorResponse(400)));
-
-      return setupXPackMain(mockServer, mockXPackMainPlugin, _xpackInfo)
-      .then(() => {
-        expect(mockServer.eventHandlers).to.be(undefined);
-        expect(mockXPackMainPlugin.status.state).to.be('red');
-        expect(mockXPackMainPlugin.status.message).to.be('X-Pack plugin is not installed on the [data] Elasticsearch cluster.');
-      });
-    });
-  });
-
 });

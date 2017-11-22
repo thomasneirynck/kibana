@@ -11,7 +11,6 @@ import { createScheme } from './server/lib/login_scheme';
 import { checkLicense } from './server/lib/check_license';
 import { initAuthenticator } from './server/lib/authentication/authenticator';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
-import { LOGIN_DISABLED_MESSAGE } from './server/lib/login_disabled_message';
 
 export const security = (kibana) => new kibana.Plugin({
   id: 'security',
@@ -41,19 +40,6 @@ export const security = (kibana) => new kibana.Plugin({
       injectVars(server) {
         const pluginId = 'security';
         const xpackInfo = server.plugins.xpack_main.info;
-
-        if (!xpackInfo) {
-          const loginMessage = LOGIN_DISABLED_MESSAGE;
-
-          return {
-            loginState: {
-              showLogin: true,
-              allowLogin: false,
-              loginMessage,
-            }
-          };
-        }
-
         const { showLogin, loginMessage, allowLogin } = xpackInfo.feature(pluginId).getLicenseCheckResults() || {};
 
         return {
@@ -89,11 +75,10 @@ export const security = (kibana) => new kibana.Plugin({
     const thisPlugin = this;
     const xpackMainPlugin = server.plugins.xpack_main;
     mirrorPluginStatus(xpackMainPlugin, thisPlugin);
-    xpackMainPlugin.status.once('green', () => {
-      // Register a function that is called whenever the xpack info changes,
-      // to re-compute the license check results for this plugin
-      xpackMainPlugin.info.feature(thisPlugin.id).registerLicenseCheckResultsGenerator(checkLicense);
-    });
+
+    // Register a function that is called whenever the xpack info changes,
+    // to re-compute the license check results for this plugin
+    xpackMainPlugin.info.feature(thisPlugin.id).registerLicenseCheckResultsGenerator(checkLicense);
 
     const config = server.config();
     validateConfig(config, message => server.log(['security', 'warning'], message));

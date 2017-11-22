@@ -1,9 +1,5 @@
-import { once, partial } from 'lodash';
 import { injectXPackInfoSignature } from './inject_xpack_info_signature';
-
-const registerPreResponseHandlerSingleton = once((server, info) => {
-  server.ext('onPreResponse', partial(injectXPackInfoSignature, info));
-});
+import { XPackInfo } from './xpack_info';
 
 /**
  * Setup the X-Pack Main plugin. This is fired every time that the Elasticsearch plugin becomes Green.
@@ -12,21 +8,22 @@ const registerPreResponseHandlerSingleton = once((server, info) => {
  * polling for _xpack/info.
  *
  * @param server {Object} The Kibana server object.
- * @param xpackMainPlugin {Object} The X-Pack Main plugin object.
- * @return {Promise} Never {@code null}.
  */
-export function setupXPackMain(server, xpackMainPlugin, xpackInfo) {
-  return xpackInfo(server)
-  .then(async info => {
-    await info.refreshNow();
-    server.expose('info', info);
-
-    if (info.isAvailable()) {
-      xpackMainPlugin.status.green('Ready');
-      registerPreResponseHandlerSingleton(server, info);
-    } else {
-      xpackMainPlugin.status.red(info.unavailableReason());
-    }
+export function setupXPackMain(server) {
+  const info = new XPackInfo(server, {
+    pollFrequencyInMillis: server.config().get('xpack.xpack_main.xpack_api_polling_frequency_millis')
   });
 
+  server.expose('info', info);
+  server.expose('createXPackInfo', (options) => new XPackInfo(server, options));
+  server.ext('onPreResponse', (request, reply) => injectXPackInfoSignature(info, request, reply));
+  server.plugins.elasticsearch.status.on('change', async () => {
+    await info.refreshNow();
+
+    if (info.isAvailable()) {
+      server.plugins.xpack_main.status.green('Ready');
+    } else {
+      server.plugins.xpack_main.status.red(info.unavailableReason());
+    }
+  });
 }

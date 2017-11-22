@@ -1,79 +1,157 @@
 import expect from 'expect.js';
-import { set } from 'lodash';
 import sinon from 'sinon';
 import { checkLicense } from '../check_license';
-import { LOGIN_DISABLED_MESSAGE } from '../login_disabled_message';
 
 describe('check_license', function () {
 
-  let mockLicenseInfo;
+  let mockXPackInfo;
 
   beforeEach(function () {
-    mockLicenseInfo = {
-      isAvailable: () => true
+    mockXPackInfo = {
+      isAvailable: sinon.stub(),
+      feature: sinon.stub(),
+      license: sinon.stub({
+        isOneOf() {},
+        isActive() {}
+      })
     };
+
+    mockXPackInfo.isAvailable.returns(true);
   });
 
-  it ('should show login page but not allow login if license information is not set', () => {
-    mockLicenseInfo = null;
-    const licenseCheckResults = checkLicense(mockLicenseInfo);
+  it('should show login page but not allow login if license information is not available.', () => {
+    mockXPackInfo.isAvailable.returns(false);
 
-    expect(licenseCheckResults.showLogin).to.be(true);
-    expect(licenseCheckResults.allowLogin).to.be(false);
-    expect(licenseCheckResults.showLinks).to.be(false);
+    const licenseCheckResults = checkLicense(mockXPackInfo);
+    expect(licenseCheckResults).to.be.eql({
+      showLogin: true,
+      allowLogin: false,
+      showLinks: false,
+      allowRoleDocumentLevelSecurity: false,
+      allowRoleFieldLevelSecurity: false,
+      loginMessage: 'Login is currently disabled. Administrators should consult the Kibana logs for more details.'
+    });
   });
 
-  it ('should show login page but not allow login if license information is set but not available', () => {
-    mockLicenseInfo = { isAvailable: () => false };
-    const licenseCheckResults = checkLicense(mockLicenseInfo);
-
-    expect(licenseCheckResults.showLogin).to.be(true);
-    expect(licenseCheckResults.allowLogin).to.be(false);
-    expect(licenseCheckResults.showLinks).to.be(false);
-  });
-
-  it ('should not show login page or other security elements if license is basic or security is disabled in Elasticsearch', () => {
-    set(mockLicenseInfo, 'license.isOneOf', sinon.stub().withArgs([ 'basic' ]).returns(true));
-    set(mockLicenseInfo, 'license.isActive', () => { return 'irrelevant'; });
-    set(mockLicenseInfo, 'feature', sinon.stub().withArgs('security').returns({
-      isEnabled: () => { return 'irrelevant'; }
-    }));
-
-    expect(checkLicense(mockLicenseInfo).showLogin).to.be(false);
-    expect(checkLicense(mockLicenseInfo).allowLogin).to.be(null);
-    expect(checkLicense(mockLicenseInfo).showLinks).to.be(false);
-  });
-
-  it ('should show login page but not allow login if license has expired, security is enabled in ES and license is not basic', () => {
-    set(mockLicenseInfo, 'license.isActive', () => { return false; });
-    set(mockLicenseInfo, 'feature', sinon.stub().withArgs('security').returns({
+  it('should not show login page or other security elements if license is basic.', () => {
+    mockXPackInfo.license.isOneOf.withArgs(['basic']).returns(true);
+    mockXPackInfo.license.isActive.returns(true);
+    mockXPackInfo.feature.withArgs('security').returns({
       isEnabled: () => { return true; }
-    }));
-    set(mockLicenseInfo, 'license.isOneOf', sinon.stub().withArgs([ 'basic' ]).returns(false));
+    });
 
-    expect(checkLicense(mockLicenseInfo).showLogin).to.be(true);
-    expect(checkLicense(mockLicenseInfo).allowLogin).to.be(false);
-    expect(checkLicense(mockLicenseInfo).showLinks).to.be(false);
+    const licenseCheckResults = checkLicense(mockXPackInfo);
+    expect(licenseCheckResults).to.be.eql({
+      showLogin: false,
+      allowLogin: false,
+      showLinks: false,
+      allowRoleDocumentLevelSecurity: false,
+      allowRoleFieldLevelSecurity: false,
+      linksMessage: 'Your Basic license does not support Security. Please upgrade your license.'
+    });
   });
 
-  describe('login message', () => {
-
-    it ('should tell users if login is disabled because license information could not be determined ', () => {
-      mockLicenseInfo = null;
-      expect(checkLicense(mockLicenseInfo).loginMessage).to.contain(LOGIN_DISABLED_MESSAGE);
+  it('should not show login page or other security elements if security is disabled in Elasticsearch.', () => {
+    mockXPackInfo.license.isOneOf.withArgs(['basic']).returns(false);
+    mockXPackInfo.license.isActive.returns(true);
+    mockXPackInfo.feature.withArgs('security').returns({
+      isEnabled: () => { return false; }
     });
 
-    it ('should tell users if login is disabled because license has expired', () => {
-      set(mockLicenseInfo, 'license.isActive', () => { return false; });
-      set(mockLicenseInfo, 'feature', sinon.stub().withArgs('security').returns({
-        isEnabled: () => { return true; }
-      }));
-      set(mockLicenseInfo, 'license.isOneOf', sinon.stub().withArgs([ 'basic' ]).returns(false));
+    const licenseCheckResults = checkLicense(mockXPackInfo);
+    expect(licenseCheckResults).to.be.eql({
+      showLogin: false,
+      allowLogin: false,
+      showLinks: false,
+      allowRoleDocumentLevelSecurity: false,
+      allowRoleFieldLevelSecurity: false,
+      linksMessage: 'Access is denied because Security is disabled in Elasticsearch.'
+    });
+  });
 
-      const expectedMessage = 'Login is disabled because your license has expired. '
-      + 'Please extend your license or disable Security in Elasticsearch.';
-      expect(checkLicense(mockLicenseInfo).loginMessage).to.be(expectedMessage);
+  it('should allow to login but forbid document level security if license is not platinum, trial or basic.', () => {
+    const isBasicOrTrialOrPlatinumMatcher = sinon.match(
+      (licenses) => licenses.includes('basic')
+        || licenses.includes('trial')
+        || licenses.includes('platinum')
+    );
+    mockXPackInfo.license.isOneOf
+      .returns(true)
+      .withArgs(isBasicOrTrialOrPlatinumMatcher).returns(false);
+    mockXPackInfo.feature.withArgs('security').returns({
+      isEnabled: () => { return true; }
     });
 
+    mockXPackInfo.license.isActive.returns(true);
+    expect(checkLicense(mockXPackInfo)).to.be.eql({
+      showLogin: true,
+      allowLogin: true,
+      showLinks: true,
+      allowRoleDocumentLevelSecurity: false,
+      allowRoleFieldLevelSecurity: false
+    });
+
+    mockXPackInfo.license.isActive.returns(false);
+    expect(checkLicense(mockXPackInfo)).to.be.eql({
+      showLogin: true,
+      allowLogin: true,
+      showLinks: true,
+      allowRoleDocumentLevelSecurity: false,
+      allowRoleFieldLevelSecurity: false
+    });
+  });
+
+  it('should allow to login and document level security if license is platinum.', () => {
+    mockXPackInfo.license.isOneOf
+      .returns(false)
+      .withArgs(sinon.match((licenses) => licenses.includes('platinum'))).returns(true);
+    mockXPackInfo.feature.withArgs('security').returns({
+      isEnabled: () => { return true; }
+    });
+
+    mockXPackInfo.license.isActive.returns(true);
+    expect(checkLicense(mockXPackInfo)).to.be.eql({
+      showLogin: true,
+      allowLogin: true,
+      showLinks: true,
+      allowRoleDocumentLevelSecurity: true,
+      allowRoleFieldLevelSecurity: true
+    });
+
+    mockXPackInfo.license.isActive.returns(false);
+    expect(checkLicense(mockXPackInfo)).to.be.eql({
+      showLogin: true,
+      allowLogin: true,
+      showLinks: true,
+      allowRoleDocumentLevelSecurity: true,
+      allowRoleFieldLevelSecurity: true
+    });
+  });
+
+  it('should allow to login and document level security if license is trial.', () => {
+    mockXPackInfo.license.isOneOf
+      .returns(false)
+      .withArgs(sinon.match((licenses) => licenses.includes('trial'))).returns(true);
+    mockXPackInfo.feature.withArgs('security').returns({
+      isEnabled: () => { return true; }
+    });
+
+    mockXPackInfo.license.isActive.returns(true);
+    expect(checkLicense(mockXPackInfo)).to.be.eql({
+      showLogin: true,
+      allowLogin: true,
+      showLinks: true,
+      allowRoleDocumentLevelSecurity: true,
+      allowRoleFieldLevelSecurity: true
+    });
+
+    mockXPackInfo.license.isActive.returns(false);
+    expect(checkLicense(mockXPackInfo)).to.be.eql({
+      showLogin: true,
+      allowLogin: true,
+      showLinks: true,
+      allowRoleDocumentLevelSecurity: true,
+      allowRoleFieldLevelSecurity: true
+    });
   });
 });

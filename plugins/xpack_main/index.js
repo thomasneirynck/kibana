@@ -6,7 +6,6 @@ import {
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 import { replaceInjectedVars } from './server/lib/replace_injected_vars';
 import { setupXPackMain } from './server/lib/setup_xpack_main';
-import { xpackInfo } from '../../server/lib/xpack_info';
 import { xpackInfoRoute, kibanaStatsRoute } from './server/routes/api/v1';
 
 export const xpackMain = (kibana) => {
@@ -16,7 +15,7 @@ export const xpackMain = (kibana) => {
     publicDir: resolve(__dirname, 'public'),
     require: ['elasticsearch'],
 
-    config: function (Joi) {
+    config(Joi) {
       return Joi.object({
         enabled: Joi.boolean().default(true),
         xpack_api_polling_frequency_millis: Joi.number().default(XPACK_INFO_API_DEFAULT_POLL_FREQUENCY_IN_MILLIS),
@@ -38,10 +37,10 @@ export const xpackMain = (kibana) => {
       replaceInjectedVars
     },
 
-    init: function (server) {
-      const elasticsearchPlugin = server.plugins.elasticsearch;
-      mirrorPluginStatus(elasticsearchPlugin, this, 'yellow', 'red');
-      elasticsearchPlugin.status.on('green', () => setupXPackMain(server, this, xpackInfo));
+    init(server) {
+      mirrorPluginStatus(server.plugins.elasticsearch, this, 'yellow', 'red');
+
+      setupXPackMain(server);
 
       // register routes
       xpackInfoRoute(server);

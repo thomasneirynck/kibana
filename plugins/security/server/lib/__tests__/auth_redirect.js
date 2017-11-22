@@ -26,18 +26,16 @@ describe('lib/auth_redirect', function () {
         credentials = {};
         server = serverFixture();
 
+        server.plugins.xpack_main.info
+          .isAvailable.returns(true);
+        server.plugins.xpack_main.info
+          .feature.returns({ isEnabled: sinon.stub().returns(true) });
+        server.plugins.xpack_main.info
+          .license.isOneOf.returns(false);
+
         params = {
           redirectUrl: sinon.stub().returns('mock redirect url'),
-          server,
-          xpackMainPlugin: {
-            info: {
-              license: {
-                isOneOf: sinon.stub().returns(false)
-              },
-              isAvailable: sinon.stub().returns(true),
-              feature: () => { return { isEnabled: sinon.stub().returns(true) }; }
-            }
-          }
+          server
         };
 
         authenticate = authenticateFactory(params);
@@ -119,11 +117,8 @@ describe('lib/auth_redirect', function () {
 
       describe('when security is disabled in elasticsearch', () => {
         beforeEach(() => {
-          params.xpackMainPlugin.info.feature = () => {
-            return {
-              isEnabled: sinon.stub().returns(false)
-            };
-          };
+          server.plugins.xpack_main.info
+            .feature.returns({ isEnabled: sinon.stub().returns(false) });
         });
 
         it ('replies with no credentials', () => {
@@ -134,7 +129,7 @@ describe('lib/auth_redirect', function () {
 
       describe('when license is basic', () => {
         beforeEach(() => {
-          params.xpackMainPlugin.info.license.isOneOf = sinon.stub().returns(true);
+          server.plugins.xpack_main.info.license.isOneOf.returns(true);
         });
 
         it ('replies with no credentials', () => {

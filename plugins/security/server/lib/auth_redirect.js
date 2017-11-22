@@ -14,19 +14,17 @@ const KIBANA_VERSION_HEADER = 'kbn-version';
  * should return a 401 or a 302 when authentication fails.
  *
  * @param {Object} options
- * @property {string} redirectUrl: Transform function that request path is passed to before
+ * @property {string} redirectUrl Transform function that request path is passed to before
  * redirecting
- * @property {Object} xpackMainPlugin XPack Main plugin.
  * @property {Hapi.Server} HapiJS Server instance.
  *
  * @return {Function}
  */
-export function authenticateFactory({ redirectUrl, xpackMainPlugin, server }) {
+export function authenticateFactory({ redirectUrl, server }) {
   return async function authenticate(request, reply) {
     // If security is disabled or license is basic, continue with no user credentials and delete the client cookie as well
-    const xpackInfo = xpackMainPlugin && xpackMainPlugin.info;
-    if (xpackInfo
-        && xpackInfo.isAvailable()
+    const xpackInfo = server.plugins.xpack_main.info;
+    if (xpackInfo.isAvailable()
         && (!xpackInfo.feature('security').isEnabled() || xpackInfo.license.isOneOf('basic'))) {
       reply.continue({ credentials: {} });
       return;

@@ -101,20 +101,21 @@ class Authenticator {
         ownsSession ? existingSession.state : null
       );
 
-      // We set/update session only if it's NOT a system API call. In case provider returns state
-      // value it has a higher priority, otherwise just extend existing session.
-      const storeInSession = !isSystemApiRequest &&
-        (authenticationResult.state || existingSession);
-      if (storeInSession) {
-        const sessionValue = authenticationResult.state
-          ? { state: authenticationResult.state, provider: providerType }
-          : existingSession;
-
-        await this._session.set(request, sessionValue);
-      } else if (ownsSession && !authenticationResult.succeeded()) {
+      if (ownsSession || authenticationResult.state) {
         // If provider owned the session, but failed to authenticate anyway, that likely means
         // that session is not valid, so we should clear it.
-        await this._session.clear(request);
+        if (authenticationResult.notHandled() || authenticationResult.failed()) {
+          await this._session.clear(request);
+        } else if (!isSystemApiRequest) {
+          // We set/update session only if it's NOT a system API call. In case provider returns state
+          // value it has a higher priority, otherwise just extend existing session.
+          await this._session.set(
+            request,
+            authenticationResult.state
+              ? { state: authenticationResult.state, provider: providerType }
+              : existingSession
+          );
+        }
       }
 
       if (authenticationResult.succeeded()) {
