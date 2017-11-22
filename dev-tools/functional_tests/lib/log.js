@@ -1,6 +1,4 @@
-import { resolveKibanaPath } from '@elastic/plugin-helpers';
-
-const { createToolingLog } = require(resolveKibanaPath('src/dev'));
+import { createToolingLog } from '@elastic/plugin-helpers';
 
 export const log = createToolingLog('debug');
 log.pipe(process.stdout);
