@@ -232,7 +232,7 @@ module
         $scope.formChange();
       });
 
-      setModelMemoryLimit($scope.formConfig);
+      $scope.setModelMemoryLimit($scope.formConfig);
     } else {
       setFieldsChartStates(CHART_STATE.LOADING);
       $scope.ui.splitText = '';
@@ -651,11 +651,13 @@ module
     mlMultiMetricJobService.stopDatafeed($scope.formConfig);
   };
 
-  function setModelMemoryLimit(formConfig) {
+  $scope.setModelMemoryLimit = function (formConfig) {
     calculateModelMemoryLimit(
       formConfig.indexPattern.title,
       formConfig.splitField.name,
       formConfig.query,
+      Object.keys(formConfig.fields),
+      formConfig.influencerFields.map(f => f.name),
       formConfig.timeField,
       formConfig.start,
       formConfig.end
@@ -666,7 +668,7 @@ module
     .catch(() => {
       formConfig.modelMemoryLimit = DEFAULT_MODEL_MEMORY_LIMIT;
     });
-  }
+  };
 
   function createResultsUrl() {
     let jobIds = [`'${$scope.formConfig.jobId}'`];
