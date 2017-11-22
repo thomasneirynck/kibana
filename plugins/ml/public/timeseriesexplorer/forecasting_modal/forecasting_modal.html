@@ -73,7 +73,7 @@
         <progressbar
             ng-show="runStatus.forecastProgress >= 0"
             ng-class="runStatus.forecastProgress < 3 ? 'empty-progress' : ''"
-            animate="true"
+            animate="false"
             value="runStatus.forecastProgress"
             type="success">
           <b>{{runStatus.forecastProgress}}%</b>

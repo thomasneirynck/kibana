@@ -198,7 +198,7 @@ module.controller('MlForecastingModal', function (
     .then((resp) => {
       // Endpoint will return { acknowledged:true, id: <now timestamp> } before forecast is complete.
       // So wait for results and then refresh the dashboard to the end of the forecast.
-      if (resp.id !== undefined) {
+      if (resp.forecast_id !== undefined) {
         waitForForecastResults(resp.forecast_id, closeJobAfterRunning);
       } else {
         $scope.runStatus.forecastProgress = REQUEST_STATES.ERROR;
