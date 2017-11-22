@@ -7,8 +7,9 @@ import { resolveKibanaPath } from '@elastic/plugin-helpers';
 import { executeJobFactory } from '../execute_job';
 import { CancellationToken } from '../../../../server/lib/esqueue/helpers/cancellation_token';
 const { SavedObjectsClient } = require(resolveKibanaPath('src/server/saved_objects/client/saved_objects_client.js'));
+const { FieldFormat } = require(resolveKibanaPath('src/ui/field_formats/field_format.js'));
 const { FieldFormatsService } = require(resolveKibanaPath('src/ui/field_formats/field_formats_service.js'));
-const { StringFormat } = require(resolveKibanaPath('src/core_plugins/kibana/common/field_formats/types/string.js'));
+const { createStringFormat } = require(resolveKibanaPath('src/core_plugins/kibana/common/field_formats/types/string.js'));
 
 const delay = (ms) => new Promise(resolve => setTimeout(() => resolve(), ms));
 
@@ -76,7 +77,7 @@ describe('CSV Execute Job', function () {
           '_default_': { 'id': 'string', 'params': {} }
         };
         const getConfig = (key) => uiConfigMock[key];
-        return new FieldFormatsService([StringFormat], getConfig);
+        return new FieldFormatsService([createStringFormat(FieldFormat)], getConfig);
       },
       plugins: {
         elasticsearch: {

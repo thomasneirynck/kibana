@@ -1,9 +1,10 @@
 import expect from 'expect.js';
 import { fieldFormatMapFactory } from '../field_format_map';
 import { resolveKibanaPath } from '@elastic/plugin-helpers';
+const { FieldFormat } = require(resolveKibanaPath('src/ui/field_formats/field_format.js'));
 const { FieldFormatsService } = require(resolveKibanaPath('src/ui/field_formats/field_formats_service.js'));
-const { BytesFormat } = require(resolveKibanaPath('src/core_plugins/kibana/common/field_formats/types/bytes.js'));
-const { NumberFormat } = require(resolveKibanaPath('src/core_plugins/kibana/common/field_formats/types/number.js'));
+const { createBytesFormat } = require(resolveKibanaPath('src/core_plugins/kibana/common/field_formats/types/bytes.js'));
+const { createNumberFormat } = require(resolveKibanaPath('src/core_plugins/kibana/common/field_formats/types/number.js'));
 
 describe('field format map', function () {
   const indexPatternSavedObject = {
@@ -26,7 +27,7 @@ describe('field format map', function () {
   const getConfig = (key) => configMock[key];
   const testValue = '4000';
 
-  const fieldFormats = new FieldFormatsService([BytesFormat, NumberFormat], getConfig);
+  const fieldFormats = new FieldFormatsService([createBytesFormat(FieldFormat), createNumberFormat(FieldFormat)], getConfig);
 
   const formatMap = fieldFormatMapFactory(indexPatternSavedObject, fieldFormats);
 
