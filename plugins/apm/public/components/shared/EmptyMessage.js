@@ -26,7 +26,7 @@ function EmptyMessage({ heading, subheading, link }) {
         <a
           href={
             link ||
-            'https://www.elastic.co/guide/en/apm/get-started/6.0/index.html'
+            'https://www.elastic.co/guide/en/apm/get-started/6.1/index.html'
           }
         >
           documentation

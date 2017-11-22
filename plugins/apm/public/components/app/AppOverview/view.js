@@ -52,7 +52,7 @@ const BetaCallout = styled.div`
   }
 
   p {
-    margin: ${units.half} 0 0 0;
+    margin: ${px(units.half)} 0;
   }
 `;
 

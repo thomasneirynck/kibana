@@ -59,7 +59,7 @@ function Introduction() {
       <Title>APM</Title>
       <TitleLabel>Beta</TitleLabel>
       <Subtitle>
-        APM (Application Performance Management) automatically collects in-depth
+        APM (Application Performance Monitoring) automatically collects in-depth
         performance metrics and errors from inside your applications.
       </Subtitle>
       <Description>
@@ -81,7 +81,7 @@ function Introduction() {
           </li>
         </ul>
         For more information,{' '}
-        <a href="https://www.elastic.co/guide/en/apm/get-started/current/index.html">
+        <a href="https://www.elastic.co/guide/en/apm/get-started/6.1/index.html">
           please see our documentation.
         </a>{' '}
         To get started, follow the steps below.

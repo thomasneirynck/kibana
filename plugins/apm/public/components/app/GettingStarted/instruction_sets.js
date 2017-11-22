@@ -5,23 +5,20 @@ export const serverInstructions = [
     steps: [
       {
         indicatorNumber: 1,
-        title: 'Download and unpack the APM Server',
-        textPre:
-          '[Download 32-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-i386.deb) – [Download 64-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-amd64.deb)',
-        code: `32-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-i386.deb
-64-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-amd64.deb`
+        title: 'Download and unpack APM Server for Debian',
+        downloadButton: true
       },
       {
         indicatorNumber: 2,
         title: 'Import dashboards (optional)',
-        textPre: 'The APM Server ships with pre-configured dashboards.',
+        textPre: 'APM Server ships with pre-configured dashboards.',
         code: './apm-server -setup',
         textPost:
-          'If you using an X-Pack secured version of the Elastic Stack, add `-E output.elasticsearch.username=user -E output.elasticsearch.password=pass` to the command.'
+          'If you are using an X-Pack secured version of the Elastic Stack, add `-E output.elasticsearch.username=user -E output.elasticsearch.password=pass` to the command.'
       },
       {
         indicatorNumber: 3,
-        title: 'Start the APM Server',
+        title: 'Start APM Server',
         textPre:
           'The server processes and stores application performance metrics in Elasticsearch.',
         code: './apm-server -e'
@@ -30,7 +27,7 @@ export const serverInstructions = [
         indicatorNumber: 4,
         title: 'APM Server status',
         textPre:
-          'Make sure the APM Server is running before you start implementing the APM agents.',
+          'Make sure APM Server is running before you start implementing the APM agents.',
         isStatusStep: true
       }
     ]
@@ -41,23 +38,20 @@ export const serverInstructions = [
     steps: [
       {
         indicatorNumber: 1,
-        title: 'Download and unpack the APM Server',
-        textPre:
-          '[Download 32-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-i686.rpm) – [Download 64-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-x86_64.rpm)',
-        code: `32-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-amd64.deb
-64-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-x86_64.rpm`
+        title: 'Download and unpack APM Server for RPM',
+        downloadButton: true
       },
       {
         indicatorNumber: 2,
         title: 'Import dashboards (optional)',
-        textPre: 'The APM Server ships with pre-configured dashboards.',
+        textPre: 'APM Server ships with pre-configured dashboards.',
         code: './apm-server -setup',
         textPost:
-          'If you using an X-Pack secured version of the Elastic Stack, add `-E output.elasticsearch.username=user -E output.elasticsearch.password=pass` to the command.'
+          'If you are using an X-Pack secured version of the Elastic Stack, add `-E output.elasticsearch.username=user -E output.elasticsearch.password=pass` to the command.'
       },
       {
         indicatorNumber: 3,
-        title: 'Start the APM Server',
+        title: 'Start APM Server',
         textPre:
           'The server processes and stores application performance metrics in Elasticsearch.',
         code: './apm-server -e'
@@ -66,7 +60,7 @@ export const serverInstructions = [
         indicatorNumber: 4,
         title: 'APM Server status',
         textPre:
-          'Make sure the APM Server is running before you start implementing the APM agents.',
+          'Make sure APM Server is running before you start implementing the APM agents.',
         isStatusStep: true
       }
     ]
@@ -77,23 +71,20 @@ export const serverInstructions = [
     steps: [
       {
         indicatorNumber: 1,
-        title: 'Download and unpack the APM Server',
-        textPre:
-          '[Download 32-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-linux-x86.tar.gz) – [Download 64-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-linux-x86_64.tar.gz)',
-        code: `32-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-linux-x86.tar.gz
-64-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-linux-x86_64.tar.gz`
+        title: 'Download and unpack APM Server for Linux',
+        downloadButton: true
       },
       {
         indicatorNumber: 2,
         title: 'Import dashboards (optional)',
-        textPre: 'The APM Server ships with pre-configured dashboards.',
+        textPre: 'APM Server ships with pre-configured dashboards.',
         code: './apm-server -setup',
         textPost:
-          'If you using an X-Pack secured version of the Elastic Stack, add `-E output.elasticsearch.username=user -E output.elasticsearch.password=pass` to the command.'
+          'If you are using an X-Pack secured version of the Elastic Stack, add `-E output.elasticsearch.username=user -E output.elasticsearch.password=pass` to the command.'
       },
       {
         indicatorNumber: 3,
-        title: 'Start the APM Server',
+        title: 'Start APM Server',
         textPre:
           'The server processes and stores application performance metrics in Elasticsearch.',
         code: './apm-server -e'
@@ -102,7 +93,7 @@ export const serverInstructions = [
         indicatorNumber: 4,
         title: 'APM Server status',
         textPre:
-          'Make sure the APM Server is running before you start implementing the APM agents.',
+          'Make sure APM Server is running before you start implementing the APM agents.',
         isStatusStep: true
       }
     ]
@@ -113,23 +104,20 @@ export const serverInstructions = [
     steps: [
       {
         indicatorNumber: 1,
-        title: 'Download and unpack the APM Server',
-        textPre:
-          '[Download link](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-darwin-x86_64.tar.gz)',
-        code:
-          'https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-darwin-x86_64.tar.gz'
+        title: 'Download and unpack APM Server for Mac',
+        downloadButton: true
       },
       {
         indicatorNumber: 2,
         title: 'Import dashboards (optional)',
-        textPre: 'The APM Server ships with pre-configured dashboards.',
+        textPre: 'APM Server ships with pre-configured dashboards.',
         code: './apm-server -setup',
         textPost:
-          'If you using an X-Pack secured version of the Elastic Stack, add `-E output.elasticsearch.username=user -E output.elasticsearch.password=pass` to the command.'
+          'If you are using an X-Pack secured version of the Elastic Stack, add `-E output.elasticsearch.username=user -E output.elasticsearch.password=pass` to the command.'
       },
       {
         indicatorNumber: 3,
-        title: 'Start the APM Server',
+        title: 'Start APM Server',
         textPre:
           'The server processes and stores application performance metrics in Elasticsearch.',
         code: './apm-server -e'
@@ -138,7 +126,7 @@ export const serverInstructions = [
         indicatorNumber: 4,
         title: 'APM Server status',
         textPre:
-          'Make sure the APM Server is running before you start implementing the APM agents.',
+          'Make sure APM Server is running before you start implementing the APM agents.',
         isStatusStep: true
       }
     ]
@@ -149,32 +137,49 @@ export const serverInstructions = [
     steps: [
       {
         indicatorNumber: 1,
-        title: 'Download and unpack the APM Server',
-        textPre:
-          '[Download 32-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-windows-x86.zip) – [Download 64-bit](https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-windows-x86_64.zip)',
-        code: `32-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-windows-x86.zip
-64-bit: https://artifacts.elastic.co/downloads/apm-server/apm-server-6.1.0-windows-x86_64.zip`
+        title: 'Download and unpack APM Server for Windows',
+        downloadButton: true
       },
       {
         indicatorNumber: 2,
         title: 'Import dashboards (optional)',
-        textPre: 'The APM Server ships with pre-configured dashboards.',
-        code: './apm-server -setup',
+        textPre: 'APM Server ships with pre-configured dashboards.',
+        code: 'apm-server.exe -setup',
         textPost:
-          'If you using an X-Pack secured version of the Elastic Stack, add `-E output.elasticsearch.username=user -E output.elasticsearch.password=pass` to the command.'
+          'If you are using an X-Pack secured version of the Elastic Stack, add `-E output.elasticsearch.username=user -E output.elasticsearch.password=pass` to the command.'
       },
       {
         indicatorNumber: 3,
-        title: 'Start the APM Server',
+        title: 'Start APM Server',
         textPre:
           'The server processes and stores application performance metrics in Elasticsearch.',
-        code: './apm-server -e'
+        code: 'apm-server.exe -e'
       },
       {
         indicatorNumber: 4,
         title: 'APM Server status',
         textPre:
-          'Make sure the APM Server is running before you start implementing the APM agents.',
+          'Make sure APM Server is running before you start implementing the APM agents.',
+        isStatusStep: true
+      }
+    ]
+  },
+  {
+    id: 'docker',
+    name: 'Docker',
+    steps: [
+      {
+        indicatorNumber: 1,
+        title: 'Run APM Server in Docker',
+        textPre: 'Start APM Server image in Docker.',
+        code: `docker run -p 8200:8200 docker.elastic.co/apm/apm-server:6.1.0 apm-server -e -E output.elasticsearch.hosts=ElasticsearchAddress:9200 -E apm-server.host=:8200`,
+        textPost: `If you are using an X-Pack secured version of the Elastic Stack, add \`-E output.elasticsearch.username=user -E output.elasticsearch.password=pass\` to the command. Read more in the [APM Server on Docker](https://www.elastic.co/guide/en/apm/server/6.1/running-on-docker.html) documentation.`
+      },
+      {
+        indicatorNumber: 2,
+        title: 'APM Server status',
+        textPre:
+          'Make sure APM Server is running before you go and implement the APM agents.',
         isStatusStep: true
       }
     ]
@@ -187,14 +192,14 @@ export const agentInstructions = [
     name: 'Node.js',
     steps: [
       {
-        indicatorNumber: 4,
+        indicatorNumber: 1,
         title: 'Install the APM agent',
         textPre:
-          'Install the APM Agent for Node.js as a dependency to your application.',
+          'Install the APM agent for Node.js as a dependency to your application.',
         code: `npm install elastic-apm --save`
       },
       {
-        indicatorNumber: 5,
+        indicatorNumber: 2,
         title: 'Configure the agent',
         textPre:
           'Agents are libraries that run inside of your application process. APM apps are created programmatically based on the `appName`. This agent supports Express, Koa, hapi, and custom Node.js.',
@@ -212,10 +217,10 @@ var apm = require('elastic-apm').start({
           'See [the documentation](https://www.elastic.co/guide/en/apm/agent/nodejs/current/index.html) for advanced usage. Babel users, please refer to the documentation.'
       },
       {
-        indicatorNumber: 6,
+        indicatorNumber: 3,
         title: 'APM agent status',
         textPre:
-          "Let's check that the agent is running and sending up data to the APM Server.",
+          "Let's check that the agent is running and sending up data to APM Server.",
         isStatusStep: true
       }
     ]
@@ -225,14 +230,14 @@ var apm = require('elastic-apm').start({
     name: 'Django',
     steps: [
       {
-        indicatorNumber: 4,
+        indicatorNumber: 1,
         title: 'Install the APM agent',
         textPre:
-          'Install the APM Agent for Python as a dependency to your application.',
+          'Install the APM agent for Python as a dependency to your application.',
         code: `$ pip install elastic-apm`
       },
       {
-        indicatorNumber: 5,
+        indicatorNumber: 2,
         title: 'Configure the agent',
         textPre:
           'Agents are libraries that run inside of your application process. APM apps are created programmatically based on the `APP_NAME`.',
@@ -259,10 +264,10 @@ MIDDLEWARES = (
           'See [the documentation](https://www.elastic.co/guide/en/apm/agent/python/current/django-support.html) for advanced usage.'
       },
       {
-        indicatorNumber: 6,
+        indicatorNumber: 3,
         title: 'APM agent status',
         textPre:
-          "Let's check that the agent is running and sending up data to the APM Server.",
+          "Let's check that the agent is running and sending up data to APM Server.",
         isStatusStep: true
       }
     ]
@@ -272,14 +277,14 @@ MIDDLEWARES = (
     name: 'Flask',
     steps: [
       {
-        indicatorNumber: 4,
+        indicatorNumber: 1,
         title: 'Install the APM agent',
         textPre:
-          'Install the APM Agent for Python as a dependency to your application.',
+          'Install the APM agent for Python as a dependency to your application.',
         code: `$ pip install elastic-apm[flask]`
       },
       {
-        indicatorNumber: 5,
+        indicatorNumber: 2,
         title: 'Configure the agent',
         textPre:
           'Agents are libraries that run inside of your application process. APM apps are created programmatically based on the `APP_NAME`.',
@@ -300,10 +305,10 @@ apm = ElasticAPM(app)
           'See [the documentation](https://www.elastic.co/guide/en/apm/agent/python/current/flask-support.html) for advanced usage.'
       },
       {
-        indicatorNumber: 6,
+        indicatorNumber: 3,
         title: 'APM agent status',
         textPre:
-          "Let's check that the agent is running and sending up data to the APM Server.",
+          "Let's check that the agent is running and sending up data to APM Server.",
         isStatusStep: true
       }
     ]

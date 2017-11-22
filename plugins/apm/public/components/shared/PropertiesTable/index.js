@@ -128,7 +128,7 @@ function getTipText(propertyKey, agentName) {
           return null;
       }
 
-    case 'elasticapm-python':
+    case 'python':
       switch (propertyKey) {
         case 'user':
           return {

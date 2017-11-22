@@ -53,7 +53,7 @@ class Distribution extends Component {
           xType="time"
           buckets={buckets}
           bucketSize={distribution.data.bucketSize}
-          formatYValue={value => `${value} err.`}
+          formatYValue={value => `${value} occ.`}
           tooltipLegendTitle="Occurences"
         />
       </div>

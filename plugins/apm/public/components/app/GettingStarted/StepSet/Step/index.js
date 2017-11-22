@@ -2,7 +2,7 @@ import React from 'react';
 import { STATUS } from '../../../../../constants';
 
 import styled from 'styled-components';
-import { KuiButton } from 'ui_framework/components';
+import { KuiButton, KuiButtonIcon } from 'ui_framework/components';
 import { px, unit, units, fontSizes } from '../../../../../style/variables';
 
 import Indicator from './Indicator';
@@ -40,6 +40,10 @@ const Title = styled.h3`
   font-size: ${fontSizes.xlarge};
 `;
 
+const DownloadButton = styled(KuiButton)`
+  margin: ${px(units.half)} 0;
+`;
+
 const Description = styled.div`
   max-width: 80%;
 `;
@@ -65,6 +69,19 @@ function Step({ step, isLastStep, checkStatus, result, type }) {
           <Description>
             <MarkdownRenderer markdown={step.textPre || ''} />
           </Description>
+        )}
+        {step.downloadButton && (
+          <a
+            href="https://www.elastic.co/downloads/apm/apm-server"
+            target="_blank"
+          >
+            <DownloadButton
+              buttonType="secondary"
+              icon={<KuiButtonIcon className="fa-external-link" />}
+            >
+              Download APM Server on Elastic.co
+            </DownloadButton>
+          </a>
         )}
 
         {step.code && (
