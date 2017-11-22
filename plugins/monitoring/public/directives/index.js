@@ -1,5 +1,6 @@
 import 'plugins/monitoring/directives/main';
 import 'plugins/monitoring/directives/chart';
+import 'plugins/monitoring/directives/sparkline';
 import 'plugins/monitoring/directives/alerts';
 import 'plugins/monitoring/directives/status_icon';
 import 'plugins/monitoring/directives/cluster/overview';
