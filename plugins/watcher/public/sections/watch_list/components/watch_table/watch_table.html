@@ -1,14 +1,14 @@
 <table class="kuiTable">
   <thead>
     <tr>
-      <th class="kuiTableHeaderCell kuiTableHeaderCell--checkBox">
+      <th scope="col" class="kuiTableHeaderCell kuiTableHeaderCell--checkBox">
         <check-box
           is-selected="watchTable.allSelected"
           on-select-change="watchTable.onAllSelectedChange"
           ng-if="watchTable.areAnyEditable()"
         ></check-box>
       </th>
-      <th class="kuiTableHeaderCell">
+      <th scope="col" class="kuiTableHeaderCell">
         <sortable-column
           field="id"
           on-sort-change="watchTable.onSortChange"
@@ -18,7 +18,7 @@
           ID
         </sortable-column>
       </th>
-      <th class="kuiTableHeaderCell">
+      <th scope="col" class="kuiTableHeaderCell">
         <sortable-column
           field="name"
           on-sort-change="watchTable.onSortChange"
@@ -28,7 +28,7 @@
           Name
         </sortable-column>
       </th>
-      <th class="kuiTableHeaderCell">
+      <th scope="col" class="kuiTableHeaderCell">
         <sortable-column
           field="watchStatus.state"
           on-sort-change="watchTable.onSortChange"
@@ -38,7 +38,7 @@
           State
         </sortable-column>
       </th>
-      <th class="kuiTableHeaderCell">
+      <th scope="col" class="kuiTableHeaderCell">
         <sortable-column
           field="watchStatus.comment"
           on-sort-change="watchTable.onSortChange"
@@ -48,7 +48,7 @@
           Comment
         </sortable-column>
       </th>
-      <th class="kuiTableHeaderCell">
+      <th scope="col" class="kuiTableHeaderCell">
         <sortable-column
           field="watchStatus.lastFired"
           on-sort-change="watchTable.onSortChange"
@@ -58,7 +58,7 @@
           Last Fired
         </sortable-column>
       </th>
-      <th class="kuiTableHeaderCell">
+      <th scope="col" class="kuiTableHeaderCell">
         <sortable-column
           field="watchStatus.lastChecked"
           on-sort-change="watchTable.onSortChange"
@@ -68,7 +68,7 @@
           Last Triggered
         </sortable-column>
       </th>
-      <th class="kuiTableHeaderCell"></th>
+      <th scope="col" class="kuiTableHeaderCell"></th>
     </tr>
   </thead>
 

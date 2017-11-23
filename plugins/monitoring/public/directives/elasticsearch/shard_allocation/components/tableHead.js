@@ -67,7 +67,7 @@ export class TableHead extends React.Component { // eslint-disable-line react/no
 
   createColumn({ key, content }) {
     return (
-      <th key={key} colSpan={1}>{ content }</th>
+      <th scope="col" key={key} colSpan={1}>{ content }</th>
     );
   }
 

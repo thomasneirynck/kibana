@@ -54,12 +54,12 @@
         <div id="ml-job-audit-list-{{job.job_id}}" class="job-audit-list-container">
         <table>
           <thead>
-            <th></th>
-            <th>Time</th>
-            <th>Node</th>
-            <th>Message</th>
+            <th scope="col"></th>
+            <th scope="col">Time</th>
+            <th scope="col">Node</th>
+            <th scope="col">Message</th>
           </thead>
-          <tbody >
+          <tbody>
             <tr ng-repeat="msg in jobAudit.messages">
               <td>
                 <i ng-show="msg.level === 'system_info'" tooltip='System Info' class="job-system-info fa fa-cogs"></i>

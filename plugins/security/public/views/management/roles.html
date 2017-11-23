@@ -74,7 +74,7 @@
         <table class="kuiTable" ng-show="(roles | filter:query).length">
           <thead>
             <tr>
-              <th class="kuiTableHeaderCell kuiTableHeaderCell--checkBox">
+              <th scope="col" class="kuiTableHeaderCell kuiTableHeaderCell--checkBox">
                 <div class="kuiTableHeaderCell__liner">
                   <input
                     type="checkbox"
@@ -88,6 +88,7 @@
 
               <th
                 class="kuiTableHeaderCell"
+                scope="col"
               >
                 <button
                   class="kuiTableHeaderCellButton"
@@ -106,7 +107,7 @@
                 </button>
               </th>
 
-              <th class="kuiTableHeaderCell">
+              <th scope="col" class="kuiTableHeaderCell">
                 <span class="kuiTableHeaderCell__liner">
                   Reserved
                   <span

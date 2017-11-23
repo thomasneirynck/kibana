@@ -1,7 +1,7 @@
 <table class="kuiTable" data-test-subj="pipelineTable">
   <thead>
     <tr>
-      <th class="kuiTableHeaderCell kuiTableHeaderCell--checkBox">
+      <th scope="col" class="kuiTableHeaderCell kuiTableHeaderCell--checkBox">
         <div class="kuiTableHeaderCell__liner">
           <check-box
             is-selected="pipelineTable.allSelected"
@@ -10,7 +10,7 @@
           ></check-box>
         </div>
       </th>
-      <th class="kuiTableHeaderCell">
+      <th scope="col" class="kuiTableHeaderCell">
         <sortable-column
           field="id"
           on-sort-change="pipelineTable.onSortChange"
@@ -20,10 +20,10 @@
           ID
         </sortable-column>
       </th>
-      <th class="kuiTableHeaderCell">
+      <th scope="col" class="kuiTableHeaderCell">
         Description
       </th>
-      <th class="kuiTableHeaderCell">
+      <th scope="col" class="kuiTableHeaderCell">
         <sortable-column
           field="lastModified.sortOrder"
           on-sort-change="pipelineTable.onSortChange"
@@ -34,6 +34,7 @@
         </sortable-column>
       </th>
       <th
+       scope="col"
        class="kuiTableHeaderCell"
        ng-show="pipelineTable.isSecurityEnabled"
       >
