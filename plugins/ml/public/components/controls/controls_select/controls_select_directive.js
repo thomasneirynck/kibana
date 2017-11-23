@@ -31,15 +31,13 @@ module.directive('mlControlsSelect', function () {
       options: '=',
       showIcons: '=',
       selected: '=',
-      updateFn: '&'
+      updateFn: '='
     },
     template,
     link: function (scope) {
       scope.setOption = function (d) {
         if (typeof scope.updateFn === 'function') {
-          // via https://stackoverflow.com/a/29023391/2266116
-          // ()(d) because we're first fetching the reference to the function
-          scope.updateFn()(d);
+          scope.updateFn(d);
         }
       };
     }
