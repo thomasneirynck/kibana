@@ -203,13 +203,13 @@ module.controller('MlForecastingModal', function (
       } else {
         $scope.runStatus.forecastProgress = REQUEST_STATES.ERROR;
         console.log('Unexpected response from running forecast', resp);
-        msgs.error('Unexpected response from running forecast.', resp);
+        msgs.error('Unexpected response from running forecast. The request may have failed.');
       }
     })
     .catch((resp) => {
       $scope.runStatus.forecastProgress = REQUEST_STATES.ERROR;
       console.log('Time series forecast modal - error running forecast:', resp);
-      msgs.error('Error running forecast.', resp);
+      msgs.error('Unexpected response from running forecast. The request may have failed.');
     });
 
   }
@@ -223,13 +223,17 @@ module.controller('MlForecastingModal', function (
     forecastChecker = $interval(() => {
       mlForecastService.getForecastRequestStats(job, forecastId)
       .then((resp) => {
-        // TODO - add in checking for error messages
-        // when this is done in the back-end.
         const progress = _.get(resp, ['stats', 'forecast_progress'], previousProgress);
         const status = _.get(resp, ['stats', 'forecast_status']);
 
         // Update the progress (stats value is between 0 and 1).
         $scope.runStatus.forecastProgress = Math.round(100 * progress);
+
+        // Display any messages returned in the request stats.
+        const messages =  _.get(resp, ['stats', 'forecast_messages'], previousProgress);
+        _.each(messages, (message) => {
+          msgs.warning(message);
+        });
 
         if (status === FORECAST_REQUEST_STATE.FINISHED) {
           $interval.cancel(forecastChecker);
@@ -242,9 +246,7 @@ module.controller('MlForecastingModal', function (
               $scope.isForecastRunning = false;
               $scope.runStatus.jobClosing = REQUEST_STATES.DONE;
               loadForForecastId(forecastId);
-
-              // Wrap the close in a timeout to give the user a chance to see progress update.
-              $timeout($scope.close, 1000);
+              closeAfterRunningForecast();
             })
             .catch((closeResp) => {
               // Load the forecast data in the main page,
@@ -256,9 +258,7 @@ module.controller('MlForecastingModal', function (
             });
           } else {
             loadForForecastId(forecastId);
-
-            // Wrap the close in a timeout to give the user a chance to see progress update.
-            $timeout($scope.close, 1000);
+            closeAfterRunningForecast();
           }
         } else {
           // Display a warning and abort check if the forecast hasn't
@@ -289,6 +289,16 @@ module.controller('MlForecastingModal', function (
       });
     }, FORECAST_STATS_POLL_FREQUENCY);
 
+  }
+
+  function closeAfterRunningForecast() {
+    // Only close the dialog automatically after a forecast has run
+    // if the message bar is clear. Otherwise the user may not catch
+    // any messages returned in the forecast request stats.
+    if (msgs.messages.length === 0) {
+      // Wrap the close in a timeout to give the user a chance to see progress update.
+      $timeout($scope.close, 1000);
+    }
   }
 
 });
