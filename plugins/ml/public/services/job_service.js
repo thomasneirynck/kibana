@@ -546,6 +546,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     delete tempJob.average_bucket_processing_time_ms;
     delete tempJob.model_snapshot_id;
     delete tempJob.open_time;
+    delete tempJob.established_model_memory;
 
     delete tempJob.data_description.time_format;
     delete tempJob.data_description.format;
