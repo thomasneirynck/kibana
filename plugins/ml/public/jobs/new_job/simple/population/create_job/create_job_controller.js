@@ -28,7 +28,7 @@ import { checkLicenseExpired } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/components/utils/filter_agg_types';
-import { isJobIdValid } from 'plugins/ml/util/job_utils';
+import { validateJobId } from 'plugins/ml/jobs/new_job/simple/components/utils/validate_job';
 import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/components/utils/app_state_settings';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
@@ -498,7 +498,7 @@ module
   // the job may fail to open, but the datafeed should still be created
   // if the job save was successful.
   $scope.createJob = function () {
-    if (validateJobId($scope.formConfig.jobId)) {
+    if (validateJobId($scope.formConfig.jobId, $scope.formConfig.jobGroups, $scope.ui.validation.checks)) {
       msgs.clear();
       // create the new job
       mlPopulationJobService.createJob($scope.formConfig)
@@ -689,41 +689,6 @@ module
     path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))';
 
     $scope.resultsUrl = path;
-  }
-
-  function validateJobId(jobId) {
-    let valid = true;
-    const checks = $scope.ui.validation.checks;
-
-    _.each(checks, (item) => {
-      item.valid = true;
-    });
-
-    if (_.isEmpty(jobId)) {
-      checks.jobId.valid = false;
-    } else if (isJobIdValid(jobId) === false) {
-      checks.jobId.valid = false;
-      let msg = 'Job name can contain lowercase alphanumeric (a-z and 0-9), hyphens or underscores; ';
-      msg += 'must start and end with an alphanumeric character';
-      checks.jobId.message = msg;
-    }
-
-    $scope.formConfig.jobGroups.forEach(group => {
-      if (isJobIdValid(group) === false) {
-        checks.groupIds.valid = false;
-        let msg = 'Job group names can contain lowercase alphanumeric (a-z and 0-9), hyphens or underscores; ';
-        msg += 'must start and end with an alphanumeric character';
-        checks.groupIds.message = msg;
-      }
-    });
-
-    _.each(checks, (item) => {
-      if (item.valid === false) {
-        valid = false;
-      }
-    });
-
-    return valid;
   }
 
   // resize the spilt cards on page resize.

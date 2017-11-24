@@ -480,9 +480,9 @@ function (
       savedSearch,
       combinedQuery } = createSearchItems($route);
 
-    timeBasedIndexCheck(indexPattern, true);
-
     if (indexPattern.id !== undefined) {
+      timeBasedIndexCheck(indexPattern, true);
+
       $scope.ui.wizard.indexInputType = INDEX_INPUT_TYPE.TEXT;
       $scope.ui.datafeed.indicesText = indexPattern.title;
 
