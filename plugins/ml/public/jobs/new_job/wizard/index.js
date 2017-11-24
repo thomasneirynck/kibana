@@ -14,6 +14,7 @@
  */
 
 import './styles/main.less';
+import 'plugins/kibana/visualize/wizard/wizard.less';
 import './steps/index_or_search';
 import './steps/job_type';
 import 'plugins/ml/components/data_recognizer';
