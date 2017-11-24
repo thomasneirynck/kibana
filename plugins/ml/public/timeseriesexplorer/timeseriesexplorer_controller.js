@@ -159,6 +159,8 @@ module.controller('MlTimeSeriesExplorerController', function (
     delete $scope.chartDetails;
     delete $scope.contextChartData;
     delete $scope.focusChartData;
+    delete $scope.contextForecastData;
+    delete $scope.focusForecastData;
 
     // Counter to keep track of what data sets have been loaded.
     $scope.loadCounter++;
@@ -282,7 +284,7 @@ module.controller('MlTimeSeriesExplorerController', function (
       mlForecastService.getForecastData(
         $scope.selectedJob,
         detectorIndex,
-        +forecastId,
+        forecastId,
         nonBlankEntities,
         bounds.min.valueOf(),
         bounds.max.valueOf(),
@@ -407,7 +409,7 @@ module.controller('MlTimeSeriesExplorerController', function (
       mlForecastService.getForecastData(
         $scope.selectedJob,
         detectorIndex,
-        +forecastId,
+        forecastId,
         nonBlankEntities,
         bounds.min.valueOf(),
         bounds.max.valueOf(),
@@ -546,12 +548,14 @@ module.controller('MlTimeSeriesExplorerController', function (
 
   // When inside a dashboard in the ML plugin, listen for changes to job selection.
   mlJobSelectService.listenJobSelectionChange($scope, (event, selections) => {
-    // Clear the detectorIndex and entities.
+    // Clear the detectorIndex, entities and forecast info.
     if (selections.length > 0) {
       delete $scope.appState.mlTimeSeriesExplorer.detectorIndex;
       delete $scope.appState.mlTimeSeriesExplorer.entities;
+      delete $scope.appState.mlTimeSeriesExplorer.forecastId;
       $scope.appState.save();
 
+      $scope.showForecastCheckbox = false;
       loadForJobId(selections[0]);
     }
   });

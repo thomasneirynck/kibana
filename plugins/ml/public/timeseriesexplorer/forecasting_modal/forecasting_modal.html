@@ -14,7 +14,7 @@
         </thead>
         <tbody >
           <tr ng-repeat="forecast in previousForecasts">
-            <td><a class="kuiLink" href="" ng-click="viewForecast(forecast.id)">{{forecast.runTime}}</a></td>
+            <td><a class="kuiLink" href="" ng-click="viewForecast(forecast.forecast_id)">{{forecast.runTime}}</a></td>
             <td>{{forecast.earliestTime}}</td>
             <td>{{forecast.latestTime}}</td>
           </tr>

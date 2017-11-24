@@ -86,9 +86,9 @@ module.controller('MlForecastingModal', function (
     .then((resp) => {
       resp.forecasts.forEach((forecast) => {
         // Format run time of forecast just down to HH:mm
-        forecast.runTime = moment(forecast.id).format('MMMM Do YYYY, HH:mm');
-        forecast.earliestTime = moment(forecast.earliest).format('MMMM Do YYYY, HH:mm:ss');
-        forecast.latestTime = moment(forecast.latest).format('MMMM Do YYYY, HH:mm:ss');
+        forecast.runTime = moment(forecast.forecast_create_timestamp).format('MMMM Do YYYY, HH:mm');
+        forecast.earliestTime = moment(forecast.forecast_start_timestamp).format('MMMM Do YYYY, HH:mm:ss');
+        forecast.latestTime = moment(forecast.forecast_end_timestamp).format('MMMM Do YYYY, HH:mm:ss');
       });
 
       $scope.previousForecasts = resp.forecasts;

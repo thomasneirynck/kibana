@@ -43,7 +43,7 @@ module.service('mlForecastService', function ($q, es, ml) {
     // Add criteria for the job ID, result type and earliest time.
     const filterCriteria = [{
       query_string: {
-        query: 'result_type:model_forecast',
+        query: 'result_type:model_forecast_request_stats',
         analyze_wildcard: true
       }
     },
@@ -61,47 +61,24 @@ module.service('mlForecastService', function ($q, es, ml) {
 
     es.search({
       index: ML_RESULTS_INDEX_PATTERN,
-      size: 0,
+      size: maxResults,
       body: {
         query: {
           bool: {
             filter: filterCriteria
           }
         },
-        aggs: {
-          forecasts: {
-            terms: {
-              field: 'forecast_id',
-              size: maxResults !== undefined ? maxResults : 10,
-              order: {
-                _term: 'desc'
-              }
-            },
-            aggs: {
-              earliest: {
-                min: {
-                  field: 'timestamp'
-                }
-              },
-              latest: {
-                max: {
-                  field: 'timestamp'
-                }
-              }
-            }
-          }
-        }
+        sort: [
+          { forecast_create_timestamp: { 'order': 'desc' } }
+        ]
       }
     })
     .then((resp) => {
-      const buckets = _.get(resp, ['aggregations', 'forecasts', 'buckets'], []);
-      _.each(buckets, (bucket) => {
-        obj.forecasts.push({
-          id: bucket.key,
-          earliest: bucket.earliest.value,
-          latest: bucket.latest.value,
+      if (resp.hits.total !== 0) {
+        _.each(resp.hits.hits, (hit) => {
+          obj.forecasts.push(hit._source);
         });
-      });
+      }
 
       deferred.resolve(obj);
     })
@@ -260,6 +237,8 @@ module.service('mlForecastService', function ($q, es, ml) {
         }
       });
     });
+
+
 
     // If an aggType object has been passed in, use it.
     // Otherwise default to avg, min and max aggs for the
