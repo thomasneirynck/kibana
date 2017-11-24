@@ -6,13 +6,15 @@
 --
 The {xpack} monitoring components enable you to easily monitor the Elastic Stack
 from {kib}. You can view health and performance data for {es}, Logstash, and
-{kib} in real time, as well as analyze past performance.
+{kib} in real time, as well as analyze past performance. For more information,
+see {xpack-ref}/xpack-monitoring.html[Monitoring the Elastic Stack].
 
 When you install {xpack}, a monitoring agent runs on each {es}, {kib}, and
 Logstash instance to collect and index metrics.
 
-For more information, see
-{xpack-ref}/xpack-monitoring.html[Monitoring the Elastic Stack].
+* <<monitoring-xpack-kibana>>
+* <<monitoring-data>>
+
 --
 
 include::viewing-metrics.asciidoc[]
