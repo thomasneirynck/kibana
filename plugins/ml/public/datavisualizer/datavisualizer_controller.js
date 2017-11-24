@@ -93,6 +93,7 @@ module
   $scope.metricFieldFilter = '';
   $scope.fieldFilterIcon = 0;
   $scope.fieldFilter = '';
+  $scope.recognizerResults = { count: 0 };
 
   // Check for a saved query in the AppState or via a savedSearchId in the URL.
   $scope.searchQueryText = '';

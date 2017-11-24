@@ -4,18 +4,30 @@
   </div>
 
   <div class="create-job-content">
-    Use the Advanced job wizard to create a job to find anomalies in this data.
+    <div class="recognized-job-content" ng-show="recognizerResults.count!==0">
+      <div class="title-text">
+        Select known configurations for recognized data:
+      </div>
 
-    <div class="button-container">
-      <button aria-label="Create job" type="button"
-        class="kuiButton kuiButton--primary"
-        ng-click="createJob()">
-        Create job
-      </button>
+      <ml-data-recognizer index-pattern='indexPattern' results=recognizerResults />
     </div>
-  </div>
 
-  <div class="recognized-job-content">
-    <ml-data-recognizer index-pattern='indexPattern'/>
+    <div class="title-text">
+      Use the Advanced job wizard to create a job to find anomalies in this data:
+    </div>
+
+    <div class="kuiFlexItem kuiPanel options-panel advanced-job-button">
+      <div class="kuiFlexGroup kuiFlexGroup--gutterLarge">
+        <div class="kuiFlexItem kuiFlexItem--flexGrowZero">
+          <i aria-hidden="true" class="synopsisIcon fa fa-cog"></i>
+        </div>
+        <div class="kuiFlexItem synopsis">
+          <h4 class="kuiTextTitle synopsisTitle">
+            <a href="" ng-click="createJob()" ng-class="{disabled: isTimeBasedIndex===false}" class="kuiLink">Advanced</a>
+          </h4>
+          <p class="kuiText kuiSubduedText">Use the full range of options to create a job for more advanced use cases.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
