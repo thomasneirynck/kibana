@@ -23,7 +23,7 @@ The possible states for watches are:
 * `Ok` - The watch is not actively firing but working properly.
 * `Disabled` - The watch will not fire under any circumstance.
 
-To delete or edit a watch, click on its checkbox in the list and then click the Delete or Edit button. Watches that do not have a checkbox are https://www.elastic.co/guide/en/x-pack/current/monitoring-details.html#cluster-alerts[cluster alerts] created by X-Pack monitoring and are immutable.
+To delete or edit a watch, click on its checkbox in the list and then click the Delete or Edit button. Watches that do not have a checkbox are <<cluster-alerts,cluster alerts>> created by X-Pack monitoring and are immutable.
 
 This page also allows you to create a <<watcher-create-threshold-alert, threshold alert>> or <<watcher-create-advanced-watch, an advanced watch>>. Let's first look at creating a threshold alert.
 
