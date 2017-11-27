@@ -34,8 +34,9 @@ export const checkForEmailValue = async (
   }
 };
 
-export function getSettingsCollector(server, config) {
+export function getSettingsCollector(server) {
   const { callWithInternalUser } = server.plugins.elasticsearch.getCluster('admin');
+  const config = server.config();
   const savedObjectsClient = server.savedObjectsClientFactory({
     callCluster: callWithInternalUser
   });

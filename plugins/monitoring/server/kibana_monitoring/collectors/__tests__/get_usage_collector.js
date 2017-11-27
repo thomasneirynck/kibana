@@ -1,97 +1,45 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
-
-import { BasicCredentials } from '../../../../../security/server/lib/authentication/providers/basic';
 import { getUsageCollector } from '../get_usage_collector';
+import { callClusterFactory } from '../../../../../xpack_main';
 
 describe('getUsageCollector', () => {
   let clusterStub;
-  let configStub;
   let serverStub;
+  let callClusterStub;
 
   beforeEach(() => {
-    clusterStub = { callWithRequest: sinon.stub() };
-    configStub = { get: sinon.stub() };
+    clusterStub = { callWithInternalUser: sinon.stub().returns(Promise.resolve({})) };
     serverStub = {
       plugins: {
         elasticsearch: {
           getCluster: sinon.stub()
         }
       },
-      getKibanaStats: sinon.stub()
+      getKibanaStats: sinon.stub(),
+      config: () => ({ get: sinon.stub() })
     };
-
     serverStub.plugins.elasticsearch.getCluster.withArgs('admin').returns(clusterStub);
+    serverStub.getKibanaStats.returns({ index: 'foo' });
+    callClusterStub = callClusterFactory(serverStub).getCallClusterInternal();
   });
 
   it('correctly defines usage collector.', () => {
-    const usageCollector = getUsageCollector(serverStub, configStub);
+    const usageCollector = getUsageCollector(serverStub, callClusterStub);
 
     expect(usageCollector.type).to.be('kibana');
     expect(usageCollector.fetch).to.be.a(Function);
   });
 
-  it('complements request with `Authorization` header if internal user credentials are defined.', () => {
-    configStub.get.withArgs('elasticsearch.username').returns('user');
-    configStub.get.withArgs('elasticsearch.password').returns('password');
-
-    const usageCollector = getUsageCollector(serverStub, configStub);
-    usageCollector.fetch();
+  it('calls callWithInternalUser with the `search` method', async () => {
+    const usageCollector = getUsageCollector(serverStub, callClusterStub);
+    await usageCollector.fetch();
 
     sinon.assert.calledOnce(serverStub.getKibanaStats);
-    sinon.assert.calledWithExactly(serverStub.getKibanaStats, sinon.match({ callCluster: sinon.match.func }));
+    sinon.assert.calledWithExactly(serverStub.getKibanaStats, sinon.match({ callCluster: callClusterStub }));
 
-    const callCluster = serverStub.getKibanaStats.firstCall.args[0].callCluster;
-    callCluster('arg-one', 'arg-two');
-
-    sinon.assert.calledOnce(clusterStub.callWithRequest);
-    sinon.assert.calledWithExactly(
-      clusterStub.callWithRequest,
-      BasicCredentials.decorateRequest({ headers: {} }, 'user', 'password'),
-      'arg-one',
-      'arg-two'
-    );
-  });
-
-  it('does not complement request with `Authorization` header if internal user username is not defined.', () => {
-    configStub.get.withArgs('elasticsearch.password').returns('password');
-
-    const usageCollector = getUsageCollector(serverStub, configStub);
-    usageCollector.fetch();
-
-    sinon.assert.calledOnce(serverStub.getKibanaStats);
-    sinon.assert.calledWithExactly(serverStub.getKibanaStats, sinon.match({ callCluster: sinon.match.func }));
-
-    const callCluster = serverStub.getKibanaStats.firstCall.args[0].callCluster;
-    callCluster('arg-one', 'arg-two');
-
-    sinon.assert.calledOnce(clusterStub.callWithRequest);
-    sinon.assert.calledWithExactly(
-      clusterStub.callWithRequest,
-      { headers: { } },
-      'arg-one',
-      'arg-two'
-    );
-  });
-
-  it('does not complement request with `Authorization` header if internal user password is not defined.', () => {
-    configStub.get.withArgs('elasticsearch.username').returns('user');
-
-    const usageCollector = getUsageCollector(serverStub, configStub);
-    usageCollector.fetch();
-
-    sinon.assert.calledOnce(serverStub.getKibanaStats);
-    sinon.assert.calledWithExactly(serverStub.getKibanaStats, sinon.match({ callCluster: sinon.match.func }));
-
-    const callCluster = serverStub.getKibanaStats.firstCall.args[0].callCluster;
-    callCluster('arg-one', 'arg-two');
-
-    sinon.assert.calledOnce(clusterStub.callWithRequest);
-    sinon.assert.calledWithExactly(
-      clusterStub.callWithRequest,
-      { headers: { } },
-      'arg-one',
-      'arg-two'
-    );
+    sinon.assert.calledOnce(clusterStub.callWithInternalUser);
+    const [ method ] = clusterStub.callWithInternalUser.getCall(0).args;
+    expect(method).to.be('search');
   });
 });

@@ -1,4 +1,5 @@
-import { handleError } from '../../../../../monitoring/server/lib/errors';
+import { wrap } from 'boom';
+import { callClusterFactory } from '../../../lib/call_cluster_factory';
 import { getUsageCollector, getReportingCollector } from '../../../../../monitoring/server/kibana_monitoring';
 
 export function kibanaStatsRoute(server) {
@@ -6,10 +7,13 @@ export function kibanaStatsRoute(server) {
     path: '/api/_kibana/v1/stats',
     method: 'GET',
     handler: async (req, reply) => {
+      const server = req.server;
+      // require that http authentication headers from req are used to read ES data
+      const callCluster = callClusterFactory(server).getCallClusterWithReq(req);
 
       try {
-        const kibanaUsageCollector = getUsageCollector(req.server, req.server.config());
-        const reportingCollector = getReportingCollector(req.server, req.server.config());
+        const kibanaUsageCollector = getUsageCollector(server, callCluster);
+        const reportingCollector = getReportingCollector(server, callCluster);
 
         const [ kibana, reporting ] = await Promise.all([
           kibanaUsageCollector.fetch(),
@@ -21,9 +25,13 @@ export function kibanaStatsRoute(server) {
           reporting,
         });
       } catch(err) {
-        reply(handleError(err, req));
-      }
+        req.log(['error'], err);
 
+        if (err.isBoom) {
+          return reply(err);
+        }
+        reply(wrap(err, err.statusCode, err.message));
+      }
     }
   });
 }

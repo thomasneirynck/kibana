@@ -1,15 +1,15 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
 import { getReportingCollector } from '../get_reporting_collector';
+import { callClusterFactory } from '../../../../../xpack_main';
 
 describe('getReportingCollector', () => {
   let clusterStub;
-  let configStub;
   let serverStub;
+  let callClusterStub;
 
   beforeEach(() => {
-    clusterStub = { callWithRequest: sinon.stub().returns(Promise.resolve({})) };
-    configStub = { get: sinon.stub() };
+    clusterStub = { callWithInternalUser: sinon.stub().returns(Promise.resolve({})) };
     serverStub = {
       plugins: {
         elasticsearch: { getCluster: sinon.stub() },
@@ -20,59 +20,28 @@ describe('getReportingCollector', () => {
           }
         }
       },
-      config: () => ({
-        get: sinon.stub().withArgs('xpack.reporting.enabled').returns(true)
-      }),
+      config: () => ({ get: sinon.stub() }),
       expose: sinon.stub(),
       log: sinon.stub(),
     };
 
     serverStub.plugins.elasticsearch.getCluster.withArgs('admin').returns(clusterStub);
+    callClusterStub = callClusterFactory(serverStub).getCallClusterInternal();
   });
 
   it('correctly defines reporting collector.', () => {
-    const reportingCollector = getReportingCollector(serverStub, configStub);
+    const reportingCollector = getReportingCollector(serverStub, callClusterStub);
 
     expect(reportingCollector.type).to.be('reporting_stats');
     expect(reportingCollector.fetch).to.be.a(Function);
   });
 
-  describe('credentials', () => {
-    it('complements request with `Authorization` header if internal user credentials are defined.', async () => {
-      configStub.get.withArgs('elasticsearch.username').returns('user');
-      configStub.get.withArgs('elasticsearch.password').returns('password');
+  it('calls callWithInternalUser with the `search` method', async () => {
+    const reportingCollector = getReportingCollector(serverStub, callClusterStub);
+    await reportingCollector.fetch();
 
-      const reportingCollector = getReportingCollector(serverStub, configStub);
-      await reportingCollector.fetch();
-
-      sinon.assert.calledOnce(clusterStub.callWithRequest);
-      const [ firstArg, secondArg ] = clusterStub.callWithRequest.getCall(0).args;
-      expect(firstArg).to.eql({ headers: { authorization: 'Basic dXNlcjpwYXNzd29yZA==' } });
-      expect(secondArg).to.be('search');
-    });
-
-    it('does not complement request with `Authorization` header if internal user username is not defined.', async () => {
-      configStub.get.withArgs('elasticsearch.password').returns('password');
-
-      const reportingCollector = getReportingCollector(serverStub, configStub);
-      await reportingCollector.fetch();
-
-      sinon.assert.calledOnce(clusterStub.callWithRequest);
-      const [ firstArg, secondArg ] = clusterStub.callWithRequest.getCall(0).args;
-      expect(firstArg).to.eql({ headers: {} });
-      expect(secondArg).to.be('search');
-    });
-
-    it('does not complement request with `Authorization` header if internal user password is not defined.', async () => {
-      configStub.get.withArgs('elasticsearch.username').returns('user');
-
-      const reportingCollector = getReportingCollector(serverStub, configStub);
-      await reportingCollector.fetch();
-
-      sinon.assert.calledOnce(clusterStub.callWithRequest);
-      const [ firstArg, secondArg ] = clusterStub.callWithRequest.getCall(0).args;
-      expect(firstArg).to.eql({ headers: {} });
-      expect(secondArg).to.be('search');
-    });
+    sinon.assert.calledOnce(clusterStub.callWithInternalUser);
+    const [ method ] = clusterStub.callWithInternalUser.getCall(0).args;
+    expect(method).to.be('search');
   });
 });

@@ -1,3 +1,4 @@
+import { callClusterFactory } from '../../../xpack_main';
 import { TypeCollector } from './lib/type_collector';
 import { getOpsStatsCollector } from './collectors/get_ops_stats_collector';
 import { getSettingsCollector } from './collectors/get_settings_collector';
@@ -29,11 +30,12 @@ export function startCollector(kbnServer, server, client, _sendBulkPayload = sen
       return _sendBulkPayload(client, interval, payload);
     }
   });
+  const callCluster = callClusterFactory(server).getCallClusterInternal();
 
-  collector.register(getUsageCollector(server, config));
+  collector.register(getUsageCollector(server, callCluster));
   collector.register(getOpsStatsCollector(server));
-  collector.register(getSettingsCollector(server, config));
-  collector.register(getReportingCollector(server, config));
+  collector.register(getSettingsCollector(server));
+  collector.register(getReportingCollector(server, callCluster));
 
   // Startup Kibana cleanly or reconnect to Elasticsearch
   server.plugins.elasticsearch.status.on('green', () => {

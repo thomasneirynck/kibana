@@ -9,6 +9,7 @@ import { config as appConfig } from './server/config/config';
 import { checkLicenseFactory } from './server/lib/check_license';
 import { validateConfig } from './server/lib/validate_config';
 import { exportTypesRegistryFactory } from './server/lib/export_types_registry';
+
 export { getReportingUsage } from './server/usage';
 
 export const reporting = (kibana) => {

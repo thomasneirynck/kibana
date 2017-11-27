@@ -1,6 +1,5 @@
 import { get, snakeCase } from 'lodash';
 import { KIBANA_USAGE_TYPE } from '../../../common/constants';
-import { BasicCredentials } from '../../../../security/server/lib/authentication/providers/basic';
 
 export function handleAdvancedStatsResponse(response) {
   const buckets = get(response, 'aggregations.types.buckets', []);
@@ -53,17 +52,7 @@ export function getKibanaAdvancedStats(callCluster, kibanaIndex) {
  * Combines saved object client stas from server.getKibanaStats
  * with "advanced" stats that come from querying the .kibana index directly
  */
-export function getUsageCollector(server, config) {
-  let fakeRequest = { headers: {} };
-
-  const username = config.get('elasticsearch.username');
-  const password = config.get('elasticsearch.password');
-  if (username && password) {
-    fakeRequest = BasicCredentials.decorateRequest(fakeRequest, username, password);
-  }
-
-  const { callWithRequest } = server.plugins.elasticsearch.getCluster('admin');
-  const callCluster = (...args) => callWithRequest(fakeRequest, ...args);
+export function getUsageCollector(server, callCluster) {
 
   return {
     type: KIBANA_USAGE_TYPE,

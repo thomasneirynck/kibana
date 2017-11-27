@@ -8,6 +8,8 @@ import { replaceInjectedVars } from './server/lib/replace_injected_vars';
 import { setupXPackMain } from './server/lib/setup_xpack_main';
 import { xpackInfoRoute, kibanaStatsRoute } from './server/routes/api/v1';
 
+export { callClusterFactory } from './server/lib/call_cluster_factory';
+
 export const xpackMain = (kibana) => {
   return new kibana.Plugin({
     id: 'xpack_main',
