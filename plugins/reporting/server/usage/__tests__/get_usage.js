@@ -64,11 +64,11 @@ describe('getReportingUsage', () => {
         enabled: true,
         csv: {
           available: true,
-          count: 22,
+          total: 22,
         },
         printable_pdf: {
           available: false,
-          count: 33,
+          total: 33,
         },
       });
     });
@@ -96,19 +96,19 @@ describe('getReportingUsage', () => {
         enabled: true,
         csv: {
           available: true,
-          count: 0,
+          total: 0,
         },
         printable_pdf: {
           available: false,
-          count: 0,
+          total: 0,
         },
         testJob1: {
           available: false,
-          count: 22,
+          total: 22,
         },
         testJob2: {
           available: false,
-          count: 33,
+          total: 33,
         },
       });
     });
@@ -139,11 +139,11 @@ describe('getReportingUsage', () => {
         enabled: true,
         csv: {
           available: true,
-          count: 22,
+          total: 22,
         },
         printable_pdf: {
           available: true,
-          count: 33,
+          total: 33,
         },
       });
     });
@@ -158,11 +158,11 @@ describe('getReportingUsage', () => {
         enabled: true,
         csv: {
           available: true,
-          count: 0,
+          total: 0,
         },
         printable_pdf: {
           available: false,
-          count: 0,
+          total: 0,
         },
       });
     });
@@ -181,11 +181,11 @@ describe('getReportingUsage', () => {
         enabled: false,
         csv: {
           available: false,
-          count: 0,
+          total: 0,
         },
         printable_pdf: {
           available: false,
-          count: 0,
+          total: 0,
         },
       });
     });
@@ -205,11 +205,11 @@ describe('getReportingUsage', () => {
         enabled: false,
         csv: {
           available: true,
-          count: undefined,
+          total: undefined,
         },
         printable_pdf: {
           available: false,
-          count: undefined,
+          total: undefined,
         },
       });
     });

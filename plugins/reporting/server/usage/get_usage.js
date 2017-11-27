@@ -19,20 +19,20 @@ export async function getReportingUsage(callCluster, server) {
   const keys = uniq([].concat(Object.keys(availability), Object.keys(counts)));
   const jobTypes = keys.reduce((accum, key) => {
     const availabilityFromData = availability[key];
-    const countFromData = counts[key];
+    const jobTotalFromData = counts[key];
 
-    let count; // if this remains undefined, the key/value gets removed in serialization
-    if (countFromData || countFromData === 0) {
-      count = countFromData;
+    let jobTotal; // if this remains undefined, the key/value gets removed in serialization
+    if (jobTotalFromData || jobTotalFromData === 0) {
+      jobTotal = jobTotalFromData;
     } else if (enabled) { // jobtype is not in the agg result because it has never been used
-      count = 0;
+      jobTotal = 0;
     }
 
     return {
       ...accum,
       [key]: {
         available: availabilityFromData ? availabilityFromData : false,
-        count,
+        total: jobTotal,
       }
     };
   }, {});
