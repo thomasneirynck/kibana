@@ -10,7 +10,7 @@ export default function ({ getService, getPageObjects }) {
   const retry = getService('retry');
 
 
-  describe('graph', function () {
+  describe.skip('graph', function () { // eslint-disable-line jest/no-disabled-tests
     before(async () => {
       await remote.setWindowSize(1600, 1000);
       log.debug('load graph/secrepo data');
