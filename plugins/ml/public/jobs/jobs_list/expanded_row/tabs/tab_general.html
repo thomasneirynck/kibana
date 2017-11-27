@@ -67,6 +67,26 @@
           </div>
         </div>
       </div>
+
+      <div>
+        <div class="ml_sub_heading">Actions</div>
+        <div class='ml_job_section_container'>
+          <span
+           ng-class="(job.datafeed_config && job.datafeed_config.state===DATAFEED_STATE.STOPPED && job.state===JOB_STATE.OPENED)?'button':['button-wrapper', 'disabled']"
+           ng-attr-tooltip="{{ui.getCloseJobTooltip()}}"
+           data-toggle="tooltip"
+          >
+          <button
+            ng-click="closeJob(job)"
+            ng-disabled="ui.closeJobDisabled()===true"
+            class="kuiButton kuiButton--primary"
+            aria-label="Close Job">
+            Close Job
+          </button>
+        </span>
+        </div>
+      </div>
+
     </div>
 
   </div>

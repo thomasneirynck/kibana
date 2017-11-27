@@ -16,6 +16,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 import { toLocaleString, detectorToString } from 'plugins/ml/util/string_utils';
+import { JOB_STATE, DATAFEED_STATE } from 'plugins/ml/../common/constants/states';
 import { ML_DATA_PREVIEW_COUNT } from 'plugins/ml/util/job_utils';
 import numeral from 'numeral';
 import chrome from 'ui/chrome';
@@ -31,7 +32,8 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
     replace: false,
     scope: {
       currentTab: '=',
-      jobAudit: '='
+      jobAudit: '=',
+      closeJob: '='
     },
     template,
     link: function ($scope, $element) {
@@ -54,6 +56,8 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
         };
 
         $scope.detectorToString = detectorToString;
+        $scope.JOB_STATE = JOB_STATE;
+        $scope.DATAFEED_STATE = DATAFEED_STATE;
 
         $scope.ui = {
           currentTab: $scope.currentTab,
@@ -88,6 +92,32 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
               });
             } else if (tab.index === 6) {
               updateDatafeedPreview();
+            }
+          },
+          closeJobDisabled() {
+            if ($scope.job.datafeed_config &&
+              $scope.job.datafeed_config.state === DATAFEED_STATE.STOPPED &&
+              $scope.job.state === JOB_STATE.OPENED) {
+              return false;
+            }
+            else if (($scope.job.datafeed_config === undefined ||
+              $scope.job.datafeed_config.datafeed_id === undefined) &&
+              $scope.job.state === JOB_STATE.OPENED) {
+              return false;
+            }
+            else if ($scope.job.state === JOB_STATE.FAILED) {
+              return false;
+            } else {
+              return true;
+            }
+          },
+          getCloseJobTooltip() {
+            if ($scope.job.datafeed_config && $scope.job.datafeed_config.state === DATAFEED_STATE.STARTED) {
+              return 'Datafeed must be stopped to close job';
+            } else if ($scope.job.state === JOB_STATE.CLOSED) {
+              return 'Job already closed';
+            } else {
+              return '';
             }
           }
         };

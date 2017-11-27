@@ -60,6 +60,13 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
+  this.forceCloseJob = function (obj) {
+    return http.request({
+      url: `${basePath}/anomaly_detectors/${obj.jobId}/_close?force=true`,
+      method: 'POST'
+    });
+  };
+
   this.deleteJob = function (obj) {
     return http.request({
       url: `${basePath}/anomaly_detectors/${obj.jobId}`,

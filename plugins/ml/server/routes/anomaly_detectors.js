@@ -128,8 +128,14 @@ export function jobRoutes(server, commonRouteConfig) {
     path: '/api/ml/anomaly_detectors/{jobId}/_close',
     handler(request, reply) {
       const callWithRequest = callWithRequestFactory(server, request);
-      const jobId = request.params.jobId;
-      return callWithRequest('ml.closeJob', { jobId })
+      const options = {
+        jobId: request.params.jobId
+      };
+      const force = request.query.force;
+      if (force !== undefined) {
+        options.force = force;
+      }
+      return callWithRequest('ml.closeJob', options)
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
     },

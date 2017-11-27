@@ -135,7 +135,12 @@ function (
   };
 
   $scope.closeJob = function (job) {
-    mlJobService.closeJob(job.job_id)
+    let closeFunc = mlJobService.closeJob;
+    if (job.state === 'failed') {
+      closeFunc = mlJobService.forceCloseJob;
+    }
+
+    closeFunc(job.job_id)
     .then(() => {
       $scope.refreshJob(job.job_id);
     })
@@ -223,6 +228,7 @@ function (
     let rows = jobs.map((job) => {
       const rowScope = $scope.$new();
       rowScope.job = job;
+      rowScope.closeJob = $scope.closeJob;
       rowScope.currentTab = { index: 0 };
       rowScope.jobAudit = {
         messages: '',
@@ -237,7 +243,7 @@ function (
         // function called when row is opened for the first time
         if (rowScope.$expandElement &&
            rowScope.$expandElement.children().length === 0) {
-          const $el = $('<ml-job-list-expanded-row>', { 'current-tab': 'currentTab', 'job-audit': 'jobAudit' });
+          const $el = $('<ml-job-list-expanded-row>', { 'current-tab': 'currentTab', 'job-audit': 'jobAudit', 'close-job': 'closeJob'  });
           $el.appendTo(this.$expandElement);
           $compile($el)(this);
         }

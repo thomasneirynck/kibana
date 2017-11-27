@@ -824,6 +824,10 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     return ml.closeJob({ jobId });
   };
 
+  this.forceCloseJob = function (jobId) {
+    return ml.forceCloseJob({ jobId });
+  };
+
 
   this.saveNewDatafeed = function (datafeedConfig, jobId) {
     const datafeedId = 'datafeed-' + jobId;
@@ -1074,7 +1078,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
         failedJobs++;
       }
 
-      if (job.datafeed_config.state === 'started') {
+      if (job.datafeed_config && job.datafeed_config.state === 'started') {
         jobStats.activeDatafeeds.value++;
       }
 

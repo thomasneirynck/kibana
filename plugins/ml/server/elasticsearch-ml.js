@@ -96,6 +96,17 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
             type: 'string'
           }
         }
+      },
+      {
+        fmt: '/_xpack/ml/anomaly_detectors/<%=jobId%>/_close?force=true',
+        req: {
+          jobId: {
+            type: 'string'
+          },
+          force: {
+            type: 'boolean'
+          }
+        }
       }
     ],
     method: 'POST'
