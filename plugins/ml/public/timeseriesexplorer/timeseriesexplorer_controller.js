@@ -665,15 +665,12 @@ module.controller('MlTimeSeriesExplorerController', function (
   }
 
   function calculateInitialFocusRange() {
-    // Calculate the 'auto' zoom duration which shows data at bucket span granularity.
-    // Get the minimum bucket span of selected jobs.
-    // TODO - only look at jobs for which data has been returned?
-    const bucketSpanSeconds =  _.find($scope.jobs, { 'id': $scope.selectedJob.job_id }).bucketSpanSeconds;
-    $scope.autoZoomDuration = (bucketSpanSeconds * 1000) * (CHARTS_POINT_TARGET - 1);
-
     // Check for a zoom parameter in the appState (URL).
     const zoomState = $scope.appState.mlTimeSeriesExplorer.zoom;
     if (zoomState !== undefined) {
+      // Calculate the 'auto' zoom duration which shows data at bucket span granularity.
+      $scope.autoZoomDuration = getAutoZoomDuration();
+
       const zoomFrom = moment(zoomState.from, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
       const zoomTo = moment(zoomState.to, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
 
@@ -695,12 +692,7 @@ module.controller('MlTimeSeriesExplorerController', function (
 
   function calculateDefaultFocusRange() {
     // Returns the range that shows the most recent data at bucket span granularity.
-
-    // Calculate the 'auto' zoom duration which shows data at bucket span granularity.
-    // Get the minimum bucket span of selected jobs.
-    // TODO - only look at jobs for which data has been returned?
-    const bucketSpanSeconds =  _.find($scope.jobs, { 'id': $scope.selectedJob.job_id }).bucketSpanSeconds;
-    $scope.autoZoomDuration = (bucketSpanSeconds * 1000) * (CHARTS_POINT_TARGET - 1);
+    $scope.autoZoomDuration = getAutoZoomDuration();
 
     const combinedData = $scope.contextForecastData === undefined ?
       $scope.contextChartData : $scope.contextChartData.concat($scope.contextForecastData);
@@ -724,10 +716,13 @@ module.controller('MlTimeSeriesExplorerController', function (
     buckets.setBounds(bounds);
     buckets.setBarTarget(Math.floor(barTarget));
     buckets.setMaxBars(maxBars);
-    let aggInterval = buckets.getInterval();
+
+    // Ensure the aggregation interval is always a multiple of the bucket span to avoid strange
+    // behaviour such as adjacent chart buckets holding different numbers of job results.
+    const bucketSpanSeconds =  _.find($scope.jobs, { 'id': $scope.selectedJob.job_id }).bucketSpanSeconds;
+    let aggInterval = buckets.getIntervalToNearestMultiple(bucketSpanSeconds);
 
     // Set the interval back to the job bucket span if the auto interval is smaller.
-    const bucketSpanSeconds =  _.find($scope.jobs, { 'id': $scope.selectedJob.job_id }).bucketSpanSeconds;
     const secs = aggInterval.asSeconds();
     if (secs < bucketSpanSeconds) {
       buckets.setInterval(bucketSpanSeconds + 's');
@@ -738,6 +733,43 @@ module.controller('MlTimeSeriesExplorerController', function (
       (bounds.max.diff(bounds.min)) / aggInterval.asMilliseconds());
 
     return aggInterval;
+  }
+
+  function getAutoZoomDuration() {
+    // Calculate the 'auto' zoom duration which shows data at bucket span granularity.
+    // Get the minimum bucket span of selected jobs.
+    // TODO - only look at jobs for which data has been returned?
+    const bucketSpanSeconds =  _.find($scope.jobs, { 'id': $scope.selectedJob.job_id }).bucketSpanSeconds;
+
+    // In most cases the duration can be obtained by simply multiplying the points target
+    // Check that this duration returns the bucket span when run back through the
+    // TimeBucket interval calculation.
+    let autoZoomDuration = (bucketSpanSeconds * 1000) * (CHARTS_POINT_TARGET - 1);
+
+    // Use a maxBars of 10% greater than the target.
+    const maxBars = Math.floor(1.1 * CHARTS_POINT_TARGET);
+    const buckets = new TimeBuckets();
+    buckets.setInterval('auto');
+    buckets.setBarTarget(Math.floor(CHARTS_POINT_TARGET));
+    buckets.setMaxBars(maxBars);
+
+    // Set bounds from 'now' for testing the auto zoom duration.
+    const nowMs = new Date().getTime();
+    const max = moment(nowMs);
+    const min = moment(nowMs - autoZoomDuration);
+    buckets.setBounds({ min, max });
+
+    const calculatedInterval = buckets.getIntervalToNearestMultiple(bucketSpanSeconds);
+    const calculatedIntervalSecs = calculatedInterval.asSeconds();
+    if (calculatedIntervalSecs !== bucketSpanSeconds) {
+      // If we haven't got the span back, which may occur depending on the 'auto' ranges
+      // used in TimeBuckets and the bucket span of the job, then multiply by the ratio
+      // of the bucket span to the calculated interval.
+      autoZoomDuration = autoZoomDuration * (bucketSpanSeconds / calculatedIntervalSecs);
+    }
+
+    return autoZoomDuration;
+
   }
 
   $scope.initializeVis();

@@ -51,7 +51,7 @@ export function IntervalHelperProvider(Private, timefilter, config) {
   TimeBuckets.prototype.getInterval = function () {
     const self = this;
     const duration = self.getDuration();
-    return decorateInterval(maybeScaleInterval(readInterval()));
+    return decorateInterval(maybeScaleInterval(readInterval()), duration);
 
     // either pull the interval from state or calculate the auto-interval
     function readInterval() {
@@ -78,7 +78,7 @@ export function IntervalHelperProvider(Private, timefilter, config) {
 
       if (+scaled === +interval) return interval;
 
-      decorateInterval(interval);
+      decorateInterval(interval, duration);
       return _.assign(scaled, {
         preScaled: interval,
         scale: interval / scaled,
@@ -86,24 +86,58 @@ export function IntervalHelperProvider(Private, timefilter, config) {
       });
     }
 
-    // append some TimeBuckets specific props to the interval
-    function decorateInterval(interval) {
-      const esInterval = calcEsInterval(interval);
-      interval.esValue = esInterval.value;
-      interval.esUnit = esInterval.unit;
-      interval.expression = esInterval.expression;
-      interval.overflow = duration > interval ? moment.duration(interval - duration) : false;
+  };
 
-      const prettyUnits = moment.normalizeUnits(esInterval.unit);
-      if (esInterval.value === 1) {
-        interval.description = prettyUnits;
-      } else {
-        interval.description = esInterval.value + ' ' + prettyUnits + 's';
-      }
+  // Returns an interval which in the last step of calculation is rounded to
+  // the closest multiple of the supplied divisor (in seconds).
+  TimeBuckets.prototype.getIntervalToNearestMultiple = function (divisorSecs) {
+    const interval = this.getInterval();
+    const intervalSecs = interval.asSeconds();
 
+    const remainder = intervalSecs % divisorSecs;
+    if (remainder === 0) {
       return interval;
     }
+
+    // Create a new interval which is a multiple of the supplied divisor (not zero).
+    let nearestMultiple = remainder > (divisorSecs / 2) ?
+      intervalSecs + divisorSecs - remainder : intervalSecs - remainder;
+    nearestMultiple = nearestMultiple === 0 ? divisorSecs : nearestMultiple;
+    const nearestMultipleInt = moment.duration(nearestMultiple, 'seconds');
+    decorateInterval(nearestMultipleInt, this.getDuration());
+
+    // Check to see if the new interval is scaled compared to the original.
+    const preScaled = _.get(interval, 'preScaled');
+    if (preScaled !== undefined && preScaled < nearestMultipleInt) {
+      nearestMultipleInt.preScaled = preScaled;
+      nearestMultipleInt.scale = preScaled / nearestMultipleInt;
+      nearestMultipleInt.scaled = true;
+    }
+
+    return nearestMultipleInt;
   };
+
+  // Appends some TimeBuckets specific properties to the momentjs duration interval.
+  // Uses the originalDuration from which the time bucket was created to calculate the overflow
+  // property (i.e. difference between the supplied duration and the calculated bucket interval).
+  function decorateInterval(interval, originalDuration) {
+    const esInterval = calcEsInterval(interval);
+    interval.esValue = esInterval.value;
+    interval.esUnit = esInterval.unit;
+    interval.expression = esInterval.expression;
+    interval.overflow = originalDuration > interval ? moment.duration(interval - originalDuration) : false;
+
+    const prettyUnits = moment.normalizeUnits(esInterval.unit);
+    if (esInterval.value === 1) {
+      interval.description = prettyUnits;
+    } else {
+      interval.description = `${esInterval.value} ${prettyUnits}s`;
+    }
+
+    return interval;
+  }
+
+
 
   return TimeBuckets;
 }

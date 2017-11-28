@@ -77,6 +77,13 @@ describe('ML - time buckets', () => {
       expect(yearResult.asSeconds()).to.be(604800); // 1 week
     });
 
+    it('returns correct interval as multiple of 3 hours for default target with 2 week bounds', () => {
+      const weekBounds = { min: moment('2017-01-01T00:00:00.000'), max: moment('2017-01-15T00:00:00.000') };
+      autoBuckets.setBounds(weekBounds);
+      const weekResult = autoBuckets.getIntervalToNearestMultiple(10800); // 3 hours
+      expect(weekResult.asSeconds()).to.be(32400);  // 9 hours
+    });
+
   });
 
   describe('custom bar target', () => {
@@ -114,6 +121,13 @@ describe('ML - time buckets', () => {
       customBuckets.setBounds(yearBounds);
       const yearResult = customBuckets.getInterval();
       expect(yearResult.asSeconds()).to.be(86400); // 1 day
+    });
+
+    it('returns correct interval as multiple of 3 hours for 500 bar target with 90 day bounds', () => {
+      const weekBounds = { min: moment('2017-01-01T00:00:00.000'), max: moment('2017-04-01T00:00:00.000') };
+      customBuckets.setBounds(weekBounds);
+      const weekResult = customBuckets.getIntervalToNearestMultiple(10800); // 3 hours
+      expect(weekResult.asSeconds()).to.be(21600);  // 6 hours
     });
 
   });
