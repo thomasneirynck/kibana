@@ -42,7 +42,6 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
     template,
     link: function ($scope) {
       const BucketSpanEstimator = Private(BucketSpanEstimatorProvider);
-      $scope.jobState = $scope.jobStateWrapper.jobState;
       const STATUS = {
         FAILED: -1,
         NOT_RUNNING: 0,

@@ -1,7 +1,7 @@
 <div class='bucket-span-estimator'>
   <button
     ng-click="guessBucketSpan()"
-    ng-disabled="ui.showJobInput===false || ui.formValid === false || formConfig.agg.type===undefined || jobState===JOB_STATE.RUNNING || jobState===JOB_STATE.STOPPING || jobState===JOB_STATE.FINISHED || ui.bucketSpanEstimator.status===STATUS.RUNNING"
+    ng-disabled="ui.showJobInput===false || ui.formValid === false || formConfig.agg.type===undefined || jobStateWrapper.jobState===JOB_STATE.RUNNING || jobStateWrapper.jobState===JOB_STATE.STOPPING || jobStateWrapper.jobState===JOB_STATE.FINISHED || ui.bucketSpanEstimator.status===STATUS.RUNNING"
     type="button"
     tooltip="Experimental feature for estimating bucket span."
     tooltip-append-to-body="true"
