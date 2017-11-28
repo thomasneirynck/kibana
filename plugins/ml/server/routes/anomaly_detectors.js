@@ -187,8 +187,7 @@ export function jobRoutes(server, commonRouteConfig) {
       const callWithRequest = callWithRequestFactory(server, request);
       const jobId = request.params.jobId;
       const duration = request.payload.duration;
-      const end = request.payload.end;
-      return callWithRequest('ml.forecast', { jobId, duration, end })
+      return callWithRequest('ml.forecast', { jobId, duration })
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
     },

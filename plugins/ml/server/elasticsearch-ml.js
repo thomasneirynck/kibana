@@ -303,17 +303,6 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
   ml.forecast = ca({
     urls: [
       {
-        fmt: '/_xpack/ml/anomaly_detectors/<%=jobId%>/_forecast?&end=<%=end%>',
-        req: {
-          jobId: {
-            type: 'string'
-          },
-          end: {
-            type: 'string'
-          }
-        }
-      },
-      {
         fmt: '/_xpack/ml/anomaly_detectors/<%=jobId%>/_forecast?&duration=<%=duration%>',
         req: {
           jobId: {
