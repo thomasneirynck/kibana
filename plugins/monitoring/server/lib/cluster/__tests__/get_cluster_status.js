@@ -1,12 +1,11 @@
 import expect from 'expect.js';
 import { getClusterStatus } from '../get_cluster_status';
 
-let clusterStats;
+let clusterStats = {};
 let shardStats;
 
 describe('getClusterStatus', () => {
   beforeEach(() => {
-    clusterStats = {};
     shardStats = {
       indicesTotals: {
         unassigned: {}
@@ -32,63 +31,87 @@ describe('getClusterStatus', () => {
     });
   });
 
-  it('calculates totalShards and unassignedShards using clusterStatus and shardStats', () => {
-    clusterStats = {
-      cluster_stats: {
-        indices: {
-          count: 10,
-          docs: {
-            count: 250
+  describe('calculation', () => {
+    beforeEach(() => {
+      clusterStats = {
+        cluster_stats: {
+          indices: {
+            count: 10,
+            docs: {
+              count: 250
+            },
+            shards: {
+              total: 40
+            },
+            store: {
+              size_in_bytes: 250000000
+            }
           },
-          shards: {
-            total: 40
-          },
-          store: {
-            size_in_bytes: 250000000
+          nodes: {
+            count: {
+              total: 2
+            },
+            jvm: {
+              mem: {
+                heap_used_in_bytes: 500000,
+                heap_max_in_bytes: 800000
+              },
+              max_uptime_in_millis: 60000000
+            },
+            versions: [ '1.1.1' ]
           }
         },
-        nodes: {
-          count: {
-            total: 2
-          },
-          jvm: {
-            mem: {
-              heap_used_in_bytes: 500000,
-              heap_max_in_bytes: 800000
-            },
-            max_uptime_in_millis: 60000000
-          },
-          versions: [ '1.1.1' ]
+        cluster_state: {
+          status: 'green'
         }
-      },
-      cluster_state: {
-        status: 'green'
-      }
-    };
+      };
+    });
 
-    shardStats = {
-      indicesTotals: {
-        unassigned: {
-          replica: 7,
-          primary: 3
+    it('calculates totalShards and unassignedShards using clusterStatus and shardStats', () => {
+      shardStats = {
+        indicesTotals: {
+          unassigned: {
+            replica: 7,
+            primary: 3
+          }
         }
-      }
-    };
+      };
 
-    const calculatedResult = getClusterStatus(clusterStats, shardStats);
+      const calculatedResult = getClusterStatus(clusterStats, shardStats);
 
-    expect(calculatedResult).to.eql({
-      status: 'green',
-      nodesCount: 2,
-      indicesCount: 10,
-      totalShards: 50, // 40 from clusterStats, 10 from unassignedShards
-      unassignedShards: 10, // all from unassignedShards
-      documentCount: 250,
-      dataSize: 250000000,
-      upTime: 60000000,
-      version: [ '1.1.1' ],
-      memUsed: 500000,
-      memMax: 800000
+      expect(calculatedResult).to.eql({
+        status: 'green',
+        nodesCount: 2,
+        indicesCount: 10,
+        totalShards: 50, // 40 from clusterStats, 10 from unassignedShards
+        unassignedShards: 10, // all from unassignedShards
+        documentCount: 250,
+        dataSize: 250000000,
+        upTime: 60000000,
+        version: [ '1.1.1' ],
+        memUsed: 500000,
+        memMax: 800000
+      });
+    });
+
+    it('there were no shard stats', () => {
+      shardStats = {};
+
+      const calculatedResult = getClusterStatus(clusterStats, shardStats);
+
+      expect(calculatedResult).to.eql({
+        status: 'green',
+        nodesCount: 2,
+        indicesCount: 10,
+        totalShards: 40,
+        unassignedShards: 0,
+        documentCount: 250,
+        dataSize: 250000000,
+        upTime: 60000000,
+        version: [ '1.1.1' ],
+        memUsed: 500000,
+        memMax: 800000
+      });
     });
   });
 });

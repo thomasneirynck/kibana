@@ -11,9 +11,12 @@ export function getClusterStatus(cluster, shardStats) {
   const clusterIndices = get(clusterStats, 'indices', {});
 
   const clusterTotalShards = get(clusterIndices, 'shards.total', 0);
+  let unassignedShardsTotal = 0;
   const unassignedShards = get(shardStats, 'indicesTotals.unassigned');
-  const { replica, primary } = unassignedShards;
-  const unassignedShardsTotal = replica + primary || 0; // replica + primary will be NaN if unassignedShards is not passed
+  if (unassignedShards !== undefined) {
+    const { replica, primary } = unassignedShards;
+    unassignedShardsTotal = replica + primary || 0; // replica + primary will be NaN if unassignedShards is not passed
+  }
   const totalShards = clusterTotalShards + unassignedShardsTotal;
 
   return {
