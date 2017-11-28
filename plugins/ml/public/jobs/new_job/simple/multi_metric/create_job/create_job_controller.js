@@ -30,6 +30,7 @@ import { CalculateModelMemoryLimitProvider } from 'plugins/ml/jobs/new_job/simpl
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/components/utils/filter_agg_types';
 import { validateJobId } from 'plugins/ml/jobs/new_job/simple/components/utils/validate_job';
+import { adjustIntervalDisplayed } from 'plugins/ml/jobs/new_job/simple/components/utils/adjust_interval';
 import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/components/utils/app_state_settings';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
@@ -268,37 +269,10 @@ module
     $scope.formConfig.chartInterval.setInterval('auto');
     $scope.formConfig.chartInterval.setBounds(bounds);
 
-    adjustIntervalDisplayed($scope.formConfig.chartInterval);
+    adjustIntervalDisplayed($scope.formConfig);
 
     $scope.ui.isFormValid();
     $scope.ui.dirty = true;
-  }
-
-  // ensure the displayed interval is never smaller than the bucketSpan
-  // otherwise the model plot bounds can be drawn in the wrong place.
-  // this only really affects small jobs when using sum
-  function adjustIntervalDisplayed(interval) {
-    let makeTheSame = false;
-    const intervalSeconds = interval.getInterval().asSeconds();
-    const bucketSpan = parseInterval($scope.formConfig.bucketSpan);
-
-    if (bucketSpan.asSeconds() > intervalSeconds) {
-      makeTheSame = true;
-    }
-
-    if ($scope.formConfig.agg.type !== undefined) {
-      const mlName = $scope.formConfig.agg.type.mlName;
-      if (mlName === 'count' ||
-        mlName === 'low_count' ||
-        mlName === 'high_count' ||
-        mlName === 'distinct_count') {
-        makeTheSame = true;
-      }
-    }
-
-    if (makeTheSame) {
-      interval.setInterval($scope.formConfig.bucketSpan);
-    }
   }
 
   function initAgg() {
