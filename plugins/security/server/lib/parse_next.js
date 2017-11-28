@@ -12,6 +12,9 @@ export function parseNext(href, basePath = '') {
   if (protocol || hostname || port) {
     return `${basePath}/`;
   }
+  if (String(pathname).startsWith('//')) {
+    return `${basePath}/`;
+  }
   if (!String(pathname).startsWith(basePath)) {
     return `${basePath}/`;
   }
