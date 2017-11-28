@@ -194,19 +194,15 @@ exports[`UploadLicense should display an error when ES says license is invalid 1
           </p>
         </div>
         <button
-          className="kuiButton kuiButton--primary kuiButton--iconText"
-          disabled={true}
+          className="kuiButton kuiButton--primary"
+          disabled={false}
           onClick={[Function]}
         >
           <span
             className="kuiButton__inner"
           >
-            <span
-              aria-hidden="true"
-              className="kuiButton__icon kuiIcon fa-spinner fa-spin"
-            />
             <span>
-              Uploading...
+              Upload
             </span>
           </span>
         </button>
@@ -276,19 +272,15 @@ exports[`UploadLicense should display an error when submitting invalid JSON 1`] 
           </p>
         </div>
         <button
-          className="kuiButton kuiButton--primary kuiButton--iconText"
-          disabled={true}
+          className="kuiButton kuiButton--primary"
+          disabled={false}
           onClick={[Function]}
         >
           <span
             className="kuiButton__inner"
           >
-            <span
-              aria-hidden="true"
-              className="kuiButton__icon kuiIcon fa-spinner fa-spin"
-            />
             <span>
-              Uploading...
+              Upload
             </span>
           </span>
         </button>
@@ -358,19 +350,15 @@ exports[`UploadLicense should display error when ES returns error 1`] = `
           </p>
         </div>
         <button
-          className="kuiButton kuiButton--primary kuiButton--iconText"
-          disabled={true}
+          className="kuiButton kuiButton--primary"
+          disabled={false}
           onClick={[Function]}
         >
           <span
             className="kuiButton__inner"
           >
-            <span
-              aria-hidden="true"
-              className="kuiButton__icon kuiIcon fa-spinner fa-spin"
-            />
             <span>
-              Uploading...
+              Upload
             </span>
           </span>
         </button>

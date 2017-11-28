@@ -11,9 +11,11 @@ const genericUploadError = 'Error encountered uploading license:';
 const dispatchFromResponse = async (response, dispatch, currentLicenseType, newLicenseType, { xPackInfo, kbnUrl }) => {
   const { error, acknowledged, license_status: licenseStatus, acknowledge } = response;
   if (error) {
+    dispatch(uploadLicenseStatus({}));
     dispatch(addUploadErrorMessage(`${genericUploadError} ${error.reason}`));
   } else if (acknowledged) {
     if (licenseStatus === 'invalid') {
+      dispatch(uploadLicenseStatus({}));
       dispatch(addUploadErrorMessage('The supplied license is not valid for this product.'));
     } else {
       await xPackInfo.refresh();
@@ -41,6 +43,7 @@ export const uploadLicense = (licenseString, currentLicenseType, acknowledge) =>
   try {
     ({ type: newLicenseType } = JSON.parse(licenseString).license);
   } catch (err) {
+    dispatch(uploadLicenseStatus({}));
     return dispatch(addUploadErrorMessage(`${genericUploadError} Check your license file.`));
   }
   try {

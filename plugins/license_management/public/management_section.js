@@ -5,6 +5,6 @@ management.getSection('elasticsearch').register('license_management', {
   visible: true,
   display: 'License Management',
   order: 4,
-  url: `#${BASE_PATH}`
+  url: `#${BASE_PATH}home`
 });
 
