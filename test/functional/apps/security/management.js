@@ -110,6 +110,21 @@ export default function ({ getService, getPageObjects }) {
         });
 
         it('Can navigate to edit role section from users page', async () => {
+          await PageObjects.settings.navigateTo();
+          await PageObjects.security.clickUsersSection();
+          await PageObjects.security.clickCreateNewUser();
+
+          await testSubjects.setValue('userFormUserNameInput', 'dashuser');
+          await testSubjects.setValue('passwordInput', '123456');
+          await testSubjects.setValue('passwordConfirmationInput', '123456');
+          await testSubjects.setValue('userFormFullNameInput', 'dashuser');
+          await testSubjects.setValue('userFormEmailInput', 'my@email.com');
+          await PageObjects.security.assignRoleToUser('kibana_dashboard_only_user');
+          await PageObjects.security.assignRoleToUser('logstash-data');
+
+          await PageObjects.security.clickSaveEditUser();
+
+          await PageObjects.settings.navigateTo();
           await PageObjects.settings.clickLinkText('Users');
           await PageObjects.settings.clickLinkText('kibana_dashboard_only_user');
           const currentUrl = await remote.getCurrentUrl();
