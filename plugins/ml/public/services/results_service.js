@@ -1166,7 +1166,7 @@ module.service('mlResultsService', function ($q, es, ml) {
       body.query.bool.minimum_should_match = shouldCriteria.length / 2;
     }
 
-    if (metricFieldName !== undefined) {
+    if (metricFieldName !== undefined && metricFieldName !== '') {
       body.aggs.byTime.aggs = {};
 
       const metricAgg = {};
