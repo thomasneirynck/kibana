@@ -23,7 +23,7 @@ export function validateJobId(jobId, groups, checks) {
     item.valid = true;
   });
 
-  if (jobId === '') {
+  if (jobId === '' || jobId === undefined) {
     checks.jobId.valid = false;
   } else if (isJobIdValid(jobId) === false) {
     checks.jobId.valid = false;
