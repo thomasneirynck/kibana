@@ -76,7 +76,8 @@ export const watch = {
                       start: {
                         script: {
                           lang: 'painless',
-                          inline: 'new Date(doc["timestamp"].date.getMillis()-doc["bucket_span"].value * 1000 * params.padding)',
+                          inline: `LocalDateTime.ofEpochSecond((doc["timestamp"].date.getMillis()-((doc["bucket_span"].value * 1000)
+ * params.padding)) / 1000, 0, ZoneOffset.UTC)`,
                           params: {
                             'padding': 10
                           }
@@ -85,7 +86,8 @@ export const watch = {
                       end: {
                         script: {
                           lang: 'painless',
-                          inline: 'new Date(doc["timestamp"].date.getMillis()+doc["bucket_span"].value * 1000 * params.padding)',
+                          inline: `LocalDateTime.ofEpochSecond((doc["timestamp"].date.getMillis()+((doc["bucket_span"].value * 1000)
+ * params.padding)) / 1000, 0, ZoneOffset.UTC)`,
                           params: {
                             'padding': 10
                           }
