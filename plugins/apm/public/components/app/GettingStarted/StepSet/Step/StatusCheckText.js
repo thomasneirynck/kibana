@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { px, units } from '../../../../../style/variables';
+import { px, unit, units } from '../../../../../style/variables';
 
 function StatusCheckText({ type, icon, text }) {
   const StatusElm = styled.div`
     display: inline-block;
-    margin-left: ${px(units.plus)};
+    margin: ${px(unit)};
+    padding: ${px(units.quarter)} ${px(unit)};
   `;
   const typeClass = `kuiStatusText kuiStatusText--${type}`;
   const iconClass = `kuiStatusText__icon kuiIcon fa-${icon}`;

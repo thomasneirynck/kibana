@@ -50,6 +50,7 @@ const Description = styled.div`
 
 const CheckStatusButton = styled(KuiButton)`
   margin: ${px(unit)} 0;
+  float: left; // IE fix
 `;
 
 const CodeWrapper = styled.div`

@@ -18,6 +18,8 @@ import { colors, fontSizes } from '../../../style/variables';
 import EmptyMessage from '../EmptyMessage';
 
 export const AlignmentKuiTableHeaderCell = styled(KuiTableHeaderCell)`
+  max-width: none;
+
   &.kuiTableHeaderCell--alignRight > button > span {
     justify-content: flex-end;
   }

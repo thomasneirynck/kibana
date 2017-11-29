@@ -14,6 +14,7 @@ import numeral from 'numeral';
 import moment from 'moment';
 
 const GroupIdCell = styled(KuiTableRowCell)`
+  max-width: none;
   width: ${px(unit * 6)};
 `;
 
@@ -29,7 +30,6 @@ const MessageAndCulpritCell = styled(KuiTableRowCell)`
 const MessageLink = styled(RelativeLink)`
   display: block;
   font-family: ${fontFamilyCode};
-  font-weight: bold;
   font-size: ${fontSizes.large};
 `;
 
@@ -38,7 +38,7 @@ const Culprit = styled.div`
 `;
 
 const OccurrenceCell = styled(KuiTableRowCell)`
-  width: ${px(unit * 14)};
+  max-width: none;
 `;
 
 function ListItem({ error, appName }) {
