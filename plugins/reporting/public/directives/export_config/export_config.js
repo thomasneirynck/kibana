@@ -40,7 +40,7 @@ module.directive('exportConfig', ($rootScope, reportingDocumentControl, reportin
       $scope.exportConfig.exportType = reportingExportTypes.getById(exportTypeId);
       $scope.exportConfig.objectType = $attr.objectType;
 
-      $scope.options = {};
+      $scope.options = $attr.options ? $scope.$eval($attr.options) : {};
       if ($scope.exportConfig.exportType.optionsTemplate) {
         $el.find('.options').append($compile($scope.exportConfig.exportType.optionsTemplate)($scope));
       }

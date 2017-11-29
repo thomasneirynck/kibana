@@ -8,7 +8,9 @@ module.directive('pdfOptions', () => {
     restrict: 'E',
     template,
     link: function ($scope) {
-      $scope.options.layoutId = 'print';
+      if (!$scope.options.layoutId) {
+        $scope.options.layoutId = 'print';
+      }
     }
   };
 });

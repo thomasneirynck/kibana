@@ -10,7 +10,12 @@ function visualizeReportProvider(Private, $location) {
 
     key: 'reporting-visualize',
     label: 'Reporting',
-    template: '<export-config object-type="Visualization" enabled-export-type="printablePdf"><pdf-options /></export-config>',
+    template: `
+      <export-config
+        object-type="Visualization"
+        enabled-export-type="printablePdf"
+        options="{ layoutId: 'preserve_layout' }"
+      ></export-config>`,
     description: 'Visualization Report',
     hideButton: () => (
       $location.path() === VisualizeConstants.LANDING_PAGE_PATH
