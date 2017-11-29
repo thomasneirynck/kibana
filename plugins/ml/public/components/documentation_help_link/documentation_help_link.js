@@ -31,7 +31,8 @@ module.directive('mlDocumentationHelpLink', function () {
     },
     restrict: 'AE',
     replace: true,
-    template: '<a href="{{fullUrl()}}" target="_blank" class="documentation-help-link" tooltip="{{label}}">' +
+    template: '<a href="{{fullUrl()}}" rel="noopener noreferrer" target="_blank"' +
+                'class="documentation-help-link" tooltip="{{label}}">' +
                 '{{label}}<i class="fa fa-external-link"></i></a>',
     controller: function ($scope) {
       const baseUrl = 'https://www.elastic.co';
