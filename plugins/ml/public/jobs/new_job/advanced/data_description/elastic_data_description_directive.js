@@ -229,7 +229,7 @@ module.directive('mlElasticDataDescription', function () {
           _.each(indices, (ind) => {
             ind = ind.trim();
             // catch wildcard text entry
-            ind = ind.replace(/\*/g, '.+');
+            ind = ind.replace(/\*/g, '.*');
             const reg = new RegExp('^' + ind + '$');
 
             _.each($scope.ui.indices, (index, key) => {
