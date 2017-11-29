@@ -42,7 +42,7 @@ class Traces extends PureComponent {
       return (
         <EmptyMessage
           heading="No traces available for this transaction."
-          subheading="Try selecting another transaction bucket above."
+          subheading=" "
         />
       );
     }

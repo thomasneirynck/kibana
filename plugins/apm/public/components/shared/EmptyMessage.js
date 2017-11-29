@@ -15,23 +15,26 @@ const HelpMessage = styled.div`
 `;
 
 function EmptyMessage({ heading, subheading, link }) {
+  const defaultSubheading = (
+    <span>
+      {
+        " Oops! You should try another time range. If that's no good, there's always the "
+      }
+      <a
+        href={
+          link ||
+          'https://www.elastic.co/guide/en/apm/get-started/6.1/index.html'
+        }
+      >
+        documentation
+      </a>.
+    </span>
+  );
+
   return (
     <Container>
       {heading || 'No data found.'}
-      <HelpMessage>
-        {subheading}
-        {
-          " Oops! You should try another time range. If that's no good, there's always the "
-        }
-        <a
-          href={
-            link ||
-            'https://www.elastic.co/guide/en/apm/get-started/6.1/index.html'
-          }
-        >
-          documentation
-        </a>.
-      </HelpMessage>
+      <HelpMessage>{subheading || defaultSubheading}</HelpMessage>
     </Container>
   );
 }

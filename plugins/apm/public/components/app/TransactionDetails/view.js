@@ -9,7 +9,7 @@ function TransactionDetails({ urlParams }) {
     <div>
       <PageHeader>{urlParams.transactionName}</PageHeader>
       <Charts />
-      <GraphHeader>Reponse time distribution</GraphHeader>
+      <GraphHeader>Response time distribution</GraphHeader>
       <Distribution />
       <Transaction />
     </div>
