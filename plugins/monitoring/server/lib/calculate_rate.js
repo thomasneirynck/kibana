@@ -23,9 +23,14 @@ export function calculateRate(
     timeWindowMax
   } = {}
 ) {
+  const nullResult = {
+    rate: null,
+    isEstimate: false
+  };
+
   // check if any params used for calculations are null
   if (hitTimestamp === null || earliestHitTimestamp === null || latestTotal === null || earliestTotal === null) {
-    return null;
+    return nullResult;
   }
 
   const hitTimestampMoment = moment(hitTimestamp).valueOf();
@@ -33,7 +38,7 @@ export function calculateRate(
   const hitsTimeDelta = hitTimestampMoment - earliestHitTimestampMoment;
 
   if (hitsTimeDelta < 1) {
-    return null;
+    return nullResult;
   }
 
   const earliestTimeInMillis = moment(timeWindowMin).valueOf();
@@ -41,10 +46,19 @@ export function calculateRate(
   const millisDelta = latestTimeInMillis - earliestTimeInMillis;
 
   let rate = null;
+  let isEstimate = false;
   if (millisDelta !== 0) {
     const totalDelta = latestTotal - earliestTotal;
-    rate = totalDelta / (millisDelta / 1000);
+    if (totalDelta < 0) {
+      rate = latestTotal / (millisDelta / 1000); // a restart caused an unwanted negative rate
+      isEstimate = true;
+    } else {
+      rate = totalDelta / (millisDelta / 1000);
+    }
   }
 
-  return rate;
+  return {
+    rate,
+    isEstimate,
+  };
 }

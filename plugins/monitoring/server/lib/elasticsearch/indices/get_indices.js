@@ -19,14 +19,14 @@ export function handleResponse(resp, min, max) {
     };
 
     const earliestIndexingHit = get(earliestStats, 'primaries.indexing');
-    const indexRate = calculateRate({
+    const { rate: indexRate } = calculateRate({
       latestTotal: get(stats, 'primaries.indexing.index_total'),
       earliestTotal: get(earliestIndexingHit, 'index_total'),
       ...rateOptions
     });
 
     const earliestSearchHit = get(earliestStats, 'total.search');
-    const searchRate = calculateRate({
+    const { rate: searchRate } = calculateRate({
       latestTotal: get(stats, 'total.search.query_total'),
       earliestTotal: get(earliestSearchHit, 'query_total'),
       ...rateOptions
