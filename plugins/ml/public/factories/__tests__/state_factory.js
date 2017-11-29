@@ -37,9 +37,20 @@ describe('ML - mlStateFactory', () => {
     expect(state.get('testValue')).to.be(10);
   });
 
+  it('Initializes with custom default state and uses reset.', () => {
+    const state = stateFactory('testName', {
+      testValue: 1
+    });
+
+    expect(state.get('testValue')).to.be(1);
+    state.set('testValue', 2);
+    expect(state.get('testValue')).to.be(2);
+    state.reset();
+    expect(state.get('testValue')).to.be(1);
+  });
+
   it('Initializes a custom state store, sets and gets a test value using events.', (done) => {
     const state = stateFactory('testName');
-    console.log('state', state);
 
     state.watch(() => {
       expect(state.get('testValue')).to.be(10);

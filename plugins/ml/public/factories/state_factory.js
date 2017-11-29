@@ -37,7 +37,8 @@ export function stateFactoryProvider(AppState) {
     // Store the state to the AppState so that it's
     // restored on page refresh.
     if (appState[stateName] === undefined) {
-      appState[stateName] = defaultState || {};
+      appState[stateName] = _.cloneDeep(defaultState) || {};
+      appState.save();
     }
 
     // If defaultState is defined, check if the keys of the defaultState
@@ -50,31 +51,54 @@ export function stateFactoryProvider(AppState) {
         Object.keys(defaultState).sort(),
         Object.keys(appState[stateName]).sort()
       )) {
-        appState[stateName] = defaultState;
+        appState[stateName] = _.cloneDeep(defaultState);
+        appState.save();
       }
     }
 
-    const state = appState[stateName];
+    // () two times here, because the Provider first returns
+    // the Factory, which then returns the actual listener
+    const listener = listenerFactoryProvider()();
 
-    const set = function (name, value) {
-      state[name] = value;
-      appState[stateName] = state;
-      appState.save();
-    };
+    let changed = false;
 
-    const get = function (name) {
-      return state[name];
-    };
-
-    const listenerFactory = listenerFactoryProvider();
-
-    // return the state's API: a getter/setter as well as the methods
+    // the state's API: a getter/setter/resetter as well as the methods
     // watch/unwatch/changed to be able to create and use listeners
     // on the state.
-    return {
-      set,
-      get,
-      ...listenerFactory()
+    const state = {
+      get(name) {
+        return appState[stateName] && appState[stateName][name];
+      },
+      // only if value doesn't match the existing one, the state gets updated
+      // and saved.
+      set(name, value) {
+        if (!_.isEqual(appState[stateName][name], value)) {
+          appState[stateName][name] = value;
+          appState.save();
+          changed = true;
+        }
+        return state;
+      },
+      reset() {
+        if (!_.isEqual(appState[stateName], defaultState)) {
+          appState[stateName] = _.cloneDeep(defaultState);
+          appState.save();
+          changed = true;
+        }
+        return state;
+      },
+      watch: listener.watch,
+      unwatch: listener.unwatch,
+      // wrap the listener's changed() method to only fire it
+      // if the state changed.
+      changed(...args) {
+        if (changed) {
+          listener.changed(...args);
+          changed = false;
+        }
+      }
     };
+
+    return state;
   };
 }

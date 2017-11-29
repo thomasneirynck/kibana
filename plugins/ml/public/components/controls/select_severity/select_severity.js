@@ -53,15 +53,19 @@ module
          // Attempt to set value in URL which doesn't map to one of the options.
          thresholdOption = scope.thresholdOptions.find((d) => d.val === 0);
        }
-
        scope.threshold = thresholdOption;
        mlSelectSeverityService.state.set('threshold', scope.threshold);
 
        scope.setThreshold = function (threshold) {
-         scope.threshold = threshold;
-         mlSelectSeverityService.state.set('threshold', scope.threshold);
-         mlSelectSeverityService.state.changed();
+         if(!_.isEqual(scope.threshold, threshold)) {
+           scope.threshold = threshold;
+           mlSelectSeverityService.state.set('threshold', scope.threshold).changed();
+         }
        };
+
+       mlSelectSeverityService.state.watch(() => {
+         scope.setThreshold(mlSelectSeverityService.state.get('threshold'));
+       });
      }
    };
  });

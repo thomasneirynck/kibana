@@ -34,7 +34,7 @@ describe('ML - <ml-controls-select>', function () {
     $scope.$destroy();
   });
 
-  it('Plain initialization doesnt\'t throw an error', function () {
+  it('Plain initialization doesn\'t throw an error', function () {
     $element = $compile('<ml-controls-select />')($scope);
     const scope = $element.isolateScope();
 

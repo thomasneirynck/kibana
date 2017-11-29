@@ -57,10 +57,15 @@ module
         mlSelectIntervalService.state.set('interval', scope.interval);
 
         scope.setInterval = function (interval) {
-          scope.interval = interval;
-          mlSelectIntervalService.state.set('interval', scope.interval);
-          mlSelectIntervalService.state.changed();
+          if (!_.isEqual(scope.interval, interval)) {
+            scope.interval = interval;
+            mlSelectIntervalService.state.set('interval', scope.interval).changed();
+          }
         };
+
+        mlSelectIntervalService.state.watch(() => {
+          scope.setInterval(mlSelectIntervalService.state.get('interval'));
+        });
       }
     };
   });

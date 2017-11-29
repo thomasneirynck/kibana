@@ -70,6 +70,17 @@ module.directive('mlAnomaliesTable', function (
     },
     template,
     link: function (scope, element) {
+      // Previously, we instantiated a new AppState here for the
+      // severity treshold and interval setting, thus resetting it on every
+      // reload. Now that this is handled differently via services and them
+      // being singletons, we need to explicitly reset the setting's state,
+      // otherwise the state would be retained across multiple instances of
+      // these settings. Should we want to change this behavior, e.g. to
+      // store the setting of the severity threshold across pages, we can
+      // just remove these resets.
+      mlSelectIntervalService.state.reset().changed();
+      mlSelectSeverityService.state.reset().changed();
+
       scope.momentInterval = 'second';
 
       scope.table = {};
