@@ -202,7 +202,7 @@
                             <ui-select-match placeholder="Select a field">
                               <ml-field-type-icon type="$select.selected.mlType"></ml-field-type-icon>{{$select.selected.name}}
                             </ui-select-match>
-                            <ui-select-choices repeat="field in ui.splitFields | filter: { name: $select.search }" group-by="'mlType'">
+                            <ui-select-choices repeat="field in ui.splitFields | filter: { name: $select.search } | filter: ui.isOverField" group-by="'mlType'">
                               <div>
                                 <ml-field-type-icon type="field.mlType"></ml-field-type-icon>
                                 <span

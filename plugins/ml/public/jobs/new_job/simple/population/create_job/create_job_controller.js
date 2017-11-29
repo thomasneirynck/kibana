@@ -177,6 +177,9 @@ module
         jobId: { valid: true },
         groupIds: { valid: true }
       },
+    },
+    isOverField(field) {
+      return (field.name === $scope.formConfig.overField.name) ? null : field;
     }
   };
 
@@ -245,6 +248,7 @@ module
         $scope.formConfig.fields[fieldIndex].splitField = undefined;
         $scope.formConfig.fields[fieldIndex].cardLabels = undefined;
         setFieldsChartStates(CHART_STATE.LOADING);
+        $scope.toggleInfluencerChange();
         $scope.ui.splitText = '';
         destroyCards(fieldIndex);
         $scope.formChange();

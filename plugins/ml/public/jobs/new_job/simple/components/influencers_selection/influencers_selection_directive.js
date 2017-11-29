@@ -15,6 +15,8 @@
 
 import template from './influencers_selection.html';
 
+import _ from 'lodash';
+
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
@@ -50,7 +52,10 @@ module.directive('mlInfluencersSelection', function () {
         const defaultFields = getSplitFields();
         if ($scope.formConfig.hasOwnProperty('overField') === true) {
           // only available for population jobs
-          defaultFields.push($scope.formConfig.overField);
+          // don't add duplicate influencers, check to see if the over field is already a default field
+          if (defaultFields.find((f) => f.name === $scope.formConfig.overField.name) === undefined) {
+            defaultFields.push($scope.formConfig.overField);
+          }
         }
         return defaultFields;
       }
@@ -65,8 +70,13 @@ module.directive('mlInfluencersSelection', function () {
       // or from the global split field (multi-metric jobs)
       function getSplitFields() {
         if ($scope.formConfig.hasOwnProperty('splitField') === false) {
-          const splitFields = $scope.formConfig.fields.map(f => f.splitField);
-          return splitFields.filter(f => (f !== undefined && f !== ''));
+          let splitFields = $scope.formConfig.fields
+            .map(f => f.splitField)
+            // remove undefined fields
+            .filter(f => (f !== undefined && f !== ''));
+          // deduplicate
+          splitFields = _.uniq(splitFields, 'name');
+          return splitFields;
         } else {
           if ($scope.formConfig.splitField === undefined) {
             return [];
