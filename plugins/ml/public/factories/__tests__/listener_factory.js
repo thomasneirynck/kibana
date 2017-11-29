@@ -16,7 +16,7 @@
 import expect from 'expect.js';
 import ngMock from 'ng_mock';
 
-import listenerFactoryProvider from '../listener_factory';
+import { listenerFactoryProvider } from '../listener_factory';
 
 describe('ML - mlListenerFactory', () => {
   let listenerFactory;

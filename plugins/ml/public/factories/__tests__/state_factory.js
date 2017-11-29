@@ -16,7 +16,7 @@
 import expect from 'expect.js';
 import ngMock from 'ng_mock';
 
-import stateFactoryProvider from '../state_factory';
+import { stateFactoryProvider } from '../state_factory';
 
 describe('ML - mlStateFactory', () => {
   let stateFactory;

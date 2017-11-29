@@ -17,7 +17,7 @@
  * AngularJS directive+service for a checkbox element to toggle charts display.
  */
 
-import stateFactoryProvider from 'plugins/ml/factories/state_factory';
+import { stateFactoryProvider } from 'plugins/ml/factories/state_factory';
 
 import template from './checkbox_showcharts.html';
 import 'plugins/ml/components/controls/controls_select';

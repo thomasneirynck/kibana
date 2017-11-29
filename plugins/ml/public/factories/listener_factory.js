@@ -16,7 +16,7 @@
 // A refactor of the original ML listener (three separate functions) into
 // an object providing them as methods.
 
-export default () => {
+export function listenerFactoryProvider() {
   return function () {
     const listeners = [];
     return {
@@ -37,4 +37,4 @@ export default () => {
       }
     };
   };
-};
+}

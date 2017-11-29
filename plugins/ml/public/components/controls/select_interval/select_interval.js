@@ -19,7 +19,7 @@
 
 import _ from 'lodash';
 
-import stateFactoryProvider from 'plugins/ml/factories/state_factory';
+import { stateFactoryProvider } from 'plugins/ml/factories/state_factory';
 
 import template from './select_interval.html';
 import 'plugins/ml/components/controls/controls_select';

@@ -15,7 +15,7 @@
 
 import _ from 'lodash';
 
-import listenerFactoryProvider from './listener_factory';
+import { listenerFactoryProvider } from './listener_factory';
 
 // A data store to be able to share persistent state across directives
 // in services more conveniently when the structure of angular directives
@@ -25,7 +25,7 @@ import listenerFactoryProvider from './listener_factory';
 // Includes watch()/unwatch()/changed() to be able to subscribe to data changes
 // Have a look at the unit tests which demonstrate basic usage.
 
-export default (AppState) => {
+export function stateFactoryProvider(AppState) {
   return function (stateName, defaultState) {
     if (typeof stateName !== 'string') {
       throw 'stateName needs to be of type `string`';
@@ -77,4 +77,4 @@ export default (AppState) => {
       ...listenerFactory()
     };
   };
-};
+}

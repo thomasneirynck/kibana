@@ -21,7 +21,7 @@
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-import listenerFactoryProvider from 'plugins/ml/factories/listener_factory';
+import { listenerFactoryProvider } from 'plugins/ml/factories/listener_factory';
 
 module.service('mlAnomaliesTableService', function () {
 
