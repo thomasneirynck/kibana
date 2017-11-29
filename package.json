@@ -19,7 +19,7 @@
     "@elastic/eslint-import-resolver-kibana": "0.9.0",
     "@elastic/eslint-plugin-kibana-custom": "1.0.3",
     "@elastic/numeral": "2.2.1",
-    "@elastic/plugin-helpers": "8.0.1",
+    "@elastic/plugin-helpers": "8.1.0",
     "@types/jest": "21.1.6",
     "ansicolors": "0.3.2",
     "aws-sdk": "2.2.33",
