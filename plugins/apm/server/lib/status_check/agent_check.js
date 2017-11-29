@@ -1,4 +1,4 @@
-import { EVENT_PROCESSOR_NAME } from '../../../common/constants';
+import { PROCESSOR_NAME } from '../../../common/constants';
 
 export async function getAgentStatus({ setup }) {
   const { client, config } = setup;
@@ -11,7 +11,7 @@ export async function getAgentStatus({ setup }) {
         bool: {
           must: {
             exists: {
-              field: EVENT_PROCESSOR_NAME
+              field: PROCESSOR_NAME
             }
           }
         }

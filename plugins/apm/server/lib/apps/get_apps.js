@@ -2,7 +2,7 @@ import {
   APP_NAME,
   TRANSACTION_DURATION,
   APP_AGENT_NAME,
-  EVENT_PROCESSOR_NAME
+  PROCESSOR_EVENT
 } from '../../../common/constants';
 import { get } from 'lodash';
 
@@ -16,6 +16,23 @@ export async function getApps({ setup }) {
       query: {
         bool: {
           must: [
+            {
+              bool: {
+                should: [
+                  {
+                    term: {
+                      [PROCESSOR_EVENT]: 'transaction'
+                    }
+                  },
+                  {
+                    term: {
+                      [PROCESSOR_EVENT]: 'error'
+                    }
+                  }
+                ]
+              }
+            },
+
             {
               range: {
                 '@timestamp': {
@@ -42,7 +59,7 @@ export async function getApps({ setup }) {
               terms: { field: APP_AGENT_NAME, size: 1 }
             },
             events: {
-              terms: { field: EVENT_PROCESSOR_NAME, size: 2 }
+              terms: { field: PROCESSOR_EVENT, size: 2 }
             }
           }
         }

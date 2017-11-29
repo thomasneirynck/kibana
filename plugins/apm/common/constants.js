@@ -1,6 +1,7 @@
 export const APP_NAME = 'context.app.name';
 export const APP_AGENT_NAME = 'context.app.agent.name';
-export const EVENT_PROCESSOR_NAME = 'processor.name';
+export const PROCESSOR_NAME = 'processor.name';
+export const PROCESSOR_EVENT = 'processor.event';
 
 export const TRANSACTION_DURATION = 'transaction.duration.us';
 export const TRANSACTION_TYPE = 'transaction.type';
