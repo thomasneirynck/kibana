@@ -82,6 +82,9 @@ export async function checkIfPdfsMatch(actualPdfPath, baselinePdfPath, screensho
 
   let pageNum = 0;
   let diffTotal = 0;
+  // Ran across an instance where the page conversion failed with `Failed to convert page to image` for no known
+  // reason. Seeing if a loop will resolve these flaky errors.
+  let failCount = 0;
   while (true) {
     let expectedPagePng;
     try {
@@ -90,9 +93,14 @@ export async function checkIfPdfsMatch(actualPdfPath, baselinePdfPath, screensho
       if (JSON.stringify(e).indexOf('Requested FirstPage is greater than the number of pages in the file') >= 0) {
         break;
       } else {
-        log.error('PDF to image conversion failed. Make sure you have the required dependencies ' +
-                  'imagemagick, ghostscript and poppler installed.');
-        throw e;
+        log.error('Failed on: ' + e.message);
+        if (failCount < 3) {
+          log.error('Will try conversion again...');
+          failCount++;
+          continue;
+        } else {
+          throw e;
+        }
       }
     }
 
