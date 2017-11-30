@@ -7,7 +7,9 @@
 
 Monitoring is enabled by default when you install {xpack}. You can adjust
 how monitoring data is displayed in the Monitoring UI by configuring
-`xpack.monitoring` settings in `kibana.yml`.
+`xpack.monitoring` settings in `kibana.yml`. There are also
+`xpack.monitoring.elasticsearch.*` settings, which support the same values as
+<<settings,{kib} configuration settings>>.
 
 To control how data is collected from your Elasticsearch nodes, you configure
 {ref}/monitoring-settings.html[`xpack.monitoring.collection`
@@ -38,6 +40,16 @@ stored. By default, this is the same as the `elasticsearch.url`. This setting
 enables you to use a single Kibana instance to search and visualize data in
 your production cluster as well as monitor data sent to a dedicated monitoring
 cluster.
+
+`xpack.monitoring.elasticsearch.username`::
+Specifies the user ID that {kib} uses for authentication when it retrieves data
+from the monitoring cluster. If not set, {kib} uses the value of the
+`elasticsearch.username` setting.
+
+`xpack.monitoring.elasticsearch.password`::
+Specifies the password that {kib} uses for authentication when it retrieves data
+from the monitoring cluster. If not set, {kib} uses the value of the
+`elasticsearch.password` setting. 
 
 `xpack.monitoring.kibana.collection.enabled`::
 

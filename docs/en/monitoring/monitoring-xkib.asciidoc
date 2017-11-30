@@ -10,18 +10,35 @@ To monitor {kib}:
 . <<installing-xpack-kb,Install {xpack}>>.
 
 . Identify where to send monitoring data. {kib} automatically
-sends metrics to the {es} cluster specified in the `elasticsearch.url` property
-in `kibana.yml`. This property has a default value of `http://localhost:9200`.
+sends metrics to the {es} cluster specified in the `elasticsearch.url` setting
+in the `kibana.yml` file. This property has a default value of
+`http://localhost:9200`. This cluster is often referred to as the
+_production cluster_.
 
-. Identify where to retrieve monitoring data from. You can optionally set the
-`xpack.monitoring.elasticsearch.url` in `kibana.yml`. This property enables you
-to use a single {kib} instance to search and visualize data in your production
-cluster as well as monitor data sent to a dedicated monitoring cluster.
+. Identify where to retrieve monitoring data from. If you want to use a
+separate _monitoring cluster_, set `xpack.monitoring.elasticsearch.url` in the
+`kibana.yml` file. Otherwise, the monitoring data is stored in the production
+cluster. To learn more about typical monitoring architectures with separate
+production and monitoring clusters, see
+{xpack-ref}/how-monitoring-works.html[How Monitoring Works].
+
+. If {security} is enabled on the production cluster, verify that there is a
+valid user ID and password in the `elasticsearch.username` and
+`elasticsearch.password` settings in the `kibana.yml` file. These values are
+used when {kib} sends monitoring data to the production cluster.
+
+. If {security} is enabled on the monitoring cluster, identify a user ID and
+password that {kib} can use to retrieve monitoring data. Specify these values in
+the `xpack.monitoring.elasticsearch.username` and
+`xpack.monitoring.elasticsearch.password` settings in the `kibana.yml` file.
+If these settings are omitted, {kib} uses the `elasticsearch.username` and
+`elasticsearch.password` setting values.
 
 . Restart {kib}.
 
-. If {security} is enabled, to view the monitoring dashboards you must log in to
-{kib} as a user who has both the `kibana_user` and `monitoring_user` roles. For
+. If {security} is enabled in your {kib} instance, to view the monitoring
+dashboards you must log in to {kib} as a user who has both the `kibana_user` and
+`monitoring_user` roles. For
 example:
 +
 --
