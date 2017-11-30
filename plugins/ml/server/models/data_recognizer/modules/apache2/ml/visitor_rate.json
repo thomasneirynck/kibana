@@ -13,6 +13,9 @@
     ],
     "influencers": []
   },
+  "analysis_limits": {
+    "model_memory_limit": "10mb"
+  },
   "data_description": {
     "time_field": "@timestamp",
     "time_format": "epoch_ms"

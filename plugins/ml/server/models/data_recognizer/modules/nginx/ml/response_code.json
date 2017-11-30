@@ -16,6 +16,9 @@
       "nginx.access.remote_ip"
     ]
   },
+  "analysis_limits": {
+    "model_memory_limit": "100mb"
+  },
   "data_description": {
     "time_field": "@timestamp",
     "time_format": "epoch_ms"
