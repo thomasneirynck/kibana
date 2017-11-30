@@ -41,7 +41,6 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
       $scope.homelessJobs = [];
       $scope.singleSelection = false;
       $scope.timeSeriesOnly = false;
-      $scope.selectableJobs = [];
       $scope.noJobsCreated = undefined;
       $scope.applyTimeRange = true;
       $scope.urlSelectedIds = {};
@@ -85,6 +84,7 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
               $scope.selected.groups.push({
                 id: group.id,
                 selected: group.selected,
+                // TODO: is the selectable property of a group still needed?
                 selectable: group.selectable,
                 timeRange: group.timeRange,
                 isGroup: true,
@@ -96,6 +96,7 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
                 $scope.selected.jobs.push({
                   id: job.name,
                   selected: selectAll || job.selected,
+                  disabled: job.disabled,
                   timeRange: job.timeRange,
                   isGroup: false
                 });
@@ -105,8 +106,6 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
             $scope.allJobsSelected = areAllJobsSelected();
             $scope.allGroupsSelected = areAllGroupsSelected();
             createSelectedCount();
-
-            $scope.selectableJobs = jobs.filter(job => !job.disabled);
 
             // if in single selection mode, set the radio button controller ($scope.selectedJobRadio)
             // to the selected job id
@@ -189,7 +188,6 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
 
           jobs.forEach(job => {
             job.group = group;
-            job.disabled = group.selected;
 
             if (timeRange.to === null || job.timeRange.to > timeRange.to) {
               timeRange.to = job.timeRange.to;

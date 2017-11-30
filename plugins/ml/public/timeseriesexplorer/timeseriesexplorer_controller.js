@@ -117,27 +117,41 @@ module.controller('MlTimeSeriesExplorerController', function (
     // Load the job info needed by the visualization, then do the first load.
     mlJobService.loadJobs()
     .then((resp) => {
+
       if (resp.jobs.length > 0) {
         $scope.jobs = createTimeSeriesJobData(resp.jobs);
-
-        const jobIds = $scope.jobs.map(j => j.id);
+        const timeSeriesJobIds = $scope.jobs.map(j => j.id);
 
         // Select any jobs set in the global state (i.e. passed in the URL).
         let selectedJobIds = mlJobSelectService.getSelectedJobIds(true);
-        selectedJobIds = selectedJobIds.filter(jobId => {
-          return (jobIds.indexOf(jobId) > -1);
-        });
+
+        // Check if any of the jobs set in the URL are not time series jobs
+        // (e.g. if switching to this view straight from the Anomaly Explorer).
+        const invalidIds = _.difference(selectedJobIds, timeSeriesJobIds);
+        selectedJobIds = _.without(selectedJobIds, ...invalidIds);
+        if (invalidIds.length > 0 && invalidIds.indexOf('*') === -1) {
+          let warningText = invalidIds.length === 1 ? `Requested job ${invalidIds} cannot be viewed in this dashboard` :
+            `Requested jobs ${invalidIds} cannot be viewed in this dashboard`;
+          if (selectedJobIds.length === 0 && timeSeriesJobIds.length > 0) {
+            warningText += ', auto selecting first job';
+          }
+          notify.warning(warningText, { lifetime: 30000 });
+        }
 
         if (selectedJobIds.length > 1) {
           notify.warning('Only one job may be viewed at a time in this dashboard', { lifetime: 30000 });
         }
 
-        if (selectedJobIds.length === 0 && $scope.jobs.length > 0) {
-          selectedJobIds.push($scope.jobs[0].id);
-        }
-
         if (selectedJobIds.length > 0) {
           loadForJobId(selectedJobIds[0]);
+        } else {
+          if (selectedJobIds.length === 0 && $scope.jobs.length > 0) {
+            selectedJobIds.push($scope.jobs[0].id);
+            mlJobSelectService.setJobIds(selectedJobIds);
+          } else {
+            // Jobs exist, but no time series jobs.
+            $scope.loading = false;
+          }
         }
       } else {
         $scope.loading = false;
