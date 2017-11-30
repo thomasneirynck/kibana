@@ -53,8 +53,14 @@ describe('ML - formatValue filter', function () {
     expect(result).to.be(true);
   });
 
-  it('correctly formats number value from numeric input', function () {
+  it('correctly formats number values from numeric input', function () {
     expect(filter(1483228800, 'mean')).to.be(1483228800);
+    expect(filter(1234.5678, 'mean')).to.be(1234.6);
+    expect(filter(0.00012345, 'mean')).to.be(0.000123);
+    expect(filter(0, 'mean')).to.be(0);
+    expect(filter(-0.12345, 'mean')).to.be(-0.123);
+    expect(filter(-1234.5678, 'mean')).to.be(-1234.6);
+    expect(filter(-100000.1, 'mean')).to.be(-100000);
   });
 
   it('correctly formats time_of_week value from array input', function () {
@@ -69,8 +75,14 @@ describe('ML - formatValue filter', function () {
     expect(result).to.be(true);
   });
 
-  it('correctly formats number value from array input', function () {
+  it('correctly formats number values from array input', function () {
     expect(filter([1483228800], 'mean')).to.be(1483228800);
+    expect(filter([1234.5678], 'mean')).to.be(1234.6);
+    expect(filter([0.00012345], 'mean')).to.be(0.000123);
+    expect(filter([0], 'mean')).to.be(0);
+    expect(filter([-0.12345], 'mean')).to.be(-0.123);
+    expect(filter([-1234.5678], 'mean')).to.be(-1234.6);
+    expect(filter([-100000.1], 'mean')).to.be(-100000);
   });
 
   it('correctly formats multi-valued array', function () {
