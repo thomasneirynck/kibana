@@ -9,13 +9,13 @@ export class Sparkline extends React.Component {
   }
 
   componentDidMount() {
-    this.sparklineFlotChart = new SparklineFlotChart(this.chartElem, this.props.series, this.props.options);
+    this.sparklineFlotChart = new SparklineFlotChart(this.chartElem, this.props.series, this.props.onBrush, this.props.options);
   }
 
-  componentWillReceiveProps({ series, options }) {
+  componentWillReceiveProps({ series, onBrush, options }) {
     if (!isEqual(options, this.props.options)) {
       this.sparklineFlotChart.shutdown();
-      this.sparklineFlotChart = new SparklineFlotChart(this.chartElem, this.props.series, options);
+      this.sparklineFlotChart = new SparklineFlotChart(this.chartElem, this.props.series, onBrush, options);
     }
 
     if (!isEqual(series, this.props.series)) {

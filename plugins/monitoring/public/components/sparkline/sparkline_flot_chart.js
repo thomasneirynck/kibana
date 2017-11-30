@@ -1,4 +1,4 @@
-import { last } from 'lodash';
+import { last, isFunction } from 'lodash';
 import $ from 'jquery-flot'; // webpackShim
 
 /**
@@ -49,10 +49,23 @@ function makeData(series = []) {
 }
 
 export class SparklineFlotChart {
-  constructor(containerElem, initialSeries, overrideOptions) {
+  constructor(containerElem, initialSeries, onBrush, overrideOptions) {
     this.containerElem = containerElem;
     this.data = makeData(initialSeries);
     this.options = { ...flotOptions, ...overrideOptions };
+
+    if (onBrush && isFunction(onBrush)) {
+      // Requires `selection` flot plugin
+      this.options.selection = {
+        mode: 'x',
+        color: '#9c9c9c'
+      };
+      $(this.containerElem).off('plotselected');
+      $(this.containerElem).on('plotselected', (_event, range) => {
+        onBrush(range.xaxis);
+        this.flotChart.clearSelection();
+      });
+    }
 
     this.render();
     window.addEventListener('resize', this.render);
@@ -74,6 +87,7 @@ export class SparklineFlotChart {
    */
   shutdown() {
     this.flotChart.shutdown();
+    $(this.containerElem).off('plotselected');
     window.removeEventListener('resize', this.render);
   }
 }
