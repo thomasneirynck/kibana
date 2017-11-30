@@ -6,12 +6,15 @@ import uiRoutes from'ui/routes';
 import { uiModules } from 'ui/modules';
 import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
 import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
+import { CALCULATE_DURATION_SINCE } from 'monitoring-constants';
+import { formatTimestampToDuration } from 'plugins/monitoring/lib/format_number';
 import template from './index.html';
 
 function getPageData($injector) {
   const $route = $injector.get('$route');
   const $http = $injector.get('$http');
   const globalState = $injector.get('globalState');
+  const minIntervalSeconds = $injector.get('minIntervalSeconds');
   const Private = $injector.get('Private');
 
   const { ccs, cluster_uuid: clusterUuid } = globalState;
@@ -22,6 +25,23 @@ function getPageData($injector) {
     ccs
   })
   .then(response => response.data)
+  .then(data => {
+    data.versions = data.versions.map(version => {
+      const relativeFirstSeen = formatTimestampToDuration(version.firstSeen, CALCULATE_DURATION_SINCE);
+      const relativeLastSeen = formatTimestampToDuration(version.lastSeen, CALCULATE_DURATION_SINCE);
+
+      const fudgeFactorSeconds = 2 * minIntervalSeconds;
+      const isLastSeenCloseToNow = (Date.now() - version.lastSeen) <= fudgeFactorSeconds * 1000;
+
+      return {
+        ...version,
+        relativeFirstSeen: `${relativeFirstSeen} ago`,
+        relativeLastSeen: isLastSeenCloseToNow ? 'now' : `until ${relativeLastSeen} ago`
+      };
+    });
+
+    return data;
+  })
   .catch((err) => {
     const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
     return ajaxErrorHandlers(err);

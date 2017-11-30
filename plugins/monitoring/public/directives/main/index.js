@@ -21,6 +21,7 @@ export class MonitoringMainController {
   setup(options) {
     this._licenseService = options.licenseService;
     this._breadcrumbsService = options.breadcrumbsService;
+    this._kbnUrlService = options.kbnUrlService;
 
     Object.assign(this, options.attributes);
 
@@ -42,6 +43,9 @@ export class MonitoringMainController {
 
     if (this.pipelineHash) {
       this.pipelineHashShort = shortenPipelineHash(this.pipelineHash);
+      this.onChangePipelineHash = () => {
+        return this._kbnUrlService.changePath(`/logstash/pipelines/${this.pipelineId}/${this.pipelineHash}`);
+      };
     }
   }
 
@@ -57,7 +61,7 @@ export class MonitoringMainController {
 }
 
 const uiModule = uiModules.get('plugins/monitoring/directives', []);
-uiModule.directive('monitoringMain', (breadcrumbs, license) => {
+uiModule.directive('monitoringMain', (breadcrumbs, license, kbnUrl) => {
   return {
     restrict: 'E',
     transclude: true,
@@ -70,6 +74,7 @@ uiModule.directive('monitoringMain', (breadcrumbs, license) => {
       controller.setup({
         licenseService: license,
         breadcrumbsService: breadcrumbs,
+        kbnUrlService: kbnUrl,
         attributes: {
           name: attributes.name,
           product: attributes.product,
@@ -79,7 +84,8 @@ uiModule.directive('monitoringMain', (breadcrumbs, license) => {
           tabIconClass: attributes.tabIconClass,
           tabIconLabel: attributes.tabIconLabel,
           pipelineId: attributes.pipelineId,
-          pipelineHash: attributes.pipelineHash
+          pipelineHash: attributes.pipelineHash,
+          pipelineVersions: get(scope, 'pageData.versions')
         },
         clusterName: get(scope, 'cluster.cluster_name')
       });

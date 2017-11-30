@@ -111,14 +111,24 @@
           >
             Advanced
           </a>
-          <a
-            ng-if="monitoringMain.pipelineId"
-            kbn-href="#/logstash/pipelines/{{ monitoringMain.pipelineId }}/{{ monitoringMain.pipelineHash }}"
-            class="kuiLocalTab"
-            ng-class="{'kuiLocalTab-isSelected': monitoringMain.page === 'pipeline'}"
+          <div
+            ng-if="monitoringMain.pipelineVersions"
+            class="kuiFlexGroup kuiFlexGroup--gutterMedium"
           >
-            Version {{ monitoringMain.pipelineHashShort }}
-          </a>
+            <h1 class="kuiTitle kuiFlexItem">{{ monitoringMain.pipelineId }}</h1>
+            <select
+              ng-model="monitoringMain.pipelineHash"
+              class="kuiSelect kuiFlexItem"
+              ng-change="monitoringMain.onChangePipelineHash()"
+            >
+              <option
+                ng-repeat="version in monitoringMain.pipelineVersions"
+                ng-value="version.hash"
+              >
+                Version active {{ version.relativeLastSeen }} and first seen {{ version.relativeFirstSeen }}
+              </option>
+            </select>
+          </div>
         </div>
 
         <div ng-if="monitoringMain.inOverview" class="kuiLocalTabs" role="navigation">

@@ -3,6 +3,7 @@ import { get } from 'lodash';
 import { checkParam } from '../error_missing_required';
 import { getPipelineStateDocument } from './get_pipeline_state_document';
 import { getPipelineStatsAggregation } from './get_pipeline_stats_aggregation';
+import { getPipelineVersions } from './get_pipeline_versions';
 
 export function _vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timeboundsInMillis) {
 
@@ -74,7 +75,7 @@ export function _enrichStateWithStatsAggregation(stateDocument, statsAggregation
   return stateDocument.logstash_state;
 }
 
-export async function getPipeline(req, lsIndexPattern, clusterUuid, pipelineId, pipelineHash) {
+export async function getPipeline(req, config, lsIndexPattern, clusterUuid, pipelineId, pipelineHash) {
   checkParam(lsIndexPattern, 'lsIndexPattern in getPipeline');
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
@@ -85,15 +86,19 @@ export async function getPipeline(req, lsIndexPattern, clusterUuid, pipelineId, 
     pipelineHash
   };
 
-  const [ stateDocument, statsAggregation ] = await Promise.all([
+  const [ stateDocument, statsAggregation, versions ] = await Promise.all([
     getPipelineStateDocument(callWithRequest, req, lsIndexPattern, options),
-    getPipelineStatsAggregation(callWithRequest, req, lsIndexPattern, options)
+    getPipelineStatsAggregation(callWithRequest, req, lsIndexPattern, options),
+    getPipelineVersions(callWithRequest, req, config, lsIndexPattern, options)
   ]);
 
   if (stateDocument === null) {
     return boom.notFound(`Pipeline [${pipelineId} @ ${pipelineHash}] not found in the selected time range for cluster [${clusterUuid}].`);
   }
 
-  const result = _enrichStateWithStatsAggregation(stateDocument, statsAggregation);
+  const result = {
+    ..._enrichStateWithStatsAggregation(stateDocument, statsAggregation),
+    ...versions
+  };
   return result;
 }

@@ -118,8 +118,7 @@ describe('Monitoring Breadcrumbs Service', () => {
       { url: '#/home', label: 'Clusters', testSubj: 'breadcrumbClusters' },
       { url: '#/overview', label: 'test-cluster-foo' },
       { url: '#/logstash', label: 'Logstash' },
-      { url: '#/logstash/pipelines', label: 'Pipelines' },
-      { url: null, label: 'main' }
+      { url: '#/logstash/pipelines', label: 'Pipelines' }
     ]);
   });
 });

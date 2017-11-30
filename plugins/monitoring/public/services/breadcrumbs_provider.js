@@ -53,7 +53,6 @@ function getLogstashBreadcrumbs(mainInstance) {
   } else if (mainInstance.page === 'pipeline') {
     breadcrumbs.push(createCrumb('#/logstash', 'Logstash'));
     breadcrumbs.push(createCrumb('#/logstash/pipelines', 'Pipelines'));
-    breadcrumbs.push(createCrumb(null, mainInstance.pipelineId));
   } else {
     // don't link to Overview when we're possibly on Overview or its sibling tabs
     breadcrumbs.push(createCrumb(null, 'Logstash'));
