@@ -130,24 +130,30 @@ module.controller('MlTimeSeriesExplorerController', function (
         const invalidIds = _.difference(selectedJobIds, timeSeriesJobIds);
         selectedJobIds = _.without(selectedJobIds, ...invalidIds);
         if (invalidIds.length > 0 && invalidIds.indexOf('*') === -1) {
-          let warningText = invalidIds.length === 1 ? `Requested job ${invalidIds} cannot be viewed in this dashboard` :
-            `Requested jobs ${invalidIds} cannot be viewed in this dashboard`;
+          let warningText = `Requested job${invalidIds.length === 1 ? '' : 's'} ${invalidIds} cannot be viewed in this dashboard`;
           if (selectedJobIds.length === 0 && timeSeriesJobIds.length > 0) {
             warningText += ', auto selecting first job';
           }
           notify.warning(warningText, { lifetime: 30000 });
         }
 
-        if (selectedJobIds.length > 1) {
+        if (selectedJobIds.length > 1 || mlJobSelectService.groupIds.length) {
+          // if more than one job or a group has been loaded from the URL
+          // select the first job from the selection.
           notify.warning('Only one job may be viewed at a time in this dashboard', { lifetime: 30000 });
-        }
-
-        if (selectedJobIds.length > 0) {
+          mlJobSelectService.setJobIds([selectedJobIds[0]]);
+        } else if (invalidIds.length > 0 && selectedJobIds.length > 0) {
+          // if some ids have been filtered out because they were invalid.
+          // refresh the URL with the first valid id
+          mlJobSelectService.setJobIds([selectedJobIds[0]]);
+        } else if (selectedJobIds.length > 0) {
+          // normal behavior. a job ID has been loaded from the URL
           loadForJobId(selectedJobIds[0]);
         } else {
           if (selectedJobIds.length === 0 && $scope.jobs.length > 0) {
-            selectedJobIds.push($scope.jobs[0].id);
-            mlJobSelectService.setJobIds(selectedJobIds);
+            // no jobs were loaded from the URL, so add the first job
+            // from the full jobs list.
+            mlJobSelectService.setJobIds([$scope.jobs[0].id]);
           } else {
             // Jobs exist, but no time series jobs.
             $scope.loading = false;
