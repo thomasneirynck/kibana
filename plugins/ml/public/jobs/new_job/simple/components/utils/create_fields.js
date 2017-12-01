@@ -62,7 +62,7 @@ export function createFields(scope, indexPattern) {
       name: field.displayName,
       tooltip: field.displayName,
       // if the field is a keyword or an ip, set the default agg to be cardinality
-      agg: (field.mlType === ML_JOB_FIELD_TYPES.KEYWORD || field.mlType === ML_JOB_FIELD_TYPES.IP) ? cardinalityAgg : agg,
+      agg: (field.mlType === ML_JOB_FIELD_TYPES.KEYWORD || field.mlType === ML_JOB_FIELD_TYPES.IP) ? { ...cardinalityAgg } : { ...agg },
       mlType: field.mlType,
     };
     if (isPopulation) {
