@@ -320,7 +320,7 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
       $target.removeClass('sl-cell-inner-masked');
       $target.addClass('sl-cell-inner-selected');
 
-      $('.lane-label').filter(() => {
+      $('.lane-label').filter(function () {
         return $(this).text() === laneLabel;
       }).removeClass('lane-label-masked');
 
