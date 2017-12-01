@@ -129,8 +129,9 @@ module.controller('MlTimeSeriesExplorerController', function (
         // (e.g. if switching to this view straight from the Anomaly Explorer).
         const invalidIds = _.difference(selectedJobIds, timeSeriesJobIds);
         selectedJobIds = _.without(selectedJobIds, ...invalidIds);
-        if (invalidIds.length > 0 && invalidIds.indexOf('*') === -1) {
-          let warningText = `Requested job${invalidIds.length === 1 ? '' : 's'} ${invalidIds} cannot be viewed in this dashboard`;
+        if (invalidIds.length > 0) {
+          const s = invalidIds.length === 1 ? '' : 's';
+          let warningText = `Requested job${s} ${invalidIds} cannot be viewed in this dashboard`;
           if (selectedJobIds.length === 0 && timeSeriesJobIds.length > 0) {
             warningText += ', auto selecting first job';
           }
@@ -139,9 +140,25 @@ module.controller('MlTimeSeriesExplorerController', function (
 
         if (selectedJobIds.length > 1 || mlJobSelectService.groupIds.length) {
           // if more than one job or a group has been loaded from the URL
-          // select the first job from the selection.
-          notify.warning('Only one job may be viewed at a time in this dashboard', { lifetime: 30000 });
-          mlJobSelectService.setJobIds([selectedJobIds[0]]);
+          if (selectedJobIds.length > 1) {
+            // if more than one job, select the first job from the selection.
+            notify.warning('Only one job may be viewed at a time in this dashboard', { lifetime: 30000 });
+            mlJobSelectService.setJobIds([selectedJobIds[0]]);
+          } else {
+            // if a group has been loaded
+            if (selectedJobIds.length > 0) {
+              // if the group contains valid jobs, select the first
+              notify.warning('Only one job may be viewed at a time in this dashboard', { lifetime: 30000 });
+              mlJobSelectService.setJobIds([selectedJobIds[0]]);
+            } else if ($scope.jobs.length > 0) {
+              // if there are no valid jobs in the group but there are valid jobs
+              // in the list of all jobs, select the first
+              mlJobSelectService.setJobIds([$scope.jobs[0].id]);
+            } else {
+              // if there are no valid jobs left.
+              $scope.loading = false;
+            }
+          }
         } else if (invalidIds.length > 0 && selectedJobIds.length > 0) {
           // if some ids have been filtered out because they were invalid.
           // refresh the URL with the first valid id
