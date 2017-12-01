@@ -18,11 +18,21 @@ export function apm(kibana) {
         main: 'plugins/apm/app',
         icon: 'plugins/apm/icon.svg'
       },
-      home: ['plugins/apm/register_feature']
+      home: ['plugins/apm/register_feature'],
+      injectDefaultVars(server) {
+        const config = server.config();
+        return {
+          apmUiEnabled: config.get('xpack.apm.ui.enabled')
+        };
+      },
+      hacks: ['plugins/apm/hacks/toggle_app_link_in_nav']
     },
 
     config(Joi) {
       return Joi.object({
+        ui: Joi.object({
+          enabled: Joi.boolean().default(true)
+        }),
         enabled: Joi.boolean().default(true),
         indexPattern: Joi.string().default('apm*'),
         minimumBucketSize: Joi.number().default(15),
