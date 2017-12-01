@@ -5,8 +5,8 @@
     type="button"
     tooltip="Experimental feature for estimating bucket span."
     tooltip-append-to-body="true"
-    ng-class='{"running": (ui.bucketSpanEstimator.status===STATUS.RUNNING)}''
-    class="kuiButton kuiButton--small">
+    ng-class='{"running": (ui.bucketSpanEstimator.status===STATUS.RUNNING)}'
+    class="kuiButton kuiButton--basic kuiButton--small">
       {{ui.bucketSpanEstimator.status===STATUS.RUNNING ? 'Estimating bucket span ' : 'Estimate bucket span'}}
       <i ng-show='ui.bucketSpanEstimator.status===STATUS.RUNNING' class="fa fa-spinner fa-spin"></i>
   </button>
