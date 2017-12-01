@@ -32,7 +32,9 @@ uiRoutes.when('/alerts', {
   },
   controllerAs: 'alerts',
   controller($injector, $scope) {
-    $injector.get('timefilter').enabled = false;
+    const timefilter = $injector.get('timefilter');
+    timefilter.disableTimeRangeSelector();
+    timefilter.disableAutoRefreshSelector();
 
     const $route = $injector.get('$route');
     const globalState = $injector.get('globalState');

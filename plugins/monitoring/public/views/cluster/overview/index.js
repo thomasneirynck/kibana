@@ -16,7 +16,8 @@ uiRoutes.when('/overview', {
   },
   controller($injector, $scope) {
     const timefilter = $injector.get('timefilter');
-    timefilter.enabled = true;
+    timefilter.enableTimeRangeSelector();
+    timefilter.enableAutoRefreshSelector();
 
     const $route = $injector.get('$route');
     $scope.cluster = $route.current.locals.cluster;

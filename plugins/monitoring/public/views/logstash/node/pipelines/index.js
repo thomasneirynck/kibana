@@ -67,7 +67,8 @@ uiModule.controller('logstashNodePipelines', ($injector, $scope) => {
   $scope.pageData = $route.current.locals.pageData;
 
   $scope.upgradeMessage = makeUpgradeMessage($scope.pageData.nodeSummary.version);
-  timefilter.enabled = true;
+  timefilter.enableTimeRangeSelector();
+  timefilter.enableAutoRefreshSelector();
 
   title($scope.cluster, `Logstash - ${$scope.pageData.nodeSummary.name} - Pipelines`);
 

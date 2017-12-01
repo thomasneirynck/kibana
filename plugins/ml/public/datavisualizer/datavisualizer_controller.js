@@ -62,7 +62,8 @@ module
   AppState,
   ml) {
 
-  timefilter.enabled = true;
+  timefilter.enableTimeRangeSelector();
+  timefilter.enableAutoRefreshSelector();
   const {
     indexPattern,
     query } = createSearchItems($route);

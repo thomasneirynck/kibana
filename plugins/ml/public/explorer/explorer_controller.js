@@ -69,7 +69,8 @@ module.controller('MlExplorerController', function (
   $scope.timeFieldName = 'timestamp';
   $scope.loading = true;
   $scope.loadCounter = 0;
-  timefilter.enabled = true;
+  timefilter.enableTimeRangeSelector();
+  timefilter.enableAutoRefreshSelector();
 
   const TimeBuckets = Private(IntervalHelperProvider);
   const queryFilter = Private(FilterBarQueryFilterProvider);

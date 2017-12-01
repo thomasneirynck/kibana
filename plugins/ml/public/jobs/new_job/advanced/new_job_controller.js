@@ -79,7 +79,8 @@ function (
   mlConfirmModalService) {
 
 
-  timefilter.enabled = false; // remove time picker from top of page
+  timefilter.disableTimeRangeSelector(); // remove time picker from top of page
+  timefilter.disableAutoRefreshSelector(); // remove time picker from top of page
   const MODE = {
     NEW: 0,
     EDIT: 1,

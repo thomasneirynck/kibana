@@ -26,7 +26,8 @@ const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
 uiModule.controller('noData', ($injector, $scope) => {
   $scope.hasData = false; // control flag to control a redirect
   const timefilter = $injector.get('timefilter');
-  timefilter.enabled = true;
+  timefilter.enableTimeRangeSelector();
+  timefilter.enableAutoRefreshSelector();
 
   const $executor = $injector.get('$executor');
   timefilter.on('update', () => {

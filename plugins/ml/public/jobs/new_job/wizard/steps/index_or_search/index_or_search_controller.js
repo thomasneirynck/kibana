@@ -50,7 +50,8 @@ function (
   $route,
   timefilter) {
 
-  timefilter.enabled = false; // remove time picker from top of page
+  timefilter.disableTimeRangeSelector(); // remove time picker from top of page
+  timefilter.disableAutoRefreshSelector(); // remove time picker from top of page
 
   $scope.indexPatterns = $route.current.locals.indexPatterns;
 

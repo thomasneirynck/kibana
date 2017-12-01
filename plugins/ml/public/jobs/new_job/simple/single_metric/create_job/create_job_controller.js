@@ -66,7 +66,8 @@ module
   mlFullTimeRangeSelectorService,
   AppState) {
 
-  timefilter.enabled = true;
+  timefilter.enableTimeRangeSelector();
+  timefilter.enableAutoRefreshSelector();
   const msgs = mlMessageBarService;
   const MlTimeBuckets = Private(IntervalHelperProvider);
 

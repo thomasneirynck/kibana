@@ -69,7 +69,8 @@ uiRoutes.when('/logstash/node/:uuid/advanced', {
 const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
 uiModule.controller('logstashNodeAdvanced', ($injector, $scope) => {
   const timefilter = $injector.get('timefilter');
-  timefilter.enabled = true;
+  timefilter.enableTimeRangeSelector();
+  timefilter.enableAutoRefreshSelector();
 
   const $route = $injector.get('$route');
   const globalState = $injector.get('globalState');

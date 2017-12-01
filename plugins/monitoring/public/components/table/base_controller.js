@@ -6,7 +6,9 @@ export class MonitoringTableBaseController {
     const titleService = $injector.get('title');
     titleService($scope.cluster, title);
 
-    $injector.get('timefilter').enabled = true;
+    const timefilter = $injector.get('timefilter');
+    timefilter.enableTimeRangeSelector();
+    timefilter.enableAutoRefreshSelector();
 
     const getLocalStorageData = tableStorageGetter(storageKey);
     const setLocalStorageData = tableStorageSetter(storageKey);

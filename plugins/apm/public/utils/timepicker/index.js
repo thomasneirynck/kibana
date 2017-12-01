@@ -70,7 +70,8 @@ export function initTimepicker(history, dispatch, callback) {
         timefilter.time.to = moment(to).toISOString();
         $scope.$apply();
       };
-      timefilter.enabled = true;
+      timefilter.enableTimeRangeSelector();
+      timefilter.enableAutoRefreshSelector();
       timefilter.init();
 
       updateRefreshRate(dispatch, timefilter);

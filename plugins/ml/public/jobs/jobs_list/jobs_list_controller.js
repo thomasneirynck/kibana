@@ -63,7 +63,8 @@ function (
   mlDatafeedService,
   mlNotificationService) {
 
-  timefilter.enabled = false; // remove time picker from top of page
+  timefilter.disableTimeRangeSelector(); // remove time picker from top of page
+  timefilter.disableAutoRefreshSelector(); // remove time picker from top of page
   const rowScopes = []; // track row scopes, so they can be destroyed as needed
   const msgs = mlMessageBarService; // set a reference to the message bar service
   const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';

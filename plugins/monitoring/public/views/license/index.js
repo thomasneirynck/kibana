@@ -17,7 +17,8 @@ uiRoutes.when('/license', {
 const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
 uiModule.controller('licenseView', ($injector, $scope) => {
   const timefilter = $injector.get('timefilter');
-  timefilter.enabled = false;
+  timefilter.disableTimeRangeSelector();
+  timefilter.disableAutoRefreshSelector();
 
   const $route = $injector.get('$route');
   const globalState = $injector.get('globalState');

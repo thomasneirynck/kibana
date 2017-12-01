@@ -55,7 +55,8 @@ module
   mlJobService,
   mlMessageBarService) {
 
-  timefilter.enabled = false;
+  timefilter.disableTimeRangeSelector();
+  timefilter.disableAutoRefreshSelector();
   $scope.tt = timefilter;
   const msgs = mlMessageBarService;
 
@@ -200,7 +201,14 @@ module
 
   // toggle kibana's timepicker
   $scope.changeUseFullIndexData = function () {
-    timefilter.enabled = !$scope.formConfig.useFullIndexData;
+    const shouldEnableTimeFilter = !$scope.formConfig.useFullIndexData;
+    if (shouldEnableTimeFilter) {
+      timefilter.enableTimeRangeSelector();
+      timefilter.enableAutoRefreshSelector();
+    } else {
+      timefilter.disableTimeRangeSelector();
+      timefilter.disableAutoRefreshSelector();
+    }
     $scope.$applyAsync();
   };
 

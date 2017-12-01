@@ -82,7 +82,8 @@ module.controller('MlTimeSeriesExplorerController', function (
   mlAnomaliesTableService) {
 
   $scope.timeFieldName = 'timestamp';
-  timefilter.enabled = true;
+  timefilter.enableTimeRangeSelector();
+  timefilter.enableAutoRefreshSelector();
 
   const CHARTS_POINT_TARGET = 500;
   const ANOMALIES_MAX_RESULTS = 500;
