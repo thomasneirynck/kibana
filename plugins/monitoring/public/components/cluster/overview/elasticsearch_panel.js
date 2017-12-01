@@ -57,7 +57,7 @@ export function ElasticsearchPanel(props) {
           <dl>
             <dt className="cluster-panel__inner-title">
               <KuiKeyboardAccessible>
-                <a className="kuiLink" onClick={goToElasticsearch}>
+                <a className="kuiLink" onClick={goToElasticsearch} aria-label="Elasticsearch Overview">
                   Overview
                 </a>
               </KuiKeyboardAccessible>
@@ -75,6 +75,7 @@ export function ElasticsearchPanel(props) {
                   className="kuiLink"
                   onClick={goToNodes}
                   data-test-subj="esNumberOfNodes"
+                  aria-label={`Elasticsearch Nodes: ${ formatNumber(get(nodes, 'count.total'), 'int_commas') }`}
                 >
                   Nodes: { formatNumber(get(nodes, 'count.total'), 'int_commas') }
                 </a>
@@ -102,6 +103,7 @@ export function ElasticsearchPanel(props) {
                   className="kuiLink"
                   onClick={goToIndices}
                   data-test-subj="esNumberOfIndices"
+                  aria-label={`Elasticsearch Indices: ${ formatNumber(get(indices, 'count'), 'int_commas') }`}
                 >
                   Indices: { formatNumber(get(indices, 'count'), 'int_commas') }
                 </a>

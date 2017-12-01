@@ -20,7 +20,11 @@ export function LogstashPanel(props) {
           <dl data-test-subj="logstash_overview">
             <dt className="cluster-panel__inner-title">
               <KuiKeyboardAccessible>
-                <a className="kuiLink" onClick={goToLogstash}>
+                <a
+                  className="kuiLink"
+                  onClick={goToLogstash}
+                  aria-label="Logstash Overview"
+                >
                   Overview
                 </a>
               </KuiKeyboardAccessible>
@@ -37,7 +41,12 @@ export function LogstashPanel(props) {
           <dl>
             <dt className="cluster-panel__inner-title">
               <KuiKeyboardAccessible>
-                <a className="kuiLink" onClick={goToNodes} data-test-subj="lsNodes">
+                <a
+                  className="kuiLink"
+                  onClick={goToNodes}
+                  data-test-subj="lsNodes"
+                  aria-label={`Logstash Nodes: ${ props.node_count}`}
+                >
                   Nodes: <span data-test-subj="number_of_logstash_instances">{ props.node_count }</span>
                 </a>
               </KuiKeyboardAccessible>
@@ -54,7 +63,12 @@ export function LogstashPanel(props) {
           <dl>
             <dt className="cluster-panel__inner-title">
               <KuiKeyboardAccessible>
-                <a className="link" onClick={goToPipelines} data-test-subj="lsPipelines">
+                <a
+                  className="link"
+                  onClick={goToPipelines}
+                  data-test-subj="lsPipelines"
+                  aria-label={`Logstash Pipelines (beta feature): ${ props.pipeline_count }`}
+                >
                   <Tooltip
                     text="Beta Feature"
                     placement="bottom"
