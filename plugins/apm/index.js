@@ -32,7 +32,7 @@ export function apm(kibana) {
       return Joi.object({
         ui: Joi.object({
           enabled: Joi.boolean().default(true)
-        }),
+        }).default(),
         enabled: Joi.boolean().default(true),
         indexPattern: Joi.string().default('apm*'),
         minimumBucketSize: Joi.number().default(15),
