@@ -6,6 +6,7 @@ describe('getReportingUsage', () => {
   let callClusterStub;
   let serverStub;
   let licenseStub;
+  let configGetStub;
 
   beforeEach(() => {
     callClusterStub = sinon.stub().returns(Promise.resolve({
@@ -22,6 +23,9 @@ describe('getReportingUsage', () => {
       }
     }));
     licenseStub = sinon.stub().returns('basic');
+    configGetStub = sinon.stub();
+    configGetStub.withArgs('xpack.reporting.enabled').returns(true);
+    configGetStub.withArgs('xpack.reporting.capture.browser.type').returns('browserTypeForTests');
     serverStub = {
       plugins: {
         elasticsearch: { getCluster: sinon.stub() },
@@ -33,7 +37,7 @@ describe('getReportingUsage', () => {
         }
       },
       config: () => ({
-        get: sinon.stub().withArgs('xpack.reporting.enabled').returns(true)
+        get: configGetStub
       }),
       expose: sinon.stub(),
       log: sinon.stub(),
@@ -62,6 +66,7 @@ describe('getReportingUsage', () => {
         _all: 55,
         available: true,
         enabled: true,
+        browser_type: 'browserTypeForTests',
         csv: {
           available: true,
           total: 22,
@@ -93,6 +98,7 @@ describe('getReportingUsage', () => {
       expect(results).to.eql({
         _all: 55,
         available: true,
+        browser_type: 'browserTypeForTests',
         enabled: true,
         csv: {
           available: true,
@@ -136,6 +142,7 @@ describe('getReportingUsage', () => {
       expect(results).to.eql({
         _all: 55,
         available: true,
+        browser_type: 'browserTypeForTests',
         enabled: true,
         csv: {
           available: true,
@@ -155,6 +162,7 @@ describe('getReportingUsage', () => {
       expect(results).to.eql({
         _all: 0,
         available: true,
+        browser_type: 'browserTypeForTests',
         enabled: true,
         csv: {
           available: true,
@@ -168,7 +176,7 @@ describe('getReportingUsage', () => {
     });
   });
 
-  describe('X-Pack license availability determins Reporting availability', () => {
+  describe('X-Pack license availability determines Reporting availability', () => {
     it('if X-Pack info is not available, Reporting usage shows not available and not enabled', async () => {
       serverStub.plugins.xpack_main.info.license.getType = sinon.stub().returns('platinum');
       serverStub.plugins.xpack_main.info.isAvailable = () => false;
@@ -178,6 +186,7 @@ describe('getReportingUsage', () => {
       expect(results).to.eql({
         _all: 0,
         available: false,
+        browser_type: 'browserTypeForTests',
         enabled: false,
         csv: {
           available: false,
@@ -196,12 +205,15 @@ describe('getReportingUsage', () => {
       const configGetStub = sinon.stub();
       configGetStub.withArgs('xpack.reporting.enabled').returns(false);
       configGetStub.withArgs('xpack.reporting.index').throws('invalid config key');
+      configGetStub.withArgs('xpack.reporting.capture.browser.type').throws('invalid config key');
       serverStub.config = () => ({ get: configGetStub });
+
       const results = await getReportingUsage(callClusterStub, serverStub);
 
       expect(results).to.eql({
         _all: undefined,
         available: true,
+        browser_type: undefined,
         enabled: false,
         csv: {
           available: true,

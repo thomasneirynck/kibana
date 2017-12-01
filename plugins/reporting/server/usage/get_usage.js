@@ -6,7 +6,7 @@ export async function getReportingUsage(callCluster, server) {
   const xpackInfo = server.plugins.xpack_main.info;
   const config = server.config();
   const available = xpackInfo && xpackInfo.isAvailable(); // some form of reporting (csv at least) is available for all valid licenses
-  const enabled = available && config.get('xpack.reporting.enabled'); // follow ES behavior: if its not available then its not enabled
+  const enabled = config.get('xpack.reporting.enabled'); // follow ES behavior: if its not available then its not enabled
 
   // 1. gather job types and their availability, according to the export types registry and x-pack info
   const exportTypesHandler = await getExportTypesHandler(server);
@@ -24,7 +24,7 @@ export async function getReportingUsage(callCluster, server) {
     let jobTotal; // if this remains undefined, the key/value gets removed in serialization
     if (jobTotalFromData || jobTotalFromData === 0) {
       jobTotal = jobTotalFromData;
-    } else if (enabled) { // jobtype is not in the agg result because it has never been used
+    } else if (available && enabled) { // jobtype is not in the agg result because it has never been used
       jobTotal = 0;
     }
 
@@ -37,9 +37,18 @@ export async function getReportingUsage(callCluster, server) {
     };
   }, {});
 
+  // 4. get the browser
+  let browserType;
+  if (enabled) {
+    // Allow this to explictly throw an exception if/when this config is deprecated,
+    // because we shouldn't collect browserType in that case!
+    browserType = config.get('xpack.reporting.capture.browser.type');
+  }
+
   return {
     available,
-    enabled,
+    enabled: available && enabled, // similar behavior as _xpack API in ES
+    browser_type: browserType,
     _all: (total || total === 0) ? total : undefined,
     ...jobTypes,
   };
