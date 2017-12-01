@@ -13,16 +13,19 @@
  * strictly prohibited.
  */
 
+import chrome from 'ui/chrome';
 import { FeatureCatalogueRegistryProvider, FeatureCatalogueCategory } from 'ui/registry/feature_catalogue';
 
-FeatureCatalogueRegistryProvider.register(() => {
-  return {
-    id: 'monitoring',
-    title: 'Monitoring',
-    description: 'Track the real-time health and performance of your Elastic Stack.',
-    icon: '/plugins/kibana/assets/app_monitoring.svg',
-    path: '/app/monitoring',
-    showOnHomePage: true,
-    category: FeatureCatalogueCategory.ADMIN
-  };
-});
+if (chrome.getInjected('monitoringUiEnabled')) {
+  FeatureCatalogueRegistryProvider.register(() => {
+    return {
+      id: 'monitoring',
+      title: 'Monitoring',
+      description: 'Track the real-time health and performance of your Elastic Stack.',
+      icon: '/plugins/kibana/assets/app_monitoring.svg',
+      path: '/app/monitoring',
+      showOnHomePage: true,
+      category: FeatureCatalogueCategory.ADMIN
+    };
+  });
+}

@@ -12,22 +12,24 @@
  * express written consent of Elasticsearch BV is
  * strictly prohibited.
  */
-
+import chrome from 'ui/chrome';
 import {
   FeatureCatalogueRegistryProvider,
   FeatureCatalogueCategory
 } from 'ui/registry/feature_catalogue';
 
-FeatureCatalogueRegistryProvider.register(() => {
-  return {
-    id: 'apm',
-    title: 'APM',
-    description:
-      'Automatically collect in-depth performance metrics and ' +
-      'errors from inside your applications.',
-    icon: '/plugins/kibana/assets/app_apm.svg',
-    path: '/app/apm',
-    showOnHomePage: true,
-    category: FeatureCatalogueCategory.DATA
-  };
-});
+if (chrome.getInjected('apmUiEnabled')) {
+  FeatureCatalogueRegistryProvider.register(() => {
+    return {
+      id: 'apm',
+      title: 'APM',
+      description:
+        'Automatically collect in-depth performance metrics and ' +
+        'errors from inside your applications.',
+      icon: '/plugins/kibana/assets/app_apm.svg',
+      path: '/app/apm',
+      showOnHomePage: true,
+      category: FeatureCatalogueCategory.DATA
+    };
+  });
+}
