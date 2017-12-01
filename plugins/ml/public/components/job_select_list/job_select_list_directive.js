@@ -42,7 +42,7 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
       $scope.singleSelection = false;
       $scope.timeSeriesOnly = false;
       $scope.noJobsCreated = undefined;
-      $scope.applyTimeRange = true;
+      $scope.applyTimeRange = mlJobSelectService.jobSelectListState.applyTimeRange;
       $scope.urlSelectedIds = {};
       $scope.selected = {};
       $scope.allGroupsSelected = false;
@@ -261,6 +261,7 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
             timefilter.time.to = moment(max).toISOString();
           }
         }
+        mlJobSelectService.jobSelectListState.applyTimeRange = $scope.applyTimeRange;
         $scope.closePopover();
       };
 

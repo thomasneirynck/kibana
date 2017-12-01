@@ -38,6 +38,9 @@ module.service('mlJobSelectService', function ($rootScope, mlJobService, globalS
   this.groupIds = [];
   this.description = { txt: '' };
   this.singleJobDescription = { txt: '' };
+  this.jobSelectListState = {
+    applyTimeRange: true
+  };
 
   // Broadcasts that a change has been made to the selected jobs.
   this.broadcastJobSelectionChange = function () {
