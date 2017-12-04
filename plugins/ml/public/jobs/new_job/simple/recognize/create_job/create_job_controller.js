@@ -204,10 +204,8 @@ module
     const shouldEnableTimeFilter = !$scope.formConfig.useFullIndexData;
     if (shouldEnableTimeFilter) {
       timefilter.enableTimeRangeSelector();
-      timefilter.enableAutoRefreshSelector();
     } else {
       timefilter.disableTimeRangeSelector();
-      timefilter.disableAutoRefreshSelector();
     }
     $scope.$applyAsync();
   };
