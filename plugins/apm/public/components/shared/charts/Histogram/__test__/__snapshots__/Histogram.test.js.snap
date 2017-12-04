@@ -68,7 +68,7 @@ exports[`Histogram Initially should have default markup 1`] = `
                   class=\\"rv-xy-plot__axis__tick__text\\"
                   style=\\"stroke-width: 1px;\\"
             >
-              0
+              0 ms
             </text>
           </g>
           <g transform=\\"translate(108.49784730407508, 0)\\"
