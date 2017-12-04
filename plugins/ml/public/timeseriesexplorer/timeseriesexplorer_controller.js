@@ -240,11 +240,8 @@ module.controller('MlTimeSeriesExplorerController', function (
 
     const bounds = timefilter.getActiveBounds();
 
-    // Only show model plot if only 1 detector.
-    // TODO - add support for showing model plot for jobs with more than 1 detector.
     const detectorIndex = +$scope.detectorId;
-    $scope.modelPlotEnabled = ($scope.detectors.length === 1) &&
-      isModelPlotEnabled($scope.selectedJob, detectorIndex, $scope.entities);
+    $scope.modelPlotEnabled = isModelPlotEnabled($scope.selectedJob, detectorIndex, $scope.entities);
 
     // Only filter on the entity if the field has a value.
     const nonBlankEntities = _.filter($scope.entities, (entity) => { return entity.fieldValue.length > 0; });

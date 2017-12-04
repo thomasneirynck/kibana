@@ -1275,7 +1275,14 @@ module.service('mlResultsService', function ($q, es, ml) {
     return deferred.promise;
   };
 
-  this.getModelPlotOutput = function (jobId, criteriaFields, earliestMs, latestMs, interval, aggType) {
+  this.getModelPlotOutput = function (
+    jobId,
+    detectorIndex,
+    criteriaFields,
+    earliestMs,
+    latestMs,
+    interval,
+    aggType) {
     const deferred = $q.defer();
     const obj = {
       success: true,
@@ -1293,67 +1300,88 @@ module.service('mlResultsService', function ($q, es, ml) {
 
     // Build the criteria to use in the bool filter part of the request.
     // Add criteria for the job ID and time range.
-    const boolCriteria = [];
-    boolCriteria.push({
-      'term': { 'job_id': jobId }
-    });
-
-    boolCriteria.push({
-      'range': {
-        'timestamp': {
-          'gte': earliestMs,
-          'lte': latestMs,
-          'format': 'epoch_millis'
+    const mustCriteria = [
+      {
+        term: { job_id: jobId }
+      },
+      {
+        range: {
+          timestamp: {
+            gte: earliestMs,
+            lte: latestMs,
+            format: 'epoch_millis'
+          }
         }
       }
-    });
+    ];
 
     // Add in term queries for each of the specified criteria.
     _.each(criteriaFields, (criteria) => {
-      const condition = { 'term': {} };
-      condition.term[criteria.fieldName] = criteria.fieldValue;
-      boolCriteria.push(condition);
+      mustCriteria.push({
+        term: {
+          [criteria.fieldName]: criteria.fieldValue
+        }
+      });
     });
+
+    // Add criteria for the detector index. Results from jobs created before 6.1 will not
+    // contain a detector_index field, so use a should criteria with a 'not exists' check.
+    const shouldCriteria = [
+      {
+        term: { detector_index: detectorIndex }
+      },
+      {
+        bool: {
+          must_not: [
+            {
+              exists: { field: 'detector_index' }
+            }
+          ]
+        }
+      }
+    ];
 
     es.search({
       index: ML_RESULTS_INDEX_PATTERN,
       size: 0,
       body: {
-        'query': {
-          'bool': {
-            'filter': [{
-              'query_string': {
-                'query': 'result_type:model_plot',
-                'analyze_wildcard': true
+        query: {
+          bool: {
+            filter: [{
+              query_string: {
+                query: 'result_type:model_plot',
+                analyze_wildcard: true
               }
             }, {
-              'bool': {
-                'must': boolCriteria
+              bool: {
+                must: mustCriteria,
+                should: shouldCriteria,
+                minimum_should_match: 1
               }
             }]
           }
         },
-        'aggs': {
-          'times': {
-            'date_histogram': {
-              'field': 'timestamp',
-              'interval': interval,
-              'min_doc_count': 0
+        aggs: {
+          times: {
+            date_histogram: {
+              field: 'timestamp',
+              interval: interval,
+              min_doc_count: 0
             },
-            'aggs': {
-              'actual': {
-                'avg': {
-                  'field': 'actual'
+            aggs: {
+              actual: {
+                avg: {
+                  field: 'actual'
                 }
               },
-              'modelUpper': {
+              modelUpper: {
                 [modelAggs.max]: {
-                  'field': 'model_upper'
+                  field: 'model_upper'
                 }
               },
-              'modelLower': {
+              modelLower: {
                 [modelAggs.min]: {
-                  'field': 'model_lower'
+                  field: 'model_lower'
                 }
               }
             }

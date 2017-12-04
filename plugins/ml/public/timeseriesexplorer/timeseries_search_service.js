@@ -30,10 +30,7 @@ module.service('mlTimeSeriesSearchService', function (
   mlResultsService) {
 
   this.getMetricData = function (job, detectorIndex, entityFields, earliestMs, latestMs, interval) {
-    // For now only use model plot data if there is only one detector.
-    // TODO - expand to multiple detectors by mapping detectorIndex to model_plot model_feature field.
-    if (job.analysis_config.detectors.length === 1 &&
-          isModelPlotEnabled(job, detectorIndex, entityFields)) {
+    if (isModelPlotEnabled(job, detectorIndex, entityFields)) {
       // Extract the partition, by, over fields on which to filter.
       const criteriaFields = [];
       const detector = job.analysis_config.detectors[detectorIndex];
@@ -66,6 +63,7 @@ module.service('mlTimeSeriesSearchService', function (
 
       return mlResultsService.getModelPlotOutput(
         job.job_id,
+        detectorIndex,
         criteriaFields,
         earliestMs,
         latestMs,
