@@ -83,12 +83,9 @@ elasticsearch.password: "s0m3th1ngs3cr3t"
 need to use {kib}.
 +
 --
-//TO-DO: Per jaymode, this would be a good place to use the UI
+You can manage roles on the *Management / Security / Roles* page in {kib}.
 
-IMPORTANT: You also need to grant {kib} users access to the indices that they
-will be working with in {kib}.
-
-If you're using the `native` realm, you can assign roles using the User
+If you're using the `native` realm, you can also assign roles by using the User
 Management API. For more information, see
 {xpack-ref}/native-realm.html#managing-native-users[Native User Authentication].
 For example, the following creates a user named `jacknich` and assigns it the
@@ -104,9 +101,6 @@ POST /_xpack/security/user/jacknich
 }
 --------------------------------------------------------------------------------
 // CONSOLE
-
-//TO-DO: Per Court, "We should highlight the use of the users/roles UI for this
-//rather than how to do this through the elasticsearch API"
 
 ////
 //TO-DO: See https://github.com/elastic/x-pack-kibana/pull/1812
@@ -127,6 +121,17 @@ kibana_user:
 --------------------------------------------------------------------------------
 --
 ////
+--
+
+. Grant users access to the indices that they will be working with in {kib}.
++
+--
+TIP: You can define as many different roles for your {kib} users as you need.
+
+For example, create roles that have `read` and `view_index_metadata` privileges
+on specific index patterns. For more information, see
+{xpack-ref}/authorization.html[Configuring Role-based Access Control].
+
 --
 
 [[configure-kibana-cert]]
