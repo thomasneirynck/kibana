@@ -99,6 +99,31 @@ export function drawLineChartDots(data, lineChartGroup, lineChartValuesLine, rad
   dots.exit().remove();
 }
 
+// this replicates Kibana's filterAxisLabels() behavior
+// which can be found in ui/vislib/lib/axis/axis_labels.js
+// axis labels which overflow the chart's boundaries will be removed
+export function filterAxisLabels(selection, chartWidth) {
+  if (selection === undefined || selection.selectAll === undefined) {
+    throw new Error('Missing selection parameter');
+  }
+
+  selection.selectAll('.tick text')
+    // don't refactor this to an arrow function because
+    // we depend on using `this` here.
+    .text(function () {
+      const parent = d3.select(this.parentNode);
+      const labelWidth = parent.node().getBBox().width;
+      const labelXPos = d3.transform(parent.attr('transform')).translate[0];
+      const minThreshold = labelXPos - (labelWidth / 2);
+      const maxThreshold = labelXPos + (labelWidth / 2);
+      if (minThreshold >= 0 && maxThreshold <= chartWidth) {
+        return this.textContent;
+      } else {
+        parent.remove();
+      }
+    });
+}
+
 export function numTicks(axisWidth) {
   return axisWidth / MAX_LABEL_WIDTH;
 }

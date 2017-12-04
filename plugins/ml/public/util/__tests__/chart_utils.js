@@ -13,8 +13,10 @@
  * strictly prohibited.
  */
 
+import $ from 'jquery';
+import d3 from 'd3';
 import expect from 'expect.js';
-import { chartLimits, numTicks } from '../chart_utils';
+import { chartLimits, filterAxisLabels, numTicks } from '../chart_utils';
 
 describe('ML - chart utils', () => {
 
@@ -67,6 +69,52 @@ describe('ML - chart utils', () => {
       const limits = chartLimits(data);
       expect(limits.min).to.be(95);
       expect(limits.max).to.be(105);
+    });
+
+  });
+
+  describe('filterAxisLabels', () => {
+
+    it('throws an error when called without arguments', () => {
+      expect(() => filterAxisLabels()).to.throwError();
+    });
+
+    it('filters axis labels', () => {
+      // this provides a dummy structure of axis labels.
+      // the first one should always be filtered because it overflows on the
+      // left side of the axis. the last one should be filtered based on the
+      // given width parameter when doing the test calls.
+      $('body').append(`
+        <svg id="filterAxisLabels">
+          <g class="x axis">
+            <g class="tick" transform="translate(5,0)">
+              <text dy=".71em" y="10" x="0" style="text-anchor: middle;">06:00</text>
+            </g>
+            <g class="tick" transform="translate(187.24137931034485,0)">
+              <text dy=".71em" y="10" x="0" style="text-anchor: middle;">12:00</text>
+            </g>
+            <g class="tick" transform="translate(486.82758620689657,0)">
+              <text dy=".71em" y="10" x="0" style="text-anchor: middle;">18:00</text>
+            </g>
+            <g class="tick" transform="translate(786.4137931034483,0)">
+              <text dy=".71em" y="10" x="0" style="text-anchor: middle;">00:00</text>
+            </g>
+          </g>
+        </svg>
+      `);
+
+      const selector = '#filterAxisLabels .x.axis';
+
+      // given this width, the last tick should not be removed
+      filterAxisLabels(d3.selectAll(selector), 1000);
+      expect(d3.selectAll(selector + ' .tick text').size()).to.be(3);
+
+      // given this width, the last tick should be removed
+      filterAxisLabels(d3.selectAll(selector), 790);
+      expect(d3.selectAll(selector + ' .tick text').size()).to.be(2);
+
+      // clean up
+      $('#filterAxisLabels').remove();
     });
 
   });

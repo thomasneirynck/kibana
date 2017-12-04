@@ -29,7 +29,11 @@ import 'ui/timefilter';
 import { ResizeCheckerProvider } from 'ui/resize_checker';
 
 import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
-import { drawLineChartDots, numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
+import {
+  drawLineChartDots,
+  filterAxisLabels,
+  numTicksForDateFormat
+} from 'plugins/ml/util/chart_utils';
 import { TimeBucketsProvider } from 'ui/time_buckets';
 import ContextChartMask from 'plugins/ml/timeseriesexplorer/context_chart_mask';
 import 'plugins/ml/filters/format_value';
@@ -425,6 +429,8 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       focusChart.select('.y.axis')
         .call(focusYAxis);
 
+      filterAxisLabels(focusChart.select('.x.axis'), vizWidth);
+
       // Render the bounds area and values line.
       if (scope.modelPlotEnabled === true) {
         focusChart.select('.area.bounds')
@@ -683,6 +689,8 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       // Move the x axis labels up so that they are inside the contact chart area.
       cxtGroup.selectAll('.x.context-chart-axis text')
         .attr('dy', (cxtChartHeight - 5));
+
+      filterAxisLabels(cxtGroup.selectAll('.x.context-chart-axis'), cxtWidth);
 
       drawContextBrush(cxtGroup);
     }
