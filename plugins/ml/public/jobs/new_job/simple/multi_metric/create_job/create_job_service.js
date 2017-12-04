@@ -352,6 +352,7 @@ module.service('mlMultiMetricJobService', function (
 
       const jobResults = data.results[formConfig.jobId];
 
+      this.chartData.job.swimlane = [];
       _.each(jobResults, (value, t) => {
         time = +t;
         const date = new Date(time);
