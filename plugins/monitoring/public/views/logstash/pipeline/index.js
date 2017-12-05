@@ -68,7 +68,7 @@ uiModule.controller('logstashPipeline', ($injector, $scope) => {
   const timefilter = $injector.get('timefilter');
 
   timefilter.disableTimeRangeSelector(); // Do not display time picker in UI
-  timefilter.disableAutoRefreshSelector(); // Do not display time picker in UI
+  timefilter.enableAutoRefreshSelector();
 
   function setClusters(clusters) {
     $scope.clusters = clusters;
