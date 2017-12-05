@@ -9,6 +9,11 @@
  *  global
  */
 
+/* elements can hide themself when shared */
+.hide-for-sharing {
+  display: none;
+}
+
 /* hide unusable controls */
 .global-nav,
 kbn-top-nav,
