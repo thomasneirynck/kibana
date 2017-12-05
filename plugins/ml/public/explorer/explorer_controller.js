@@ -38,7 +38,7 @@ import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { getIndexPatterns } from 'plugins/ml/util/index_utils';
 import { refreshIntervalWatcher } from 'plugins/ml/util/refresh_interval_watcher';
-import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
+import { IntervalHelperProvider, getBoundsRoundedToInterval } from 'plugins/ml/util/ml_time_buckets';
 
 uiRoutes
 .when('/explorer/?', {
@@ -513,7 +513,10 @@ module.controller('MlExplorerController', function (
     $scope.swimlaneBucketInterval = calculateSwimlaneBucketInterval();
     console.log('Explorer swimlane bucketInterval:', $scope.swimlaneBucketInterval);
 
+    // Ensure the search bounds align to the bucketing interval used in the swimlane so
+    // that the first and last buckets are complete.
     const bounds = timefilter.getActiveBounds();
+    const searchBounds = getBoundsRoundedToInterval(bounds, $scope.swimlaneBucketInterval, false);
     const selectedJobIds = $scope.getSelectedJobIds();
 
     // Query 1 - load list of top influencers.
@@ -523,8 +526,8 @@ module.controller('MlExplorerController', function (
     const counter = $scope.loadCounter;
     mlResultsService.getTopInfluencers(
       selectedJobIds,
-      bounds.min.valueOf(),
-      bounds.max.valueOf(),
+      searchBounds.min.valueOf(),
+      searchBounds.max.valueOf(),
       MAX_INFLUENCER_FIELD_NAMES,
       MAX_INFLUENCER_FIELD_VALUES
     ).then((resp) => {
@@ -537,17 +540,20 @@ module.controller('MlExplorerController', function (
     // Query 2 - load overall bucket scores by time.
     // Pass the interval in seconds as the swimlane relies on a fixed number of seconds between buckets
     // which wouldn't be the case if e.g. '1M' was used.
+    // Pass 'true' when obtaining bucket bounds due to the way the overall_buckets endpoint works
+    // to ensure the search is inclusive of end time.
+    const overallBucketsBounds = getBoundsRoundedToInterval(bounds, $scope.swimlaneBucketInterval, true);
     mlResultsService.getOverallBucketScores(
       selectedJobIds,
       // Note there is an optimization for when top_n == 1.
       // If top_n > 1, we should test what happens when the request takes long
       // and refactor the loading calls, if necessary, to avoid delays in loading other components.
       1,
-      bounds.min.valueOf(),
-      bounds.max.valueOf(),
+      overallBucketsBounds.min.valueOf(),
+      overallBucketsBounds.max.valueOf(),
       $scope.swimlaneBucketInterval.asSeconds() + 's'
     ).then((resp) => {
-      processOverallResults(resp.results);
+      processOverallResults(resp.results, searchBounds);
       console.log('Explorer overall swimlane data set:', $scope.overallSwimlaneData);
       finish(counter);
     });
@@ -571,7 +577,10 @@ module.controller('MlExplorerController', function (
       $scope.viewBySwimlaneData = { 'fieldName': '', 'laneLabels': [], 'points': [], 'interval': 3600 };
       finish();
     } else {
+      // Ensure the search bounds align to the bucketing interval used in the swimlane so
+      // that the first and last buckets are complete.
       const bounds = timefilter.getActiveBounds();
+      const searchBounds = getBoundsRoundedToInterval(bounds, $scope.swimlaneBucketInterval, false);
       const selectedJobIds = $scope.getSelectedJobIds();
 
       // load scores by influencer/jobId value and time.
@@ -583,8 +592,8 @@ module.controller('MlExplorerController', function (
           selectedJobIds,
           $scope.swimlaneViewByFieldName,
           fieldValues,
-          bounds.min.valueOf(),
-          bounds.max.valueOf(),
+          searchBounds.min.valueOf(),
+          searchBounds.max.valueOf(),
           interval,
           $scope.swimlaneLimit
         ).then((resp) => {
@@ -595,8 +604,8 @@ module.controller('MlExplorerController', function (
         const jobIds = (fieldValues !== undefined && fieldValues.length > 0) ? fieldValues : selectedJobIds;
         mlResultsService.getScoresByBucket(
           jobIds,
-          bounds.min.valueOf(),
-          bounds.max.valueOf(),
+          searchBounds.min.valueOf(),
+          searchBounds.max.valueOf(),
           interval,
           $scope.swimlaneLimit
         ).then((resp) => {
@@ -696,46 +705,40 @@ module.controller('MlExplorerController', function (
     return(($mlExplorer.width() / 6) * 5) - 170 - 50;
   }
 
-  function processOverallResults(scoresByTime) {
-    const bounds = timefilter.getActiveBounds();
-    const boundsMin = Math.floor(bounds.min.valueOf() / 1000);
-    const boundsMax = Math.floor(bounds.max.valueOf() / 1000);
-    const dataset = { 'laneLabels': ['Overall'], 'points': [],
-      'interval': $scope.swimlaneBucketInterval.asSeconds(), earliest: boundsMin, latest: boundsMax };
+  function processOverallResults(scoresByTime, searchBounds) {
+    const dataset = {
+      laneLabels: ['Overall'],
+      points: [],
+      interval: $scope.swimlaneBucketInterval.asSeconds(),
+      earliest: searchBounds.min.valueOf() / 1000,
+      latest: searchBounds.max.valueOf() / 1000
+    };
 
     if (_.keys(scoresByTime).length > 0) {
       // Store the earliest and latest times of the data returned by the ES aggregations,
       // These will be used for calculating the earliest and latest times for the swimlane charts.
-      dataset.earliest = Number.MAX_VALUE;
-      dataset.latest = 0;
-
       _.each(scoresByTime, (score, timeMs) => {
         const time = timeMs / 1000;
-        dataset.points.push({ 'laneLabel': 'Overall', 'time': time, 'value': score });
+        dataset.points.push({
+          laneLabel: 'Overall',
+          time,
+          value: score
+        });
 
         dataset.earliest = Math.min(time, dataset.earliest);
         dataset.latest = Math.max((time + dataset.interval), dataset.latest);
       });
-
-      // Adjust the earliest back to the first bucket at or before the start time in the time picker,
-      // and the latest forward to the end of the bucket at or after the end time in the time picker.
-      // Due to the way the swimlane sections are plotted, the chart buckets
-      // must coincide with the times of the buckets in the data.
-      const bucketIntervalSecs = $scope.swimlaneBucketInterval.asSeconds();
-      if (dataset.earliest > boundsMin) {
-        dataset.earliest = dataset.earliest - (Math.ceil((dataset.earliest - boundsMin) / bucketIntervalSecs) * bucketIntervalSecs);
-      }
-      if (dataset.latest < boundsMax) {
-        dataset.latest = dataset.latest + (Math.ceil((boundsMax - dataset.latest) / bucketIntervalSecs) * bucketIntervalSecs);
-      }
     }
 
     $scope.overallSwimlaneData = dataset;
   }
 
   function processViewByResults(scoresByInfluencerAndTime) {
-    const dataset = { 'fieldName': $scope.swimlaneViewByFieldName, 'laneLabels': [],
-      'points': [], 'interval': $scope.swimlaneBucketInterval.asSeconds() };
+    const dataset = {
+      fieldName: $scope.swimlaneViewByFieldName,
+      laneLabels: [],
+      points: [],
+      interval: $scope.swimlaneBucketInterval.asSeconds() };
 
     // Set the earliest and latest to be the same as the overall swimlane.
     dataset.earliest = $scope.overallSwimlaneData.earliest;
@@ -746,7 +749,11 @@ module.controller('MlExplorerController', function (
 
       _.each(influencerData, (anomalyScore, timeMs) => {
         const time = timeMs / 1000;
-        dataset.points.push({ 'laneLabel': influencerFieldValue, 'time': time, 'value': anomalyScore });
+        dataset.points.push({
+          laneLabel: influencerFieldValue,
+          time,
+          value: anomalyScore
+        });
       });
     });
 

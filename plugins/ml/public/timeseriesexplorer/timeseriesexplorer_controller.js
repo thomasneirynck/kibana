@@ -46,7 +46,7 @@ import {
   processMetricPlotResults,
   processRecordScoreResults } from 'plugins/ml/timeseriesexplorer/timeseriesexplorer_utils';
 import { refreshIntervalWatcher } from 'plugins/ml/util/refresh_interval_watcher';
-import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
+import { IntervalHelperProvider, getBoundsRoundedToInterval } from 'plugins/ml/util/ml_time_buckets';
 import template from './timeseriesexplorer.html';
 import forecastingModalTemplate from 'plugins/ml/timeseriesexplorer/forecasting_modal/forecasting_modal.html';
 
@@ -255,6 +255,11 @@ module.controller('MlTimeSeriesExplorerController', function (
     $scope.contextAggregationInterval = calculateAggregationInterval(bounds, CHARTS_POINT_TARGET, CHARTS_POINT_TARGET);
     console.log('aggregationInterval for context data (s):', $scope.contextAggregationInterval.asSeconds());
 
+    // Ensure the search bounds align to the bucketing interval so that the first and last buckets are complete.
+    // For sum or count detectors, short buckets would hold smaller values, and model bounds would also be affected
+    // to some extent with all detector functions if not searching complete buckets.
+    const searchBounds = getBoundsRoundedToInterval(bounds, $scope.contextAggregationInterval, false);
+
     // Query 1 - load metric data at low granularity across full time range.
     // Pass a counter flag into the finish() function to make sure we only process the results
     // for the most recent call to the load the data in cases where the job selection and time filter
@@ -264,8 +269,8 @@ module.controller('MlTimeSeriesExplorerController', function (
       $scope.selectedJob,
       detectorIndex,
       nonBlankEntities,
-      bounds.min.valueOf(),
-      bounds.max.valueOf(),
+      searchBounds.min.valueOf(),
+      searchBounds.max.valueOf(),
       $scope.contextAggregationInterval.expression
     ).then((resp) => {
       const fullRangeChartData = processMetricPlotResults(resp.results, $scope.modelPlotEnabled);
@@ -282,8 +287,8 @@ module.controller('MlTimeSeriesExplorerController', function (
     mlResultsService.getRecordMaxScoreByTime(
       $scope.selectedJob.job_id,
       $scope.criteriaFields,
-      bounds.min.valueOf(),
-      bounds.max.valueOf(),
+      searchBounds.min.valueOf(),
+      searchBounds.max.valueOf(),
       $scope.contextAggregationInterval.expression
     ).then((resp) => {
       const fullRangeRecordScoreData = processRecordScoreResults(resp.results);
@@ -300,8 +305,8 @@ module.controller('MlTimeSeriesExplorerController', function (
       $scope.selectedJob,
       detectorIndex,
       $scope.entities,
-      bounds.min.valueOf(),
-      bounds.max.valueOf()
+      searchBounds.min.valueOf(),
+      searchBounds.max.valueOf()
     ).then((resp) => {
       $scope.chartDetails = resp.results;
       finish(counter);
@@ -324,8 +329,8 @@ module.controller('MlTimeSeriesExplorerController', function (
         detectorIndex,
         forecastId,
         nonBlankEntities,
-        bounds.min.valueOf(),
-        bounds.max.valueOf(),
+        searchBounds.min.valueOf(),
+        searchBounds.max.valueOf(),
         $scope.contextAggregationInterval.expression,
         aggType)
       .then((resp) => {
@@ -342,8 +347,8 @@ module.controller('MlTimeSeriesExplorerController', function (
       [$scope.selectedJob.job_id],
       [{ 'fieldName': 'detector_index', 'fieldValue': detectorIndex }],
       0,
-      bounds.min.valueOf(),
-      bounds.max.valueOf(),
+      searchBounds.min.valueOf(),
+      searchBounds.max.valueOf(),
       ANOMALIES_MAX_RESULTS)
     .then((resp) => {
       if (resp.records && resp.records.length > 0) {
@@ -398,15 +403,19 @@ module.controller('MlTimeSeriesExplorerController', function (
     // Calculate the aggregation interval for the focus chart.
     const bounds = { min: moment(fromDate), max: moment(toDate) };
     $scope.focusAggregationInterval = calculateAggregationInterval(bounds, CHARTS_POINT_TARGET, CHARTS_POINT_TARGET);
-    console.log('aggregationInterval for focus data (s):', $scope.focusAggregationInterval.asSeconds());
+
+    // Ensure the search bounds align to the bucketing interval so that the first and last buckets are complete.
+    // For sum or count detectors, short buckets would hold smaller values, and model bounds would also be affected
+    // to some extent with all detector functions if not searching complete buckets.
+    const searchBounds = getBoundsRoundedToInterval(bounds, $scope.focusAggregationInterval, false);
 
     // Query 1 - load metric data across selected time range.
     mlTimeSeriesSearchService.getMetricData(
       $scope.selectedJob,
       detectorIndex,
       nonBlankEntities,
-      bounds.min.valueOf(),
-      bounds.max.valueOf(),
+      searchBounds.min.valueOf(),
+      searchBounds.max.valueOf(),
       $scope.focusAggregationInterval.expression
     ).then((resp) => {
       $scope.focusChartData = processMetricPlotResults(resp.results, $scope.modelPlotEnabled);
@@ -422,8 +431,8 @@ module.controller('MlTimeSeriesExplorerController', function (
       [$scope.selectedJob.job_id],
       $scope.criteriaFields,
       0,
-      bounds.min.valueOf(),
-      bounds.max.valueOf(),
+      searchBounds.min.valueOf(),
+      searchBounds.max.valueOf(),
       ANOMALIES_MAX_RESULTS
     ).then((resp) => {
       // Sort in descending time order before storing in scope.
@@ -444,13 +453,14 @@ module.controller('MlTimeSeriesExplorerController', function (
       if ($scope.modelPlotEnabled === false && (esAgg === 'sum' || esAgg === 'count')) {
         aggType = { avg: 'sum', max: 'sum', min: 'sum' };
       }
+
       mlForecastService.getForecastData(
         $scope.selectedJob,
         detectorIndex,
         forecastId,
         nonBlankEntities,
-        bounds.min.valueOf(),
-        bounds.max.valueOf(),
+        searchBounds.min.valueOf(),
+        searchBounds.max.valueOf(),
         $scope.focusAggregationInterval.expression,
         aggType)
       .then((resp) => {
