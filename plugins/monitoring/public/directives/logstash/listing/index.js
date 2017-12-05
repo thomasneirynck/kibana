@@ -21,7 +21,8 @@ const columns = [
   { title: 'Load Average', sortKey: 'os.cpu.load_average.1m', },
   { title: 'JVM Heap Used', sortKey: 'jvm.mem.heap_used_percent' },
   { title: 'Events Ingested', sortKey: 'events.out' },
-  { title: 'Config Reloads' }
+  { title: 'Config Reloads' },
+  { title: 'Version', sortKey: 'logstash.version' }
 ];
 const nodeRowFactory = (scope, kbnUrl) => {
   const goToNode = uuid => {
@@ -66,6 +67,11 @@ const nodeRowFactory = (scope, kbnUrl) => {
         <KuiTableRowCell>
           <div className="monitoringTableCell__splitNumber">{ props.reloads.successes } successes</div>
           <div className="monitoringTableCell__splitNumber">{ props.reloads.failures } failures</div>
+        </KuiTableRowCell>
+        <KuiTableRowCell>
+          <div className="monitoringTableCell__version">
+            { formatNumber(get(props, 'logstash.version')) }
+          </div>
         </KuiTableRowCell>
       </KuiTableRow>
     );

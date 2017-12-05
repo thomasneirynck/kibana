@@ -53,7 +53,8 @@ export function getNodes(req, lsIndexPattern, { clusterUuid }) {
         'logstash_stats.logstash.uuid',
         'logstash_stats.logstash.status',
         'logstash_stats.logstash.pipeline',
-        'logstash_stats.reloads'
+        'logstash_stats.reloads',
+        'logstash_stats.logstash.version'
       ]
     }
   };
