@@ -54,8 +54,8 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
     const contextChartHeight = 60;
     const chartSpacing = 25;
     const swimlaneHeight = 30;
-    const margin = { top: 20, right: 20, bottom: 40, left: 40 };
-    const svgHeight = focusHeight + contextChartHeight + swimlaneHeight + margin.top + margin.bottom;
+    const margin = { top: 20, right: 10, bottom: 15, left: 40 };
+    const svgHeight = focusHeight + contextChartHeight + swimlaneHeight + chartSpacing + margin.top + margin.bottom;
     let vizWidth  = svgWidth  - margin.left - margin.right;
 
     const FOCUS_CHART_ANOMALY_RADIUS = 7;
