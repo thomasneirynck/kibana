@@ -437,20 +437,7 @@ module
   }
 
   function createResultsUrl() {
-    const jobIds = [];
-    // create a flat list of job ids.
-    // if groups have been configured, create duplicate jobs for each group
-    if ($scope.formConfig.jobGroups.length) {
-      $scope.formConfig.jobs.forEach(job => {
-        $scope.formConfig.jobGroups.forEach(group => {
-          jobIds.push(`'${group}.${$scope.formConfig.jobLabel}${job.id}'`);
-        });
-      });
-    } else {
-      $scope.formConfig.jobs.forEach((job) => {
-        jobIds.push(`'${$scope.formConfig.jobLabel}${job.id}'`);
-      });
-    }
+    const jobIds = $scope.formConfig.jobs.map(job => `'${$scope.formConfig.jobLabel}${job.id}'`);
     const jobIdsString = jobIds.join(',');
 
     const from = moment($scope.formConfig.start).toISOString();
