@@ -1,5 +1,6 @@
-import { last, isFunction } from 'lodash';
+import { last, isFunction, debounce } from 'lodash';
 import $ from 'jquery-flot'; // webpackShim
+import { DEBOUNCE_FAST_MS } from 'monitoring-constants';
 
 /**
  * Helper class for operations done by Sparkline component on its flot chart
@@ -10,7 +11,9 @@ const flotOptions = {
     // No grid
     show: false,
 
-    margin: 4 // px
+    margin: 4, // px
+
+    hoverable: true,
   },
 
   // Set series line color
@@ -23,6 +26,12 @@ const flotOptions = {
     lines: {
       // Set series line width
       lineWidth: 2 // Cribbed from components/chart/get_options.js
+    },
+
+    highlightColor: '#3b73ac',
+
+    points: {
+      radius: 2
     }
   }
 };
@@ -49,22 +58,17 @@ function makeData(series = []) {
 }
 
 export class SparklineFlotChart {
-  constructor(containerElem, initialSeries, onBrush, overrideOptions) {
+  constructor(containerElem, initialSeries, onBrush, onHover, overrideOptions) {
     this.containerElem = containerElem;
     this.data = makeData(initialSeries);
     this.options = { ...flotOptions, ...overrideOptions };
 
-    if (onBrush && isFunction(onBrush)) {
-      // Requires `selection` flot plugin
-      this.options.selection = {
-        mode: 'x',
-        color: '#9c9c9c'
-      };
-      $(this.containerElem).off('plotselected');
-      $(this.containerElem).on('plotselected', (_event, range) => {
-        onBrush(range.xaxis);
-        this.flotChart.clearSelection();
-      });
+    if (isFunction(onBrush)) {
+      this.setupBrushHandling(onBrush);
+    }
+
+    if (isFunction(onHover)) {
+      this.setupHoverHandling(onHover);
     }
 
     this.render();
@@ -81,13 +85,51 @@ export class SparklineFlotChart {
     this.flotChart.draw();
   }
 
+  setupBrushHandling = (onBrush) => {
+    // Requires `selection` flot plugin
+    this.options.selection = {
+      mode: 'x',
+      color: '#9c9c9c'
+    };
+    $(this.containerElem).off('plotselected');
+    $(this.containerElem).on('plotselected', (_event, range) => {
+      onBrush(range.xaxis);
+      this.flotChart.clearSelection();
+    });
+  }
+
+  setupHoverHandling = (onHover) => {
+    const container = $(this.containerElem);
+    const debouncedOnHover = debounce((_event, _range, item) => {
+      if (item === null) {
+        return onHover();
+      }
+
+      onHover({
+        xValue: item.datapoint[0],
+        yValue: item.datapoint[1],
+        xPosition: item.pageX - window.pageXOffset,
+        yPosition: item.pageY - window.pageYOffset,
+        plotTop: container.offset().top,
+        plotLeft: container.offset().left,
+        plotHeight: container.height(),
+        plotWidth: container.width()
+      });
+    }, DEBOUNCE_FAST_MS, { leading: true });
+
+    container.off('plothover');
+    container.on('plothover', debouncedOnHover);
+  }
+
   /**
    * Necessary to prevent a memory leak. Shoudl be called any time
    * the chart is being removed from the DOM
    */
   shutdown() {
     this.flotChart.shutdown();
-    $(this.containerElem).off('plotselected');
+    const container = $(this.containerElem);
+    container.off('plotselected');
+    container.off('plothover');
     window.removeEventListener('resize', this.render);
   }
 }

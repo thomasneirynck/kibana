@@ -4,15 +4,14 @@ import { getLastValue } from './get_last_value';
 import { TimeseriesContainer } from './timeseries_container';
 import { HorizontalLegend } from './horizontal_legend';
 import { getValuesForSeriesIndex, getValuesByX } from './get_values_for_legend';
+import { DEBOUNCE_SLOW_MS } from 'monitoring-constants';
 
 export class TimeseriesVisualization extends React.Component {
 
   constructor(props) {
     super(props);
 
-    // 17ms, which is roughly 60fps
-    const debounceMillis = 17;
-    this.debouncedUpdateLegend = _.debounce(this.updateLegend, debounceMillis);
+    this.debouncedUpdateLegend = _.debounce(this.updateLegend, DEBOUNCE_SLOW_MS);
     this.debouncedUpdateLegend = this.debouncedUpdateLegend.bind(this);
 
     this.toggleFilter = this.toggleFilter.bind(this);

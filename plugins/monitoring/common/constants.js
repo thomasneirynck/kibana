@@ -184,3 +184,6 @@ export const DEFAULT_NO_DATA_MESSAGE_WITH_FILTER = (
 
 export const TABLE_ACTION_UPDATE_FILTER = 'UPDATE_FILTER';
 export const TABLE_ACTION_RESET_PAGING  = 'RESET_PAGING';
+
+export const DEBOUNCE_SLOW_MS = 17; // roughly how long it takes to render a frame at 60fps
+export const DEBOUNCE_FAST_MS = 10; // roughly how long it takes to render a frame at 100fps
