@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { checkParam } from '../../error_missing_required';
 import { createQuery } from '../../create_query.js';
-import { near } from '../../calculate_auto';
+import { calculateAuto } from '../../calculate_auto';
 import { getAggItems } from '../../lists/get_agg_items';
 import { mapResponse } from '../../lists/map_response';
 import { ElasticsearchMetric } from '../../metrics';
@@ -48,7 +48,7 @@ export function getNodes(req, esIndexPattern) {
 
   const listingMetrics = req.payload.listingMetrics || [];
   const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
-  const bucketSize = Math.max(minIntervalSeconds, near(100, duration).asSeconds());
+  const bucketSize = Math.max(minIntervalSeconds, calculateAuto(100, duration).asSeconds());
   const aggItems = getAggItems({ listingMetrics, bucketSize, min, max });
 
   const params = {

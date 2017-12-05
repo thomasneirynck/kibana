@@ -20,9 +20,7 @@ const roundingRules = [
   [ Infinity, d(1, 'year') ]
 ];
 
-const revRoundingRules = roundingRules.slice(0).reverse();
-
-function find(rules, check, last) {
+function find(rules, check) {
   function pick(buckets, duration) {
     const target = duration / buckets;
     let lastResp;
@@ -32,12 +30,10 @@ function find(rules, check, last) {
       const resp = check(rule[0], rule[1], target);
 
       if (resp == null) {
-        if (!last) { continue; }
         if (lastResp) { return lastResp; }
         break;
       }
 
-      if (!last) { return resp; }
       lastResp = resp;
     }
 
@@ -52,14 +48,17 @@ function find(rules, check, last) {
   };
 }
 
-export const near = find(revRoundingRules, function near(bound, interval, target) {
-  if (bound > target) { return interval; }
-}, true);
+const revRoundingRules = roundingRules.slice(0).reverse();
 
-export const lessThan = find(revRoundingRules, function lessThan(_bound, interval, target) {
-  if (interval < target) { return interval; }
-});
-
-export const atLeast = find(revRoundingRules, function atLeast(_bound, interval, target) {
-  if (interval <= target) { return interval; }
+/*
+ * 24 hours: 600 seconds
+ * 12 hours: 300 seconds
+ * 4 hours: 60 seconds
+ * 1 hour: 30 seconds
+ * 15 minutes: 10 seconds
+ */
+export const calculateAuto = find(revRoundingRules, (bound, interval, target) => {
+  if (bound > target) {
+    return interval;
+  }
 });
