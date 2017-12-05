@@ -134,6 +134,84 @@ exports[`UploadLicense should display a modal when license requires acknowledgem
 </div>
 `;
 
+exports[`UploadLicense should display an error when ES says license is expired 1`] = `
+<div
+  className="kuiNotice"
+>
+  <div
+    className="kuiPanel"
+  >
+    <div
+      className="kuiPanelHeader"
+    >
+      <div
+        className="kuiPanelHeader__title"
+      >
+        Upload a license
+      </div>
+    </div>
+    <div
+      className="kuiPanelBody"
+    >
+      <p>
+        Your license key is a JSON file with a signature attached.
+      </p>
+      <p>
+        Uploading a license will replace your current 
+        <b>
+          
+        </b>
+         license.
+      </p>
+      <form>
+        <div
+          className="kuiInfoPanel kuiInfoPanel--error kuiVerticalRhythm"
+        >
+          <div
+            className="kuiInfoPanelHeader"
+          >
+            <span
+              aria-label="Warning"
+              className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--error fa-warning"
+              role="img"
+            />
+            <span
+              className="kuiInfoPanelHeader__title"
+            >
+              The supplied license has expired.
+            </span>
+          </div>
+        </div>
+        <div
+          className="kuiVerticalRhythm"
+        >
+          <p>
+            <input
+              name="licenseFile"
+              onChange={[Function]}
+              type="file"
+            />
+          </p>
+        </div>
+        <button
+          className="kuiButton kuiButton--primary"
+          disabled={false}
+          onClick={[Function]}
+        >
+          <span
+            className="kuiButton__inner"
+          >
+            <span>
+              Upload
+            </span>
+          </span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`UploadLicense should display an error when ES says license is invalid 1`] = `
 <div
   className="kuiNotice"

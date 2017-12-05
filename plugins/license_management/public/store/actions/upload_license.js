@@ -17,6 +17,9 @@ const dispatchFromResponse = async (response, dispatch, currentLicenseType, newL
     if (licenseStatus === 'invalid') {
       dispatch(uploadLicenseStatus({}));
       dispatch(addUploadErrorMessage('The supplied license is not valid for this product.'));
+    } else if (licenseStatus === 'expired') {
+      dispatch(uploadLicenseStatus({}));
+      dispatch(addUploadErrorMessage('The supplied license has expired.'));
     } else {
       await xPackInfo.refresh();
       dispatch(addLicense(xPackInfo.get('license')));

@@ -54,6 +54,14 @@ describe('UploadLicense', () => {
     const rendered = TestRenderer.create(component);
     expect(rendered).toMatchSnapshot();
   });
+  it('should display an error when ES says license is expired', async () => {
+    const invalidLicense = JSON.stringify({ license: { type: 'basic' } });
+    server.respond([200, { "Content-Type": "application/json" },
+      '{"acknowledged": "true", "license_status": "expired"}']);
+    await uploadLicense(invalidLicense)(store.dispatch, null, services);
+    const rendered = TestRenderer.create(component);
+    expect(rendered).toMatchSnapshot();
+  });
   it('should display a modal when license requires acknowledgement', async () => {
     const unacknowledgedLicense = JSON.stringify({ license: { type: 'basic' } });
     /* eslint-disable max-len */
