@@ -567,9 +567,14 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       // remove query_delay if it's between 60s and 120s
       // the back-end produces a random value between 60 and 120 and so
       // by deleting it, the back-end will produce a new random value
-      const queryDelay = parseInterval(tempJob.datafeed_config.query_delay).asSeconds();
-      if (queryDelay > 60 && queryDelay < 120) {
-        delete tempJob.datafeed_config.query_delay;
+      if (tempJob.datafeed_config.query_delay) {
+        const interval = parseInterval(tempJob.datafeed_config.query_delay);
+        if (interval !== null) {
+          const queryDelay = interval.asSeconds();
+          if (queryDelay > 60 && queryDelay < 120) {
+            delete tempJob.datafeed_config.query_delay;
+          }
+        }
       }
     }
 
