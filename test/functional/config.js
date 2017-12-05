@@ -41,7 +41,7 @@ export default async function ({ readConfigFile }) {
     // list paths to the files that contain your plugins tests
     testFiles: [
       resolve(__dirname, './apps/graph'),
-      // resolve(__dirname, './apps/monitoring'), // FIXME: picking time range in automation needs stabilization: https://github.com/elastic/kibana/issues/15333
+      resolve(__dirname, './apps/monitoring'),
       resolve(__dirname, './apps/dashboard_mode'),
       resolve(__dirname, './apps/security'),
       resolve(__dirname, './apps/reporting'),
