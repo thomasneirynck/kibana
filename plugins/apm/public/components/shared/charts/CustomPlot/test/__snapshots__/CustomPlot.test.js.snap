@@ -959,7 +959,7 @@ Object {
 }
 `;
 
-exports[`when response has data when dragging without releasing should display drag marker 1`] = `
+exports[`when response has data when dragging without releasing should display SelectionMarker 1`] = `
 "
 <rect pointer-events=\\"none\\"
       fill=\\"black\\"

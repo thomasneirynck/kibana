@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import {
-  getResponseTimeSeries,
-  getRpmSeries
+  getResponseTimeSeriesOrEmpty,
+  getRpmSeriesOrEmpty
 } from '../../../shared/charts/TransactionCharts/selectors';
 import Charts from '../../../shared/charts/TransactionCharts';
 import { getUrlParams } from '../../../../store/urlParams';
@@ -15,12 +15,12 @@ function mapStateToProps(state = {}) {
   return {
     urlParams,
     status: charts.status,
-    responseTimeSeries: getResponseTimeSeries({
+    responseTimeSeries: getResponseTimeSeriesOrEmpty({
       start,
       end,
       chartsData: charts.data
     }),
-    rpmSeries: getRpmSeries({
+    rpmSeries: getRpmSeriesOrEmpty({
       start,
       end,
       chartsData: charts.data,

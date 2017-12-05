@@ -1,7 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { unit, units, px, fontSizes, colors } from '../../style/variables';
-import { truncate } from '../../style/utils';
+import {
+  unit,
+  units,
+  px,
+  fontSizes,
+  colors,
+  truncate
+} from '../../style/variables';
 
 const PropertiesContainer = styled.div`
   display: flex;
@@ -34,7 +40,7 @@ const PropertyValueEmphasis = styled.span`
 `;
 
 const PropertyUrl = PropertyValue.withComponent('span').extend`
-${truncate(px(unit * 35))};
+  ${truncate(px(unit * 35))};
 `;
 
 export function Properties({ timestampAgo, timestampFull, url }) {

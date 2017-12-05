@@ -76,3 +76,12 @@ export const fontSizes = {
   xlarge: '20px',
   xxlarge: '30px'
 };
+
+export function truncate(width) {
+  return `
+      max-width: ${width};
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    `;
+}

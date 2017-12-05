@@ -13,9 +13,9 @@ import {
   units,
   fontSizes,
   px,
-  colors
+  colors,
+  truncate
 } from '../../../../style/variables';
-import { truncate } from '../../../../style/utils';
 
 import StaticPlot from './StaticPlot';
 import InteractivePlot from './InteractivePlot';
