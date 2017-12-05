@@ -52,6 +52,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
     const focusChartHeight = 310;
     const focusHeight = focusZoomPanelHeight + focusChartHeight;
     const contextChartHeight = 60;
+    const contextChartLineTopMargin = 3;
     const chartSpacing = 25;
     const swimlaneHeight = 30;
     const margin = { top: 20, right: 10, bottom: 15, left: 40 };
@@ -97,7 +98,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       .defined(d => (d.lower !== null && d.upper !== null));
 
     let contextXScale = d3.time.scale().range([0, vizWidth]);
-    let contextYScale = d3.scale.linear().range([contextChartHeight, 0]);
+    let contextYScale = d3.scale.linear().range([contextChartHeight, contextChartLineTopMargin]);
 
     const TimeBuckets = Private(TimeBucketsProvider);
 
@@ -596,7 +597,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         }
       }
 
-      contextYScale = d3.scale.linear().range([cxtChartHeight, 0])
+      contextYScale = d3.scale.linear().range([cxtChartHeight, contextChartLineTopMargin])
         .domain([chartLimits.min, chartLimits.max]);
 
       const borders = cxtGroup.append('g')
@@ -721,7 +722,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       const topBorder = contextGroup.append('rect')
         .attr('class', 'top-border')
         .attr('y', -2)
-        .attr('height', 3);
+        .attr('height', contextChartLineTopMargin);
 
       // Draw the brush handles using SVG foreignObject elements.
       // Note these are not supported on IE11 and below, so will not appear in IE.
