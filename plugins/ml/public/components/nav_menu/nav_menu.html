@@ -9,14 +9,14 @@
     </div>
     <!-- Tabs -->
     <div data-transclude-slot="bottomRow">
-      <div ng-if="showTabs" class="kuiLocalTabs" role="navigation">
-        <a kbn-href="#/jobs" class="kuiLocalTab"
+      <div ng-if="showTabs" class="kuiLocalTabs" role="tablist">
+        <a kbn-href="#/jobs" class="kuiLocalTab" role="tab"
         ng-class="{'kuiLocalTab-isSelected': isActiveTab('jobs')}">
         Job Management</a>
-        <a kbn-href="#/explorer" class="kuiLocalTab"
+        <a kbn-href="#/explorer" class="kuiLocalTab" role="tab"
         ng-class="{'kuiLocalTab-isSelected': isActiveTab('explorer')}">
         Anomaly Explorer</a>
-        <a kbn-href="#/timeseriesexplorer" class="kuiLocalTab"
+        <a kbn-href="#/timeseriesexplorer" class="kuiLocalTab" role="tab"
         ng-class="{'kuiLocalTab-isSelected': isActiveTab('timeseriesexplorer')}">
         Single Metric Viewer</a>
       </div>

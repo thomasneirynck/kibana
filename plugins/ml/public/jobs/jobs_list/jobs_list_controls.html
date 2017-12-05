@@ -8,6 +8,7 @@
       ng-click="((job.datafeed_config && job.datafeed_config.state==='started')?stopDatafeed(job):startDatafeed(job))"
       class="kuiButton kuiButton--basic kuiButton--small"
       data-toggle="tooltip"
+      aria-label="{{((job.datafeed_config && job.datafeed_config.state==='started')?'Stop':'Start')}} datafeed"
       ng-disabled="(privileges.canStartStopDatafeed===false || licenseDetails.hasExpired===true) || job.state==='closing' || job.state==='opening' || job.state==='failed'"
       tooltip="{{(job.datafeed_config && job.datafeed_config.state==='started')?'Stop datafeed for':'Start datafeed for'}} {{job.job_id}}">
         <i ng-show="job.datafeed_config && job.datafeed_config.state==='started' && job.state!=='failed'" aria-hidden="true" class="fa fa-stop"></i>
@@ -25,7 +26,6 @@
     ng-show="(!job.datafeed_config) || (job.datafeed_config.state==='stopping' || job.datafeed_config.state==='starting')"
     class="kuiButton kuiButton--basic kuiButton--small"
     data-toggle="tooltip"
-    aria-label="Preview Job"
     tooltip="No datafeed settings for {{job.job_id}}">
       <i aria-hidden="true" class="fa fa-clock-o"></i>
   </button>
@@ -35,6 +35,7 @@
     href='ml#/explorer/{{jobUrl.url}}'
     class="kuiButton kuiButton--basic kuiButton--small"
     data-toggle="tooltip"
+    aria-label="Open Anomaly Explorer"
     tooltip="Open {{job.job_id}} in Anomaly Explorer">
       <i aria-hidden="true" class="fa fa-table"></i>
   </a>
@@ -46,6 +47,7 @@
     href='ml#/timeseriesexplorer/{{jobUrl.url}}'
     class="kuiButton kuiButton--basic kuiButton--small"
     data-toggle="tooltip"
+    aria-label="Open Single Metric Viewer"
     tooltip="Open {{job.job_id}} in Single Metric Viewer">
       <i aria-hidden="true" class="fa fa-line-chart"></i>
   </a>
@@ -53,6 +55,7 @@
     ng-if='!enableTimeSeries'
     disabled
     class="kuiButton kuiButton--basic kuiButton--small"
+    aria-label="Open single metric viewer"
     data-toggle="tooltip">
       <i aria-hidden="true" class="fa fa-line-chart"></i>
   </button>
@@ -64,6 +67,7 @@
       ng-click="editJob(job)"
       ng-disabled="(privileges.canUpdateJob===false || privileges.canUpdateDatafeed===false || licenseDetails.hasExpired===true)"
       class="kuiButton kuiButton--basic kuiButton--small"
+      aria-label="Edit job"
       data-toggle="tooltip"
       tooltip="Edit job" >
         <i aria-hidden="true" class="fa fa-pencil-square-o"></i>
@@ -78,6 +82,7 @@
       class="kuiButton kuiButton--basic kuiButton--small"
       data-toggle="tooltip"
       ng-disabled='(privileges.canCreateJob===false || licenseDetails.hasExpired===true)'
+      aria-label="Clone job"
       tooltip="Clone job" >
         <i aria-hidden="true" class="fa fa-clone"></i>
     </button>
@@ -91,6 +96,7 @@
       class="kuiButton kuiButton--danger kuiButton--small"
       data-toggle="tooltip"
       ng-disabled='!privileges.canDeleteJob'
+      aria-label="Delete job"
       tooltip="Delete job">
         <i aria-hidden="true" class="fa fa-trash"></i>
     </button>

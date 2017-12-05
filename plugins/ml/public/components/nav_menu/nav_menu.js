@@ -14,6 +14,7 @@
  */
 
 import _ from 'lodash';
+import $ from 'jquery';
 import template from './nav_menu.html';
 import uiRouter from 'ui/routes';
 
@@ -61,6 +62,14 @@ module.directive('mlNavMenu', function () {
         breadcrumbs.push(crumbNames[crumb.id]);
       });
       scope.breadcrumbs = breadcrumbs.filter(Boolean);
+
+      // when the page loads, focus on the first breadcrumb
+      el.ready(() => {
+        const $crumbs = $('.kuiLocalBreadcrumbs a');
+        if ($crumbs.length) {
+          $crumbs[0].focus();
+        }
+      });
     }
   };
 });

@@ -10,8 +10,11 @@
   <div class="select-list" ng-show='noJobsCreated!==undefined'>
     <div ng-if="groups.length && singleSelection !== true">
       <div class="list-section-title">
-        <input ng-if="singleSelection !== true" type="checkbox"
+        <input
+          ng-if="singleSelection !== true"
+          type="checkbox"
           ng-checked="allGroupsSelected"
+          aria-label="Select all groups checkbox"
           ng-click="toggleAllGroupsSelection()" />
         Groups
       </div>
@@ -50,6 +53,7 @@
     <div class="list-section-title" ng-if="singleSelection !== true">
       <input type="checkbox"
         ng-checked="allJobsSelected"
+        aria-label="Select all jobs checkbox"
         ng-click="toggleAllJobsSelection()" />
       Jobs
     </div>
