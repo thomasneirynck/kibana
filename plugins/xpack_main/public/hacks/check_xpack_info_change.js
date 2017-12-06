@@ -1,5 +1,9 @@
 import { identity } from 'lodash';
 import { uiModules } from 'ui/modules';
+import chrome from 'ui/chrome';
+import { Notifier } from 'ui/notify/notifier';
+import { DebounceProvider } from 'ui/debounce';
+import { PathProvider } from 'plugins/xpack_main/services/path';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import { XPackInfoSignatureProvider } from 'plugins/xpack_main/services/xpack_info_signature';
 
@@ -8,6 +12,28 @@ const module = uiModules.get('xpack_main', []);
 module.factory('checkXPackInfoChange', ($q, Private) => {
   const xpackInfo = Private(XPackInfoProvider);
   const xpackInfoSignature = Private(XPackInfoSignatureProvider);
+  const debounce = Private(DebounceProvider);
+  const isLoginOrLogout = Private(PathProvider).isLoginOrLogout();
+
+  const notify = new Notifier();
+  const notifyIfLicenseIsExpired = debounce(() => {
+    const license = xpackInfo.get('license');
+    if (license.isActive) {
+      return;
+    }
+
+    const uploadLicensePath = `${chrome.getBasePath()}/app/kibana#/management/elasticsearch/license_management/upload_license`;
+    notify.directive({
+      template: `
+        <p>
+          Your ${license.type} license is currently expired. Please contact your administrator or 
+          <a href="${uploadLicensePath}">update your license</a> directly.
+        </p>
+      `
+    }, {
+      type: 'error'
+    });
+  });
 
   /**
    *  Intercept each network response to look for the kbn-xpack-sig header.
@@ -20,6 +46,10 @@ module.factory('checkXPackInfoChange', ($q, Private) => {
    *  @return
    */
   function interceptor(response, handleResponse) {
+    if (isLoginOrLogout) {
+      return handleResponse(response);
+    }
+
     const currentSignature = response.headers('kbn-xpack-sig');
     const cachedSignature = xpackInfoSignature.get();
 
@@ -28,7 +58,10 @@ module.factory('checkXPackInfoChange', ($q, Private) => {
       // cached info, so we need to refresh it.
       // Intentionally swallowing this error
       // because nothing catches it and it's an ugly console error.
-      xpackInfo.refresh().catch(()=> {});
+      xpackInfo.refresh().then(
+        () => notifyIfLicenseIsExpired(),
+        () => {}
+      );
     }
 
     return handleResponse(response);
