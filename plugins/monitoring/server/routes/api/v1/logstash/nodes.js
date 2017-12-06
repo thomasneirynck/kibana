@@ -36,18 +36,26 @@ export function logstashNodesRoute(server) {
         })
       }
     },
-    handler: (req, reply) => {
+    async handler(req, reply) {
       const config = server.config();
       const ccs = req.payload.ccs;
       const clusterUuid = req.params.clusterUuid;
       const lsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.logstash.index_pattern', ccs);
 
-      return Promise.props({
-        nodes: getNodes(req, lsIndexPattern, { clusterUuid }),
-        clusterStatus: getClusterStatus(req, lsIndexPattern, { clusterUuid })
-      })
-      .then (reply)
-      .catch(err => reply(handleError(err, req)));
+      try {
+        const [ clusterStatus, nodes ] = await Promise.all([
+          getClusterStatus(req, lsIndexPattern, { clusterUuid }),
+          getNodes(req, lsIndexPattern, { clusterUuid }),
+        ]);
+
+        reply({
+          clusterStatus,
+          nodes,
+        });
+      }
+      catch (err) {
+        reply(handleError(err, req));
+      }
     }
   });
 

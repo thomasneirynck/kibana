@@ -1,5 +1,4 @@
 import Joi from 'joi';
-import Promise from 'bluebird';
 import { getNodeInfo } from '../../../../lib/logstash/get_node_info';
 import { handleError } from '../../../../lib/errors';
 import { getMetrics } from '../../../../lib/details/get_metrics';
@@ -38,19 +37,26 @@ export function logstashNodeRoute(server) {
         })
       }
     },
-    handler: (req, reply) => {
+    async handler(req, reply) {
       const config = server.config();
       const ccs = req.payload.ccs;
       const clusterUuid = req.params.clusterUuid;
       const lsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.logstash.index_pattern', ccs);
       const logstashUuid = req.params.logstashUuid;
 
-      return Promise.props({
-        metrics: getMetrics(req, lsIndexPattern),
-        nodeSummary: getNodeInfo(req, lsIndexPattern, { clusterUuid, logstashUuid })
-      })
-      .then(reply)
-      .catch(err => reply(handleError(err, req)));
+      try {
+        const [ metrics, nodeSummary ] = await Promise.all([
+          getMetrics(req, lsIndexPattern),
+          getNodeInfo(req, lsIndexPattern, { clusterUuid, logstashUuid }),
+        ]);
+
+        reply({
+          metrics,
+          nodeSummary,
+        });
+      } catch(err) {
+        reply(handleError(err, req));
+      }
     }
   });
 }

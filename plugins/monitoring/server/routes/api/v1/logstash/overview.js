@@ -1,5 +1,4 @@
 import Joi from 'joi';
-import Promise from 'bluebird';
 import { getClusterStatus } from '../../../../lib/logstash/get_cluster_status';
 import { getMetrics } from '../../../../lib/details/get_metrics';
 import { handleError } from '../../../../lib/errors';
@@ -37,18 +36,25 @@ export function logstashOverviewRoute(server) {
         })
       }
     },
-    handler: (req, reply) => {
+    async handler(req, reply) {
       const config = server.config();
       const ccs = req.payload.ccs;
       const clusterUuid = req.params.clusterUuid;
       const lsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.logstash.index_pattern', ccs);
 
-      return Promise.props({
-        metrics: getMetrics(req, lsIndexPattern),
-        clusterStatus: getClusterStatus(req, lsIndexPattern, { clusterUuid })
-      })
-      .then (reply)
-      .catch(err => reply(handleError(err, req)));
+      try {
+        const [ metrics, clusterStatus ] = await Promise.all([
+          getMetrics(req, lsIndexPattern),
+          getClusterStatus(req, lsIndexPattern, { clusterUuid })
+        ]);
+
+        reply({
+          metrics,
+          clusterStatus,
+        });
+      } catch(err) {
+        reply(handleError(err, req));
+      }
     }
   });
 }

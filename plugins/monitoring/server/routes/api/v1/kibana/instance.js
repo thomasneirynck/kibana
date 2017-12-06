@@ -1,5 +1,4 @@
 import Joi from 'joi';
-import Promise from 'bluebird';
 import { getKibanaInfo } from '../../../../lib/kibana/get_kibana_info';
 import { handleError } from '../../../../lib/errors';
 import { getMetrics } from '../../../../lib/details/get_metrics';
@@ -31,19 +30,26 @@ export function kibanaInstanceRoutes(server) {
         })
       }
     },
-    handler: (req, reply) => {
+    async handler(req, reply) {
       const config = server.config();
       const ccs = req.payload.ccs;
       const clusterUuid = req.params.clusterUuid;
       const kibanaUuid = req.params.kibanaUuid;
       const kbnIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.kibana.index_pattern', ccs);
 
-      return Promise.props({
-        metrics: getMetrics(req, kbnIndexPattern),
-        kibanaSummary: getKibanaInfo(req, kbnIndexPattern, { clusterUuid, kibanaUuid })
-      })
-      .then(reply)
-      .catch(err => reply(handleError(err, req)));
+      try {
+        const [ metrics, kibanaSummary ] = await Promise.all([
+          getMetrics(req, kbnIndexPattern),
+          getKibanaInfo(req, kbnIndexPattern, { clusterUuid, kibanaUuid }),
+        ]);
+
+        reply({
+          metrics,
+          kibanaSummary,
+        });
+      } catch (err) {
+        reply(handleError(err, req));
+      }
     }
   });
 }

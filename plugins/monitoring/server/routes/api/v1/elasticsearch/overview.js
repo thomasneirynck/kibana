@@ -33,10 +33,12 @@ export function esOverviewRoute(server) {
       const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
 
       try {
-        const clusterStats = await getClusterStats(req, esIndexPattern, clusterUuid);
+        const [ clusterStats, metrics, shardActivity ] = await Promise.all([
+          getClusterStats(req, esIndexPattern, clusterUuid),
+          getMetrics(req, esIndexPattern),
+          getLastRecovery(req, esIndexPattern),
+        ]);
         const shardStats = await getShardStats(req, esIndexPattern, clusterStats);
-        const metrics = await getMetrics(req, esIndexPattern);
-        const shardActivity = await getLastRecovery(req, esIndexPattern);
 
         reply({
           clusterStatus: getClusterStatus(clusterStats, shardStats),
