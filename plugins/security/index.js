@@ -98,8 +98,8 @@ export const security = (kibana) => new kibana.Plugin({
     initUsersApi(server);
     initRolesApi(server);
     initIndicesApi(server);
-    initLoginView(server, thisPlugin, xpackMainPlugin);
-    initLogoutView(server, thisPlugin);
+    initLoginView(server, xpackMainPlugin);
+    initLogoutView(server);
 
   }
 });

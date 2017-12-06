@@ -1,5 +1,5 @@
-export function initLogoutView(server, uiExports) {
-  const logout = uiExports.apps.byId.logout;
+export function initLogoutView(server) {
+  const logout = server.getHiddenUiAppById('logout');
 
   server.route({
     method: 'GET',
