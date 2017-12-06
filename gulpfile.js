@@ -22,11 +22,20 @@ const getFlags = require('./gulp_helpers/get_flags');
 
 const pkg = require('./package.json');
 const browsers = require('./plugins/reporting/export_types/printable_pdf/server/lib/browsers').browsers;
+const { createAutoJunitReporter } = require(pluginHelpers.resolveKibanaPath('src/dev'));
 
 const buildDir = path.resolve(__dirname, 'build');
 const buildTarget = path.resolve(buildDir, 'plugin');
 const packageDir = path.resolve(buildDir, 'distributions');
 const coverageDir = path.resolve(__dirname, 'coverage');
+
+const MOCHA_OPTIONS = {
+  ui: 'bdd',
+  reporter: createAutoJunitReporter({
+    reportName: 'X-Pack Mocha Tests',
+    rootDirectory: __dirname,
+  }),
+};
 
 const skipTestCoverage = argv['test-coverage'] && argv['test-coverage'] === 'skip';
 
@@ -189,11 +198,11 @@ gulp.task('testserver', ['pre-test'], () => {
 
   if (skipTestCoverage) {
     return gulp.src(globs, { read: false })
-    .pipe(g.mocha({ ui: 'bdd' }));
+    .pipe(g.mocha(MOCHA_OPTIONS));
   }
 
   return gulp.src(globs, { read: false })
-  .pipe(g.mocha({ ui: 'bdd' }))
+  .pipe(g.mocha(MOCHA_OPTIONS))
   .pipe(g.istanbul.writeReports());
 });
 

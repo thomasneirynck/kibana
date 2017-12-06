@@ -137,6 +137,11 @@ export default async function ({ readConfigFile }) {
     // choose where screenshots should be saved
     screenshots: {
       directory: resolve(__dirname, 'screenshots')
+    },
+
+    junit: {
+      reportName: 'X-Pack Functional Tests',
+      rootDirectory: resolve(__dirname, '../../'),
     }
   };
 }
