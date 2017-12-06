@@ -13,6 +13,11 @@ import {
 } from '../../../shared/PropertiesTable';
 import Traces from './Traces';
 import DiscoverButton from '../../../shared/DiscoverButton';
+import {
+  APP_NAME,
+  TRANSACTION_ID,
+  APP_AGENT_NAME
+} from '../../../../../common/constants';
 
 function loadTransaction(props) {
   const { appName, start, end, transactionId } = props.urlParams;
@@ -88,8 +93,7 @@ class Transaction extends Component {
       return null;
     }
 
-    const agentName = get(transaction, 'data.context.app.agent.name');
-
+    const agentName = get(transaction.data, APP_AGENT_NAME);
     const timestamp = moment(get(transaction, 'data.@timestamp'));
     const timestampFull = timestamp.format('MMMM Do YYYY, HH:mm:ss.SSS');
     const timestampAgo = timestamp.fromNow();
@@ -104,9 +108,7 @@ class Transaction extends Component {
         interval: 'auto',
         query: {
           language: 'lucene',
-          query: `context.app.name:${appName} AND transaction.id:${
-            transactionId
-          }`
+          query: `${APP_NAME}:${appName} AND ${TRANSACTION_ID}:${transactionId}`
         },
         sort: { '@timestamp': 'desc' }
       }

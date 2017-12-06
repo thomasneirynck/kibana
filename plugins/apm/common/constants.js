@@ -11,7 +11,7 @@ export const TRANSACTION_ID = 'transaction.id';
 
 export const TRACE_START = 'trace.start.us';
 export const TRACE_DURATION = 'trace.duration.us';
-export const TRACE_TRANSACTION_ID = 'trace.transaction_id';
+export const TRACE_TRANSACTION_ID = 'trace.transaction.id';
 export const TRACE_TYPE = 'trace.type';
 export const TRACE_NAME = 'trace.name';
 export const TRACE_ID = 'trace.id';

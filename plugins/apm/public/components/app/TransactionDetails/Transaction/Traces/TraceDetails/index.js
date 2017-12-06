@@ -7,7 +7,9 @@ import DiscoverButton from '../../../../../shared/DiscoverButton';
 import { asMillis } from '../../../../../../utils/formatters';
 import {
   TRACE_DURATION,
-  TRACE_NAME
+  TRACE_NAME,
+  TRACE_TRANSACTION_ID,
+  TRANSACTION_ID
 } from '../../../../../../../common/constants';
 import {
   unit,
@@ -53,9 +55,9 @@ function TraceDetails({ trace, totalDuration }) {
       interval: 'auto',
       query: {
         language: 'lucene',
-        query: `transaction.id:${trace.transactionId} OR trace.transaction_id:${
-          trace.transactionId
-        }`
+        query: `${TRANSACTION_ID}:${trace.transactionId} OR ${
+          TRACE_TRANSACTION_ID
+        }:${trace.transactionId}`
       },
       sort: { '@timestamp': 'desc' }
     }

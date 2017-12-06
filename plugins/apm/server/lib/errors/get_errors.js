@@ -2,7 +2,8 @@ import {
   APP_NAME,
   ERROR_GROUP_ID,
   ERROR_CULPRIT,
-  ERROR_MESSAGE
+  ERROR_MESSAGE,
+  PROCESSOR_EVENT
 } from '../../../common/constants';
 import { get } from 'lodash';
 
@@ -17,7 +18,7 @@ export async function getErrors({ appName, setup }) {
         bool: {
           must: [
             { term: { [APP_NAME]: appName } },
-            { term: { 'processor.event': 'error' } },
+            { term: { [PROCESSOR_EVENT]: 'error' } },
             {
               range: {
                 '@timestamp': {

@@ -13,6 +13,11 @@ import {
   getLevelOneProps
 } from '../../shared/PropertiesTable';
 import Stacktrace from '../../shared/Stacktrace';
+import {
+  APP_NAME,
+  ERROR_GROUP_ID,
+  APP_AGENT_NAME
+} from '../../../../common/constants';
 
 const Container = styled.div`
   position: relative;
@@ -78,14 +83,14 @@ function DetailView({ errorGroup, urlParams }) {
 
   const url = get(errorGroup.data.error, 'context.request.url.raw', 'N/A');
 
-  const agentName = get(errorGroup.data.error, 'context.app.agent.name');
+  const agentName = get(errorGroup.data.error, APP_AGENT_NAME);
 
   const discoverQuery = {
     _a: {
       interval: 'auto',
       query: {
         language: 'lucene',
-        query: `context.app.name:${appName} AND error.grouping_key:${groupId}`
+        query: `${APP_NAME}:${appName} AND ${ERROR_GROUP_ID}:${groupId}`
       },
       sort: { '@timestamp': 'desc' }
     }

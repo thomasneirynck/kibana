@@ -7,6 +7,7 @@ import DetailView from './DetailView';
 import Distribution from './Distribution';
 
 import { units, px, fontFamilyCode, fontSizes } from '../../../style/variables';
+import { ERROR_CULPRIT, ERROR_MESSAGE } from '../../../../common/constants';
 
 const Titles = styled.div`
   height: ${px(units.triple)};
@@ -45,8 +46,8 @@ class ErrorGroupDetails extends Component {
     const { errorGroupId } = this.props.urlParams;
     const { errorGroup } = this.props;
 
-    const message = get(errorGroup.data, 'error.error.exception.message');
-    const culprit = get(errorGroup.data, 'error.error.culprit');
+    const message = get(errorGroup.data.error, ERROR_MESSAGE);
+    const culprit = get(errorGroup.data.error, ERROR_CULPRIT);
 
     return (
       <div>
