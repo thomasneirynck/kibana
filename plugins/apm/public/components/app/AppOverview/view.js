@@ -63,6 +63,7 @@ class AppOverview extends Component {
 
   componentDidMount() {
     fetchData(this.props);
+    redirectIfNoData(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
