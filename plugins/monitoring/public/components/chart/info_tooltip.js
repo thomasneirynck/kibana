@@ -1,6 +1,9 @@
 import React from 'react';
+import { first, get } from 'lodash';
 
 export function InfoTooltip({ series }) {
+
+  const bucketSize = get(first(series), 'bucket_size'); // bucket size will be the same for all metrics in all series
   const tableRows = series.map((item, index) => {
     return (
       <tr key={`chart-tooltip-${index}`}>
@@ -13,6 +16,10 @@ export function InfoTooltip({ series }) {
   return (
     <table>
       <tbody>
+        <tr>
+          <td className="monitoring-chart-tooltip__label">Interval</td>
+          <td className="monitoring-chart-tooltip__value">{bucketSize}</td>
+        </tr>
         { tableRows }
       </tbody>
     </table>

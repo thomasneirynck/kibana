@@ -3,7 +3,7 @@ import uiRoutes from 'ui/routes';
 import template from './index.html';
 import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
 import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
-import { formatTimestampToDuration } from 'plugins/monitoring/lib/format_number';
+import { formatTimestampToDuration } from 'monitoring-common';
 import { CALCULATE_DURATION_SINCE } from 'monitoring-constants';
 import { mapSeverity } from 'plugins/monitoring/components/alerts/map_severity';
 

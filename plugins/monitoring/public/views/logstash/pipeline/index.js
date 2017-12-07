@@ -7,7 +7,7 @@ import { uiModules } from 'ui/modules';
 import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
 import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
 import { CALCULATE_DURATION_SINCE } from 'monitoring-constants';
-import { formatTimestampToDuration } from 'plugins/monitoring/lib/format_number';
+import { formatTimestampToDuration } from 'monitoring-common';
 import template from './index.html';
 
 function getPageData($injector) {

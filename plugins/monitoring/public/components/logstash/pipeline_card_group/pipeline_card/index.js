@@ -10,7 +10,7 @@ import {
 } from 'ui_framework/components';
 import { formatDateTimeLocal, shortenPipelineHash } from 'monitoring-formatting';
 import { CALCULATE_DURATION_SINCE } from 'monitoring-constants';
-import { formatTimestampToDuration } from 'plugins/monitoring/lib/format_number';
+import { formatTimestampToDuration } from 'monitoring-common';
 
 function renderHashesInfo(pipeline) {
   const numHashes = pipeline.hashes.length;

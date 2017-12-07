@@ -40,7 +40,11 @@ uiModule.directive('monitoringChart', (timefilter) => {
               <OverlayTrigger
                 placement="left"
                 trigger="click"
-                overlay={<Tooltip><InfoTooltip series={series}/></Tooltip>}
+                overlay={
+                  <Tooltip>
+                    <InfoTooltip series={series}/>
+                  </Tooltip>
+                }
               >
                 <span className="monitoring-chart-tooltip__trigger overlay-trigger">
                   <KuiInfoButton />

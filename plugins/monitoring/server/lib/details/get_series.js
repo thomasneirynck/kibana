@@ -4,6 +4,8 @@ import { checkParam } from '../error_missing_required';
 import { metrics } from '../metrics';
 import { createQuery } from '../create_query.js';
 import { pickMetricFields } from '../pick_metric_fields';
+import { formatTimestampToDuration } from '../../../common';
+import { CALCULATE_DURATION_UNTIL } from '../../../common/constants';
 
 /**
  * Derivative metrics for the first two agg buckets are unusable. For the first bucket, there
@@ -32,7 +34,7 @@ function getUuid(req, metric) {
   return req.params.clusterUuid;
 }
 
-function defaultCalculation(key, metric, bucketSize, bucket) {
+function defaultCalculation(key, metric, bucketSizeInSeconds, bucket) {
   // [${key}] guarantees that if the key has periods in it, it gets interpreted as a single key value
   const value =  get(bucket, `[${key}].value`, null);
 
@@ -41,7 +43,7 @@ function defaultCalculation(key, metric, bucketSize, bucket) {
     return null;
   } else if (value && metric.units === '/s') {
     // convert metric_deriv from the bucket size to seconds if units == '/s'
-    return value / bucketSize;
+    return value / bucketSizeInSeconds;
   }
 
   return value;
@@ -152,16 +154,23 @@ function findLastUsableBucketIndex(buckets, max, firstUsableBucketIndex, bucketS
   return -1;
 }
 
-function handleSeries(metric, min, max, bucketSize, response) {
+const formatBucketSize = bucketSizeInSeconds => {
+  const now = moment();
+  const timestamp = moment(now).add(bucketSizeInSeconds, 'seconds'); // clone the `now` object
+
+  return formatTimestampToDuration(timestamp, CALCULATE_DURATION_UNTIL, now);
+};
+
+function handleSeries(metric, min, max, bucketSizeInSeconds, response) {
   const buckets = get(response, 'aggregations.check.buckets', []);
   const firstUsableBucketIndex = findFirstUsableBucketIndex(buckets, min);
-  const lastUsableBucketIndex = findLastUsableBucketIndex(buckets, max, firstUsableBucketIndex, bucketSize * 1000);
+  const lastUsableBucketIndex = findLastUsableBucketIndex(buckets, max, firstUsableBucketIndex, bucketSizeInSeconds * 1000);
   let data = [];
 
   if (firstUsableBucketIndex <= lastUsableBucketIndex) {
     // map buckets to values for charts
     const key = metric.derivative ? 'metric_deriv' : 'metric';
-    const metricDefaultCalculation = (bucket) => defaultCalculation(key, metric, bucketSize, bucket);
+    const metricDefaultCalculation = (bucket) => defaultCalculation(key, metric, bucketSizeInSeconds, bucket);
     const bucketMapper = metric && metric.calculation || metricDefaultCalculation;
 
     data = buckets
@@ -170,6 +179,7 @@ function handleSeries(metric, min, max, bucketSize, response) {
   }
 
   return {
+    bucket_size: formatBucketSize(bucketSizeInSeconds),
     timeRange: { min, max },
     metric: pickMetricFields(metric),
     data

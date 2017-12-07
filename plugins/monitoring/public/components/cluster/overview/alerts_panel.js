@@ -14,7 +14,7 @@ import {
   KuiEventBodyMessage,
   KuiEventBodyMetadata
 } from 'ui_framework/components';
-import { formatTimestampToDuration } from 'plugins/monitoring/lib/format_number';
+import { formatTimestampToDuration } from 'monitoring-common';
 import { CALCULATE_DURATION_SINCE } from 'monitoring-constants';
 import { formatDateTimeLocal } from 'monitoring-formatting';
 

@@ -61,6 +61,7 @@ describe('getMetrics and getSeries', () => {
       expect(result).to.eql({
         node_cpu_utilization: [
           {
+            bucket_size: '10 min',
             timeRange: { min, max },
             metric: {
               app: 'elasticsearch',
@@ -84,6 +85,7 @@ describe('getMetrics and getSeries', () => {
       expect(result).to.eql({
         cluster_search_request_rate: [
           {
+            bucket_size: '10 min',
             timeRange: { min, max },
             metric: {
               app: 'elasticsearch',
@@ -112,6 +114,7 @@ describe('getMetrics and getSeries', () => {
       expect(result).to.eql({
         cluster_index_latency: [
           {
+            bucket_size: '10 min',
             timeRange: { min, max },
             metric: {
               app: 'elasticsearch',
@@ -149,6 +152,7 @@ describe('getMetrics and getSeries', () => {
       expect(result).to.eql({
         index_1: [
           {
+            bucket_size: '10 min',
             timeRange: { min, max },
             metric: {
               app: 'elasticsearch',
@@ -164,6 +168,7 @@ describe('getMetrics and getSeries', () => {
             data: nonDerivMetricsResults
           },
           {
+            bucket_size: '10 min',
             timeRange: { min, max },
             metric: {
               app: 'elasticsearch',
@@ -179,6 +184,7 @@ describe('getMetrics and getSeries', () => {
             data: nonDerivMetricsResults
           },
           {
+            bucket_size: '10 min',
             timeRange: { min, max },
             metric: {
               app: 'elasticsearch',
@@ -194,6 +200,7 @@ describe('getMetrics and getSeries', () => {
             data: nonDerivMetricsResults
           },
           {
+            bucket_size: '10 min',
             timeRange: { min, max },
             metric: {
               app: 'elasticsearch',
@@ -220,6 +227,7 @@ describe('getMetrics and getSeries', () => {
       expect(result).to.eql({
         kibana_max_response_times: [
           {
+            bucket_size: '10 min',
             timeRange: { min, max },
             metric: {
               app: 'kibana',

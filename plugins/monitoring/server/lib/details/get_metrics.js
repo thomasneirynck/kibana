@@ -38,6 +38,7 @@ export function getMetrics(req, indexPattern, filters = []) {
       const keyName = isPlainObject(key) ? key.name : key;
       data[keyName] = rows[index];
     });
+
     return data;
   });
 }
