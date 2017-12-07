@@ -121,9 +121,14 @@ module.directive('mlPopulationJobChart', function (Private, mlChartTooltipServic
 
       // create flat array of data points
       const data = scope.chartData.line.reduce((p, c) => {
-        c.values.forEach(v => {
-          p.push({ date: c.date, value: v.value, label: v.label });
-        });
+        if (c.values.length) {
+          c.values.forEach(v => {
+            p.push({ date: c.date, value: v.value, label: v.label });
+          });
+        } else {
+          // for empty buckets, still add an entry so we plot gaps
+          p.push({ date: c.date, value: null, label: null });
+        }
         return p;
       }, []);
 

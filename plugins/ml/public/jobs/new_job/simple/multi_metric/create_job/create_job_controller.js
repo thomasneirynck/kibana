@@ -36,6 +36,7 @@ import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/compone
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
 import { createFields } from 'plugins/ml/jobs/new_job/simple/components/utils/create_fields';
 import { getIndexPattern, getSavedSearch, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
+import { ChartDataUtilsProvider } from 'plugins/ml/jobs/new_job/simple/components/utils/chart_data_utils.js';
 import template from './create_job.html';
 
 uiRoutes
@@ -69,6 +70,7 @@ module
   const msgs = mlMessageBarService;
   const MlTimeBuckets = Private(IntervalHelperProvider);
   const calculateModelMemoryLimit = Private(CalculateModelMemoryLimitProvider);
+  const chartDataUtils = Private(ChartDataUtilsProvider);
 
   const stateDefaults = {
     mlJobSettings: {}
@@ -223,7 +225,7 @@ module
 
       $scope.ui.splitText = 'Data split by ' + splitField.name;
 
-      mlMultiMetricJobService.getSplitFields($scope.formConfig, 10)
+      chartDataUtils.getSplitFields($scope.formConfig, $scope.formConfig.splitField.name, 10)
       .then((resp) => {
         if (resp.results.values && resp.results.values.length) {
           $scope.formConfig.firstSplitFieldName = resp.results.values[0];
@@ -333,18 +335,18 @@ module
     }
 
     function loadDocCountData(dtrs) {
-      mlMultiMetricJobService.loadDocCountData($scope.formConfig)
+      chartDataUtils.loadDocCountData($scope.formConfig, $scope.chartData)
       .then((resp) => {
         if (thisLoadTimestamp === $scope.chartData.lastLoadTimestamp) {
           _.each(dtrs, (dtr, id) => {
-            const state = (dtr.line.length) ? CHART_STATE.LOADED : CHART_STATE.NO_RESULTS;
+            const state = (resp.totalResults) ? CHART_STATE.LOADED : CHART_STATE.NO_RESULTS;
             $scope.chartStates.fields[id] = state;
           });
 
           $scope.chartData.lastLoadTimestamp = null;
-          mlMultiMetricJobService.updateChartMargin();
+          chartDataUtils.updateChartMargin($scope.chartData);
           $scope.$broadcast('render');
-          $scope.chartStates.eventRate = (resp.job.bars.length) ? CHART_STATE.LOADED : CHART_STATE.NO_RESULTS;
+          $scope.chartStates.eventRate = (resp.totalResults) ? CHART_STATE.LOADED : CHART_STATE.NO_RESULTS;
         }
       })
       .catch((resp) => {
@@ -523,7 +525,7 @@ module
     const counterLimit = 20 - (refreshInterval / REFRESH_INTERVAL_MS);
     if (refreshCounter >=  counterLimit) {
       refreshCounter = 0;
-      mlMultiMetricJobService.checkDatafeedStatus($scope.formConfig)
+      mlJobService.cheloadJobSwimlaneDatackDatafeedStatus($scope.formConfig.jobId)
       .then((status) => {
         if (status === 'stopped') {
           console.log('Stopping poll because datafeed status is: ' + status);
@@ -576,12 +578,12 @@ module
   }
 
   function reloadJobSwimlaneData() {
-    return mlMultiMetricJobService.loadJobSwimlaneData($scope.formConfig);
+    return chartDataUtils.loadJobSwimlaneData($scope.formConfig, $scope.chartData);
   }
 
 
   function reloadDetectorSwimlane() {
-    return mlMultiMetricJobService.loadDetectorSwimlaneData($scope.formConfig);
+    return chartDataUtils.loadDetectorSwimlaneData($scope.formConfig, $scope.chartData);
   }
 
   function adjustRefreshInterval(loadingDifference, currentInterval) {

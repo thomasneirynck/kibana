@@ -1215,23 +1215,28 @@ module.service('mlResultsService', function ($q, es, ml) {
   // Extra query object can be supplied, or pass null if no additional query.
   // Returned response contains a results property, which is an object
   // of document counts against time (epoch millis).
-  this.getEventRateData = function (index, query, timeFieldName, earliestMs, latestMs, interval) {
+  this.getEventRateData = function (
+    index,
+    query,
+    timeFieldName,
+    earliestMs,
+    latestMs,
+    interval) {
     const deferred = $q.defer();
     const obj = { success: true, results: {} };
 
     // Build the criteria to use in the bool filter part of the request.
     // Add criteria for the types, time range, entity fields,
     // plus any additional supplied query.
-    const mustCriteria = [];
-    mustCriteria.push({
-      'range': {
+    const mustCriteria = [{
+      range: {
         [timeFieldName]: {
-          'gte': earliestMs,
-          'lte': latestMs,
-          'format': 'epoch_millis'
+          gte: earliestMs,
+          lte: latestMs,
+          format: 'epoch_millis'
         }
       }
-    });
+    }];
 
     if (query) {
       mustCriteria.push(query);
@@ -1241,20 +1246,24 @@ module.service('mlResultsService', function ($q, es, ml) {
       index,
       size: 0,
       body: {
-        'query': {
-          'bool': {
-            'must': mustCriteria
+        query: {
+          bool: {
+            must: mustCriteria
           }
         },
-        '_source': {
-          'excludes': []
+        _source: {
+          excludes: []
         },
-        'aggs': {
-          'eventRate': {
-            'date_histogram': {
-              'field': timeFieldName,
-              'interval': interval,
-              'min_doc_count': 1
+        aggs: {
+          eventRate: {
+            date_histogram: {
+              field: timeFieldName,
+              interval: interval,
+              min_doc_count: 0,
+              extended_bounds: {
+                min: earliestMs,
+                max: latestMs,
+              }
             }
           }
         }
@@ -1266,6 +1275,7 @@ module.service('mlResultsService', function ($q, es, ml) {
         const time = dataForTime.key;
         obj.results[time] = dataForTime.doc_count;
       });
+      obj.total = resp.hits.total;
 
       deferred.resolve(obj);
     })

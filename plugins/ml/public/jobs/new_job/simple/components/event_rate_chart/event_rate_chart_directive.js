@@ -201,9 +201,10 @@ module.directive('mlEventRateChart', function (Private) {
     }
 
     function drawBarChartPaths(data) {
+      const earliestTime = scope.chartData.earliestTime;
       let cellWidth = 0;
       if (data.length > 0) {
-        cellWidth = barChartXScale(data[0].time + scope.chartData.barsInterval) - barChartXScale(data[0].time);
+        cellWidth = barChartXScale(earliestTime + scope.chartData.barsInterval) - barChartXScale(earliestTime);
       }
 
       barChartGroup.selectAll('bar')
@@ -225,10 +226,11 @@ module.directive('mlEventRateChart', function (Private) {
     function drawSwimlane(swlWidth, swlHeight) {
       const lineData = scope.chartData.line;
       const data = scope.chartData.swimlane;
+      const earliestTime = scope.chartData.earliestTime;
 
       let cellWidth = 0;
       if (data.length > 0) {
-        cellWidth = barChartXScale(data[0].time + scope.chartData.swimlaneInterval) - barChartXScale(data[0].time);
+        cellWidth = barChartXScale(earliestTime + scope.chartData.swimlaneInterval) - barChartXScale(earliestTime);
       }
 
       d3.time.scale().range([0, swlWidth])

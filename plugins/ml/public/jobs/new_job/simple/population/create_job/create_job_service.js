@@ -18,7 +18,6 @@ import angular from 'angular';
 
 import { EVENT_RATE_COUNT_FIELD } from 'plugins/ml/jobs/new_job/simple/components/constants/general';
 import { ML_MEDIAN_PERCENTS } from 'plugins/ml/util/job_utils';
-import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 
 import { uiModules } from 'ui/modules';
@@ -29,9 +28,7 @@ module.service('mlPopulationJobService', function (
   es,
   timefilter,
   Private,
-  mlJobService,
-  mlResultsService,
-  mlSimpleJobSearchService) {
+  mlJobService) {
 
   const TimeBuckets = Private(IntervalHelperProvider);
   const OVER_FIELD_EXAMPLES_COUNT = 40;
@@ -41,6 +38,7 @@ module.service('mlPopulationJobService', function (
       swimlane: [],
       line: [],
       bars: [],
+      earliestTime: Number.MAX_SAFE_INTEGER
     },
     detectors: {},
     percentComplete: 0,
@@ -48,7 +46,8 @@ module.service('mlPopulationJobService', function (
     lastLoadTimestamp: null,
     highestValue: 0,
     eventRateHighestValue: 0,
-    chartTicksMargin: { width: 30 }
+    chartTicksMargin: { width: 30 },
+    totalResults: 0
   };
   this.job = {};
 
@@ -61,6 +60,7 @@ module.service('mlPopulationJobService', function (
     this.chartData.loadingDifference = 0;
     this.chartData.highestValue = 0;
     this.chartData.eventRateHighestValue = 0;
+    this.chartData.totalResults = 0;
 
     this.job = {};
   };
@@ -69,6 +69,8 @@ module.service('mlPopulationJobService', function (
     const deferred = $q.defer();
 
     const fieldIds = formConfig.fields.map(f => f.id);
+
+    this.chartData.job.earliestTime = formConfig.start;
 
     // move event rate field to the front of the list
     const idx = _.findIndex(fieldIds, (id) => id === EVENT_RATE_COUNT_FIELD);
@@ -113,6 +115,8 @@ module.service('mlPopulationJobService', function (
           color: '',
           percentComplete: 0
         });
+
+        this.chartData.job.earliestTime = (time < this.chartData.job.earliestTime) ? time : this.chartData.job.earliestTime;
 
         this.chartData.job.line.push({
           date: date,
@@ -210,7 +214,11 @@ module.service('mlPopulationJobService', function (
             'date_histogram': {
               'field': formConfig.timeField,
               'interval': interval,
-              'min_doc_count': 0
+              'min_doc_count': 0,
+              'extended_bounds': {
+                'min': formConfig.start,
+                'max': formConfig.end,
+              }
             }
           }
         }
@@ -397,7 +405,7 @@ module.service('mlPopulationJobService', function (
 
     this.job = getJobFromConfig(formConfig);
     const job = createJobForSaving(this.job);
-    console.log(job);
+
     // DO THE SAVE
     mlJobService.saveNewJob(job)
     .then((resp) => {
@@ -420,166 +428,4 @@ module.service('mlPopulationJobService', function (
     const datafeedId = mlJobService.getDatafeedId(formConfig.jobId);
     return mlJobService.stopDatafeed(datafeedId, formConfig.jobId);
   };
-
-  this.checkDatafeedStatus = function (formConfig) {
-    return mlJobService.updateSingleJobDatafeedState(formConfig.jobId);
-  };
-
-
-  this.loadJobSwimlaneData = function (formConfig) {
-    const deferred = $q.defer();
-
-    mlResultsService.getScoresByBucket(
-      [formConfig.jobId],
-      formConfig.start,
-      formConfig.end,
-      formConfig.resultsIntervalSeconds + 's',
-      1
-    )
-    .then((data) => {
-      let time = formConfig.start;
-
-      const jobResults = data.results[formConfig.jobId];
-
-      this.chartData.job.swimlane = [];
-      _.each(jobResults, (value, t) => {
-        time = +t;
-        const date = new Date(time);
-        this.chartData.job.swimlane.push({
-          date,
-          time,
-          value,
-          color: ''
-        });
-      });
-
-      const pcnt = ((time -  formConfig.start + formConfig.resultsIntervalSeconds) / (formConfig.end - formConfig.start) * 100);
-
-      this.chartData.percentComplete = Math.round(pcnt);
-      this.chartData.job.percentComplete = this.chartData.percentComplete;
-      this.chartData.job.swimlaneInterval = formConfig.resultsIntervalSeconds * 1000;
-
-      deferred.resolve(this.chartData);
-    })
-    .catch(() => {
-      deferred.resolve(this.chartData);
-    });
-
-    return deferred.promise;
-  };
-
-  this.loadDetectorSwimlaneData = function (formConfig) {
-    const deferred = $q.defer();
-
-    mlSimpleJobSearchService.getScoresByRecord(
-      formConfig.jobId,
-      formConfig.start,
-      formConfig.end,
-      formConfig.resultsIntervalSeconds + 's',
-      {
-        name: (formConfig.splitField !== undefined) ? formConfig.splitField.name : undefined,
-        value: formConfig.firstSplitFieldName
-      }
-    )
-    .then((data) => {
-      let dtrIndex = 0;
-      _.each(formConfig.fields, (field, key) => {
-
-        const dtr = this.chartData.detectors[key];
-        const times = data.results[dtrIndex];
-
-        dtr.swimlane = [];
-        _.each(times, (timeObj, t) => {
-          const time = +t;
-          const date = new Date(time);
-          dtr.swimlane.push({
-            date: date,
-            time: time,
-            value: timeObj.recordScore,
-            color: ''
-          });
-        });
-
-        dtr.percentComplete = this.chartData.percentComplete;
-        dtr.swimlaneInterval = formConfig.resultsIntervalSeconds * 1000;
-
-        dtrIndex++;
-      });
-
-      deferred.resolve(this.chartData);
-    })
-    .catch(() => {
-      deferred.resolve(this.chartData);
-    });
-
-    return deferred.promise;
-  };
-
-  this.getSplitFields = function (formConfig, splitFieldName, size) {
-    const query = formConfig.combinedQuery;
-    return mlSimpleJobSearchService.getCategoryFields(
-      formConfig.indexPattern.title,
-      splitFieldName,
-      size,
-      query);
-  };
-
-  this.loadDocCountData = function (formConfig) {
-    const deferred = $q.defer();
-    const query = formConfig.combinedQuery;
-    const bounds = timefilter.getActiveBounds();
-    const buckets = new TimeBuckets();
-    buckets.setInterval('auto');
-    buckets.setBounds(bounds);
-
-    const interval = buckets.getInterval().asMilliseconds();
-
-    const end = formConfig.end;
-    const start = formConfig.start;
-
-    mlResultsService.getEventRateData(
-      formConfig.indexPattern.title,
-      query,
-      formConfig.timeField,
-      start,
-      end,
-      (interval + 'ms'))
-    .then((resp) => {
-      let highestValue = Math.max(this.chartData.eventRateHighestValue, this.chartData.highestValue);
-      this.chartData.job.bars = [];
-
-      _.each(resp.results, (value, t) => {
-        if (!isFinite(value)) {
-          value = 0;
-        }
-
-        if (value > highestValue) {
-          highestValue = value;
-        }
-
-        const time = +t;
-        const date = new Date(time);
-        this.chartData.job.barsInterval = interval;
-        this.chartData.job.bars.push({
-          date,
-          time,
-          value,
-        });
-      });
-
-      this.chartData.eventRateHighestValue = Math.ceil(highestValue);
-
-      deferred.resolve(this.chartData);
-    }).catch((resp) => {
-      console.log('getEventRate visualization - error getting event rate data from elasticsearch:', resp);
-      deferred.reject(resp);
-    });
-    return deferred.promise;
-  };
-
-  this.updateChartMargin = function () {
-    // Append extra 10px to width of tick label for highest axis value to allow for tick padding.
-    this.chartData.chartTicksMargin.width = calculateTextWidth(this.chartData.eventRateHighestValue, true) + 10;
-  };
-
 });

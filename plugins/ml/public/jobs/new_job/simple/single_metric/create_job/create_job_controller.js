@@ -326,7 +326,7 @@ module
 
       mlSingleMetricJobService.getLineChartResults($scope.formConfig)
       .then((resp) => {
-        $scope.chartState = (resp.length) ? CHART_STATE.LOADED : CHART_STATE.NO_RESULTS;
+        $scope.chartState = (resp.totalResults) ? CHART_STATE.LOADED : CHART_STATE.NO_RESULTS;
       })
       .catch((resp) => {
         msgs.error(resp.message);
@@ -464,7 +464,7 @@ module
 
           reloadModelChart()
           .catch(() => {
-            // on the 10th model load failure, set ignoreNodel to true to stop trying to load it.
+            // on the 10th model load failure, set ignoreModel to true to stop trying to load it.
             if (refreshCounter % 10 === 0) {
               console.log('Model has failed to load 10 times. Stop trying to load it.');
               ignoreModel = true;
@@ -492,7 +492,9 @@ module
       // at the very end of the job, reload the full model just in case there are
       // any jitters in the chart caused by previously loading the model mid job.
       $scope.chartData.model = [];
-      reloadModelChart().finally(() => {
+      reloadModelChart()
+      .finally(() => {
+        $scope.chartData.percentComplete = 100;
         $scope.$broadcast('render-results');
       });
     } else {

@@ -40,7 +40,8 @@ module.service('mlSingleMetricJobService', function (
     hasBounds: false,
     percentComplete: 0,
     highestValue: 0,
-    chartTicksMargin: { width: 30 }
+    chartTicksMargin: { width: 30 },
+    totalResults: 0
   };
   this.job = {};
 
@@ -54,6 +55,7 @@ module.service('mlSingleMetricJobService', function (
     this.chartData.percentComplete = 0;
     this.chartData.loadingDifference = 0;
     this.chartData.eventRateHighestValue = 0;
+    this.chartData.totalResults = 0;
 
     const obj = {
       success: true,
@@ -91,13 +93,14 @@ module.service('mlSingleMetricJobService', function (
         };
       });
 
+      this.chartData.totalResults = resp.hits.total;
       this.chartData.line = processLineChartResults(obj.results);
 
       this.chartData.highestValue = Math.ceil(highestValue);
       // Append extra 10px to width of tick label for highest axis value to allow for tick padding.
       this.chartData.chartTicksMargin.width = calculateTextWidth(this.chartData.highestValue, true) + 10;
 
-      deferred.resolve(this.chartData.line);
+      deferred.resolve(this.chartData);
     })
     .catch((resp) => {
       deferred.reject(resp);
@@ -157,7 +160,11 @@ module.service('mlSingleMetricJobService', function (
             'date_histogram': {
               'field': formConfig.timeField,
               'interval': interval,
-              'min_doc_count': 0
+              'min_doc_count': 0,
+              'extended_bounds': {
+                'min': formConfig.start,
+                'max': formConfig.end,
+              }
             }
           }
         }
@@ -390,10 +397,8 @@ module.service('mlSingleMetricJobService', function (
       }
     }
 
-    // Obtain the model plot data, passing 0 for the detectorIndex and empty list of partitioning fields.
     mlResultsService.getModelPlotOutput(
       formConfig.jobId,
-      0,
       [],
       start,
       formConfig.end,
