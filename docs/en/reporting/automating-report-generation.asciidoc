@@ -36,7 +36,7 @@ For more information about configuring watches, see
 The following is deprecated in 6.0, and you should now use Kibana to get the URL for a
 particular report.
 
-You may request PDF reports through three {reporting} endpoints:
+You may request PDF reports optimized for printing through three {reporting} endpoints:
 
 * Dashboard Reports:  `/api/reporting/generate/dashboard/<dashboard-id>`
 * Visualization Reports:  `/api/reporting/generate/visualization/<visualization-id>`

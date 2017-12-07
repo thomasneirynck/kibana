@@ -19,14 +19,19 @@ in the report.
 +
 --
 [role="screenshot"]
-image:reporting/images/reporting.jpg["Reporting",link="reporting.jpg"]
+image:reporting/images/reporting-button.png["Reporting Button",link="reporting-button.png"]
 --
-. Click the appropriate button:
 
-  .. If you're on Discover, click *Generate CSV*
+. Depending on the Kibana application, choose the appropriate options:
 
-  .. If you're on Visualize or Dashboard, click *Generate Printable PDF*.
+.. If you're on Discover, click the *Generate CSV* button.
+
+.. If you're on Visualize or Dashboard:
+
+  ... Select either *Optimize PDF for printing* or *Preserve existing layout in PDF*. For an explanation of the different layout modes, see <<pdf-layout-modes, PDF Layout Modes>>.
+
+  ... Click the *Generate PDF* button.
 
 If you want to automatically generate reports from a script or with
 {watcher}, use the displayed Generation URL. For more information, see
-{kibana-ref}/automating-report-generation.html[Automating Report Generation].
+<<automating-report-generation, Automating Report Generation>>

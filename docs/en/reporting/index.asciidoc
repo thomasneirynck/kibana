@@ -6,7 +6,7 @@
 --
 {xpack} enables you to generate reports that contain Kibana dashboards,
 visualizations, and saved searches. Dashboards and visualizations are
-exported as print-optimized PDF documents, while saved searches in Discover
+exported as PDF documents, while saved searches in Discover
 are exported to CSV.
 
 NOTE: On Linux, the `libfontconfig` and `libfreetype6` packages and system
@@ -17,7 +17,7 @@ When you install {xpack} into Kibana, a Reporting button is added to the
 toolbar:
 
 [role="screenshot"]
-image::reporting/images/reporting.jpg["Reporting"]
+image::reporting/images/reporting-button.png["Reporting"]
 
 You can also <<automating-report-generation, generate reports automatically>>.
 
@@ -27,5 +27,6 @@ the Reporting endpoints>>.
 
 include::getting-started.asciidoc[]
 include::automating-report-generation.asciidoc[]
+include::pdf-layout-modes.asciidoc[]
 include::configuring-reporting.asciidoc[]
 include::reporting-troubleshooting.asciidoc[]
