@@ -20,7 +20,7 @@ import angular from 'angular';
 
 import jobsListControlsHtml from './jobs_list_controls.html';
 import jobsListArrow from 'plugins/ml/components/paginated_table/open.html';
-import { isTimeSeriesViewJob } from 'plugins/ml/util/job_utils';
+import { isTimeSeriesViewJob } from 'plugins/ml/../common/util/job_utils';
 import { toLocaleString, mlEscape } from 'plugins/ml/util/string_utils';
 
 import uiRoutes from 'ui/routes';

@@ -17,7 +17,7 @@
 // Ml Results dashboards.
 import _ from 'lodash';
 
-import { ML_MEDIAN_PERCENTS } from 'plugins/ml/util/job_utils';
+import { ML_MEDIAN_PERCENTS } from 'plugins/ml/../common/util/job_utils';
 import { escapeForElasticsearchQuery } from 'plugins/ml/util/string_utils';
 import { ML_RESULTS_INDEX_PATTERN } from 'plugins/ml/constants/index_patterns';
 

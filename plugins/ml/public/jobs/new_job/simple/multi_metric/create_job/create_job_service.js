@@ -17,7 +17,7 @@ import _ from 'lodash';
 import angular from 'angular';
 
 import { EVENT_RATE_COUNT_FIELD } from 'plugins/ml/jobs/new_job/simple/components/constants/general';
-import { ML_MEDIAN_PERCENTS } from 'plugins/ml/util/job_utils';
+import { ML_MEDIAN_PERCENTS } from 'plugins/ml/../common/util/job_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');

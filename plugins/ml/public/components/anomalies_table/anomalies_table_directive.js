@@ -24,7 +24,7 @@ import rison from 'rison-node';
 import { notify } from 'ui/notify';
 import { ES_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
 import { replaceStringTokens } from 'plugins/ml/util/string_utils';
-import { isTimeSeriesViewDetector } from 'plugins/ml/util/job_utils';
+import { isTimeSeriesViewDetector } from 'plugins/ml/../common/util/job_utils';
 import {
   getEntityFieldName,
   getEntityFieldValue,

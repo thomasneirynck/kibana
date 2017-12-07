@@ -24,7 +24,7 @@ import moment from 'moment';
 import d3 from 'd3';
 
 import template from './job_select_list.html';
-import { isTimeSeriesViewJob } from 'plugins/ml/util/job_utils';
+import { isTimeSeriesViewJob } from 'plugins/ml/../common/util/job_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');

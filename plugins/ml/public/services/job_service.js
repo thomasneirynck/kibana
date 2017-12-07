@@ -20,7 +20,7 @@ import moment from 'moment';
 import { parseInterval } from 'ui/utils/parse_interval';
 
 import { labelDuplicateDetectorDescriptions } from 'plugins/ml/util/anomaly_utils';
-import { ML_DATA_PREVIEW_COUNT } from 'plugins/ml/util/job_utils';
+import { ML_DATA_PREVIEW_COUNT } from 'plugins/ml/../common/util/job_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');

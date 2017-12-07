@@ -37,7 +37,7 @@ import {
   isTimeSeriesViewJob,
   isTimeSeriesViewDetector,
   isModelPlotEnabled,
-  mlFunctionToESAggregation } from 'plugins/ml/util/job_utils';
+  mlFunctionToESAggregation } from 'plugins/ml/../common/util/job_utils';
 import { getIndexPatterns } from 'plugins/ml/util/index_utils';
 import {
   createTimeSeriesJobData,

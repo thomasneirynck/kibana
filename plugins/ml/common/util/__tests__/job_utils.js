@@ -22,7 +22,8 @@ import {
   isModelPlotEnabled,
   mlFunctionToESAggregation,
   isJobIdValid,
-  ML_MEDIAN_PERCENTS
+  ML_MEDIAN_PERCENTS,
+  prefixDatafeedId
 } from '../job_utils';
 
 describe('ML - job utils', () => {
@@ -329,6 +330,17 @@ describe('ML - job utils', () => {
 
     it('is \'50.0\'', () => {
       expect(ML_MEDIAN_PERCENTS).to.be('50.0');
+    });
+  });
+
+  describe('prefixDatafeedId', () => {
+
+    it('returns datafeed-prefix-job"', () => {
+      expect(prefixDatafeedId('datafeed-job', 'prefix-')).to.be('datafeed-prefix-job');
+    });
+
+    it('returns prefix-job"', () => {
+      expect(prefixDatafeedId('job', 'prefix-')).to.be('prefix-job');
     });
   });
 });

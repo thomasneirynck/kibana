@@ -13,7 +13,7 @@
  * strictly prohibited.
  */
 
-import { isJobIdValid } from 'plugins/ml/util/job_utils';
+import { isJobIdValid } from 'plugins/ml/../common/util/job_utils';
 import _ from 'lodash';
 
 export function validateJobId(jobId, groups, checks) {

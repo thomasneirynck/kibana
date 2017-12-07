@@ -17,7 +17,7 @@ import _ from 'lodash';
 import 'plugins/ml/jobs/new_job/advanced/detectors_list_directive';
 import './styles/main.less';
 import angular from 'angular';
-import { calculateDatafeedFrequencyDefaultSeconds } from 'plugins/ml/util/job_utils';
+import { calculateDatafeedFrequencyDefaultSeconds } from 'plugins/ml/../common/util/job_utils';
 import { parseInterval } from 'ui/utils/parse_interval';
 
 import { uiModules } from 'ui/modules';

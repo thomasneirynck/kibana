@@ -16,7 +16,7 @@
 import _ from 'lodash';
 
 import { FieldsServiceProvider } from 'plugins/ml/services/fields_service';
-import { isModelPlotEnabled } from 'plugins/ml/util/job_utils';
+import { isModelPlotEnabled } from 'plugins/ml/../common/util/job_utils';
 import { buildConfigFromDetector } from 'plugins/ml/util/chart_config_builder';
 
 import { uiModules } from 'ui/modules';

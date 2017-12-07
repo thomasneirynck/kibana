@@ -17,7 +17,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { toLocaleString, detectorToString } from 'plugins/ml/util/string_utils';
 import { JOB_STATE, DATAFEED_STATE } from 'plugins/ml/../common/constants/states';
-import { ML_DATA_PREVIEW_COUNT } from 'plugins/ml/util/job_utils';
+import { ML_DATA_PREVIEW_COUNT } from 'plugins/ml/../common/util/job_utils';
 import numeral from 'numeral';
 import chrome from 'ui/chrome';
 import angular from 'angular';

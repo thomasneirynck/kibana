@@ -19,7 +19,7 @@ import 'ui/timefilter';
 
 import { parseInterval } from 'ui/utils/parse_interval';
 
-import { ML_MEDIAN_PERCENTS } from 'plugins/ml/util/job_utils';
+import { ML_MEDIAN_PERCENTS } from 'plugins/ml/../common/util/job_utils';
 import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 
 import { uiModules } from 'ui/modules';

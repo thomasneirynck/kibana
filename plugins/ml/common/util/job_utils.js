@@ -180,3 +180,10 @@ export const ML_MEDIAN_PERCENTS = '50.0';
 // The number of preview items to show up in
 // the Advanced Job Configuration data/datafeed preview tab
 export const ML_DATA_PREVIEW_COUNT = 10;
+
+// add a prefix to a datafeed id before the "datafeed-" part of the name
+export function prefixDatafeedId(datafeedId, prefix) {
+  return (datafeedId.match(/^datafeed-/)) ?
+    datafeedId.replace(/^datafeed-/, `datafeed-${prefix}`) :
+    `${prefix}${datafeedId}`;
+}

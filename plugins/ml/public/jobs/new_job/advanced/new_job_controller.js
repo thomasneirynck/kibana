@@ -56,7 +56,7 @@ import {
   isJobIdValid,
   calculateDatafeedFrequencyDefaultSeconds as juCalculateDatafeedFrequencyDefaultSeconds,
   ML_DATA_PREVIEW_COUNT
-} from 'plugins/ml/util/job_utils';
+} from 'plugins/ml/../common/util/job_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');

@@ -27,7 +27,7 @@ import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 import { explorerChartConfigBuilder } from './explorer_chart_config_builder';
 import { chartLimits } from 'plugins/ml/util/chart_utils';
-import { isTimeSeriesViewDetector } from 'plugins/ml/util/job_utils';
+import { isTimeSeriesViewDetector } from 'plugins/ml/../common/util/job_utils';
 import 'plugins/ml/services/results_service';
 
 module.controller('MlExplorerChartsContainerController', function ($scope, $injector) {

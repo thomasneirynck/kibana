@@ -15,6 +15,7 @@
 
 import fs from 'fs';
 import Boom from 'boom';
+import { prefixDatafeedId } from '../../../common/util/job_utils';
 
 const ML_DIR = 'ml';
 const KIBANA_DIR = 'kibana';
@@ -158,7 +159,7 @@ export class DataRecognizer {
       config.job_id = `${prefix}${datafeed.job_id}`;
 
       datafeeds.push({
-        id: this.prefixDatafeedId(datafeed.id, prefix),
+        id: prefixDatafeedId(datafeed.id, prefix),
         config
       });
     }));
@@ -498,9 +499,4 @@ export class DataRecognizer {
     }
   }
 
-  prefixDatafeedId(datafeedId, prefix) {
-    return (datafeedId.match(/^datafeed-/)) ?
-      datafeedId.replace(/^datafeed-/, `datafeed-${prefix}`) :
-      `${prefix}${datafeedId}`;
-  }
 }
