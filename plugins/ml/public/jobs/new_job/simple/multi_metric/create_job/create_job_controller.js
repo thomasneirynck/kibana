@@ -525,10 +525,10 @@ module
     const counterLimit = 20 - (refreshInterval / REFRESH_INTERVAL_MS);
     if (refreshCounter >=  counterLimit) {
       refreshCounter = 0;
-      mlJobService.cheloadJobSwimlaneDatackDatafeedStatus($scope.formConfig.jobId)
-      .then((status) => {
-        if (status === 'stopped') {
-          console.log('Stopping poll because datafeed status is: ' + status);
+      mlJobService.updateSingleJobDatafeedState($scope.formConfig.jobId)
+      .then((state) => {
+        if (state === 'stopped') {
+          console.log('Stopping poll because datafeed state is: ' + state);
           $scope.$broadcast('render-results');
           forceStop = true;
         }
