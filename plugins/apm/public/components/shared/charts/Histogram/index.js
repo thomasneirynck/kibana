@@ -57,8 +57,8 @@ export class HistogramInner extends PureComponent {
   };
 
   getChartData(items, selectedItem) {
-    const yMax = Math.max(...items.map(item => item.y));
-    const yMin = yMax * 0.1;
+    const yMax = d3.max(items, d => d.y);
+    const MINIMUM_BUCKET_SIZE = yMax * 0.02;
 
     return items.map(item => {
       const padding = (item.x - item.x0) / 20;
@@ -67,7 +67,7 @@ export class HistogramInner extends PureComponent {
         color: item === selectedItem ? colors.blue1 : undefined,
         x0: item.x0 + padding,
         x: item.x - padding,
-        y: item.y > 0 ? Math.max(item.y, yMin) : 0
+        y: item.y > 0 ? Math.max(item.y, MINIMUM_BUCKET_SIZE) : 0
       };
     });
   }

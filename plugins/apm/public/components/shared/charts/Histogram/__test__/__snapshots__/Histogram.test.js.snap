@@ -350,15 +350,15 @@ exports[`Histogram Initially should have default markup 1`] = `
         </rect>
         <rect x=\\"302.97142857142853\\"
               width=\\"22.62857142857149\\"
-              y=\\"72.58181818181818\\"
-              height=\\"7.4181818181818215\\"
+              y=\\"74.18181818181819\\"
+              height=\\"5.818181818181813\\"
               style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
         <rect x=\\"328.1142857142857\\"
               width=\\"22.628571428571433\\"
-              y=\\"72.58181818181818\\"
-              height=\\"7.4181818181818215\\"
+              y=\\"75.63636363636364\\"
+              height=\\"4.36363636363636\\"
               style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
@@ -371,8 +371,8 @@ exports[`Histogram Initially should have default markup 1`] = `
         </rect>
         <rect x=\\"378.4\\"
               width=\\"22.628571428571433\\"
-              y=\\"72.58181818181818\\"
-              height=\\"7.4181818181818215\\"
+              y=\\"74.18181818181819\\"
+              height=\\"5.818181818181813\\"
               style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
@@ -392,8 +392,8 @@ exports[`Histogram Initially should have default markup 1`] = `
         </rect>
         <rect x=\\"453.82857142857137\\"
               width=\\"22.628571428571547\\"
-              y=\\"72.58181818181818\\"
-              height=\\"7.4181818181818215\\"
+              y=\\"78.51636363636364\\"
+              height=\\"1.4836363636363643\\"
               style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
@@ -434,15 +434,15 @@ exports[`Histogram Initially should have default markup 1`] = `
         </rect>
         <rect x=\\"604.6857142857142\\"
               width=\\"22.628571428571604\\"
-              y=\\"72.58181818181818\\"
-              height=\\"7.4181818181818215\\"
+              y=\\"78.51636363636364\\"
+              height=\\"1.4836363636363643\\"
               style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
         <rect x=\\"629.8285714285714\\"
               width=\\"22.62857142857149\\"
-              y=\\"72.58181818181818\\"
-              height=\\"7.4181818181818215\\"
+              y=\\"78.51636363636364\\"
+              height=\\"1.4836363636363643\\"
               style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
@@ -455,8 +455,8 @@ exports[`Histogram Initially should have default markup 1`] = `
         </rect>
         <rect x=\\"680.1142857142858\\"
               width=\\"22.628571428571377\\"
-              y=\\"72.58181818181818\\"
-              height=\\"7.4181818181818215\\"
+              y=\\"78.51636363636364\\"
+              height=\\"1.4836363636363643\\"
               style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
