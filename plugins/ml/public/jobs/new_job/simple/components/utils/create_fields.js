@@ -26,10 +26,10 @@ export function createFields(scope, indexPattern) {
   scope.ui.fields = [];
   agg.type.params.forEach(param => {
     if (param.name === 'field') {
-      fields = getIndexedFields(indexPattern, param, [KBN_FIELD_TYPES.NUMBER, KBN_FIELD_TYPES.STRING, KBN_FIELD_TYPES.IP]);
+      fields = getIndexedFields(indexPattern, [KBN_FIELD_TYPES.NUMBER, KBN_FIELD_TYPES.STRING, KBN_FIELD_TYPES.IP]);
     }
     if (param.name === 'customLabel') {
-      categoryFields = getIndexedFields(indexPattern, param, [KBN_FIELD_TYPES.STRING, KBN_FIELD_TYPES.IP]);
+      categoryFields = getIndexedFields(indexPattern, [KBN_FIELD_TYPES.STRING, KBN_FIELD_TYPES.IP]);
     }
   });
 
@@ -82,12 +82,16 @@ export function createFields(scope, indexPattern) {
   });
 }
 
-function getIndexedFields(indexPattern, param, fieldTypes) {
+export function getIndexedFields(indexPattern, fieldTypes) {
   let fields = indexPattern.fields.raw.filter(f => f.aggregatable === true);
 
   if (fieldTypes) {
-    // filter out _type, _id and _index
-    fields = fields.filter(f => (f.displayName !== '_type' && f.displayName !== '_id' && f.displayName !== '_index'));
+    // filter out _type, _id and _index and scripted fields
+    fields = fields.filter(f =>
+      (f.displayName !== '_type' &&
+      f.displayName !== '_id' &&
+      f.displayName !== '_index' &&
+      f.scripted !== true));
     // we only want fields which the type is in fieldTypes
     fields = fields.filter(f => fieldTypes.find(t => t === f.type));
     // create the mlType property

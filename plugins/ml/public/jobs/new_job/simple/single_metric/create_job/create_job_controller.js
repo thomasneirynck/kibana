@@ -32,9 +32,9 @@ import { validateJobId } from 'plugins/ml/jobs/new_job/simple/components/utils/v
 import { adjustIntervalDisplayed } from 'plugins/ml/jobs/new_job/simple/components/utils/adjust_interval';
 import { createSearchItems, getSafeFieldName } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/components/utils/app_state_settings';
+import { getIndexedFields } from 'plugins/ml/jobs/new_job/simple/components/utils/create_fields';
 import { changeJobIDCase } from 'plugins/ml/jobs/new_job/simple/components/general_job_details/change_job_id_case';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
-import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
 import { getIndexPattern, getSavedSearch, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
 import template from './create_job.html';
 
@@ -263,7 +263,7 @@ module
     let fields = [];
     agg.type.params.forEach((param) => {
       if (param.name === 'field') {
-        fields = getIndexedFields(param);
+        fields = getIndexedFields(indexPattern, param.filterFieldTypes.split(','));
       }
     });
 
@@ -284,19 +284,6 @@ module
       ($scope.formConfig.field === null && agg.type.name === 'cardinality')) {
       $scope.formConfig.field = $scope.ui.fields[0];
     }
-  }
-
-  function getIndexedFields(param) {
-    let fields = _.filter(indexPattern.fields.raw, 'aggregatable');
-    const fieldTypes = param.filterFieldTypes;
-
-    if (fieldTypes) {
-      fields = $filter('fieldType')(fields, fieldTypes);
-      fields = $filter('orderBy')(fields, ['type', 'name']);
-      fields = _.filter(fields, (f) => f.displayName !== '_type');
-      fields = _.each(fields, (f) => f.mlType = kbnTypeToMLJobType(f));
-    }
-    return fields;
   }
 
   $scope.ui.isFormValid = function () {
