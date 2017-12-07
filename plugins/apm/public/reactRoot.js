@@ -9,6 +9,7 @@ import ErrorGroupOverview from './components/app/ErrorGroupOverview';
 import Main from './components/app/Main';
 import TransactionDetails from './components/app/TransactionDetails';
 import TransactionOverview from './components/app/TransactionOverview';
+import ScrollToTopOnPathChange from './components/shared/ScrollToTopOnPathChange';
 import connectHistoryToStore from './utils/connectHistoryToStore';
 
 function Root({ history, store }) {
@@ -18,6 +19,7 @@ function Root({ history, store }) {
     <Provider store={store}>
       <Router history={history}>
         <Main>
+          <ScrollToTopOnPathChange />
           {/* App */}
           <Route exact path="/" component={AppOverview} />
 
