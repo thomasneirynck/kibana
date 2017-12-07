@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import GettingStarted from './view';
+import SetupInstructions from './view';
 import { getUrlParams } from '../../../store/urlParams';
 
 function mapStateToProps(state = {}) {
@@ -9,4 +9,4 @@ function mapStateToProps(state = {}) {
 }
 
 const mapDispatchToProps = {};
-export default connect(mapStateToProps, mapDispatchToProps)(GettingStarted);
+export default connect(mapStateToProps, mapDispatchToProps)(SetupInstructions);

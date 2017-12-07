@@ -24,7 +24,7 @@ function redirectIfNoData({ appList, history }) {
     loadAgentStatus().then(result => {
       if (!result.dataFound) {
         history.push({
-          pathname: '/getting-started'
+          pathname: '/setup-instructions'
         });
       }
     });
@@ -36,7 +36,7 @@ const HeaderWrapper = styled.div`
   justify-content: space-between;
 `;
 
-const GettingStartedLink = styled(RelativeLink)`
+const SetupInstructionsLink = styled(RelativeLink)`
   margin-top: ${px(units.minus)};
 `;
 
@@ -91,9 +91,9 @@ class AppOverview extends Component {
       <div>
         <HeaderWrapper>
           <PageHeader>Apps</PageHeader>
-          <GettingStartedLink path="/getting-started">
+          <SetupInstructionsLink path="/setup-instructions">
             <KuiButton buttonType="secondary">Setup Instructions</KuiButton>
-          </GettingStartedLink>
+          </SetupInstructionsLink>
         </HeaderWrapper>
 
         {this.state.hideBetaCallout === false && (

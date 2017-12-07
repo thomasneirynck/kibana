@@ -3,7 +3,7 @@ import { legacyDecodeURIComponent } from '../utils/url';
 
 const routes = {
   '/': 'APM',
-  '/getting-started': 'Getting Started',
+  '/setup-instructions': 'Setup Instructions',
   '/:appName': {
     url: params => `/${params.appName}/transactions`,
     label: params => params.appName
@@ -26,10 +26,10 @@ describe('breadcrumbs', () => {
     ]);
   });
 
-  it('/getting-started', () => {
-    expect(setupRoutes(routes)('/getting-started')).toEqual([
+  it('/setup-instructions', () => {
+    expect(setupRoutes(routes)('/setup-instructions')).toEqual([
       { label: 'APM', url: '/' },
-      { label: 'Getting Started', url: '/getting-started' }
+      { label: 'Setup Instructions', url: '/setup-instructions' }
     ]);
   });
 

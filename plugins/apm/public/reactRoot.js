@@ -2,7 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { Router, Route, Redirect, Switch } from 'react-router-dom';
 
-import GettingStarted from './components/app/GettingStarted';
+import SetupInstructions from './components/app/SetupInstructions';
 import AppOverview from './components/app/AppOverview';
 import ErrorGroupDetails from './components/app/ErrorGroupDetails';
 import ErrorGroupOverview from './components/app/ErrorGroupOverview';
@@ -31,8 +31,8 @@ function Root({ history, store }) {
           <Route exact path="/:appName/errors" component={ErrorGroupOverview} />
 
           <Switch>
-            {/* Getting started */}
-            <Route path="/getting-started" component={GettingStarted} />
+            {/* Setup instructions */}
+            <Route path="/setup-instructions" component={SetupInstructions} />
 
             {/* Transactions */}
             <Route

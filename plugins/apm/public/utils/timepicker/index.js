@@ -9,7 +9,7 @@ import { updateTimePicker } from '../../store/urlParams';
 
 const routes = {
   '/': 'APM',
-  '/getting-started': 'Getting Started',
+  '/setup-instructions': 'Setup Instructions',
   '/:appName': {
     url: params => `/${params.appName}/transactions`,
     label: params => params.appName

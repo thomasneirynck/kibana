@@ -8,7 +8,7 @@ import Introduction from './Introduction';
 import StepSet from './StepSet';
 import CompleteSetup from './CompleteSetup';
 
-class GettingStarted extends Component {
+class SetupInstructions extends Component {
   state = {
     server: {
       status: null,
@@ -88,4 +88,4 @@ class GettingStarted extends Component {
   }
 }
 
-export default GettingStarted;
+export default SetupInstructions;
