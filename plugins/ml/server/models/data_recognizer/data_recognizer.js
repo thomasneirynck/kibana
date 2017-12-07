@@ -122,7 +122,9 @@ export class DataRecognizer {
   }
 
   // called externally by an endpoint
-  async getModule(id) {
+  // supplying an optional prefix will add the prefix
+  // to the job and datafeed configs
+  async getModule(id, prefix = '') {
     let manifestJSON = null;
     let dirName = null;
 
@@ -143,7 +145,7 @@ export class DataRecognizer {
       const jobConfig = await this.readFile(`${this.modulesDir}/${dirName}/${ML_DIR}/${job.file}`);
       // use the file name for the id
       jobs.push({
-        id: job.id,
+        id: `${prefix}${job.id}`,
         config: JSON.parse(jobConfig)
       });
     }));
@@ -153,10 +155,10 @@ export class DataRecognizer {
       const datafeedConfig = await this.readFile(`${this.modulesDir}/${dirName}/${ML_DIR}/${datafeed.file}`);
       const config = JSON.parse(datafeedConfig);
       // use the job id from the manifestFile
-      config.job_id = datafeed.job_id;
+      config.job_id = `${prefix}${datafeed.job_id}`;
 
       datafeeds.push({
-        id: datafeed.id,
+        id: this.prefixDatafeedId(datafeed.id, prefix),
         config
       });
     }));
@@ -194,7 +196,7 @@ export class DataRecognizer {
     this.indexPatterns = await this.loadIndexPatterns();
 
     // load the config from disk
-    const moduleConfig = await this.getModule(moduleId);
+    const moduleConfig = await this.getModule(moduleId, jobPrefix);
     const manifestFile = await this.getManifestFile(moduleId);
 
     if (indexPatternName === undefined &&
@@ -208,7 +210,7 @@ export class DataRecognizer {
 
     jobPrefix = (jobPrefix === undefined) ? '' : jobPrefix;
     // create an empty results object
-    const results = this.createResultsTemplate(moduleConfig, jobPrefix);
+    const results = this.createResultsTemplate(moduleConfig);
     const saveResults = {
       jobs: [],
       datafeeds: [],
@@ -219,12 +221,12 @@ export class DataRecognizer {
 
     // create the jobs
     if (moduleConfig.jobs && moduleConfig.jobs.length) {
-      saveResults.jobs = await this.saveJobs(moduleConfig.jobs, jobPrefix);
+      saveResults.jobs = await this.saveJobs(moduleConfig.jobs);
     }
 
     // create the datafeeds
     if (moduleConfig.datafeeds && moduleConfig.datafeeds.length) {
-      saveResults.datafeeds = await this.saveDatafeeds(moduleConfig.datafeeds, jobPrefix);
+      saveResults.datafeeds = await this.saveDatafeeds(moduleConfig.datafeeds);
     }
 
     // create the savedObjects
@@ -334,9 +336,9 @@ export class DataRecognizer {
   // save the jobs.
   // if any fail (e.g. it already exists), catch the error and mark the result
   // as success: false
-  async saveJobs(jobs, jobPrefix) {
+  async saveJobs(jobs) {
     return await Promise.all(jobs.map(async (job) => {
-      const jobId = `${jobPrefix}${job.id}`;
+      const jobId = job.id;
       try {
         job.id = jobId;
         await this.saveJob(job);
@@ -355,12 +357,12 @@ export class DataRecognizer {
   // save the datafeeds.
   // if any fail (e.g. it already exists), catch the error and mark the result
   // as success: false
-  async saveDatafeeds(datafeeds, jobPrefix) {
+  async saveDatafeeds(datafeeds) {
     return await Promise.all(datafeeds.map(async (datafeed) => {
-      const datafeedId = `${jobPrefix}${datafeed.id}`;
+      const datafeedId = datafeed.id;
+
       try {
         datafeed.id = datafeedId;
-        datafeed.config.job_id = `${jobPrefix}${datafeed.config.job_id}`;
         await this.saveDatafeed(datafeed);
         return { id: datafeedId, success: true };
       } catch (error) {
@@ -421,13 +423,13 @@ export class DataRecognizer {
 
   // creates an empty results object,
   // listing each job/datafeed/savedObject with a save success boolean
-  createResultsTemplate(moduleConfig, jobPrefix) {
+  createResultsTemplate(moduleConfig) {
     const results = {};
-    function createResultsItems(configItems, resultItems, index, lab = '') {
+    function createResultsItems(configItems, resultItems, index) {
       resultItems[index] = [];
       configItems.forEach((j) => {
         resultItems[index].push({
-          id: `${lab}${j.id}`,
+          id: j.id,
           success: false
         });
       });
@@ -435,7 +437,7 @@ export class DataRecognizer {
 
     Object.keys(moduleConfig).forEach((i) => {
       if (Array.isArray(moduleConfig[i])) {
-        createResultsItems(moduleConfig[i], results, i, jobPrefix);
+        createResultsItems(moduleConfig[i], results, i);
       } else {
         results[i] = {};
         Object.keys(moduleConfig[i]).forEach((k) => {
@@ -494,5 +496,11 @@ export class DataRecognizer {
         });
       });
     }
+  }
+
+  prefixDatafeedId(datafeedId, prefix) {
+    return (datafeedId.match(/^datafeed-/)) ?
+      datafeedId.replace(/^datafeed-/, `datafeed-${prefix}`) :
+      `${prefix}${datafeedId}`;
   }
 }

@@ -258,7 +258,8 @@ module
         if (resp.jobs) {
           $scope.formConfig.jobs.forEach((job) => {
             // check results from saving the jobs
-            const jobResult = resp.jobs.find(j => j.id === `${prefix}${job.id}`);
+            const jobId = `${prefix}${job.id}`;
+            const jobResult = resp.jobs.find(j => j.id === jobId);
             if (jobResult !== undefined) {
               if (jobResult.success) {
                 job.jobState = SAVE_STATE.SAVED;
@@ -270,11 +271,12 @@ module
               }
             } else {
               job.jobState = SAVE_STATE.FAILED;
-              job.errors.push(`Could not save job ${prefix}${job.id}`);
+              job.errors.push(`Could not save job ${jobId}`);
             }
 
             // check results from saving the datafeeds
-            const datafeedResult = resp.datafeeds.find(d => d.id === `${prefix}${job.datafeedId}`);
+            const datafeedId = prefixDatafeedId(job.datafeedId, prefix);
+            const datafeedResult = resp.datafeeds.find(d => d.id === datafeedId);
             if (datafeedResult !== undefined) {
               if (datafeedResult.success) {
                 job.datafeedState = SAVE_STATE.SAVED;
@@ -286,7 +288,7 @@ module
               }
             } else {
               job.datafeedState = SAVE_STATE.FAILED;
-              job.errors.push(`Could not save datafeed ${prefix}${job.datafeedId}`);
+              job.errors.push(`Could not save datafeed ${datafeedId}`);
             }
           });
         }
@@ -382,7 +384,13 @@ module
         }
 
         function start(job) {
-          mlCreateRecognizerJobsService.startDatafeed(job, $scope.formConfig)
+          const jobId = $scope.formConfig.jobLabel + job.id;
+          const datafeedId = prefixDatafeedId(job.datafeedId, $scope.formConfig.jobLabel);
+          mlCreateRecognizerJobsService.startDatafeed(
+            datafeedId,
+            jobId,
+            $scope.formConfig.start,
+            $scope.formConfig.end)
           .then(() => {
             job.runningState = DATAFEED_STATE.STARTED;
             datafeedCounter++;
@@ -481,6 +489,12 @@ module
       }
     });
     return valid;
+  }
+
+  function prefixDatafeedId(datafeedId, prefix) {
+    return (datafeedId.match(/^datafeed-/)) ?
+      datafeedId.replace(/^datafeed-/, `datafeed-${prefix}`) :
+      `${prefix}${datafeedId}`;
   }
 
   loadJobConfigs();
