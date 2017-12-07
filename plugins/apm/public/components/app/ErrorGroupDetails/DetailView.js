@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
 import { units, px, colors, borderRadius } from '../../../style/variables';
 import { get, capitalize, isEmpty } from 'lodash';
 import { STATUS } from '../../../constants';
@@ -68,9 +67,8 @@ function DetailView({ errorGroup, urlParams }) {
 
   const { appName } = urlParams;
 
-  const timestamp = moment(get(errorGroup, 'data.error.@timestamp'));
-  const timestampFull = timestamp.format('MMMM Do YYYY, HH:mm:ss.SSS');
-  const timestampAgo = timestamp.fromNow();
+  const timestamp = get(errorGroup, 'data.error.@timestamp');
+  const url = get(errorGroup.data.error, 'context.request.url.raw', 'N/A');
 
   const stackframes = get(errorGroup.data.error.error.exception, 'stacktrace');
   const codeLanguage = get(errorGroup.data.error, 'context.app.language.name');
@@ -80,8 +78,6 @@ function DetailView({ errorGroup, urlParams }) {
 
   const occurencesCount = errorGroup.data.occurrencesCount;
   const groupId = errorGroup.data.groupId;
-
-  const url = get(errorGroup.data.error, 'context.request.url.raw', 'N/A');
 
   const agentName = get(errorGroup.data.error, APP_AGENT_NAME);
 
@@ -105,11 +101,7 @@ function DetailView({ errorGroup, urlParams }) {
         </DiscoverButton>
       </Header>
 
-      <Properties
-        timestampAgo={timestampAgo}
-        timestampFull={timestampFull}
-        url={url}
-      />
+      <Properties timestamp={timestamp} url={url} />
 
       <TabContainer>
         {tabs.map(key => {

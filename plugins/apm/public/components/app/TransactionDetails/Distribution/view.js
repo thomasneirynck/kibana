@@ -4,11 +4,7 @@ import Histogram from '../../../shared/charts/Histogram';
 import { toQuery, fromQuery } from '../../../../utils/url';
 import { withRouter } from 'react-router-dom';
 import EmptyMessage from '../../../shared/EmptyMessage';
-import {
-  getTimeFormatter,
-  timeUnit,
-  distributionUnit
-} from '../../../../utils/formatters';
+import { getTimeFormatter, timeUnit } from '../../../../utils/formatters';
 
 export function getFormattedBuckets(buckets, bucketSize) {
   if (!buckets) {
@@ -100,6 +96,10 @@ class Distribution extends Component {
       </div>
     );
   }
+}
+
+function distributionUnit(type) {
+  return type === 'request' ? 'req.' : 'trans.';
 }
 
 function transactionLabel(type) {

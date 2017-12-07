@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import moment from 'moment';
+
 import {
   unit,
   units,
@@ -14,7 +16,7 @@ const PropertiesContainer = styled.div`
   padding: 0 ${px(units.plus)};
   width: 100%;
   justify-content: flex-start;
-  flex-flow: row wrap;
+  flex-wrap: wrap;
 `;
 
 const Property = styled.div`
@@ -39,11 +41,16 @@ const PropertyValueEmphasis = styled.span`
   color: ${colors.gray3};
 `;
 
-const PropertyUrl = PropertyValue.withComponent('span').extend`
+const PropertyUrl = styled.span`
+  display: inline-block;
   ${truncate(px(unit * 35))};
 `;
 
-export function Properties({ timestampAgo, timestampFull, url }) {
+export function Properties({ timestamp, url }) {
+  const time = moment(timestamp);
+  const timestampFull = time.format('MMMM Do YYYY, HH:mm:ss.SSS');
+  const timestampAgo = time.fromNow();
+
   return (
     <PropertiesContainer>
       <Property>

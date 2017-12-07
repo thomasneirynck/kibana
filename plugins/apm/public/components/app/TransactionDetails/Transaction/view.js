@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
 import { STATUS } from '../../../../constants';
 import { units, colors, px, borderRadius } from '../../../../style/variables';
 import { Tab } from '../../../shared/UIComponents';
@@ -93,12 +92,10 @@ class Transaction extends Component {
       return null;
     }
 
-    const agentName = get(transaction.data, APP_AGENT_NAME);
-    const timestamp = moment(get(transaction, 'data.@timestamp'));
-    const timestampFull = timestamp.format('MMMM Do YYYY, HH:mm:ss.SSS');
-    const timestampAgo = timestamp.fromNow();
-
+    const timestamp = get(transaction, 'data.@timestamp');
     const url = get(transaction.data, 'context.request.url.raw', 'N/A');
+
+    const agentName = get(transaction.data, APP_AGENT_NAME);
 
     const tabs = getTabs(transaction.data);
     const currentTab = getCurrentTab(tabs, this.props.urlParams.detailTab);
@@ -123,11 +120,7 @@ class Transaction extends Component {
           </DiscoverButton>
         </Header>
 
-        <Properties
-          timestampAgo={timestampAgo}
-          timestampFull={timestampFull}
-          url={url}
-        />
+        <Properties timestamp={timestamp} url={url} />
 
         <TabContainer>
           {[DEFAULT_TAB, ...tabs].map(key => {
