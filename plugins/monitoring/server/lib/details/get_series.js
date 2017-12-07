@@ -153,17 +153,17 @@ function findLastUsableBucketIndex(buckets, max, firstUsableBucketIndex, bucketS
 }
 
 function handleSeries(metric, min, max, bucketSize, response) {
-  // map buckets to values for charts
-  const key = metric.derivative ? 'metric_deriv' : 'metric';
-  const metricDefaultCalculation = (bucket) => defaultCalculation(key, metric, bucketSize, bucket);
-  const bucketMapper = metric && metric.calculation || metricDefaultCalculation;
-
   const buckets = get(response, 'aggregations.check.buckets', []);
   const firstUsableBucketIndex = findFirstUsableBucketIndex(buckets, min);
   const lastUsableBucketIndex = findLastUsableBucketIndex(buckets, max, firstUsableBucketIndex, bucketSize * 1000);
   let data = [];
 
   if (firstUsableBucketIndex <= lastUsableBucketIndex) {
+    // map buckets to values for charts
+    const key = metric.derivative ? 'metric_deriv' : 'metric';
+    const metricDefaultCalculation = (bucket) => defaultCalculation(key, metric, bucketSize, bucket);
+    const bucketMapper = metric && metric.calculation || metricDefaultCalculation;
+
     data = buckets
       .slice(firstUsableBucketIndex, lastUsableBucketIndex + 1) // take only the buckets we know are usable
       .map(bucket => [ bucket.key, bucketMapper(bucket) ]); // map buckets to X/Y coords for Flot charting
