@@ -16,7 +16,7 @@
 import ngMock from 'ng_mock';
 import expect from 'expect.js';
 import moment from 'moment';
-import { IntervalHelperProvider } from '../ml_time_buckets';
+import { IntervalHelperProvider, getBoundsRoundedToInterval } from '../ml_time_buckets';
 
 describe('ML - time buckets', () => {
 
@@ -128,6 +128,37 @@ describe('ML - time buckets', () => {
       customBuckets.setBounds(weekBounds);
       const weekResult = customBuckets.getIntervalToNearestMultiple(10800); // 3 hours
       expect(weekResult.asSeconds()).to.be(21600);  // 6 hours
+    });
+
+  });
+
+  describe('getBoundsRoundedToInterval ', () => {
+    // Must include timezone when creating moments for this test to ensure
+    // checks are correct when running tests in different timezones.
+    const testBounds = { min: moment('2017-01-05T10:11:12.000+00:00'), max: moment('2017-10-26T09:08:07.000+00:00') };
+
+    it('returns correct bounds for 4h interval without inclusive end', () => {
+      const bounds4h = getBoundsRoundedToInterval (testBounds, moment.duration(4, 'hours'), false);
+      expect(bounds4h.min.valueOf()).to.be(moment('2017-01-05T08:00:00.000+00:00').valueOf());
+      expect(bounds4h.max.valueOf()).to.be(moment('2017-10-26T11:59:59.999+00:00').valueOf());
+    });
+
+    it('returns correct bounds for 4h interval with inclusive end', () => {
+      const bounds4h = getBoundsRoundedToInterval (testBounds, moment.duration(4, 'hours'), true);
+      expect(bounds4h.min.valueOf()).to.be(moment('2017-01-05T08:00:00.000+00:00').valueOf());
+      expect(bounds4h.max.valueOf()).to.be(moment('2017-10-26T12:00:00.000+00:00').valueOf());
+    });
+
+    it('returns correct bounds for 1d interval without inclusive end', () => {
+      const bounds4h = getBoundsRoundedToInterval (testBounds, moment.duration(1, 'days'), false);
+      expect(bounds4h.min.valueOf()).to.be(moment('2017-01-05T00:00:00.000+00:00').valueOf());
+      expect(bounds4h.max.valueOf()).to.be(moment('2017-10-26T23:59:59.999+00:00').valueOf());
+    });
+
+    it('returns correct bounds for 1d interval with inclusive end', () => {
+      const bounds4h = getBoundsRoundedToInterval (testBounds, moment.duration(1, 'days'), true);
+      expect(bounds4h.min.valueOf()).to.be(moment('2017-01-05T00:00:00.000+00:00').valueOf());
+      expect(bounds4h.max.valueOf()).to.be(moment('2017-10-27T00:00:00.000+00:00').valueOf());
     });
 
   });
