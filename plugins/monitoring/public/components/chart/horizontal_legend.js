@@ -34,18 +34,30 @@ export class HorizontalLegend extends React.Component {
     }
     if (!row.label || row.legend === false) {
       return (
-        <div key={rowIdx} style={{ display: 'none' }}/>
+        <div
+          key={rowIdx}
+          style={{ display: 'none' }}
+        />
       );
     }
 
     return (
-      <KuiKeyboardAccessible key={rowIdx} >
-        <div className={classes.join(' ')} onClick={event => this.props.onToggle(event, row.id)} >
+      <KuiKeyboardAccessible key={rowIdx}>
+        <div
+          className={classes.join(' ')}
+          onClick={event => this.props.onToggle(event, row.id)}
+        >
           <span className="rhythm_chart__legend-label">
-            <span className="fa fa-circle rhythm_chart__legend-indicator" style={{ color: row.color }}/>
-            { row.label }
+            <span
+              className="fa fa-circle rhythm_chart__legend-indicator"
+              style={{ color: row.color }}
+              aria-label="toggle button"
+            />
+            { ' ' + row.label }
           </span>
-          <span className="rhythm_chart__legend-value">{ value }</span>
+          <span className="rhythm_chart__legend-value">
+            { ' ' + value }
+          </span>
         </div>
       </KuiKeyboardAccessible>
     );
