@@ -1,0 +1,5 @@
+{
+  "upstream": "elastic/x-pack-kibana",
+  "branches": [{ "name": "6.x", "checked": true }, "6.1", "6.0", "5.6"],
+  "labels": ["backport"]
+}
