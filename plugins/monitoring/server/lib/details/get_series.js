@@ -66,7 +66,15 @@ function fetchSeries(req, indexPattern, metric, min, max, bucketSize, filters) {
   // if we're using a derivative metric, offset the min (also @see comment on offsetMinForDerivativeMetric function)
   const adjustedMin = metric.derivative ? offsetMinForDerivativeMetric(min, bucketSize) : min;
 
-  const metricAggs = createMetricAggs(metric);
+  const dateHistogramSubAggs = metric.dateHistogramSubAggs || {
+    metric: {
+      [metric.metricAgg]: {
+        field: metric.field
+      }
+    },
+    ...createMetricAggs(metric)
+  };
+
   const params = {
     index: indexPattern,
     size: 0,
@@ -87,12 +95,7 @@ function fetchSeries(req, indexPattern, metric, min, max, bucketSize, filters) {
             interval: bucketSize + 's'
           },
           aggs: {
-            metric: {
-              [metric.metricAgg]: {
-                field: metric.field
-              }
-            },
-            ...metricAggs
+            ...dateHistogramSubAggs
           }
         }
       }
