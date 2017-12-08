@@ -397,8 +397,10 @@ module.service('mlSingleMetricJobService', function (
       }
     }
 
+    // Obtain the model plot data, passing 0 for the detectorIndex and empty list of partitioning fields.
     mlResultsService.getModelPlotOutput(
       formConfig.jobId,
+      0,
       [],
       start,
       formConfig.end,
