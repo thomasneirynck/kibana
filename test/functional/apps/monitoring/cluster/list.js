@@ -9,7 +9,7 @@ export default function ({ getService, getPageObjects }) {
   const PageObjects = getPageObjects(['monitoring', 'header']);
 
   describe('monitoring/cluster-list', () => {
-    describe('with trial license clusters', () => {
+    describe.skip('with trial license clusters', () => { // eslint-disable-line jest/no-disabled-tests
       const UNSUPPORTED_CLUSTER_UUID = '6d-9tDFTRe-qT5GoBytdlQ';
 
       before(async () => {
