@@ -3,16 +3,28 @@ import CustomPlot from '../CustomPlot';
 import { getTimefilter } from '../../../../utils/timepicker';
 import { asMillis, asDecimal, tpmUnit } from '../../../../utils/formatters';
 import styled from 'styled-components';
-import { units, px } from '../../../../style/variables';
+import { units, unit, px } from '../../../../style/variables';
 
 const ChartsWrapper = styled.div`
   display: flex;
+  flex-flow: wrap;
   justify-content: space-between;
   user-select: none;
 `;
 
 const Chart = styled.div`
-  width: calc(50% - ${px(units.plus)});
+  flex: 0 0 100%;
+
+  @media (min-width: ${px(unit * 60)}) {
+    flex: 1 1 0%;
+
+    &:first-child {
+      margin-right: ${px(units.half)};
+    }
+    &:last-child {
+      margin-left: ${px(units.half)};
+    }
+  }
 `;
 
 export class Charts extends Component {

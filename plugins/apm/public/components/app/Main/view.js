@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { get } from 'lodash';
-import { units, px } from '../../../style/variables';
+import { units, unit, px } from '../../../style/variables';
 
 const MainContainer = styled.div`
+  min-width: ${px(unit * 50)};
   padding: ${px(units.plus)};
 `;
 function fetchLicense(props) {
