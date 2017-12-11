@@ -736,7 +736,6 @@ module.controller('MlExplorerController', function (
   function processViewByResults(scoresByInfluencerAndTime) {
     const dataset = {
       fieldName: $scope.swimlaneViewByFieldName,
-      laneLabels: [],
       points: [],
       interval: $scope.swimlaneBucketInterval.asSeconds() };
 
@@ -744,8 +743,12 @@ module.controller('MlExplorerController', function (
     dataset.earliest = $scope.overallSwimlaneData.earliest;
     dataset.latest = $scope.overallSwimlaneData.latest;
 
+    const laneLabels = [];
+    const maxScoreByLaneLabel = {};
+
     _.each(scoresByInfluencerAndTime, (influencerData, influencerFieldValue) => {
-      dataset.laneLabels.push(influencerFieldValue);
+      laneLabels.push(influencerFieldValue);
+      maxScoreByLaneLabel[influencerFieldValue] = 0;
 
       _.each(influencerData, (anomalyScore, timeMs) => {
         const time = timeMs / 1000;
@@ -754,7 +757,17 @@ module.controller('MlExplorerController', function (
           time,
           value: anomalyScore
         });
+        maxScoreByLaneLabel[influencerFieldValue] =
+          Math.max(maxScoreByLaneLabel[influencerFieldValue], anomalyScore);
       });
+    });
+
+    // Ensure lanes are sorted in descending order of max score.
+    // Note the keys in scoresByInfluencerAndTime received from the ES request
+    // are not guaranteed to be sorted by score if they can be parsed as numbers
+    // (e.g. if viewing by HTTP response code).
+    dataset.laneLabels = laneLabels.sort((a, b) => {
+      return maxScoreByLaneLabel[b] - maxScoreByLaneLabel[a];
     });
 
     $scope.viewBySwimlaneData = dataset;

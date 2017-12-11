@@ -423,29 +423,37 @@ module.service('mlResultsService', function ($q, es, ml) {
 
     // Build the criteria to use in the bool filter part of the request.
     // Adds criteria for the time range plus any specified job IDs.
-    const boolCriteria = [];
-    boolCriteria.push({
-      'range': {
-        'timestamp': {
-          'gte': earliestMs,
-          'lte': latestMs,
-          'format': 'epoch_millis'
+    const boolCriteria = [
+      {
+        range: {
+          timestamp: {
+            gte: earliestMs,
+            lte: latestMs,
+            format: 'epoch_millis'
+          }
+        }
+      },
+      {
+        range: {
+          influencer_score: {
+            gt: 0
+          }
         }
       }
-    });
+    ];
+
     if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
       let jobIdFilterStr = '';
       _.each(jobIds, (jobId, i) => {
         if (i > 0) {
           jobIdFilterStr += ' OR ';
         }
-        jobIdFilterStr += 'job_id:';
-        jobIdFilterStr += jobId;
+        jobIdFilterStr += `job_id:${jobId}`;
       });
       boolCriteria.push({
-        'query_string': {
-          'analyze_wildcard': false,
-          'query': jobIdFilterStr
+        query_string: {
+          analyze_wildcard: false,
+          query: jobIdFilterStr
         }
       });
     }
@@ -456,13 +464,12 @@ module.service('mlResultsService', function ($q, es, ml) {
         if (i > 0) {
           influencerFilterStr += ' OR ';
         }
-        influencerFilterStr += 'influencer_field_value:';
-        influencerFilterStr += escapeForElasticsearchQuery(value);
+        influencerFilterStr += `influencer_field_value:${escapeForElasticsearchQuery(value)}`;
       });
       boolCriteria.push({
-        'query_string': {
-          'analyze_wildcard': false,
-          'query': influencerFilterStr
+        query_string: {
+          analyze_wildcard: false,
+          query: influencerFilterStr
         }
       });
     }
@@ -471,49 +478,49 @@ module.service('mlResultsService', function ($q, es, ml) {
       index: ML_RESULTS_INDEX_PATTERN,
       size: 0,
       body: {
-        'query': {
-          'bool': {
-            'filter': [
+        query: {
+          bool: {
+            filter: [
               {
-                'query_string': {
-                  'query': 'result_type:influencer AND influencer_field_name:' +
+                query_string: {
+                  query: 'result_type:influencer AND influencer_field_name:' +
                     escapeForElasticsearchQuery(influencerFieldName),
-                  'analyze_wildcard': false
+                  analyze_wildcard: false
                 }
               },
               {
-                'bool': {
-                  'must': boolCriteria
+                bool: {
+                  must: boolCriteria
                 }
               }
             ]
           }
         },
-        'aggs': {
-          'influencerFieldValues': {
-            'terms': {
-              'field': 'influencer_field_value',
-              'size': maxResults !== undefined ? maxResults : 10,
-              'order': {
-                'maxAnomalyScore': 'desc'
+        aggs: {
+          influencerFieldValues: {
+            terms: {
+              field: 'influencer_field_value',
+              size: maxResults !== undefined ? maxResults : 10,
+              order: {
+                maxAnomalyScore: 'desc'
               }
             },
-            'aggs': {
-              'maxAnomalyScore': {
-                'max': {
-                  'field': 'influencer_score'
+            aggs: {
+              maxAnomalyScore: {
+                max: {
+                  field: 'influencer_score'
                 }
               },
-              'byTime': {
-                'date_histogram': {
-                  'field': 'timestamp',
-                  'interval': interval,
-                  'min_doc_count': 1
+              byTime: {
+                date_histogram: {
+                  field: 'timestamp',
+                  interval,
+                  min_doc_count: 1
                 },
-                'aggs': {
-                  'maxAnomalyScore': {
-                    'max': {
-                      'field': 'influencer_score'
+                aggs: {
+                  maxAnomalyScore: {
+                    max: {
+                      field: 'influencer_score'
                     }
                   }
                 }
