@@ -113,7 +113,8 @@ Enable the proxy for Chromium to use. When this is set to `true`, the
 Defaults to `false`
 
 `xpack.reporting.capture.browser.chromium.proxy.server`::
-The uri for the proxy server.
+The uri for the proxy server. Providing the username/password for the proxy server via the uri is not supported.
+
 
 `xpack.reporting.capture.browser.chromium.proxy.bypass`::
 An array of hosts that shouldn't go through the proxy server and instead use a direct connection.
