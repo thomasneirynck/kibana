@@ -48,9 +48,7 @@ exports[`when response has data Initially should have correct markup 1`] = `
         >
         </span>
         <span class=\\"sc-iwsKbI ehWbsd\\">
-          <!-- react-text: 8 -->
           Avg.
-          <!-- /react-text -->
           <span class=\\"sc-gqjmRU eRtNVe\\">
             468 ms
           </span>
@@ -65,9 +63,7 @@ exports[`when response has data Initially should have correct markup 1`] = `
         >
         </span>
         <span class=\\"sc-iwsKbI ehWbsd\\">
-          <!-- react-text: 13 -->
           95th percentile
-          <!-- /react-text -->
         </span>
       </div>
       <div class=\\"sc-bdVaJa eWvHJG\\"
@@ -79,18 +75,15 @@ exports[`when response has data Initially should have correct markup 1`] = `
         >
         </span>
         <span class=\\"sc-iwsKbI ehWbsd\\">
-          <!-- react-text: 17 -->
           99th percentile
-          <!-- /react-text -->
         </span>
       </div>
-      <!-- react-empty: 18 -->
     </div>
   </div>
   <div style=\\"position: relative; height: 256px;\\">
     <div style=\\"position: absolute; top: 0px; left: 0px;\\">
-      <div class=\\"rv-xy-plot \\"
-           style=\\"width: 800px; height: 256px;\\"
+      <div style=\\"width: 800px; height: 256px;\\"
+           class=\\"rv-xy-plot \\"
       >
         <svg class=\\"rv-xy-plot__inner\\"
              width=\\"800\\"
@@ -335,8 +328,8 @@ exports[`when response has data Initially should have correct markup 1`] = `
       </div>
     </div>
     <div style=\\"position: absolute; top: 0px; left: 0px;\\">
-      <div class=\\"rv-xy-plot \\"
-           style=\\"width: 800px; height: 256px;\\"
+      <div style=\\"width: 800px; height: 256px;\\"
+           class=\\"rv-xy-plot \\"
       >
         <svg class=\\"rv-xy-plot__inner\\"
              width=\\"800\\"
@@ -346,8 +339,8 @@ exports[`when response has data Initially should have correct markup 1`] = `
       </div>
     </div>
     <div style=\\"position: absolute; top: 0px; left: 0px;\\">
-      <div class=\\"rv-xy-plot \\"
-           style=\\"width: 800px; height: 256px;\\"
+      <div style=\\"width: 800px; height: 256px;\\"
+           class=\\"rv-xy-plot \\"
       >
         <svg class=\\"rv-xy-plot__inner\\"
              width=\\"800\\"
@@ -1009,9 +1002,7 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
         >
         </span>
         <span class=\\"sc-iwsKbI ehWbsd\\">
-          <!-- react-text: 8 -->
           Avg.
-          <!-- /react-text -->
           <span class=\\"sc-gqjmRU eRtNVe\\">
             468 ms
           </span>
@@ -1026,9 +1017,7 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
         >
         </span>
         <span class=\\"sc-iwsKbI ehWbsd\\">
-          <!-- react-text: 13 -->
           95th percentile
-          <!-- /react-text -->
         </span>
       </div>
       <div class=\\"sc-bdVaJa eWvHJG\\"
@@ -1040,18 +1029,15 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
         >
         </span>
         <span class=\\"sc-iwsKbI ehWbsd\\">
-          <!-- react-text: 17 -->
           99th percentile
-          <!-- /react-text -->
         </span>
       </div>
-      <!-- react-empty: 18 -->
     </div>
   </div>
   <div style=\\"position: relative; height: 256px;\\">
     <div style=\\"position: absolute; top: 0px; left: 0px;\\">
-      <div class=\\"rv-xy-plot \\"
-           style=\\"width: 800px; height: 256px;\\"
+      <div style=\\"width: 800px; height: 256px;\\"
+           class=\\"rv-xy-plot \\"
       >
         <svg class=\\"rv-xy-plot__inner\\"
              width=\\"800\\"
@@ -1296,8 +1282,8 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
       </div>
     </div>
     <div style=\\"position: absolute; top: 0px; left: 0px;\\">
-      <div class=\\"rv-xy-plot \\"
-           style=\\"width: 800px; height: 256px;\\"
+      <div style=\\"width: 800px; height: 256px;\\"
+           class=\\"rv-xy-plot \\"
       >
         <svg class=\\"rv-xy-plot__inner\\"
              width=\\"800\\"
@@ -1355,9 +1341,7 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
                         radius=\\"8\\"
                   >
                   </span>
-                  <!-- react-text: 114 -->
                   Avg.
-                  <!-- /react-text -->
                 </div>
                 <div class=\\"sc-gzVnrw zwJEr\\">
                   438704.4
@@ -1372,9 +1356,7 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
                         radius=\\"8\\"
                   >
                   </span>
-                  <!-- react-text: 119 -->
                   95th
-                  <!-- /react-text -->
                 </div>
                 <div class=\\"sc-gzVnrw zwJEr\\">
                   1557383.999999999
@@ -1389,9 +1371,7 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
                         radius=\\"8\\"
                   >
                   </span>
-                  <!-- react-text: 124 -->
                   99th
-                  <!-- /react-text -->
                 </div>
                 <div class=\\"sc-gzVnrw zwJEr\\">
                   1820377.1200000006
@@ -1403,8 +1383,8 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
       </div>
     </div>
     <div style=\\"position: absolute; top: 0px; left: 0px;\\">
-      <div class=\\"rv-xy-plot \\"
-           style=\\"width: 800px; height: 256px;\\"
+      <div style=\\"width: 800px; height: 256px;\\"
+           class=\\"rv-xy-plot \\"
       >
         <svg class=\\"rv-xy-plot__inner\\"
              width=\\"800\\"
@@ -2023,13 +2003,12 @@ exports[`when response has no data Initially should have correct markup 1`] = `
     <div class=\\"sc-htoDjs kTDeMd\\">
     </div>
     <div class=\\"sc-dnqmqq jHYWyk\\">
-      <!-- react-empty: 5 -->
     </div>
   </div>
   <div style=\\"position: relative; height: 256px;\\">
     <div style=\\"position: absolute; top: 0px; left: 0px;\\">
-      <div class=\\"rv-xy-plot \\"
-           style=\\"width: 100px; height: 256px;\\"
+      <div style=\\"width: 100px; height: 256px;\\"
+           class=\\"rv-xy-plot \\"
       >
         <svg class=\\"rv-xy-plot__inner\\"
              width=\\"100\\"
@@ -2385,8 +2364,8 @@ exports[`when response has no data Initially should have correct markup 1`] = `
       </div>
     </div>
     <div style=\\"position: absolute; top: 0px; left: 0px;\\">
-      <div class=\\"rv-xy-plot \\"
-           style=\\"width: 100px; height: 256px;\\"
+      <div style=\\"width: 100px; height: 256px;\\"
+           class=\\"rv-xy-plot \\"
       >
         <svg class=\\"rv-xy-plot__inner\\"
              width=\\"100\\"
@@ -2395,7 +2374,6 @@ exports[`when response has no data Initially should have correct markup 1`] = `
         </svg>
       </div>
     </div>
-    <!-- react-empty: 72 -->
   </div>
 </div>
 "

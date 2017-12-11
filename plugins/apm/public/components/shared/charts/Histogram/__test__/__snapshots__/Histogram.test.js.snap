@@ -3,8 +3,8 @@
 exports[`Histogram Initially should have default markup 1`] = `
 "
 <div class=\\"sc-htoDjs gBxNsV\\">
-  <div class=\\"rv-xy-plot \\"
-       style=\\"width: 800px; height: 128px;\\"
+  <div style=\\"width: 800px; height: 128px;\\"
+       class=\\"rv-xy-plot \\"
   >
     <svg class=\\"rv-xy-plot__inner\\"
          width=\\"800\\"
@@ -264,200 +264,200 @@ exports[`Histogram Initially should have default markup 1`] = `
       <g class=\\"rv-xy-plot__series rv-xy-plot__series--rect \\"
          transform=\\"translate(80,16)\\"
       >
-        <rect x=\\"1.2571428571428571\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"1.2571428571428571\\"
               width=\\"22.628571428571433\\"
               y=\\"80\\"
               height=\\"0\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"26.4\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"26.4\\"
               width=\\"22.628571428571433\\"
               y=\\"80\\"
               height=\\"0\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"51.542857142857144\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"51.542857142857144\\"
               width=\\"22.62857142857142\\"
               y=\\"80\\"
               height=\\"0\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"76.68571428571428\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"76.68571428571428\\"
               width=\\"22.628571428571433\\"
               y=\\"80\\"
               height=\\"0\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"101.82857142857144\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"101.82857142857144\\"
               width=\\"22.628571428571405\\"
               y=\\"80\\"
               height=\\"0\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"126.97142857142858\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"126.97142857142858\\"
               width=\\"22.62857142857142\\"
               y=\\"68.36363636363636\\"
               height=\\"11.63636363636364\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"152.11428571428573\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"152.11428571428573\\"
               width=\\"22.628571428571405\\"
               y=\\"46.54545454545455\\"
               height=\\"33.45454545454545\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"177.25714285714287\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"177.25714285714287\\"
               width=\\"22.628571428571405\\"
               y=\\"8.727272727272734\\"
               height=\\"71.27272727272727\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"202.40000000000003\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"202.40000000000003\\"
               width=\\"22.628571428571377\\"
               y=\\"5.818181818181813\\"
               height=\\"74.18181818181819\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"227.54285714285712\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"227.54285714285712\\"
               width=\\"22.628571428571462\\"
               y=\\"13.090909090909093\\"
               height=\\"66.9090909090909\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"252.68571428571425\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"252.68571428571425\\"
               width=\\"22.62857142857149\\"
               y=\\"61.09090909090909\\"
               height=\\"18.909090909090907\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"277.8285714285714\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"277.8285714285714\\"
               width=\\"22.62857142857149\\"
               y=\\"69.81818181818181\\"
               height=\\"10.181818181818187\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"302.97142857142853\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"302.97142857142853\\"
               width=\\"22.62857142857149\\"
               y=\\"74.18181818181819\\"
               height=\\"5.818181818181813\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"328.1142857142857\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"328.1142857142857\\"
               width=\\"22.628571428571433\\"
               y=\\"75.63636363636364\\"
               height=\\"4.36363636363636\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"353.25714285714287\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"353.25714285714287\\"
               width=\\"22.628571428571433\\"
               y=\\"80\\"
               height=\\"0\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"378.4\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"378.4\\"
               width=\\"22.628571428571433\\"
               y=\\"74.18181818181819\\"
               height=\\"5.818181818181813\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"403.5428571428571\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"403.5428571428571\\"
               width=\\"22.628571428571547\\"
               y=\\"80\\"
               height=\\"0\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"428.68571428571425\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"428.68571428571425\\"
               width=\\"22.62857142857149\\"
               y=\\"80\\"
               height=\\"0\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"453.82857142857137\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"453.82857142857137\\"
               width=\\"22.628571428571547\\"
               y=\\"78.51636363636364\\"
               height=\\"1.4836363636363643\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"478.9714285714286\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"478.9714285714286\\"
               width=\\"22.628571428571433\\"
               y=\\"80\\"
               height=\\"0\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"504.1142857142857\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"504.1142857142857\\"
               width=\\"22.628571428571433\\"
               y=\\"80\\"
               height=\\"0\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"529.2571428571429\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"529.2571428571429\\"
               width=\\"22.628571428571377\\"
               y=\\"80\\"
               height=\\"0\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"554.4\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"554.4\\"
               width=\\"22.62857142857149\\"
               y=\\"80\\"
               height=\\"0\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"579.5428571428571\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"579.5428571428571\\"
               width=\\"22.62857142857149\\"
               y=\\"80\\"
               height=\\"0\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"604.6857142857142\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"604.6857142857142\\"
               width=\\"22.628571428571604\\"
               y=\\"78.51636363636364\\"
               height=\\"1.4836363636363643\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"629.8285714285714\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"629.8285714285714\\"
               width=\\"22.62857142857149\\"
               y=\\"78.51636363636364\\"
               height=\\"1.4836363636363643\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"654.9714285714285\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"654.9714285714285\\"
               width=\\"22.62857142857149\\"
               y=\\"80\\"
               height=\\"0\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
-        <rect x=\\"680.1142857142858\\"
+        <rect style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
+              x=\\"680.1142857142858\\"
               width=\\"22.628571428571377\\"
               y=\\"78.51636363636364\\"
               height=\\"1.4836363636363643\\"
-              style=\\"opacity: 1; stroke: rgb(172, 189, 216); fill: rgb(172, 189, 216);\\"
         >
         </rect>
       </g>
@@ -657,9 +657,7 @@ exports[`Histogram when hovering over a non-empty bucket should have correct mar
                 radius=\\"8\\"
           >
           </span>
-          <!-- react-text: 109 -->
           Requests
-          <!-- /react-text -->
         </div>
         <div class=\\"sc-gzVnrw zwJEr\\">
           49.0

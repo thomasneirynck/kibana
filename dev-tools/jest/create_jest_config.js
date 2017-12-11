@@ -18,6 +18,8 @@ export function createJestConfig({
     },
     setupFiles: [
       `${kibanaDirectory}/src/dev/jest/setup/babel_polyfill.js`,
+      `${kibanaDirectory}/src/dev/jest/setup/request_animation_frame_polyfill.js`,
+      `<rootDir>/dev-tools/jest/setup/enzyme.js`
     ],
     testMatch: [
       "**/*.test.js"
