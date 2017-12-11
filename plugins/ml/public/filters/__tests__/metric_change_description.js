@@ -28,13 +28,13 @@ const init = function () {
   });
 };
 
-describe('ML - metricChangeDescription filter', function () {
+describe('ML - metricChangeDescription filter', () => {
 
   beforeEach(function () {
     init();
   });
 
-  it('should have a metricChangeDescription filter', function () {
+  it('should have a metricChangeDescription filter', () => {
     expect(filter).to.not.be(null);
   });
 

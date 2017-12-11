@@ -16,7 +16,7 @@
 import ngMock from 'ng_mock';
 import expect from 'expect.js';
 
-describe('ML - <ml-select-severity>', function () {
+describe('ML - <ml-select-severity>', () => {
   let $scope;
   let $compile;
 
@@ -33,7 +33,7 @@ describe('ML - <ml-select-severity>', function () {
     $scope.$destroy();
   });
 
-  it('Initialization doesn\'t throw an error', function () {
+  it('Initialization doesn\'t throw an error', () => {
     expect(function () {
       $compile('<ml-select-severity />')($scope);
     }).to.not.throwError('Not initialized.');

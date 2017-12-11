@@ -18,7 +18,7 @@ import expect from 'expect.js';
 
 import tooltips from '../tooltips.json';
 
-describe('ML - <ml-info-icon>', function () {
+describe('ML - <ml-info-icon>', () => {
   let $scope;
   let $compile;
   let $element;
@@ -36,7 +36,7 @@ describe('ML - <ml-info-icon>', function () {
     $scope.$destroy();
   });
 
-  it('Plain initialization doesn\'t throw an error', function () {
+  it('Plain initialization doesn\'t throw an error', () => {
     $element = $compile('<ml-info-icon />')($scope);
     const scope = $element.isolateScope();
 
@@ -44,7 +44,7 @@ describe('ML - <ml-info-icon>', function () {
     expect(scope.text).to.be('');
   });
 
-  it('Initialization with a non-existing tooltip attribute doesn\'t throw an error', function () {
+  it('Initialization with a non-existing tooltip attribute doesn\'t throw an error', () => {
     const id = 'non_existing_attribute';
     $element = $compile(`<i ml-info-icon="${id}" />`)($scope);
     const scope = $element.isolateScope();
@@ -53,7 +53,7 @@ describe('ML - <ml-info-icon>', function () {
     expect(scope.id).to.be(id);
     expect(scope.text).to.be('');
   });
-  it('Initialize with existing tooltip attribute', function () {
+  it('Initialize with existing tooltip attribute', () => {
     const id = 'new_job_id';
     $element = $compile(`<i ml-info-icon="${id}" />`)($scope);
     const scope = $element.isolateScope();

@@ -16,12 +16,12 @@
 import ngMock from 'ng_mock';
 import expect from 'expect.js';
 
-describe('ML - Explorer Controller', function () {
+describe('ML - Explorer Controller', () => {
   beforeEach(() => {
     ngMock.module('kibana');
   });
 
-  it('Initialize Explorer Controller', function () {
+  it('Initialize Explorer Controller', () => {
     ngMock.inject(function ($rootScope, $controller) {
       const scope = $rootScope.$new();
       $controller('MlExplorerController', { $scope: scope });

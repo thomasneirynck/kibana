@@ -39,7 +39,7 @@ import { chartLimits } from 'plugins/ml/util/chart_utils.js';
  * run in an asynchronous manner like using a callback in this case.
  */
 
-describe('ML - <ml-explorer-chart>', function () {
+describe('ML - <ml-explorer-chart>', () => {
   let $scope;
   let $compile;
   let $element;
@@ -94,7 +94,7 @@ describe('ML - <ml-explorer-chart>', function () {
     $scope.$destroy();
   });
 
-  it('Initialize', function () {
+  it('Initialize', () => {
     $element = $compile('<ml-explorer-chart />')($scope);
     $scope.$digest();
 

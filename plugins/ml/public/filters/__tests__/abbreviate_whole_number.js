@@ -28,13 +28,13 @@ const init = function () {
   });
 };
 
-describe('ML - abbreviateWholeNumber filter', function () {
+describe('ML - abbreviateWholeNumber filter', () => {
 
   beforeEach(function () {
     init();
   });
 
-  it('should have an abbreviateWholeNumber filter', function () {
+  it('should have an abbreviateWholeNumber filter', () => {
     expect(filter).to.not.be(null);
   });
 

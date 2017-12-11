@@ -16,7 +16,7 @@
 import ngMock from 'ng_mock';
 import expect from 'expect.js';
 
-describe('ML - <ml-controls-select>', function () {
+describe('ML - <ml-controls-select>', () => {
   let $scope;
   let $compile;
   let $element;
@@ -34,7 +34,7 @@ describe('ML - <ml-controls-select>', function () {
     $scope.$destroy();
   });
 
-  it('Plain initialization doesn\'t throw an error', function () {
+  it('Plain initialization doesn\'t throw an error', () => {
     $element = $compile('<ml-controls-select />')($scope);
     const scope = $element.isolateScope();
 
@@ -47,7 +47,7 @@ describe('ML - <ml-controls-select>', function () {
     expect(scope.updateFn).to.be.a('undefined');
   });
 
-  it('Initialize with attributes, call pass-through function', function (done) {
+  it('Initialize with attributes, call pass-through function', (done) => {
     $scope.intervalOptions = [
       { display: 'testOptionLabel1', val: 'testOptionValue1' },
       { display: 'testOptionLabel2', val: 'testOptionValue2' }

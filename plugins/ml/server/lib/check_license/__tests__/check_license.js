@@ -18,7 +18,7 @@ import sinon from 'sinon';
 import { set } from 'lodash';
 import { checkLicense } from '../check_license';
 
-describe('check_license', function () {
+describe('check_license', () => {
 
   let mockLicenseInfo;
   beforeEach(() => mockLicenseInfo = {});

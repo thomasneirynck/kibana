@@ -16,7 +16,7 @@
 import ngMock from 'ng_mock';
 import expect from 'expect.js';
 
-describe('ML - <ml-loading-indicator>', function () {
+describe('ML - <ml-loading-indicator>', () => {
   let $scope;
   let $compile;
   let $element;
@@ -33,7 +33,7 @@ describe('ML - <ml-loading-indicator>', function () {
     $scope.$destroy();
   });
 
-  it('Default loading indicator without attributes should not be visible', function () {
+  it('Default loading indicator without attributes should not be visible', () => {
     $element = $compile('<ml-loading-indicator />')($scope);
     $scope.$apply();
     $scope.$on('renderComplete', () => {
@@ -41,7 +41,7 @@ describe('ML - <ml-loading-indicator>', function () {
     });
   });
 
-  it('Enables the loading indicator, checks the default height and non-existant label', function () {
+  it('Enables the loading indicator, checks the default height and non-existant label', () => {
     $element = $compile('<ml-loading-indicator is-loading="true" />')($scope);
     $scope.$apply();
     $scope.$on('renderComplete', () => {
@@ -51,7 +51,7 @@ describe('ML - <ml-loading-indicator>', function () {
     });
   });
 
-  it('Sets a custom height', function () {
+  it('Sets a custom height', () => {
     $element = $compile('<ml-loading-indicator is-loading="true" height="200" />')($scope);
     $scope.$apply();
     $scope.$on('renderComplete', () => {
@@ -59,7 +59,7 @@ describe('ML - <ml-loading-indicator>', function () {
     });
   });
 
-  it('Sets a custom label', function () {
+  it('Sets a custom label', () => {
     const labelName = 'my-label';
     $element = $compile(`<ml-loading-indicator is-loading="true" label="${labelName}" />`)($scope);
     $scope.$apply();
@@ -68,7 +68,7 @@ describe('ML - <ml-loading-indicator>', function () {
     });
   });
 
-  it('Triggers a scope-change of isLoading', function () {
+  it('Triggers a scope-change of isLoading', () => {
     $scope.isLoading = false;
     $element = $compile('<ml-loading-indicator is-loading="isLoading" />')($scope);
     $scope.$apply();
