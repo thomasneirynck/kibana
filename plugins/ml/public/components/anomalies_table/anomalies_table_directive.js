@@ -348,6 +348,8 @@ module.directive('mlAnomaliesTable', function (
         } else {
           // Replace any tokens in the configured url_value with values from the source record,
           // and then open link in a new tab/window.
+          // TODO - if drilling down to a Kibana dashboard, use escapeForElasticsearchQuery from string_utils
+          // to escape any terms used in the dashboard query or filters.
           const urlPath = replaceStringTokens(customUrl.url_value, record, true);
           $window.open(urlPath, '_blank');
         }
@@ -786,8 +788,9 @@ module.directive('mlAnomaliesTable', function (
         if (addEntity !== undefined) {
           if (_.has(record, 'entityValue')) {
             if (record.entityName !== 'mlcategory') {
-              const safeEntityName = record.entityName.replace(/(['])/g, '\\$1');
-              const safeEntityValue = record.entityValue.replace(/(['])/g, '\\$1');
+               // Escape single quotes and backslash characters in the HTML for the event handlers.
+              const safeEntityName = record.entityName.replace(/(['\\])/g, '\\$1');
+              const safeEntityValue = record.entityValue.replace(/(['\\])/g, '\\$1');
 
               tableRow.push({
                 markup: record.entityValue +

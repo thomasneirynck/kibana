@@ -97,7 +97,6 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
       });
 
       function cellClick($event, laneLabel, bucketScore, index, time) {
-
         let $target = $($event.target);
         // if the edge of the outer cell has been clicked by accident, find the inner cell.
         if ($target.hasClass('sl-cell')) {
@@ -199,7 +198,8 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
             }
           }
 
-          const safeLaneTxt = lane.replace(/(['])/g, '\\$1');
+          // Escape single quotes and backslash characters in the HTML for the event handlers.
+          const safeLaneTxt = lane.replace(/(['\\])/g, '\\$1');
           const cellClickTxt = 'cellClick($event, \'' + safeLaneTxt + '\', ' +
             bucketScore + ', ' + i + ', ' + time + ')';
           $cell.attr({ 'ng-click': cellClickTxt });

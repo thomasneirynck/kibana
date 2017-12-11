@@ -16,6 +16,7 @@
 import _ from 'lodash';
 
 import { ML_RESULTS_INDEX_PATTERN } from 'plugins/ml/constants/index_patterns';
+import { escapeForElasticsearchQuery } from 'plugins/ml/util/string_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -31,66 +32,71 @@ module.service('mlSimpleJobSearchService', function ($q, es) {
 
     let jobIdFilterStr = 'job_id: ' + jobId;
     if (firstSplitField && firstSplitField.value !== undefined) {
-      jobIdFilterStr += ` AND ${firstSplitField.name}: ${firstSplitField.value}`;
+      // Escape any reserved characters for the query_string query,
+      // wrapping the value in quotes to do a phrase match.
+      // Backslash is a special character in JSON strings, so doubly escape
+      // any backslash characters which exist in the field value.
+      jobIdFilterStr += `AND ${escapeForElasticsearchQuery(firstSplitField.name)}:`;
+      jobIdFilterStr += `"${String(firstSplitField.value).replace(/\\/g, '\\\\')}"`;
     }
 
     es.search({
       index: ML_RESULTS_INDEX_PATTERN,
       size: 0,
       body: {
-        'query': {
-          'bool': {
-            'filter': [{
-              'query_string': {
-                'query': 'result_type:record'
+        query: {
+          bool: {
+            filter: [{
+              query_string: {
+                query: 'result_type:record'
               }
             }, {
-              'bool': {
-                'must': [{
-                  'range': {
-                    'timestamp': {
-                      'gte': earliestMs,
-                      'lte': latestMs,
-                      'format': 'epoch_millis'
+              bool: {
+                must: [{
+                  range: {
+                    timestamp: {
+                      gte: earliestMs,
+                      lte: latestMs,
+                      format: 'epoch_millis'
                     }
                   }
                 }, {
-                  'query_string': {
-                    'query': jobIdFilterStr
+                  query_string: {
+                    query: jobIdFilterStr
                   }
                 }]
               }
             }]
           }
         },
-        'aggs': {
-          'detector_index': {
-            'terms': {
-              'field': 'detector_index',
-              'order': {
-                'recordScore': 'desc'
+        aggs: {
+          detector_index: {
+            terms: {
+              field: 'detector_index',
+              order: {
+                recordScore: 'desc'
               }
             },
-            'aggs': {
-              'recordScore': {
-                'max': {
-                  'field': 'record_score'
+            aggs: {
+              recordScore: {
+                max: {
+                  field: 'record_score'
                 }
               },
-              'byTime': {
-                'date_histogram': {
-                  'field': 'timestamp',
-                  'interval': interval,
-                  'min_doc_count': 1,
-                  'extended_bounds': {
-                    'min': earliestMs,
-                    'max': latestMs
+              byTime: {
+                date_histogram: {
+                  field: 'timestamp',
+                  interval: interval,
+                  min_doc_count: 1,
+                  extended_bounds: {
+                    min: earliestMs,
+                    max: latestMs
                   }
                 },
-                'aggs': {
-                  'recordScore': {
-                    'max': {
-                      'field': 'record_score'
+                aggs: {
+                  recordScore: {
+                    max: {
+                      field: 'record_score'
                     }
                   }
                 }
@@ -111,7 +117,7 @@ module.service('mlSimpleJobSearchService', function ($q, es) {
           const bkt = buckets[j];
           const time = bkt.key;
           dtrResults[time] = {
-            'recordScore': _.get(bkt, ['recordScore', 'value']),
+            recordScore: _.get(bkt, ['recordScore', 'value']),
           };
         }
         obj.results[dtrIndex] = dtrResults;
@@ -136,12 +142,12 @@ module.service('mlSimpleJobSearchService', function ($q, es) {
       index,
       size: 0,
       body: {
-        'query': query,
-        'aggs': {
-          'catFields': {
-            'terms': {
-              'field': field,
-              'size': size
+        query: query,
+        aggs: {
+          catFields: {
+            terms: {
+              field: field,
+              size: size
             }
           }
         }

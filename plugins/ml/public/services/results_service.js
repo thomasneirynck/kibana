@@ -1084,14 +1084,14 @@ module.service('mlResultsService', function ($q, es, ml) {
     const shouldCriteria = [];
 
     if (types && types.length) {
-      mustCriteria.push({ 'terms': { '_type': types } });
+      mustCriteria.push({ terms: { _type: types } });
     }
 
-    const timeRangeCriteria = { 'range': {} };
+    const timeRangeCriteria = { range: {} };
     timeRangeCriteria.range[timeFieldName] = {
-      'gte': earliestMs,
-      'lte': latestMs,
-      'format': 'epoch_millis'
+      gte: earliestMs,
+      lte: latestMs,
+      format: 'epoch_millis'
     };
     mustCriteria.push(timeRangeCriteria);
 
@@ -1105,20 +1105,22 @@ module.service('mlResultsService', function ($q, es, ml) {
         // in quotes to do a phrase match. This is the best approach when the
         // field in the source data could be mapped as text or keyword.
         // a term query could only be used if we knew it was mapped as keyword.
+        // Backslash is a special character in JSON strings, so doubly escape
+        // any backslash characters which exist in the field value.
         mustCriteria.push({
-          'query_string': {
-            'query': escapeForElasticsearchQuery(entity.fieldName) + ':\"' + entity.fieldValue + '\"',
-            'analyze_wildcard': false
+          query_string: {
+            query: `${escapeForElasticsearchQuery(entity.fieldName)}:"${entity.fieldValue.replace(/\\/g, '\\\\')}"`,
+            analyze_wildcard: false
           }
         });
       } else {
         // Add special handling for blank entity field values, checking for either
         // an empty string or the field not existing.
         const emptyFieldCondition = {
-          'bool': {
-            'must': [
+          bool: {
+            must: [
               {
-                'term': {
+                term: {
                 }
               }
             ]
@@ -1127,10 +1129,10 @@ module.service('mlResultsService', function ($q, es, ml) {
         emptyFieldCondition.bool.must[0].term[entity.fieldName] = '';
         shouldCriteria.push(emptyFieldCondition);
         shouldCriteria.push({
-          'bool': {
-            'must_not': [
+          bool: {
+            must_not: [
               {
-                'exists': { 'field': entity.fieldName }
+                exists: { field: entity.fieldName }
               }
             ]
           }
@@ -1140,21 +1142,21 @@ module.service('mlResultsService', function ($q, es, ml) {
     });
 
     const body = {
-      'query': {
-        'bool': {
-          'must': mustCriteria
+      query: {
+        bool: {
+          must: mustCriteria
         }
       },
-      'size': 0,
-      '_source': {
-        'excludes': []
+      size: 0,
+      _source: {
+        excludes: []
       },
-      'aggs': {
-        'byTime': {
-          'date_histogram': {
-            'field': timeFieldName,
-            'interval': interval,
-            'min_doc_count': 0
+      aggs: {
+        byTime: {
+          date_histogram: {
+            field: timeFieldName,
+            interval: interval,
+            min_doc_count: 0
           }
 
         }
@@ -1170,7 +1172,7 @@ module.service('mlResultsService', function ($q, es, ml) {
       body.aggs.byTime.aggs = {};
 
       const metricAgg = {};
-      metricAgg[metricFunction] = { 'field': metricFieldName };
+      metricAgg[metricFunction] = { field: metricFieldName };
       if (metricFunction === 'percentiles') {
         metricAgg[metricFunction].percents = [ML_MEDIAN_PERCENTS];
       }
@@ -1442,19 +1444,19 @@ module.service('mlResultsService', function ($q, es, ml) {
     };
 
     // Build the criteria to use in the bool filter part of the request.
-    const mustCriteria = [];
-    const shouldCriteria = [];
-    mustCriteria.push({
-      'range': {
-        'timestamp': {
-          'gte': earliestMs,
-          'lte': latestMs,
-          'format': 'epoch_millis'
+    const mustCriteria = [
+      {
+        range: {
+          timestamp: {
+            gte: earliestMs,
+            lte: latestMs,
+            format: 'epoch_millis'
+          }
         }
-      }
-    });
-
-    mustCriteria.push({ 'term': { 'job_id': jobId } });
+      },
+      { term: { job_id: jobId } }
+    ];
+    const shouldCriteria = [];
 
     _.each(criteriaFields, (criteria) => {
       if (criteria.fieldValue.length !== 0) {
@@ -1462,20 +1464,22 @@ module.service('mlResultsService', function ($q, es, ml) {
         // in quotes to do a phrase match. This is the best approach when the
         // field in the source data could be mapped as text or keyword.
         // a term query could only be used if we knew it was mapped as keyword.
+        // Backslash is a special character in JSON strings, so doubly escape
+        // any backslash characters which exist in the field value.
         mustCriteria.push({
-          'query_string': {
-            'query': escapeForElasticsearchQuery(criteria.fieldName) + ':\"' + criteria.fieldValue + '\"',
-            'analyze_wildcard': false
+          query_string: {
+            query: `${escapeForElasticsearchQuery(criteria.fieldName)}:"${String(criteria.fieldValue).replace(/\\/g, '\\\\')}"`,
+            analyze_wildcard: false
           }
         });
       } else {
         // Add special handling for blank entity field values, checking for either
         // an empty string or the field not existing.
         const emptyFieldCondition = {
-          'bool': {
-            'must': [
+          bool: {
+            must: [
               {
-                'term': {
+                term: {
                 }
               }
             ]
@@ -1484,10 +1488,10 @@ module.service('mlResultsService', function ($q, es, ml) {
         emptyFieldCondition.bool.must[0].term[criteria.fieldName] = '';
         shouldCriteria.push(emptyFieldCondition);
         shouldCriteria.push({
-          'bool': {
-            'must_not': [
+          bool: {
+            must_not: [
               {
-                'exists': { 'field': criteria.fieldName }
+                exists: { field: criteria.fieldName }
               }
             ]
           }
@@ -1500,31 +1504,31 @@ module.service('mlResultsService', function ($q, es, ml) {
       index: ML_RESULTS_INDEX_PATTERN,
       size: 0,
       body: {
-        'query': {
-          'bool': {
-            'filter': [{
-              'query_string': {
-                'query': 'result_type:record',
-                'analyze_wildcard': true
+        query: {
+          bool: {
+            filter: [{
+              query_string: {
+                query: 'result_type:record',
+                analyze_wildcard: true
               }
             }, {
-              'bool': {
-                'must': mustCriteria
+              bool: {
+                must: mustCriteria
               }
             }]
           }
         },
-        'aggs': {
-          'times': {
-            'date_histogram': {
-              'field': 'timestamp',
-              'interval': interval,
-              'min_doc_count': 1
+        aggs: {
+          times: {
+            date_histogram: {
+              field: 'timestamp',
+              interval: interval,
+              min_doc_count: 1
             },
-            'aggs': {
-              'recordScore': {
-                'max': {
-                  'field': 'record_score'
+            aggs: {
+              recordScore: {
+                max: {
+                  field: 'record_score'
                 }
               }
             }
@@ -1537,7 +1541,7 @@ module.service('mlResultsService', function ($q, es, ml) {
       _.each(aggregationsByTime, (dataForTime) => {
         const time = dataForTime.key;
         obj.results[time] = {
-          'score': _.get(dataForTime, ['recordScore', 'value']),
+          score: _.get(dataForTime, ['recordScore', 'value']),
         };
       });
 
