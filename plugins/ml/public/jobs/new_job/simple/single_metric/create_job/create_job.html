@@ -128,9 +128,11 @@
 
     <div ng-show="ui.showJobInput && (jobState === JOB_STATE.NOT_STARTED || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING)">
       <div class="form-group">
-        <label>Name</label><i ml-info-icon="new_job_id" ></i>
+        <label id="ml_aria_label_new_job_id">Name</label><i ml-info-icon="new-job-id" />
         <input
-          id='job-id-input'
+          aria-labelledby="ml_aria_label_new_job_id"
+          aria-describedby="ml_aria_description_new_job_id"
+          id="job-id-input"
           ng-model="formConfig.jobId"
           required
           placeholder="Job ID"

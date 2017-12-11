@@ -43,7 +43,11 @@ module.service('mlJsonTooltipService', function () {
     },
     restrict: 'AE',
     replace: true,
-    template: '<i aria-hidden="true" class="fa fa-info-circle" tooltip="{{text}}"></i>',
+    template: `
+      <i aria-hidden="true" class="fa fa-info-circle" tooltip="{{text}}">
+        <span id="ml_aria_description_{{id}}" class="ml-info-tooltip-text">{{text}}</span>
+      </i>
+    `,
     controller: function ($scope) {
       $scope.text = (tooltips[$scope.id]) ? tooltips[$scope.id].text : '';
     }
