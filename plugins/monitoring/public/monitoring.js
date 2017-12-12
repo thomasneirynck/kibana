@@ -11,8 +11,8 @@ import 'plugins/monitoring/services/executor';
 import 'plugins/monitoring/services/license';
 import 'plugins/monitoring/services/title';
 import 'plugins/monitoring/services/breadcrumbs';
-import 'plugins/monitoring/directives';
-import 'plugins/monitoring/views';
+import 'plugins/monitoring/directives/all';
+import 'plugins/monitoring/views/all';
 
 const uiModule = uiModules.get('kibana');
 uiModule.run((uiSettings, config) => {
