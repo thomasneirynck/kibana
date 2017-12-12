@@ -17,7 +17,7 @@
                 <ml-field-type-icon type="$item.mlType"></ml-field-type-icon>{{$item.name}}
               </span>
             </ui-select-match>
-            <ui-select-choices repeat="field in ui.splitFields" group-by="'mlType'">
+            <ui-select-choices repeat="field in ui.splitFields | filter: { name: $select.search }" group-by="'mlType'">
               <ml-field-type-icon type="field.mlType"></ml-field-type-icon>
               <span class="select-item" ng-bind-html="(field.name | highlight: $select.search)"></span>
             </ui-select-choices>

@@ -12,7 +12,7 @@
       {{$item.id}}
     </ui-select-match>
     <ui-select-choices
-      repeat="group in mlGroupSelect.groups"
+      repeat="group in mlGroupSelect.groups | filter: { id: $select.search }"
       group-by="mlGroupSelect.groupTypes"
     >
       <div ng-if="group.isTag"  class="select-item" ng-bind-html="(group.id | highlight: $select.search) +' <small>(new group)</small>'"></div>
