@@ -9,18 +9,22 @@
 
     <div class="field-cols">
       <div class="form-group">
-        <label>target_field_name</label><i ml-info-icon="new_filter_targetfieldname" />
+        <ml-form-label label-id="new_filter_targetfieldname">target_field_name</ml-form-label>
 
         <input
+          aria-labelledby="ml_aria_label_new_filter_targetfieldname"
+          aria-describedby="ml_aria_description_new_filter_targetfieldname"
           ng-model="filter.target_field_name"
           tabindex="2"
           ng-change="functionChange()"
           list='fields_datalist'
           class="form-control" />
 
-        <label>target_field_value</label><i ml-info-icon="new_action_targetfieldvalue" />
+        <ml-form-label label-id="new_action_targetfieldvalue">target_field_value</ml-form-label>
 
         <input
+          aria-labelledby="ml_aria_label_new_action_targetfieldvalue"
+          aria-describedby="ml_aria_description_new_action_targetfieldvalue"
           ng-model="filter.target_field_value"
           tabindex="2"
           ng-change="functionChange()"
@@ -30,8 +34,10 @@
 
     <div class="field-cols">
       <div class="form-group">
-        <label>conditions_connective</label><i ml-info-icon="new_action_conditionsconnective" />
+        <ml-form-label label-id="new_action_conditionsconnective">conditions_connective</ml-form-label>
         <select
+          aria-labelledby="ml_aria_label_new_action_conditionsconnective"
+          aria-describedby="ml_aria_description_new_action_conditionsconnective"
           ng-model="filter.conditions_connective"
           tabindex="2"
           placeholder=""
@@ -43,13 +49,13 @@
   </div>
 
   <div class="conditions-list-container" >
-    <div class="title">Conditions<i ml-info-icon="new_action_ruleconditions" /></div>
+    <div class="title"><span aria-describedby="ml_aria_description_new_action_ruleconditions">Conditions</span><i ml-info-icon="new_action_ruleconditions" /></div>
     <div class="table-title">
-      <div>Type<i ml-info-icon="new_action_conditiontype" /></div>
-      <div>field_name<i ml-info-icon="new_action_fieldname" /></div>
-      <div>field_value<i ml-info-icon="new_action_fieldvalue" /></div>
-      <div>lt/gt<i ml-info-icon="new_action_condition" /></div>
-      <div>value<i ml-info-icon="new_action_value" /></div>
+      <div><span aria-describedby="ml_aria_description_new_action_conditiontype">Type</span><i ml-info-icon="new_action_conditiontype" /></div>
+      <div><span aria-describedby="ml_aria_description_new_action_fieldname">field_name</span><i ml-info-icon="new_action_fieldname" /></div>
+      <div><span aria-describedby="ml_aria_description_new_action_fieldvalue">field_value</span><i ml-info-icon="new_action_fieldvalue" /></div>
+      <div><span aria-describedby="ml_aria_description_new_action_condition">lt/gt</span><i ml-info-icon="new_action_condition" /></div>
+      <div><span aria-describedby="ml_aria_description_new_action_value">value</span><i ml-info-icon="new_action_value" /></div>
       <div></div>
     </div>
     <div ng-repeat="cond in filter.ruleConditions track by $index" class="rule-condition">

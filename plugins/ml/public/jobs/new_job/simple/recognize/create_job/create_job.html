@@ -31,8 +31,10 @@
               <div class="form-group">
                 <div ng-show="ui.showJobInput && (overallState === SAVE_STATE.NOT_SAVED || overallState === SAVE_STATE.SAVING)">
                   <div class="form-group">
-                    <label>Job ID prefix</label><i ml-info-icon="new_job_recognizer_job_prefix" aria-label="Job label" ></i>
+                    <ml-form-label label-id="new_job_recognizer_job_prefix">Job ID prefix</ml-form-label>
                     <input
+                      aria-labelledby="ml_aria_label_new_job_recognizer_job_prefix"
+                      aria-describedby="ml_aria_description_new_job_recognizer_job_prefix"
                       ng-model="formConfig.jobLabel"
                       placeholder="Job ID prefix"
                       ng-change="changeJobLabelCase()"
@@ -41,12 +43,13 @@
                       <div ng-hide="ui.validation.checks.jobLabel.valid" class="validation-error">{{ ui.validation.checks.jobLabel.message }}</div>
                   </div>
                   <div class="form-group">
-                    <label>Job groups</label><i ml-info-icon="new_job_group" aria-label="Job group" ></i>
-                      <ml-job-group-select
-                        job-groups='formConfig.jobGroups'
-                        disabled='(overallState === SAVE_STATE.SAVING)'
-                      ></ml-job-group-select>
-                      <div ng-hide="ui.validation.checks.groupIds.valid" class="validation-error">{{ ui.validation.checks.groupIds.message }}</div>
+                    <ml-form-label label-id="new_job_group">Job groups</ml-form-label>
+                    <ml-job-group-select
+                      aria-labelledby="ml_aria_label_new_job_group"
+                      aria-describedby="ml_aria_description_new_job_group"
+                      job-groups='formConfig.jobGroups'
+                      disabled='(overallState === SAVE_STATE.SAVING)' />
+                    <div ng-hide="ui.validation.checks.groupIds.valid" class="validation-error">{{ ui.validation.checks.groupIds.message }}</div>
                   </div>
                   <div class="form-group">
                     <div ng-click="ui.showAdvanced = (!ui.showAdvanced || formConfig.useDedicatedIndex)" class="advanced-button-container">
@@ -57,16 +60,20 @@
                         class="kuiButton kuiButton--small kuiButton--hollow advanced-button">
                         <i ng-class="{ 'fa-caret-down': ui.showAdvanced, 'fa-caret-right': !ui.showAdvanced }" class="fa" aria-label="Show advanced" ></i>
                       </button>
-                      <label>Advanced</label><i ml-info-icon="new_job_advanced_settings" aria-label="Advanced settings" ></i>
+                      <label aria-describedby="ml_aria_description_new_job_advanced_settings">Advanced</label>
+                      <i ml-info-icon="new_job_advanced_settings" aria-label="Advanced settings" />
                     </div>
                     <div class='advanced-group' ng-show="ui.showAdvanced">
                       <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
                         <input type="checkbox"
+                          aria-labelledby="ml_aria_label_new_job_dedicated_index"
+                          aria-describedby="ml_aria_description_new_job_dedicated_index"
                           class='kuiCheckBox'
                           ng-model="formConfig.useDedicatedIndex" />
-                          <span class='kuiCheckBoxLabel__text'>
-                            Use dedicated index <i ml-info-icon="new_job_dedicated_index" aria-label="Use dedicated index" ></i>
-                          </span>
+                        <span class='kuiCheckBoxLabel__text'>
+                          <span id="ml_aria_label_new_job_dedicated_index">Use dedicated index</span>
+                          <i ml-info-icon="new_job_dedicated_index" aria-label="Use dedicated index" />
+                        </span>
                       </label>
                     </div>
                   </div>

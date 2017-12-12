@@ -1,17 +1,19 @@
 <div class='bucket-span-selection'>
-  <h4>Bucket span</h4><i ml-info-icon="new_job_bucketspan" ></i>
+  <h4 id="ml_aria_label_new_job_bucketspan">Bucket span</h4><i ml-info-icon="new_job_bucketspan" />
   <div class="row">
     <div class="col-md-12">
       <div class="form-group">
         <div>
           <input
-          ng-model="formConfig.bucketSpan"
-          required
-          placeholder={{formConfig-bucketSpan}}
-          ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED || ui.bucketSpanEstimator.status===1"
-          ng-change="bucketSpanFieldChange()"
-          ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
-          class="form-control lowercase bucket-span-input" />
+            aria-labelledby="ml_aria_label_new_job_bucketspan"
+            aria-describedby="ml_aria_description_new_job_bucketspan"
+            ng-model="formConfig.bucketSpan"
+            required
+            placeholder={{formConfig-bucketSpan}}
+            ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED || ui.bucketSpanEstimator.status===1"
+            ng-change="bucketSpanFieldChange()"
+            ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
+            class="form-control lowercase bucket-span-input" />
 
           <ml-bucket-span-estimator
             bucket-span-field-change="bucketSpanFieldChange"

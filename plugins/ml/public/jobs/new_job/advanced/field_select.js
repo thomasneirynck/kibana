@@ -7,6 +7,7 @@ import 'react-select/dist/react-select.css';
 export class FieldSelect extends Component {
   render() {
     const {
+      labelId,
       onChange,
       value,
       options,
@@ -29,6 +30,8 @@ export class FieldSelect extends Component {
 
     return (
       <Select
+        aria-describedby={'ml_aria_description_' + labelId}
+        aria-labelledby={'ml_aria_label_' + labelId}
         placeholder={placeholder}
         options={getOptions()}
         value={value}
@@ -39,6 +42,7 @@ export class FieldSelect extends Component {
 }
 
 FieldSelect.propTypes = {
+  labelId: PropTypes.string,
   onChange: PropTypes.func,
   value: PropTypes.string,
   options: PropTypes.object,

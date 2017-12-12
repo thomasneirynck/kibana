@@ -32,6 +32,7 @@ import 'plugins/ml/components/messagebar';
 import 'plugins/ml/datavisualizer';
 import 'plugins/ml/explorer';
 import 'plugins/ml/timeseriesexplorer';
+import 'plugins/ml/components/form_label';
 import 'plugins/ml/components/json_tooltip';
 import 'plugins/ml/components/confirm_modal';
 import 'plugins/ml/components/pretty_duration';

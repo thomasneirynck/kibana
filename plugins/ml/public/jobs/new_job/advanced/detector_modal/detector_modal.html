@@ -3,8 +3,10 @@
   <h3>{{title}}</h3>
 
   <div class="form-group">
-    <label>Description</label><i ml-info-icon="new_job_detector_description" />
+    <ml-form-label label-id="new_job_detector_description">Description</ml-form-label>
     <input
+      aria-labelledby="ml_aria_label_new_job_detector_description"
+      aria-describedby="ml_aria_description_new_job_detector_description"
       ng-model="detector.detector_description"
       placeholder="{{ detectorToString(detector) }}"
       class="form-control" />
@@ -14,8 +16,9 @@
 
     <div class="field-cols">
       <div class="form-group">
-        <label>function</label><i ml-info-icon="new_job_detector_function" ></i>
+        <ml-form-label label-id="new_job_detector_function">function</ml-form-label>
         <field-select
+          label-id='"new_job_detector_function"'
           on-change='setDetectorProperty'
           value='detector.function'
           field='"function"'
@@ -26,8 +29,9 @@
 
     <div class="field-cols">
       <div class="form-group">
-        <label>field_name</label><i ml-info-icon="new_job_detector_fieldname"></i>
+        <ml-form-label label-id="new_job_detector_fieldname">field_name</ml-form-label>
         <field-select
+          label-id='"new_job_detector_fieldname"'
           on-change='setDetectorProperty'
           value='detector.field_name'
           field='"field_name"'
@@ -38,8 +42,9 @@
 
     <div class="field-cols">
       <div class="form-group">
-        <label>by_field_name</label><i ml-info-icon="new_job_detector_byfieldname"></i>
+        <ml-form-label label-id="new_job_detector_byfieldname">by_field_name</ml-form-label>
         <field-select
+          label-id='"new_job_detector_byfieldname"'
           on-change='setDetectorProperty'
           value='detector.by_field_name'
           field='"by_field_name"'
@@ -53,8 +58,9 @@
 
     <div class="field-cols">
       <div class="form-group">
-        <label>over_field_name</label><i ml-info-icon="new_job_detector_overfieldname" ></i>
+        <ml-form-label label-id="new_job_detector_overfieldname">over_field_name</ml-form-label>
         <field-select
+          label-id='"new_job_detector_overfieldname"'
           on-change='setDetectorProperty'
           value='detector.over_field_name'
           field='"over_field_name"'
@@ -65,8 +71,9 @@
 
     <div class="field-cols">
       <div class="form-group">
-        <label>partition_field_name</label><i ml-info-icon="new_job_detector_partitionfieldname"></i>
+        <ml-form-label label-id="new_job_detector_partitionfieldname">partition_field_name</ml-form-label>
         <field-select
+          label-id='"new_job_detector_partitionfieldname"'
           on-change='setDetectorProperty'
           value='detector.partition_field_name'
           field='"partition_field_name"'
@@ -77,8 +84,9 @@
 
     <div class="field-cols">
       <div class="form-group">
-        <label>exclude_frequent</label><i ml-info-icon="new_job_detector_excludefrequent"></i>
+        <ml-form-label label-id="new_job_detector_excludefrequent">exclude_frequent</ml-form-label>
         <field-select
+          label-id='"new_job_detector_excludefrequent"'
           on-change='setDetectorProperty'
           value='detector.exclude_frequent'
           field='"exclude_frequent"'

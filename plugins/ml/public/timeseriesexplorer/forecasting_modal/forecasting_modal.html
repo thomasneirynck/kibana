@@ -3,7 +3,7 @@
   <h3>Forecasting</h3>
 
   <div ng-if="previousForecasts.length > 0">
-    <h4 class="view-forecast-title">View a previous forecast</h4><i ml-info-icon="forecasting_modal_view_list" />
+    <h4 aria-describedby="ml_aria_description_forecasting_modal_view_list" class="view-forecast-title">View a previous forecast</h4><i ml-info-icon="forecasting_modal_view_list" />
 
     <div class="previous-forecast-list">
       <table>
@@ -31,7 +31,7 @@
     so running a forecast may take a long time and consume a high amount of resource.
   </div>
   <div class="form-group">
-    <label for="forecastDuration" class="kuiLabel">Duration</label><i ml-info-icon="forecasting_modal_run_duration" />
+    <label id="ml_aria_label_forecasting_modal_run_duration" for="forecastDuration" class="kuiLabel">Duration</label><i ml-info-icon="forecasting_modal_run_duration" />
     <div ng-class="privileges.canForecastJob && invalidJobState === undefined ? 'control-wrapper' : ['control-wrapper', 'disabled']"
       data-toggle="tooltip"
       ng-attr-tooltip="{{privileges.canForecastJob === false ? 'You do not have permission to run forecasts. Please contact your administrator.' :
@@ -39,6 +39,8 @@
       tooltip-placement="bottom">
       <input
         id="forecastDuration"
+        aria-labelledby="ml_aria_label_forecasting_modal_run_duration"
+        aria-describedby="ml_aria_description_forecasting_modal_run_duration"
         ng-model="newForecastDuration"
         ng-change="newForecastDurationChange()"
         ng-disabled="isForecastRunning === true || privileges.canForecastJob === false || invalidJobState !== undefined"

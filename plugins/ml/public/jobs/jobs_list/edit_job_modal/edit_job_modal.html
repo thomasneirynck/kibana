@@ -18,8 +18,10 @@
   <!-- Job Details -->
   <div class="tab_contents" ng-show="ui.currentTab === 0">
     <div class="form-group">
-      <label>Job description</label>
+      <ml-form-label label-id="new_job_description">Job description</ml-form-label>
       <input
+        aria-labelledby="ml_aria_label_new_job_description"
+        aria-describedby="ml_aria_description_new_job_description"
         ng-model="job.description"
         class="form-control" />
     </div>
@@ -27,23 +29,25 @@
     <hr />
 
     <div class="form-group">
-      <label>Job groups</label>
+      <ml-form-label label-id="new_job_group">Job Groups</ml-form-label>
       <ml-job-group-select
-        job-groups='job.groups'
-      ></ml-job-group-select>
+        aria-labelledby="ml_aria_label_new_job_group"
+        aria-describedby="ml_aria_description_new_job_group"
+        job-groups='job.groups' />
     </div>
 
     <hr />
 
     <div class="form-group">
-      <label>Custom URLs</label>
+      <label>Custom URLs</label><i ml-info-icon="new_job_custom_urls" />
       <div ng-if="job.custom_settings && job.custom_settings.custom_urls">
         <div ng-repeat="item in job.custom_settings.custom_urls track by $index" class="custom-url">
           <div class="field-cols">
 
             <div class="form-group">
-              <label>Label</label>
+              <label id="ml_aria_label_custom_url_label_{{$index}}">Label</label>
               <input
+                aria-labelledby="ml_aria_label_custom_url_label_{{$index}}"
                 ng-model="item.url_name"
                 type="text"
                 class="form-control" />
@@ -52,8 +56,9 @@
 
           <div class="field-cols">
             <div class="form-group">
-              <label>URL</label>
+              <label id="ml_aria_label_custom_url_{{$index}}">URL</label>
               <textarea
+                aria-labelledby="ml_aria_label_custom_url_{{$index}}"
                 ng-model="item.url_value"
                 type="text"
                 class="form-control" ></textarea>
@@ -70,9 +75,14 @@
         </div>
       </div>
       <div>
-        <button aria-label="Add Custom URL" ng-click="addCustomUrl()" type="button" class="kuiButton kuiButton--primary kuiButton--small">
-          <span class="sr-only">Add Custom URL</span>
-          <i aria-hidden="true" class="fa fa-plus"></i> Add Custom URL
+        <button
+          aria-labelledby="ml_aria_label_new_job_custom_urls"
+          aria-describedby="ml_aria_description_new_job_custom_urls"
+          ng-click="addCustomUrl()"
+          type="button"
+          class="kuiButton kuiButton--primary kuiButton--small">
+          <i aria-hidden="true" class="fa fa-plus" />
+          <span id="ml_aria_label_new_job_custom_urls">Add Custom URL</span>
         </button>
       </div>
     </div>
@@ -83,7 +93,8 @@
                (job.analysis_config.categorization_filters && job.analysis_config.categorization_filters.length)">
       <hr />
 
-      <label>Categorization Filters</label>
+      <label aria-describedby="ml_aria_description_new_job_categorizationfilters">Categorization Filters</label>
+      <i ml-info-icon="new_job_categorizationfilters" />
       <div ng-if="job.analysis_config && job.analysis_config.categorization_filters">
         <div ng-repeat="item in job.analysis_config.categorization_filters track by $index" class="categorization-filter">
           <div class="field-cols">
@@ -106,13 +117,13 @@
       </div>
       <div>
         <button
-          aria-label="Add Categorization Filter"
+          aria-labelledby="ml_aria_label_add_categorization_filter"
           ng-click="addCategorizationFilter()"
           type="button"
           ng-disabled="job.analysis_config.categorization_field_name === undefined || job.analysis_config.categorization_field_name === ''"
           class="kuiButton kuiButton--primary kuiButton--small">
-          <span class="sr-only">Add Categorization Filter</span>
-          <i aria-hidden="true" class="fa fa-plus"></i> Add Categorization Filter
+          <i aria-hidden="true" class="fa fa-plus"></i>
+          <span id="ml_aria_label_add_categorization_filter">Add Categorization Filter</span>
         </button>
       </div>
     </div>
@@ -139,28 +150,42 @@
 
     <div ng-show="ui.datafeedStopped" >
       <div class="form-group" >
-        <label>Query</label>
+        <ml-form-label label-id="new_job_datafeed_query">Query</ml-form-label>
         <input
+          aria-labelledby="ml_aria_label_new_job_datafeed_query"
+          aria-describedby="ml_aria_description_new_job_datafeed_query"
           ng-model="ui.datafeed.queryText"
           placeholder='{ "match_all": {}}'
           class="form-control" />
 
-        <label>Query delay</label>
+      </div>
+      <div class="form-group" >
+        <ml-form-label label-id="new_job_datafeed_query_delay">Query delay</ml-form-label>
         <input
+          aria-labelledby="ml_aria_label_new_job_datafeed_query_delay"
+          aria-describedby="ml_aria_description_new_job_datafeed_query_delay"
           ng-model="ui.datafeed.queryDelayText"
           placeholder="{{ui.datafeed.queryDelayDefault}}"
           min="0"
           class="form-control" />
 
-        <label>Frequency</label>
+      </div>
+      <div class="form-group" >
+        <ml-form-label label-id="new_job_datafeed_frequency">Frequency</ml-form-label>
         <input
+          aria-labelledby="ml_aria_label_new_job_datafeed_frequency"
+          aria-describedby="ml_aria_description_new_job_datafeed_frequency"
           ng-model="ui.datafeed.frequencyText"
           placeholder="{{ui.datafeed.frequencyDefault}}"
           min="0"
           class="form-control" />
 
-        <label>scroll_size</label>
+      </div>
+      <div class="form-group" >
+        <ml-form-label label-id="new_job_datafeed_scrollsize">scroll_size</ml-form-label>
         <input
+          aria-labelledby="ml_aria_label_new_job_datafeed_scrollsize"
+          aria-describedby="ml_aria_description_new_job_datafeed_scrollsize"
           ng-model="ui.datafeed.scrollSizeText"
           placeholder="{{ui.datafeed.scrollSizeDefault}}"
           type="number"
