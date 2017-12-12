@@ -18,13 +18,13 @@ export function logstashPipelineRoute(server) {
    */
   server.route({
     method: 'POST',
-    path: '/api/monitoring/v1/clusters/{clusterUuid}/logstash/pipeline/{pipelineId}/{pipelineHash}',
+    path: '/api/monitoring/v1/clusters/{clusterUuid}/logstash/pipeline/{pipelineId}/{pipelineHash?}',
     config: {
       validate: {
         params: Joi.object({
           clusterUuid: Joi.string().required(),
           pipelineId: Joi.string().required(),
-          pipelineHash: Joi.string().required()
+          pipelineHash: Joi.string().optional()
         }),
         payload: Joi.object({
           ccs: Joi.string().optional()

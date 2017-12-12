@@ -19,7 +19,7 @@ function getPageData($injector) {
 
   const { ccs, cluster_uuid: clusterUuid } = globalState;
   const pipelineId = $route.current.params.id;
-  const pipelineHash = $route.current.params.hash;
+  const pipelineHash = $route.current.params.hash || '';
   const url = `../api/monitoring/v1/clusters/${clusterUuid}/logstash/pipeline/${pipelineId}/${pipelineHash}`;
   return $http.post(url, {
     ccs
@@ -48,7 +48,7 @@ function getPageData($injector) {
   });
 }
 
-uiRoutes.when('/logstash/pipelines/:id/:hash', {
+uiRoutes.when('/logstash/pipelines/:id/:hash?', {
   template,
   resolve: {
     clusters(Private) {

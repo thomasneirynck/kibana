@@ -79,6 +79,10 @@ export async function getPipeline(req, config, lsIndexPattern, clusterUuid, pipe
   checkParam(lsIndexPattern, 'lsIndexPattern in getPipeline');
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
+  const versions = await getPipelineVersions(callWithRequest, req, config, lsIndexPattern, clusterUuid, pipelineId);
+  if (!pipelineHash) {
+    pipelineHash = versions[0].hash;
+  }
 
   const options = {
     clusterUuid,
@@ -86,10 +90,9 @@ export async function getPipeline(req, config, lsIndexPattern, clusterUuid, pipe
     pipelineHash
   };
 
-  const [ stateDocument, statsAggregation, versions ] = await Promise.all([
+  const [ stateDocument, statsAggregation ] = await Promise.all([
     getPipelineStateDocument(callWithRequest, req, lsIndexPattern, options),
-    getPipelineStatsAggregation(callWithRequest, req, lsIndexPattern, options),
-    getPipelineVersions(callWithRequest, req, config, lsIndexPattern, options)
+    getPipelineStatsAggregation(callWithRequest, req, lsIndexPattern, options)
   ]);
 
   if (stateDocument === null) {
@@ -98,7 +101,7 @@ export async function getPipeline(req, config, lsIndexPattern, clusterUuid, pipe
 
   const result = {
     ..._enrichStateWithStatsAggregation(stateDocument, statsAggregation),
-    ...versions
+    versions
   };
   return result;
 }

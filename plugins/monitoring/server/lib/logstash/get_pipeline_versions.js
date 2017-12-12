@@ -4,7 +4,7 @@ import { get } from 'lodash';
 import { checkParam } from '../error_missing_required';
 
 function fetchPipelineVersions(...args) {
-  const [ callWithRequest, req, config, logstashIndexPattern, { clusterUuid, pipelineId } ] = args;
+  const [ callWithRequest, req, config, logstashIndexPattern, clusterUuid, pipelineId ] = args;
   checkParam(logstashIndexPattern, 'logstashIndexPattern in getPipelineVersions');
 
   const filters = [
@@ -90,13 +90,11 @@ function fetchPipelineVersions(...args) {
 
 export function _handleResponse(response) {
   const pipelineHashes = get(response, 'aggregations.pipelines.scoped.by_pipeline_hash.buckets', []);
-  return {
-    versions: pipelineHashes.map(pipelineHash => ({
-      hash: pipelineHash.key,
-      firstSeen: get(pipelineHash, 'path_to_root.first_seen.value'),
-      lastSeen: get(pipelineHash, 'path_to_root.last_seen.value')
-    }))
-  };
+  return pipelineHashes.map(pipelineHash => ({
+    hash: pipelineHash.key,
+    firstSeen: get(pipelineHash, 'path_to_root.first_seen.value'),
+    lastSeen: get(pipelineHash, 'path_to_root.last_seen.value')
+  }));
 }
 
 export async function getPipelineVersions(...args) {
