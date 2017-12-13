@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, partialRight } from 'lodash';
 import moment from 'moment';
 import { checkParam } from '../error_missing_required';
 import { metrics } from '../metrics';
@@ -34,7 +34,7 @@ function getUuid(req, metric) {
   return req.params.clusterUuid;
 }
 
-function defaultCalculation(key, metric, bucketSizeInSeconds, bucket) {
+function defaultCalculation(bucket, key, metric, bucketSizeInSeconds) {
   // [${key}] guarantees that if the key has periods in it, it gets interpreted as a single key value
   const value =  get(bucket, `[${key}].value`, null);
 
@@ -173,8 +173,7 @@ function handleSeries(metric, min, max, bucketSizeInSeconds, response) {
   if (firstUsableBucketIndex <= lastUsableBucketIndex) {
     // map buckets to values for charts
     const key = metric.derivative ? 'metric_deriv' : 'metric';
-    const metricDefaultCalculation = (bucket) => defaultCalculation(key, metric, bucketSizeInSeconds, bucket);
-    const bucketMapper = metric && metric.calculation || metricDefaultCalculation;
+    const bucketMapper = partialRight(metric.calculation || defaultCalculation, key, metric, bucketSizeInSeconds);
 
     data = buckets
       .slice(firstUsableBucketIndex, lastUsableBucketIndex + 1) // take only the buckets we know are usable
