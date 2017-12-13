@@ -60,13 +60,13 @@ describe('$executor service', () => {
 
   it('should execute function if ingorePause is passed (interval set to 1000ms)', (done) => {
     timefilter.refreshInterval.value = 1000;
-    executor.register({ execute: () => done() });
+    executor.register({ execute: () => Promise.resolve().then(() => done(), done) });
     executor.start({ ignorePaused: true });
   });
 
   it('should execute function if timefilter is not paused and interval set to 1000ms', (done) => {
     timefilter.refreshInterval.value = 1000;
-    executor.register({ execute: () => done() });
+    executor.register({ execute: () => Promise.resolve().then(() => done(), done) });
     executor.start();
   });
 
@@ -92,7 +92,7 @@ describe('$executor service', () => {
   it('should call handleError', (done) => {
     timefilter.refreshInterval.value = 10;
     executor.register({
-      execute: () => Promise.reject(),
+      execute: () => Promise.reject(new Error('reject test')),
       handleError: () => done()
     });
     executor.start();
