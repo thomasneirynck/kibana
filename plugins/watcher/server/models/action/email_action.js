@@ -40,14 +40,19 @@ export class EmailAction extends BaseAction {
   get upstreamJson() {
     const result = super.upstreamJson;
 
+    const optionalFields = {};
+    if (this.subject) {
+      optionalFields.subject = this.subject;
+    }
+    if (this.body) {
+      optionalFields.body.text = this.body;
+    }
+
     result[this.id] = {
       email: {
         profile: 'standard',
         to: this.to,
-        subject: this.subject,
-        body: {
-          text: this.body
-        }
+        ...optionalFields,
       }
     };
 
@@ -64,17 +69,19 @@ export class EmailAction extends BaseAction {
     if (!json.actionJson.email.to) {
       throw new Error('json argument must contain an actionJson.email.to property');
     }
-    if (!json.actionJson.email.subject) {
-      throw new Error('json argument must contain an actionJson.email.subject property');
+
+    const optionalFields = {};
+    if (json.actionJson.email.subject) {
+      optionalFields.subject = json.actionJson.email.subject;
     }
-    if (!json.actionJson.email.body) {
-      throw new Error('json argument must contain an actionJson.email.body property');
+    if (json.actionJson.email.body) {
+      optionalFields.body = json.actionJson.email.body.text;
     }
 
     Object.assign(props, {
       to: json.actionJson.email.to,
       subject: json.actionJson.email.subject,
-      body: json.actionJson.email.body.text
+      ...optionalFields,
     });
 
     return new EmailAction(props);
