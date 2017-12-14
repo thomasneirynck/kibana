@@ -58,6 +58,7 @@ export class TypeCollector {
    */
   start() {
     const initialCollectors = [];
+    this._log.info(`Starting all Kibana monitoring collectors`);
 
     this._collectors.forEach(collector => {
       if (collector.init) {
@@ -130,7 +131,7 @@ export class TypeCollector {
   }
 
   cleanup() {
-    this._log.warn(`Stopping all Kibana monitoring collectors`);
+    this._log.info(`Stopping all Kibana monitoring collectors`);
 
     // stop fetching
     clearInterval(this._timer);
