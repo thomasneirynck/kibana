@@ -10,6 +10,7 @@ import {
   LogstashPageProvider,
   GraphPageProvider,
   GrokDebuggerPageProvider,
+  WatcherPageProvider,
 } from './page_objects';
 
 import {
@@ -27,6 +28,7 @@ import {
   RandomProvider,
   AceEditorProvider,
   GrokDebuggerProvider,
+
 } from './services';
 
 // the default export of config files must be a config provider
@@ -42,6 +44,7 @@ export default async function ({ readConfigFile }) {
     testFiles: [
       resolve(__dirname, './apps/graph'),
       resolve(__dirname, './apps/monitoring'),
+      resolve(__dirname, './apps/watcher'),
       resolve(__dirname, './apps/dashboard_mode'),
       resolve(__dirname, './apps/security'),
       resolve(__dirname, './apps/reporting'),
@@ -80,6 +83,7 @@ export default async function ({ readConfigFile }) {
       logstash: LogstashPageProvider,
       graph: GraphPageProvider,
       grokDebugger: GrokDebuggerPageProvider,
+      watcher: WatcherPageProvider,
     },
 
     servers: {

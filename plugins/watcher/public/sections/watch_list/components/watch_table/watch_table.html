@@ -6,6 +6,7 @@
           is-selected="watchTable.allSelected"
           on-select-change="watchTable.onAllSelectedChange"
           ng-if="watchTable.areAnyEditable()"
+          data-test-subj="selectAllWatchesCheckBox"
         ></check-box>
       </th>
       <th scope="col" class="kuiTableHeaderCell">
@@ -77,6 +78,7 @@
       ng-repeat="item in watchTable.items"
       class="kuiTableRow"
       ng-class="{ 'kuiTableRow-isBeingDeleted': item.isBeingDeleted }"
+      data-test-subj="watchRow-{{ item.watch.id }}"
     >
       <td class="kuiTableRowCell kuiTableRowCell--checkBox">
         <div class="kuiTableRowCell__liner">
@@ -95,7 +97,7 @@
             ng-href="#/management/elasticsearch/watcher/watches/watch/{{item.watch.id}}/status"
             title="{{item.watch.id}}"
             ng-if="watchTable.isEditable(item)"
-            data-test-subj="lnkWatchStatus-{{ item.watch.id }}"
+
           >
             {{item.watch.id}}
           </a>
