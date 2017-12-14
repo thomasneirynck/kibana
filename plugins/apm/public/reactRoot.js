@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { Router, Route, Redirect, Switch } from 'react-router-dom';
 
 import SetupInstructions from './components/app/SetupInstructions';
-import AppOverview from './components/app/AppOverview';
+import ServiceOverview from './components/app/ServiceOverview';
 import ErrorGroupDetails from './components/app/ErrorGroupDetails';
 import ErrorGroupOverview from './components/app/ErrorGroupOverview';
 import Main from './components/app/Main';
@@ -21,14 +21,18 @@ function Root({ history, store }) {
         <Main>
           <ScrollToTopOnPathChange />
           {/* App */}
-          <Route exact path="/" component={AppOverview} />
+          <Route exact path="/" component={ServiceOverview} />
 
           {/* Errors */}
           <Route
-            path="/:appName/errors/:groupId"
+            path="/:serviceName/errors/:groupId"
             component={ErrorGroupDetails}
           />
-          <Route exact path="/:appName/errors" component={ErrorGroupOverview} />
+          <Route
+            exact
+            path="/:serviceName/errors"
+            component={ErrorGroupOverview}
+          />
 
           <Switch>
             {/* Setup instructions */}
@@ -37,10 +41,12 @@ function Root({ history, store }) {
             {/* Transactions */}
             <Route
               exact
-              path="/:appName"
+              path="/:serviceName"
               render={({ location, match }) => {
-                const appName = match.params.appName;
-                const newPath = `/${appName}/transactions${location.search}`;
+                const serviceName = match.params.serviceName;
+                const newPath = `/${serviceName}/transactions${
+                  location.search
+                }`;
                 return <Redirect to={newPath} />;
               }}
             />
@@ -48,17 +54,17 @@ function Root({ history, store }) {
 
           <Route
             exact
-            path="/:appName/transactions"
+            path="/:serviceName/transactions"
             component={TransactionOverview}
           />
 
           <Route
             exact
-            path="/:appName/transactions/:transactionType"
+            path="/:serviceName/transactions/:transactionType"
             component={TransactionOverview}
           />
           <Route
-            path="/:appName/transactions/:transactionType/:transactionName"
+            path="/:serviceName/transactions/:transactionType/:transactionName"
             component={TransactionDetails}
           />
         </Main>

@@ -27,7 +27,7 @@ const ImpactToolTip = () => (
       trigger="click"
       overlay={
         <Tooltip>
-          Impact shows the most used and slowest endpoints in your app.
+          Impact shows the most used and slowest endpoints in your service.
         </Tooltip>
       }
     >
@@ -48,7 +48,7 @@ const getRelativeImpact = (impact, impactMin, impactMax) =>
 class List extends Component {
   render() {
     const {
-      appName,
+      serviceName,
       type,
       items,
       changeTransactionSorting,
@@ -96,7 +96,7 @@ class List extends Component {
         return (
           <ListItem
             key={get({ transaction }, TRANSACTION_ID)}
-            appName={appName}
+            serviceName={serviceName}
             type={type}
             transaction={transaction}
             impact={getRelativeImpact(transaction.impact, impactMin, impactMax)}

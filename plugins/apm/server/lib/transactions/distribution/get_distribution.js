@@ -8,14 +8,14 @@ function getDefaultTransactionId(buckets) {
   return get(filledBuckets, `[${middleIndex}].transaction_id`);
 }
 
-export async function getDistribution({ appName, transactionName, setup }) {
+export async function getDistribution({ serviceName, transactionName, setup }) {
   const bucketSize = await calculateBucketSize({
-    appName,
+    serviceName,
     transactionName,
     setup
   });
   const { buckets, total_hits } = await getBuckets({
-    appName,
+    serviceName,
     transactionName,
     setup,
     bucketSize

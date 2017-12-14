@@ -33,8 +33,8 @@ export const loadTransactionDistribution = createAction(
 );
 
 export function getTransactionDistribution(state) {
-  const { appName, start, end, transactionName } = state.urlParams;
-  const key = getKey({ appName, start, end, transactionName });
+  const { serviceName, start, end, transactionName } = state.urlParams;
+  const key = getKey({ serviceName, start, end, transactionName });
   return state.transactionDistributions[key] || INITIAL_STATE;
 }
 

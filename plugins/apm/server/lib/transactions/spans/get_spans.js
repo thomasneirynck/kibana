@@ -1,10 +1,11 @@
 import {
-  TRACE_TRANSACTION_ID,
-  TRACE_START,
-  TRACE_TYPE
+  TRANSACTION_ID,
+  SPAN_START,
+  SPAN_TYPE,
+  PROCESSOR_EVENT
 } from '../../../../common/constants';
 
-async function getTraces({ transactionId, setup }) {
+async function getSpans({ transactionId, setup }) {
   const { start, end, client, config } = setup;
 
   const params = {
@@ -23,15 +24,16 @@ async function getTraces({ transactionId, setup }) {
                 }
               }
             },
-            { term: { [TRACE_TRANSACTION_ID]: transactionId } }
+            { term: { [TRANSACTION_ID]: transactionId } },
+            { term: { [PROCESSOR_EVENT]: 'span' } }
           ]
         }
       },
-      sort: [{ [TRACE_START]: { order: 'asc' } }],
+      sort: [{ [SPAN_START]: { order: 'asc' } }],
       aggs: {
         types: {
           terms: {
-            field: TRACE_TYPE,
+            field: SPAN_TYPE,
             size: 100
           }
         }
@@ -41,15 +43,16 @@ async function getTraces({ transactionId, setup }) {
 
   const resp = await client('search', params);
   return {
-    trace_types: resp.aggregations.types.buckets.map(bucket => {
-      return { type: bucket.key, count: bucket.doc_count };
-    }),
-    traces: resp.hits.hits.map((doc, i) => ({
+    span_types: resp.aggregations.types.buckets.map(bucket => ({
+      type: bucket.key,
+      count: bucket.doc_count
+    })),
+    spans: resp.hits.hits.map((doc, i) => ({
       id: i,
-      ...doc._source.trace,
+      ...doc._source.span,
       context: doc._source.context
     }))
   };
 }
 
-export default getTraces;
+export default getSpans;

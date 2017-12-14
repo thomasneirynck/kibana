@@ -1,6 +1,6 @@
-import { APP_NAME, ERROR_GROUP_ID } from '../../../../common/constants';
+import { SERVICE_NAME, ERROR_GROUP_ID } from '../../../../common/constants';
 
-export async function getBuckets({ appName, groupId, bucketSize, setup }) {
+export async function getBuckets({ serviceName, groupId, bucketSize, setup }) {
   const { start, end, client, config } = setup;
 
   const params = {
@@ -20,7 +20,7 @@ export async function getBuckets({ appName, groupId, bucketSize, setup }) {
               }
             },
             { term: { [ERROR_GROUP_ID]: groupId } },
-            { term: { [APP_NAME]: appName } }
+            { term: { [SERVICE_NAME]: serviceName } }
           ]
         }
       },

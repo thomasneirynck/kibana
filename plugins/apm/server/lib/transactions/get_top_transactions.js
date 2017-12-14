@@ -1,6 +1,6 @@
 import moment from 'moment';
 import {
-  APP_NAME,
+  SERVICE_NAME,
   TRANSACTION_TYPE,
   TRANSACTION_NAME,
   TRANSACTION_ID,
@@ -8,7 +8,11 @@ import {
 } from '../../../common/constants';
 import { get, sortBy } from 'lodash';
 
-export async function getTopTransactions({ transactionType, appName, setup }) {
+export async function getTopTransactions({
+  transactionType,
+  serviceName,
+  setup
+}) {
   const { start, end, client, config } = setup;
 
   const duration = moment.duration(end - start);
@@ -21,7 +25,7 @@ export async function getTopTransactions({ transactionType, appName, setup }) {
       query: {
         bool: {
           must: [
-            { term: { [APP_NAME]: appName } },
+            { term: { [SERVICE_NAME]: serviceName } },
             { term: { [TRANSACTION_TYPE]: transactionType } },
             {
               range: {

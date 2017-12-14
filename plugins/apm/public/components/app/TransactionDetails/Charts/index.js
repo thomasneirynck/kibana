@@ -9,9 +9,15 @@ import { getCharts, loadCharts } from '../../../../store/charts';
 
 function mapStateToProps(state = {}) {
   const urlParams = getUrlParams(state);
-  const { appName, start, end, transactionType, transactionName } = urlParams;
+  const {
+    serviceName,
+    start,
+    end,
+    transactionType,
+    transactionName
+  } = urlParams;
   const charts = getCharts(state, {
-    appName,
+    serviceName,
     start,
     end,
     transactionType,
@@ -39,14 +45,14 @@ function mapStateToProps(state = {}) {
 const mapDispatchToProps = dispatch => ({
   loadCharts: props => {
     const {
-      appName,
+      serviceName,
       start,
       end,
       transactionType,
       transactionName
     } = props.urlParams;
     const shouldLoad =
-      appName &&
+      serviceName &&
       start &&
       end &&
       transactionType &&
@@ -55,7 +61,13 @@ const mapDispatchToProps = dispatch => ({
 
     if (shouldLoad) {
       dispatch(
-        loadCharts({ appName, start, end, transactionType, transactionName })
+        loadCharts({
+          serviceName,
+          start,
+          end,
+          transactionType,
+          transactionName
+        })
       );
     }
   }

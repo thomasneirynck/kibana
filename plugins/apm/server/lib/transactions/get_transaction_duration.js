@@ -1,7 +1,8 @@
 import { get } from 'lodash';
 import {
   TRANSACTION_ID,
-  TRANSACTION_DURATION
+  TRANSACTION_DURATION,
+  PROCESSOR_EVENT
 } from '../../../common/constants';
 
 export async function getTransactionDuration({ transactionId, setup }) {
@@ -15,6 +16,7 @@ export async function getTransactionDuration({ transactionId, setup }) {
       query: {
         bool: {
           must: [
+            { term: { [PROCESSOR_EVENT]: 'transaction' } },
             { term: { [TRANSACTION_ID]: transactionId } },
             {
               range: {
@@ -32,8 +34,5 @@ export async function getTransactionDuration({ transactionId, setup }) {
   };
 
   const resp = await client('search', params);
-  return get(
-    resp.hits.hits.find(doc => doc._source.transaction),
-    `_source[${TRANSACTION_DURATION}]`
-  );
+  return get(resp, `hits.hits[0]._source.${TRANSACTION_DURATION}`);
 }

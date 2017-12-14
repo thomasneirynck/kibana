@@ -6,7 +6,7 @@ describe('get_timeseries_data', () => {
   let res;
   beforeEach(async () => {
     res = await getTimeseriesData({
-      appName: 'myAppName',
+      serviceName: 'myServiceName',
       transactionType: 'myTransactionType',
       transactionName: 'myTransactionName',
       setup: {

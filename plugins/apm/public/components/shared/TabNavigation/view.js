@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tab } from '../UIComponents';
 import styled from 'styled-components';
-import withApp from '../withApp';
+import withService from '../withService';
 import { unit, units, px, colors, fontSizes } from '../../../style/variables';
 import { isEmpty } from 'lodash';
 
@@ -30,17 +30,17 @@ function transactionTypeLabel(type) {
   return type === 'request' ? 'Request' : type;
 }
 
-function TabNavigation({ urlParams, location, app }) {
-  const { appName, transactionType } = urlParams;
+function TabNavigation({ urlParams, location, service }) {
+  const { serviceName, transactionType } = urlParams;
   const errorsSelected = location.pathname.includes('/errors');
-  const { types } = app.data;
+  const { types } = service.data;
 
   return (
     <Container>
       {types.map(type => {
         return (
           <Tab
-            path={`${appName}/transactions/${encodeURIComponent(type)}`}
+            path={`${serviceName}/transactions/${encodeURIComponent(type)}`}
             selected={transactionType === type && !errorsSelected}
             key={type}
           >
@@ -50,11 +50,11 @@ function TabNavigation({ urlParams, location, app }) {
       })}
       {isEmpty(types) && <EmptyMessage>No transactions available</EmptyMessage>}
       <Divider />
-      <Tab path={`${appName}/errors`} selected={errorsSelected}>
+      <Tab path={`${serviceName}/errors`} selected={errorsSelected}>
         Errors
       </Tab>
     </Container>
   );
 }
 
-export default withApp(TabNavigation);
+export default withService(TabNavigation);

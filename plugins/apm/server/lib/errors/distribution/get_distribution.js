@@ -5,10 +5,10 @@ function getBucketSize({ start, end, config }) {
   return Math.floor((end - start) / bucketTargetCount);
 }
 
-export async function getDistribution({ appName, groupId, setup }) {
+export async function getDistribution({ serviceName, groupId, setup }) {
   const bucketSize = getBucketSize(setup);
   const { buckets, total_hits } = await getBuckets({
-    appName,
+    serviceName,
     groupId,
     bucketSize,
     setup

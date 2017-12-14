@@ -39,8 +39,8 @@ export const getTransactionList = createSelector(
   state => state.sorting.transaction,
   getUrlParams,
   (transactionLists, transactionSorting, urlParams) => {
-    const { appName, start, end, transactionType } = urlParams;
-    const key = getKey({ appName, start, end, transactionType });
+    const { serviceName, start, end, transactionType } = urlParams;
+    const key = getKey({ serviceName, start, end, transactionType });
 
     if (!transactionLists[key]) {
       return INITIAL_STATE;

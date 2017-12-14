@@ -8,11 +8,11 @@ import ListItem from './ListItem';
 
 class List extends Component {
   render() {
-    const { items, changeAppSorting, appSorting } = this.props;
+    const { items, changeServiceSorting, serviceSorting } = this.props;
 
     const renderHead = () => {
       const cells = [
-        { key: 'appName', label: 'Name' },
+        { key: 'serviceName', label: 'Name' },
         { key: 'agentName', label: 'Agent' },
         {
           key: 'avgResponseTime',
@@ -28,9 +28,9 @@ class List extends Component {
       ].map(({ key, label, alignRight }) => (
         <AlignmentKuiTableHeaderCell
           key={key}
-          onSort={() => changeAppSorting(key)}
-          isSorted={appSorting.key === key}
-          isSortAscending={!appSorting.descending}
+          onSort={() => changeServiceSorting(key)}
+          isSorted={serviceSorting.key === key}
+          isSortAscending={!serviceSorting.descending}
           className={alignRight ? 'kuiTableHeaderCell--alignRight' : ''}
         >
           {label}
@@ -40,18 +40,18 @@ class List extends Component {
       return cells;
     };
 
-    const renderBody = apps => {
-      return apps.map(app => {
-        return <ListItem key={app.appName} app={app} />;
+    const renderBody = services => {
+      return services.map(service => {
+        return <ListItem key={service.serviceName} service={service} />;
       });
     };
 
     return (
       <APMTable
         resultsLimit={500}
-        searchableFields={['appName', 'agentName']}
+        searchableFields={['serviceName', 'agentName']}
         items={items}
-        emptyMessageHeading="No apps with data in the selected time range."
+        emptyMessageHeading="No services with data in the selected time range."
         renderHead={renderHead}
         renderBody={renderBody}
       />

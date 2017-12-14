@@ -1,7 +1,7 @@
-import { APP_NAME, ERROR_GROUP_ID } from '../../../common/constants';
+import { SERVICE_NAME, ERROR_GROUP_ID } from '../../../common/constants';
 import { get } from 'lodash';
 
-export async function getErrorGroup({ appName, groupId, setup }) {
+export async function getErrorGroup({ serviceName, groupId, setup }) {
   const { start, end, client, config } = setup;
 
   const params = {
@@ -11,7 +11,7 @@ export async function getErrorGroup({ appName, groupId, setup }) {
       query: {
         bool: {
           must: [
-            { term: { [APP_NAME]: appName } },
+            { term: { [SERVICE_NAME]: serviceName } },
             { term: { [ERROR_GROUP_ID]: groupId } },
             {
               range: {

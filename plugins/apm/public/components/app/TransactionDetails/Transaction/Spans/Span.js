@@ -2,8 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { get } from 'lodash';
+import PropTypes from 'prop-types';
 import { toQuery, fromQuery, RelativeLink } from '../../../../../utils/url';
-import TraceDetails from './TraceDetails';
+import SpanDetails from './SpanDetails';
 import Modal from '../../../../shared/Modal';
 
 import {
@@ -15,17 +16,17 @@ import {
   fontSizes
 } from '../../../../../style/variables';
 import {
-  TRACE_DURATION,
-  TRACE_START,
-  TRACE_ID,
-  TRACE_NAME
+  SPAN_DURATION,
+  SPAN_START,
+  SPAN_ID,
+  SPAN_NAME
 } from '../../../../../../common/constants';
 
-const TraceBar = styled.div`
+const SpanBar = styled.div`
   position: relative;
   height: ${unit}px;
 `;
-const TraceLabel = styled.div`
+const SpanLabel = styled.div`
   white-space: nowrap;
   position: relative;
   direction: rtl;
@@ -50,15 +51,15 @@ const Container = styled(({ isSelected, timelineMargins, ...props }) => (
   }
 `;
 
-class Trace extends React.Component {
+class Span extends React.Component {
   onClose = () => {
     const { location, history } = this.props;
-    const { traceId, ...currentQuery } = toQuery(location.search);
+    const { spanId, ...currentQuery } = toQuery(location.search);
     history.push({
       ...location,
       search: fromQuery({
         ...currentQuery,
-        traceId: null
+        spanId: null
       })
     });
   };
@@ -67,45 +68,54 @@ class Trace extends React.Component {
     const {
       timelineMargins,
       totalDuration,
-      trace,
+      span,
       color,
-      isSelected
+      isSelected,
+      transactionId
     } = this.props;
 
-    const width = get({ trace }, TRACE_DURATION) / totalDuration * 100;
-    const left = get({ trace }, TRACE_START) / totalDuration * 100;
+    const width = get({ span }, SPAN_DURATION) / totalDuration * 100;
+    const left = get({ span }, SPAN_START) / totalDuration * 100;
 
-    const traceId = get({ trace }, TRACE_ID);
-    const traceName = get({ trace }, TRACE_NAME);
+    const spanId = get({ span }, SPAN_ID);
+    const spanName = get({ span }, SPAN_NAME);
 
     return (
       <Container
-        query={{ traceId }}
+        query={{ spanId }}
         timelineMargins={timelineMargins}
         isSelected={isSelected}
       >
-        <TraceBar
+        <SpanBar
           style={{
             left: `${left}%`,
             width: `${width}%`,
             backgroundColor: color
           }}
         />
-        <TraceLabel style={{ left: `${left}%`, width: `${100 - left}%` }}>
-          {traceName}
-        </TraceLabel>
+        <SpanLabel style={{ left: `${left}%`, width: `${100 - left}%` }}>
+          {spanName}
+        </SpanLabel>
 
         <Modal
-          header="Trace details"
+          header="Span details"
           isOpen={isSelected}
           onClose={this.onClose}
           close={this.onClose}
         >
-          <TraceDetails trace={trace} totalDuration={totalDuration} />
+          <SpanDetails
+            span={span}
+            totalDuration={totalDuration}
+            transactionId={transactionId}
+          />
         </Modal>
       </Container>
     );
   }
 }
 
-export default withRouter(Trace);
+SpanDetails.propTypes = {
+  totalDuration: PropTypes.number.isRequired
+};
+
+export default withRouter(Span);

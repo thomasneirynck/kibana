@@ -9,18 +9,18 @@ import {
   createReducer
 } from './apiHelpers';
 
-const actionTypes = createActionTypes('APP_LIST');
+const actionTypes = createActionTypes('SERVICE_LIST');
 export const [
-  APP_LIST_LOADING,
-  APP_LIST_SUCCESS,
-  APP_LIST_FAILURE
+  SERVICE_LIST_LOADING,
+  SERVICE_LIST_SUCCESS,
+  SERVICE_LIST_FAILURE
 ] = actionTypes;
 
 const INITIAL_STATE = {
   data: []
 };
 const list = createReducer(actionTypes, INITIAL_STATE);
-const appLists = (state = {}, action) => {
+const serviceLists = (state = {}, action) => {
   if (!actionTypes.includes(action.type)) {
     return state;
   }
@@ -31,28 +31,32 @@ const appLists = (state = {}, action) => {
   };
 };
 
-export const loadAppList = createAction(actionTypes, rest.loadAppList);
+export const loadServiceList = createAction(actionTypes, rest.loadServiceList);
 
 // SELECTORS
-export const getAppList = createSelector(
-  state => state.appLists,
-  state => state.sorting.app,
+export const getServiceList = createSelector(
+  state => state.serviceLists,
+  state => state.sorting.service,
   getUrlParams,
-  (appLists, appSorting, urlParams) => {
+  (serviceLists, serviceSorting, urlParams) => {
     const { start, end } = urlParams;
     const key = getKey({ start, end });
 
-    if (!appLists[key]) {
+    if (!serviceLists[key]) {
       return INITIAL_STATE;
     }
 
-    const { key: sortKey, descending } = appSorting;
+    const { key: sortKey, descending } = serviceSorting;
 
     return {
-      ...appLists[key],
-      data: orderBy(appLists[key].data, sortKey, descending ? 'desc' : 'asc')
+      ...serviceLists[key],
+      data: orderBy(
+        serviceLists[key].data,
+        sortKey,
+        descending ? 'desc' : 'asc'
+      )
     };
   }
 );
 
-export default appLists;
+export default serviceLists;

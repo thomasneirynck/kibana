@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
 import { first, get, zipObject, difference, uniq } from 'lodash';
-import Trace from './Trace';
+import Span from './Span';
 import TimelineHeader from './TimelineHeader';
-import { TRACE_ID } from '../../../../../../common/constants';
+import { SPAN_ID } from '../../../../../../common/constants';
 import { STATUS } from '../../../../../constants';
 import { colors } from '../../../../../style/variables';
 import { StickyContainer } from 'react-sticky';
@@ -23,38 +23,38 @@ const TIMELINE_MARGINS = {
   bottom: 0
 };
 
-class Traces extends PureComponent {
+class Spans extends PureComponent {
   componentDidMount() {
-    loadTraces(this.props);
+    loadSpans(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
-    loadTraces(nextProps);
+    loadSpans(nextProps);
   }
 
   render() {
-    const { traces } = this.props;
-    if (traces.status !== STATUS.SUCCESS) {
+    const { spans, urlParams } = this.props;
+    if (spans.status !== STATUS.SUCCESS) {
       return null;
     }
 
-    if (traces.data.traces.length <= 0) {
+    if (spans.data.spans.length <= 0) {
       return (
         <EmptyMessage
-          heading="No traces available for this transaction."
+          heading="No spans available for this transaction."
           subheading=" "
         />
       );
     }
 
-    const traceTypes = uniq(
-      traces.data.traceTypes.map(({ type }) => getPrimaryType(type))
+    const spanTypes = uniq(
+      spans.data.spanTypes.map(({ type }) => getPrimaryType(type))
     );
-    const getTraceColor = getColorByType(traceTypes);
+    const getSpanColor = getColorByType(spanTypes);
 
-    const totalDuration = traces.data.duration;
-    const traceContainerHeight = 58;
-    const timelineHeight = traceContainerHeight * traces.data.traces.length;
+    const totalDuration = spans.data.duration;
+    const spanContainerHeight = 58;
+    const timelineHeight = spanContainerHeight * spans.data.spans.length;
 
     return (
       <Container>
@@ -62,11 +62,11 @@ class Traces extends PureComponent {
           <Timeline
             header={
               <TimelineHeader
-                legends={traceTypes.map(type => ({
-                  label: getTraceLabel(type),
-                  color: getTraceColor(type)
+                legends={spanTypes.map(type => ({
+                  label: getSpanLabel(type),
+                  color: getSpanColor(type)
                 }))}
-                transactionName={this.props.urlParams.transactionName}
+                transactionName={urlParams.transactionName}
               />
             }
             duration={totalDuration}
@@ -78,16 +78,15 @@ class Traces extends PureComponent {
               paddingTop: TIMELINE_MARGINS.top
             }}
           >
-            {traces.data.traces.map(trace => (
-              <Trace
+            {spans.data.spans.map(span => (
+              <Span
+                transactionId={urlParams.transactionId}
                 timelineMargins={TIMELINE_MARGINS}
-                key={get({ trace }, TRACE_ID)}
-                color={getTraceColor(getPrimaryType(trace.type))}
-                trace={trace}
+                key={get({ span }, SPAN_ID)}
+                color={getSpanColor(getPrimaryType(span.type))}
+                span={span}
                 totalDuration={totalDuration}
-                isSelected={
-                  get({ trace }, TRACE_ID) === this.props.urlParams.traceId
-                }
+                isSelected={get({ span }, SPAN_ID) === urlParams.spanId}
               />
             ))}
           </div>
@@ -97,16 +96,16 @@ class Traces extends PureComponent {
   }
 }
 
-function loadTraces(props) {
-  const { appName, start, end, transactionId } = props.urlParams;
-  if (appName && start && end && transactionId && !props.tracesNext.status) {
-    props.loadTraces({ appName, start, end, transactionId });
+function loadSpans(props) {
+  const { serviceName, start, end, transactionId } = props.urlParams;
+  if (serviceName && start && end && transactionId && !props.spansNext.status) {
+    props.loadSpans({ serviceName, start, end, transactionId });
   }
 }
 
 function getColorByType(types) {
   const assignedColors = {
-    app: colors.apmBlue,
+    service: colors.apmBlue,
     cache: colors.apmGreen,
     ext: colors.apmPurple,
     template: colors.apmRed2,
@@ -125,7 +124,7 @@ function getColorByType(types) {
   return type => assignedColors[type] || unassignedColors[type];
 }
 
-function getTraceLabel(type) {
+function getSpanLabel(type) {
   switch (type) {
     case 'db':
       return 'DB';
@@ -138,4 +137,4 @@ function getPrimaryType(type) {
   return first(type.split('.'));
 }
 
-export default Traces;
+export default Spans;

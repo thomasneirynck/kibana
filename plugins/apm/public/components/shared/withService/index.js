@@ -1,13 +1,13 @@
 import { connect } from 'react-redux';
 import { getUrlParams } from '../../../store/urlParams';
-import { loadApp, getApp } from '../../../store/apps';
+import { loadApp, getService } from '../../../store/services';
 import getComponentWithApp from './view';
 import { getDisplayName } from '../HOCUtils';
 
-function withApp(WrappedComponent) {
+function withService(WrappedComponent) {
   function mapStateToProps(state = {}, props) {
     return {
-      app: getApp(state),
+      service: getService(state),
       urlParams: getUrlParams(state),
       originalProps: props
     };
@@ -23,4 +23,4 @@ function withApp(WrappedComponent) {
   return connect(mapStateToProps, mapDispatchToProps)(HOC);
 }
 
-export default withApp;
+export default withService;

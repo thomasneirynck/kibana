@@ -9,8 +9,8 @@ import { getCharts, loadCharts } from '../../../../store/charts';
 
 function mapStateToProps(state = {}) {
   const urlParams = getUrlParams(state);
-  const { appName, start, end, transactionType } = urlParams;
-  const charts = getCharts(state, { appName, start, end, transactionType });
+  const { serviceName, start, end, transactionType } = urlParams;
+  const charts = getCharts(state, { serviceName, start, end, transactionType });
 
   return {
     urlParams,
@@ -32,12 +32,12 @@ function mapStateToProps(state = {}) {
 
 const mapDispatchToProps = dispatch => ({
   loadCharts: props => {
-    const { appName, start, end, transactionType } = props.urlParams;
+    const { serviceName, start, end, transactionType } = props.urlParams;
     const shouldLoad =
-      appName && start && end && transactionType && !props.status;
+      serviceName && start && end && transactionType && !props.status;
 
     if (shouldLoad) {
-      dispatch(loadCharts({ appName, start, end, transactionType }));
+      dispatch(loadCharts({ serviceName, start, end, transactionType }));
     }
   }
 });

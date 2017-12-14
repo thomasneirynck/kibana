@@ -2,7 +2,7 @@ import Joi from 'joi';
 import Boom from 'boom';
 
 import { getTimeseriesData } from '../lib/transactions/charts/get_timeseries_data';
-import getTraces from '../lib/transactions/traces/get_traces';
+import getSpans from '../lib/transactions/spans/get_spans';
 import { getDistribution } from '../lib/transactions/distribution/get_distribution';
 import { getTransactionDuration } from '../lib/transactions/get_transaction_duration';
 import { getTopTransactions } from '../lib/transactions/get_top_transactions';
@@ -11,7 +11,7 @@ import { setupRequest } from '../lib/helpers/setup_request';
 import { dateValidation } from '../lib/helpers/date_validation';
 
 const pre = [{ method: setupRequest, assign: 'setup' }];
-const ROOT = '/api/apm/apps/{appName}/transactions';
+const ROOT = '/api/apm/services/{serviceName}/transactions';
 const defaultErrorHandler = reply => err => {
   console.error(err.stack);
   reply(Boom.wrap(err, 400));
@@ -33,12 +33,12 @@ export function initTransactionsApi(server) {
       }
     },
     handler: (req, reply) => {
-      const { appName } = req.params;
+      const { serviceName } = req.params;
       const { transaction_type } = req.query;
       const { setup } = req.pre;
 
       return getTopTransactions({
-        appName,
+        serviceName,
         transactionType: transaction_type,
         setup
       })
@@ -70,7 +70,7 @@ export function initTransactionsApi(server) {
 
   server.route({
     method: 'GET',
-    path: `${ROOT}/{transactionId}/traces`,
+    path: `${ROOT}/{transactionId}/spans`,
     config: {
       pre,
       validate: {
@@ -84,10 +84,10 @@ export function initTransactionsApi(server) {
       const { transactionId } = req.params;
       const { setup } = req.pre;
       return Promise.all([
-        getTraces({ transactionId, setup }),
+        getSpans({ transactionId, setup }),
         getTransactionDuration({ transactionId, setup })
       ])
-        .then(([traces, duration]) => reply({ ...traces, duration }))
+        .then(([spans, duration]) => reply({ ...spans, duration }))
         .catch(defaultErrorHandler(reply));
     }
   });
@@ -109,12 +109,12 @@ export function initTransactionsApi(server) {
     },
     handler: (req, reply) => {
       const { setup } = req.pre;
-      const { appName } = req.params;
+      const { serviceName } = req.params;
       const transactionType = req.query.transaction_type;
       const transactionName = req.query.transaction_name;
 
       return getTimeseriesData({
-        appName,
+        serviceName,
         transactionType,
         transactionName,
         setup
@@ -139,10 +139,10 @@ export function initTransactionsApi(server) {
     },
     handler: (req, reply) => {
       const { setup } = req.pre;
-      const { appName } = req.params;
+      const { serviceName } = req.params;
       const { transaction_name: transactionName } = req.query;
       return getDistribution({
-        appName,
+        serviceName,
         transactionName,
         setup
       })

@@ -36,8 +36,8 @@ const transactions = (state = {}, action) => {
 export const loadTransaction = createAction(actionTypes, rest.loadTransaction);
 
 export function getTransactionNext(state) {
-  const { appName, start, end, transactionId } = getUrlParams(state);
-  const key = getKey({ appName, start, end, transactionId });
+  const { serviceName, start, end, transactionId } = getUrlParams(state);
+  const key = getKey({ serviceName, start, end, transactionId });
   return state.transactions[key] || INITIAL_STATE;
 }
 

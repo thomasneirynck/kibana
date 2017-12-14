@@ -8,7 +8,7 @@ import ListItem from './ListItem';
 class List extends Component {
   render() {
     const {
-      appName,
+      serviceName,
       items,
       changeErrorGroupSorting,
       errorGroupSorting
@@ -45,7 +45,13 @@ class List extends Component {
 
     const renderBody = errorGroups => {
       return errorGroups.map(error => {
-        return <ListItem key={error.groupId} appName={appName} error={error} />;
+        return (
+          <ListItem
+            key={error.groupId}
+            serviceName={serviceName}
+            error={error}
+          />
+        );
       });
     };
 

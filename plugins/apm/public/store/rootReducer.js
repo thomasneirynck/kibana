@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
-import appLists from './appLists';
-import apps from './apps';
+import serviceLists from './serviceLists';
+import services from './services';
 import charts from './charts';
 import errorDistributions from './errorDistributions';
 import errorGroupLists from './errorGroupLists';
@@ -9,15 +9,15 @@ import errorGroups from './errorGroups';
 import license from './license';
 import location from './location';
 import sorting from './sorting';
-import traces from './traces';
+import spans from './spans';
 import transactionDistributions from './transactionDistributions';
 import transactionLists from './transactionLists';
 import transactions from './transactions';
 import urlParams from './urlParams';
 
 const appReducer = combineReducers({
-  appLists,
-  apps,
+  serviceLists,
+  services,
   charts,
   errorDistributions,
   errorGroupLists,
@@ -25,7 +25,7 @@ const appReducer = combineReducers({
   license,
   location,
   sorting,
-  traces,
+  spans,
   transactionDistributions,
   transactionLists,
   transactions,
@@ -41,8 +41,8 @@ const rootReducer = (state, action) => {
       errorGroupLists: undefined,
       errorGroups: undefined,
       transactionLists: undefined,
-      app: undefined,
-      apps: undefined
+      service: undefined,
+      services: undefined
     };
   }
 

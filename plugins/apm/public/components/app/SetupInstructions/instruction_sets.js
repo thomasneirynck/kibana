@@ -202,12 +202,12 @@ export const agentInstructions = [
         indicatorNumber: 2,
         title: 'Configure the agent',
         textPre:
-          'Agents are libraries that run inside of your application process. APM apps are created programmatically based on the `appName`. This agent supports Express, Koa, hapi, and custom Node.js.',
+          'Agents are libraries that run inside of your application process. APM services are created programmatically based on the `serviceName`. This agent supports Express, Koa, hapi, and custom Node.js.',
         codeLanguage: 'javascript',
-        code: `// Add this to the VERY top of the first file loaded in your app
+        code: `// Add this to the VERY top of the first file loaded in your application
 var apm = require('elastic-apm').start({
-// Set required app name (allowed characters: a-z, A-Z, 0-9, -, _, and space)
-    appName: '',
+    // Set required service name (allowed characters: a-z, A-Z, 0-9, -, _, and space)
+    serviceName: '',
     // Use if APM Server requires a token
     secretToken: '',
     // Set custom APM Server URL (default: http://localhost:8200)
@@ -232,32 +232,31 @@ var apm = require('elastic-apm').start({
       {
         indicatorNumber: 1,
         title: 'Install the APM agent',
-        textPre:
-          'Install the APM agent for Python as a dependency to your application.',
+        textPre: 'Install the APM agent for Python as a dependency.',
         code: `$ pip install elastic-apm`
       },
       {
         indicatorNumber: 2,
         title: 'Configure the agent',
         textPre:
-          'Agents are libraries that run inside of your application process. APM apps are created programmatically based on the `APP_NAME`.',
+          'Agents are libraries that run inside of your application process. APM services are created programmatically based on the `SERVICE_NAME`.',
         codeLanguage: 'python',
-        code: `# Add the agent to the installed apps
+        code: `# Add the agent to INSTALLED_APPS
 INSTALLED_APPS = (
-  # ...
   'elasticapm.contrib.django',
+  # ...
 )
 
-# Choose an app name and optionally a secret token
+# Choose a service name and optionally a secret token
 ELASTIC_APM = {
-  'APP_NAME': '<APP-NAME>',
+  'SERVICE_NAME': '<SERVICE-NAME>',
   'SECRET_TOKEN': '<SECRET-TOKEN>',
 }
 
 # To send performance metrics, add our tracing middleware:
-MIDDLEWARES = (
-   'elasticapm.contrib.django.middleware.TracingMiddleware',
-   #...
+MIDDLEWARE = (
+'elasticapm.contrib.django.middleware.TracingMiddleware',
+#...
 )
 `,
         textPost:
@@ -279,15 +278,14 @@ MIDDLEWARES = (
       {
         indicatorNumber: 1,
         title: 'Install the APM agent',
-        textPre:
-          'Install the APM agent for Python as a dependency to your application.',
+        textPre: 'Install the APM agent for Python as a dependency.',
         code: `$ pip install elastic-apm[flask]`
       },
       {
         indicatorNumber: 2,
         title: 'Configure the agent',
         textPre:
-          'Agents are libraries that run inside of your application process. APM apps are created programmatically based on the `APP_NAME`.',
+          'Agents are libraries that run inside of your application process. APM services are created programmatically based on the `SERVICE_NAME`.',
         codeLanguage: 'python',
         code: `# initialize using environment variables from elasticapm.contrib.flask import ElasticAPM
 app = Flask(__name__)
@@ -295,8 +293,8 @@ apm = ElasticAPM(app)
 
 # configure to use ELASTIC_APM in your application's settings from elasticapm.contrib.flask import ElasticAPM
 app.config['ELASTIC_APM'] = {
-    # allowed app_name chars: a-z, A-Z, 0-9, -, _, and space from elasticapm.contrib.flask
-   'APP_NAME': '',
+    # allowed SERVICE_NAME chars: a-z, A-Z, 0-9, -, _, and space from elasticapm.contrib.flask
+   'SERVICE_NAME': '',
    'SECRET_TOKEN': '',
 }
 apm = ElasticAPM(app)

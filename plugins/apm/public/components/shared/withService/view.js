@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 
 function loadApp(props) {
-  const { appName, start, end } = props.urlParams;
-  if (appName && start && end && !props.app.status) {
-    props.loadApp({ appName, start, end });
+  const { serviceName, start, end } = props.urlParams;
+  if (serviceName && start && end && !props.service.status) {
+    props.loadApp({ serviceName, start, end });
   }
 }
 
@@ -19,7 +19,10 @@ function getComponentWithApp(WrappedComponent) {
 
     render() {
       return (
-        <WrappedComponent {...this.props.originalProps} app={this.props.app} />
+        <WrappedComponent
+          {...this.props.originalProps}
+          service={this.props.service}
+        />
       );
     }
   };

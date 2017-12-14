@@ -9,8 +9,8 @@ const INITIAL_STATE = {
     key: 'latestOccurrenceAt',
     descending: true
   },
-  app: {
-    key: 'appName',
+  service: {
+    key: 'serviceName',
     descending: false
   }
 };
@@ -18,7 +18,7 @@ const INITIAL_STATE = {
 const INITIALLY_DESCENDING = {
   transaction: ['name'],
   errorGroup: ['message'],
-  app: ['appName']
+  service: ['serviceName']
 };
 
 function getSorting(state, action) {
@@ -55,8 +55,8 @@ export const changeErrorGroupSorting = key => ({
   section: 'errorGroup'
 });
 
-export const changeAppSorting = key => ({
+export const changeServiceSorting = key => ({
   type: SORTING_CHANGE,
   key,
-  section: 'app'
+  section: 'service'
 });

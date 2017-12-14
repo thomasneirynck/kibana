@@ -5,10 +5,10 @@ import TabNavigation from '../../shared/TabNavigation';
 import List from './List';
 
 function loadErrorGroupList(props) {
-  const { appName, start, end } = props.urlParams;
+  const { serviceName, start, end } = props.urlParams;
 
-  if (appName && start && end && !props.errorGroupList.status) {
-    props.loadErrorGroupList({ appName, start, end });
+  if (serviceName && start && end && !props.errorGroupList.status) {
+    props.loadErrorGroupList({ serviceName, start, end });
   }
 }
 
@@ -22,15 +22,15 @@ class ErrorGroupOverview extends Component {
   }
 
   render() {
-    const { appName } = this.props.urlParams;
+    const { serviceName } = this.props.urlParams;
     const { changeErrorGroupSorting, errorGroupSorting } = this.props;
     return (
       <div>
-        <PageHeader>{appName}</PageHeader>
+        <PageHeader>{serviceName}</PageHeader>
         <TabNavigation />
 
         <List
-          appName={appName}
+          serviceName={serviceName}
           items={this.props.errorGroupList.data}
           changeErrorGroupSorting={changeErrorGroupSorting}
           errorGroupSorting={errorGroupSorting}

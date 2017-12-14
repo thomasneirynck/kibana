@@ -7,7 +7,7 @@ import { RIGHT_ALIGNMENT } from 'ui_framework/services';
 import { asMillisWithDefault } from '../../../../utils/formatters';
 import numeral from '@elastic/numeral';
 
-const AppNameCell = styled(KuiTableRowCell)`
+const ServiceNameCell = styled(KuiTableRowCell)`
   max-width: ${px(unit * 2)};
 `;
 
@@ -24,22 +24,22 @@ function formatNumber(value) {
   return formatted <= 0.1 ? '< 0.1' : formatted;
 }
 
-function ListItem({ app }) {
+function ListItem({ service }) {
   const {
-    appName,
+    serviceName,
     agentName,
     transactionsPerMinute,
     errorsPerMinute,
     avgResponseTime
-  } = app;
+  } = service;
 
   return (
     <KuiTableRow>
-      <AppNameCell>
-        <AppLink path={`${appName}/transactions`}>
-          {formatString(appName)}
+      <ServiceNameCell>
+        <AppLink path={`${serviceName}/transactions`}>
+          {formatString(serviceName)}
         </AppLink>
-      </AppNameCell>
+      </ServiceNameCell>
       <KuiTableRowCell>{formatString(agentName)}</KuiTableRowCell>
       <KuiTableRowCell align={RIGHT_ALIGNMENT}>
         {asMillisWithDefault(avgResponseTime)}

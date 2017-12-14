@@ -39,8 +39,8 @@ async function callApi(options) {
   }
 }
 
-function getAppRootPath(appName) {
-  return `../api/apm/apps/${appName}`;
+function getAppRootPath(serviceName) {
+  return `../api/apm/services/${serviceName}`;
 }
 
 export async function loadLicense() {
@@ -62,9 +62,9 @@ export async function loadAgentStatus() {
   });
 }
 
-export async function loadAppList({ start, end, query }) {
+export async function loadServiceList({ start, end, query }) {
   return callApi({
-    pathname: `../api/apm/apps`,
+    pathname: `../api/apm/services`,
     query: {
       start,
       end,
@@ -73,9 +73,9 @@ export async function loadAppList({ start, end, query }) {
   });
 }
 
-export async function loadApp({ start, end, appName }) {
+export async function loadApp({ start, end, serviceName }) {
   return callApi({
-    pathname: `../api/apm/apps/${appName}`,
+    pathname: `../api/apm/services/${serviceName}`,
     query: {
       start,
       end
@@ -84,13 +84,13 @@ export async function loadApp({ start, end, appName }) {
 }
 
 export async function loadTransactionList({
-  appName,
+  serviceName,
   start,
   end,
   transactionType
 }) {
   return callApi({
-    pathname: `${getAppRootPath(appName)}/transactions`,
+    pathname: `${getAppRootPath(serviceName)}/transactions`,
     query: {
       start,
       end,
@@ -100,13 +100,13 @@ export async function loadTransactionList({
 }
 
 export async function loadTransactionDistribution({
-  appName,
+  serviceName,
   start,
   end,
   transactionName
 }) {
   return callApi({
-    pathname: `${getAppRootPath(appName)}/transactions/distribution`,
+    pathname: `${getAppRootPath(serviceName)}/transactions/distribution`,
     query: {
       start,
       end,
@@ -115,9 +115,11 @@ export async function loadTransactionDistribution({
   });
 }
 
-export async function loadTraces({ appName, start, end, transactionId }) {
+export async function loadSpans({ serviceName, start, end, transactionId }) {
   return callApi({
-    pathname: `${getAppRootPath(appName)}/transactions/${transactionId}/traces`,
+    pathname: `${getAppRootPath(serviceName)}/transactions/${
+      transactionId
+    }/spans`,
     query: {
       start,
       end
@@ -125,9 +127,14 @@ export async function loadTraces({ appName, start, end, transactionId }) {
   });
 }
 
-export async function loadTransaction({ appName, start, end, transactionId }) {
+export async function loadTransaction({
+  serviceName,
+  start,
+  end,
+  transactionId
+}) {
   return callApi({
-    pathname: `${getAppRootPath(appName)}/transactions/${transactionId}`,
+    pathname: `${getAppRootPath(serviceName)}/transactions/${transactionId}`,
     camelcase: false,
     query: {
       start,
@@ -137,14 +144,14 @@ export async function loadTransaction({ appName, start, end, transactionId }) {
 }
 
 export async function loadCharts({
-  appName,
+  serviceName,
   start,
   end,
   transactionType,
   transactionName
 }) {
   return callApi({
-    pathname: `${getAppRootPath(appName)}/transactions/charts`,
+    pathname: `${getAppRootPath(serviceName)}/transactions/charts`,
     query: {
       start,
       end,
@@ -154,9 +161,9 @@ export async function loadCharts({
   });
 }
 
-export async function loadErrorGroupList({ appName, start, end }) {
+export async function loadErrorGroupList({ serviceName, start, end }) {
   return callApi({
-    pathname: `${getAppRootPath(appName)}/errors`,
+    pathname: `${getAppRootPath(serviceName)}/errors`,
     query: {
       start,
       end
@@ -164,9 +171,14 @@ export async function loadErrorGroupList({ appName, start, end }) {
   });
 }
 
-export async function loadErrorGroup({ appName, errorGroupId, start, end }) {
+export async function loadErrorGroup({
+  serviceName,
+  errorGroupId,
+  start,
+  end
+}) {
   const res = await callApi({
-    pathname: `${getAppRootPath(appName)}/errors/${errorGroupId}`,
+    pathname: `${getAppRootPath(serviceName)}/errors/${errorGroupId}`,
     camelcase: false,
     query: {
       start,
@@ -179,13 +191,15 @@ export async function loadErrorGroup({ appName, errorGroupId, start, end }) {
 }
 
 export async function loadErrorDistribution({
-  appName,
+  serviceName,
   start,
   end,
   errorGroupId
 }) {
   return callApi({
-    pathname: `${getAppRootPath(appName)}/errors/${errorGroupId}/distribution`,
+    pathname: `${getAppRootPath(serviceName)}/errors/${
+      errorGroupId
+    }/distribution`,
     query: {
       start,
       end

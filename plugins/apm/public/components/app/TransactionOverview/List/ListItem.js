@@ -49,9 +49,9 @@ function ImpactSparkline({ impact }) {
   );
 }
 
-function TransactionListItem({ appName, transaction, type, impact }) {
+function TransactionListItem({ serviceName, transaction, type, impact }) {
   const transactionName = get({ transaction }, TRANSACTION_NAME);
-  const transactionUrl = `${appName}/transactions/${encodeURIComponent(
+  const transactionUrl = `${serviceName}/transactions/${encodeURIComponent(
     type
   )}/${legacyEncodeURIComponent(transactionName)}`;
 

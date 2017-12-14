@@ -1,13 +1,13 @@
 import { get } from 'lodash';
 import {
-  APP_NAME,
+  SERVICE_NAME,
   TRANSACTION_DURATION,
   TRANSACTION_ID,
   TRANSACTION_NAME
 } from '../../../../common/constants';
 
 export async function getBuckets({
-  appName,
+  serviceName,
   transactionName,
   bucketSize = 100,
   setup
@@ -32,7 +32,7 @@ export async function getBuckets({
                 }
               }
             },
-            { term: { [APP_NAME]: appName } },
+            { term: { [SERVICE_NAME]: serviceName } },
             { term: { [`${TRANSACTION_NAME}.keyword`]: transactionName } }
           ]
         }

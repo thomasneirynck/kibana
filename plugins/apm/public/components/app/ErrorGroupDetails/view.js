@@ -26,10 +26,10 @@ const Culprit = styled.div`
 `;
 
 function loadErrorGroup(props) {
-  const { appName, errorGroupId, start, end } = props.urlParams;
+  const { serviceName, errorGroupId, start, end } = props.urlParams;
 
-  if (appName && errorGroupId && start && end && !props.errorGroup.status) {
-    props.loadErrorGroup({ appName, errorGroupId, start, end });
+  if (serviceName && errorGroupId && start && end && !props.errorGroup.status) {
+    props.loadErrorGroup({ serviceName, errorGroupId, start, end });
   }
 }
 

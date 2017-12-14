@@ -8,7 +8,7 @@ import { setupRequest } from '../lib/helpers/setup_request';
 import { dateValidation } from '../lib/helpers/date_validation';
 
 const pre = [{ method: setupRequest, assign: 'setup' }];
-const ROOT = '/api/apm/apps/{appName}/errors';
+const ROOT = '/api/apm/services/{serviceName}/errors';
 const defaultErrorHandler = reply => err => {
   console.error(err.stack);
   reply(Boom.wrap(err, 400));
@@ -29,8 +29,8 @@ export function initErrorsApi(server) {
     },
     handler: (req, reply) => {
       const { setup } = req.pre;
-      const { appName } = req.params;
-      return getErrors({ appName, setup })
+      const { serviceName } = req.params;
+      return getErrors({ serviceName, setup })
         .then(reply)
         .catch(defaultErrorHandler(reply));
     }
@@ -50,8 +50,8 @@ export function initErrorsApi(server) {
     },
     handler: (req, reply) => {
       const { setup } = req.pre;
-      const { appName, groupId } = req.params;
-      return getErrorGroup({ appName, groupId, setup })
+      const { serviceName, groupId } = req.params;
+      return getErrorGroup({ serviceName, groupId, setup })
         .then(reply)
         .catch(defaultErrorHandler(reply));
     }
@@ -71,9 +71,9 @@ export function initErrorsApi(server) {
     },
     handler: (req, reply) => {
       const { setup } = req.pre;
-      const { appName, groupId } = req.params;
+      const { serviceName, groupId } = req.params;
 
-      return getDistribution({ appName, groupId, setup })
+      return getDistribution({ serviceName, groupId, setup })
         .then(reply)
         .catch(defaultErrorHandler(reply));
     }

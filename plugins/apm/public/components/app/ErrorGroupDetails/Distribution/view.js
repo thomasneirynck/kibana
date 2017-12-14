@@ -18,10 +18,16 @@ export function getFormattedBuckets(buckets, bucketSize) {
 }
 
 function loadErrorDistribution(props) {
-  const { appName, start, end, errorGroupId } = props.urlParams;
+  const { serviceName, start, end, errorGroupId } = props.urlParams;
 
-  if (appName && start && end && errorGroupId && !props.distribution.status) {
-    props.loadErrorDistribution({ appName, start, end, errorGroupId });
+  if (
+    serviceName &&
+    start &&
+    end &&
+    errorGroupId &&
+    !props.distribution.status
+  ) {
+    props.loadErrorDistribution({ serviceName, start, end, errorGroupId });
   }
 }
 

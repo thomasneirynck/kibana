@@ -1,7 +1,7 @@
 import {
   TRANSACTION_DURATION,
   TRANSACTION_RESULT,
-  APP_NAME,
+  SERVICE_NAME,
   TRANSACTION_TYPE,
   TRANSACTION_NAME
 } from '../../../../common/constants';
@@ -9,7 +9,7 @@ import { isNumber, get, sortBy } from 'lodash';
 import { getBucketSize } from '../../helpers/get_bucket_size';
 
 export async function getTimeseriesData({
-  appName,
+  serviceName,
   transactionType,
   transactionName,
   setup
@@ -24,7 +24,7 @@ export async function getTimeseriesData({
       query: {
         bool: {
           must: [
-            { term: { [APP_NAME]: appName } },
+            { term: { [SERVICE_NAME]: serviceName } },
             { term: { [TRANSACTION_TYPE]: transactionType } },
             {
               range: {

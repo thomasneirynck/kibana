@@ -10,17 +10,18 @@ import { updateTimePicker } from '../../store/urlParams';
 const routes = {
   '/': 'APM',
   '/setup-instructions': 'Setup Instructions',
-  '/:appName': {
-    url: params => `/${params.appName}/transactions`,
-    label: params => params.appName
+  '/:serviceName': {
+    url: params => `/${params.serviceName}/transactions`,
+    label: params => params.serviceName
   },
-  '/:appName/errors': 'Errors',
-  '/:appName/errors/:groupId': params => params.groupId,
-  '/:appName/transactions': {
+  '/:serviceName/errors': 'Errors',
+  '/:serviceName/errors/:groupId': params => params.groupId,
+  '/:serviceName/transactions': {
     skip: true
   },
-  '/:appName/transactions/:transactionType': params => params.transactionType,
-  '/:appName/transactions/:transactionType/:transactionName': params =>
+  '/:serviceName/transactions/:transactionType': params =>
+    params.transactionType,
+  '/:serviceName/transactions/:transactionType/:transactionName': params =>
     legacyDecodeURIComponent(params.transactionName)
 };
 const getBreadcrumbs = setupRoutes(routes);

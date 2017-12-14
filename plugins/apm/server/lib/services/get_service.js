@@ -1,12 +1,12 @@
 import {
-  APP_NAME,
+  SERVICE_NAME,
   TRANSACTION_DURATION,
   TRANSACTION_TYPE
 } from '../../../common/constants';
 
 import { getBucketSize } from '../helpers/get_bucket_size';
 
-export async function getApp({ appName, setup }) {
+export async function getService({ serviceName, setup }) {
   const { start, end, client, config } = setup;
   const { intervalString } = getBucketSize(start, end, 'auto');
 
@@ -17,7 +17,7 @@ export async function getApp({ appName, setup }) {
       query: {
         bool: {
           must: [
-            { term: { [APP_NAME]: appName } },
+            { term: { [SERVICE_NAME]: serviceName } },
             {
               range: {
                 '@timestamp': {
@@ -66,7 +66,7 @@ export async function getApp({ appName, setup }) {
   const { types } = resp.aggregations;
 
   return {
-    app_name: appName,
+    service_name: serviceName,
     types: types.buckets.map(bucket => bucket.key)
   };
 }

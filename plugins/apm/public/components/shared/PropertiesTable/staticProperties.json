@@ -15,7 +15,7 @@
     "children": ["hostname", "loadavg", "architecture", "platform"]
   },
   {
-    "key": "app",
+    "key": "service",
     "required": false,
     "children": [
       "pid",

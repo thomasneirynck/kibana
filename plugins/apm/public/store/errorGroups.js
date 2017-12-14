@@ -32,8 +32,8 @@ const errorGroups = (state = {}, action) => {
 export const loadErrorGroup = createAction(actionTypes, rest.loadErrorGroup);
 
 export function getErrorGroup(state) {
-  const { appName, errorGroupId, start, end } = state.urlParams;
-  const key = getKey({ appName, errorGroupId, start, end });
+  const { serviceName, errorGroupId, start, end } = state.urlParams;
+  const key = getKey({ serviceName, errorGroupId, start, end });
   return state.errorGroups[key] || INITIAL_STATE;
 }
 

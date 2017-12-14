@@ -13,9 +13,10 @@ import {
 } from '../../shared/PropertiesTable';
 import Stacktrace from '../../shared/Stacktrace';
 import {
-  APP_NAME,
+  SERVICE_NAME,
   ERROR_GROUP_ID,
-  APP_AGENT_NAME
+  SERVICE_AGENT_NAME,
+  SERVICE_LANGUAGE_NAME
 } from '../../../../common/constants';
 
 const Container = styled.div`
@@ -65,13 +66,13 @@ function DetailView({ errorGroup, urlParams }) {
     return null;
   }
 
-  const { appName } = urlParams;
+  const { serviceName } = urlParams;
 
   const timestamp = get(errorGroup, 'data.error.@timestamp');
   const url = get(errorGroup.data.error, 'context.request.url.raw', 'N/A');
 
   const stackframes = get(errorGroup.data.error.error.exception, 'stacktrace');
-  const codeLanguage = get(errorGroup.data.error, 'context.app.language.name');
+  const codeLanguage = get(errorGroup.data.error, SERVICE_LANGUAGE_NAME);
 
   const tabs = getTabs(errorGroup);
   const currentTab = getCurrentTab(tabs, urlParams.detailTab);
@@ -79,14 +80,14 @@ function DetailView({ errorGroup, urlParams }) {
   const occurencesCount = errorGroup.data.occurrencesCount;
   const groupId = errorGroup.data.groupId;
 
-  const agentName = get(errorGroup.data.error, APP_AGENT_NAME);
+  const agentName = get(errorGroup.data.error, SERVICE_AGENT_NAME);
 
   const discoverQuery = {
     _a: {
       interval: 'auto',
       query: {
         language: 'lucene',
-        query: `${APP_NAME}:${appName} AND ${ERROR_GROUP_ID}:${groupId}`
+        query: `${SERVICE_NAME}:${serviceName} AND ${ERROR_GROUP_ID}:${groupId}`
       },
       sort: { '@timestamp': 'desc' }
     }

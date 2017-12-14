@@ -3,8 +3,8 @@ import reducer from '../rootReducer';
 describe('root reducer', () => {
   it('should return the initial state', () => {
     expect(reducer(undefined, {})).toEqual({
-      appLists: {},
-      apps: {},
+      serviceLists: {},
+      services: {},
       charts: {},
       errorDistributions: {},
       errorGroupLists: {},
@@ -20,12 +20,12 @@ describe('root reducer', () => {
           key: 'latestOccurrenceAt',
           descending: true
         },
-        app: {
-          key: 'appName',
+        service: {
+          key: 'serviceName',
           descending: false
         }
       },
-      traces: {},
+      spans: {},
       transactionDistributions: {},
       transactionLists: {},
       transactions: {},

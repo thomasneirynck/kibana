@@ -6,16 +6,16 @@ import Charts from './Charts';
 import List from './List';
 
 function loadTransactionList(props) {
-  const { appName, start, end, transactionType } = props.urlParams;
+  const { serviceName, start, end, transactionType } = props.urlParams;
 
   if (
-    appName &&
+    serviceName &&
     start &&
     end &&
     transactionType &&
     !props.transactionList.status
   ) {
-    props.loadTransactionList({ appName, start, end, transactionType });
+    props.loadTransactionList({ serviceName, start, end, transactionType });
   }
 }
 
@@ -29,16 +29,16 @@ export class TransactionOverview extends Component {
   }
 
   render() {
-    const { appName, transactionType } = this.props.urlParams;
+    const { serviceName, transactionType } = this.props.urlParams;
     const { changeTransactionSorting, transactionSorting } = this.props;
     return (
       <div>
-        <PageHeader>{appName}</PageHeader>
+        <PageHeader>{serviceName}</PageHeader>
         <TabNavigation />
         <Charts />
         <SectionHeader>{transactionTypeLabel(transactionType)}</SectionHeader>
         <List
-          appName={appName}
+          serviceName={serviceName}
           type={transactionType}
           items={this.props.transactionList.data}
           changeTransactionSorting={changeTransactionSorting}

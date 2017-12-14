@@ -22,16 +22,21 @@ export function getFormattedBuckets(buckets, bucketSize) {
 }
 
 function loadTransactionDistribution(props) {
-  const { appName, start, end, transactionName } = props.urlParams;
+  const { serviceName, start, end, transactionName } = props.urlParams;
 
   if (
-    appName &&
+    serviceName &&
     start &&
     end &&
     transactionName &&
     !props.distribution.status
   ) {
-    props.loadTransactionDistribution({ appName, start, end, transactionName });
+    props.loadTransactionDistribution({
+      serviceName,
+      start,
+      end,
+      transactionName
+    });
   }
 }
 

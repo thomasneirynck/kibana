@@ -1,18 +1,18 @@
 import Joi from 'joi';
 import Boom from 'boom';
-import { getApps } from '../lib/apps/get_apps';
-import { getApp } from '../lib/apps/get_app';
+import { getServices } from '../lib/services/get_services';
+import { getService } from '../lib/services/get_service';
 import { setupRequest } from '../lib/helpers/setup_request';
 import { dateValidation } from '../lib/helpers/date_validation';
 
-const ROOT = '/api/apm/apps';
+const ROOT = '/api/apm/services';
 const pre = [{ method: setupRequest, assign: 'setup' }];
 const defaultErrorHandler = reply => err => {
   console.error(err.stack);
   reply(Boom.wrap(err, 400));
 };
 
-export function initAppsApi(server) {
+export function initServicesApi(server) {
   server.route({
     method: 'GET',
     path: ROOT,
@@ -27,7 +27,7 @@ export function initAppsApi(server) {
     },
     handler: (req, reply) => {
       const { setup } = req.pre;
-      return getApps({ setup })
+      return getServices({ setup })
         .then(reply)
         .catch(defaultErrorHandler(reply));
     }
@@ -35,7 +35,7 @@ export function initAppsApi(server) {
 
   server.route({
     method: 'GET',
-    path: `${ROOT}/{appName}`,
+    path: `${ROOT}/{serviceName}`,
     config: {
       pre,
       validate: {
@@ -47,8 +47,8 @@ export function initAppsApi(server) {
     },
     handler: (req, reply) => {
       const { setup } = req.pre;
-      const { appName } = req.params;
-      return getApp({ appName, setup })
+      const { serviceName } = req.params;
+      return getService({ serviceName, setup })
         .then(reply)
         .catch(defaultErrorHandler(reply));
     }

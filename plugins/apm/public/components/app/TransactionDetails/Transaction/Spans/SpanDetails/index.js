@@ -2,14 +2,15 @@ import React from 'react';
 import styled from 'styled-components';
 import numeral from 'numeral';
 import { get } from 'lodash';
+import PropTypes from 'prop-types';
 import Stacktrace from '../../../../../shared/Stacktrace';
 import DiscoverButton from '../../../../../shared/DiscoverButton';
 import { asMillis } from '../../../../../../utils/formatters';
 import {
-  TRACE_DURATION,
-  TRACE_NAME,
-  TRACE_TRANSACTION_ID,
-  TRANSACTION_ID
+  SPAN_DURATION,
+  SPAN_NAME,
+  TRANSACTION_ID,
+  SERVICE_LANGUAGE_NAME
 } from '../../../../../../../common/constants';
 import {
   unit,
@@ -43,21 +44,19 @@ const StackTraceContainer = styled.div`
   margin-top: ${unit}px;
 `;
 
-function TraceDetails({ trace, totalDuration }) {
-  const traceDuration = get({ trace }, TRACE_DURATION);
-  const relativeDuration = traceDuration / totalDuration;
-  const traceName = get({ trace }, TRACE_NAME);
-  const stackframes = trace.stacktrace;
-  const codeLanguage = get(trace, 'context.app.language.name');
+function SpanDetails({ span, totalDuration, transactionId }) {
+  const spanDuration = get({ span }, SPAN_DURATION);
+  const relativeDuration = spanDuration / totalDuration;
+  const spanName = get({ span }, SPAN_NAME);
+  const stackframes = span.stacktrace;
+  const codeLanguage = get(span, SERVICE_LANGUAGE_NAME);
 
   const discoverQuery = {
     _a: {
       interval: 'auto',
       query: {
         language: 'lucene',
-        query: `${TRANSACTION_ID}:${trace.transactionId} OR ${
-          TRACE_TRANSACTION_ID
-        }:${trace.transactionId}`
+        query: `${TRANSACTION_ID}:${transactionId}`
       },
       sort: { '@timestamp': 'desc' }
     }
@@ -67,19 +66,19 @@ function TraceDetails({ trace, totalDuration }) {
     <div>
       <DetailsWrapper>
         <div>
-          <DetailsHeader>Trace name</DetailsHeader>
-          <DetailsText>{traceName}</DetailsText>
+          <DetailsHeader>Span name</DetailsHeader>
+          <DetailsText>{spanName}</DetailsText>
         </div>
         <div>
-          <DetailsHeader>Trace duration</DetailsHeader>
-          <DetailsText>{asMillis(traceDuration)}</DetailsText>
+          <DetailsHeader>Span duration</DetailsHeader>
+          <DetailsText>{asMillis(spanDuration)}</DetailsText>
         </div>
         <div>
           <DetailsHeader>% of total time</DetailsHeader>
           <DetailsText>{numeral(relativeDuration).format('0.00%')}</DetailsText>
         </div>
         <DiscoverButton query={discoverQuery}>
-          {`View traces in Discover`}
+          {`View spans in Discover`}
         </DiscoverButton>
       </DetailsWrapper>
 
@@ -90,4 +89,9 @@ function TraceDetails({ trace, totalDuration }) {
   );
 }
 
-export default TraceDetails;
+SpanDetails.propTypes = {
+  span: PropTypes.object.isRequired,
+  totalDuration: PropTypes.number.isRequired
+};
+
+export default SpanDetails;

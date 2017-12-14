@@ -10,24 +10,23 @@ import {
   PropertiesTable,
   getLevelOneProps
 } from '../../../shared/PropertiesTable';
-import Traces from './Traces';
+import Spans from './Spans';
 import DiscoverButton from '../../../shared/DiscoverButton';
 import {
-  APP_NAME,
   TRANSACTION_ID,
-  APP_AGENT_NAME
+  SERVICE_AGENT_NAME
 } from '../../../../../common/constants';
 
 function loadTransaction(props) {
-  const { appName, start, end, transactionId } = props.urlParams;
+  const { serviceName, start, end, transactionId } = props.urlParams;
   if (
-    appName &&
+    serviceName &&
     start &&
     end &&
     transactionId &&
     !props.transactionNext.status
   ) {
-    props.loadTransaction({ appName, start, end, transactionId });
+    props.loadTransaction({ serviceName, start, end, transactionId });
   }
 }
 
@@ -86,7 +85,7 @@ class Transaction extends Component {
 
   render() {
     const { transaction } = this.props;
-    const { appName, transactionId } = this.props.urlParams;
+    const { transactionId } = this.props.urlParams;
 
     if (transaction.status !== STATUS.SUCCESS) {
       return null;
@@ -95,7 +94,7 @@ class Transaction extends Component {
     const timestamp = get(transaction, 'data.@timestamp');
     const url = get(transaction.data, 'context.request.url.raw', 'N/A');
 
-    const agentName = get(transaction.data, APP_AGENT_NAME);
+    const agentName = get(transaction.data, SERVICE_AGENT_NAME);
 
     const tabs = getTabs(transaction.data);
     const currentTab = getCurrentTab(tabs, this.props.urlParams.detailTab);
@@ -105,7 +104,7 @@ class Transaction extends Component {
         interval: 'auto',
         query: {
           language: 'lucene',
-          query: `${APP_NAME}:${appName} AND ${TRANSACTION_ID}:${transactionId}`
+          query: `${TRANSACTION_ID}:${transactionId}`
         },
         sort: { '@timestamp': 'desc' }
       }
@@ -138,7 +137,7 @@ class Transaction extends Component {
 
         <TabContentContainer>
           {currentTab === DEFAULT_TAB ? (
-            <Traces />
+            <Spans />
           ) : (
             <PropertiesTableContainer>
               <PropertiesTable

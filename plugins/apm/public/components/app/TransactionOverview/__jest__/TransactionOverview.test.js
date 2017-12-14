@@ -5,7 +5,7 @@ jest.mock('../../../../utils/timepicker', () => {});
 
 const setup = () => {
   const props = {
-    app: {
+    service: {
       data: {}
     },
     transactionList: {
@@ -30,7 +30,7 @@ describe('TransactionOverview', () => {
 
     wrapper.setProps({
       urlParams: {
-        appName: 'myAppName',
+        serviceName: 'myServiceName',
         start: 'myStart',
         end: 'myEnd',
         transactionType: 'myTransactionType'
@@ -42,7 +42,7 @@ describe('TransactionOverview', () => {
     });
 
     expect(props.loadTransactionList).toHaveBeenCalledWith({
-      appName: 'myAppName',
+      serviceName: 'myServiceName',
       end: 'myEnd',
       start: 'myStart',
       transactionType: 'myTransactionType'
@@ -53,7 +53,7 @@ describe('TransactionOverview', () => {
     const { props, wrapper } = setup();
     wrapper.setProps({
       urlParams: {
-        appName: 'myAppName',
+        serviceName: 'myServiceName',
         start: 'myStart',
         end: 'myEnd',
         transactionType: 'myTransactionType'

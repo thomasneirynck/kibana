@@ -41,7 +41,7 @@ const OccurrenceCell = styled(KuiTableRowCell)`
   max-width: none;
 `;
 
-function ListItem({ error, appName }) {
+function ListItem({ error, serviceName }) {
   const {
     groupId,
     culprit,
@@ -60,12 +60,12 @@ function ListItem({ error, appName }) {
   return (
     <KuiTableRow>
       <GroupIdCell>
-        <GroupIdLink path={`${appName}/errors/${groupId}`}>
+        <GroupIdLink path={`${serviceName}/errors/${groupId}`}>
           {groupId.slice(0, 5) || 'N/A'}
         </GroupIdLink>
       </GroupIdCell>
       <MessageAndCulpritCell>
-        <MessageLink path={`${appName}/errors/${groupId}`}>
+        <MessageLink path={`${serviceName}/errors/${groupId}`}>
           {message || 'N/A'}
         </MessageLink>
         <Culprit>{culprit || 'N/A'}</Culprit>

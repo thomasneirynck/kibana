@@ -1,12 +1,12 @@
 import {
-  APP_NAME,
+  SERVICE_NAME,
   TRANSACTION_DURATION,
-  APP_AGENT_NAME,
+  SERVICE_AGENT_NAME,
   PROCESSOR_EVENT
 } from '../../../common/constants';
 import { get } from 'lodash';
 
-export async function getApps({ setup }) {
+export async function getServices({ setup }) {
   const { start, end, client, config } = setup;
 
   const params = {
@@ -46,9 +46,9 @@ export async function getApps({ setup }) {
         }
       },
       aggs: {
-        apps: {
+        services: {
           terms: {
-            field: APP_NAME,
+            field: SERVICE_NAME,
             size: 500
           },
           aggs: {
@@ -56,7 +56,7 @@ export async function getApps({ setup }) {
               avg: { field: TRANSACTION_DURATION }
             },
             agents: {
-              terms: { field: APP_AGENT_NAME, size: 1 }
+              terms: { field: SERVICE_AGENT_NAME, size: 1 }
             },
             events: {
               terms: { field: PROCESSOR_EVENT, size: 2 }
@@ -69,7 +69,7 @@ export async function getApps({ setup }) {
 
   const resp = await client('search', params);
 
-  const buckets = get(resp.aggregations, 'apps.buckets', []);
+  const buckets = get(resp.aggregations, 'services.buckets', []);
   return buckets.map(bucket => {
     const eventTypes = bucket.events.buckets;
 
@@ -85,7 +85,7 @@ export async function getApps({ setup }) {
     const errorsPerMinute = totalErrors / deltaAsMinutes;
 
     return {
-      app_name: bucket.key,
+      service_name: bucket.key,
       agent_name: get(bucket, 'agents.buckets[0].key', null),
       transactions_per_minute: transactionsPerMinute,
       errors_per_minute: errorsPerMinute,

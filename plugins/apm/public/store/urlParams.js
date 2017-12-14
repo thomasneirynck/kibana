@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 import { LOCATION_UPDATE } from './location';
 import { toQuery, legacyDecodeURIComponent } from '../utils/url';
 import { getDefaultTransactionId } from './transactionDistributions';
-import { getDefaultTransactionType } from './apps';
+import { getDefaultTransactionType } from './services';
 
 // ACTION TYPES
 export const TIMEPICKER_UPDATE = 'TIMEPICKER_UPDATE';
@@ -13,20 +13,20 @@ export const TIMEPICKER_UPDATE = 'TIMEPICKER_UPDATE';
 
 // Example:
 // url: /opbeans-backend/Brewing%20Bot?transactionId=1321
-// appName: opbeans-backend (path param)
+// serviceName: opbeans-backend (path param)
 // transactionType: Brewing%20Bot (path param)
 // transactionId: 1321 (query param)
 function urlParams(state = {}, action) {
   switch (action.type) {
     case LOCATION_UPDATE: {
       const {
-        appName,
+        serviceName,
         transactionType,
         transactionName,
         errorGroupId
       } = getPathParams(action.location.pathname);
 
-      const { transactionId, detailTab, traceId } = toQuery(
+      const { transactionId, detailTab, spanId } = toQuery(
         action.location.search
       );
 
@@ -36,10 +36,10 @@ function urlParams(state = {}, action) {
         // query params
         transactionId,
         detailTab,
-        traceId: toNumber(traceId),
+        spanId: toNumber(spanId),
 
         // path params
-        appName,
+        serviceName,
         transactionType,
         transactionName: legacyDecodeURIComponent(transactionName),
         errorGroupId
@@ -71,13 +71,13 @@ function getPathParams(pathname) {
   switch (pageName) {
     case 'transactions':
       return {
-        appName: paths[0],
+        serviceName: paths[0],
         transactionType: paths[2],
         transactionName: paths[3]
       };
     case 'errors':
       return {
-        appName: paths[0],
+        serviceName: paths[0],
         errorGroupId: paths[2]
       };
     default:

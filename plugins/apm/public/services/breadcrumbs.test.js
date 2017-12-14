@@ -4,22 +4,23 @@ import { legacyDecodeURIComponent } from '../utils/url';
 const routes = {
   '/': 'APM',
   '/setup-instructions': 'Setup Instructions',
-  '/:appName': {
-    url: params => `/${params.appName}/transactions`,
-    label: params => params.appName
+  '/:serviceName': {
+    url: params => `/${params.serviceName}/transactions`,
+    label: params => params.serviceName
   },
-  '/:appName/errors': 'Errors',
-  '/:appName/errors/:groupId': params => params.groupId,
-  '/:appName/transactions': {
+  '/:serviceName/errors': 'Errors',
+  '/:serviceName/errors/:groupId': params => params.groupId,
+  '/:serviceName/transactions': {
     skip: true
   },
-  '/:appName/transactions/:transactionType': params => params.transactionType,
-  '/:appName/transactions/:transactionType/:transactionName': params =>
+  '/:serviceName/transactions/:transactionType': params =>
+    params.transactionType,
+  '/:serviceName/transactions/:transactionType/:transactionName': params =>
     legacyDecodeURIComponent(params.transactionName)
 };
 
 describe('breadcrumbs', () => {
-  it('/:appName', () => {
+  it('/:serviceName', () => {
     expect(setupRoutes(routes)('/opbeans-backend')).toEqual([
       { label: 'APM', url: '/' },
       { label: 'opbeans-backend', url: '/opbeans-backend/transactions' }
@@ -33,7 +34,7 @@ describe('breadcrumbs', () => {
     ]);
   });
 
-  it('/:appName/errors', () => {
+  it('/:serviceName/errors', () => {
     expect(setupRoutes(routes)('/opbeans-backend/errors')).toEqual([
       { label: 'APM', url: '/' },
       { label: 'opbeans-backend', url: '/opbeans-backend/transactions' },
@@ -41,7 +42,7 @@ describe('breadcrumbs', () => {
     ]);
   });
 
-  it('/:appName/errors/:groupId', () => {
+  it('/:serviceName/errors/:groupId', () => {
     expect(
       setupRoutes(routes)(
         '/opbeans-backend/errors/a43bcaa33f1577ca6b5d99f05faa4e07'
@@ -57,14 +58,14 @@ describe('breadcrumbs', () => {
     ]);
   });
 
-  it('/:appName/transactions', () => {
+  it('/:serviceName/transactions', () => {
     expect(setupRoutes(routes)('/opbeans-backend/transactions')).toEqual([
       { label: 'APM', url: '/' },
       { label: 'opbeans-backend', url: '/opbeans-backend/transactions' }
     ]);
   });
 
-  it('/:appName/transactions/:transactionType', () => {
+  it('/:serviceName/transactions/:transactionType', () => {
     expect(
       setupRoutes(routes)('/opbeans-backend/transactions/request')
     ).toEqual([
@@ -74,7 +75,7 @@ describe('breadcrumbs', () => {
     ]);
   });
 
-  it('/:appName/transactions/:transactionType/:transactionName', () => {
+  it('/:serviceName/transactions/:transactionType/:transactionName', () => {
     expect(
       setupRoutes(routes)(
         '/opbeans-backend/transactions/request/GET ~2Fapi~2Fstats'

@@ -1,10 +1,14 @@
 import {
-  APP_NAME,
+  SERVICE_NAME,
   TRANSACTION_NAME,
   TRANSACTION_DURATION
 } from '../../../../common/constants';
 
-export async function calculateBucketSize({ appName, transactionName, setup }) {
+export async function calculateBucketSize({
+  serviceName,
+  transactionName,
+  setup
+}) {
   const { start, end, client, config } = setup;
 
   const params = {
@@ -24,7 +28,7 @@ export async function calculateBucketSize({ appName, transactionName, setup }) {
               }
             },
             { term: { [`${TRANSACTION_NAME}.keyword`]: transactionName } },
-            { term: { [APP_NAME]: appName } }
+            { term: { [SERVICE_NAME]: serviceName } }
           ]
         }
       },

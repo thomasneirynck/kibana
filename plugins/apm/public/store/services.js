@@ -8,7 +8,7 @@ import {
 } from './apiHelpers';
 
 const actionTypes = createActionTypes('APP');
-export const [APP_LOADING, APP_SUCCESS, APP_FAILURE] = actionTypes;
+export const [SERVICE_LOADING, SERVICE_SUCCESS, SERVICE_FAILURE] = actionTypes;
 
 const INITIAL_STATE = {
   data: {
@@ -16,29 +16,29 @@ const INITIAL_STATE = {
   }
 };
 
-const app = createReducer(actionTypes, INITIAL_STATE);
-const apps = (state = {}, action) => {
+const service = createReducer(actionTypes, INITIAL_STATE);
+const services = (state = {}, action) => {
   if (!actionTypes.includes(action.type)) {
     return state;
   }
 
   return {
     ...state,
-    [action.key]: app(state[action.key], action)
+    [action.key]: service(state[action.key], action)
   };
 };
 
 export const loadApp = createAction(actionTypes, rest.loadApp);
 
-export function getApp(state) {
-  const { appName, start, end } = state.urlParams;
-  const key = getKey({ appName, start, end });
-  return state.apps[key] || INITIAL_STATE;
+export function getService(state) {
+  const { serviceName, start, end } = state.urlParams;
+  const key = getKey({ serviceName, start, end });
+  return state.services[key] || INITIAL_STATE;
 }
 
 export function getDefaultTransactionType(state) {
-  const types = getApp(state).data.types;
+  const types = getService(state).data.types;
   return _.first(types);
 }
 
-export default apps;
+export default services;

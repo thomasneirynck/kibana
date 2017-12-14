@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
+import { isEmpty, get } from 'lodash';
 import CodePreview from '../../shared/CodePreview';
 import { Ellipsis } from '../../shared/Icons';
 import { units, px } from '../../../style/variables';
@@ -14,14 +15,14 @@ const LibraryFrames = styled.div``;
 
 function getCollapsedLibraryFrames(stackframes) {
   return stackframes.reduce((acc, stackframe) => {
-    if (stackframe.inApp) {
+    if (!stackframe.libraryFrame) {
       return [...acc, stackframe];
     }
 
     // current stackframe is library frame
     const prevItem = acc[acc.length - 1];
-    if (!prevItem || prevItem.inApp) {
-      return [...acc, { inApp: false, stackframes: [stackframe] }];
+    if (!get(prevItem, 'libraryFrame')) {
+      return [...acc, { libraryFrame: true, stackframes: [stackframe] }];
     }
 
     return [
@@ -43,18 +44,15 @@ class Stacktrace extends PureComponent {
 
   render() {
     const { stackframes = [], codeLanguage } = this.props;
-    if (!stackframes) {
-      return <div>No stackframes</div>;
-    }
 
-    if (stackframes.length <= 0) {
+    if (isEmpty(stackframes)) {
       return <EmptyMessage heading="No stacktrace available." />;
     }
 
     return (
       <div>
         {getCollapsedLibraryFrames(stackframes).map((item, i) => {
-          if (item.inApp) {
+          if (!item.libraryFrame) {
             return (
               <CodePreview
                 key={i}

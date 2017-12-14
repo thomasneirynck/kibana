@@ -1,4 +1,4 @@
-import { TRANSACTION_ID } from '../../../common/constants';
+import { TRANSACTION_ID, PROCESSOR_EVENT } from '../../../common/constants';
 import { get } from 'lodash';
 
 async function getTransaction({ transactionId, setup }) {
@@ -11,6 +11,7 @@ async function getTransaction({ transactionId, setup }) {
       query: {
         bool: {
           must: [
+            { term: { [PROCESSOR_EVENT]: 'transaction' } },
             { term: { [TRANSACTION_ID]: transactionId } },
             {
               range: {

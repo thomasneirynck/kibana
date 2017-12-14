@@ -33,8 +33,8 @@ export const loadErrorDistribution = createAction(
 );
 
 export function getErrorDistribution(state) {
-  const { appName, start, end, errorGroupId } = state.urlParams;
-  const key = getKey({ appName, start, end, errorGroupId });
+  const { serviceName, start, end, errorGroupId } = state.urlParams;
+  const key = getKey({ serviceName, start, end, errorGroupId });
   return state.errorDistributions[key] || INITIAL_STATE;
 }
 

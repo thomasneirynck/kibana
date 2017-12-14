@@ -14,13 +14,13 @@ import { PageHeader } from '../../shared/UIComponents';
 
 function fetchData(props) {
   const { start, end } = props.urlParams;
-  if (start && end && !props.appList.status) {
-    props.loadAppList({ start, end });
+  if (start && end && !props.serviceList.status) {
+    props.loadServiceList({ start, end });
   }
 }
 
-function redirectIfNoData({ appList, history }) {
-  if (appList.status === STATUS.SUCCESS && isEmpty(appList.data)) {
+function redirectIfNoData({ serviceList, history }) {
+  if (serviceList.status === STATUS.SUCCESS && isEmpty(serviceList.data)) {
     loadAgentStatus().then(result => {
       if (!result.dataFound) {
         history.push({
@@ -56,7 +56,7 @@ const BetaCallout = styled.div`
   }
 `;
 
-class AppOverview extends Component {
+class ServiceOverview extends Component {
   state = {
     hideBetaCallout: false
   };
@@ -85,12 +85,12 @@ class AppOverview extends Component {
   };
 
   render() {
-    const { appList, changeAppSorting, appSorting } = this.props;
+    const { serviceList, changeServiceSorting, serviceSorting } = this.props;
 
     return (
       <div>
         <HeaderWrapper>
-          <PageHeader>Apps</PageHeader>
+          <PageHeader>Services</PageHeader>
           <SetupInstructionsLink path="/setup-instructions">
             <KuiButton buttonType="secondary">Setup Instructions</KuiButton>
           </SetupInstructionsLink>
@@ -110,13 +110,13 @@ class AppOverview extends Component {
         )}
 
         <List
-          items={appList.data}
-          changeAppSorting={changeAppSorting}
-          appSorting={appSorting}
+          items={serviceList.data}
+          changeServiceSorting={changeServiceSorting}
+          serviceSorting={serviceSorting}
         />
       </div>
     );
   }
 }
 
-export default withErrorHandler(withRouter(AppOverview), ['appList']);
+export default withErrorHandler(withRouter(ServiceOverview), ['serviceList']);

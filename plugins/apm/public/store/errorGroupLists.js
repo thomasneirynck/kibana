@@ -39,8 +39,8 @@ export const getErrorGroupList = createSelector(
   state => state.sorting.errorGroup,
   getUrlParams,
   (errorGroupLists, errorGroupSorting, urlParams) => {
-    const { appName, start, end } = urlParams;
-    const key = getKey({ appName, start, end });
+    const { serviceName, start, end } = urlParams;
+    const key = getKey({ serviceName, start, end });
 
     if (!errorGroupLists[key]) {
       return INITIAL_STATE;
