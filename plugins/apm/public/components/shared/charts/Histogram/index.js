@@ -19,8 +19,8 @@ import {
 import { unit, colors } from '../../../../style/variables';
 import Tooltip from '../Tooltip';
 
-const barColor = 'rgb(172, 189, 216)';
-const XY_HEIGHT = unit * 8;
+const barColor = colors.apmLightBlue;
+const XY_HEIGHT = unit * 10;
 const XY_MARGIN = {
   top: unit,
   left: unit * 5,
@@ -28,7 +28,7 @@ const XY_MARGIN = {
   bottom: unit * 2
 };
 
-const X_TICK_TOTAL = 10;
+const X_TICK_TOTAL = 8;
 
 const ChartsWrapper = styled.div`
   user-select: none;
@@ -64,7 +64,7 @@ export class HistogramInner extends PureComponent {
       const padding = (item.x - item.x0) / 20;
       return {
         ...item,
-        color: item === selectedItem ? colors.blue1 : undefined,
+        color: item === selectedItem ? colors.blue2 : undefined,
         x0: item.x0 + padding,
         x: item.x - padding,
         y: item.y > 0 ? Math.max(item.y, MINIMUM_BUCKET_SIZE) : 0
@@ -144,7 +144,7 @@ export class HistogramInner extends PureComponent {
                 x={x(this.state.hoveredBucket.x0)}
                 width={x(bucketSize) - x(0)}
                 style={{
-                  fill: colors.gray4
+                  fill: colors.gray5
                 }}
               />
             )}
@@ -173,17 +173,19 @@ export class HistogramInner extends PureComponent {
               width={x(bucketSize) - x(0)}
               style={{
                 fill: 'transparent',
-                stroke: 'rgb(172, 189, 220)'
+                stroke: colors.blue2,
+                rx: '0px',
+                ry: '0px'
               }}
             />
           )}
           <VerticalRectSeries
             colorType="literal"
-            color="rgb(172, 189, 216)"
+            color={colors.apmLightBlue}
             data={chartData}
             style={{
-              rx: '2px',
-              ry: '2px'
+              rx: '0px',
+              ry: '0px'
             }}
           />
           {isTimeSeries &&

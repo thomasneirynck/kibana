@@ -6,7 +6,7 @@ import { fontSizes, colors, units, px } from '../../../../../style/variables';
 const TimelineHeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: ${px(units.double)} ${px(units.double)} 0 ${px(units.double)};
+  padding: ${px(units.double)} ${px(units.plus)} 0 ${px(units.plus)};
 `;
 
 const Heading = styled.div`

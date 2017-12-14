@@ -55,6 +55,7 @@ export const colors = {
   apmOrange: '#f98510',
   apmTan: '#bfa180',
   apmYellow: '#ecae23',
+  apmLightBlue: '#80bcd2',
 
   // Semantic colors
   link: colorBlue2,

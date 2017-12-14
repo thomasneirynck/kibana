@@ -30,7 +30,7 @@ const TraceLabel = styled.div`
   position: relative;
   direction: rtl;
   text-align: left;
-  margin: ${px(units.quarter)} 0;
+  margin: ${px(units.quarter)} 0 0;
   font-family: ${fontFamilyCode};
   font-size: ${fontSizes.small};
 `;
@@ -42,7 +42,7 @@ const Container = styled(({ isSelected, timelineMargins, ...props }) => (
   display: block;
   user-select: none;
   padding: ${px(units.half)} ${props => px(props.timelineMargins.right)}
-    ${px(units.half)} ${props => px(props.timelineMargins.left)};
+    ${px(units.eighth)} ${props => px(props.timelineMargins.left)};
   border-top: 1px solid ${colors.gray4};
   background-color: ${props => (props.isSelected ? colors.gray5 : 'initial')};
   &:hover {

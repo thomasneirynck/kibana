@@ -97,7 +97,7 @@ describe('Histogram', () => {
       expect(tooltips.length).toBe(1);
       expect(tooltips.prop('header')).toBe('811 - 869 ms');
       expect(tooltips.prop('tooltipPoints')).toEqual([
-        { color: 'rgb(172, 189, 216)', text: 'Requests', value: '49.0' }
+        { color: '#80bcd2', text: 'Requests', value: '49.0' }
       ]);
       expect(tooltips.prop('x')).toEqual(869010);
       expect(tooltips.prop('y')).toEqual(27.5);
