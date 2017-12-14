@@ -1,6 +1,6 @@
 import uiRoutes from 'ui/routes';
 import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
-import { MonitoringTableBaseController } from 'plugins/monitoring/components/table';
+import { MonitoringViewBaseTableController } from '../../';
 import template from './index.html';
 
 const getPageData = $injector => {
@@ -29,7 +29,7 @@ uiRoutes.when('/home', {
     }
   },
   controllerAs: 'clusters',
-  controller: class ClustersList extends MonitoringTableBaseController {
+  controller: class ClustersList extends MonitoringViewBaseTableController {
 
     constructor($injector, $scope) {
       super({

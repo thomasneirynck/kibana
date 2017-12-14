@@ -1,8 +1,8 @@
 import { spy, stub } from 'sinon';
 import expect from 'expect.js';
-import { MonitoringTableBaseController } from '../';
+import { MonitoringViewBaseTableController } from '../';
 
-describe('MonitoringTableBaseController', function () {
+describe('MonitoringViewBaseTableController', function () {
 
   let ctrl;
   let $injector;
@@ -31,10 +31,10 @@ describe('MonitoringTableBaseController', function () {
     injectorGetStub.withArgs('$executor').returns(executorService);
     injectorGetStub.withArgs('localStorage').returns({
       get: stub().returns({
-        testo: {
+        testoStorageKey: {
           pageIndex: 9000,
-          filterText: 'table-ctrl-testo',
-          sortKey: 'test.testo',
+          filterText: 'table-ctrl-testoStorageKey',
+          sortKey: 'test.testoStorageKey',
           sortOrder: -1
         }
       })
@@ -47,18 +47,19 @@ describe('MonitoringTableBaseController', function () {
     };
 
     options = {
-      storageKey: 'testo',
+      title: 'testoTitle',
+      storageKey: 'testoStorageKey',
       $injector,
       $scope
     };
 
-    ctrl = new MonitoringTableBaseController(options);
+    ctrl = new MonitoringViewBaseTableController(options);
   });
 
   it('initializes scope data from storage', () => {
     expect(ctrl.pageIndex).to.be(9000);
-    expect(ctrl.filterText).to.be('table-ctrl-testo');
-    expect(ctrl.sortKey).to.be('test.testo');
+    expect(ctrl.filterText).to.be('table-ctrl-testoStorageKey');
+    expect(ctrl.sortKey).to.be('test.testoStorageKey');
     expect(ctrl.sortOrder).to.be(-1);
   });
 
@@ -74,6 +75,11 @@ describe('MonitoringTableBaseController', function () {
 
   it('sets page title', () => {
     expect(titleService.calledOnce).to.be(true);
+    const { args } = titleService.getCall(0);
+    expect(args).to.eql([
+      { cluster_uuid: 'foo' },
+      'testoTitle'
+    ]);
   });
 
   it('starts data poller', () => {

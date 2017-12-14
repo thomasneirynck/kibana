@@ -1,7 +1,7 @@
 import { find } from 'lodash';
 import uiRoutes from 'ui/routes';
 import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
-import { MonitoringTableBaseController } from 'plugins/monitoring/components/table';
+import { MonitoringViewBaseTableController } from '../../';
 import { getPageData } from './get_page_data';
 import template from './index.html';
 
@@ -15,7 +15,7 @@ uiRoutes.when('/elasticsearch/ml_jobs', {
     pageData: getPageData
   },
   controllerAs: 'mlJobs',
-  controller: class MlJobsList extends MonitoringTableBaseController {
+  controller: class MlJobsList extends MonitoringViewBaseTableController {
 
     constructor($injector, $scope) {
       super({

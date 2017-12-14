@@ -1,7 +1,7 @@
 import { find } from 'lodash';
 import uiRoutes from'ui/routes';
 import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
-import { MonitoringTableBaseController } from 'plugins/monitoring/components/table';
+import { MonitoringViewBaseTableController } from '../../';
 import { getPageData } from './get_page_data';
 import template from './index.html';
 
@@ -15,7 +15,7 @@ uiRoutes.when('/kibana/instances', {
     pageData: getPageData,
   },
   controllerAs: 'kibanas',
-  controller: class KibanaInstancesList extends MonitoringTableBaseController {
+  controller: class KibanaInstancesList extends MonitoringViewBaseTableController {
 
     constructor($injector, $scope) {
       super({
