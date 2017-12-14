@@ -6,6 +6,7 @@ import { createJestConfig } from './create_jest_config';
 
 
 export function runJest() {
+  process.env.NODE_ENV = process.env.NODE_ENV || 'test';
   const config = JSON.stringify(createJestConfig({
     kibanaDirectory: resolveKibanaPath(''),
     xPackKibanaDirectory: resolve(__dirname, '..', '..'),
