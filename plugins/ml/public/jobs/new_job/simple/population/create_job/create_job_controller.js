@@ -654,17 +654,11 @@ module
   };
 
   function createResultsUrl() {
-    let jobIds = [`'${$scope.formConfig.jobId}'`];
-    if ($scope.formConfig.jobGroups.length) {
-      jobIds = $scope.formConfig.jobGroups.map(group => `'${group}.${$scope.formConfig.jobId}'`);
-    }
-    const jobIdsString = jobIds.join(',');
-
     const from = moment($scope.formConfig.start).toISOString();
     const to = moment($scope.formConfig.end).toISOString();
     let path = '';
     path += 'ml#/explorer';
-    path += `?_g=(ml:(jobIds:!(${jobIdsString}))`;
+    path += `?_g=(ml:(jobIds:!(${$scope.formConfig.jobId}))`;
     path += `,refreshInterval:(display:Off,pause:!f,value:0),time:(from:'${from}'`;
     path += `,mode:absolute,to:'${to}'`;
     path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))';
