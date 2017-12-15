@@ -23,7 +23,7 @@ export const args = ({ userDataDir, bridgePort, viewport, disableSandbox, proxyC
     '--disable-gpu',
     '--headless',
     '--hide-scrollbars',
-    `--window-size=${viewport.width},${viewport.height}`,
+    `--window-size=${Math.floor(viewport.width)},${Math.floor(viewport.height)}`,
     `--remote-debugging-port=${bridgePort}`,
   ];
 
