@@ -1,5 +1,8 @@
 [[monitoring-troubleshooting]]
-== Monitoring Troubleshooting
+== {monitoring} Troubleshooting
+++++
+<titleabbrev>{monitoring}</titleabbrev>
+++++
 
 See
-{logstash-ref}/monitoring-troubleshooting.html[Troubleshooting {monitoring} in Logstash]. 
+{logstash-ref}/monitoring-troubleshooting.html[Troubleshooting {monitoring} in Logstash].
