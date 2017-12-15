@@ -715,17 +715,10 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     return deferred.promise;
   };
 
-  this.searchPreview = function (indices, types, job) {
+  this.searchPreview = function (job) {
     const deferred = $q.defer();
 
     if (job.datafeed_config) {
-      const data = {
-        index: indices,
-        // removed for now because it looks like kibana are now escaping the & and it breaks
-        // it was done this way in the first place because you can't sent <index>/<type>/_search through
-        // kibana's proxy. it doesn't like type
-        // '&type': types.join(',')
-      };
       const body = {};
 
       let query = { 'match_all': {} };
@@ -807,7 +800,10 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
         }
       }
 
-      data.body = body;
+      const data = {
+        index: job.datafeed_config.indices,
+        body
+      };
 
       es.search(data)
       .then((resp) => {

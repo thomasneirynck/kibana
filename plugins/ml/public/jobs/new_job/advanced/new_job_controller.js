@@ -1051,11 +1051,10 @@ function (
     createJSONText();
     $scope.ui.wizard.dataPreview = '';
 
-    const indices = Object.keys($scope.indices);
-    const types = Object.keys($scope.types);
     const job = $scope.job;
-    if (indices.length) {
-      mlJobService.searchPreview(indices, types, job)
+
+    if (job.datafeed_config && job.datafeed_config.indices.length) {
+      mlJobService.searchPreview(job)
       .then(function (resp) {
         let data;
 
@@ -1070,6 +1069,8 @@ function (
       .catch(function (resp) {
         $scope.ui.wizard.dataPreview = angular.toJson(resp, true);
       });
+    } else {
+      $scope.ui.wizard.dataPreview = 'Datafeed does not exist';
     }
   }
 
