@@ -20,7 +20,6 @@ import { AggTypesIndexProvider } from 'ui/agg_types/index';
 import { parseInterval } from 'ui/utils/parse_interval';
 
 import dateMath from '@elastic/datemath';
-import moment from 'moment';
 import angular from 'angular';
 
 import uiRoutes from 'ui/routes';
@@ -31,7 +30,7 @@ import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/components/utils/filter_agg_types';
 import { validateJobId } from 'plugins/ml/jobs/new_job/simple/components/utils/validate_job';
 import { adjustIntervalDisplayed } from 'plugins/ml/jobs/new_job/simple/components/utils/adjust_interval';
-import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
+import { createSearchItems, createResultsUrl } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/components/utils/app_state_settings';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
 import { createFields } from 'plugins/ml/jobs/new_job/simple/components/utils/create_fields';
@@ -502,7 +501,11 @@ module
               $scope.formConfig.resultsIntervalSeconds = bucketSpanSeconds;
             }
 
-            createResultsUrl();
+            $scope.resultsUrl = createResultsUrl(
+              $scope.formConfig.jobId,
+              $scope.formConfig.start,
+              $scope.formConfig.end,
+              'explorer');
 
             loadCharts();
           })
@@ -646,19 +649,6 @@ module
       formConfig.modelMemoryLimit = DEFAULT_MODEL_MEMORY_LIMIT;
     });
   };
-
-  function createResultsUrl() {
-    const from = moment($scope.formConfig.start).toISOString();
-    const to = moment($scope.formConfig.end).toISOString();
-    let path = '';
-    path += 'ml#/explorer';
-    path += `?_g=(ml:(jobIds:!(${$scope.formConfig.jobId}))`;
-    path += `,refreshInterval:(display:Off,pause:!f,value:0),time:(from:'${from}'`;
-    path += `,mode:absolute,to:'${to}'`;
-    path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))';
-
-    $scope.resultsUrl = path;
-  }
 
   // resize the spilt cards on page resize.
   // when the job starts the 'Analysis running' label appearing can cause a scroll bar to appear

@@ -20,7 +20,6 @@ import { AggTypesIndexProvider } from 'ui/agg_types/index';
 import { parseInterval } from 'ui/utils/parse_interval';
 
 import dateMath from '@elastic/datemath';
-import moment from 'moment';
 import angular from 'angular';
 
 import uiRoutes from 'ui/routes';
@@ -30,7 +29,7 @@ import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/components/utils/filter_agg_types';
 import { validateJobId } from 'plugins/ml/jobs/new_job/simple/components/utils/validate_job';
 import { adjustIntervalDisplayed } from 'plugins/ml/jobs/new_job/simple/components/utils/adjust_interval';
-import { createSearchItems, getSafeFieldName } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
+import { createSearchItems, getSafeFieldName, createResultsUrl } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/components/utils/app_state_settings';
 import { getIndexedFields } from 'plugins/ml/jobs/new_job/simple/components/utils/create_fields';
 import { changeJobIDCase } from 'plugins/ml/jobs/new_job/simple/components/general_job_details/change_job_id_case';
@@ -380,7 +379,11 @@ module
               $scope.formConfig.resultsIntervalSeconds = bucketSpanSeconds;
             }
 
-            createResultsUrl();
+            $scope.resultsUrl = createResultsUrl(
+              $scope.formConfig.jobId,
+              $scope.formConfig.start,
+              $scope.formConfig.end,
+              'timeseriesexplorer');
 
             loadCharts();
           })
@@ -535,19 +538,6 @@ module
     $scope.jobState = JOB_STATE.STOPPING;
     mlSingleMetricJobService.stopDatafeed($scope.formConfig);
   };
-
-  function createResultsUrl() {
-    const from = moment($scope.formConfig.start).toISOString();
-    const to = moment($scope.formConfig.end).toISOString();
-    let path = '';
-    path += 'ml#/timeseriesexplorer';
-    path += `?_g=(ml:(jobIds:!('${$scope.formConfig.jobId}'))`;
-    path += `,refreshInterval:(display:Off,pause:!f,value:0),time:(from:'${from}'`;
-    path += `,mode:absolute,to:'${to}'`;
-    path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))';
-
-    $scope.resultsUrl = path;
-  }
 
   $scope.setFullTimeRange = function () {
     mlFullTimeRangeSelectorService.setFullTimeRange($scope.ui.indexPattern, $scope.formConfig.combinedQuery);

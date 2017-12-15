@@ -13,6 +13,7 @@
  * strictly prohibited.
  */
 
+import moment from 'moment';
 import { migrateFilter } from 'ui/courier/data_source/_migrate_filter.js';
 
 export function getQueryFromSavedSearch(formConfig) {
@@ -95,4 +96,18 @@ export function createSearchItems($route) {
     query,
     combinedQuery
   };
+}
+
+export function createResultsUrl(jobId, start, end, resultsPage) {
+  const from = moment(start).toISOString();
+  const to = moment(end).toISOString();
+  let path = '';
+  path += 'ml#/';
+  path += resultsPage;
+  path += `?_g=(ml:(jobIds:!(${jobId}))`;
+  path += `,refreshInterval:(display:Off,pause:!f,value:0),time:(from:'${from}'`;
+  path += `,mode:absolute,to:'${to}'`;
+  path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))';
+
+  return path;
 }

@@ -14,11 +14,10 @@
  */
 
 import _ from 'lodash';
-import moment from 'moment';
 import angular from 'angular';
 import dateMath from '@elastic/datemath';
 import { isJobIdValid, prefixDatafeedId } from 'plugins/ml/../common/util/job_utils';
-import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
+import { createSearchItems, createResultsUrl } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 
 import 'plugins/kibana/visualize/styles/main.less';
 
@@ -224,20 +223,31 @@ module
         // save jobs,datafeeds and kibana savedObjects
         saveDataRecognizerItems()
         .then(() => {
+          const jobIds = $scope.formConfig.jobs.map(job => `'${$scope.formConfig.jobLabel}${job.id}'`);
+          const jobIdsString = jobIds.join(',');
+
           // open jobs and save start datafeeds
           if ($scope.formConfig.startDatafeedAfterSave) {
             startDatafeeds()
               .then(() => {
                 // everything saved correctly and datafeeds have started.
                 $scope.overallState = SAVE_STATE.SAVED;
-                createResultsUrl();
+                $scope.resultsUrl = createResultsUrl(
+                  jobIdsString,
+                  $scope.formConfig.start,
+                  $scope.formConfig.end,
+                  'explorer');
               }).catch(() => {
                 $scope.overallState = SAVE_STATE.FAILED;
               });
           } else {
             // datafeeds didn't need to be started so finish
             $scope.overallState = SAVE_STATE.SAVED;
-            createResultsUrl();
+            $scope.resultsUrl = createResultsUrl(
+              jobIdsString,
+              $scope.formConfig.start,
+              $scope.formConfig.end,
+              'explorer');
           }
         });
       }, 500);
@@ -442,22 +452,6 @@ module
         reject(resp);
       });
     });
-  }
-
-  function createResultsUrl() {
-    const jobIds = $scope.formConfig.jobs.map(job => `'${$scope.formConfig.jobLabel}${job.id}'`);
-    const jobIdsString = jobIds.join(',');
-
-    const from = moment($scope.formConfig.start).toISOString();
-    const to = moment($scope.formConfig.end).toISOString();
-    let path = '';
-    path += 'ml#/explorer';
-    path += `?_g=(ml:(jobIds:!(${jobIdsString}))`;
-    path += `,refreshInterval:(display:Off,pause:!f,value:0),time:(from:'${from}'`;
-    path += `,mode:absolute,to:'${to}'`;
-    path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))';
-
-    $scope.resultsUrl = path;
   }
 
   function validateJobs() {
