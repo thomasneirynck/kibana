@@ -744,7 +744,8 @@ module.service('mlResultsService', function ($q, es, ml) {
   // Queries Elasticsearch to obtain the record level results containing the specified influencer(s),
   // for the specified job(s), time range, and record score threshold.
   // influencers parameter must be an array, with each object in the array having 'fieldName'
-  // 'fieldValue' properties.
+  // 'fieldValue' properties. The influencer array uses 'should' for the nested bool query,
+  // so this returns record level results which have at least one of the influencers.
   // Pass an empty array or ['*'] to search over all job IDs.
   this.getRecordsForInfluencer = function (jobIds, influencers, threshold, earliestMs, latestMs, maxResults) {
     const deferred = $q.defer();
@@ -789,29 +790,36 @@ module.service('mlResultsService', function ($q, es, ml) {
     }
 
     // Add a nested query to filter for each of the specified influencers.
-    _.each(influencers, (influencer) => {
+    if (influencers.length > 0) {
       boolCriteria.push({
-        'nested': {
-          'path': 'influencers',
-          'query': {
-            'bool': {
-              'must': [
-                {
-                  'match': {
-                    'influencers.influencer_field_name': influencer.fieldName
-                  }
-                },
-                {
-                  'match': {
-                    'influencers.influencer_field_values': influencer.fieldValue
+        bool: {
+          should: influencers.map((influencer) => {
+            return {
+              nested: {
+                path: 'influencers',
+                query: {
+                  bool: {
+                    must: [
+                      {
+                        match: {
+                          'influencers.influencer_field_name': influencer.fieldName
+                        }
+                      },
+                      {
+                        match: {
+                          'influencers.influencer_field_values': influencer.fieldValue
+                        }
+                      }
+                    ]
                   }
                 }
-              ]
-            }
-          }
+              }
+            };
+          }),
+          minimum_should_match: 1,
         }
       });
-    });
+    }
 
     es.search({
       index: ML_RESULTS_INDEX_PATTERN,

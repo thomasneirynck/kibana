@@ -21,6 +21,7 @@
 
 import _ from 'lodash';
 import $ from 'jquery';
+import DragSelect from 'dragselect';
 import moment from 'moment';
 
 import 'plugins/ml/components/anomalies_table';
@@ -81,6 +82,29 @@ module.controller('MlExplorerController', function (
   const MAX_INFLUENCER_FIELD_NAMES = 10;
   const MAX_INFLUENCER_FIELD_VALUES = 10;
   const VIEW_BY_JOB_LABEL = 'job ID';
+
+  const ALLOW_CELL_RANGE_SELECTION = mlExplorerDashboardService.allowCellRangeSelection;
+
+  const dragSelect = new DragSelect({
+    selectables: document.querySelectorAll('.sl-cell'),
+    callback(elements) {
+      if (elements.length > 1 && !ALLOW_CELL_RANGE_SELECTION) {
+        elements = [elements[0]];
+      }
+
+      mlExplorerDashboardService.dragSelect.changed({
+        action: 'newSelection',
+        elements
+      });
+    },
+    onElementSelect() {
+      if (ALLOW_CELL_RANGE_SELECTION) {
+        mlExplorerDashboardService.dragSelect.changed({
+          action: 'elementSelect'
+        });
+      }
+    }
+  });
 
   $scope.selectedJobs = null;
 
@@ -272,8 +296,11 @@ module.controller('MlExplorerController', function (
   const getTimeRange = function (cellData) {
     // Time range for charts should be maximum time span at job bucket span, centred on the selected cell.
     const bounds = timefilter.getActiveBounds();
-    const earliestMs = cellData.time !== undefined ? cellData.time * 1000 : bounds.min.valueOf();
-    const latestMs = cellData.time !== undefined ? ((cellData.time  + cellData.interval) * 1000) - 1 : bounds.max.valueOf();
+    const earliestMs = cellData.time[0] !== undefined ? ((cellData.time[0]) * 1000) : bounds.min.valueOf();
+    let latestMs = cellData.time[1] !== undefined ? ((cellData.time[1]) * 1000) : bounds.max.valueOf();
+    if (earliestMs === latestMs) {
+      latestMs = latestMs + (cellData.interval * 1000);
+    }
     return { earliestMs, latestMs };
   };
 
@@ -300,12 +327,14 @@ module.controller('MlExplorerController', function (
       }
 
       if (cellData.fieldName === VIEW_BY_JOB_LABEL) {
-        jobIds.push(cellData.laneLabel);
+        jobIds = cellData.laneLabels;
       } else {
         jobIds = $scope.getSelectedJobIds();
 
         if (cellData.fieldName !== undefined) {
-          influencers.push({ fieldName: $scope.swimlaneViewByFieldName, fieldValue: cellData.laneLabel });
+          cellData.laneLabels.forEach((laneLabel) =>{
+            influencers.push({ fieldName: $scope.swimlaneViewByFieldName, fieldValue: laneLabel });
+          });
         }
       }
 
@@ -341,9 +370,17 @@ module.controller('MlExplorerController', function (
   };
   mlSelectSeverityService.state.watch(anomalyChartsSeverityListener);
 
+  // Listens to render updates of the swimlanes to update dragSelect
+  const swimlaneRenderDoneListener = function () {
+    dragSelect.addSelectables(document.querySelectorAll('.sl-cell'));
+  };
+  mlExplorerDashboardService.swimlaneRenderDone.watch(swimlaneRenderDoneListener);
+
   $scope.$on('$destroy', () => {
+    dragSelect.stop();
     mlCheckboxShowChartsService.state.unwatch(checkboxShowChartsListener);
     mlExplorerDashboardService.swimlaneCellClick.unwatch(swimlaneCellClickListener);
+    mlExplorerDashboardService.swimlaneRenderDone.unwatch(swimlaneRenderDoneListener);
     mlSelectSeverityService.state.unwatch(anomalyChartsSeverityListener);
     $scope.cellData = undefined;
     refreshWatcher.cancel();

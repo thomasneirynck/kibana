@@ -33,6 +33,43 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
 
   function link(scope, element) {
 
+    // Consider the setting to support to select a range of cells
+    if (!mlExplorerDashboardService.allowCellRangeSelection) {
+      element.addClass('ml-hide-range-selection');
+    }
+
+    // Listen for dragSelect events
+    function dragSelectListener({ action, elements = [] }) {
+      if (action === 'newSelection' && elements.length > 0) {
+        const firstCellData = $(elements[0]).data('click');
+        if (scope.swimlaneType === firstCellData.swimlaneType) {
+          const selectedData = elements.reduce((d, e) => {
+            const cellData = $(e).data('click');
+            d.bucketScore = Math.max(d.bucketScore, cellData.bucketScore);
+            d.laneLabels.push(cellData.laneLabel);
+            d.times.push(cellData.time);
+            return d;
+          }, {
+            bucketScore: 0,
+            laneLabels: [],
+            times: []
+          });
+
+          selectedData.laneLabels = _.uniq(selectedData.laneLabels);
+          selectedData.times = _.uniq(selectedData.times);
+          cellClick(elements, selectedData);
+        }
+      } else if (action === 'elementSelect') {
+        element.addClass('ml-dragselect-dragging');
+        return;
+      }
+
+      element.removeClass('ml-dragselect-dragging');
+      elements.map(e => $(e).removeClass('ds-selected'));
+    }
+
+    mlExplorerDashboardService.dragSelect.watch(dragSelectListener);
+
     // Re-render the swimlane whenever the underlying data changes.
     function swimlaneDataChangeListener(swimlaneType) {
       if (swimlaneType === scope.swimlaneType) {
@@ -44,11 +81,20 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
     mlExplorerDashboardService.swimlaneDataChange.watch(swimlaneDataChangeListener);
 
     element.on('$destroy', () => {
+      mlExplorerDashboardService.dragSelect.unwatch(dragSelectListener);
       mlExplorerDashboardService.swimlaneDataChange.unwatch(swimlaneDataChangeListener);
       scope.$destroy();
     });
 
     const MlTimeBuckets = Private(IntervalHelperProvider);
+
+    function cellClick(cellsToSelect, { laneLabels, bucketScore, times }) {
+      if (cellsToSelect.length > 1 || bucketScore > 0) {
+        selectCell(cellsToSelect, laneLabels, times, bucketScore);
+      } else {
+        clearSelection();
+      }
+    }
 
     function render() {
       if (scope.swimlaneData === undefined) {
@@ -87,29 +133,6 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
       const xAxisTickFormat = timeBuckets.getScaledDateFormat();
       const xAxisTicks = xAxisScale.ticks(numTicksForDateFormat(scope.chartWidth, xAxisTickFormat));
 
-      // Clear selection if clicking away from a cell.
-      $swimlanes.click(($event) => {
-        const $target = $($event.target);
-        if (!$target.hasClass('sl-cell') && !$target.hasClass('sl-cell-inner') &&
-            $('.sl-cell-inner.sl-cell-inner-selected', '.ml-explorer-swimlane').length > 0) {
-          clearSelection();
-        }
-      });
-
-      function cellClick($event, laneLabel, bucketScore, index, time) {
-        let $target = $($event.target);
-        // if the edge of the outer cell has been clicked by accident, find the inner cell.
-        if ($target.hasClass('sl-cell')) {
-          $target = $target.find('.sl-cell-inner');
-        }
-
-        if ($target && bucketScore > 0 && $target.hasClass('sl-cell-inner-selected') === false) {
-          selectCell($target, laneLabel, time, bucketScore);
-        } else {
-          clearSelection();
-        }
-      }
-
       function cellMouseover($event, laneLabel, bucketScore, index, time) {
         if (bucketScore === undefined) {
           return;
@@ -138,7 +161,6 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
 
       _.each(lanes, (lane) => {
         const rowScope = scope.$new();
-        rowScope.cellClick = cellClick;
         rowScope.cellMouseover = cellMouseover;
         rowScope.cellMouseleave = cellMouseleave;
 
@@ -195,16 +217,26 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
                 }
               }));
               $cell.attr({ 'data-score': bucketScore });
+              $cell.find('.sl-cell-inner-dragselect').remove();
+            } else if ($cell.find('.sl-cell-inner-dragselect').length === 0 && $cell.find('.sl-cell-inner').length === 0) {
+              $cell.append($('<div>', {
+                class: 'sl-cell-inner-dragselect'
+              }));
             }
           }
 
           // Escape single quotes and backslash characters in the HTML for the event handlers.
-          const safeLaneTxt = lane.replace(/(['\\])/g, '\\$1');
-          const cellClickTxt = 'cellClick($event, \'' + safeLaneTxt + '\', ' +
-            bucketScore + ', ' + i + ', ' + time + ')';
-          $cell.attr({ 'ng-click': cellClickTxt });
+          $cell.data({
+            'click': {
+              bucketScore,
+              laneLabel: lane,
+              swimlaneType: scope.swimlaneType,
+              time
+            }
+          });
 
           if (bucketScore > 0) {
+            const safeLaneTxt = lane.replace(/(['\\])/g, '\\$1');
             const cellMouseoverTxt = 'cellMouseover($event, \'' + safeLaneTxt + '\', ' +
               bucketScore + ', ' + i + ', ' + time + ')';
             const cellMouseleaveTxt = 'cellMouseleave()';
@@ -244,6 +276,7 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
       });
 
       $swimlanes.append($laneTimes);
+      mlExplorerDashboardService.swimlaneRenderDone.changed();
     }
 
     function checkForSelection() {
@@ -263,83 +296,77 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
         return;
       }
 
-      let cellToSelect = undefined;
-      const selectedLane = _.get(selectionState, 'selectedLane', '');
-      const selectedTime = _.get(selectionState, 'selectedTime', -1);
+      const cellsToSelect = [];
+      const selectedLanes = _.get(selectionState, 'selectedLanes', []);
+      const selectedTimes = _.get(selectionState, 'selectedTimes', []);
+      const selectedTimeExtent = d3.extent(selectedTimes);
 
       const lanes = scope.swimlaneData.laneLabels;
       const startTime = scope.swimlaneData.earliest;
       const endTime = scope.swimlaneData.latest;
 
-      if (lanes.indexOf(selectedLane) > -1 && selectedTime >= startTime && selectedTime <= endTime) {
-        // Locate matching cell - look for exact time, otherwise closest before.
-        const $swimlanes = element.find('#swimlanes');
-        const laneCells = $('div[data-lane-label="' + selectedLane + '"]', $swimlanes);
-        if (laneCells.length === 0) {
-          return;
-        }
-
-        let previousCell = laneCells[0];
-        cellToSelect = laneCells[0];
-        for (let i = 0; i < laneCells.length; i++) {
-          const cell = laneCells[i];
-          const cellTime = $(cell).attr('data-time');
-          if (cellTime === selectedTime) {
-            cellToSelect = cell;
-            break;
-          } else {
-            if (cellTime > selectedTime) {
-              // Select previous as long as it has a score.
-              const previousScore = +$(previousCell).attr('data-score');
-              cellToSelect = previousScore !== undefined ? previousCell : cell;
-              break;
-            }
-
+      selectedLanes.forEach((selectedLane) => {
+        if (lanes.indexOf(selectedLane) > -1 && selectedTimeExtent[0] >= startTime && selectedTimeExtent[1] <= endTime) {
+          // Locate matching cell - look for exact time, otherwise closest before.
+          const $swimlanes = element.find('#swimlanes');
+          const laneCells = $('div[data-lane-label="' + selectedLane + '"]', $swimlanes);
+          if (laneCells.length === 0) {
+            return;
           }
-          cellToSelect = cell;   // Ensures last cell is selected if selection is most recent in list.
-          previousCell = cell;
-        }
-      }
 
-      if (cellToSelect !== undefined && $(cellToSelect).attr('data-score') !== undefined) {
-        const $target = $(cellToSelect).find('.sl-cell-inner');
-        selectCell($target, selectedLane, selectedTime, +$(cellToSelect).attr('data-score'));
-      }
-      else {
+          for (let i = 0; i < laneCells.length; i++) {
+            const cell = laneCells[i];
+            const cellTime = $(cell).attr('data-time');
+            if (cellTime >= selectedTimeExtent[0] && cellTime <= selectedTimeExtent[1]) {
+              cellsToSelect.push(cell);
+            }
+          }
+        }
+      });
+      const selectedMaxBucketScore = cellsToSelect.reduce((maxBucketScore, cell) => {
+        return Math.max(maxBucketScore, +$(cell).attr('data-score') || 0);
+      }, 0);
+      if (cellsToSelect.length > 1 || selectedMaxBucketScore > 0) {
+        selectCell(cellsToSelect, selectedLanes, selectedTimes, selectedMaxBucketScore);
+      } else {
         // Clear selection from state as previous selection is no longer applicable.
         clearSelection();
       }
 
     }
 
-    function selectCell($target, laneLabel, time, bucketScore) {
+    function selectCell(cellsToSelect, laneLabels, times, bucketScore) {
       $('.lane-label', '.ml-explorer-swimlane').addClass('lane-label-masked');
-      $('.sl-cell-inner', '.ml-explorer-swimlane').addClass('sl-cell-inner-masked');
-      $('.sl-cell-inner.sl-cell-inner-selected', '.ml-explorer-swimlane').removeClass('sl-cell-inner-selected');
+      $('.sl-cell-inner,.sl-cell-inner-dragselect', '.ml-explorer-swimlane').addClass('sl-cell-inner-masked');
+      $('.sl-cell-inner.sl-cell-inner-selected,.sl-cell-inner-dragselect.sl-cell-inner-selected',
+        '.ml-explorer-swimlane').removeClass('sl-cell-inner-selected');
 
-      $target.removeClass('sl-cell-inner-masked');
-      $target.addClass('sl-cell-inner-selected');
+      $(cellsToSelect).find('.sl-cell-inner,.sl-cell-inner-dragselect')
+        .removeClass('sl-cell-inner-masked')
+        .addClass('sl-cell-inner-selected');
 
       $('.lane-label').filter(function () {
-        return $(this).text() === laneLabel;
+        return laneLabels.indexOf($(this).text()) > -1;
       }).removeClass('lane-label-masked');
 
       if (scope.swimlaneType === 'viewBy') {
         // If selecting a cell in the 'view by' swimlane, indicate the corresponding time in the Overall swimlane.
         const overallSwimlane = $('ml-explorer-swimlane[swimlane-type="overall"]');
-        const overallCell = $('div[data-time="' + time + '"]', overallSwimlane).find('.sl-cell-inner');
-        overallCell.addClass('sl-cell-inner-selected');
+        times.forEach(time => {
+          const overallCell = $('div[data-time="' + time + '"]', overallSwimlane).find('.sl-cell-inner,.sl-cell-inner-dragselect');
+          overallCell.addClass('sl-cell-inner-selected');
+        });
       }
 
       scope.appState.mlExplorerSwimlane.selectedType = scope.swimlaneType;
-      scope.appState.mlExplorerSwimlane.selectedLane = laneLabel;
-      scope.appState.mlExplorerSwimlane.selectedTime = time;
+      scope.appState.mlExplorerSwimlane.selectedLanes = laneLabels;
+      scope.appState.mlExplorerSwimlane.selectedTimes = times;
       scope.appState.save();
 
       mlExplorerDashboardService.swimlaneCellClick.changed({
         fieldName: scope.swimlaneData.fieldName,
-        laneLabel: laneLabel,
-        time: time,
+        laneLabels: laneLabels,
+        time: d3.extent(times),
         interval: scope.swimlaneData.interval,
         score: bucketScore
       });
@@ -349,10 +376,12 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
       $('.lane-label', '.ml-explorer-swimlane').removeClass('lane-label-masked');
       $('.sl-cell-inner', '.ml-explorer-swimlane').removeClass('sl-cell-inner-masked');
       $('.sl-cell-inner.sl-cell-inner-selected', '.ml-explorer-swimlane').removeClass('sl-cell-inner-selected');
+      $('.sl-cell-inner-dragselect.sl-cell-inner-selected', '.ml-explorer-swimlane').removeClass('sl-cell-inner-selected');
+      $('.ds-selected', '.ml-exlporer-swimlane').removeClass('ds-selected');
 
       delete scope.appState.mlExplorerSwimlane.selectedType;
-      delete scope.appState.mlExplorerSwimlane.selectedLane;
-      delete scope.appState.mlExplorerSwimlane.selectedTime;
+      delete scope.appState.mlExplorerSwimlane.selectedLanes;
+      delete scope.appState.mlExplorerSwimlane.selectedTimes;
       scope.appState.save();
 
       mlExplorerDashboardService.swimlaneCellClick.changed({});

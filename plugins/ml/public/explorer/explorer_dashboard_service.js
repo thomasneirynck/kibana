@@ -24,16 +24,21 @@ const module = uiModules.get('apps/ml');
 import { listenerFactoryProvider } from 'plugins/ml/factories/listener_factory';
 
 module.service('mlExplorerDashboardService', function () {
+  this.allowCellRangeSelection = false;
 
   const listenerFactory = listenerFactoryProvider();
+  const dragSelect = this.dragSelect = listenerFactory();
   const swimlaneCellClick = this.swimlaneCellClick = listenerFactory();
   const swimlaneDataChange = this.swimlaneDataChange = listenerFactory();
+  const swimlaneRenderDone = this.swimlaneRenderDone = listenerFactory();
   this.anomalyDataChange = listenerFactory();
 
   this.init = function () {
     // Clear out any old listeners.
+    dragSelect.unwatchAll();
     swimlaneCellClick.unwatchAll();
     swimlaneDataChange.unwatchAll();
+    swimlaneRenderDone.unwatchAll();
   };
 
 });

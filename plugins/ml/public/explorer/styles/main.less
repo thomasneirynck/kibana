@@ -119,6 +119,35 @@
       }
     }
 
+    ml-explorer-swimlane.ml-dragselect-dragging {
+      .sl-cell-inner,
+      .sl-cell-inner-dragselect {
+        opacity: 0.2;
+      }
+    }
+
+    ml-explorer-swimlane.ml-hide-range-selection {
+      div#swimlanes {
+        div.lane {
+          div.cells-container {
+            .sl-cell.ds-selected {
+              .sl-cell-inner,
+              .sl-cell-inner-dragselect {
+                border-width: 0px;
+                opacity: 1;
+              }
+              .sl-cell-inner.sl-cell-inner-selected {
+                border-width: 2px;
+              }
+              .sl-cell-inner.sl-cell-inner-masked {
+                opacity: 0.2;
+              }
+            }
+          }
+        }
+      }
+    }
+
     div#swimlanes {
       margin: 0px 0px 0px 10px;
 
@@ -195,7 +224,7 @@
             border-right: 1px solid #e6e6e6;
             vertical-align: top;
             position: relative;
-            .sl-cell-inner {
+            .sl-cell-inner, .sl-cell-inner-dragselect {
               height: 26px;
               margin:1px 1px 1px 1px;
               border-radius: 2px;
@@ -204,11 +233,13 @@
             .sl-cell-inner.sl-cell-inner-masked {
               opacity: 0.2;
             }
-            .sl-cell-inner.sl-cell-inner-selected {
+            .sl-cell-inner.sl-cell-inner-selected,
+            .sl-cell-inner-dragselect.sl-cell-inner-selected {
               border: 2px solid #6B6B6B;
             }
 
-            .sl-cell-inner.sl-cell-inner-selected.sl-cell-inner-masked {
+            .sl-cell-inner.sl-cell-inner-selected.sl-cell-inner-masked,
+            .sl-cell-inner-dragselect.sl-cell-inner-selected.sl-cell-inner-masked {
               border: 2px solid #000000;
               opacity: 0.4;
             }
@@ -217,6 +248,14 @@
             .sl-cell-inner {
               opacity: 0.8;
               cursor: pointer;
+            }
+          }
+          .sl-cell.ds-selected {
+            .sl-cell-inner,
+            .sl-cell-inner-dragselect {
+              border: 2px solid #6B6B6B;
+              border-radius: 2px;
+              opacity: 1;
             }
           }
 
