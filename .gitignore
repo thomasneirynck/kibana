@@ -3,7 +3,7 @@
 *.iml
 *.log
 node_modules/
-npm-debug.log
+npm-debug.log*
 .vscode
 
 yarn.lock
