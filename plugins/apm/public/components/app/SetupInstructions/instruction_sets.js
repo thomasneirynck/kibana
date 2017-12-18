@@ -196,7 +196,7 @@ export const agentInstructions = [
         title: 'Install the APM agent',
         textPre:
           'Install the APM agent for Node.js as a dependency to your application.',
-        code: `npm install elastic-apm --save`
+        code: `npm install elastic-apm-node --save`
       },
       {
         indicatorNumber: 2,
@@ -205,7 +205,7 @@ export const agentInstructions = [
           'Agents are libraries that run inside of your application process. APM services are created programmatically based on the `serviceName`. This agent supports Express, Koa, hapi, and custom Node.js.',
         codeLanguage: 'javascript',
         code: `// Add this to the VERY top of the first file loaded in your application
-var apm = require('elastic-apm').start({
+var apm = require('elastic-apm-node').start({
     // Set required service name (allowed characters: a-z, A-Z, 0-9, -, _, and space)
     serviceName: '',
     // Use if APM Server requires a token
