@@ -1,3 +1,4 @@
+import { badRequest } from 'boom';
 import { forEach, keys, sortBy } from 'lodash';
 import { normalizedFieldTypes } from '../../lib/normalized_field_types';
 
@@ -45,7 +46,7 @@ export class Fields {
 
   static fromUpstreamJson(json) {
     if (!json.fields) {
-      throw new Error('json argument must contain a fields property');
+      throw badRequest('json argument must contain a fields property');
     }
 
     const fields = buildFieldList(json.fields);

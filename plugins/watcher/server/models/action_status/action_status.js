@@ -1,4 +1,5 @@
 import { get } from 'lodash';
+import { badImplementation, badRequest } from 'boom';
 import { getMoment } from '../../../common/lib/get_moment';
 import { ACTION_STATES } from '../../../common/constants';
 
@@ -50,7 +51,7 @@ export class ActionStatus {
     // At this point, we cannot determine the action status so we thrown an error.
     // We should never get to this point in the code. If we do, it means we are
     // missing an action status and the logic to determine it.
-    throw new Error(`Could not determine action status; action = ${JSON.stringify(actionStatusJson)}`);
+    throw badImplementation(`Could not determine action status; action = ${JSON.stringify(actionStatusJson)}`);
   }
 
   get isAckable() {
@@ -82,10 +83,10 @@ export class ActionStatus {
   // generate object from elasticsearch response
   static fromUpstreamJson(json) {
     if (!json.id) {
-      throw new Error('json argument must contain an id property');
+      throw badRequest('json argument must contain an id property');
     }
     if (!json.actionStatusJson) {
-      throw new Error('json argument must contain an actionStatusJson property');
+      throw badRequest('json argument must contain an actionStatusJson property');
     }
 
     return new ActionStatus(json);

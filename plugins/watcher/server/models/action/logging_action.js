@@ -1,3 +1,4 @@
+import { badRequest } from 'boom';
 import { BaseAction } from './base_action';
 import { ACTION_TYPES } from '../../../common/constants';
 
@@ -48,10 +49,10 @@ export class LoggingAction extends BaseAction {
     const props = super.getPropsFromUpstreamJson(json);
 
     if (!json.actionJson.logging) {
-      throw new Error('json argument must contain an actionJson.logging property');
+      throw badRequest('json argument must contain an actionJson.logging property');
     }
     if (!json.actionJson.logging.text) {
-      throw new Error('json argument must contain an actionJson.logging.text property');
+      throw badRequest('json argument must contain an actionJson.logging.text property');
     }
 
     Object.assign(props, {

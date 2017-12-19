@@ -1,4 +1,5 @@
 import { set } from 'lodash';
+import { badRequest } from 'boom';
 import { getActionType } from '../../../common/lib/get_action_type';
 import { ACTION_TYPES } from '../../../common/constants';
 import { LoggingAction } from './logging_action';
@@ -20,7 +21,7 @@ export class Action {
   // From Elasticsearch
   static fromUpstreamJson(json) {
     if (!json.actionJson) {
-      throw new Error('json argument must contain an actionJson property');
+      throw badRequest('json argument must contain an actionJson property');
     }
 
     const type = getActionType(json.actionJson);

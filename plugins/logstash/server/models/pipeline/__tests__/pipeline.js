@@ -28,6 +28,17 @@ describe('pipeline', () => {
         expect(pipeline.pipeline).to.be(upstreamJSON._source.pipeline);
       });
 
+      it('throws if pipeline argument does not contain an id property', () => {
+        const badJSON = { // no _id
+          _source: upstreamJSON._source
+        };
+        const testFromUpstreamJsonError = () => {
+          return Pipeline.fromUpstreamJSON(badJSON);
+        };
+        expect(testFromUpstreamJsonError)
+          .to.throwError(/upstreamPipeline argument must contain an id property/i);
+      });
+
     });
 
     describe('upstreamJSON getter method', () => {

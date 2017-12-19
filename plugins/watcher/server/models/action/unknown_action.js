@@ -1,3 +1,4 @@
+import { badRequest } from 'boom';
 import { BaseAction } from './base_action';
 import { ACTION_TYPES } from '../../../common/constants';
 
@@ -45,7 +46,7 @@ export class UnknownAction extends BaseAction {
     const props = super.getPropsFromUpstreamJson(json);
 
     if (!json.actionJson) {
-      throw new Error('json argument must contain an actionJson property');
+      throw badRequest('json argument must contain an actionJson property');
     }
 
     Object.assign(props, {

@@ -1,3 +1,5 @@
+import { badRequest } from 'boom';
+
 export class BaseAction {
   constructor(props) {
     this.id = props.id;
@@ -26,7 +28,7 @@ export class BaseAction {
 
   static getPropsFromUpstreamJson(json) {
     if (!json.id) {
-      throw new Error('json argument must contain an id property');
+      throw badRequest('json argument must contain an id property');
     }
 
     return {

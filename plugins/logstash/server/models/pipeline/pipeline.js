@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { badRequest } from 'boom';
 import { get } from 'lodash';
 
 /**
@@ -59,7 +60,7 @@ export class Pipeline {
   // generate Pipeline object from elasticsearch response
   static fromUpstreamJSON(upstreamPipeline) {
     if (!upstreamPipeline._id) {
-      throw new Error('upstreamPipeline argument must contain an id property');
+      throw badRequest('upstreamPipeline argument must contain an id property');
     }
     const id = get(upstreamPipeline, '_id');
     const description = get(upstreamPipeline, '_source.description');

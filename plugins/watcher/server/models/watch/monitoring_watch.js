@@ -1,4 +1,5 @@
 import { merge } from 'lodash';
+import { badRequest } from 'boom';
 import { BaseWatch } from './base_watch';
 import { WATCH_TYPES } from '../../../common/constants';
 
@@ -22,16 +23,16 @@ export class MonitoringWatch extends BaseWatch {
   }
 
   getVisualizeQuery() {
-    throw new Error('getVisualizeQuery called for monitoring watch');
+    throw badRequest('getVisualizeQuery called for monitoring watch');
   }
 
   formatVisualizeData() {
-    throw new Error('formatVisualizeData called for monitoring watch');
+    throw badRequest('formatVisualizeData called for monitoring watch');
   }
 
   // To Elasticsearch
   get upstreamJson() {
-    throw new Error('upstreamJson called for monitoring watch');
+    throw badRequest('upstreamJson called for monitoring watch');
   }
 
   // To Kibana
@@ -59,7 +60,7 @@ export class MonitoringWatch extends BaseWatch {
 
   // From Kibana
   static fromDownstreamJson() {
-    throw new Error('fromDownstreamJson called for monitoring watch');
+    throw badRequest('fromDownstreamJson called for monitoring watch');
   }
 
 }

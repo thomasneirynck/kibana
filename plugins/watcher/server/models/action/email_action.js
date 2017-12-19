@@ -1,3 +1,4 @@
+import { badRequest } from 'boom';
 import { BaseAction } from './base_action';
 import { ACTION_TYPES } from '../../../common/constants';
 
@@ -64,10 +65,10 @@ export class EmailAction extends BaseAction {
     const props = super.getPropsFromUpstreamJson(json);
 
     if (!json.actionJson.email) {
-      throw new Error('json argument must contain an actionJson.email property');
+      throw badRequest('json argument must contain an actionJson.email property');
     }
     if (!json.actionJson.email.to) {
-      throw new Error('json argument must contain an actionJson.email.to property');
+      throw badRequest('json argument must contain an actionJson.email.to property');
     }
 
     const optionalFields = {};

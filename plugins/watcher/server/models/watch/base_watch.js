@@ -1,4 +1,5 @@
 import { get, map, pick } from 'lodash';
+import { badRequest } from 'boom';
 import { Action } from '../action';
 import { WatchStatus } from '../watch_status';
 
@@ -81,13 +82,13 @@ export class BaseWatch {
   // from Elasticsearch
   static getPropsFromUpstreamJson(json) {
     if (!json.id) {
-      throw new Error('json argument must contain an id property');
+      throw badRequest('json argument must contain an id property');
     }
     if (!json.watchJson) {
-      throw new Error('json argument must contain a watchJson property');
+      throw badRequest('json argument must contain a watchJson property');
     }
     if (!json.watchStatusJson) {
-      throw new Error('json argument must contain a watchStatusJson property');
+      throw badRequest('json argument must contain a watchStatusJson property');
     }
 
     const id = json.id;

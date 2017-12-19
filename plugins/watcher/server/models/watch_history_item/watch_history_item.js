@@ -1,3 +1,4 @@
+import { badRequest } from 'boom';
 import { getMoment } from '../../../common/lib/get_moment';
 import { get, cloneDeep } from 'lodash';
 import { WatchStatus } from '../watch_status';
@@ -30,13 +31,13 @@ export class WatchHistoryItem {
   // generate object from elasticsearch response
   static fromUpstreamJson(json, opts) {
     if (!json.id) {
-      throw new Error('json argument must contain a id property');
+      throw badRequest('json argument must contain a id property');
     }
     if (!json.watchId) {
-      throw new Error('json argument must contain a watchId property');
+      throw badRequest('json argument must contain a watchId property');
     }
     if (!json.watchHistoryItemJson) {
-      throw new Error('json argument must contain a watchHistoryItemJson property');
+      throw badRequest('json argument must contain a watchHistoryItemJson property');
     }
 
     const props = { ...json, ...opts };
