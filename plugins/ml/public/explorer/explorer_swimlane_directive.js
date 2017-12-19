@@ -117,7 +117,7 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
       const laneLabelWidth = 170;
 
       element.css('height', (height + 20) + 'px');
-      const $swimlanes = element.find('#swimlanes');
+      const $swimlanes = element.find('.ml-swimlanes').first();
       $swimlanes.empty();
 
       const cellWidth = Math.floor(scope.chartWidth / numBuckets);
@@ -308,7 +308,7 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
       selectedLanes.forEach((selectedLane) => {
         if (lanes.indexOf(selectedLane) > -1 && selectedTimeExtent[0] >= startTime && selectedTimeExtent[1] <= endTime) {
           // Locate matching cell - look for exact time, otherwise closest before.
-          const $swimlanes = element.find('#swimlanes');
+          const $swimlanes = element.find('.ml-swimlanes').first();
           const laneCells = $('div[data-lane-label="' + selectedLane + '"]', $swimlanes);
           if (laneCells.length === 0) {
             return;
@@ -388,7 +388,7 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
     }
   }
 
-  const template = '<div id=\'swimlanes\'></div>';
+  const template = `<div class="ml-swimlanes"></div>`;
   return {
     scope: {
       swimlaneType: '@',
