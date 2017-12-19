@@ -28,6 +28,7 @@ module.directive('mlControlsSelect', function () {
     scope: {
       identifier: '@',
       label: '@',
+      narrowStyle: '=',
       options: '=',
       showIcons: '=',
       selected: '=',

@@ -13,10 +13,4 @@
  * strictly prohibited.
  */
 
-import 'plugins/ml/explorer/explorer_controller.js';
-import 'plugins/ml/explorer/explorer_dashboard_service.js';
-import 'plugins/ml/explorer/explorer_swimlane_directive.js';
-import 'plugins/ml/explorer/styles/main.less';
-import 'plugins/ml/explorer/explorer_charts';
-import 'plugins/ml/explorer/select_limit';
-import 'plugins/ml/components/job_select_list';
+import './select_limit.js';

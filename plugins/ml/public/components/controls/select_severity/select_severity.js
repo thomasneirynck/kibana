@@ -48,10 +48,10 @@ module
 
        const tresholdState = mlSelectSeverityService.state.get('threshold');
        const thresholdValue = _.get(tresholdState, 'val', 0);
-       let thresholdOption = scope.thresholdOptions.find((d) => d.val === thresholdValue);
+       let thresholdOption = scope.thresholdOptions.find(d => d.val === thresholdValue);
        if (thresholdOption === undefined) {
          // Attempt to set value in URL which doesn't map to one of the options.
-         thresholdOption = scope.thresholdOptions.find((d) => d.val === 0);
+         thresholdOption = scope.thresholdOptions.find(d => d.val === 0);
        }
        scope.threshold = thresholdOption;
        mlSelectSeverityService.state.set('threshold', scope.threshold);

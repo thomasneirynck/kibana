@@ -69,17 +69,7 @@
               </ul>
             </div>
 
-            <label for="swimlaneLimit">Limit:</label>
-            <div class="kuiButtonGroup" dropdown>
-              <button id="swimlaneLimit" type="button" class="form-control dropdown-toggle dropdown-toggle-narrow" dropdown-toggle ng-disabled="disabled">
-                <span>{{swimlaneLimit}}</span> <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" role="menu">
-                <li ng-repeat="swimlaneOption in limitSwimlaneOptions">
-                  <a href="" ng-click="setSwimlaneLimit(swimlaneOption)">{{swimlaneOption}}</a>
-                </li>
-              </ul>
-            </div>
+            <ml-select-limit />
 
             <span ng-if="viewByLoadedForTimeFormatted" class="panel-sub-title">
               (Sorted by max anomaly score for {{viewByLoadedForTimeFormatted}})

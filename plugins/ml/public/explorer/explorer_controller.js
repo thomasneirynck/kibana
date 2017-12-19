@@ -65,6 +65,7 @@ module.controller('MlExplorerController', function (
   mlResultsService,
   mlJobSelectService,
   mlExplorerDashboardService,
+  mlSelectLimitService,
   mlSelectSeverityService) {
 
   $scope.timeFieldName = 'timestamp';
@@ -116,9 +117,6 @@ module.controller('MlExplorerController', function (
   $scope.viewBySwimlaneOptions = [];
   $scope.viewBySwimlaneData = { 'fieldName': '', 'laneLabels': [],
     'points': [], 'interval': 3600 };
-
-  $scope.limitSwimlaneOptions = [5, 10, 25, 50];
-  $scope.swimlaneLimit = 10;
 
   $scope.initializeVis = function () {
     // Initialize the AppState in which to store filters.
@@ -214,17 +212,6 @@ module.controller('MlExplorerController', function (
 
     // Save the 'view by' field name to the AppState so that it can restored from the URL.
     $scope.appState.mlExplorerSwimlane.viewBy = viewByFieldName;
-    $scope.appState.save();
-
-    loadViewBySwimlane([]);
-    clearSelectedAnomalies();
-  };
-
-  $scope.setSwimlaneLimit = function (limit) {
-    $scope.swimlaneLimit = limit;
-
-    // Save the 'view by' field name to the AppState so that it can restored from the URL.
-    $scope.appState.mlExplorerSwimlane.limit = limit;
     $scope.appState.save();
 
     loadViewBySwimlane([]);
@@ -370,6 +357,12 @@ module.controller('MlExplorerController', function (
   };
   mlSelectSeverityService.state.watch(anomalyChartsSeverityListener);
 
+  const swimlaneLimitListener = function () {
+    loadViewBySwimlane([]);
+    clearSelectedAnomalies();
+  };
+  mlSelectLimitService.state.watch(swimlaneLimitListener);
+
   // Listens to render updates of the swimlanes to update dragSelect
   const swimlaneRenderDoneListener = function () {
     dragSelect.addSelectables(document.querySelectorAll('.sl-cell'));
@@ -382,6 +375,7 @@ module.controller('MlExplorerController', function (
     mlExplorerDashboardService.swimlaneCellClick.unwatch(swimlaneCellClickListener);
     mlExplorerDashboardService.swimlaneRenderDone.unwatch(swimlaneRenderDoneListener);
     mlSelectSeverityService.state.unwatch(anomalyChartsSeverityListener);
+    mlSelectLimitService.state.unwatch(swimlaneLimitListener);
     $scope.cellData = undefined;
     refreshWatcher.cancel();
     // Cancel listening for updates to the global nav state.
@@ -619,6 +613,7 @@ module.controller('MlExplorerController', function (
       const bounds = timefilter.getActiveBounds();
       const searchBounds = getBoundsRoundedToInterval(bounds, $scope.swimlaneBucketInterval, false);
       const selectedJobIds = $scope.getSelectedJobIds();
+      const swimlaneLimit = mlSelectLimitService.state.get('limit').val;
 
       // load scores by influencer/jobId value and time.
       // Pass the interval in seconds as the swimlane relies on a fixed number of seconds between buckets
@@ -632,7 +627,7 @@ module.controller('MlExplorerController', function (
           searchBounds.min.valueOf(),
           searchBounds.max.valueOf(),
           interval,
-          $scope.swimlaneLimit
+          swimlaneLimit
         ).then((resp) => {
           processViewByResults(resp.results);
           finish();
@@ -644,7 +639,7 @@ module.controller('MlExplorerController', function (
           searchBounds.min.valueOf(),
           searchBounds.max.valueOf(),
           interval,
-          $scope.swimlaneLimit
+          swimlaneLimit
         ).then((resp) => {
           processViewByResults(resp.results);
           finish();
@@ -656,6 +651,7 @@ module.controller('MlExplorerController', function (
 
   function loadViewBySwimlaneForSelectedTime(earliestMs, latestMs) {
     const selectedJobIds = $scope.getSelectedJobIds();
+    const swimlaneLimit = mlSelectLimitService.state.get('limit').val;
 
     // Find the top field values for the selected time, and then load the 'view by'
     // swimlane over the full time range for those specific field values.
@@ -665,7 +661,7 @@ module.controller('MlExplorerController', function (
         earliestMs,
         latestMs,
         MAX_INFLUENCER_FIELD_NAMES,
-        $scope.swimlaneLimit
+        swimlaneLimit
       ).then((resp) => {
         const topFieldValues = [];
         const topInfluencers = resp.influencers[$scope.swimlaneViewByFieldName];
@@ -682,7 +678,7 @@ module.controller('MlExplorerController', function (
         earliestMs,
         latestMs,
         $scope.swimlaneBucketInterval.asSeconds() + 's',
-        $scope.swimlaneLimit
+        swimlaneLimit
       ).then((resp) => {
         loadViewBySwimlane(_.keys(resp.results));
       });

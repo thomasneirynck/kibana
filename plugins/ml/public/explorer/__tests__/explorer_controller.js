@@ -26,8 +26,6 @@ describe('ML - Explorer Controller', () => {
       const scope = $rootScope.$new();
       $controller('MlExplorerController', { $scope: scope });
 
-      expect(scope.limitSwimlaneOptions).to.eql([5, 10, 25, 50]);
-      expect(scope.swimlaneLimit).to.equal(10);
       expect(scope.showCharts).to.be.true;
     });
   });

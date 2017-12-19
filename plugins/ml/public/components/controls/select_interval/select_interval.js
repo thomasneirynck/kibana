@@ -48,10 +48,10 @@ module
 
         const intervalState = mlSelectIntervalService.state.get('interval');
         const intervalValue = _.get(intervalState, 'val', 'auto');
-        let intervalOption = scope.intervalOptions.find((d) => d.val === intervalValue);
+        let intervalOption = scope.intervalOptions.find(d => d.val === intervalValue);
         if (intervalOption === undefined) {
           // Attempt to set value in URL which doesn't map to one of the options.
-          intervalOption = scope.intervalOptions.find((d) => d.val === 'auto');
+          intervalOption = scope.intervalOptions.find(d => d.val === 'auto');
         }
         scope.interval = intervalOption;
         mlSelectIntervalService.state.set('interval', scope.interval);
