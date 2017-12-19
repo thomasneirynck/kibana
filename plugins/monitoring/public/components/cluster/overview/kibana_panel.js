@@ -1,9 +1,18 @@
 import React from 'react';
-import { capitalize } from 'lodash';
 import { formatNumber } from 'plugins/monitoring/lib/format_number';
-import { KuiKeyboardAccessible } from 'ui_framework/components';
 import { ClusterItemContainer, HealthStatusIndicator, BytesPercentageUsage } from './helpers';
-import { KibanaStatusIcon } from 'plugins/monitoring/components/kibana/status_icon';
+
+import {
+  EuiFlexGrid,
+  EuiFlexItem,
+  EuiLink,
+  EuiTitle,
+  EuiPanel,
+  EuiDescriptionList,
+  EuiDescriptionListTitle,
+  EuiDescriptionListDescription,
+  EuiHorizontalRule,
+} from '@elastic/eui';
 
 export function KibanaPanel(props) {
   if (!props.count) {
@@ -11,10 +20,7 @@ export function KibanaPanel(props) {
   }
 
   const statusIndicator = (
-    <HealthStatusIndicator>
-      <KibanaStatusIcon status={props.status} />&nbsp;
-      { capitalize(props.status) }
-    </HealthStatusIndicator>
+    <HealthStatusIndicator status={props.status} />
   );
 
   const goToKibana = () => props.changeUrl('kibana');
@@ -22,48 +28,59 @@ export function KibanaPanel(props) {
 
   return (
     <ClusterItemContainer {...props} statusIndicator={statusIndicator} url="kibana" title="Kibana">
-      <div className="row">
-        <div className="col-md-4">
-          <dl data-test-subj="kibana_overview" data-overview-status={status}>
-            <dt className="cluster-panel__inner-title">
-              <KuiKeyboardAccessible>
-                <a
-                  className="kuiLink"
+      <EuiFlexGrid columns={2}>
+        <EuiFlexItem>
+          <EuiPanel paddingSize="m">
+            <EuiTitle size="s">
+              <h3>
+                <EuiLink
                   onClick={goToKibana}
                   aria-label="Kibana Overview"
                 >
                   Overview
-                </a>
-              </KuiKeyboardAccessible>
-            </dt>
-            <dd data-test-subj="kbnRequests">Requests: { props.requests_total }</dd>
-            <dd data-test-subj="kbnMaxResponseTime">Max. Response Time: { props.response_time_max } ms</dd>
-          </dl>
-        </div>
-
-        <div className="col-md-4">
-          <dl>
-            <dt className="cluster-panel__inner-title">
-              <KuiKeyboardAccessible>
-                <a
-                  className="kuiLink"
+                </EuiLink>
+              </h3>
+            </EuiTitle>
+            <EuiHorizontalRule margin="m" />
+            <EuiDescriptionList type="column" data-test-subj="kibana_overview" data-overview-status={status}>
+              <EuiDescriptionListTitle>Requests</EuiDescriptionListTitle>
+              <EuiDescriptionListDescription data-test-subj="kbnRequests">
+                { props.requests_total }
+              </EuiDescriptionListDescription>
+              <EuiDescriptionListTitle>Max. Response Time</EuiDescriptionListTitle>
+              <EuiDescriptionListDescription data-test-subj="kbnMaxResponseTime">
+                { props.response_time_max } ms
+              </EuiDescriptionListDescription>
+            </EuiDescriptionList>
+          </EuiPanel>
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiPanel paddingSize="m">
+            <EuiTitle size="s">
+              <h3>
+                <EuiLink
                   onClick={goToInstances}
                   data-test-subj="kbnInstances"
                   aria-label={`Kibana Instances: ${ props.count }`}
                 >
                   Instances: <span data-test-subj="number_of_kibana_instances">{ props.count }</span>
-                </a>
-              </KuiKeyboardAccessible>
-            </dt>
-            <dd data-test-subj="kbnConnections">
-              Connections: { formatNumber(props.concurrent_connections, 'int_commas') }
-            </dd>
-            <dd data-test-subj="kbnMemoryUsage">
-              Memory Usage: <BytesPercentageUsage usedBytes={props.memory_size} maxBytes={props.memory_limit} />
-            </dd>
-          </dl>
-        </div>
-      </div>
+                </EuiLink>
+              </h3>
+            </EuiTitle>
+            <EuiHorizontalRule margin="m" />
+            <EuiDescriptionList type="column">
+              <EuiDescriptionListTitle>Connections</EuiDescriptionListTitle>
+              <EuiDescriptionListDescription data-test-subj="kbnConnections">
+                { formatNumber(props.concurrent_connections, 'int_commas') }
+              </EuiDescriptionListDescription>
+              <EuiDescriptionListTitle>Memory Usage</EuiDescriptionListTitle>
+              <EuiDescriptionListDescription data-test-subj="kbnMemoryUsage">
+                <BytesPercentageUsage usedBytes={props.memory_size} maxBytes={props.memory_limit} />
+              </EuiDescriptionListDescription>
+            </EuiDescriptionList>
+          </EuiPanel>
+        </EuiFlexItem>
+      </EuiFlexGrid>
     </ClusterItemContainer>
   );
 }

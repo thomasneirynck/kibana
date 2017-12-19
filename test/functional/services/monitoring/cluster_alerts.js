@@ -1,14 +1,21 @@
 import { range } from 'lodash';
+import {
+  map as mapAsync,
+} from 'bluebird';
 
 export function MonitoringClusterAlertsProvider({ getService, getPageObjects }) {
   const testSubjects = getService('testSubjects');
+  const find = getService('find');
+  const retry = getService('retry');
   const PageObjects = getPageObjects(['monitoring']);
 
   const SUBJ_OVERVIEW_CLUSTER_ALERTS = `clusterAlertsContainer`;
-  const SUBJ_OVERVIEW_ICONS          = `${SUBJ_OVERVIEW_CLUSTER_ALERTS} alertIcon`;
-  const SUBJ_OVERVIEW_TEXTS          = `${SUBJ_OVERVIEW_CLUSTER_ALERTS} alertText`;
-  const SUBJ_OVERVIEW_ACTIONS        = `${SUBJ_OVERVIEW_CLUSTER_ALERTS} alertAction`;
-  const SUBJ_OVERVIEW_VIEW_ALL       = `${SUBJ_OVERVIEW_CLUSTER_ALERTS} viewAllAlerts`;
+  const SUBJ_OVERVIEW_ICONS =
+    `[data-test-subj="${SUBJ_OVERVIEW_CLUSTER_ALERTS}"] ` +
+    `[data-test-subj="topAlertItem"] .euiCallOutHeader__title`;
+  const SUBJ_OVERVIEW_TEXTS = `${SUBJ_OVERVIEW_CLUSTER_ALERTS} alertText`;
+  const SUBJ_OVERVIEW_ACTIONS = `${SUBJ_OVERVIEW_CLUSTER_ALERTS} alertAction`;
+  const SUBJ_OVERVIEW_VIEW_ALL = `${SUBJ_OVERVIEW_CLUSTER_ALERTS} viewAllAlerts`;
 
   const SUBJ_LISTING_PAGE  = 'clusterAlertsListingPage';
   const SUBJ_TABLE_BODY    = 'alertsTableBody';
@@ -21,8 +28,7 @@ export function MonitoringClusterAlertsProvider({ getService, getPageObjects }) 
     /*
      * Helper function to return the testable panel listing content or table content
      */
-    async _getAlertSetAll({ iconsSubj, textsSubj, actionsSubj, size }) {
-      const alertIcons = await testSubjects.getPropertyAll(iconsSubj, 'alt');
+    async _getAlertSetAll({ alertIcons, textsSubj, actionsSubj, size }) {
       const alertTexts = await testSubjects.getVisibleTextAll(textsSubj);
       const alertActions = await testSubjects.findAll(actionsSubj);
 
@@ -50,9 +56,16 @@ export function MonitoringClusterAlertsProvider({ getService, getPageObjects }) 
 
     async getOverviewAlertsAll() {
       const listingRows = await this.getOverviewAlerts();
+      const alertIcons = await retry.try(async () => {
+        const elements = await find.allByCssSelector(SUBJ_OVERVIEW_ICONS);
+        return await mapAsync(elements, async (element) => {
+          return await element.getVisibleText();
+        });
+      });
+
       return await this._getAlertSetAll({
         size: listingRows.length,
-        iconsSubj: SUBJ_OVERVIEW_ICONS,
+        alertIcons,
         textsSubj: SUBJ_OVERVIEW_TEXTS,
         actionsSubj: SUBJ_OVERVIEW_ACTIONS
       });
@@ -81,9 +94,11 @@ export function MonitoringClusterAlertsProvider({ getService, getPageObjects }) 
 
     async getTableAlertsAll() {
       const tableRows = await this.getTableAlerts();
+      const alertIcons = await testSubjects.getPropertyAll(SUBJ_TABLE_ICONS, 'alt');
+
       return await this._getAlertSetAll({
         size: tableRows.length,
-        iconsSubj: SUBJ_TABLE_ICONS,
+        alertIcons,
         textsSubj: SUBJ_TABLE_TEXTS,
         actionsSubj: SUBJ_TABLE_ACTIONS
       });

@@ -4,7 +4,9 @@
   <ml-message-bar></ml-message-bar>
   <div ng-controller="MlCreatePopulationJob" class="population-job-container">
     <div class="row">
-      <div class="col-md-6"><h3>New job from {{ui.pageTitle}}</h3></div>
+      <div class="col-md-6">
+        <h3 class="euiTitle euiTitle--large">New job from {{ui.pageTitle}}</h3>
+      </div>
       <div class="col-md-6">
         <div class="pull-right">
           <span style="font-size:10px;" ng-show="formConfig.chartInterval !== undefined">Chart interval: {{formConfig.chartInterval.getInterval().expression}}</span>
@@ -17,13 +19,15 @@
       </div>
     </div>
 
+    <div class="euiSpacer euiSpacer--l"></div>
+
     <div class="row">
       <div class="col-md-4">
         <div class="row form-controls">
-          <h4 >Job settings</h4>
+          <h4 class="euiTitle euiTitle--small">Job settings</h4>
           <div>
             <div class='form-section form-section-overflow' >
-              <h4 >Population</h4>
+              <h4 class="euiTitle euiTitle--small">Population</h4>
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group">
@@ -56,7 +60,7 @@
             </div>
 
             <!-- <div class='form-section' >
-              <h4 >Split Data</h4>
+              <h4 class="euiTitle euiTitle--small">Split Data</h4>
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group">
@@ -82,7 +86,7 @@
             </div>
 
             <div class='form-section' >
-              <h4 >Job Details</h4>
+              <h4 class="euiTitle euiTitle--small">Job Details</h4>
               <div class="form-group">
                 <div ng-show="ui.showJobInput && (jobState === JOB_STATE.NOT_STARTED || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING)">
                   <ml-general-job-details></ml-general-job-details>
@@ -119,7 +123,7 @@
                   </a>
                 </div>
                 <div ng-show="jobState === JOB_STATE.FINISHED">
-                  <h3>Job {{formConfig.jobId }} created</h3>
+                  <h3 class="euiTitle euiTitle--small">Job {{formConfig.jobId }} created</h3>
 
                   <button
                     aria-label="Reset"
@@ -137,7 +141,7 @@
                 </div>
 
                 <div ng-if='jobState === JOB_STATE.FINISHED'>
-                  <hr />
+                  <hr class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium">
                   <ml-post-save-options
                     job-id='formConfig.jobId'
                     bucket-span='formConfig.bucketSpan'
@@ -151,10 +155,10 @@
       </div>
       <div class="col-md-8">
         <div class="row charts-container">
-          <h4>Results</h4>
+          <h4 class="euiTitle euiTitle--small">Results</h4>
           <div>
             <div class='chart-list-panel event-rate-container' style='height: {{ui.eventRateChartHeight + 70}}px;'>
-              <label>Document count</label>
+              <label class="kuiFormLabel">Document count</label>
 
               <div class='chart-container'>
                 <div style='height: {{ui.eventRateChartHeight + 25}}px;'>
@@ -170,11 +174,11 @@
                   style='height: {{ui.eventRateChartHeight}}px; margin-top: -{{ui.eventRateChartHeight + 25}}px;'>
                     <div class='status-label' ng-if="chartStates.eventRate === CHART_STATE.NOT_STARTED"></div>
                     <div class='status-label' ng-if="chartStates.eventRate === CHART_STATE.LOADING">
-                      <h2><i class='fa fa-spinner fa-spin'></i></h2>
+                      <h2 class="euiTitle euiTitle"><i class='fa fa-spinner fa-spin'></i></h2>
                     </div>
                     <div class='status-label' ng-if="chartStates.eventRate === CHART_STATE.NO_RESULTS">
                       <div class='no-results'>
-                        <h4><i class="fa fa-info-circle"></i> No results found</h4>
+                        <h4 class="euiTitle euiTitle--small"><i class="fa fa-info-circle"></i> No results found</h4>
                         <span>Consider using the <a ng-click="setFullTimeRange()">full {{ui.indexPattern.title}} data</a></span>
                       </div>
                     </div>
@@ -188,7 +192,7 @@
                 <div class='card-front'>
                   <div class="card-title"></div>
                   <div class='chart' style='height: {{ui.chartHeight + 90}}px;'>
-                    <label>{{formConfig.fields[id].agg.type.title}} {{formConfig.fields[id].name}} over {{formConfig.overField.name}} <span ng-if="formConfig.fields[id].splitField!==undefined"> split by {{formConfig.fields[id].splitField.name}}</span></label>
+                    <label class="kuiFormLabel">{{formConfig.fields[id].agg.type.title}} {{formConfig.fields[id].name}} over {{formConfig.overField.name}} <span ng-if="formConfig.fields[id].splitField!==undefined"> split by {{formConfig.fields[id].splitField.name}}</span></label>
                     <div class="split-controls">
                       <div class="split-align">Split data: </div>
                       <div class="split-field-container">
@@ -239,11 +243,11 @@
                         style='height: {{ui.chartHeight}}px; margin-top: -{{ui.chartHeight + 25}}px; margin-left: {{chartData.chartTicksMargin.width - 1}}px;'>
                           <div class='status-label' ng-show="chartStates.fields[id] === CHART_STATE.NOT_STARTED"></div>
                           <div class='status-label' ng-show="chartStates.fields[id] === CHART_STATE.LOADING">
-                            <h2><i class='fa fa-spinner fa-spin'></i></h2>
+                            <h2 class="euiTitle euiTitle"><i class='fa fa-spinner fa-spin'></i></h2>
                           </div>
                           <div class='status-label' ng-show="chartStates.fields[id] === CHART_STATE.NO_RESULTS">
                             <div class='no-results'>
-                              <h4><i class="fa fa-info-circle"></i> No results found</h4>
+                              <h4 class="euiTitle euiTitle--small"><i class="fa fa-info-circle"></i> No results found</h4>
                             </div>
                           </div>
                       </div>

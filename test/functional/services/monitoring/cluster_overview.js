@@ -49,8 +49,7 @@ export function MonitoringClusterOverviewProvider({ getService }) {
     }
 
     async getEsStatus() {
-      const statusIcon = await testSubjects.find(SUBJ_ES_STATUS);
-      return statusIcon.getProperty('alt');
+      return testSubjects.getVisibleText(SUBJ_ES_STATUS);
     }
     async getEsVersion() {
       return testSubjects.getVisibleText(SUBJ_ES_VERSION);
@@ -102,8 +101,7 @@ export function MonitoringClusterOverviewProvider({ getService }) {
       return testSubjects.exists(SUBJ_KBN_PANEL);
     }
     async getKbnStatus() {
-      const statusIcon = await testSubjects.find(SUBJ_KBN_STATUS);
-      return statusIcon.getProperty('alt');
+      return testSubjects.getVisibleText(SUBJ_KBN_STATUS);
     }
     async getKbnRequests() {
       return testSubjects.getVisibleText(SUBJ_KBN_REQUESTS);

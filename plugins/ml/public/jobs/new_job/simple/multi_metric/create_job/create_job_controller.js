@@ -392,7 +392,7 @@ module
     for (let i = 0; i < labels.length; i++) {
       let el = '<div class="card card-behind"><div class="card-title">';
       el += labels[i];
-      el += '</div><label>';
+      el += '</div><label class="kuiFormLabel">';
       el += backCardTitle;
       el += '</label></div>';
 

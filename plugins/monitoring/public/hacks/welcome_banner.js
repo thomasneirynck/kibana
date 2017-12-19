@@ -9,18 +9,23 @@ function renderBanner($injector) {
   const notify = new Notifier('X-Pack');
   const directive = {
     template: (`
-      <h3>X-Pack is installed</h3>
-      <p>
-        Sharing your cluster statistics with us helps us improve. Your data is never shared with anyone.
-        <span ng-switch="welcome.allowReport">
-          <span ng-switch-when="true">
-            Not interested? <a ng-click="welcome.toggleOpt({ allowReport: false })">Opt out here</a>.
-          </span>
-          <span ng-switch-default>
-            <a ng-click="welcome.toggleOpt({ allowReport: true })">Opt in here</a>.
-          </span>
-        </span>
-      </p>
+      <div>
+        <div class="euiText">
+          <h3>X-Pack is installed</h3>
+          <p>
+            Sharing your cluster statistics with us helps us improve. Your data is never shared with anyone.
+            <span ng-switch="welcome.allowReport">
+              <span ng-switch-when="true">
+                Not interested? <a ng-click="welcome.toggleOpt({ allowReport: false })">Opt out here</a>.
+              </span>
+              <span ng-switch-default>
+                <a ng-click="welcome.toggleOpt({ allowReport: true })" class="euiLink euiLink--primary">Opt in here</a>.
+              </span>
+            </span>
+          </p>
+        </div>
+        <div class="euiSpacer euiSpacer--m"></div>
+      </div>
     `),
     controllerAs: 'welcome',
     controller() {

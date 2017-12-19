@@ -1,6 +1,6 @@
 <div class="forecasting-modal">
   <ml-message-bar ></ml-message-bar>
-  <h3>Forecasting</h3>
+  <h3 class="euiTitle euiTitle--small">Forecasting</h3>
 
   <div ng-if="previousForecasts.length > 0">
     <h4 aria-describedby="ml_aria_description_forecasting_modal_view_list" class="view-forecast-title">View a previous forecast</h4><i ml-info-icon="forecasting_modal_view_list" />
@@ -22,10 +22,10 @@
       </table>
     </div>
 
-    <hr />
+    <hr class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium">
   </div>
 
-  <h4>Run a new forecast</h4>
+  <h4 class="euiTitle euiTitle--small">Run a new forecast</h4>
   <div ng-show="showNumPartitionsWarning" class="warning-text">
     Note that this data contains more than {{partitionsWarningNumber}} partitions
     so running a forecast may take a long time and consume a high amount of resource.
@@ -90,7 +90,7 @@
       </div>
     </div>
 
-    <hr />
+    <hr class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium">
 </div>
 
   <button

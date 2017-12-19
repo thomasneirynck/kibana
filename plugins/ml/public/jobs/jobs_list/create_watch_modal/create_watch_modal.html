@@ -1,6 +1,6 @@
 <ml-message-bar ></ml-message-bar>
 <div class="create-watch-modal">
-  <h3>Create watch for {{jobId}}</h3>
+  <h3 class="euiTitle euiTitle--small">Create watch for {{jobId}}</h3>
   <div ng-if='watcherEnabled===true'>
     <ml-create-watch
       job-id='jobId'
@@ -9,7 +9,7 @@
     ></ml-create-watch>
 
 
-    <hr />
+    <hr class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium">
 
     <div ng-show= "status.watch===null">
       <button
@@ -40,7 +40,7 @@
 
   <div ng-if='watcherEnabled===false'>
     Watcher is not enabled.
-    <hr />
+    <hr class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium">
     <button
       ng-click="close();"
       class="kuiButton kuiButton--primary"

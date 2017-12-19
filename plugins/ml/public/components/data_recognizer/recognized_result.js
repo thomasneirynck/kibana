@@ -27,7 +27,7 @@ export const RecognizedResult = ({
   if (config.logo && config.logo.src) {
     logo = <div><img src={config.logo.src}/></div>;
   } else {
-    logo = <h3>{config.id}</h3>;
+    logo = <h3 className="euiTitle euiTitle--small">{config.id}</h3>;
   }
 
   return (

@@ -1,6 +1,6 @@
 <div class="job-timepicker-modal">
   <ml-message-bar ></ml-message-bar>
-  <h3 tooltip="Start datafeed for {{jobId}}">Start datafeed for {{jobId}}</h3>
+  <h3 tooltip="Start datafeed for {{jobId}}" class="euiTitle euiTitle--small">Start datafeed for {{jobId}}</h3>
 
   <div class="ml-timepicker-contents" >
     <div class="row">
@@ -11,7 +11,7 @@
             (+ui.startRadio <= 1 && ui.endRadio === '0') ||
             (ui.startRadio === '2' && +ui.endRadio <= 1)
         }">
-        <label>Search start time</label>
+        <label class="kuiFormLabel">Search start time</label>
 
         <div class="ml-timepicker-radios" >
           <ul class="nav nav-pills nav-stacked">
@@ -45,7 +45,7 @@
           'ml-timepicker-left-border':
             (+ui.startRadio <= 1 && ui.endRadio === '1')
         }">
-        <label>Search end time</label>
+        <label class="kuiFormLabel">Search end time</label>
         <div class="ml-timepicker-radios" >
           <ul class="nav nav-pills nav-stacked">
             <li ng-class="{ active: ui.endRadio === '0' }">
@@ -74,7 +74,7 @@
   </div>
 
   <div ng-if="ui.endRadio === '0' && watcherEnabled">
-    <hr />
+    <hr class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium">
     <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
       <input ng-model='ui.createWatch' type="checkbox" class='kuiCheckBox'/>
       <span class="kuiCheckBoxLabel__text">
@@ -84,7 +84,7 @@
   </div>
   <div class="clearfix"></div>
 
-  <hr />
+  <hr class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium">
 
   <button
     ng-click="save()"

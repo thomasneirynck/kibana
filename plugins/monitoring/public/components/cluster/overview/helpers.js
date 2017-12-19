@@ -1,47 +1,66 @@
 import React from 'react';
 import { formatBytesUsage, formatPercentageUsage } from 'plugins/monitoring/lib/format_number';
 
+import {
+  EuiSpacer,
+  EuiFlexItem,
+  EuiFlexGroup,
+  EuiTitle,
+  EuiIcon,
+  EuiHealth,
+  EuiText,
+} from '@elastic/eui';
+
 export function HealthStatusIndicator(props) {
+
+  const statusColorMap = {
+    green: 'success',
+    yellow: 'warning',
+    red: 'danger'
+  };
+
+  const statusColor = statusColorMap[props.status];
+
   return (
-    <span>
-      Health: { props.children }
-    </span>
+    <EuiHealth color={statusColor} data-test-subj="statusIcon">
+      Health is {props.status}
+    </EuiHealth>
   );
 }
 
 export function ClusterItemContainer(props) {
-  const urlIconMap = {
-    elasticsearch: 'cluster-overview-icon__elasticsearch',
-    kibana: 'cluster-overview-icon__kibana',
-    logstash: 'cluster-overview-icon__logstash'
+  const iconMap = {
+    elasticsearch: 'logoElasticSearch',
+    kibana: 'logoKibana',
+    logstash: 'logoLogstash'
   };
-  const iconClassNames = [ 'cluster-overview-icon', urlIconMap[props.url] ];
+  const icon = iconMap[props.url];
 
   return (
-    <div
-      className="kuiPanel kuiPanel--withHeader kuiVerticalRhythm"
-      data-test-subj={`clusterItemContainer${props.title}`}
-    >
-      <div className="kuiPanelHeader">
-        <div className="kuiPanelHeaderSection">
-          <div className={iconClassNames.join(' ')} />
-          <div className="kuiPanelHeader__title">
-            <h2 className="kuiSubTitle">
-              { props.title }
-            </h2>
-          </div>
-        </div>
+    <div data-test-subj={`clusterItemContainer${props.title}`}>
+      <EuiFlexGroup gutterSize="m" alignItems="center">
+        <EuiFlexItem grow={false}>
+          <EuiFlexGroup gutterSize="m" alignItems="center">
+            <EuiFlexItem grow={false}>
+              <EuiIcon type={icon} size="l" />
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiTitle>
+                <h2>
+                  { props.title }
+                </h2>
+              </EuiTitle>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          { props.statusIndicator }
+        </EuiFlexItem>
+      </EuiFlexGroup>
+      <EuiSpacer size="m" />
+      { props.children }
 
-        <div className="kuiPanelHeaderSection">
-          <div className="kuiText">
-            { props.statusIndicator }
-          </div>
-        </div>
-      </div>
-
-      <div className="kuiPanelBody">
-        { props.children }
-      </div>
+      <EuiSpacer size="xxl" />
     </div>
   );
 }
@@ -50,9 +69,12 @@ export function BytesUsage({ usedBytes, maxBytes }) {
   if (usedBytes && maxBytes) {
     return (
       <span>
-        { formatBytesUsage(usedBytes, maxBytes) }
-        &nbsp;
-        ({ formatPercentageUsage(usedBytes, maxBytes) })
+        <EuiText>
+          { formatPercentageUsage(usedBytes, maxBytes) }
+        </EuiText>
+        <EuiText color="subdued" size="s">
+          { formatBytesUsage(usedBytes, maxBytes) }
+        </EuiText>
       </span>
     );
   }
@@ -64,9 +86,12 @@ export function BytesPercentageUsage({ usedBytes, maxBytes }) {
   if (usedBytes && maxBytes) {
     return (
       <span>
-        { formatPercentageUsage(usedBytes, maxBytes) }
-        &nbsp;
-        ({ formatBytesUsage(usedBytes, maxBytes) })
+        <EuiText>
+          { formatPercentageUsage(usedBytes, maxBytes) }
+        </EuiText>
+        <EuiText color="subdued" size="s">
+          { formatBytesUsage(usedBytes, maxBytes) }
+        </EuiText>
       </span>
     );
   }

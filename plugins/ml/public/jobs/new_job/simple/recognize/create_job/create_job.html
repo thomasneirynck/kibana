@@ -3,7 +3,9 @@
   <ml-message-bar></ml-message-bar>
   <div ng-controller="MlCreateRecognizerJobs" class="recognizer-job-container">
     <div class="row">
-      <div class="col-md-6"><h3>New job from {{ui.pageTitle}}</h3></div>
+      <div class="col-md-6">
+        <h3 class="euiTitle euiTitle--large">New job from {{ui.pageTitle}}</h3>
+      </div>
 <!--       <div class="col-md-6">
         <div class="pull-right">
           <span style="font-size:10px;" ng-show="formConfig.chartInterval !== undefined">Chart interval: {{formConfig.chartInterval.getInterval().expression}}</span>
@@ -20,14 +22,16 @@
  -->
     </div>
 
+    <div class="euiSpacer euiSpacer--l"></div>
+
     <div class="row">
       <div class="col-md-4">
         <div class="row form-controls">
-          <h4 >Job settings</h4>
+          <h4 class="euiTitle euiTitle--small">Job settings</h4>
           <div>
 
             <div class='form-section' >
-              <h4 >Job Details</h4>
+              <h4 class="euiTitle euiTitle--small">Job Details</h4>
               <div class="form-group">
                 <div ng-show="ui.showJobInput && (overallState === SAVE_STATE.NOT_SAVED || overallState === SAVE_STATE.SAVING)">
                   <div class="form-group">
@@ -60,7 +64,7 @@
                         class="kuiButton kuiButton--small kuiButton--hollow advanced-button">
                         <i ng-class="{ 'fa-caret-down': ui.showAdvanced, 'fa-caret-right': !ui.showAdvanced }" class="fa" aria-label="Show advanced" ></i>
                       </button>
-                      <label aria-describedby="ml_aria_description_new_job_advanced_settings">Advanced</label>
+                      <label class="kuiFormLabel" aria-describedby="ml_aria_description_new_job_advanced_settings">Advanced</label>
                       <i ml-info-icon="new_job_advanced_settings" aria-label="Advanced settings" />
                     </div>
                     <div class='advanced-group' ng-show="ui.showAdvanced">
@@ -113,7 +117,7 @@
                   <div class='job-state-info' ng-show="overallState === SAVE_STATE.SAVING">Analysis running <i class='fa fa-spinner fa-spin' aria-label="Analysis running" ></i></div>
                 </div>
                 <div ng-show="overallState === SAVE_STATE.SAVED">
-                  <h3>Jobs created</h3>
+                  <h3 class="euiTitle euiTitle--small">Jobs created</h3>
 
                   <button
                     aria-label="Reset"
@@ -131,7 +135,7 @@
                 </div>
 
                 <div ng-show="overallState === SAVE_STATE.FAILED">
-                  <h3>Jobs creation failed</h3>
+                  <h3 class="euiTitle euiTitle--small">Jobs creation failed</h3>
 
                   <button
                     aria-label="Reset"
@@ -148,7 +152,7 @@
       </div>
       <div class="col-md-8">
         <div class="row charts-container">
-          <h4>Jobs</h4>
+          <h4 class="euiTitle euiTitle--small">Jobs</h4>
           <div class='jobs-list'>
             <div ng-repeat='job in formConfig.jobs' class='job-container'>
               <div class='labels'>
@@ -190,7 +194,7 @@
         </div>
 
         <div class="row charts-container" ng-repeat='(key, value) in formConfig.kibanaObjects'>
-          <h4>{{ui.kibanaLabels[key]}}</h4>
+          <h4 class="euiTitle euiTitle--small">{{ui.kibanaLabels[key]}}</h4>
           <div class='save-objects-list'>
             <div ng-repeat='obj in value' class='job-container'>
               <div class='labels'>

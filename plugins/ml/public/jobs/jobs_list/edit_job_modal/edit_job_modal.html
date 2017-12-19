@@ -1,6 +1,8 @@
 <div class="edit-job-modal">
   <ml-message-bar ></ml-message-bar>
-  <h3 tooltip="{{ui.title}}">{{ui.title}}</h3>
+  <h3 tooltip="{{ui.title}}" class="euiTitle">{{ui.title}}</h3>
+
+  <div class="euiSpacer euiSpacer--m"></div>
 
   <ul class="nav nav-tabs" >
     <li
@@ -26,7 +28,7 @@
         class="form-control" />
     </div>
 
-    <hr />
+    <hr class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium">
 
     <div class="form-group">
       <ml-form-label label-id="new_job_group">Job Groups</ml-form-label>
@@ -36,7 +38,7 @@
         job-groups='job.groups' />
     </div>
 
-    <hr />
+    <hr class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium">
 
     <div class="form-group">
       <label>Custom URLs</label><i ml-info-icon="new_job_custom_urls" />
@@ -91,7 +93,7 @@
     <div class="form-group"
       ng-show="(job.analysis_config.categorization_field_name !== undefined && job.analysis_config.categorization_field_name !== '') ||
                (job.analysis_config.categorization_filters && job.analysis_config.categorization_filters.length)">
-      <hr />
+      <hr class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium">
 
       <label aria-describedby="ml_aria_description_new_job_categorizationfilters">Categorization Filters</label>
       <i ml-info-icon="new_job_categorizationfilters" />
@@ -136,7 +138,7 @@
 
   <!-- Detectors -->
   <div class="tab_contents" ng-show="ui.currentTab === 1">
-    <label>Edit detector descriptions</label>
+    <label class="kuiFormLabel">Edit detector descriptions</label>
     <div ml-job-detectors-list
       ml-detectors="job.analysis_config.detectors"
       ml-indices="indices"
@@ -200,7 +202,7 @@
     </div>
   </div>
 
-  <hr />
+  <hr class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium">
 
   <button
     ng-click="save()"

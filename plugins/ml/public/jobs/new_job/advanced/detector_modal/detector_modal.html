@@ -1,6 +1,6 @@
 <div class="detector-modal">
   <ml-message-bar ></ml-message-bar>
-  <h3>{{title}}</h3>
+  <h3 class="euiTitle euiTitle--small">{{title}}</h3>
 
   <div class="form-group">
     <ml-form-label label-id="new_job_detector_description">Description</ml-form-label>
@@ -98,7 +98,7 @@
   </div>
   <small><div class='help-pane'><ml-documentation-help-link ml-uri="{{helpLink.uri}}" ml-label="{{helpLink.label}}"></ml-documentation-help-link></div></small>
 
-  <hr />
+  <hr class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium">
 
   <button
     ng-click="save()"

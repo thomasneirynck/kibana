@@ -4,7 +4,7 @@ import { mapSeverity } from './map_severity';
 export function SeverityIcon({ severity }) {
   const mappedSeverity = mapSeverity(severity);
   const icon = (() => {
-    switch(mappedSeverity) {
+    switch(mappedSeverity.value) {
       case 'ok': return 'alert-green.svg'; // used for cluster listing row when cluster has no alerts
       case 'low': return 'alert-blue.svg';
       case 'medium': return 'alert-yellow.svg';
@@ -14,7 +14,7 @@ export function SeverityIcon({ severity }) {
 
   return (
     <img
-      alt={`severity level: ${mappedSeverity}`}
+      alt={mappedSeverity.humanized}
       src={`../plugins/monitoring/icons/${icon}`}
       data-test-subj="alertIcon"
     />

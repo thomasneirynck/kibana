@@ -38,34 +38,34 @@ export default function ({ getService, getPageObjects }) {
       });
 
       it('shows elasticsearch panel with data', async () => {
-        expect(await overview.getEsStatus()).to.be('Health: green');
-        expect(await overview.getEsVersion()).to.be('Version: 7.0.0-alpha1');
-        expect(await overview.getEsUptime()).to.be('Uptime: 20 minutes');
+        expect(await overview.getEsStatus()).to.be('Health is green');
+        expect(await overview.getEsVersion()).to.be('7.0.0-alpha1');
+        expect(await overview.getEsUptime()).to.be('20 minutes');
         expect(await overview.getEsNumberOfNodes()).to.be('Nodes: 2');
-        expect(await overview.getEsDiskAvailable()).to.be('Disk Available: 188GB / 465GB  (40.35%)');
-        expect(await overview.getEsJvmHeap()).to.be('JVM Heap: 43.90%  (526MB / 1GB)');
+        expect(await overview.getEsDiskAvailable()).to.be('40.35%\n188GB / 465GB');
+        expect(await overview.getEsJvmHeap()).to.be('43.90%\n526MB / 1GB');
         expect(await overview.getEsNumberOfIndices()).to.be('Indices: 17');
-        expect(await overview.getEsDocumentsCount()).to.be('Documents: 4,001');
-        expect(await overview.getEsDiskUsage()).to.be('Disk Usage: 11MB');
-        expect(await overview.getEsPrimaryShards()).to.be('Primary Shards: 49');
-        expect(await overview.getEsReplicaShards()).to.be('Replica Shards: 49');
+        expect(await overview.getEsDocumentsCount()).to.be('4,001');
+        expect(await overview.getEsDiskUsage()).to.be('11MB');
+        expect(await overview.getEsPrimaryShards()).to.be('49');
+        expect(await overview.getEsReplicaShards()).to.be('49');
       });
 
       it('shows kibana panel', async () => {
-        expect(await overview.getEsStatus()).to.be('Health: green');
-        expect(await overview.getKbnRequests()).to.be('Requests: 914');
-        expect(await overview.getKbnMaxResponseTime()).to.be('Max. Response Time: 2873 ms');
+        expect(await overview.getEsStatus()).to.be('Health is green');
+        expect(await overview.getKbnRequests()).to.be('914');
+        expect(await overview.getKbnMaxResponseTime()).to.be('2873 ms');
         expect(await overview.getKbnInstances()).to.be('Instances: 1');
-        expect(await overview.getKbnConnections()).to.be('Connections: 646');
-        expect(await overview.getKbnMemoryUsage()).to.be('Memory Usage: 13.05%  (187MB / 1GB)');
+        expect(await overview.getKbnConnections()).to.be('646');
+        expect(await overview.getKbnMemoryUsage()).to.be('13.05%\n187MB / 1GB');
       });
 
       it('shows logstash panel', async () => {
-        expect(await overview.getLsEventsReceived()).to.be('Events Received: 31');
-        expect(await overview.getLsEventsEmitted()).to.be('Events Emitted: 31');
+        expect(await overview.getLsEventsReceived()).to.be('31');
+        expect(await overview.getLsEventsEmitted()).to.be('31');
         expect(await overview.getLsNodes()).to.be('Nodes: 1');
-        expect(await overview.getLsUptime()).to.be('Uptime: 10 minutes');
-        expect(await overview.getLsJvmHeap()).to.be('JVM Heap: 46.16%  (457MB / 991MB)');
+        expect(await overview.getLsUptime()).to.be('10 minutes');
+        expect(await overview.getLsJvmHeap()).to.be('46.16%\n457MB / 991MB');
         expect(await overview.getLsPipelines()).to.be('Pipelines: 1');
       });
     });
@@ -92,30 +92,30 @@ export default function ({ getService, getPageObjects }) {
       });
 
       it('elasticsearch panel has ML, because license is Platinum', async () => {
-        expect(await overview.getEsMlJobs()).to.be('Jobs: 0');
+        expect(await overview.getEsMlJobs()).to.be('0');
       });
 
       it('shows elasticsearch panel with data', async () => {
-        expect(await overview.getEsStatus()).to.be('Health: yellow');
-        expect(await overview.getEsVersion()).to.be('Version: 7.0.0-alpha1');
-        expect(await overview.getEsUptime()).to.be('Uptime: 5 minutes');
+        expect(await overview.getEsStatus()).to.be('Health is yellow');
+        expect(await overview.getEsVersion()).to.be('7.0.0-alpha1');
+        expect(await overview.getEsUptime()).to.be('5 minutes');
         expect(await overview.getEsNumberOfNodes()).to.be('Nodes: 1');
-        expect(await overview.getEsDiskAvailable()).to.be('Disk Available: 186GB / 465GB  (40.05%)');
-        expect(await overview.getEsJvmHeap()).to.be('JVM Heap: 25.06%  (150MB / 599MB)');
+        expect(await overview.getEsDiskAvailable()).to.be('40.05%\n186GB / 465GB');
+        expect(await overview.getEsJvmHeap()).to.be('25.06%\n150MB / 599MB');
         expect(await overview.getEsNumberOfIndices()).to.be('Indices: 8');
-        expect(await overview.getEsDocumentsCount()).to.be('Documents: 160');
-        expect(await overview.getEsDiskUsage()).to.be('Disk Usage: 806KB');
-        expect(await overview.getEsPrimaryShards()).to.be('Primary Shards: 8');
-        expect(await overview.getEsReplicaShards()).to.be('Replica Shards: 0');
+        expect(await overview.getEsDocumentsCount()).to.be('160');
+        expect(await overview.getEsDiskUsage()).to.be('806KB');
+        expect(await overview.getEsPrimaryShards()).to.be('8');
+        expect(await overview.getEsReplicaShards()).to.be('0');
       });
 
       it('shows kibana panel', async () => {
-        expect(await overview.getKbnStatus()).to.be('Health: green');
-        expect(await overview.getKbnRequests()).to.be('Requests: 174');
-        expect(await overview.getKbnMaxResponseTime()).to.be('Max. Response Time: 2203 ms');
+        expect(await overview.getKbnStatus()).to.be('Health is green');
+        expect(await overview.getKbnRequests()).to.be('174');
+        expect(await overview.getKbnMaxResponseTime()).to.be('2203 ms');
         expect(await overview.getKbnInstances()).to.be('Instances: 1');
-        expect(await overview.getKbnConnections()).to.be('Connections: 174');
-        expect(await overview.getKbnMemoryUsage()).to.be('Memory Usage: 15.33%  (220MB / 1GB)');
+        expect(await overview.getKbnConnections()).to.be('174');
+        expect(await overview.getKbnMemoryUsage()).to.be('15.33%\n220MB / 1GB');
       });
 
       it('does not show logstash panel', async () => {
@@ -149,17 +149,17 @@ export default function ({ getService, getPageObjects }) {
       });
 
       it('shows elasticsearch panel with data', async () => {
-        expect(await overview.getEsStatus()).to.be('Health: yellow');
-        expect(await overview.getEsVersion()).to.be('Version: 7.0.0-alpha1');
-        expect(await overview.getEsUptime()).to.be('Uptime: 8 minutes');
+        expect(await overview.getEsStatus()).to.be('Health is yellow');
+        expect(await overview.getEsVersion()).to.be('7.0.0-alpha1');
+        expect(await overview.getEsUptime()).to.be('8 minutes');
         expect(await overview.getEsNumberOfNodes()).to.be('Nodes: 1');
-        expect(await overview.getEsDiskAvailable()).to.be('Disk Available: 186GB / 465GB  (40.02%)');
-        expect(await overview.getEsJvmHeap()).to.be('JVM Heap: 20.06%  (120MB / 599MB)');
+        expect(await overview.getEsDiskAvailable()).to.be('40.02%\n186GB / 465GB');
+        expect(await overview.getEsJvmHeap()).to.be('20.06%\n120MB / 599MB');
         expect(await overview.getEsNumberOfIndices()).to.be('Indices: 7');
-        expect(await overview.getEsDocumentsCount()).to.be('Documents: 410');
-        expect(await overview.getEsDiskUsage()).to.be('Disk Usage: 724KB');
-        expect(await overview.getEsPrimaryShards()).to.be('Primary Shards: 7');
-        expect(await overview.getEsReplicaShards()).to.be('Replica Shards: 0');
+        expect(await overview.getEsDocumentsCount()).to.be('410');
+        expect(await overview.getEsDiskUsage()).to.be('724KB');
+        expect(await overview.getEsPrimaryShards()).to.be('7');
+        expect(await overview.getEsReplicaShards()).to.be('0');
       });
 
       it('shows kibana panel', async () => {

@@ -9,6 +9,8 @@ import {
   borderRadius
 } from '../../../style/variables';
 
+import { EuiText } from '@elastic/eui';
+
 const IntroductionWrapper = styled.div`
   padding: ${px(units.plus)};
   margin-bottom: ${px(unit)};
@@ -55,37 +57,39 @@ const Subtitle = styled.h2`
 function Introduction() {
   return (
     <IntroductionWrapper>
-      <Icon />
-      <Title>APM</Title>
-      <TitleLabel>Beta</TitleLabel>
-      <Subtitle>
-        APM (Application Performance Monitoring) automatically collects in-depth
-        performance metrics and errors from inside your applications.
-      </Subtitle>
-      <Description>
-        APM consists of three components - the Agents, the Server, and the UI:<br
-        />
-        <br />
-        <ul>
-          <li>
-            The Agents are libraries in your application that run inside of your
-            application process.
-          </li>
-          <li>
-            The Server processes data from agents and stores the application
-            data in Elasticsearch.
-          </li>
-          <li>
-            The UI is this dedicated Kibana APM plugin and customizable
-            dashboards.
-          </li>
-        </ul>
-        For more information,{' '}
-        <a href="https://www.elastic.co/guide/en/apm/get-started/6.1/index.html">
-          please see our documentation.
-        </a>{' '}
-        To get started, follow the steps below.
-      </Description>
+      <EuiText>
+        <Icon />
+        <Title>APM</Title>
+        <TitleLabel>Beta</TitleLabel>
+        <Subtitle>
+          APM (Application Performance Monitoring) automatically collects
+          in-depth performance metrics and errors from inside your applications.
+        </Subtitle>
+        <Description>
+          APM consists of three components - the Agents, the Server, and the UI:<br
+          />
+          <br />
+          <ul>
+            <li>
+              The Agents are libraries in your application that run inside of
+              your application process.
+            </li>
+            <li>
+              The Server processes data from agents and stores the application
+              data in Elasticsearch.
+            </li>
+            <li>
+              The UI is this dedicated Kibana APM plugin and customizable
+              dashboards.
+            </li>
+          </ul>
+          For more information,{' '}
+          <a href="https://www.elastic.co/guide/en/apm/get-started/6.1/index.html">
+            please see our documentation.
+          </a>{' '}
+          To get started, follow the steps below.
+        </Description>
+      </EuiText>
     </IntroductionWrapper>
   );
 }

@@ -10,18 +10,7 @@ import StatusCheckText from './StatusCheckText';
 import CopyButton from './CopyButton';
 import MarkdownRenderer from 'react-markdown-renderer';
 
-import SyntaxHighlighter, {
-  registerLanguage
-} from 'react-syntax-highlighter/dist/light';
-import { xcode } from 'react-syntax-highlighter/dist/styles';
-
-import bash from 'react-syntax-highlighter/dist/languages/bash';
-import javascript from 'react-syntax-highlighter/dist/languages/javascript';
-import python from 'react-syntax-highlighter/dist/languages/python';
-
-registerLanguage('bash', bash);
-registerLanguage('javascript', javascript);
-registerLanguage('python', python);
+import { EuiCodeBlock, EuiText } from '@elastic/eui';
 
 const StepWrapper = styled.div`
   display: flex;
@@ -68,7 +57,9 @@ function Step({ step, isLastStep, checkStatus, result, type }) {
         <Title>{step.title || ''}</Title>
         {step.textPre && (
           <Description>
-            <MarkdownRenderer markdown={step.textPre || ''} />
+            <EuiText>
+              <MarkdownRenderer markdown={step.textPre || ''} />
+            </EuiText>
           </Description>
         )}
         {step.downloadButton && (
@@ -93,24 +84,21 @@ function Step({ step, isLastStep, checkStatus, result, type }) {
               Copy snippet
             </CopyButton>
 
-            <SyntaxHighlighter
+            <EuiCodeBlock
               language={step.codeLanguage || 'bash'}
-              style={xcode}
-              customStyle={{
-                color: null,
-                padding: null,
-                background: null,
-                overflowX: null
-              }}
+              fontSize="m"
+              paddingSize="m"
             >
               {step.code || ''}
-            </SyntaxHighlighter>
+            </EuiCodeBlock>
           </CodeWrapper>
         )}
 
         {step.textPost && (
           <Description>
-            <MarkdownRenderer markdown={step.textPost || ''} />
+            <EuiText>
+              <MarkdownRenderer markdown={step.textPost || ''} />
+            </EuiText>
           </Description>
         )}
 

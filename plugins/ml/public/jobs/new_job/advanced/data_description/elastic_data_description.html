@@ -2,13 +2,13 @@
   <div ng-show="ui.esServerOk === 1">
 
     <div class="form-group">
-      <div><label><input type="radio" name="indexRadio" ng-model="ui.wizard.indexInputType" value="{{INDEX_INPUT_TYPE.TEXT}}" /> Input index</label></div>
-      <div><label><input type="radio" name="indexRadio" ng-model="ui.wizard.indexInputType" value="{{INDEX_INPUT_TYPE.LIST}}" /> Choose index from list</label></div>
+      <div><label class="kuiFormLabel"><input type="radio" name="indexRadio" ng-model="ui.wizard.indexInputType" value="{{INDEX_INPUT_TYPE.TEXT}}" /> Input index</label></div>
+      <div><label class="kuiFormLabel"><input type="radio" name="indexRadio" ng-model="ui.wizard.indexInputType" value="{{INDEX_INPUT_TYPE.LIST}}" /> Choose index from list</label></div>
     </div>
 
     <!-- text input index list -->
     <div ng-show="ui.wizard.indexInputType === INDEX_INPUT_TYPE.TEXT" class="form-group">
-      <label>Index</label>
+      <label class="kuiFormLabel">Index</label>
       <div class="input-group">
       <input
         ng-model="ui.datafeed.indicesText"$
@@ -29,7 +29,7 @@
 
     <!-- checkbox index list -->
     <div ng-show="ui.wizard.indexInputType === INDEX_INPUT_TYPE.LIST" class="form-group">
-      <label>Indices</label>
+      <label class="kuiFormLabel">Indices</label>
       <div>
         <div class="index-list-container">
           <div ng-repeat="(key, value) in ui.sortByKey(ui.indices) | filterIndices" >
@@ -43,7 +43,7 @@
     </div>
 
     <div ng-show="ui.indexTextOk" class="form-group">
-      <label>Time-field name</label>
+      <label class="kuiFormLabel">Time-field name</label>
       <select
         ng-model="data_description.time_field"
         class="form-control">

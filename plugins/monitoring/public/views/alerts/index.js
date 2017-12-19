@@ -21,7 +21,7 @@ function getPageData($injector) {
       return {
         ...alert,
         since: formatTimestampToDuration(alert.timestamp, CALCULATE_DURATION_SINCE),
-        severity_group: mapSeverity(alert.metadata.severity)
+        severity_group: mapSeverity(alert.metadata.severity).value
       };
     });
   })

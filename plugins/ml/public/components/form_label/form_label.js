@@ -36,7 +36,7 @@ module.directive('mlFormLabel', function () {
     replace: false,
     transclude: true,
     template: `
-      <label id="ml_aria_label_{{labelId}}" ng-transclude></label>
+      <label class="kuiFormLabel" id="ml_aria_label_{{labelId}}" ng-transclude></label>
       <i ml-info-icon="{{labelId}}" />
     `
   };

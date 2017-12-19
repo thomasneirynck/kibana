@@ -1,3 +1,14 @@
 @import "./icons";
 @import "./tooltips";
 @import "./ui-select";
+
+// Hacks. These need to be removed when ML converts to EUI.
+.tab-jobs, .edit-job-modal {
+  label {
+    display: inline-block;
+  }
+
+  .validation-error {
+    margin-top: 5px;
+  }
+}

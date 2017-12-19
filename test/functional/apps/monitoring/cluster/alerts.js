@@ -1,5 +1,9 @@
 import expect from 'expect.js';
 
+const HIGH_ALERT_MESSAGE = 'High severity alert';
+const MEDIUM_ALERT_MESSAGE = 'Medium severity alert';
+const LOW_ALERT_MESSAGE = 'Low severity alert';
+
 export default function ({ getService, getPageObjects }) {
   const esArchiver = getService('esArchiver');
   const kibanaServer = getService('kibanaServer');
@@ -39,7 +43,7 @@ export default function ({ getService, getPageObjects }) {
         expect(clusterAlerts.length).to.be(1);
 
         const { alertIcon, alertText } = await alerts.getOverviewAlert(0);
-        expect(alertIcon).to.be('severity level: medium');
+        expect(alertIcon).to.be(MEDIUM_ALERT_MESSAGE);
         expect(alertText).to.be('Elasticsearch cluster status is yellow. Allocate missing replica shards.');
       });
     });
@@ -71,15 +75,15 @@ export default function ({ getService, getPageObjects }) {
         // check the all data in the panel
         const panelData = [
           {
-            alertIcon: 'severity level: high',
+            alertIcon: HIGH_ALERT_MESSAGE,
             alertText: 'One cannot step twice in the same river. Heraclitus (ca. 540 – ca. 480 BCE)'
           },
           {
-            alertIcon: 'severity level: high',
+            alertIcon: HIGH_ALERT_MESSAGE,
             alertText: 'Quality is not an act, it is a habit. Aristotle (384-322 BCE)'
           },
           {
-            alertIcon: 'severity level: high',
+            alertIcon: HIGH_ALERT_MESSAGE,
             alertText: (
               'Life contains but two tragedies. One is not to get your heart’s desire; the other is to get it. Socrates (470-399 BCE)'
             )
@@ -105,45 +109,45 @@ export default function ({ getService, getPageObjects }) {
         // check the all data in the table
         const tableData = [
           {
-            alertIcon: 'severity level: high',
+            alertIcon: HIGH_ALERT_MESSAGE,
             alertText: 'One cannot step twice in the same river. Heraclitus (ca. 540 – ca. 480 BCE)'
           },
           {
-            alertIcon: 'severity level: high',
+            alertIcon: HIGH_ALERT_MESSAGE,
             alertText: 'Quality is not an act, it is a habit. Aristotle (384-322 BCE)'
           },
           {
-            alertIcon: 'severity level: high',
+            alertIcon: HIGH_ALERT_MESSAGE,
             alertText: (
               'Life contains but two tragedies. One is not to get your heart’s desire; the other is to get it. Socrates (470-399 BCE)'
             )
           },
           {
-            alertIcon: 'severity level: high',
+            alertIcon: HIGH_ALERT_MESSAGE,
             alertText: 'The owl of Minerva spreads its wings only with the falling of the dusk. G.W.F. Hegel (1770 – 1831)'
           },
           {
-            alertIcon: 'severity level: medium',
+            alertIcon: MEDIUM_ALERT_MESSAGE,
             alertText: 'We live in the best of all possible worlds. Gottfried Wilhelm Leibniz (1646 – 1716)'
           },
           {
-            alertIcon: 'severity level: medium',
+            alertIcon: MEDIUM_ALERT_MESSAGE,
             alertText: 'To be is to be perceived (Esse est percipi). Bishop George Berkeley (1685 – 1753)'
           },
           {
-            alertIcon: 'severity level: medium',
+            alertIcon: MEDIUM_ALERT_MESSAGE,
             alertText: 'I think therefore I am. René Descartes (1596 – 1650)'
           },
           {
-            alertIcon: 'severity level: low',
+            alertIcon: LOW_ALERT_MESSAGE,
             alertText: 'The life of man [is] solitary, poor, nasty, brutish, and short. Thomas Hobbes (1588 – 1679)'
           },
           {
-            alertIcon: 'severity level: low',
+            alertIcon: LOW_ALERT_MESSAGE,
             alertText: 'Entities should not be multiplied unnecessarily. William of Ockham (1285 - 1349?)'
           },
           {
-            alertIcon: 'severity level: low',
+            alertIcon: LOW_ALERT_MESSAGE,
             alertText: 'The unexamined life is not worth living. Socrates (470-399 BCE)'
           },
         ];

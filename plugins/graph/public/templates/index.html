@@ -189,7 +189,10 @@
                       <input
                              ng-change="selectedFieldConfigHopSizeChanged()"
                               type="number" class="input-sm" min="0" max="100" step="1" id="qHopSize" ng-model="selectedFieldConfig.hopSize">
-                      <div class="help-block">Controls the number of terms returned each search step.
+                      <div class="help-block">
+                        <div class="euiText">
+                          <p>Controls the number of terms returned each search step.</p>
+                        </div>
 
                         <div class="hintbox">
                           <span class="kuiIcon fa-info text-info"></span> Shift-clicking the field icons in the menu bar provides a quick way to toggle this number to zero and back

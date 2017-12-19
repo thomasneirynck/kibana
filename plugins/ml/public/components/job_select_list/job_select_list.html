@@ -22,7 +22,7 @@
         <div class='group' ng-repeat="group in selected.groups">
           <div class='group-title job-row'>
             <div class="job-row-inner">
-              <label>
+              <label class="kuiFormLabel">
                 <div >
                   <input
                     ng-if="singleSelection !== true && group.selectable === true" type="checkbox"
@@ -60,7 +60,7 @@
     <div class="list-section" ng-class="{'list-section-single': singleSelection}">
       <div class='job-row' ng-repeat="job in selected.jobs">
         <div class='job-row-inner'>
-          <label>
+          <label class="kuiFormLabel">
             <div>
               <span>
                 <input ng-if="singleSelection !== true" type="checkbox"
@@ -109,7 +109,7 @@
   </div>
 
   <div class='apply-time-range'>
-    <label>
+    <label class="kuiFormLabel">
     <input type="checkbox"
       ng-model="applyTimeRange"/>
       Also apply time range

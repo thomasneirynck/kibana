@@ -10,11 +10,9 @@ export function FormattedMessage({ prefix, suffix, message, metadata, changeUrl 
     if (metadata && metadata.link) {
       if (metadata.link.startsWith('https')) {
         return (
-          <KuiKeyboardAccessible>
-            <a className="kuiLink" href={metadata.link} target="_blank" data-test-subj="alertAction">
-              { message }
-            </a>
-          </KuiKeyboardAccessible>
+          <a className="kuiLink" href={metadata.link} target="_blank" data-test-subj="alertAction">
+            { message }
+          </a>
         );
       }
 

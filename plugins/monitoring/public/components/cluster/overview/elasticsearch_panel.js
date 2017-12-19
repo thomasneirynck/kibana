@@ -1,9 +1,19 @@
 import React from 'react';
-import { get, capitalize } from 'lodash';
+import { get } from 'lodash';
 import { formatNumber } from 'plugins/monitoring/lib/format_number';
-import { KuiKeyboardAccessible } from 'ui_framework/components';
-import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';
 import { ClusterItemContainer, HealthStatusIndicator, BytesUsage, BytesPercentageUsage } from './helpers';
+
+import {
+  EuiFlexGrid,
+  EuiFlexItem,
+  EuiLink,
+  EuiTitle,
+  EuiPanel,
+  EuiDescriptionList,
+  EuiDescriptionListTitle,
+  EuiDescriptionListDescription,
+  EuiHorizontalRule,
+} from '@elastic/eui';
 
 const calculateShards = shards => {
   const total = get(shards, 'total', 0);
@@ -36,86 +46,127 @@ export function ElasticsearchPanel(props) {
   const { primaries, replicas } = calculateShards(get(props, 'cluster_stats.indices.shards', {}));
 
   const statusIndicator = (
-    <HealthStatusIndicator>
-      <ElasticsearchStatusIcon status={clusterStats.status} />&nbsp;
-      { capitalize(clusterStats.status) }
-    </HealthStatusIndicator>
+    <HealthStatusIndicator status={clusterStats.status} />
   );
 
   const showMlJobs = () => {
     // if license doesn't support ML, then `ml === null`
     if (props.ml) {
-      return <dd data-test-subj="esMlJobs">Jobs: { props.ml.jobs }</dd>;
+      return [
+        <EuiDescriptionListTitle>Jobs</EuiDescriptionListTitle>,
+        <EuiDescriptionListDescription data-test-subj="esMlJobs">{ props.ml.jobs }</EuiDescriptionListDescription>
+      ];
     }
     return null;
   };
 
   return (
     <ClusterItemContainer {...props} statusIndicator={statusIndicator} url="elasticsearch" title="Elasticsearch">
-      <div className="row">
-        <div className="col-md-4">
-          <dl>
-            <dt className="cluster-panel__inner-title">
-              <KuiKeyboardAccessible>
-                <a className="kuiLink" onClick={goToElasticsearch} aria-label="Elasticsearch Overview">
+      <EuiFlexGrid columns={3}>
+
+        <EuiFlexItem>
+          <EuiPanel paddingSize="m">
+            <EuiTitle size="s">
+              <h3>
+                <EuiLink onClick={goToElasticsearch} aria-label="Elasticsearch Overview">
                   Overview
-                </a>
-              </KuiKeyboardAccessible>
-            </dt>
-            <dd data-test-subj="esVersion">Version: { get(nodes, 'versions[0]') || 'N/A' }</dd>
-            <dd data-test-subj="esUptime">Uptime: { formatNumber(get(nodes, 'jvm.max_uptime_in_millis'), 'time_since') }</dd>
-            {showMlJobs()}
-          </dl>
-        </div>
-        <div className="col-md-4">
-          <dl>
-            <dt className="cluster-panel__inner-title">
-              <KuiKeyboardAccessible>
-                <a
-                  className="kuiLink"
-                  onClick={goToNodes}
+                </EuiLink>
+              </h3>
+            </EuiTitle>
+            <EuiHorizontalRule margin="m" />
+            <EuiDescriptionList type="column">
+              <EuiDescriptionListTitle>Version</EuiDescriptionListTitle>
+              <EuiDescriptionListDescription data-test-subj="esVersion">
+                { get(nodes, 'versions[0]') || 'N/A' }
+              </EuiDescriptionListDescription>
+              <EuiDescriptionListTitle>Uptime</EuiDescriptionListTitle>
+              <EuiDescriptionListDescription data-test-subj="esUptime">
+                { formatNumber(get(nodes, 'jvm.max_uptime_in_millis'), 'time_since') }
+              </EuiDescriptionListDescription>
+              {showMlJobs()}
+            </EuiDescriptionList>
+          </EuiPanel>
+        </EuiFlexItem>
+
+        <EuiFlexItem>
+          <EuiPanel paddingSize="m">
+            <EuiTitle size="s">
+              <h3>
+                <EuiLink
                   data-test-subj="esNumberOfNodes"
-                  aria-label={`Elasticsearch Nodes: ${ formatNumber(get(nodes, 'count.total'), 'int_commas') }`}
+                  onClick={goToNodes}
                 >
                   Nodes: { formatNumber(get(nodes, 'count.total'), 'int_commas') }
-                </a>
-              </KuiKeyboardAccessible>
-            </dt>
-            <dd data-test-subj="esDiskAvailable">
-              Disk Available: <BytesUsage
-                usedBytes={get(nodes, 'fs.available_in_bytes')}
-                maxBytes={get(nodes, 'fs.total_in_bytes')}
-              />
-            </dd>
-            <dd data-test-subj="esJvmHeap">
-              JVM Heap: <BytesPercentageUsage
-                usedBytes={get(nodes, 'jvm.mem.heap_used_in_bytes')}
-                maxBytes={get(nodes, 'jvm.mem.heap_max_in_bytes')}
-              />
-            </dd>
-          </dl>
-        </div>
-        <div className="col-md-4">
-          <dl>
-            <dt className="cluster-panel__inner-title">
-              <KuiKeyboardAccessible>
-                <a
-                  className="kuiLink"
+                </EuiLink>
+              </h3>
+            </EuiTitle>
+            <EuiHorizontalRule margin="m" />
+            <EuiDescriptionList type="column">
+              <EuiDescriptionListTitle>Disk Available</EuiDescriptionListTitle>
+              <EuiDescriptionListDescription data-test-subj="esDiskAvailable">
+                <BytesUsage
+                  usedBytes={get(nodes, 'fs.available_in_bytes')}
+                  maxBytes={get(nodes, 'fs.total_in_bytes')}
+                />
+              </EuiDescriptionListDescription>
+              <EuiDescriptionListTitle>JVM Heap</EuiDescriptionListTitle>
+              <EuiDescriptionListDescription data-test-subj="esJvmHeap">
+                <BytesPercentageUsage
+                  usedBytes={get(nodes, 'jvm.mem.heap_used_in_bytes')}
+                  maxBytes={get(nodes, 'jvm.mem.heap_max_in_bytes')}
+                />
+              </EuiDescriptionListDescription>
+            </EuiDescriptionList>
+          </EuiPanel>
+        </EuiFlexItem>
+
+        <EuiFlexItem>
+          <EuiPanel paddingSize="m">
+            <EuiTitle size="s">
+              <h3>
+                <EuiLink
                   onClick={goToIndices}
                   data-test-subj="esNumberOfIndices"
                   aria-label={`Elasticsearch Indices: ${ formatNumber(get(indices, 'count'), 'int_commas') }`}
                 >
                   Indices: { formatNumber(get(indices, 'count'), 'int_commas') }
-                </a>
-              </KuiKeyboardAccessible>
-            </dt>
-            <dd data-test-subj="esDocumentsCount">Documents: { formatNumber(get(indices, 'docs.count'), 'int_commas') }</dd>
-            <dd data-test-subj="esDiskUsage">Disk Usage: { formatNumber(get(indices, 'store.size_in_bytes'), 'bytes') }</dd>
-            <dd data-test-subj="esPrimaryShards">Primary Shards: { primaries }</dd>
-            <dd data-test-subj="esReplicaShards">Replica Shards: { replicas }</dd>
-          </dl>
-        </div>
-      </div>
+                </EuiLink>
+              </h3>
+            </EuiTitle>
+            <EuiHorizontalRule margin="m" />
+            <EuiDescriptionList type="column">
+              <EuiDescriptionListTitle>
+                Documents
+              </EuiDescriptionListTitle>
+              <EuiDescriptionListDescription data-test-subj="esDocumentsCount">
+                { formatNumber(get(indices, 'docs.count'), 'int_commas') }
+              </EuiDescriptionListDescription>
+
+              <EuiDescriptionListTitle>
+                Disk Usage
+              </EuiDescriptionListTitle>
+              <EuiDescriptionListDescription data-test-subj="esDiskUsage">
+                { formatNumber(get(indices, 'store.size_in_bytes'), 'bytes') }
+              </EuiDescriptionListDescription>
+
+              <EuiDescriptionListTitle>
+                Primary Shards
+              </EuiDescriptionListTitle>
+              <EuiDescriptionListDescription data-test-subj="esPrimaryShards">
+                { primaries }
+              </EuiDescriptionListDescription>
+
+              <EuiDescriptionListTitle>
+                Replica Shards
+              </EuiDescriptionListTitle>
+              <EuiDescriptionListDescription data-test-subj="esReplicaShards">
+                { replicas }
+              </EuiDescriptionListDescription>
+            </EuiDescriptionList>
+          </EuiPanel>
+        </EuiFlexItem>
+
+      </EuiFlexGrid>
     </ClusterItemContainer>
   );
 }
