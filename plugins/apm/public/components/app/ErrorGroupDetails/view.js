@@ -7,7 +7,11 @@ import DetailView from './DetailView';
 import Distribution from './Distribution';
 
 import { units, px, fontFamilyCode, fontSizes } from '../../../style/variables';
-import { ERROR_CULPRIT, ERROR_MESSAGE } from '../../../../common/constants';
+import {
+  ERROR_CULPRIT,
+  ERROR_LOG_MESSAGE,
+  ERROR_EXC_MESSAGE
+} from '../../../../common/constants';
 
 const Titles = styled.div`
   height: ${px(units.triple)};
@@ -46,15 +50,17 @@ class ErrorGroupDetails extends Component {
     const { errorGroupId } = this.props.urlParams;
     const { errorGroup } = this.props;
 
-    const message = get(errorGroup.data.error, ERROR_MESSAGE);
+    const message =
+      get(errorGroup.data.error, ERROR_LOG_MESSAGE) ||
+      get(errorGroup.data.error, ERROR_EXC_MESSAGE);
     const culprit = get(errorGroup.data.error, ERROR_CULPRIT);
 
     return (
       <div>
         <PageHeader>Error group {errorGroupId.slice(0, 5) || 'N/A'}</PageHeader>
         <Titles>
-          <Message>{message}</Message>
-          <Culprit>{culprit}</Culprit>
+          <Message>{message || 'N/A'}</Message>
+          <Culprit>{culprit || 'N/A'}</Culprit>
         </Titles>
         <GraphHeader>Occurrences</GraphHeader>
         <Distribution />
