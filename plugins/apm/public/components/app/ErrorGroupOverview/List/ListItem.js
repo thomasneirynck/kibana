@@ -9,7 +9,7 @@ import {
 } from '../../../../style/variables';
 import { RelativeLink } from '../../../../utils/url';
 import { KuiTableRow, KuiTableRowCell } from 'ui_framework/components';
-import { RIGHT_ALIGNMENT } from 'ui_framework/src/services';
+import { RIGHT_ALIGNMENT } from '@elastic/eui';
 import numeral from 'numeral';
 import moment from 'moment';
 
