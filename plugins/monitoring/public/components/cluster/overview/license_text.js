@@ -13,12 +13,9 @@ export function LicenseText(props) {
   const goToLicense = () => props.changeUrl('/license');
 
   const message = (
-    <span>
-      Your { capitalize(props.license.type) } license will expire on {' '}
-      <EuiLink onClick={goToLicense} >
-        Your { capitalize(props.license.type) } license will expire on { formatDateLocal(props.license.expiry_date) }.
-      </EuiLink>
-    </span>
+    <EuiLink onClick={goToLicense} >
+      Your { capitalize(props.license.type) } license will expire on { formatDateLocal(props.license.expiry_date) }.
+    </EuiLink>
   );
 
   if (props.license && props.showLicenseExpiration) {

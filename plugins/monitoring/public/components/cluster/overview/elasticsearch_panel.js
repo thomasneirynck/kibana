@@ -53,8 +53,8 @@ export function ElasticsearchPanel(props) {
     // if license doesn't support ML, then `ml === null`
     if (props.ml) {
       return [
-        <EuiDescriptionListTitle>Jobs</EuiDescriptionListTitle>,
-        <EuiDescriptionListDescription data-test-subj="esMlJobs">{ props.ml.jobs }</EuiDescriptionListDescription>
+        <EuiDescriptionListTitle key="mlJobsListTitle">Jobs</EuiDescriptionListTitle>,
+        <EuiDescriptionListDescription key="mlJobsCount" data-test-subj="esMlJobs">{ props.ml.jobs }</EuiDescriptionListDescription>
       ];
     }
     return null;
