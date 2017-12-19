@@ -1,29 +1,8 @@
 import Joi from 'joi';
-import { getAllStats, receivePhoneHome } from '../../../../lib/phone_home';
+import { getAllStats } from '../../../../lib/phone_home';
 import { handleError } from '../../../../lib/errors';
 
 export function phoneHomeRoutes(server) {
-  /**
-   * This endpoint is ONLY for development and internal testing.
-   */
-  server.route({
-    path: '/api/monitoring/v1/phone-home',
-    method: 'POST',
-    handler: (req, reply) => {
-      const config = req.server.config();
-      const reportStatsTestEnabled = config.get('xpack.monitoring.internal.reportStatsTest');
-      const { callWithRequest } = server.plugins.elasticsearch.getCluster('monitoring');
-      const callWith = (...args) => callWithRequest(req, ...args);
-
-      // receivePhoneHome defaults to a no-op promise resolution
-      // set xpack.monitoring.internal.reportStatsTest to index the payload
-      // NOTE: the logged-in user needs permission to create the "phone-home" index
-      return receivePhoneHome(callWith, req.payload, reportStatsTestEnabled)
-      .then(reply)
-      .catch (err => reply(handleError(err, req)));
-    }
-  });
-
   /**
    * Phone Home Data Gathering
    *
