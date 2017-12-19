@@ -33,8 +33,9 @@ module.directive('mlNavMenu', function () {
 
       scope.showTabs = false;
       if (scope.name === 'jobs' ||
-          scope.name === 'timeseriesexplorer' ||
-          scope.name === 'explorer') {
+        scope.name === 'settings' ||
+        scope.name === 'timeseriesexplorer' ||
+        scope.name === 'explorer') {
         scope.showTabs = true;
       }
       scope.isActiveTab = function (path) {
@@ -52,6 +53,10 @@ module.directive('mlNavMenu', function () {
         datavisualizer: { label: 'Data Visualizer', url: '' },
         explorer: { label: 'Anomaly Explorer', url: '#/explorer' },
         timeseriesexplorer: { label: 'Single Metric Viewer', url: '#/timeseriesexplorer' },
+        settings: { label: 'Settings', url: '#/settings' },
+        calendars_list: { label: 'Calendar Management', url: '#/settings/calendars_list' },
+        new_calendar: { label: 'New Calendar', url: '#/settings/calendars_list/new_calendar' },
+        edit_calendar: { label: 'Edit Calendar', url: '#/settings/calendars_list/edit_calendar' },
       };
 
       const breadcrumbs = [{ label: 'Machine Learning', url: '#/' }];

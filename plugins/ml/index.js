@@ -24,6 +24,7 @@ import { notificationRoutes } from './server/routes/notification_settings';
 import { systemRoutes } from './server/routes/system';
 import { dataRecognizer } from './server/routes/modules';
 import { dataVisualizerRoutes } from './server/routes/data_visualizer';
+import { calendars } from './server/routes/calendars';
 
 export const ml = (kibana) => {
   return new kibana.Plugin({
@@ -88,6 +89,7 @@ export const ml = (kibana) => {
       systemRoutes(server, commonRouteConfig);
       dataRecognizer(server, commonRouteConfig);
       dataVisualizerRoutes(server, commonRouteConfig);
+      calendars(server, commonRouteConfig);
     }
 
   });

@@ -283,4 +283,37 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
+  this.calendars = function (obj) {
+    const calendarId = (obj && obj.calendarId) ? `/${obj.calendarId}` : '';
+    return http.request({
+      url: `${basePath}/calendars${calendarId}`,
+      method: 'GET'
+    });
+  };
+
+
+  this.addCalendar = function (obj) {
+    return http.request({
+      url: `${basePath}/calendars`,
+      method: 'PUT',
+      data: obj
+    });
+  };
+
+  this.updateCalendar = function (obj) {
+    const calendarId = (obj && obj.calendarId) ? `/${obj.calendarId}` : '';
+    return http.request({
+      url: `${basePath}/calendars${calendarId}`,
+      method: 'PUT',
+      data: obj
+    });
+  };
+
+  this.deleteCalendar = function (obj) {
+    return http.request({
+      url: `${basePath}/calendars/${obj.calendarId}`,
+      method: 'DELETE'
+    });
+  };
+
 });

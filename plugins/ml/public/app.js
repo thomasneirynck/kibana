@@ -23,7 +23,7 @@ import 'plugins/ml/access_denied';
 import 'plugins/ml/factories/listener_factory';
 import 'plugins/ml/factories/state_factory';
 import 'plugins/ml/lib/angular_bootstrap_patch';
-import 'plugins/ml/jobs/index';
+import 'plugins/ml/jobs';
 import 'plugins/ml/services/ml_clipboard_service';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/ml_api_service';
@@ -38,6 +38,7 @@ import 'plugins/ml/components/confirm_modal';
 import 'plugins/ml/components/pretty_duration';
 import 'plugins/ml/components/nav_menu';
 import 'plugins/ml/components/loading_indicator';
+import 'plugins/ml/settings';
 
 import uiRoutes from 'ui/routes';
 import moment from 'moment-timezone';

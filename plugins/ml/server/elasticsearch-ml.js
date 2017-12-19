@@ -345,5 +345,144 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
     method: 'POST'
   });
 
+  ml.calendars = ca({
+    urls: [
+      {
+        fmt: '_xpack/ml/calendars/<%=calendarId%>',
+        req: {
+          calendarId: {
+            type: 'string'
+          }
+        }
+      },
+      {
+        fmt: '_xpack/ml/calendars/',
+      }
+    ],
+    method: 'GET'
+  });
+
+  ml.deleteCalendar = ca({
+    url: {
+      fmt: '_xpack/ml/calendars/<%=calendarId%>',
+      req: {
+        calendarId: {
+          type: 'string'
+        }
+      }
+    },
+    method: 'DELETE'
+  });
+
+  ml.addCalendar = ca({
+    url: {
+      fmt: '_xpack/ml/calendars/<%=calendarId%>',
+      req: {
+        calendarId: {
+          type: 'string'
+        }
+      }
+    },
+    needBody: true,
+    method: 'PUT'
+  });
+
+  ml.updateCalendar = ca({
+    url: {
+      fmt: '_xpack/ml/calendars/<%=calendarId%>/_update',
+      req: {
+        calendarId: {
+          type: 'string'
+        }
+      }
+    },
+    needBody: true,
+    method: 'POST'
+  });
+
+  ml.events = ca({
+    urls: [
+      {
+        fmt: '_xpack/ml/calendars/<%=calendarId%>/events',
+        req: {
+          calendarId: {
+            type: 'string'
+          }
+        }
+      },
+      {
+        fmt: '_xpack/ml/calendars/<%=calendarId%>/events?&job_id=<%=jobId%>',
+        req: {
+          calendarId: {
+            type: 'string'
+          },
+          jobId: {
+            type: 'string'
+          }
+        }
+      },
+      {
+        fmt: '_xpack/ml/calendars/<%=calendarId%>/events?&after=<%=start%>&before=<%=end%>',
+        req: {
+          calendarId: {
+            type: 'string'
+          },
+          start: {
+            type: 'string'
+          },
+          end: {
+            type: 'string'
+          }
+        }
+      },
+      {
+        fmt: '_xpack/ml/calendars/<%=calendarId%>/events?&after=<%=start%>&before=<%=end%>&job_id=<%=jobId%>',
+        req: {
+          calendarId: {
+            type: 'string'
+          },
+          start: {
+            type: 'string'
+          },
+          end: {
+            type: 'string'
+          },
+          jobId: {
+            type: 'string'
+          }
+        }
+      }
+    ],
+    method: 'GET'
+  });
+
+  ml.addEvent = ca({
+    url: {
+      fmt: '_xpack/ml/calendars/<%=calendarId%>/events',
+      req: {
+        calendarId: {
+          type: 'string'
+        }
+      }
+    },
+    needBody: true,
+    method: 'PUT'
+  });
+
+  ml.deleteEvent = ca({
+    url: {
+      fmt: '_xpack/ml/calendars/<%=calendarId%>/events/<%=eventId%>',
+      req: {
+        calendarId: {
+          type: 'string'
+        },
+        eventId: {
+          type: 'string'
+        }
+      }
+    },
+    method: 'DELETE'
+  });
+
 };
 
