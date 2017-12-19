@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { RelativeLink } from '../../../../utils/url';
 import { KuiTableRow, KuiTableRowCell } from 'ui_framework/components';
 import { px, unit, fontSizes } from '../../../../style/variables';
-import { RIGHT_ALIGNMENT } from 'ui_framework/services';
+import { RIGHT_ALIGNMENT } from 'ui_framework/src/services';
 import { asMillisWithDefault } from '../../../../utils/formatters';
 import numeral from '@elastic/numeral';
 
