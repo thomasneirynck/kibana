@@ -1,6 +1,6 @@
 <ml-nav-menu name="explorer"></ml-nav-menu>
 <ml-chart-tooltip></ml-chart-tooltip>
-<div class="ml-explorer" ng-controller="MlExplorerController">
+<div class="ml-explorer euiText" ng-controller="MlExplorerController">
   <navbar ng-show="jobs.length > 0 && chrome.getVisible()">
     <job-select-button></job-select-button>
   </navbar>
@@ -57,7 +57,7 @@
 
         <div ng-if="viewBySwimlaneOptions.length > 0">
           <div class="ml-controls">
-            <label for="selectViewBy">View by:</label>
+            <label for="selectViewBy" class="kuiLabel">View by:</label>
             <div class="kuiButtonGroup" dropdown>
               <button id="selectViewBy" type="button" class="form-control dropdown-toggle" dropdown-toggle ng-disabled="disabled">
                 <span>{{swimlaneViewByFieldName}}</span> <span class="caret"></span>
