@@ -1,4 +1,4 @@
-const getPlugins = require('./get_plugins');
+import { getPlugins } from './get_plugins';
 
 /*
  * Note: The path `plugins / pluginName / ** / __tests__ / ** / *.js` will match

@@ -17,7 +17,7 @@ const downloadBrowsers = require('./gulp_helpers/download_browsers');
 const gitInfo = require('./gulp_helpers/git_info');
 const stagedFiles = require('./gulp_helpers/staged_files.js');
 const fileGlobs = require('./gulp_helpers/globs');
-const getPlugins = require('./gulp_helpers/get_plugins');
+const { getEnabledPlugins } = require('./gulp_helpers/get_plugins');
 const getFlags = require('./gulp_helpers/get_flags');
 
 const pkg = require('./package.json');
@@ -209,16 +209,19 @@ gulp.task('testserver', ['pre-test'], () => {
 });
 
 gulp.task('testbrowser', () => {
-  const plugins = getPlugins();
-  return pluginHelpers.run('testBrowser', {
-    plugins: plugins.join(','),
+  getEnabledPlugins().then(plugins => {
+    return pluginHelpers.run('testBrowser', {
+      plugins: plugins.join(','),
+    });
   });
+
 });
 
 gulp.task('testbrowser-dev', () => {
-  const plugins = getPlugins();
-  return pluginHelpers.run('testBrowser', {
-    dev: true,
-    plugins: plugins.join(','),
+  getEnabledPlugins().then(plugins => {
+    return pluginHelpers.run('testBrowser', {
+      dev: true,
+      plugins: plugins.join(','),
+    });
   });
 });

@@ -1,6 +1,8 @@
 const path = require('path');
 const yargs = require('yargs');
 const glob = require('glob');
+const { resolveKibanaPath } = require('@elastic/plugin-helpers');
+const { findPluginSpecs } = require(resolveKibanaPath('src/plugin_discovery'));
 
 /*
   Usage:
@@ -16,10 +18,23 @@ const argv = yargs
   .argv;
 const allPlugins = glob.sync('*', { cwd: path.resolve(__dirname, '..', 'plugins') });
 
-module.exports = function getPlugins() {
+export function getPlugins() {
   const plugins = argv.plugins && argv.plugins.split(',');
   if (!Array.isArray(plugins) || plugins.length === 0) {
     return allPlugins;
   }
   return plugins;
-};
+}
+
+const { spec$ } = findPluginSpecs({
+  plugins: { paths: [path.resolve(__dirname, '../')] }
+});
+
+export async function getEnabledPlugins() {
+  const plugins = argv.plugins && argv.plugins.split(',');
+  if (!Array.isArray(plugins) || plugins.length === 0) {
+    const enabledPlugins = await spec$.toArray().toPromise();
+    return enabledPlugins.map(spec => spec.getId());
+  }
+  return plugins;
+}
