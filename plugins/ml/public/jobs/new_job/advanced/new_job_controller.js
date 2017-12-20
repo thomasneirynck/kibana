@@ -338,10 +338,11 @@ function (
             mlConfirm.open({
               message: 'You have not chosen any influencers, do you want to continue?',
               title: 'No Influencers'
-            }).then(saveFunc)
-              .catch(function () {
-                changeTab({ index: 1 });
-              });
+            })
+            .then(saveFunc)
+            .catch(() => {
+              changeTab({ index: 1 });
+            });
           }
         }
 

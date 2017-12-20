@@ -26,6 +26,7 @@ import 'plugins/ml/lib/angular_bootstrap_patch';
 import 'plugins/ml/jobs';
 import 'plugins/ml/services/ml_clipboard_service';
 import 'plugins/ml/services/job_service';
+import 'plugins/ml/services/calendar_service';
 import 'plugins/ml/services/ml_api_service';
 import 'plugins/ml/services/results_service';
 import 'plugins/ml/components/messagebar';

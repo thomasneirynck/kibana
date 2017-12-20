@@ -22,6 +22,25 @@
     </div>
 
     <div class="col-md-6">
+      <div>
+        <div class="ml_sub_heading">Actions</div>
+        <div class='ml_job_section_container'>
+          <span
+           ng-class="(job.datafeed_config && job.datafeed_config.state===DATAFEED_STATE.STOPPED && job.state===JOB_STATE.OPENED)?'button':['button-wrapper', 'disabled']"
+           ng-attr-tooltip="{{ui.getCloseJobTooltip()}}"
+           data-toggle="tooltip"
+          >
+          <button
+            ng-click="closeJob(job)"
+            ng-disabled="ui.closeJobDisabled()===true"
+            class="kuiButton kuiButton--primary"
+            aria-label="Close job">
+            Close Job
+          </button>
+        </span>
+        </div>
+      </div>
+
       <div ng-repeat="(key, value) in job">
         <div ng-switch="key">
           <div ng-switch-when="custom_settings">
@@ -68,22 +87,20 @@
         </div>
       </div>
 
-      <div>
-        <div class="ml_sub_heading">Actions</div>
-        <div class='ml_job_section_container'>
-          <span
-           ng-class="(job.datafeed_config && job.datafeed_config.state===DATAFEED_STATE.STOPPED && job.state===JOB_STATE.OPENED)?'button':['button-wrapper', 'disabled']"
-           ng-attr-tooltip="{{ui.getCloseJobTooltip()}}"
-           data-toggle="tooltip"
-          >
-          <button
-            ng-click="closeJob(job)"
-            ng-disabled="ui.closeJobDisabled()===true"
-            class="kuiButton kuiButton--primary"
-            aria-label="Close job">
-            Close Job
-          </button>
-        </span>
+      <div ng-repeat="(key, value) in job">
+        <div ng-switch="key">
+          <div ng-switch-when="calendars">
+            <div class="ml_sub_heading">Calendars</div>
+            <div class='ml_job_section_container'>
+              <div>
+                <ml-job-item>
+                  <div class="ml_job_row row">
+                    <div class="col-md-12">{{value.join(', ')}}</div>
+                  </div>
+                </ml-job-item>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

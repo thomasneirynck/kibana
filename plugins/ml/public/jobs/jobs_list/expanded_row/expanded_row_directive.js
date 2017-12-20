@@ -48,7 +48,9 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
       // scope population is inside a function so it can be called later from somewhere else
       $scope.init = function () {
         $scope.job = $scope.$parent.job;
-        $scope.jobJson = angular.toJson($scope.job, true);
+        const tempJob = angular.copy($scope.job);
+        delete tempJob.calendars;
+        $scope.jobJson = angular.toJson(tempJob, true);
         $scope.jobAuditText = '';
         $scope.datafeedPreview = {
           update: updateDatafeedPreview,

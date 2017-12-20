@@ -60,6 +60,7 @@ function (
   mlMessageBarService,
   mlClipboardService,
   mlJobService,
+  mlCalendarService,
   mlDatafeedService,
   mlNotificationService) {
 
@@ -225,9 +226,14 @@ function (
       { title: 'Actions', sortable: false, class: 'col-action' }
     ];
 
+    const jobCalendars = mlCalendarService.jobCalendars;
 
     let rows = jobs.map((job) => {
       const rowScope = $scope.$new();
+      const calendars = jobCalendars[job.job_id];
+      if (calendars.length) {
+        job.calendars = calendars;
+      }
       rowScope.job = job;
       rowScope.closeJob = $scope.closeJob;
       rowScope.currentTab = { index: 0 };
@@ -625,7 +631,10 @@ function (
   function refreshJobs() {
     mlJobService.loadJobs()
     .then((resp) => {
-      jobsUpdated(resp.jobs);
+      mlCalendarService.loadCalendars(resp.jobs)
+      .then(() => {
+        jobsUpdated(resp.jobs);
+      });
     })
     .catch((resp) => {
       jobsUpdated(resp.jobs);
