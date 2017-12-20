@@ -20,6 +20,7 @@ import {
   isTimeSeriesViewDetector,
   isTimeSeriesViewFunction,
   isModelPlotEnabled,
+  isJobVersionGte,
   mlFunctionToESAggregation,
   isJobIdValid,
   ML_MEDIAN_PERCENTS,
@@ -262,6 +263,23 @@ describe('ML - job utils', () => {
       expect(isModelPlotEnabled(job2, 0)).to.be(false);
     });
 
+  });
+
+  describe('isJobVersionGte', () => {
+
+    const job = {
+      job_version: '6.1.1'
+    };
+
+    it('returns true for later job version', () => {
+      expect(isJobVersionGte(job, '6.1.0')).to.be(true);
+    });
+    it('returns true for equal job version', () => {
+      expect(isJobVersionGte(job, '6.1.1')).to.be(true);
+    });
+    it('returns false for earlier job version', () => {
+      expect(isJobVersionGte(job, '6.1.2')).to.be(false);
+    });
   });
 
   describe('mlFunctionToESAggregation', () => {

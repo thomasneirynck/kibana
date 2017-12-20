@@ -34,6 +34,7 @@ import { parseInterval } from 'ui/utils/parse_interval';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import {
+  isJobVersionGte,
   isTimeSeriesViewJob,
   isTimeSeriesViewDetector,
   isModelPlotEnabled,
@@ -85,6 +86,7 @@ module.controller('MlTimeSeriesExplorerController', function (
   timefilter.enableTimeRangeSelector();
   timefilter.enableAutoRefreshSelector();
 
+  const FORECAST_JOB_MIN_VERSION = '6.1.0'; // Forecasting only allowed for jobs created >= 6.1.0.
   const CHARTS_POINT_TARGET = 500;
   const ANOMALIES_MAX_RESULTS = 500;
   const TimeBuckets = Private(IntervalHelperProvider);
@@ -97,7 +99,8 @@ module.controller('MlTimeSeriesExplorerController', function (
   $scope.hasResults = false;
 
   $scope.modelPlotEnabled = false;
-  $scope.forecastingEnabled = false;
+  $scope.forecastingDisabled = false;
+  $scope.forecastingDisabledMessage = '';
   $scope.showModelBounds = true;            // Toggles display of model bounds in the focus chart
   $scope.showModelBoundsCheckbox = false;
   $scope.showForecast = true;               // Toggles display of forecast data in the focus chart
@@ -705,9 +708,19 @@ module.controller('MlTimeSeriesExplorerController', function (
 
     $scope.entities = entities;
 
-    // Disable forecasting only if the detector has an 'over' field as
-    // forecasting is not currently supported for these kinds of models.
-    $scope.forecastingEnabled = (overFieldName === undefined);
+    // Disable forecasting if the detector has an 'over' field as
+    // forecasting is not currently supported for these kinds of models,
+    // or if the job was created earlier than 6.1.0.
+    if (overFieldName !== undefined) {
+      $scope.forecastingDisabled = true;
+      $scope.forecastingDisabledMessage = 'Forecasting is not available for population detectors with an over field';
+    } else if (isJobVersionGte($scope.selectedJob, FORECAST_JOB_MIN_VERSION) === false) {
+      $scope.forecastingDisabled = true;
+      $scope.forecastingDisabledMessage = `Forecasting is only available for jobs created in version ${FORECAST_JOB_MIN_VERSION} or later`;
+    } else {
+      $scope.forecastingDisabled = false;
+      $scope.forecastingDisabledMessage = '';
+    }
 
     $scope.refresh();
   }

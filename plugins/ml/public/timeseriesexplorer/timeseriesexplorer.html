@@ -37,9 +37,13 @@
       <i class="fa fa-play" ></i>
     </button>
 
-    <div ng-show="forecastingEnabled === true" class="forecast-controls">
+    <div ng-class="forecastingDisabled === false ? 'forecast-controls' : ['forecast-controls', 'disabled']"
+      data-toggle="tooltip"
+      ng-attr-tooltip="{{forecastingDisabled === true ?  forecastingDisabledMessage : undefined}}"
+      tooltip-placement="left">
       <button
         ng-click='openForecastDialog()'
+        ng-disabled="forecastingDisabled === true"
         class="kuiButton kuiButton--primary"
         aria-label="Forecast">
         Forecast

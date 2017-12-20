@@ -14,6 +14,7 @@
  */
 
 import _ from 'lodash';
+import semver from 'semver';
 
 // work out the default frequency based on the bucket_span in seconds
 export function calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) {
@@ -125,6 +126,13 @@ export function isModelPlotEnabled(job, detectorIndex, entityFields) {
   }
 
   return isEnabled;
+}
+
+// Returns whether the version of the job (the version number of the elastic stack that the job was
+// created with) is greater than or equal to the supplied version (e.g. '6.1.0').
+export function isJobVersionGte(job, version) {
+  const jobVersion = _.get(job, 'job_version', '0.0.0');
+  return semver.gte(jobVersion, version);
 }
 
 // Takes an ML detector 'function' and returns the corresponding ES aggregation name
