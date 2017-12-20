@@ -7,11 +7,11 @@ export default class VerticalLines extends PureComponent {
     const {
       width,
       height,
-      timelineMargins,
+      margins,
       xDomain,
       tickValues,
       xMax
-    } = this.props;
+    } = this.props.plotValues;
 
     return (
       <div
@@ -24,8 +24,8 @@ export default class VerticalLines extends PureComponent {
         <XYPlot
           dontCheckIfEmpty
           width={width}
-          height={height + timelineMargins.top}
-          margin={timelineMargins}
+          height={height + margins.top}
+          margin={margins}
           xDomain={xDomain}
         >
           <VerticalGridLines

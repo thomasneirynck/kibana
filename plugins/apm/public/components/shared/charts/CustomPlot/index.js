@@ -1,137 +1,55 @@
-import React, { PureComponent } from 'react';
 import _ from 'lodash';
-import 'react-vis/dist/style.css';
+import { makeWidthFlexible } from 'react-vis';
 import PropTypes from 'prop-types';
-import d3 from 'd3';
-import { scaleLinear } from 'd3-scale';
-import { XYPlot, makeWidthFlexible } from 'react-vis';
-import { createSelector } from 'reselect';
-import Legend from '../Legend';
-import styled from 'styled-components';
-import {
-  unit,
-  units,
-  fontSizes,
-  px,
-  colors,
-  truncate
-} from '../../../../style/variables';
+import React, { PureComponent } from 'react';
 
+import Legends from './Legends';
 import StaticPlot from './StaticPlot';
 import InteractivePlot from './InteractivePlot';
 import VoronoiPlot from './VoronoiPlot';
+import { createSelector } from 'reselect';
+import { getPlotValues } from './plotUtils';
 
-const VISIBLE_SERIES = 5;
-const XY_HEIGHT = unit * 16;
-const XY_MARGIN = {
-  top: unit,
-  left: unit * 5,
-  right: unit,
-  bottom: unit * 2
-};
-
-const Title = styled.div`
-  font-size: ${fontSizes.large};
-`;
-
-const Legends = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-`;
-
-const LegendContent = styled.span`
-  white-space: nowrap;
-  color: ${colors.gray3};
-  display: flex;
-`;
-
-const TruncatedLabel = styled.span`
-  display: inline-block;
-  ${truncate(px(units.half * 10))};
-`;
-
-const SeriesValue = styled.span`
-  margin-left: ${px(units.quarter)};
-  color: ${colors.black};
-  display: inline-block;
-`;
-
-const getXScale = _.memoize(
-  (xMin, xMax, width) => {
-    return scaleLinear()
-      .domain([xMin, xMax])
-      .range([XY_MARGIN.left, width - XY_MARGIN.right]);
-  },
-  (...args) => args.join('_')
-);
-
-const getYScale = _.memoize(
-  (yMin, yMax) => {
-    return scaleLinear()
-      .domain([yMin, yMax])
-      .range([XY_HEIGHT, 0])
-      .nice();
-  },
-  (...args) => args.join('_')
-);
-
-const getYTickValues = _.memoize(yMaxNice => [0, yMaxNice / 2, yMaxNice]);
-const getXYPlot = _.memoize(
-  (x, y, width) => {
-    function XYPlotWrapper(props) {
-      return (
-        <div style={{ position: 'absolute', top: 0, left: 0 }}>
-          <XYPlot
-            dontCheckIfEmpty
-            width={width}
-            height={XY_HEIGHT}
-            margin={XY_MARGIN}
-            xType="time"
-            xDomain={x.domain()}
-            yDomain={y.domain()}
-            {...props}
-          />
-        </div>
-      );
-    }
-
-    return XYPlotWrapper;
-  },
-  (x, y, width) => [...x.domain(), ...y.domain(), width].join('_')
-);
-
-const topSeries = createSelector(
-  props => props.series,
-  series => series.slice(0, VISIBLE_SERIES)
-);
-
-const getEnabledSeries = (props, seriesVisibility) => {
-  return topSeries(props).filter((serie, i) => !seriesVisibility[i]);
-};
+const VISIBLE_SERIES_COUNT = 5;
 
 export class InnerCustomPlot extends PureComponent {
   state = {
-    seriesVisibility: [],
-    enabledSeries: [],
+    seriesEnabledState: [],
     isDrawing: false,
     selectionStart: null,
     selectionEnd: null
   };
 
-  componentWillMount() {
-    this.setState({
-      enabledSeries: getEnabledSeries(this.props, this.state.seriesVisibility)
-    });
-  }
+  getEnabledSeries = createSelector(
+    state => state.visibleSeries,
+    state => state.seriesEnabledState,
+    (visibleSeries, seriesEnabledState) =>
+      visibleSeries.filter((serie, i) => !seriesEnabledState[i])
+  );
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.series !== nextProps.series) {
-      this.setState({
-        enabledSeries: getEnabledSeries(nextProps, this.state.seriesVisibility)
+  getPlotValues = createSelector(
+    state => state.series,
+    state => state.width,
+    getPlotValues
+  );
+
+  getVisibleSeries = createSelector(
+    state => state.series,
+    series => series.slice(0, VISIBLE_SERIES_COUNT)
+  );
+
+  clickLegend = i => {
+    this.setState(({ seriesEnabledState }) => {
+      const nextSeriesEnabledState = this.props.series.map((value, _i) => {
+        const disabledValue = seriesEnabledState[_i];
+        return i === _i ? !disabledValue : !!disabledValue;
       });
-    }
-  }
+
+      return {
+        seriesEnabledState: nextSeriesEnabledState
+      };
+    });
+  };
 
   onMouseLeave = (...args) => {
     if (this.state.isDrawing) {
@@ -169,106 +87,53 @@ export class InnerCustomPlot extends PureComponent {
     }
   };
 
-  clickLegend = i => {
-    this.setState(({ seriesVisibility }) => {
-      const nextSeriesVisibility = this.props.series.map((value, _i) => {
-        const disabledValue = seriesVisibility[_i];
-        return i === _i ? !disabledValue : !!disabledValue;
-      });
-
-      return {
-        seriesVisibility: nextSeriesVisibility,
-        enabledSeries: getEnabledSeries(this.props, nextSeriesVisibility)
-      };
-    });
-  };
-
   render() {
-    const {
-      chartTitle,
-      series: allSeries,
-      width,
-      truncateLegends
-    } = this.props;
-    const series = topSeries(this.props);
-    const hiddenSeries = allSeries.length - VISIBLE_SERIES;
+    const { chartTitle, series, truncateLegends, width } = this.props;
+
     if (_.isEmpty(series)) {
       return null;
     }
 
-    const allCoordinates = _.flatten(series.map(serie => serie.data));
-    const xMin = d3.min(allCoordinates, d => d.x);
-    const xMax = d3.max(allCoordinates, d => d.x);
-    const yMin = 0;
-    const yMax = d3.max(allCoordinates, d => d.y);
-
-    const x = getXScale(xMin, xMax, width);
-    const y = getYScale(yMin, yMax);
-    const yTickValues = getYTickValues(y.domain()[1]);
-
-    const { enabledSeries } = this.state;
+    const hiddenSeriesCount = Math.max(series.length - VISIBLE_SERIES_COUNT, 0);
+    const visibleSeries = this.getVisibleSeries({ series });
+    const enabledSeries = this.getEnabledSeries({
+      visibleSeries,
+      seriesEnabledState: this.state.seriesEnabledState
+    });
+    const plotValues = this.getPlotValues({ series: enabledSeries, width });
 
     return (
       <div>
-        <div>
-          <Title>{chartTitle}</Title>
-          <Legends>
-            {series.filter(serie => !serie.isEmpty).map((serie, i) => {
-              const text = (
-                <LegendContent>
-                  {truncateLegends ? (
-                    <TruncatedLabel title={serie.title}>
-                      {serie.title}
-                    </TruncatedLabel>
-                  ) : (
-                    serie.title
-                  )}
-                  {serie.legendValue && (
-                    <SeriesValue>{serie.legendValue}</SeriesValue>
-                  )}
-                </LegendContent>
-              );
-              return (
-                <Legend
-                  key={i}
-                  onClick={() => this.clickLegend(i)}
-                  disabled={this.state.seriesVisibility[i]}
-                  text={text}
-                  color={serie.color}
-                />
-              );
-            })}
-            <MoreSeries hiddenSeries={hiddenSeries} />
-          </Legends>
-        </div>
+        <Legends
+          chartTitle={chartTitle}
+          truncateLegends={truncateLegends}
+          series={visibleSeries}
+          hiddenSeriesCount={hiddenSeriesCount}
+          clickLegend={this.clickLegend}
+          seriesEnabledState={this.state.seriesEnabledState}
+        />
 
-        <div style={{ position: 'relative', height: XY_HEIGHT }}>
+        <div style={{ position: 'relative', height: plotValues.XY_HEIGHT }}>
           <StaticPlot
+            plotValues={plotValues}
             series={enabledSeries}
             tickFormatY={this.props.tickFormatY}
             tickFormatX={this.props.tickFormatX}
-            XYPlot={getXYPlot(x, y, width)}
-            yTickValues={yTickValues}
           />
 
           <InteractivePlot
+            plotValues={plotValues}
             hoverIndex={this.props.hoverIndex}
             series={enabledSeries}
             tickFormatY={this.props.tickFormatY}
-            XYPlot={getXYPlot(x, y, width)}
-            x={x}
             isDrawing={this.state.isDrawing}
             selectionStart={this.state.selectionStart}
             selectionEnd={this.state.selectionEnd}
           />
 
           <VoronoiPlot
-            width={width}
-            series={series}
-            XY_MARGIN={XY_MARGIN}
-            XY_HEIGHT={XY_HEIGHT}
-            XYPlot={getXYPlot(x, y, width)}
-            x={x}
+            plotValues={plotValues}
+            series={enabledSeries}
             onHover={this.onHover}
             onMouseLeave={this.onMouseLeave}
             onMouseDown={this.onMouseDown}
@@ -281,14 +146,14 @@ export class InnerCustomPlot extends PureComponent {
 }
 
 InnerCustomPlot.propTypes = {
-  width: PropTypes.number.isRequired,
-  series: PropTypes.array.isRequired,
+  hoverIndex: PropTypes.number,
   onHover: PropTypes.func.isRequired,
   onMouseLeave: PropTypes.func.isRequired,
   onSelectionEnd: PropTypes.func.isRequired,
-  hoverIndex: PropTypes.number,
+  series: PropTypes.array.isRequired,
   tickFormatY: PropTypes.func,
-  truncateLegends: PropTypes.bool
+  truncateLegends: PropTypes.bool,
+  width: PropTypes.number.isRequired
 };
 
 InnerCustomPlot.defaultProps = {
@@ -297,15 +162,3 @@ InnerCustomPlot.defaultProps = {
 };
 
 export default makeWidthFlexible(InnerCustomPlot);
-
-const MoreSeriesContainer = styled.div`
-  font-size: ${fontSizes.small};
-  color: ${colors.gray3};
-`;
-function MoreSeries({ hiddenSeries }) {
-  if (hiddenSeries <= 0) {
-    return null;
-  }
-
-  return <MoreSeriesContainer>(+{hiddenSeries})</MoreSeriesContainer>;
-}

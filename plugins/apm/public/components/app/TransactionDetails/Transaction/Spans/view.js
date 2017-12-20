@@ -71,7 +71,7 @@ class Spans extends PureComponent {
             }
             duration={totalDuration}
             height={timelineHeight}
-            timelineMargins={TIMELINE_MARGINS}
+            margins={TIMELINE_MARGINS}
           />
           <div
             style={{

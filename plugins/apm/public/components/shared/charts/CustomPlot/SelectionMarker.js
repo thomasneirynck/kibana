@@ -1,5 +1,5 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 function SelectionMarker({ innerHeight, marginTop, start, end }) {
   const width = Math.abs(end - start);

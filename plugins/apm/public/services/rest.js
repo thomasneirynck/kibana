@@ -117,9 +117,9 @@ export async function loadTransactionDistribution({
 
 export async function loadSpans({ serviceName, start, end, transactionId }) {
   return callApi({
-    pathname: `${getAppRootPath(serviceName)}/transactions/${
-      transactionId
-    }/spans`,
+    pathname: `${getAppRootPath(
+      serviceName
+    )}/transactions/${transactionId}/spans`,
     query: {
       start,
       end
@@ -197,9 +197,9 @@ export async function loadErrorDistribution({
   errorGroupId
 }) {
   return callApi({
-    pathname: `${getAppRootPath(serviceName)}/errors/${
-      errorGroupId
-    }/distribution`,
+    pathname: `${getAppRootPath(
+      serviceName
+    )}/errors/${errorGroupId}/distribution`,
     query: {
       start,
       end

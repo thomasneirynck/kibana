@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { scaleLinear } from 'd3-scale';
 import styled from 'styled-components';
 import SingleRect from './SingleRect';
-import 'react-vis/dist/style.css';
+
 import {
   XYPlot,
   XAxis,

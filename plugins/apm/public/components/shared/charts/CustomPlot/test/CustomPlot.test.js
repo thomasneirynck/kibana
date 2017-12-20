@@ -1,7 +1,8 @@
-import React from 'react';
 import { mount } from 'enzyme';
-import toDiffableHtml from 'diffable-html';
 import moment from 'moment';
+import React from 'react';
+import toDiffableHtml from 'diffable-html';
+
 import { InnerCustomPlot } from '../index';
 import responseWithData from './responseWithData.json';
 import responseWithoutData from './responseWithoutData.json';
@@ -39,7 +40,7 @@ describe('when response has data', () => {
 
   describe('Initially', () => {
     it('should have 3 enabled series', () => {
-      expect(wrapper.state().enabledSeries.length).toBe(3);
+      expect(wrapper.find('AreaSeries Animation').length).toBe(3);
     });
 
     it('should have 3 legends ', () => {
@@ -55,7 +56,7 @@ describe('when response has data', () => {
     });
 
     it('should have correct state', () => {
-      expect(wrapper.state().seriesVisibility).toEqual([]);
+      expect(wrapper.state().seriesEnabledState).toEqual([]);
       expect(wrapper.state().isDrawing).toBe(false);
       expect(wrapper.state().selectionStart).toBe(null);
       expect(wrapper.state().selectionEnd).toBe(null);
@@ -73,8 +74,7 @@ describe('when response has data', () => {
 
   describe('Legends', () => {
     it('should have initial values when nothing is clicked', () => {
-      expect(wrapper.state('enabledSeries').length).toBe(3);
-      expect(wrapper.state('seriesVisibility')).toEqual([]);
+      expect(wrapper.state('seriesEnabledState')).toEqual([]);
       expect(wrapper.find('StaticPlot').prop('series').length).toBe(3);
     });
 
@@ -86,14 +86,27 @@ describe('when response has data', () => {
           .simulate('click');
       });
 
+      it('should have 2 enabled series', () => {
+        expect(wrapper.find('AreaSeries Animation').length).toBe(2);
+      });
+
+      it('should add disabled prop to Legends', () => {
+        expect(
+          wrapper.find('Legend').map(node => node.prop('disabled'))
+        ).toEqual([false, true, false]);
+      });
+
       it('should toggle series ', () => {
-        expect(wrapper.state('enabledSeries').length).toBe(2);
-        expect(wrapper.state('seriesVisibility')).toEqual([false, true, false]);
+        expect(wrapper.state('seriesEnabledState')).toEqual([
+          false,
+          true,
+          false
+        ]);
         expect(wrapper.find('StaticPlot').prop('series').length).toBe(2);
       });
 
-      it('should not re-render VoronoiPlot', () => {
-        expect(VoronoiPlot.prototype.render.mock.calls.length).toBe(0);
+      it('should re-render VoronoiPlot', () => {
+        expect(VoronoiPlot.prototype.render.mock.calls.length).toBe(1);
       });
 
       it('should re-render InteractivePlot', () => {
@@ -111,17 +124,21 @@ describe('when response has data', () => {
       });
 
       it('should toggle series back to initial state', () => {
-        expect(wrapper.state('enabledSeries').length).toBe(3);
-        expect(wrapper.state('seriesVisibility')).toEqual([
+        expect(
+          wrapper.find('Legend').map(node => node.prop('disabled'))
+        ).toEqual([false, false, false]);
+
+        expect(wrapper.state('seriesEnabledState')).toEqual([
           false,
           false,
           false
         ]);
+
         expect(wrapper.find('StaticPlot').prop('series').length).toBe(3);
       });
 
-      it('should not re-render VoronoiPlot', () => {
-        expect(VoronoiPlot.prototype.render.mock.calls.length).toBe(0);
+      it('should re-render VoronoiPlot', () => {
+        expect(VoronoiPlot.prototype.render.mock.calls.length).toBe(2);
       });
 
       it('should re-render InteractivePlot', () => {
@@ -280,10 +297,6 @@ describe('when response has no data', () => {
   });
 
   describe('Initially', () => {
-    it('should have 1 enabled series', () => {
-      expect(wrapper.state().enabledSeries.length).toBe(1);
-    });
-
     it('should have 0 legends ', () => {
       expect(wrapper.find('Legend').length).toBe(0);
     });
@@ -295,7 +308,7 @@ describe('when response has no data', () => {
     });
 
     it('should have correct state', () => {
-      expect(wrapper.state().seriesVisibility).toEqual([]);
+      expect(wrapper.state().seriesEnabledState).toEqual([]);
       expect(wrapper.state().isDrawing).toBe(false);
       expect(wrapper.state().selectionStart).toBe(null);
       expect(wrapper.state().selectionEnd).toBe(null);
@@ -310,12 +323,15 @@ describe('when response has no data', () => {
       expect(toDiffableHtml(wrapper.html())).toMatchSnapshot();
     });
 
-    it('should have 1 empty series that all have a y-value of 1', () => {
-      expect(wrapper.state().enabledSeries.length).toBe(1);
-      expect(wrapper.state().enabledSeries[0].isEmpty).toBe(true);
-      expect(
-        wrapper.state().enabledSeries[0].data.filter(d => d.y !== 1)
-      ).toEqual([]);
+    it('should have a single series', () => {
+      expect(wrapper.prop('series').length).toBe(1);
+    });
+
+    it('The series is empty and every y-value is 1', () => {
+      expect(wrapper.prop('series')[0].isEmpty).toBe(true);
+      expect(wrapper.prop('series')[0].data.every(d => d.y === 1)).toEqual(
+        true
+      );
     });
   });
 });

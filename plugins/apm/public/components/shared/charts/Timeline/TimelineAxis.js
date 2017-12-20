@@ -3,23 +3,22 @@ import _ from 'lodash';
 import { Sticky } from 'react-sticky';
 import { XYPlot, XAxis } from 'react-vis';
 import LastTickValue from './LastTickValue';
-import { getTimeFormatter } from '../../../../utils/formatters';
-import { colors } from '../../../../style/variables';
+import { colors, px } from '../../../../style/variables';
+
+const tickFormatSeconds = value => `${value / 1000} s`;
+const tickFormatMilliSeconds = value => `${value} ms`;
+const getTickFormat = _.memoize(
+  highestValue =>
+    highestValue < 5000 ? tickFormatMilliSeconds : tickFormatSeconds
+);
 
 // Remove last tick if it's too close to xMax
 const getXAxisTickValues = (tickValues, xMax) =>
   _.last(tickValues) * 1.05 > xMax ? tickValues.slice(0, -1) : tickValues;
 
-function TimelineAxis({
-  xScale,
-  xDomain,
-  width,
-  timelineMargins,
-  tickValues,
-  xMax,
-  header
-}) {
-  const tickFormat = getTimeFormatter(xMax);
+function TimelineAxis({ header, plotValues }) {
+  const { margins, tickValues, width, xDomain, xMax, xScale } = plotValues;
+  const tickFormat = getTickFormat(xMax);
   const xAxisTickValues = getXAxisTickValues(tickValues, xMax);
 
   return (
@@ -31,10 +30,7 @@ function TimelineAxis({
               position: 'absolute',
               backgroundColor: colors.white,
               borderBottom: `1px solid ${colors.gray3}`,
-              height: `${timelineMargins.top}px`,
-              display: 'flex',
-              justifyContent: 'space-between',
-              flexDirection: 'column',
+              height: px(margins.top),
               zIndex: 2,
               ...style
             }}
@@ -43,11 +39,11 @@ function TimelineAxis({
             <XYPlot
               dontCheckIfEmpty
               width={width}
-              height={20}
+              height={40}
               margin={{
-                top: 20,
-                left: timelineMargins.left,
-                right: timelineMargins.right
+                top: 40,
+                left: margins.left,
+                right: margins.right
               }}
               xDomain={xDomain}
             >

@@ -66,8 +66,7 @@ function Introduction() {
           in-depth performance metrics and errors from inside your applications.
         </Subtitle>
         <Description>
-          APM consists of three components - the Agents, the Server, and the UI:<br
-          />
+          APM consists of three components - the Agents, the Server, and the UI:<br />
           <br />
           <ul>
             <li>
