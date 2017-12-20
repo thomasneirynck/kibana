@@ -1,4 +1,3 @@
-import moment from 'moment';
 import Joi from 'joi';
 import { getNodeInfo } from '../../../../../lib/logstash/get_node_info';
 import { getPipelines } from '../../../../../lib/logstash/get_pipelines';
@@ -23,7 +22,8 @@ export function logstashNodePipelinesRoute(server) {
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
-          }).required()
+          }).required(),
+          metrics: Joi.array().items(Joi.string()).required()
         })
       }
     },
@@ -31,15 +31,12 @@ export function logstashNodePipelinesRoute(server) {
       const config = server.config();
       const ccs = req.payload.ccs;
       const clusterUuid = req.params.clusterUuid;
-      const lsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.logstash.index_pattern', ccs);
-
-      const start = moment(req.payload.timeRange.min).valueOf();
-      const end = moment(req.payload.timeRange.max).valueOf();
       const logstashUuid = req.params.logstashUuid;
+      const lsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.logstash.index_pattern', ccs);
 
       try {
         const response = {
-          pipelines: await getPipelines(req, config, lsIndexPattern, start, end, clusterUuid, logstashUuid),
+          pipelines: await getPipelines(req, lsIndexPattern),
           nodeSummary: await getNodeInfo(req, lsIndexPattern, { clusterUuid, logstashUuid })
         };
         reply(response);

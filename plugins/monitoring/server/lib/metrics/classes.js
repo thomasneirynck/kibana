@@ -301,10 +301,10 @@ export class LogstashMetric extends Metric {
 
   constructor(opts) {
     super({
-      ...opts,
       app: 'logstash',
       uuidField: 'logstash_stats.logstash.uuid',
-      timestampField: 'logstash_stats.timestamp'
+      timestampField: 'logstash_stats.timestamp',
+      ...opts
     });
   }
 
@@ -475,4 +475,129 @@ export class LogstashEventsRateClusterMetric extends LogstashClusterMetric {
     };
   }
 
+}
+
+export class LogstashPipelineThroughputMetric extends LogstashMetric {
+  constructor(opts) {
+    super({
+      ...opts,
+      derivative: false
+    });
+
+    this.dateHistogramSubAggs = {
+      pipelines_nested: {
+        nested: {
+          path: 'logstash_stats.pipelines'
+        },
+        aggs: {
+          by_pipeline_id: {
+            terms: {
+              field: 'logstash_stats.pipelines.id',
+              size: 1000
+            },
+            aggs: {
+              throughput: {
+                sum_bucket: {
+                  buckets_path: 'by_pipeline_hash>throughput'
+                }
+              },
+              by_pipeline_hash: {
+                terms: {
+                  field: 'logstash_stats.pipelines.hash',
+                  size: 1000
+                },
+                aggs: {
+                  throughput: {
+                    sum_bucket: {
+                      buckets_path: 'by_ephemeral_id>throughput'
+                    }
+                  },
+                  by_ephemeral_id: {
+                    terms: {
+                      field: 'logstash_stats.pipelines.ephemeral_id',
+                      size: 1000
+                    },
+                    aggs: {
+                      events_stats: {
+                        stats: {
+                          field: this.field
+                        }
+                      },
+                      throughput: {
+                        bucket_script: {
+                          script: 'params.max - params.min',
+                          buckets_path: {
+                            min: 'events_stats.min',
+                            max: 'events_stats.max'
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+
+    this.calculation = (bucket, _key, _metric, bucketSizeInSeconds) => {
+      const pipelineThroughputs = {};
+      const pipelineBuckets = _.get(bucket, 'pipelines_nested.by_pipeline_id.buckets', []);
+      pipelineBuckets.forEach(pipelineBucket => {
+        pipelineThroughputs[pipelineBucket.key] =
+          bucketSizeInSeconds ? _.get(pipelineBucket, 'throughput.value') / bucketSizeInSeconds : undefined;
+      });
+
+      return pipelineThroughputs;
+    };
+  }
+}
+
+export class LogstashPipelineNodeCountMetric extends LogstashMetric {
+  constructor(opts) {
+    super({
+      ...opts,
+      derivative: false
+    });
+
+    this.dateHistogramSubAggs = {
+      pipelines_nested: {
+        nested: {
+          path: 'logstash_stats.pipelines'
+        },
+        aggs: {
+          by_pipeline_id: {
+            terms: {
+              field: 'logstash_stats.pipelines.id',
+              size: 1000
+            },
+            aggs: {
+              to_root: {
+                reverse_nested: {},
+                aggs: {
+                  node_count: {
+                    cardinality: {
+                      field: this.field
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+
+    this.calculation = (bucket) => {
+      const pipelineNodesCounts = {};
+      const pipelineBuckets = _.get(bucket, 'pipelines_nested.by_pipeline_id.buckets', []);
+      pipelineBuckets.forEach(pipelineBucket => {
+        pipelineNodesCounts[pipelineBucket.key] = _.get(pipelineBucket, 'to_root.node_count.value');
+      });
+
+      return pipelineNodesCounts;
+    };
+  }
 }

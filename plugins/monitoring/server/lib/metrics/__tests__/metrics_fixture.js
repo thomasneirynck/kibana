@@ -51,7 +51,6 @@ function quotaMetricCalculation(bucket) {
   return null;
 }
 
-
 export const expected = {
   'cluster_index_request_rate_primary': {
     'title': 'Indexing Rate',
@@ -2416,5 +2415,256 @@ export const expected = {
     'uuidField': 'logstash_stats.logstash.uuid',
     'timestampField': 'logstash_stats.timestamp',
     'derivative': false
+  },
+  'logstash_cluster_pipeline_throughput': {
+    'field': 'logstash_stats.pipelines.events.out',
+    'label': 'Pipeline Throughput',
+    'description': 'Number of events emitted per second by the Logstash pipeline at the outputs stage.',
+    'format': '0,0.[00]',
+    'units': 'e/s',
+    'app': 'logstash',
+    'uuidField': 'cluster_uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': false,
+    'calculation': (bucket, _key, _metric, bucketSizeInSeconds) => {
+      const pipelineThroughputs = {};
+      const pipelineBuckets = _.get(bucket, 'pipelines_nested.by_pipeline_id.buckets', []);
+      pipelineBuckets.forEach(pipelineBucket => {
+        pipelineThroughputs[pipelineBucket.key] =
+          bucketSizeInSeconds ? _.get(pipelineBucket, 'throughput.value') / bucketSizeInSeconds : undefined;
+      });
+
+      return pipelineThroughputs;
+    },
+    'dateHistogramSubAggs': {
+      'pipelines_nested': {
+        'nested': {
+          'path': 'logstash_stats.pipelines'
+        },
+        'aggs': {
+          'by_pipeline_id': {
+            'terms': {
+              'field': 'logstash_stats.pipelines.id',
+              'size': 1000
+            },
+            'aggs': {
+              'throughput': {
+                'sum_bucket': {
+                  'buckets_path': 'by_pipeline_hash>throughput'
+                }
+              },
+              'by_pipeline_hash': {
+                'terms': {
+                  'field': 'logstash_stats.pipelines.hash',
+                  'size': 1000
+                },
+                'aggs': {
+                  'throughput': {
+                    'sum_bucket': {
+                      'buckets_path': 'by_ephemeral_id>throughput'
+                    }
+                  },
+                  'by_ephemeral_id': {
+                    'terms': {
+                      'field': 'logstash_stats.pipelines.ephemeral_id',
+                      'size': 1000
+                    },
+                    'aggs': {
+                      'events_stats': {
+                        'stats': {
+                          'field': 'logstash_stats.pipelines.events.out'
+                        }
+                      },
+                      'throughput': {
+                        'bucket_script': {
+                          'script': 'params.max - params.min',
+                          'buckets_path': {
+                            'min': 'events_stats.min',
+                            'max': 'events_stats.max'
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  'logstash_cluster_pipeline_nodes_count': {
+    'field': 'logstash_stats.logstash.uuid',
+    'label': 'Pipeline Node Count',
+    'description': 'Number of nodes on which the Logstash pipeline is running.',
+    'format': '0,0.[00]',
+    'units': '',
+    'app': 'logstash',
+    'uuidField': 'cluster_uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': false,
+    'calculation': (bucket) => {
+      const pipelineNodesCounts = {};
+      const pipelineBuckets = _.get(bucket, 'pipelines_nested.by_pipeline_id.buckets', []);
+      pipelineBuckets.forEach(pipelineBucket => {
+        pipelineNodesCounts[pipelineBucket.key] = _.get(pipelineBucket, 'to_root.node_count.value');
+      });
+
+      return pipelineNodesCounts;
+    },
+    'dateHistogramSubAggs': {
+      'pipelines_nested': {
+        'nested': {
+          'path': 'logstash_stats.pipelines'
+        },
+        'aggs': {
+          'by_pipeline_id': {
+            'terms': {
+              'field': 'logstash_stats.pipelines.id',
+              'size': 1000
+            },
+            'aggs': {
+              'to_root': {
+                'reverse_nested': {},
+                'aggs': {
+                  'node_count': {
+                    'cardinality': {
+                      'field': 'logstash_stats.logstash.uuid'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  'logstash_node_pipeline_throughput': {
+    'field': 'logstash_stats.pipelines.events.out',
+    'label': 'Pipeline Throughput',
+    'description': 'Number of events emitted per second by the Logstash pipeline at the outputs stage.',
+    'format': '0,0.[00]',
+    'units': 'e/s',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': false,
+    'calculation': (bucket, _key, _metric, bucketSizeInSeconds) => {
+      const pipelineThroughputs = {};
+      const pipelineBuckets = _.get(bucket, 'pipelines_nested.by_pipeline_id.buckets', []);
+      pipelineBuckets.forEach(pipelineBucket => {
+        pipelineThroughputs[pipelineBucket.key] =
+          bucketSizeInSeconds ? _.get(pipelineBucket, 'throughput.value') / bucketSizeInSeconds : undefined;
+      });
+
+      return pipelineThroughputs;
+    },
+    'dateHistogramSubAggs': {
+      'pipelines_nested': {
+        'nested': {
+          'path': 'logstash_stats.pipelines'
+        },
+        'aggs': {
+          'by_pipeline_id': {
+            'terms': {
+              'field': 'logstash_stats.pipelines.id',
+              'size': 1000
+            },
+            'aggs': {
+              'throughput': {
+                'sum_bucket': {
+                  'buckets_path': 'by_pipeline_hash>throughput'
+                }
+              },
+              'by_pipeline_hash': {
+                'terms': {
+                  'field': 'logstash_stats.pipelines.hash',
+                  'size': 1000
+                },
+                'aggs': {
+                  'throughput': {
+                    'sum_bucket': {
+                      'buckets_path': 'by_ephemeral_id>throughput'
+                    }
+                  },
+                  'by_ephemeral_id': {
+                    'terms': {
+                      'field': 'logstash_stats.pipelines.ephemeral_id',
+                      'size': 1000
+                    },
+                    'aggs': {
+                      'events_stats': {
+                        'stats': {
+                          'field': 'logstash_stats.pipelines.events.out'
+                        }
+                      },
+                      'throughput': {
+                        'bucket_script': {
+                          'script': 'params.max - params.min',
+                          'buckets_path': {
+                            'min': 'events_stats.min',
+                            'max': 'events_stats.max'
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  'logstash_node_pipeline_nodes_count': {
+    'field': 'logstash_stats.logstash.uuid',
+    'label': 'Pipeline Node Count',
+    'description': 'Number of nodes on which the Logstash pipeline is running.',
+    'format': '0,0.[00]',
+    'units': '',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': false,
+    'calculation': (bucket) => {
+      const pipelineNodesCounts = {};
+      const pipelineBuckets = _.get(bucket, 'pipelines_nested.by_pipeline_id.buckets', []);
+      pipelineBuckets.forEach(pipelineBucket => {
+        pipelineNodesCounts[pipelineBucket.key] = _.get(pipelineBucket, 'to_root.node_count.value');
+      });
+
+      return pipelineNodesCounts;
+    },
+    'dateHistogramSubAggs': {
+      'pipelines_nested': {
+        'nested': {
+          'path': 'logstash_stats.pipelines'
+        },
+        'aggs': {
+          'by_pipeline_id': {
+            'terms': {
+              'field': 'logstash_stats.pipelines.id',
+              'size': 1000
+            },
+            'aggs': {
+              'to_root': {
+                'reverse_nested': {},
+                'aggs': {
+                  'node_count': {
+                    'cardinality': {
+                      'field': 'logstash_stats.logstash.uuid'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
+
 };

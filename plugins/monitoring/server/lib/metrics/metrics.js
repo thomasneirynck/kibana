@@ -8,6 +8,8 @@ import {
   LogstashEventsRateClusterMetric,
   LogstashEventsRateMetric,
   LogstashMetric,
+  LogstashPipelineThroughputMetric,
+  LogstashPipelineNodeCountMetric,
   NodeIndexMemoryMetric,
   QuotaMetric,
   RequestRateMetric,
@@ -1158,7 +1160,39 @@ const metricInstances = {
     format: LARGE_FLOAT,
     metricAgg: 'avg',
     units: ''
-  })
+  }),
+  'logstash_cluster_pipeline_throughput': new LogstashPipelineThroughputMetric({
+    uuidField: 'cluster_uuid', // TODO: add comment explaining why
+    field: 'logstash_stats.pipelines.events.out',
+    label: 'Pipeline Throughput',
+    description: 'Number of events emitted per second by the Logstash pipeline at the outputs stage.',
+    format: LARGE_FLOAT,
+    units: 'e/s'
+  }),
+  'logstash_node_pipeline_throughput': new LogstashPipelineThroughputMetric({
+    uuidField: 'logstash_stats.logstash.uuid', // TODO: add comment explaining why
+    field: 'logstash_stats.pipelines.events.out',
+    label: 'Pipeline Throughput',
+    description: 'Number of events emitted per second by the Logstash pipeline at the outputs stage.',
+    format: LARGE_FLOAT,
+    units: 'e/s'
+  }),
+  'logstash_cluster_pipeline_nodes_count': new LogstashPipelineNodeCountMetric({
+    uuidField: 'cluster_uuid', // TODO: add comment explaining why
+    field: 'logstash_stats.logstash.uuid',
+    label: 'Pipeline Node Count',
+    description: 'Number of nodes on which the Logstash pipeline is running.',
+    format: LARGE_FLOAT,
+    units: ''
+  }),
+  'logstash_node_pipeline_nodes_count': new LogstashPipelineNodeCountMetric({
+    uuidField: 'logstash_stats.logstash.uuid', // TODO: add comment explaining why
+    field: 'logstash_stats.logstash.uuid',
+    label: 'Pipeline Node Count',
+    description: 'Number of nodes on which the Logstash pipeline is running.',
+    format: LARGE_FLOAT,
+    units: ''
+  }),
 };
 
 export const metrics = Object.keys(metricInstances).reduce((accumulated, key) => {

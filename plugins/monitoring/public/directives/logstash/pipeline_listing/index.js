@@ -1,35 +1,152 @@
 import React from 'react';
-import { render } from 'react-dom';
-import { PipelineCardGroup } from 'plugins/monitoring/components/logstash/pipeline_card_group';
+import { render, unmountComponentAtNode } from 'react-dom';
+import moment from 'moment';
+import { partialRight } from 'lodash';
 import { uiModules } from 'ui/modules';
+import {
+  KuiKeyboardAccessible,
+  KuiTableRowCell,
+  KuiTableRow,
+  KuiFlexGroup,
+  KuiFlexItem
+} from 'ui_framework/components';
+import { MonitoringTable } from 'plugins/monitoring/components/table';
+import { Sparkline } from 'plugins/monitoring/components/sparkline';
+import { SORT_ASCENDING } from 'monitoring-constants';
+import { formatMetric } from '../../../lib/format_number';
+
+const filterFields = [ 'id' ];
+const columns = [
+  { title: 'ID', sortKey: 'id', sortOrder: SORT_ASCENDING },
+  { title: 'Events Emitted Rate', sortKey: 'latestThroughput' },
+  { title: 'Number of Nodes', sortKey: 'latestNodesCount', }
+];
+
+const pipelineRowFactory = (onPipelineClick, onBrush, tooltipXValueFormatter, tooltipYValueFormatter) => {
+
+  return function PipelineRow({ id, metrics, latestThroughput, latestNodesCount }) {
+    const throughputMetric = metrics.throughput;
+    const nodesCountMetric = metrics.nodesCount;
+
+    return (
+      <KuiTableRow>
+        <KuiTableRowCell>
+          <div className="monitoringTableCell__name">
+            <KuiKeyboardAccessible>
+              <a className="kuiLink" onClick={onPipelineClick.bind(null, id)}>
+                { id }
+              </a>
+            </KuiKeyboardAccessible>
+          </div>
+        </KuiTableRowCell>
+        <KuiTableRowCell>
+          <KuiFlexGroup
+            gutterSize="none"
+            alignItems="center"
+          >
+            <KuiFlexItem>
+              <Sparkline
+                series={throughputMetric.data}
+                onBrush={onBrush}
+                tooltip={{
+                  xValueFormatter: tooltipXValueFormatter,
+                  yValueFormatter: partialRight(tooltipYValueFormatter, throughputMetric.metric.format, throughputMetric.metric.units)
+                }}
+                options={{ xaxis: throughputMetric.timeRange }}
+              />
+            </KuiFlexItem>
+            <KuiFlexItem className="monitoringTableCell__number">
+              { formatMetric(latestThroughput, '0.[0]a', throughputMetric.metric.units) }
+            </KuiFlexItem>
+          </KuiFlexGroup>
+        </KuiTableRowCell>
+        <KuiTableRowCell>
+          <KuiFlexGroup
+            gutterSize="none"
+            alignItems="center"
+          >
+            <KuiFlexItem>
+              <Sparkline
+                series={nodesCountMetric.data}
+                onBrush={onBrush}
+                tooltip={{
+                  xValueFormatter: tooltipXValueFormatter,
+                  yValueFormatter: partialRight(tooltipYValueFormatter, nodesCountMetric.metric.format, nodesCountMetric.metric.units)
+                }}
+                options={{ xaxis: nodesCountMetric.timeRange }}
+              />
+            </KuiFlexItem>
+            <KuiFlexItem className="monitoringTableCell__number">
+              { formatMetric(latestNodesCount, '0a') }
+            </KuiFlexItem>
+          </KuiFlexGroup>
+        </KuiTableRowCell>
+      </KuiTableRow>
+    );
+  };
+};
 
 const uiModule = uiModules.get('monitoring/directives', []);
-uiModule.directive('monitoringLogstashPipelineListing', function ($injector) {
+uiModule.directive('monitoringLogstashPipelineListing', ($injector) => {
   const kbnUrl = $injector.get('kbnUrl');
+  const timefilter = $injector.get('timefilter');
+  const config = $injector.get('config');
+
+  const dateFormat = config.get('dateFormat');
 
   return {
     restrict: 'E',
     scope: {
       pipelines: '=',
-      upgradeMessage: '@'
+      pageIndex: '=',
+      filterText: '=',
+      sortKey: '=',
+      sortOrder: '=',
+      onNewState: '=',
     },
-    link(scope, $el) {
-      function onHashClick(id, hash) {
-        const url = `/logstash/pipelines/${id}/${hash}`;
+    link: function (scope, $el) {
+
+      function onBrush(xaxis) {
+        scope.$evalAsync(() => {
+          timefilter.time.from = moment(xaxis.from);
+          timefilter.time.to = moment(xaxis.to);
+          timefilter.time.mode = 'absolute';
+        });
+      }
+
+      function onPipelineClick(id) {
+        const url = `/logstash/pipelines/${id}`;
         scope.$evalAsync(() => kbnUrl.changePath(url));
       }
 
-      scope.$watch('pipelines', pipelines => {
-        const pipelineCardGroup = (
-          <PipelineCardGroup
-            pipelines={pipelines}
-            onHashClick={onHashClick}
-            upgradeMessage={scope.upgradeMessage}
+      function tooltipXValueFormatter(xValue) {
+        return moment(xValue).format(dateFormat);
+      }
+
+      function tooltipYValueFormatter(yValue, format, units) {
+        return formatMetric(yValue, format, units);
+      }
+
+      scope.$watch('pipelines', (pipelines = []) => {
+        const pipelinesTable = (
+          <MonitoringTable
+            className="logstashPipelinesTable"
+            rows={pipelines}
+            pageIndex={scope.pageIndex}
+            filterText={scope.filterText}
+            sortKey={scope.sortKey}
+            sortOrder={scope.sortOrder}
+            onNewState={scope.onNewState}
+            placeholder="Filter Pipelines..."
+            filterFields={filterFields}
+            columns={columns}
+            rowComponent={pipelineRowFactory(onPipelineClick, onBrush, tooltipXValueFormatter, tooltipYValueFormatter)}
           />
         );
-
-        render(pipelineCardGroup, $el[0]);
+        render(pipelinesTable, $el[0]);
       });
+
+      scope.$on('$destroy', () => unmountComponentAtNode($el[0]));
     }
   };
 });

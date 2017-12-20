@@ -2,109 +2,84 @@ import expect from 'expect.js';
 import { _handleResponse } from '../get_pipelines';
 
 describe('get_pipelines', () => {
-  let responseFromEs;
-  let timespanInSeconds;
+  let fetchPipelinesWithMetricsResult;
 
-  describe('response from ES is empty', () => {
+  describe('fetchPipelinesWithMetrics result contains no pipelines', () => {
+    beforeEach(() => {
+      fetchPipelinesWithMetricsResult = {
+        logstash_pipeline_throughput: [
+          {
+            data: []
+          }
+        ],
+        logstash_pipeline_nodes_count: [
+          {
+            data: []
+          }
+        ]
+      };
+    });
+
     it ('returns an empty array', () => {
-      const result = _handleResponse(responseFromEs, timespanInSeconds);
+      const result = _handleResponse(fetchPipelinesWithMetricsResult);
       expect(result).to.eql([]);
     });
   });
 
-  describe('response from ES is non-empty', () => {
+  describe('fetchPipelinesWithMetrics result contains pipelines', () => {
     beforeEach(() => {
-      responseFromEs = {
-        aggregations: {
-          pipelines: {
-            by_pipeline_id: {
-              buckets: [
-                {
-                  key: 'main',
-                  by_pipeline_hash: {
-                    buckets: [
-                      {
-                        key: 'abcdef1',
-                        throughput: { value: 2400 },
-                        duration_in_millis: { value: 600 },
-                        path_to_root: {
-                          last_seen: { value: 1500920946113 }
-                        }
-                      },
-                      {
-                        key: 'abcdef2',
-                        duration_in_millis: { value: 90 },
-                        path_to_root: {
-                          last_seen: { value: 1500920925471 }
-                        }
-                      }
-                    ]
-                  }
-                },
-                {
-                  key: 'shipper',
-                  by_pipeline_hash: {
-                    buckets: [
-                      {
-                        key: 'deadbeef',
-                        throughput: { value: 200 },
-                        path_to_root: {
-                          last_seen: { value: 1500920967692 }
-                        }
-                      }
-                    ]
-                  }
-                }
+      fetchPipelinesWithMetricsResult = {
+        logstash_pipeline_throughput: [
+          {
+            data: [
+              [1513123151000, { apache_logs: 231, logstash_tweets: 34 }]
+            ]
+          }
+        ],
+        logstash_pipeline_nodes_count: [
+          {
+            data: [
+              [1513123151000, { apache_logs: 3, logstash_tweets: 1 }]
+            ]
+          }
+        ]
+      };
+    });
+
+    it ('returns the correct structure for a non-empty response', () => {
+      const result = _handleResponse(fetchPipelinesWithMetricsResult);
+      expect(result).to.eql([
+        {
+          id: 'apache_logs',
+          metrics: {
+            logstash_pipeline_throughput: {
+              data: [
+                [ 1513123151000, 231 ]
+              ]
+            },
+            logstash_pipeline_nodes_count: {
+              data: [
+                [ 1513123151000, 3 ]
+              ]
+            }
+          }
+        },
+        {
+          id: 'logstash_tweets',
+          metrics: {
+            logstash_pipeline_throughput: {
+              data: [
+                [ 1513123151000, 34 ]
+              ]
+            },
+            logstash_pipeline_nodes_count: {
+              data: [
+                [ 1513123151000, 1 ]
               ]
             }
           }
         }
-      };
-
-      timespanInSeconds = 100;
-    });
-
-    it ('returns the correct structure for a non-empty response', () => {
-      const result = _handleResponse(responseFromEs, timespanInSeconds);
-      expect(result).to.eql([
-        {
-          id: 'main',
-          hashes: [
-            {
-              hash: 'abcdef1',
-              eventsPerSecond: 24,
-              eventLatencyInMs: 0.25,
-              lastSeen: 1500920946113
-            },
-            {
-              hash: 'abcdef2',
-              eventsPerSecond: null,
-              eventLatencyInMs: null,
-              lastSeen: 1500920925471
-            }
-          ]
-        },
-        {
-          id: 'shipper',
-          hashes: [
-            {
-              hash: 'deadbeef',
-              eventsPerSecond: 2,
-              eventLatencyInMs: null,
-              lastSeen: 1500920967692
-            }
-          ]
-        }
       ]);
-    });
-
-    it('sorts config hashes from newest to oldest', () => {
-      const pipeline = responseFromEs.aggregations.pipelines.by_pipeline_id.buckets[0];
-      const configHashes = pipeline.by_pipeline_hash.buckets;
-
-      const firstConfigHashLastSeen  = configHashes[0].path_to_root.last_seen.value;
-      const secondConfigHashLastSeen = configHashes[1].path_to_root.last_seen.value;
-      expect(firstConfigHashLastSeen).to.be.greaterThan(secondConfigHashLastSeen);
     });
   });
 });

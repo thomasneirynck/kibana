@@ -1,4 +1,3 @@
-import moment from 'moment';
 import Joi from 'joi';
 import { getClusterStatus } from '../../../../../lib/logstash/get_cluster_status';
 import { getPipelines } from '../../../../../lib/logstash/get_pipelines';
@@ -22,7 +21,8 @@ export function logstashClusterPipelinesRoute(server) {
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
-          }).required()
+          }).required(),
+          metrics: Joi.array().items(Joi.string()).required()
         })
       }
     },
@@ -32,12 +32,9 @@ export function logstashClusterPipelinesRoute(server) {
       const clusterUuid = req.params.clusterUuid;
       const lsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.logstash.index_pattern', ccs);
 
-      const start = moment(req.payload.timeRange.min).valueOf();
-      const end = moment(req.payload.timeRange.max).valueOf();
-
       try {
         const response = {
-          pipelines: await getPipelines(req, config, lsIndexPattern, start, end, clusterUuid),
+          pipelines: await getPipelines(req, lsIndexPattern),
           clusterStatus: await getClusterStatus(req, lsIndexPattern, { clusterUuid })
         };
         reply(response);

@@ -82,6 +82,36 @@ describe('Metrics', () => {
         const failObject = {
           fail: true
         };
+        const logstashPipelineThroughputObject = {
+          pipelines_nested: {
+            by_pipeline_id: {
+              buckets: [
+                {
+                  key: 'main',
+                  throughput: {
+                    value: 12345
+                  }
+                }
+              ]
+            }
+          }
+        };
+        const logstashPipelineNodesCountObject = {
+          pipelines_nested: {
+            by_pipeline_id: {
+              buckets: [
+                {
+                  key: 'main',
+                  to_root: {
+                    node_count: {
+                      value: 3
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        };
 
         const metricsIndexingDerivResult = metricsFunction(indexingObject);
         const expectedIndexingDeriveResult = expectedFunction(indexingObject);
@@ -94,6 +124,14 @@ describe('Metrics', () => {
         const metricsFailResult = metricsFunction(failObject);
         const expectedFailResult = expectedFunction(failObject);
         expect(metricsFailResult).to.be.eql(expectedFailResult);
+
+        const metricsLogstashPipelineThroughputResult = metricsFunction(logstashPipelineThroughputObject, undefined, undefined, 10);
+        const expectedLogstashPipelineThroughputResult = expectedFunction(logstashPipelineThroughputObject, undefined, undefined, 10);
+        expect(metricsLogstashPipelineThroughputResult).to.be.eql(expectedLogstashPipelineThroughputResult);
+
+        const metricsLogstashPipelineNodesCountResult = metricsFunction(logstashPipelineNodesCountObject);
+        const expectedLogstashPipelineNodesCountResult = expectedFunction(logstashPipelineNodesCountObject);
+        expect(metricsLogstashPipelineNodesCountResult).to.be.eql(expectedLogstashPipelineNodesCountResult);
       });
     }
   }
