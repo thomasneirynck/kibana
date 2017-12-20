@@ -5,7 +5,7 @@ import { get, capitalize, isEmpty } from 'lodash';
 import { STATUS } from '../../../constants';
 
 import { Properties } from '../../shared/ContextProperties';
-import { Tab } from '../../shared/UIComponents';
+import { TabLink } from '../../shared/UIComponents';
 import DiscoverButton from '../../shared/DiscoverButton';
 import {
   PropertiesTable,
@@ -107,13 +107,13 @@ function DetailView({ errorGroup, urlParams }) {
       <TabContainer>
         {tabs.map(key => {
           return (
-            <Tab
+            <TabLink
               query={{ detailTab: key }}
               selected={currentTab === key}
               key={key}
             >
               {capitalize(key)}
-            </Tab>
+            </TabLink>
           );
         })}
       </TabContainer>

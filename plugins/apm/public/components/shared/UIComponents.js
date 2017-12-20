@@ -19,7 +19,7 @@ export const GraphHeader = styled.h3`
   font-size: ${fontSizes.large};
 `;
 
-export const Tab = styled(RelativeLink)`
+export const Tab = styled.div`
   display: inline-block;
   font-size: ${fontSizes.large};
   padding: ${px(unit)} ${px(unit + units.quarter)};
@@ -28,3 +28,5 @@ export const Tab = styled(RelativeLink)`
   border-bottom: ${props =>
     props.selected && `${units.quarter / 2}px solid ${colors.blue1}`};
 `;
+
+export const TabLink = Tab.withComponent(RelativeLink);

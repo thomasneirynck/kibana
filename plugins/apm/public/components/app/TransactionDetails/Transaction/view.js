@@ -16,6 +16,8 @@ import {
   TRANSACTION_ID,
   SERVICE_AGENT_NAME
 } from '../../../../../common/constants';
+import { fromQuery, toQuery } from '../../../../utils/url';
+import { withRouter } from 'react-router-dom';
 
 function loadTransaction(props) {
   const { serviceName, start, end, transactionId } = props.urlParams;
@@ -84,7 +86,7 @@ class Transaction extends Component {
   }
 
   render() {
-    const { transaction } = this.props;
+    const { transaction, history, location } = this.props;
     const { transactionId } = this.props.urlParams;
 
     if (transaction.status !== STATUS.SUCCESS) {
@@ -125,7 +127,15 @@ class Transaction extends Component {
           {[DEFAULT_TAB, ...tabs].map(key => {
             return (
               <Tab
-                query={{ detailTab: key }}
+                onClick={() => {
+                  history.replace({
+                    ...location,
+                    search: fromQuery({
+                      ...toQuery(location.search),
+                      detailTab: key
+                    })
+                  });
+                }}
                 selected={currentTab === key}
                 key={key}
               >
@@ -153,4 +163,4 @@ class Transaction extends Component {
   }
 }
 
-export default Transaction;
+export default withRouter(Transaction);

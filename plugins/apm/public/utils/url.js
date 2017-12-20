@@ -18,7 +18,7 @@ export function fromQuery(query) {
 export function encodeQuery(query, exclude = []) {
   return _.mapValues(query, (value, key) => {
     if (exclude.includes(key)) {
-      return value;
+      return encodeURI(value);
     }
     return qs.escape(value);
   });

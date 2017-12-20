@@ -55,7 +55,7 @@ class Span extends React.Component {
   onClose = () => {
     const { location, history } = this.props;
     const { spanId, ...currentQuery } = toQuery(location.search);
-    history.push({
+    history.replace({
       ...location,
       search: fromQuery({
         ...currentQuery,

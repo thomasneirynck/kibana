@@ -31,12 +31,12 @@ describe('fromQuery', () => {
   it('should not encode _a and _g', () => {
     expect(
       fromQuery({
-        g: 'john doe',
-        _g: 'john doe',
-        a: ":'",
-        _a: ":'"
+        g: 'john doe:',
+        _g: 'john doe:',
+        a: 'john doe:',
+        _a: 'john doe:'
       })
-    ).toEqual("g=john%20doe&_g=john doe&a=%3A'&_a=:'");
+    ).toEqual('g=john%20doe%3A&_g=john%20doe:&a=john%20doe%3A&_a=john%20doe:');
   });
 });
 

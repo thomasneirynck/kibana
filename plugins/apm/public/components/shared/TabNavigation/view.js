@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tab } from '../UIComponents';
+import { TabLink } from '../UIComponents';
 import styled from 'styled-components';
 import withService from '../withService';
 import { unit, units, px, colors, fontSizes } from '../../../style/variables';
@@ -39,20 +39,20 @@ function TabNavigation({ urlParams, location, service }) {
     <Container>
       {types.map(type => {
         return (
-          <Tab
+          <TabLink
             path={`${serviceName}/transactions/${encodeURIComponent(type)}`}
             selected={transactionType === type && !errorsSelected}
             key={type}
           >
             {transactionTypeLabel(type)}
-          </Tab>
+          </TabLink>
         );
       })}
       {isEmpty(types) && <EmptyMessage>No transactions available</EmptyMessage>}
       <Divider />
-      <Tab path={`${serviceName}/errors`} selected={errorsSelected}>
+      <TabLink path={`${serviceName}/errors`} selected={errorsSelected}>
         Errors
-      </Tab>
+      </TabLink>
     </Container>
   );
 }
