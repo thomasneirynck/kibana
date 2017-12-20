@@ -1,56 +1,3 @@
-import _ from 'lodash';
-
-function indexingLatencyCalculation(last) {
-  const indexTimeInMillis = _.get(last, 'index_time_in_millis_deriv.value');
-  const indexTimeTotal = _.get(last, 'index_total_deriv.value');
-  if (indexTimeInMillis && indexTimeTotal) {
-    if (indexTimeInMillis < 0 || indexTimeTotal < 0) {
-      return null;
-    }
-    return indexTimeInMillis / indexTimeTotal;
-  }
-  return null;
-}
-
-function queryLatencyCalculation(last) {
-  const queryTimeInMillis = _.get(last, 'query_time_in_millis_deriv.value');
-  const queryTimeTotal = _.get(last, 'query_total_deriv.value');
-  if (queryTimeInMillis && queryTimeTotal) {
-    if (queryTimeInMillis < 0 || queryTimeTotal < 0) {
-      return null;
-    }
-    return queryTimeInMillis / queryTimeTotal;
-  }
-  return null;
-}
-
-function logstashEventsLatencyCalculation(last) {
-  const eventsTimeInMillis = _.get(last, 'events_time_in_millis_deriv.value');
-  const eventsTotal = _.get(last, 'events_total_deriv.value');
-  if (eventsTimeInMillis && eventsTotal) {
-    if (eventsTimeInMillis < 0 || eventsTotal < 0) {
-      return null;
-    }
-    return eventsTimeInMillis / eventsTotal;
-  }
-  return null;
-}
-
-function quotaMetricCalculation(bucket) {
-  const quota = _.get(bucket, 'quota.value');
-  const deltaUsage = _.get(bucket, 'usage_deriv.value');
-  const deltaPeriods = _.get(bucket, 'periods_deriv.value');
-
-  if (deltaUsage && deltaPeriods && quota > -1) {
-    // if throttling is configured
-    const factor = deltaUsage / (deltaPeriods * quota * 1000); // convert quota from microseconds to nanoseconds by multiplying 1000
-    return factor * 100; // convert factor to percentage
-
-  }
-  // if throttling is NOT configured
-  return null;
-}
-
 export const expected = {
   'cluster_index_request_rate_primary': {
     'title': 'Indexing Rate',
@@ -96,7 +43,7 @@ export const expected = {
     'timestampField': 'timestamp'
   },
   'cluster_index_latency': {
-    'calculation': indexingLatencyCalculation,
+    'calculation': new Function(),
     'field': 'indices_stats._all.primaries.indexing.index_total',
     'label': 'Indexing Latency',
     'description':
@@ -136,7 +83,7 @@ export const expected = {
     }
   },
   'node_index_latency': {
-    'calculation': indexingLatencyCalculation,
+    'calculation': new Function(),
     'field': 'node_stats.indices.indexing.index_total',
     'title': 'Latency',
     'label': 'Indexing',
@@ -177,7 +124,7 @@ export const expected = {
     }
   },
   'index_latency': {
-    'calculation': indexingLatencyCalculation,
+    'calculation': new Function(),
     'field': 'index_stats.primaries.indexing.index_total',
     'label': 'Indexing Latency',
     'description':
@@ -217,7 +164,7 @@ export const expected = {
     }
   },
   'cluster_query_latency': {
-    'calculation': queryLatencyCalculation,
+    'calculation': new Function(),
     'field': 'indices_stats._all.total.search.query_total',
     'label': 'Search Latency',
     'description':
@@ -257,7 +204,7 @@ export const expected = {
     }
   },
   'node_query_latency': {
-    'calculation': queryLatencyCalculation,
+    'calculation': new Function(),
     'field': 'node_stats.indices.search.query_total',
     'title': 'Latency',
     'label': 'Search',
@@ -298,7 +245,7 @@ export const expected = {
     }
   },
   'query_latency': {
-    'calculation': queryLatencyCalculation,
+    'calculation': new Function(),
     'field': 'index_stats.total.search.query_total',
     'label': 'Search Latency',
     'description':
@@ -913,7 +860,7 @@ export const expected = {
     'timestampField': 'timestamp',
     'units': '%',
     'uuidField': 'cluster_uuid',
-    'calculation': quotaMetricCalculation,
+    'calculation': new Function(),
     'aggs': {
       'periods': {
         'max': {
@@ -963,7 +910,7 @@ export const expected = {
     'timestampField': 'timestamp',
     'units': '%',
     'uuidField': 'cluster_uuid',
-    'calculation': quotaMetricCalculation,
+    'calculation': new Function(),
     'aggs': {
       'periods': {
         'max': {
@@ -2036,7 +1983,7 @@ export const expected = {
     }
   },
   'logstash_cluster_events_latency': {
-    'calculation': logstashEventsLatencyCalculation,
+    'calculation': new Function(),
     'field': 'logstash_stats.events.out',
     'label': 'Event Latency',
     'description': (
@@ -2120,7 +2067,7 @@ export const expected = {
     'derivative': true
   },
   'logstash_events_latency': {
-    'calculation': logstashEventsLatencyCalculation,
+    'calculation': new Function(),
     'field': 'logstash_stats.events.out',
     'label': 'Event Latency',
     'description': (
@@ -2324,7 +2271,7 @@ export const expected = {
     'timestampField': 'logstash_stats.timestamp',
     'units': '%',
     'uuidField': 'logstash_stats.logstash.uuid',
-    'calculation': quotaMetricCalculation,
+    'calculation': new Function(),
     'aggs': {
       'periods': {
         'max': {
@@ -2373,7 +2320,7 @@ export const expected = {
     'timestampField': 'logstash_stats.timestamp',
     'units': '%',
     'uuidField': 'logstash_stats.logstash.uuid',
-    'calculation': quotaMetricCalculation,
+    'calculation': new Function(),
     'aggs': {
       'periods': {
         'max': {
@@ -2426,16 +2373,7 @@ export const expected = {
     'uuidField': 'cluster_uuid',
     'timestampField': 'logstash_stats.timestamp',
     'derivative': false,
-    'calculation': (bucket, _key, _metric, bucketSizeInSeconds) => {
-      const pipelineThroughputs = {};
-      const pipelineBuckets = _.get(bucket, 'pipelines_nested.by_pipeline_id.buckets', []);
-      pipelineBuckets.forEach(pipelineBucket => {
-        pipelineThroughputs[pipelineBucket.key] =
-          bucketSizeInSeconds ? _.get(pipelineBucket, 'throughput.value') / bucketSizeInSeconds : undefined;
-      });
-
-      return pipelineThroughputs;
-    },
+    'calculation': new Function(),
     'dateHistogramSubAggs': {
       'pipelines_nested': {
         'nested': {
@@ -2504,15 +2442,7 @@ export const expected = {
     'uuidField': 'cluster_uuid',
     'timestampField': 'logstash_stats.timestamp',
     'derivative': false,
-    'calculation': (bucket) => {
-      const pipelineNodesCounts = {};
-      const pipelineBuckets = _.get(bucket, 'pipelines_nested.by_pipeline_id.buckets', []);
-      pipelineBuckets.forEach(pipelineBucket => {
-        pipelineNodesCounts[pipelineBucket.key] = _.get(pipelineBucket, 'to_root.node_count.value');
-      });
-
-      return pipelineNodesCounts;
-    },
+    'calculation': new Function(),
     'dateHistogramSubAggs': {
       'pipelines_nested': {
         'nested': {
@@ -2551,16 +2481,7 @@ export const expected = {
     'uuidField': 'logstash_stats.logstash.uuid',
     'timestampField': 'logstash_stats.timestamp',
     'derivative': false,
-    'calculation': (bucket, _key, _metric, bucketSizeInSeconds) => {
-      const pipelineThroughputs = {};
-      const pipelineBuckets = _.get(bucket, 'pipelines_nested.by_pipeline_id.buckets', []);
-      pipelineBuckets.forEach(pipelineBucket => {
-        pipelineThroughputs[pipelineBucket.key] =
-          bucketSizeInSeconds ? _.get(pipelineBucket, 'throughput.value') / bucketSizeInSeconds : undefined;
-      });
-
-      return pipelineThroughputs;
-    },
+    'calculation': new Function(),
     'dateHistogramSubAggs': {
       'pipelines_nested': {
         'nested': {
@@ -2629,15 +2550,7 @@ export const expected = {
     'uuidField': 'logstash_stats.logstash.uuid',
     'timestampField': 'logstash_stats.timestamp',
     'derivative': false,
-    'calculation': (bucket) => {
-      const pipelineNodesCounts = {};
-      const pipelineBuckets = _.get(bucket, 'pipelines_nested.by_pipeline_id.buckets', []);
-      pipelineBuckets.forEach(pipelineBucket => {
-        pipelineNodesCounts[pipelineBucket.key] = _.get(pipelineBucket, 'to_root.node_count.value');
-      });
-
-      return pipelineNodesCounts;
-    },
+    'calculation': new Function(),
     'dateHistogramSubAggs': {
       'pipelines_nested': {
         'nested': {
