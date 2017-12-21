@@ -21,41 +21,32 @@ export class EventManager {
     this.callWithRequest = callWithRequest;
   }
 
-  async getCalendarEvents(calendarId, jobId) {
+  async getCalendarEvents(calendarId) {
     try {
       const resp = await this.callWithRequest('ml.events', { calendarId });
-      const events = resp.events;
-      if (events.length) {
-        return events[0];
-      } else {
-        const extraText = (jobId === undefined) ? '' : ` and job "${jobId}"`;
-        throw Boom.notFound(`Events for calendar "${calendarId}"${extraText} not found`);
-      }
+      return resp.special_events;
     } catch (error) {
       throw Boom.badRequest(error);
     }
   }
 
+  // jobId is optional
   async getAllEvents(jobId) {
     const calendarId = '_all';
     try {
       const resp = await this.callWithRequest('ml.events', { calendarId, jobId });
-      const events = resp.events;
-      if (events.length) {
-        return events[0];
-      } else {
-        const extraText = (jobId === undefined) ? '' : ` and job "${jobId}"`;
-        throw Boom.notFound(`Events for calendar "${calendarId}"${extraText} not found`);
-      }
+      return resp.special_events;
     } catch (error) {
       throw Boom.badRequest(error);
     }
   }
 
-  async newEvent(calendarId, events) {
-    const body = events;
+  async addEvents(calendarId, events) {
+    // create ndjson string of events
+    const body = events.reduce((str, event) => str += `${JSON.stringify(event)}\n`, '');
+
     try {
-      return await this.callWithRequest('ml.events', { calendarId, body });
+      return await this.callWithRequest('ml.addEvent', { calendarId, body });
     } catch (error) {
       return Boom.badRequest(error);
     }
@@ -68,7 +59,7 @@ export class EventManager {
   isEqual(ev1, ev2) {
     return (ev1.event_id === ev2.event_id &&
       ev1.description === ev2.description &&
-      ev1.start === ev2.start &&
-      ev1.end === ev2.end);
+      ev1.start_time === ev2.start_time &&
+      ev1.end_time === ev2.end_time);
   }
 }

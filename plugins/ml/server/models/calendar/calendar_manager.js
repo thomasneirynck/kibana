@@ -13,6 +13,7 @@
  * strictly prohibited.
  */
 
+import _ from 'lodash';
 import Boom from 'boom';
 import { EventManager } from './event_manager';
 
@@ -44,14 +45,12 @@ export class CalendarManager {
       const calendarsResp = await this.callWithRequest('ml.calendars');
       const events = await this.eventManager.getAllEvents();
       const calendars = calendarsResp.calendars;
+      calendars.forEach((cal) => cal.events = []);
 
       // loop events and combine with related calendars
       events.forEach((event) => {
         const calendar = calendars.find((cal) => cal.calendar_id === event.calendar_id);
         if (calendar) {
-          if (calendar.events === undefined) {
-            calendar.events = [];
-          }
           calendar.events.push(event);
         }
       });
@@ -68,7 +67,7 @@ export class CalendarManager {
     delete calendar.events;
     try {
       await this.callWithRequest('ml.addCalendar', { calendarId, body: calendar });
-      await this.eventManager.newEvent(calendarId, events);
+      await this.eventManager.addEvents(calendarId, events);
 
       // return await this.getCalendar(calendarId); do this?????
       return;
@@ -81,24 +80,37 @@ export class CalendarManager {
     const origCalendar = await this.getCalendar(calendarId);
     try {
       // update job_ids
-      await this.callWithRequest('ml.updateCalendar', { calendarId, body: calendar });
+      const jobsToAdd = _.difference(calendar.job_ids, origCalendar.job_ids);
+      const jobsToRemove = _.difference(origCalendar.job_ids, calendar.job_ids);
 
       // workout the differences between the original events list and the new one
       // if an event has no event_id, it must be new
-      const eventsToAdd = calendar.events.filter((event) => (event.event_id === undefined));
+      const eventsToAdd = calendar.events.filter((event) => (
+        origCalendar.events.find(e => this.eventManager.isEqual(e, event)) === undefined
+      ));
 
       // if an event in the original calendar cannot be found, it must have been deleted
       const eventsToRemove = origCalendar.events.filter((event) => (
         calendar.events.find(e => this.eventManager.isEqual(e, event)) === undefined
       ));
 
+
       // note, both of the loops below could be removed if the add and delete endpoints
-      // allowed multiple events
+      // allowed multiple job_ids
+
+      //add all new jobs
+      await Promise.all(jobsToAdd.map(async (jobId) => {
+        await this.callWithRequest('ml.addJobToCalendar', { calendarId, jobId });
+      }));
+
+      //remove all removed jobs
+      await Promise.all(jobsToRemove.map(async (jobId) => {
+        await this.callWithRequest('ml.removeJobFromCalendar', { calendarId, jobId });
+      }));
+
 
       // add all new events
-      await Promise.all(eventsToAdd.map(async (event) => {
-        await this.eventManager.newEvent(calendarId, event);
-      }));
+      await this.eventManager.addEvents(calendarId, eventsToAdd);
 
       // remove all removed events
       await Promise.all(eventsToRemove.map(async (event) => {

@@ -387,17 +387,34 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
     method: 'PUT'
   });
 
-  ml.updateCalendar = ca({
+  ml.addJobToCalendar = ca({
     url: {
-      fmt: '_xpack/ml/calendars/<%=calendarId%>/_update',
+      fmt: '_xpack/ml/calendars/<%=calendarId%>/jobs/<%=jobId%>',
       req: {
         calendarId: {
+          type: 'string'
+        },
+        jobId: {
           type: 'string'
         }
       }
     },
-    needBody: true,
-    method: 'POST'
+    method: 'PUT'
+  });
+
+  ml.removeJobFromCalendar = ca({
+    url: {
+      fmt: '_xpack/ml/calendars/<%=calendarId%>/jobs/<%=jobId%>',
+      req: {
+        calendarId: {
+          type: 'string'
+        },
+        jobId: {
+          type: 'string'
+        }
+      }
+    },
+    method: 'DELETE'
   });
 
   ml.events = ca({
@@ -466,7 +483,7 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
       }
     },
     needBody: true,
-    method: 'PUT'
+    method: 'POST'
   });
 
   ml.deleteEvent = ca({

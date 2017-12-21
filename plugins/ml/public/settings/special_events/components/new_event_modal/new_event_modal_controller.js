@@ -89,8 +89,8 @@ module.controller('MlNewEventModal', function (
 
     return{
       description: $scope.ui.description,
-      start: start.valueOf(),
-      end: end.valueOf()
+      start_time: start.valueOf(),
+      end_time: end.valueOf()
     };
   }
 
