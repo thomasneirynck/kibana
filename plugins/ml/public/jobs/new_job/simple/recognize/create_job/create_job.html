@@ -6,23 +6,9 @@
       <div class="col-md-6">
         <h3 class="euiTitle euiTitle--large">New job from {{ui.pageTitle}}</h3>
       </div>
-<!--       <div class="col-md-6">
-        <div class="pull-right">
-          <span style="font-size:10px;" ng-show="formConfig.chartInterval !== undefined">Chart interval: {{formConfig.chartInterval.getInterval().expression}}</span>
-          <button
-            aria-label="Create Job"
-            ng-click="setFullTimeRange()"
-            type="button"
-            ng-disabled="jobState === DATAFEED_STATE.RUNNING  || jobState === DATAFEED_STATE.STOPPING || jobState === DATAFEED_STATE.FINISHED"
-            class="kuiButton kuiButton--primary">
-              Use full {{ui.indexPattern.title}} data
-          </button>
-        </div>
-      </div>
- -->
     </div>
 
-    <div class="euiSpacer euiSpacer--l"></div>
+    <div class="euiSpacer euiSpacer--s"></div>
 
     <div class="row">
       <div class="col-md-4">
@@ -31,7 +17,11 @@
           <div>
 
             <div class='form-section' >
-              <h4 class="euiTitle euiTitle--small">Job Details</h4>
+              <div ng-show="jobState !== SAVE_STATE.FINISHED">
+                <h4 class="euiTitle euiTitle--small">Job Details</h4>
+                <div class="euiSpacer euiSpacer--s"></div>
+              </div>
+
               <div class="form-group">
                 <div ng-show="ui.showJobInput && (overallState === SAVE_STATE.NOT_SAVED || overallState === SAVE_STATE.SAVING)">
                   <div class="form-group">
@@ -117,7 +107,10 @@
                   <div class='job-state-info' ng-show="overallState === SAVE_STATE.SAVING">Analysis running <i class='fa fa-spinner fa-spin' aria-label="Analysis running" ></i></div>
                 </div>
                 <div ng-show="overallState === SAVE_STATE.SAVED">
-                  <h3 class="euiTitle euiTitle--small">Jobs created</h3>
+                  <h3 class="euiTitle euiTitle--large">Jobs created
+                    <i style="color:green;" class="fa fa-check" aria-label="Saved"></i>
+                  </h3>
+                  <div class="euiSpacer euiSpacer--m"></div>
 
                   <button
                     aria-label="Reset"
@@ -135,7 +128,8 @@
                 </div>
 
                 <div ng-show="overallState === SAVE_STATE.FAILED">
-                  <h3 class="euiTitle euiTitle--small">Jobs creation failed</h3>
+                  <h3 class="euiTitle euiTitle--large">Jobs creation failed</h3>
+                  <div class="euiSpacer euiSpacer--m"></div>
 
                   <button
                     aria-label="Reset"

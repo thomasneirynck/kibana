@@ -1,6 +1,6 @@
 <div class="edit-job-modal">
   <ml-message-bar ></ml-message-bar>
-  <h3 tooltip="{{ui.title}}" class="euiTitle">{{ui.title}}</h3>
+  <h1 tooltip="{{ui.title}}" class="euiTitle">{{ui.title}}</h1>
 
   <div class="euiSpacer euiSpacer--m"></div>
 
@@ -41,13 +41,14 @@
     <hr class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium">
 
     <div class="form-group">
-      <label>Custom URLs</label><i ml-info-icon="new_job_custom_urls" />
+      <label class="kuiFormLabel">Custom URLs</label><i ml-info-icon="new_job_custom_urls" />
+      <div class="euiSpacer euiSpacer--s"></div>
       <div ng-if="job.custom_settings && job.custom_settings.custom_urls">
         <div ng-repeat="item in job.custom_settings.custom_urls track by $index" class="custom-url">
           <div class="field-cols">
 
             <div class="form-group">
-              <label id="ml_aria_label_custom_url_label_{{$index}}">Label</label>
+              <label id="ml_aria_label_custom_url_label_{{$index}}" class="kuiFormLabel">Label</label>
               <input
                 aria-labelledby="ml_aria_label_custom_url_label_{{$index}}"
                 ng-model="item.url_name"
@@ -58,7 +59,7 @@
 
           <div class="field-cols">
             <div class="form-group">
-              <label id="ml_aria_label_custom_url_{{$index}}">URL</label>
+              <label id="ml_aria_label_custom_url_{{$index}}" class="kuiFormLabel">URL</label>
               <textarea
                 aria-labelledby="ml_aria_label_custom_url_{{$index}}"
                 ng-model="item.url_value"
@@ -195,7 +196,7 @@
           class="form-control" />
       </div>
     </div>
-    <div ng-hide="ui.datafeedStopped" >
+    <div ng-hide="ui.datafeedStopped" class="kuiText">
       <div>Datafeed settings cannot be edited while the datafeed is running.</div>
       <div ng-show="ui.stoppingDatafeed===false"><a ng-click="stopDatafeed()">Stop datafeed now</a></div>
       <div ng-show="ui.stoppingDatafeed===true">Stopping...</div>

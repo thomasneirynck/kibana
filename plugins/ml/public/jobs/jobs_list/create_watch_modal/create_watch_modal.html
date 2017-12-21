@@ -1,6 +1,8 @@
 <ml-message-bar ></ml-message-bar>
 <div class="create-watch-modal">
-  <h3 class="euiTitle euiTitle--small">Create watch for {{jobId}}</h3>
+  <h1 class="euiTitle">Create watch for {{jobId}}</h1>
+  <div class="euiSpacer euiSpacer--s"></div>
+
   <div ng-if='watcherEnabled===true'>
     <ml-create-watch
       job-id='jobId'

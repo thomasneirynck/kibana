@@ -2,12 +2,12 @@
 	<div ng-show='status.watch===null || status.watch===STATUS.SAVING || status.watch===STATUS.SAVE_FAILED'>
 		<div class='form-group'>
 			<div class='sub-form-group'>
-				<label for="selectInterval">Time range</label><br />
+				<label for="selectInterval" class="kuiFormLabel kuiVerticalRhythm">Time range</label><br />
 				Now - <input id="selectInterval" ng-model='config.interval' type="text" class="kuiTextInput kuiTextInput--small interval" placeholder="m">
 			</div>
 
 			<div class='sub-form-group'>
-				<label for="selectSeverity">Severity threshold</label><br />
+				<label for="selectSeverity" class="kuiFormLabel kuiVerticalRhythm">Severity threshold</label><br />
 		    <div class="dropdown-group" dropdown>
 		      <button id="selectSeverity" type="button" class="form-control dropdown-toggle" dropdown-toggle ng-disabled="disabled">
 		        <span><i class="fa fa-exclamation-triangle ml-icon-severity-{{config.threshold.display}}"></i> {{config.threshold.display}}</span> <span class="caret"></span>

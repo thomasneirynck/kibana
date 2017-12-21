@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <div class="euiSpacer euiSpacer--l"></div>
+    <div class="euiSpacer euiSpacer--s"></div>
 
     <div class="row">
       <div class="col-md-4">
@@ -28,6 +28,7 @@
           <div>
             <div class='form-section form-section-overflow' >
               <h4 class="euiTitle euiTitle--small">Population</h4>
+              <div class="euiSpacer euiSpacer--s"></div>
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group">
@@ -86,7 +87,11 @@
             </div>
 
             <div class='form-section' >
-              <h4 class="euiTitle euiTitle--small">Job Details</h4>
+              <div ng-show="jobState !== JOB_STATE.FINISHED">
+                <h4 class="euiTitle euiTitle--small">Job Details</h4>
+                <div class="euiSpacer euiSpacer--s"></div>
+              </div>
+
               <div class="form-group">
                 <div ng-show="ui.showJobInput && (jobState === JOB_STATE.NOT_STARTED || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING)">
                   <ml-general-job-details></ml-general-job-details>
@@ -103,6 +108,8 @@
 
                   <div class='job-state-info' ng-show="jobState === JOB_STATE.RUNNING">Analysis running <i class='fa fa-spinner fa-spin'></i></div>
                   <div class='job-state-info' ng-show="jobState === JOB_STATE.STOPPING">Analysis stopping <i class='fa fa-spinner fa-spin'></i></div>
+
+                  <div class="euiSpacer euiSpacer--s"></div>
 
                   <button
                     aria-label="Stop Job"
@@ -123,7 +130,10 @@
                   </a>
                 </div>
                 <div ng-show="jobState === JOB_STATE.FINISHED">
-                  <h3 class="euiTitle euiTitle--small">Job {{formConfig.jobId }} created</h3>
+                  <h3 class="euiTitle euiTitle--large">Job {{formConfig.jobId }} created
+                    <i style="color:green;" class="fa fa-check" aria-label="Saved"></i>
+                  </h3>
+                  <div class="euiSpacer euiSpacer--m"></div>
 
                   <button
                     aria-label="Reset"

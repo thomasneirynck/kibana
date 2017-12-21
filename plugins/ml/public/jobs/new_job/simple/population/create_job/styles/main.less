@@ -1,6 +1,7 @@
 @import (reference) "~ui/styles/variables";
 
 .population-job-container {
+  font-size: 14px;
   width: 100%;
   margin-right: auto;
   margin-left: auto;
@@ -37,6 +38,10 @@
 
   .charts-container {
       margin-left: -10px;
+
+      label {
+        margin-bottom: 15px;
+      }
    }
 
   .form-section {
@@ -87,7 +92,6 @@
       margin: 0px;
       padding: 10px;
       overflow: hidden;
-
     }
 
     .chart {
@@ -95,7 +99,7 @@
         display: block;
       }
       .split-controls {
-        height: 40px;
+        height: 45px;
 
         .split-field-container {
           width: 255px;
@@ -107,7 +111,7 @@
         }
         .split-align {
           vertical-align: top;
-          margin-top: 5px;
+          margin-top: 7px;
           display: inline-block
         }
       }
@@ -124,12 +128,17 @@
         color: steelblue;
         font-weight: bold;
         margin-left: 10px;
-        border-bottom: 1px solid #CCCCCC;
+        margin-top: 1px;
         margin-bottom: 5px;
+        border-bottom: 1px solid #CCCCCC;
         padding-bottom: 5px;
       }
       .chart {
         margin: 0px 10px;
+      }
+
+      label {
+        margin-bottom: 10px;
       }
     }
 

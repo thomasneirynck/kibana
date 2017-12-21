@@ -4,7 +4,7 @@
   <div ng-controller="MlCreateSingleMetricJob" class="single-metric-job-container">
     <div class="row">
       <div class="col-md-6">
-        <h3 class="euiTitle euiTitle--large">New job from {{ui.pageTitle}}</h3>
+        <h1 class="euiTitle euiTitle--large">New job from {{ui.pageTitle}}</h1>
       </div>
       <div class="col-md-6">
         <div class="pull-right">
@@ -203,12 +203,13 @@
             </label>
           </div>
           <div class="form-group">
-            <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
+            <label class='kuiFormLabel kuiVerticalRhythm'>
               <span id="ml_aria_label_new_job_model_memory_limit">
                 Model memory limit
               </span>
               <i ml-info-icon="new_job_model_memory_limit" />
             </label>
+            <div></div>
             <input
               aria-labelledby="ml_aria_label_new_job_model_memory_limit"
               aria-describedby="ml_aria_description_new_job_model_memory_limit"
@@ -252,7 +253,10 @@
 
     </div>
     <div ng-show="jobState === JOB_STATE.FINISHED">
-      <h3 class="euiTitle euiTitle--small">Job {{formConfig.jobId }} created</h3>
+      <h3 class="euiTitle euiTitle--large">Job {{formConfig.jobId }} created
+        <i style="color:green;" class="fa fa-check" aria-label="Saved"></i>
+      </h3>
+      <div class="euiSpacer euiSpacer--m"></div>
 
       <button
         aria-label="Reset"

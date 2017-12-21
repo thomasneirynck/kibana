@@ -60,7 +60,8 @@
 
     <!-- third view of wizard -->
     <div ng-show="ui.wizard.step === 2"  class="wizard-step-2">
-      <h3 class="euiTitle euiTitle--small">{{ui.pageTitle}}</h3>
+      <h3 class="euiTitle euiTitle--large">{{ui.pageTitle}}</h3>
+      <div class="euiSpacer euiSpacer--s"></div>
         <ul class="nav nav-tabs">
           <li
             class="kbn-settings-tab"
@@ -115,6 +116,7 @@
 
             <div class="form-group">
               <label class="kuiFormLabel">Custom URLs</label><i ml-info-icon="new_job_custom_urls" />
+              <div class="euiSpacer euiSpacer--s"></div>
               <div ng-if="job.custom_settings && job.custom_settings.custom_urls">
                 <div ng-repeat="item in job.custom_settings.custom_urls track by $index" class="custom-url">
                   <div class="field-cols">
@@ -236,6 +238,7 @@
 
               <label class="kuiFormLabel" aria-describedby="ml_aria_description_new_job_categorizationfilters">Categorization Filters</label>
               <i ml-info-icon="new_job_categorizationfilters" />
+              <div class="euiSpacer euiSpacer--s"></div>
               <div ng-if="job.analysis_config && job.analysis_config.categorization_filters">
                 <div ng-repeat="item in job.analysis_config.categorization_filters track by $index" class="categorization-filter">
                   <div class="field-cols">
@@ -278,6 +281,9 @@
             <hr class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium">
             <label class="kuiFormLabel" aria-describedby="ml_aria_description_new_job_detectors">Detectors</label>
             <i ml-info-icon="new_job_detectors" />
+
+            <div class="euiSpacer euiSpacer--s"></div>
+
             <div ml-job-detectors-list
               ml-detectors="job.analysis_config.detectors"
               ml-indices="indices"
@@ -288,8 +294,9 @@
             <div ng-hide="ui.validation.tabs[1].checks.detectors.valid" class="validation-error">
               {{ ( ui.validation.tabs[1].checks.detectors.message || "At least one detector should be configured" ) }}
             </div>
-            <hr />
+
             <hr class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium">
+
             <label class="kuiFormLabel" aria-describedby="ml_aria_description_new_job_influencers">Influencers</label>
             <i ml-info-icon="new_job_influencers" />
             <div class="influencer-list-container">
@@ -327,65 +334,74 @@
         <!-- tab 2 Data Description -->
         <ml-job-tab-2 ng-show="ui.currentTab === 2">
           <div class="tab_contents">
-            <ml-form-label label-id="new_job_data_format">Data format</ml-form-label>
-            <select
-              aria-labelledby="ml_aria_label_new_job_data_format"
-              aria-describedby="ml_aria_description_new_job_data_format"
-              ng-model="job.data_description.format"
-              ng-disabled="ui.isDatafeed"
-              ng-options="item.value as item.title for item in ui.inputDataFormat"
-              class="form-control">
-            </select>
-
-            <ml-job-delimited-options ng-show="job.data_description.format==='delimited'">
-              <ml-form-label label-id="new_job_delimiter">Delimiter</ml-form-label>
+            <div class="form-group">
+              <ml-form-label label-id="new_job_data_format">Data format</ml-form-label>
               <select
-                aria-labelledby="ml_aria_label_new_job_delimiter"
-                aria-describedby="ml_aria_description_new_job_delimiter"
-                ng-model="ui.selectedFieldDelimiter"
-                ng-options="item.value as item.title for item in ui.fieldDelimiterOptions"
-                class="form-control" />
-              <input
-                ng-model="ui.customFieldDelimiter"
-                ng-show="ui.selectedFieldDelimiter==='custom'"
-                ng-required="job.data_description.format==='delimited' && ui.selectedFieldDelimiter==='custom'"
-                class="form-control" />
-
-              <ml-form-label label-id="new_job_quote_character">Quote character</ml-form-label>
-              <input
-                aria-labelledby="ml_aria_label_new_job_quote_character"
-                aria-describedby="ml_aria_description_new_job_quote_character"
-                ng-model="job.data_description.quote_character"
-                ng-required="job.data_description.format==='delimited'"
-                placeholder=""
-                class="form-control" />
+                aria-labelledby="ml_aria_label_new_job_data_format"
+                aria-describedby="ml_aria_description_new_job_data_format"
+                ng-model="job.data_description.format"
+                ng-disabled="ui.isDatafeed"
+                ng-options="item.value as item.title for item in ui.inputDataFormat"
+                class="form-control">
+              </select>
+            </div>
+            <ml-job-delimited-options ng-show="job.data_description.format==='delimited'">
+              <div class="form-group">
+                <ml-form-label label-id="new_job_delimiter">Delimiter</ml-form-label>
+                <select
+                  aria-labelledby="ml_aria_label_new_job_delimiter"
+                  aria-describedby="ml_aria_description_new_job_delimiter"
+                  ng-model="ui.selectedFieldDelimiter"
+                  ng-options="item.value as item.title for item in ui.fieldDelimiterOptions"
+                  class="form-control" />
+              </div>
+              <div class="form-group">
+                <input
+                  ng-model="ui.customFieldDelimiter"
+                  ng-show="ui.selectedFieldDelimiter==='custom'"
+                  ng-required="job.data_description.format==='delimited' && ui.selectedFieldDelimiter==='custom'"
+                  class="form-control" />
+              </div>
+              <div class="form-group">
+                <ml-form-label label-id="new_job_quote_character">Quote character</ml-form-label>
+                <input
+                  aria-labelledby="ml_aria_label_new_job_quote_character"
+                  aria-describedby="ml_aria_description_new_job_quote_character"
+                  ng-model="job.data_description.quote_character"
+                  ng-required="job.data_description.format==='delimited'"
+                  placeholder=""
+                  class="form-control" />
+              </div>
             </ml-job-delimited-options>
 
-            <ml-form-label label-id="new_job_time_field">Time field</ml-form-label>
-            <input
-              aria-labelledby="ml_aria_label_new_job_time_field"
-              aria-describedby="ml_aria_description_new_job_time_field"
-              ng-model="job.data_description.time_field"
-              required
-              placeholder=""
-              class="form-control" />
-            <div ng-hide="ui.validation.tabs[2].checks.timeField.valid" class="validation-error">
-              {{ ( ui.validation.tabs[2].checks.timeField.message || "Time field should be specified" ) }}
+            <div class="form-group">
+              <ml-form-label label-id="new_job_time_field">Time field</ml-form-label>
+              <input
+                aria-labelledby="ml_aria_label_new_job_time_field"
+                aria-describedby="ml_aria_description_new_job_time_field"
+                ng-model="job.data_description.time_field"
+                required
+                placeholder=""
+                class="form-control" />
+              <div ng-hide="ui.validation.tabs[2].checks.timeField.valid" class="validation-error">
+                {{ ( ui.validation.tabs[2].checks.timeField.message || "Time field should be specified" ) }}
+              </div>
             </div>
 
-            <ml-form-label label-id="new_job_time_format">Time format</ml-form-label>
-            <input
-              aria-labelledby="ml_aria_label_new_job_time_format"
-              aria-describedby="ml_aria_description_new_job_time_format"
-              ng-model="job.data_description.time_format"
-              required
-              placeholder=""
-              class="form-control" />
-            <div ng-hide="ui.validation.tabs[2].checks.timeFormat.valid" class="validation-error">
-              {{ ( ui.validation.tabs[2].checks.timeFormat.message || "Time format should be specified" ) }}
+            <div class="form-group">
+              <ml-form-label label-id="new_job_time_format">Time format</ml-form-label>
+              <input
+                aria-labelledby="ml_aria_label_new_job_time_format"
+                aria-describedby="ml_aria_description_new_job_time_format"
+                ng-model="job.data_description.time_format"
+                required
+                placeholder=""
+                class="form-control" />
+              <div ng-hide="ui.validation.tabs[2].checks.timeFormat.valid" class="validation-error">
+                {{ ( ui.validation.tabs[2].checks.timeFormat.message || "Time format should be specified" ) }}
+              </div>
+              <div class="time-example">{{ ((exampleTime)?"e.g. "+ exampleTime:"") }}</div>
             </div>
-            <div class="time-example">{{ ((exampleTime)?"e.g. "+ exampleTime:"") }}</div>
-
           </div>
         </ml-job-tab-2>
 
@@ -406,6 +422,7 @@
                 <i ml-info-icon="new_job_enable_datafeed_job" />
               </span>
             </label>
+            <div class="euiSpacer euiSpacer--s"></div>
             <div ng-hide="ui.validation.tabs[3].checks.isDatafeed.valid" class="validation-error">
               {{ ( ui.validation.tabs[3].checks.isDatafeed.message ) }}
             </div>
