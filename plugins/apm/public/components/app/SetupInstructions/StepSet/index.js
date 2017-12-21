@@ -57,8 +57,10 @@ class StepSet extends React.Component {
       instruction => instruction.id === selectedTabId
     );
 
+    const stepSetId = type.replace(/\s+/g, '-').toLowerCase();
+
     return (
-      <StepSetWrapper className="kuiPanel">
+      <StepSetWrapper className="kuiPanel" data-stepset-id={stepSetId}>
         <Title>Install and set up {type}</Title>
         <Tabs>{this.renderTabs()}</Tabs>
 
@@ -70,6 +72,7 @@ class StepSet extends React.Component {
               key={step.indicatorNumber}
               type={type}
               step={step}
+              stepSetId={stepSetId}
               isLastStep={isLastStep}
               checkStatus={checkStatus}
               result={result}

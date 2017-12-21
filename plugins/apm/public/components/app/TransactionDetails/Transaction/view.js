@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { STATUS } from '../../../../constants';
 import { units, colors, px, borderRadius } from '../../../../style/variables';
-import { Tab } from '../../../shared/UIComponents';
+import { Tab, SectionHeader } from '../../../shared/UIComponents';
 import { capitalize, get } from 'lodash';
 
 import { Properties } from '../../../shared/ContextProperties';
@@ -56,8 +56,8 @@ const Header = styled.div`
   padding: ${px(units.plus)};
 `;
 
-const Title = styled.h3`
-  margin-top: -${px(units.quarter)};
+const Title = styled(SectionHeader)`
+  margin-top: ${px(units.quarter)};
 `;
 
 const PropertiesTableContainer = styled.div`

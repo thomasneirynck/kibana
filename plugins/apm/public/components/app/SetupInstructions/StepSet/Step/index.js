@@ -3,14 +3,35 @@ import { STATUS } from '../../../../../constants';
 
 import styled from 'styled-components';
 import { KuiButton, KuiButtonIcon } from 'ui_framework/components';
-import { px, unit, units, fontSizes } from '../../../../../style/variables';
+import {
+  px,
+  unit,
+  units,
+  fontSize,
+  fontSizes,
+  fontFamilyCode,
+  colors
+} from '../../../../../style/variables';
 
 import Indicator from './Indicator';
 import StatusCheckText from './StatusCheckText';
 import CopyButton from './CopyButton';
 import MarkdownRenderer from 'react-markdown-renderer';
 
-import { EuiCodeBlock, EuiText } from '@elastic/eui';
+import SyntaxHighlighter, {
+  registerLanguage
+} from 'react-syntax-highlighter/dist/light';
+import { xcode } from 'react-syntax-highlighter/dist/styles';
+
+import bash from 'react-syntax-highlighter/dist/languages/bash';
+import javascript from 'react-syntax-highlighter/dist/languages/javascript';
+import python from 'react-syntax-highlighter/dist/languages/python';
+
+registerLanguage('bash', bash);
+registerLanguage('javascript', javascript);
+registerLanguage('python', python);
+
+import { EuiText } from '@elastic/eui';
 
 const StepWrapper = styled.div`
   display: flex;
@@ -21,7 +42,7 @@ const StepWrapper = styled.div`
 const Timeline = styled.div``;
 
 const Content = styled.div`
-  width: 100%;
+  width: 80%;
 `;
 
 const Title = styled.h3`
@@ -35,6 +56,15 @@ const DownloadButton = styled(KuiButton)`
 
 const Description = styled.div`
   max-width: 80%;
+
+  // Markdown code blocks
+  p code {
+    font-family: ${fontFamilyCode};
+    white-space: pre-wrap;
+    font-size: ${fontSize};
+    background: ${colors.gray5};
+    padding: ${px(units.quarter)} ${px(units.half)};
+  }
 `;
 
 const CheckStatusButton = styled(KuiButton)`
@@ -47,7 +77,7 @@ const CodeWrapper = styled.div`
   margin: ${px(unit)} 0 ${px(unit)} 0;
 `;
 
-function Step({ step, isLastStep, checkStatus, result, type }) {
+function Step({ step, stepSetId, isLastStep, checkStatus, result, type }) {
   return (
     <StepWrapper data-step-id={step.indicatorNumber}>
       <Timeline>
@@ -79,18 +109,26 @@ function Step({ step, isLastStep, checkStatus, result, type }) {
         {step.code && (
           <CodeWrapper>
             <CopyButton
-              target={`[data-step-id="${step.indicatorNumber}"] code`}
+              target={`[data-stepset-id="${stepSetId}"] [data-step-id="${
+                step.indicatorNumber
+              }"] pre code`}
             >
               Copy snippet
             </CopyButton>
 
-            <EuiCodeBlock
+            <SyntaxHighlighter
               language={step.codeLanguage || 'bash'}
-              fontSize="m"
-              paddingSize="m"
+              style={xcode}
+              customStyle={{
+                color: null,
+                padding: px(unit),
+                lineHeight: px(unit * 1.5),
+                background: colors.gray5,
+                overflowX: 'scroll'
+              }}
             >
               {step.code || ''}
-            </EuiCodeBlock>
+            </SyntaxHighlighter>
           </CodeWrapper>
         )}
 

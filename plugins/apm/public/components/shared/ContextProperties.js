@@ -28,7 +28,7 @@ const Property = styled.div`
 `;
 
 const PropertyLabel = styled.div`
-  margin-bottom: ${px(units.quarter)};
+  margin-bottom: ${px(units.half)};
   font-size: ${fontSizes.small};
   color: ${colors.gray3};
 `;
