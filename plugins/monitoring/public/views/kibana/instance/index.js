@@ -3,7 +3,6 @@
  */
 import { get, find } from 'lodash';
 import uiRoutes from'ui/routes';
-import { uiModules } from 'ui/modules';
 import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
 import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
 import template from './index.html';
@@ -66,30 +65,28 @@ uiRoutes.when('/kibana/instances/:uuid', {
       return routeInit();
     },
     pageData: getPageData
+  },
+  controller($injector, $scope) {
+    const timefilter = $injector.get('timefilter');
+    timefilter.enableTimeRangeSelector();
+    timefilter.enableAutoRefreshSelector();
+
+    const $route = $injector.get('$route');
+    const globalState = $injector.get('globalState');
+    $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
+    $scope.pageData = $route.current.locals.pageData;
+
+    const title = $injector.get('title');
+    title($scope.cluster, `Kibana - ${get($scope.pageData, 'kibanaSummary.name')}`);
+
+    const $executor = $injector.get('$executor');
+    $executor.register({
+      execute: () => getPageData($injector),
+      handleResponse: (response) => $scope.pageData = response
+    });
+
+    $executor.start();
+
+    $scope.$on('$destroy', $executor.destroy);
   }
-});
-
-const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-uiModule.controller('kibana', ($injector, $scope) => {
-  const timefilter = $injector.get('timefilter');
-  timefilter.enableTimeRangeSelector();
-  timefilter.enableAutoRefreshSelector();
-
-  const $route = $injector.get('$route');
-  const globalState = $injector.get('globalState');
-  $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
-  $scope.pageData = $route.current.locals.pageData;
-
-  const title = $injector.get('title');
-  title($scope.cluster, `Kibana - ${get($scope.pageData, 'kibanaSummary.name')}`);
-
-  const $executor = $injector.get('$executor');
-  $executor.register({
-    execute: () => getPageData($injector),
-    handleResponse: (response) => $scope.pageData = response
-  });
-
-  $executor.start();
-
-  $scope.$on('$destroy', $executor.destroy);
 });

@@ -1,9 +1,8 @@
 /*
  * Logstash Node Pipeline View
  */
-import _ from 'lodash';
+import { find } from 'lodash';
 import uiRoutes from'ui/routes';
-import { uiModules } from 'ui/modules';
 import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
 import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
 import { CALCULATE_DURATION_SINCE } from 'monitoring-constants';
@@ -56,34 +55,32 @@ uiRoutes.when('/logstash/pipelines/:id/:hash?', {
       return routeInit();
     },
     pageData: getPageData
-  }
-});
+  },
+  controller($injector, $scope) {
+    const $route = $injector.get('$route');
+    const $executor = $injector.get('$executor');
+    const globalState = $injector.get('globalState');
+    const title = $injector.get('title');
+    const timefilter = $injector.get('timefilter');
 
-const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-uiModule.controller('logstashPipeline', ($injector, $scope) => {
-  const $route = $injector.get('$route');
-  const $executor = $injector.get('$executor');
-  const globalState = $injector.get('globalState');
-  const title = $injector.get('title');
-  const timefilter = $injector.get('timefilter');
+    timefilter.disableTimeRangeSelector(); // Do not display time picker in UI
+    timefilter.enableAutoRefreshSelector();
 
-  timefilter.disableTimeRangeSelector(); // Do not display time picker in UI
-  timefilter.enableAutoRefreshSelector();
-
-  function setClusters(clusters) {
-    $scope.clusters = clusters;
-    $scope.cluster = _.find($scope.clusters, { cluster_uuid: globalState.cluster_uuid });
-  }
-  setClusters($route.current.locals.clusters);
-  $scope.pageData = $route.current.locals.pageData;
-  title($scope.cluster, `Logstash - Pipeline`);
-
-  $executor.register({
-    execute: () => getPageData($injector),
-    handleResponse: (response) => {
-      $scope.pageData = response;
+    function setClusters(clusters) {
+      $scope.clusters = clusters;
+      $scope.cluster = find($scope.clusters, { cluster_uuid: globalState.cluster_uuid });
     }
-  });
-  $executor.start();
-  $scope.$on('$destroy', $executor.destroy);
+    setClusters($route.current.locals.clusters);
+    $scope.pageData = $route.current.locals.pageData;
+    title($scope.cluster, `Logstash - Pipeline`);
+
+    $executor.register({
+      execute: () => getPageData($injector),
+      handleResponse: (response) => {
+        $scope.pageData = response;
+      }
+    });
+    $executor.start();
+    $scope.$on('$destroy', $executor.destroy);
+  }
 });

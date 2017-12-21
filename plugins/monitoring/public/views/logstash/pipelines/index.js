@@ -1,6 +1,5 @@
 import { find } from 'lodash';
 import uiRoutes from 'ui/routes';
-import { uiModules } from 'ui/modules';
 import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
 import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
 import {
@@ -62,32 +61,30 @@ uiRoutes
       return routeInit();
     },
     pageData: getPageData
+  },
+  controller($injector, $scope) {
+    const $route = $injector.get('$route');
+    const globalState = $injector.get('globalState');
+    const timefilter = $injector.get('timefilter');
+    const title = $injector.get('title');
+    const $executor = $injector.get('$executor');
+
+    $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
+    $scope.pageData = $route.current.locals.pageData;
+
+    $scope.upgradeMessage = makeUpgradeMessage($scope.pageData.clusterStatus.versions);
+    timefilter.enableTimeRangeSelector();
+    timefilter.enableAutoRefreshSelector();
+
+    title($scope.cluster, 'Logstash Pipelines');
+
+    $executor.register({
+      execute: () => getPageData($injector),
+      handleResponse: (response) => $scope.pageData = response
+    });
+
+    $executor.start();
+
+    $scope.$on('$destroy', $executor.destroy);
   }
-});
-
-const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-uiModule.controller('logstashPipelines', ($injector, $scope) => {
-  const $route = $injector.get('$route');
-  const globalState = $injector.get('globalState');
-  const timefilter = $injector.get('timefilter');
-  const title = $injector.get('title');
-  const $executor = $injector.get('$executor');
-
-  $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
-  $scope.pageData = $route.current.locals.pageData;
-
-  $scope.upgradeMessage = makeUpgradeMessage($scope.pageData.clusterStatus.versions);
-  timefilter.enableTimeRangeSelector();
-  timefilter.enableAutoRefreshSelector();
-
-  title($scope.cluster, 'Logstash Pipelines');
-
-  $executor.register({
-    execute: () => getPageData($injector),
-    handleResponse: (response) => $scope.pageData = response
-  });
-
-  $executor.start();
-
-  $scope.$on('$destroy', $executor.destroy);
 });
