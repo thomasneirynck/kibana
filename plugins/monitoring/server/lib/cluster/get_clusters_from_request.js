@@ -34,7 +34,9 @@ export function normalizeClustersData(clusters) {
 /**
  * Get all clusters or the cluster associated with {@code clusterUuid} when it is defined.
  */
-export async function getClustersFromRequest(req, esIndexPattern, kbnIndexPattern, lsIndexPattern, alertsIndex, { clusterUuid } = {}) {
+export async function getClustersFromRequest(req, indexPatterns, { clusterUuid } = {}) {
+  const { esIndexPattern, kbnIndexPattern, lsIndexPattern, alertsIndex } = indexPatterns;
+
   // get clusters with stats and cluster state
   let clusters = await getClustersStats(req, esIndexPattern, clusterUuid);
 

@@ -31,9 +31,10 @@ export function clusterRoutes(server) {
       const kbnIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.kibana.index_pattern', ccs);
       const lsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.logstash.index_pattern', ccs);
       const alertsIndex = prefixIndexPattern(config, 'xpack.monitoring.cluster_alerts.index', ccs);
+      const indexPatterns = { esIndexPattern, kbnIndexPattern, lsIndexPattern, alertsIndex };
       const clusterUuid = req.params.clusterUuid;
 
-      return getClustersFromRequest(req, esIndexPattern, kbnIndexPattern, lsIndexPattern, alertsIndex, { clusterUuid })
+      return getClustersFromRequest(req, indexPatterns, { clusterUuid })
       .then(reply)
       .catch(err => reply(handleError(err, req)));
     }
