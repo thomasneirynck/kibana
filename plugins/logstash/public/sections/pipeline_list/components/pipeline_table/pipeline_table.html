@@ -40,6 +40,7 @@
       >
         Last Modified By
       </th>
+      <th scope="col" class="kuiTableHeaderCell"></th>
     </tr>
   </thead>
 
@@ -87,6 +88,21 @@
       >
         <div class="kuiTableRowCell__liner" data-test-subj="cellUsername">
           {{item.pipeline.username}}
+        </div>
+      </td>
+      <td class="kuiTableRowCell">
+        <div class="kuiTableRowCell__liner">
+          <div class="kuiMenuButtonGroup kuiMenuButtonGroup--alignRight">
+            <a
+              class="kuiMenuButton kuiMenuButton--basic kuiMenuButton--iconText"
+              title="Clone"
+              ng-href="#/management/logstash/pipelines/pipeline/{{item.pipeline.id}}/edit?clone"
+              data-test-subj="lnkPipelineClone-{{ item.pipeline.id }}"
+            >
+              <span class="kuiMenuButton__icon kuiIcon fa-clone"></span>
+              <span>Clone</span>
+            </a>
+          </div>
         </div>
       </td>
     </tr>

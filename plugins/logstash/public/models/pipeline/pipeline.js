@@ -1,4 +1,4 @@
-import { get, pick } from 'lodash';
+import { get, pick, omit } from 'lodash';
 
 // This config template is presented to the user for the 'new pipeline' workflow
 const emptyPipeline = 'input {\n' +
@@ -22,6 +22,12 @@ export class Pipeline {
     this.description = get(props, 'description', '');
     this.pipeline = get(props, 'pipeline', emptyPipeline);
     this.username = get(props, 'username');
+  }
+
+  get clone() {
+    return new Pipeline({
+      ...omit(this, [ 'id', 'username' ])
+    });
   }
 
   get upstreamJSON() {

@@ -21,6 +21,7 @@ export function PipelineListProvider({ getService }) {
   const SUBJ_CONTAINER = `pipelineList`;
   const SUBJ_BTN_ADD = `pipelineList btnAdd`;
   const SUBJ_BTN_DELETE = `pipelineList btnDelete`;
+  const getCloneLinkSubjForId = id => `pipelineList lnkPipelineClone-${id}`;
   const SUBJ_FILTER = `pipelineList filter`;
   const SUBJ_SELECT_ALL = `pipelineList pipelineTable chkSelectAll`;
   const SUBJ_ROW_SELECT = `pipelineList pipelineTable chkSelectRow`;
@@ -161,6 +162,14 @@ export function PipelineListProvider({ getService }) {
      */
     async clickFirstRowId() {
       await testSubjects.click(SUBJ_CELL_ID);
+    }
+
+    /**
+     *  Click the clone link for the given pipeline id
+     *  @return {Promise<undefined>}
+     */
+    async clickCloneLink(id) {
+      await testSubjects.click(getCloneLinkSubjForId(id));
     }
 
     /**

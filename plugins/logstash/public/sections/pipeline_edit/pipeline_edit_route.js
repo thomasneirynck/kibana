@@ -38,6 +38,7 @@ routes
       if (!pipelineId) return new Pipeline();
 
       return pipelineService.loadPipeline(pipelineId)
+      .then(pipeline => !!$route.current.params.clone ? pipeline.clone : pipeline)
       .catch(err => {
         return licenseService.checkValidity()
         .then(() => {

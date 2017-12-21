@@ -4,6 +4,7 @@ import { omit } from 'lodash';
 export default function ({ getService, getPageObjects }) {
   const remote = getService('remote');
   const esArchiver = getService('esArchiver');
+  const random = getService('random');
   const pipelineList = getService('pipelineList');
   const pipelineEditor = getService('pipelineEditor');
   const PageObjects = getPageObjects(['logstash']);
@@ -151,6 +152,46 @@ export default function ({ getService, getPageObjects }) {
             username: 'elastic'
           }
         ]);
+      });
+    });
+
+    describe('clone button', () => {
+      it('links to the pipeline editor with cloned pipeline details', async () => {
+
+        // First, create a random pipeline
+        await PageObjects.logstash.gotoNewPipelineEditor();
+
+        const id = random.id();
+        const description = random.text();
+        const pipeline = random.longText();
+
+        await pipelineEditor.setId(id);
+        await pipelineEditor.setDescription(description);
+        await pipelineEditor.setPipeline(pipeline);
+
+        await pipelineEditor.assertInputs({
+          id, description, pipeline
+        });
+
+        await pipelineEditor.clickSave();
+
+        // Then, try to clone it
+        await pipelineList.assertExists();
+
+        await pipelineList.setFilter(id);
+        await pipelineList.clickCloneLink(id);
+
+        // Check that pipeline edit view is shown with cloned pipeline details
+        await pipelineEditor.assertInputs({
+          id: '',
+          description,
+          pipeline
+        });
+
+      });
+
+      after(async () => {
+        await PageObjects.logstash.gotoPipelineList();
       });
     });
   });
