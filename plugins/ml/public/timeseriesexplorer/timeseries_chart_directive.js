@@ -80,7 +80,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       .range(['#dce7ed', '#b0c5d6', '#b1a34e', '#b17f4e', '#c88686']);
 
     const focusXScale = d3.time.scale().range([0, vizWidth]);
-    let focusYScale = d3.scale.linear().range([focusHeight, focusZoomPanelHeight]);
+    const focusYScale = d3.scale.linear().range([focusHeight, focusZoomPanelHeight]);
 
     const focusXAxis = d3.svg.axis().scale(focusXScale).orient('bottom')
       .innerTickSize(-focusChartHeight).outerTickSize(0).tickPadding(10);
@@ -168,7 +168,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         const combinedData = scope.contextForecastData === undefined ?
           scope.contextChartData : scope.contextChartData.concat(scope.contextForecastData);
 
-        focusYScale = focusYScale.domain([
+        focusYScale.domain([
           d3.min(combinedData, (d) => {
             return Math.min(d.value, d.lower);
           }),
@@ -177,7 +177,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
           })
         ]);
       } else {
-        focusYScale = focusYScale.domain([
+        focusYScale.domain([
           d3.min(scope.contextChartData, (d) => d.value),
           d3.max(scope.contextChartData, (d) => d.value)
         ]);
@@ -399,7 +399,10 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         });
 
         if (yMax === yMin) {
-          if (contextYScale.domain()[0] !== contextYScale.domain()[1]) {
+          if (
+            contextYScale.domain()[0] !== contextYScale.domain()[1] &&
+            yMin >= contextYScale.domain()[0] && yMax <= contextYScale.domain()[1]
+          ) {
             // Set the focus chart limits to be the same as the context chart.
             yMin = contextYScale.domain()[0];
             yMax = contextYScale.domain()[1];
@@ -409,11 +412,11 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
           }
         }
 
-        focusYScale = focusYScale.domain([yMin, yMax]);
+        focusYScale.domain([yMin, yMax]);
 
       } else {
         // Display 10 unlabelled ticks.
-        focusYScale = focusYScale.domain([0, 10]);
+        focusYScale.domain([0, 10]);
         focusYAxis.tickFormat('');
       }
 
