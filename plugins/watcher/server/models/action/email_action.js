@@ -46,7 +46,7 @@ export class EmailAction extends BaseAction {
       optionalFields.subject = this.subject;
     }
     if (this.body) {
-      optionalFields.body.text = this.body;
+      optionalFields.body = { text: this.body };
     }
 
     result[this.id] = {
