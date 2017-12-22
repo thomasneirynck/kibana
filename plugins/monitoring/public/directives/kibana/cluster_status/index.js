@@ -5,6 +5,9 @@ const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringClusterStatusKibana', () => {
   return {
     restrict: 'E',
-    template
+    template,
+    scope: {
+      status: '='
+    }
   };
 });

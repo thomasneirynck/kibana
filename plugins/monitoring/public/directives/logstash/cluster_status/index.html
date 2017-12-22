@@ -1,16 +1,16 @@
 <div class="monitoring-summary-status">
   <div class="monitoring-summary-status__content">
     <div>Nodes:
-      <strong data-test-subj="node_count">{{ pageData.clusterStatus.node_count }}</strong>
+      <strong data-test-subj="node_count">{{ status.node_count }}</strong>
     </div>
     <div>Memory:
-      <strong data-test-subj="memory_used">{{ pageData.clusterStatus.avg_memory_used|formatNumber:'bytes' }} / {{ pageData.clusterStatus.avg_memory|formatNumber:'bytes' }}</strong>
+      <strong data-test-subj="memory_used">{{ status.avg_memory_used|formatNumber:'bytes' }} / {{ status.avg_memory|formatNumber:'bytes' }}</strong>
     </div>
     <div>Events Received:
-      <strong data-test-subj="events_in_total">{{ pageData.clusterStatus.events_in_total|formatNumber:'0.[0]a' }}</strong>
+      <strong data-test-subj="events_in_total">{{ status.events_in_total|formatNumber:'0.[0]a' }}</strong>
     </div>
     <div>Events Emitted:
-      <strong data-test-subj="events_out_total">{{ pageData.clusterStatus.events_out_total|formatNumber:'0.[0]a' }}</strong>
+      <strong data-test-subj="events_out_total">{{ status.events_out_total|formatNumber:'0.[0]a' }}</strong>
     </div>
   </div>
 </div>

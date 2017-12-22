@@ -1,33 +1,33 @@
 <div class="monitoring-summary-status">
   <div class="monitoring-summary-status__content" data-test-subj="elasticsearchSummaryStatus">
     <div data-test-subj="nodesCount">Nodes:
-      <strong>{{ pageData.clusterStatus.nodesCount }}</strong>
+      <strong>{{ status.nodesCount }}</strong>
     </div>
     <div data-test-subj="indicesCount">Indices:
-      <strong>{{ pageData.clusterStatus.indicesCount }}</strong>
+      <strong>{{ status.indicesCount }}</strong>
     </div>
     <div data-test-subj="memory">Memory:
-      <strong>{{ pageData.clusterStatus.memUsed|formatNumber:'bytes' }} / {{ pageData.clusterStatus.memMax|formatNumber:'bytes' }}</strong>
+      <strong>{{ status.memUsed|formatNumber:'bytes' }} / {{ status.memMax|formatNumber:'bytes' }}</strong>
     </div>
     <div data-test-subj="totalShards">Total Shards:
-      <strong>{{ pageData.clusterStatus.totalShards }}</strong>
+      <strong>{{ status.totalShards }}</strong>
     </div>
     <div data-test-subj="unassignedShards">Unassigned Shards:
-      <strong>{{ pageData.clusterStatus.unassignedShards }}</strong>
+      <strong>{{ status.unassignedShards }}</strong>
     </div>
     <div data-test-subj="documentCount">Documents:
-      <strong>{{ pageData.clusterStatus.documentCount|formatNumber:'int_commas' }}</strong>
+      <strong>{{ status.documentCount|formatNumber:'int_commas' }}</strong>
     </div>
     <div data-test-subj="dataSize">Data:
-      <strong>{{ pageData.clusterStatus.dataSize|formatNumber:'bytes' }}</strong>
+      <strong>{{ status.dataSize|formatNumber:'bytes' }}</strong>
     </div>
     <div class="monitoring-summary-status__status-indicator">
       Health:
       <monitoring-elasticsearch-status-icon
-        status="pageData.clusterStatus.status"
-        title="Status of the Elasticsearch cluster: {{ pageData.clusterStatus.status }}"
+        status="status.status"
+        title="Status of the Elasticsearch cluster: {{ status.status }}"
       ></monitoring-elasticsearch-status-icon>
-      {{ pageData.clusterStatus.status|capitalize }}
+      {{ status.status|capitalize }}
     </div>
   </div>
 </div>

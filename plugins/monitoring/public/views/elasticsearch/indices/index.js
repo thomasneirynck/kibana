@@ -30,7 +30,6 @@ uiRoutes.when('/elasticsearch/indices', {
       this.data = $route.current.locals.pageData;
       const globalState = $injector.get('globalState');
       $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
-      $scope.pageData = this.data;
 
       // used in table toolbar
       const features = $injector.get('features');

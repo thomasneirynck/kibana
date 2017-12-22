@@ -30,7 +30,6 @@ uiRoutes.when('/logstash/nodes', {
       this.data = $route.current.locals.pageData;
       const globalState = $injector.get('globalState');
       $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
-      $scope.pageData = $route.current.locals.pageData;
     }
   }
 });
