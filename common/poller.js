@@ -14,6 +14,10 @@ export class Poller {
     this._isRunning = false;
   }
 
+  getPollFrequency() {
+    return this.pollFrequencyInMillis;
+  }
+
   _poll() {
     return this.functionToPoll()
     .then(this.successFunction)

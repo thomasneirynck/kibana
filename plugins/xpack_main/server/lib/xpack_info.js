@@ -97,7 +97,9 @@ export class XPackInfo {
    * @returns {Promise.<XPackInfo>}
    */
   async refreshNow() {
-    this._log(['license', 'debug', 'xpack'], 'Calling Elasticsearch _xpack API');
+    this._log(['license', 'debug', 'xpack'], (
+      `Calling [${this._clusterSource}] Elasticsearch _xpack API. Polling frequency: ${this._poller.getPollFrequency()}`
+    ));
 
     // We can reset polling timer since we force refresh here.
     this._poller.stop();
