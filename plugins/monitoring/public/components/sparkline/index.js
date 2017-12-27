@@ -104,7 +104,7 @@ export class Sparkline extends React.Component {
     this.chartElem = elem;
     if (this.chartElem) {
       this.makeSparklineFlotChart(this.props.options);
-    } else {
+    } else if (this.sparklineFlotChart) {
       this.sparklineFlotChart.shutdown();
     }
   }

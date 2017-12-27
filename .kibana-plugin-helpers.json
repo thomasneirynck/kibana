@@ -24,6 +24,7 @@
     "!**/__tests__/**/*",
     "!plugins/**/*.test.js",
     "!plugins/**/__snapshots__",
-    "!plugins/**/__snapshots__/*"
+    "!plugins/**/__snapshots__/*",
+    "!plugins/**/__mocks__/*"
   ]
 }
