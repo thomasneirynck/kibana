@@ -29,6 +29,10 @@ export async function runKibanaServer({ procs, ftrConfig, devMode = false }) {
       `--elasticsearch.password=${ftrConfig.get('servers.elasticsearch.password')}`,
       '--xpack.monitoring.kibana.collection.enabled=false',
     ],
+    env: {
+      FORCE_COLOR: 1,
+      ...process.env,
+    },
     cwd: KIBANA_ROOT,
     wait: /Server running/,
   });
