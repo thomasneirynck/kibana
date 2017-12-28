@@ -37,6 +37,22 @@ class Stacktrace extends PureComponent {
     libraryframes: {}
   };
 
+  componentWillMount() {
+    if (!this.props.stackframes) {
+      // Don't do anything, if there are no stackframes
+      return false;
+    }
+
+    const hasAnyAppFrames = this.props.stackframes.some(
+      frame => !frame.libraryFrame
+    );
+
+    if (!hasAnyAppFrames) {
+      // If there are no app frames available, always show the only existing group
+      this.setState({ libraryframes: { 0: true } });
+    }
+  }
+
   toggle = i =>
     this.setState(({ libraryframes }) => {
       return { libraryframes: { ...libraryframes, [i]: !libraryframes[i] } };
