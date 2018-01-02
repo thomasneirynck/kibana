@@ -8,7 +8,8 @@ import {
   KuiTableRowCell,
   KuiTableRow,
   KuiFlexGroup,
-  KuiFlexItem
+  KuiFlexItem,
+  KuiEmptyTablePrompt
 } from 'ui_framework/components';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { Sparkline } from 'plugins/monitoring/components/sparkline';
@@ -103,6 +104,7 @@ uiModule.directive('monitoringLogstashPipelineListing', ($injector) => {
       sortKey: '=',
       sortOrder: '=',
       onNewState: '=',
+      upgradeMessage: '@',
     },
     link: function (scope, $el) {
 
@@ -128,6 +130,11 @@ uiModule.directive('monitoringLogstashPipelineListing', ($injector) => {
       }
 
       scope.$watch('pipelines', (pipelines = []) => {
+        if (scope.upgradeMessage) {
+          render(<KuiEmptyTablePrompt message={scope.upgradeMessage} />, $el[0]);
+          return;
+        }
+
         const pipelinesTable = (
           <MonitoringTable
             className="logstashPipelinesTable"
