@@ -51,5 +51,5 @@ export function getNodeInfo(req, lsIndexPattern, { clusterUuid, logstashUuid }) 
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
-  .then(handleResponse);
+    .then(handleResponse);
 }

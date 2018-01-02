@@ -73,17 +73,17 @@ export function FieldsServiceProvider(es) {
         index,
         body
       })
-      .then((resp) => {
-        const aggregations = resp.aggregations;
-        const results = _.reduce(fieldNames, (obj, field) => {
-          obj[field] = _.get(aggregations, [field, 'value'], 0);
-          return obj;
-        }, {});
-        resolve(results);
-      })
-      .catch((resp) => {
-        reject(resp);
-      });
+        .then((resp) => {
+          const aggregations = resp.aggregations;
+          const results = _.reduce(fieldNames, (obj, field) => {
+            obj[field] = _.get(aggregations, [field, 'value'], 0);
+            return obj;
+          }, {});
+          resolve(results);
+        })
+        .catch((resp) => {
+          reject(resp);
+        });
     });
   }
 

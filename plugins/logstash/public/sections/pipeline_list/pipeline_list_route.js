@@ -5,9 +5,9 @@ import './components/pipeline_list';
 import 'plugins/logstash/services/license';
 
 routes
-.when('/management/logstash/pipelines/', {
-  template
-});
+  .when('/management/logstash/pipelines/', {
+    template
+  });
 
 routes.defaults(/\/management/, {
   resolve: {

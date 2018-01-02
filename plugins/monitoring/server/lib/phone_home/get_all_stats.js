@@ -51,20 +51,20 @@ export function getAllStatsForServer(server, start, end) {
  */
 function getAllStatsWithCaller(server, callCluster, start, end) {
   return getClusterUuids(server, callCluster, start, end)
-  .then(clusterUuids => {
+    .then(clusterUuids => {
     // don't bother doing a further lookup
-    if (clusterUuids.length === 0) {
-      return [];
-    }
+      if (clusterUuids.length === 0) {
+        return [];
+      }
 
-    return Promise.all([
-      getElasticsearchStats(server, callCluster, clusterUuids),           // cluster_stats, stack_stats.xpack, cluster_name/uuid, license, version
-      getKibanaStats(server, callCluster, clusterUuids, start, end),      // stack_stats.kibana
-      getHighLevelStats(server, callCluster, clusterUuids, start, end, LOGSTASH_SYSTEM_ID), // stack_stats.logstash
-      getReportingStats(server, callCluster, clusterUuids, start, end),   // stack_stats.xpack.reporting
-    ])
-    .then(([esClusters, kibana, logstash, reporting]) => handleAllStats(esClusters, { kibana, logstash, reporting }));
-  });
+      return Promise.all([
+        getElasticsearchStats(server, callCluster, clusterUuids),           // cluster_stats, stack_stats.xpack, cluster_name/uuid, license, version
+        getKibanaStats(server, callCluster, clusterUuids, start, end),      // stack_stats.kibana
+        getHighLevelStats(server, callCluster, clusterUuids, start, end, LOGSTASH_SYSTEM_ID), // stack_stats.logstash
+        getReportingStats(server, callCluster, clusterUuids, start, end),   // stack_stats.xpack.reporting
+      ])
+        .then(([esClusters, kibana, logstash, reporting]) => handleAllStats(esClusters, { kibana, logstash, reporting }));
+    });
 }
 
 /**

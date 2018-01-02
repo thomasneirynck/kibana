@@ -10,22 +10,22 @@ export class PipelineService {
 
   loadPipeline(id) {
     return this.$http.get(`${this.basePath}/pipeline/${id}`)
-    .then(response => {
-      return Pipeline.fromUpstreamJSON(response.data.pipeline);
-    });
+      .then(response => {
+        return Pipeline.fromUpstreamJSON(response.data.pipeline);
+      });
   }
 
   savePipeline(pipelineModel) {
     return this.$http.put(`${this.basePath}/pipeline/${pipelineModel.id}`, pipelineModel.upstreamJSON)
-    .catch(e => {
-      throw e.data.message;
-    });
+      .catch(e => {
+        throw e.data.message;
+      });
   }
 
   deletePipeline(id) {
     return this.$http.delete(`${this.basePath}/pipeline/${id}`)
-    .catch(e => {
-      throw e.data.message;
-    });
+      .catch(e => {
+        throw e.data.message;
+      });
   }
 }

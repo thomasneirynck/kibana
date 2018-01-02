@@ -80,20 +80,20 @@ app.directive('watchList', function ($injector) {
 
       loadWatches = () => {
         watchesService.getWatchList()
-        .then(watches => {
-          this.watches = watches;
-          this.forbidden = false;
-        })
-        .catch(err => {
-          return licenseService.checkValidity()
-          .then(() => {
-            if (err.status === 403) {
-              this.forbidden = true;
-            } else {
-              this.notifier.error(err);
-            }
+          .then(watches => {
+            this.watches = watches;
+            this.forbidden = false;
+          })
+          .catch(err => {
+            return licenseService.checkValidity()
+              .then(() => {
+                if (err.status === 403) {
+                  this.forbidden = true;
+                } else {
+                  this.notifier.error(err);
+                }
+              });
           });
-        });
       }
 
       onQueryChange = (query) => {
@@ -146,25 +146,25 @@ app.directive('watchList', function ($injector) {
 
         const watchIds = this.watchesBeingDeleted.map(watch => watch.id);
         return watchesService.deleteWatches(watchIds)
-        .then(results => {
-          const numSuccesses = results.numSuccesses;
-          const numErrors = results.numErrors;
-          const numTotal = numWatchesToDelete;
+          .then(results => {
+            const numSuccesses = results.numSuccesses;
+            const numErrors = results.numErrors;
+            const numTotal = numWatchesToDelete;
 
-          if (numSuccesses > 0) {
-            this.notifier.info(`Deleted ${numSuccesses} out of ${numTotal} selected ${watchesStr}`);
-          }
+            if (numSuccesses > 0) {
+              this.notifier.info(`Deleted ${numSuccesses} out of ${numTotal} selected ${watchesStr}`);
+            }
 
-          if (numErrors > 0) {
-            this.notifier.error(`Could not delete ${numErrors} out of ${numTotal} selected ${watchesStr}`);
-          }
+            if (numErrors > 0) {
+              this.notifier.error(`Could not delete ${numErrors} out of ${numTotal} selected ${watchesStr}`);
+            }
 
-          this.loadWatches();
-        })
-        .catch(err => {
-          return licenseService.checkValidity()
-          .then(() => this.notifier.error(err));
-        });
+            this.loadWatches();
+          })
+          .catch(err => {
+            return licenseService.checkValidity()
+              .then(() => this.notifier.error(err));
+          });
       }
 
       applyFilters = () => {

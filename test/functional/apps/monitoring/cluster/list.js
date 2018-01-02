@@ -60,7 +60,7 @@ export default function ({ getService, getPageObjects }) {
 
           const actualMessage = await PageObjects.header.getToastMessage();
           const expectedMessage = (
-`You can't view the "clustertwo" cluster because the Basic license does not support multi-cluster monitoring.
+            `You can't view the "clustertwo" cluster because the Basic license does not support multi-cluster monitoring.
 Need to monitor multiple clusters? Get a license with full functionality to enjoy multi-cluster monitoring.`
           );
           expect(actualMessage).to.be(expectedMessage);
@@ -128,7 +128,7 @@ Need to monitor multiple clusters? Get a license with full functionality to enjo
 
           const actualMessage = await PageObjects.header.getToastMessage();
           const expectedMessage = (
-`You can't view the "staging" cluster because the Basic license does not support multi-cluster monitoring.
+            `You can't view the "staging" cluster because the Basic license does not support multi-cluster monitoring.
 Need to monitor multiple clusters? Get a license with full functionality to enjoy multi-cluster monitoring.`
           );
           expect(actualMessage).to.be(expectedMessage);

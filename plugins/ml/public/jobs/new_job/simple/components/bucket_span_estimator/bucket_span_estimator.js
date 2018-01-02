@@ -119,46 +119,46 @@ export function BucketSpanEstimatorProvider($injector) {
         }
 
         this.polledDataChecker.run()
-        .then((result) => {
+          .then((result) => {
           // if the data is polled, set a minimum threshold
           // of bucket span
-          if (result.isPolled) {
-            this.thresholds.minimumBucketSpanMS = result.minimumBucketSpan;
-          }
-          let checkCounter = this.checkers.length;
-          const runComplete = () => {
-            checkCounter--;
-
-            if (checkCounter === 0) {
-              const median = this.processResults();
-              if (median !== null) {
-                resolve(median);
-              } else {
-                // no results found
-                console.log('BucketSpanEstimator: run has stopped because no checks returned a valid interval');
-                reject('BucketSpanEstimator: run has stopped because no checks returned a valid interval');
-              }
+            if (result.isPolled) {
+              this.thresholds.minimumBucketSpanMS = result.minimumBucketSpan;
             }
-          };
+            let checkCounter = this.checkers.length;
+            const runComplete = () => {
+              checkCounter--;
 
-          _.each(this.checkers, (check) => {
-            check.check.run()
-            .then((interval) => {
-              check.result = interval;
-              runComplete();
-            })
-            .catch(() => {
-              // run failed. this may be due to a lack of data
-              // mark the result as null so it can be filtered out
-              // later by processResults()
-              check.result = null;
-              runComplete();
+              if (checkCounter === 0) {
+                const median = this.processResults();
+                if (median !== null) {
+                  resolve(median);
+                } else {
+                // no results found
+                  console.log('BucketSpanEstimator: run has stopped because no checks returned a valid interval');
+                  reject('BucketSpanEstimator: run has stopped because no checks returned a valid interval');
+                }
+              }
+            };
+
+            _.each(this.checkers, (check) => {
+              check.check.run()
+                .then((interval) => {
+                  check.result = interval;
+                  runComplete();
+                })
+                .catch(() => {
+                  // run failed. this may be due to a lack of data
+                  // mark the result as null so it can be filtered out
+                  // later by processResults()
+                  check.result = null;
+                  runComplete();
+                });
             });
+          })
+          .catch((resp) => {
+            reject(resp);
           });
-        })
-        .catch((resp) => {
-          reject(resp);
-        });
       });
     }
 

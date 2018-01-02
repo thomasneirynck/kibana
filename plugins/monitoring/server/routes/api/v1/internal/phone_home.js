@@ -27,18 +27,18 @@ export function phoneHomeRoutes(server) {
       const end = req.payload.timeRange.max;
 
       return getAllStats(req, start, end)
-      .then(reply)
-      .catch(err => {
-        const config = req.server.config();
+        .then(reply)
+        .catch(err => {
+          const config = req.server.config();
 
-        if (config.get('env.dev')) {
+          if (config.get('env.dev')) {
           // don't ignore errors when running in dev mode
-          reply(handleError(err, req));
-        } else {
+            reply(handleError(err, req));
+          } else {
           // ignore errors, return empty set and a 200
-          reply([]).code(200);
-        }
-      });
+            reply([]).code(200);
+          }
+        });
     }
   });
 }

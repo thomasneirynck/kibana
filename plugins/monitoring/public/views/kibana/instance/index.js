@@ -49,12 +49,12 @@ function getPageData($injector) {
       'kibana_requests'
     ]
   })
-  .then(response => response.data)
-  .catch((err) => {
-    const Private = $injector.get('Private');
-    const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
-    return ajaxErrorHandlers(err);
-  });
+    .then(response => response.data)
+    .catch((err) => {
+      const Private = $injector.get('Private');
+      const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
+      return ajaxErrorHandlers(err);
+    });
 }
 
 uiRoutes.when('/kibana/instances/:uuid', {

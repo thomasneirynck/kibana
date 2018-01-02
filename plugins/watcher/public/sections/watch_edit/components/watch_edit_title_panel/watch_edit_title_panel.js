@@ -75,8 +75,8 @@ app.directive('watchEditTitlePanel', function ($injector) {
         $scope.$watch('watchEditTitlePanel.fields', (fields) => {
           this.timeFields = Boolean(fields)
             ? fields.filter(
-                field => VALID_NORMALIZED_TYPES.includes(field.normalizedType)
-              )
+              field => VALID_NORMALIZED_TYPES.includes(field.normalizedType)
+            )
             : [];
           this.updateValidity();
         });

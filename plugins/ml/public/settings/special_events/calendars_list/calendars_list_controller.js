@@ -22,59 +22,59 @@ import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import template from './calendars_list.html';
 
 uiRoutes
-.when('/settings/calendars_list', {
-  template,
-  resolve: {
-    CheckLicense: checkLicense,
-    privileges: checkGetJobsPrivilege
-  }
-});
+  .when('/settings/calendars_list', {
+    template,
+    resolve: {
+      CheckLicense: checkLicense,
+      privileges: checkGetJobsPrivilege
+    }
+  });
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml', ['ui.bootstrap']);
 
 module.controller('MlCalendarsList',
-function (
-  $scope,
-  ml,
-  timefilter,
-  mlConfirmModalService) {
+  function (
+    $scope,
+    ml,
+    timefilter,
+    mlConfirmModalService) {
 
-  timefilter.disableTimeRangeSelector(); // remove time picker from top of page
-  timefilter.disableAutoRefreshSelector(); // remove time picker from top of page
-  const mlConfirm = mlConfirmModalService;
+    timefilter.disableTimeRangeSelector(); // remove time picker from top of page
+    timefilter.disableAutoRefreshSelector(); // remove time picker from top of page
+    const mlConfirm = mlConfirmModalService;
 
-  $scope.calendars = [];
+    $scope.calendars = [];
 
-  function loadCalendars() {
-    ml.calendars()
-    .then((resp) => {
-      $scope.calendars = resp;
-    });
-  }
+    function loadCalendars() {
+      ml.calendars()
+        .then((resp) => {
+          $scope.calendars = resp;
+        });
+    }
 
-  $scope.allSelected = false;
-  $scope.sortField = 'id';
-  $scope.sortReverse = true;
-  $scope.onSortChange = function (field, reverse) {
-    $scope.sortField = field;
-    $scope.sortReverse = reverse;
-  };
+    $scope.allSelected = false;
+    $scope.sortField = 'id';
+    $scope.sortReverse = true;
+    $scope.onSortChange = function (field, reverse) {
+      $scope.sortField = field;
+      $scope.sortReverse = reverse;
+    };
 
-  $scope.deleteCalendar = function (calendarId) {
-    mlConfirm.open({
-      message: `Confirm deletion of ${calendarId}?`,
-      title: `Delete calendar`
-    })
-    .then(() => {
-      ml.deleteCalendar({ calendarId })
-      .then(loadCalendars)
-      .catch((error) => {
-        console.log(error);
-      });
-    })
-    .catch(() => {});
-  };
+    $scope.deleteCalendar = function (calendarId) {
+      mlConfirm.open({
+        message: `Confirm deletion of ${calendarId}?`,
+        title: `Delete calendar`
+      })
+        .then(() => {
+          ml.deleteCalendar({ calendarId })
+            .then(loadCalendars)
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch(() => {});
+    };
 
-  loadCalendars();
-});
+    loadCalendars();
+  });

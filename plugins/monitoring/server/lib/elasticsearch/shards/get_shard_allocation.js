@@ -45,5 +45,5 @@ export function getShardAllocation(req, esIndexPattern, { nodeResolver, shardFil
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
-  .then(handleResponse(nodeResolver));
+    .then(handleResponse(nodeResolver));
 }

@@ -16,13 +16,13 @@ const read = function (filename) { return fs.readFileSync(filename, 'utf8'); };
 const parseJson = function (contents) { return JSON.parse(contents); };
 const Method = require('./Method');
 const methods = glob
-.sync(resolve(apiDir, 'shield.*.json'))
-.map(read)
-.map(parseJson)
-.map(function (spec) {
-  const name = Object.keys(spec).shift();
-  return new Method(name, spec[name]);
-});
+  .sync(resolve(apiDir, 'shield.*.json'))
+  .map(read)
+  .map(parseJson)
+  .map(function (spec) {
+    const name = Object.keys(spec).shift();
+    return new Method(name, spec[name]);
+  });
 
 glob.sync(resolve(tmplDir, '*.tmpl')).forEach(function (filename) {
   const file = relative(tmplDir, filename);

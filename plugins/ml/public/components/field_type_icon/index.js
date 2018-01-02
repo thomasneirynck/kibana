@@ -13,5 +13,5 @@
  * strictly prohibited.
  */
 
- import './field_type_icon_directive';
- import './styles/main.less';
+import './field_type_icon_directive';
+import './styles/main.less';

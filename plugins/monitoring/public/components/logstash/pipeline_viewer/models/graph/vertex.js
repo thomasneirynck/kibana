@@ -109,12 +109,12 @@ export class Vertex {
   }
   get customStats() {
     return Object.keys(this.stats)
-          .filter(k => !(k.match(/^events\./)))
-          .filter(k => k !== 'name')
-          .reduce((acc, k) => {
-            acc[k] = this.stats[k];
-            return acc;
-          }, {});
+      .filter(k => !(k.match(/^events\./)))
+      .filter(k => k !== 'name')
+      .reduce((acc, k) => {
+        acc[k] = this.stats[k];
+        return acc;
+      }, {});
   }
 
   lineage() {

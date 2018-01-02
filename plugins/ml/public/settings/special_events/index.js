@@ -13,5 +13,5 @@
  * strictly prohibited.
  */
 
- import './calendars_list';
- import './new_calendar';
+import './calendars_list';
+import './new_calendar';

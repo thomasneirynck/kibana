@@ -16,11 +16,11 @@ export function getClusterStats(req, esIndexPattern, clusterUuid) {
 
   // passing clusterUuid so `get_clusters` will filter for single cluster
   return getClustersStats(req, esIndexPattern, clusterUuid)
-  .then(clusters => {
-    if (!clusters || clusters.length === 0) {
-      throw notFound(`The cluster [${clusterUuid}] was not found within the selected time range.`);
-    }
+    .then(clusters => {
+      if (!clusters || clusters.length === 0) {
+        throw notFound(`The cluster [${clusterUuid}] was not found within the selected time range.`);
+      }
 
-    return clusters[0];
-  });
+      return clusters[0];
+    });
 }

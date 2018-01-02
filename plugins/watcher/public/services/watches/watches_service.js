@@ -10,10 +10,10 @@ export class WatchesService {
 
   getWatchList() {
     return this.$http.get(`${this.basePath}/watches`)
-    .then(response => response.data.watches)
-    .then(watches => watches.map(watch => {
-      return Watch.fromUpstreamJson(watch);
-    }));
+      .then(response => response.data.watches)
+      .then(watches => watches.map(watch => {
+        return Watch.fromUpstreamJson(watch);
+      }));
   }
 
   /**
@@ -31,6 +31,6 @@ export class WatchesService {
       headers: { 'Content-Type': 'application/json' }
     };
     return this.$http.delete(`${this.basePath}/watches`, requestOpts)
-    .then(response => response.data.results);
+      .then(response => response.data.results);
   }
 }

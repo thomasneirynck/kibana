@@ -286,10 +286,10 @@ describe('Worker class', function () {
         searchStub = sinon.stub(mockQueue.client, 'search', () => Promise.reject());
         worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
         worker._getPendingJobs()
-        .then(() => done(new Error('should not resolve')))
-        .catch(() => {
-          done();
-        });
+          .then(() => done(new Error('should not resolve')))
+          .catch(() => {
+            done();
+          });
       });
 
       describe('missing index', function () {
@@ -423,11 +423,11 @@ describe('Worker class', function () {
         version: 3
       };
       return mockQueue.client.get(params)
-      .then((jobDoc) => {
-        job = jobDoc;
-        worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
-        updateSpy = sinon.spy(mockQueue.client, 'update');
-      });
+        .then((jobDoc) => {
+          job = jobDoc;
+          worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
+          updateSpy = sinon.spy(mockQueue.client, 'update');
+        });
     });
 
     afterEach(() => {
@@ -492,14 +492,14 @@ describe('Worker class', function () {
       mockQueue.client.update.restore();
       sinon.stub(mockQueue.client, 'update').returns(Promise.reject({ statusCode: 409 }));
       return worker._claimJob(job)
-      .then((res) => expect(res).to.equal(true));
+        .then((res) => expect(res).to.equal(true));
     });
 
     it('should return false on other errors', function () {
       mockQueue.client.update.restore();
       sinon.stub(mockQueue.client, 'update').returns(Promise.reject({ statusCode: 401 }));
       return worker._claimJob(job)
-      .then((res) => expect(res).to.equal(false));
+        .then((res) => expect(res).to.equal(false));
     });
 
     it('should emit on other errors', function (done) {
@@ -530,11 +530,11 @@ describe('Worker class', function () {
       clock = sinon.useFakeTimers(anchorMoment.valueOf());
 
       return mockQueue.client.get()
-      .then((jobDoc) => {
-        job = jobDoc;
-        worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
-        updateSpy = sinon.spy(mockQueue.client, 'update');
-      });
+        .then((jobDoc) => {
+          job = jobDoc;
+          worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
+          updateSpy = sinon.spy(mockQueue.client, 'update');
+        });
     });
 
     afterEach(() => {
@@ -568,14 +568,14 @@ describe('Worker class', function () {
       mockQueue.client.update.restore();
       sinon.stub(mockQueue.client, 'update').returns(Promise.reject({ statusCode: 409 }));
       return worker._failJob(job)
-      .then((res) => expect(res).to.equal(true));
+        .then((res) => expect(res).to.equal(true));
     });
 
     it('should return false on other docuemnt update errors', function () {
       mockQueue.client.update.restore();
       sinon.stub(mockQueue.client, 'update').returns(Promise.reject({ statusCode: 401 }));
       return worker._failJob(job)
-      .then((res) => expect(res).to.equal(false));
+        .then((res) => expect(res).to.equal(false));
     });
 
     it('should set completed time and status to failure', function () {
@@ -637,10 +637,10 @@ describe('Worker class', function () {
       };
 
       return mockQueue.client.get({}, { payload })
-      .then((jobDoc) => {
-        job = jobDoc;
-        updateSpy = sinon.spy(mockQueue.client, 'update');
-      });
+        .then((jobDoc) => {
+          job = jobDoc;
+          updateSpy = sinon.spy(mockQueue.client, 'update');
+        });
     });
 
     describe('worker success', function () {
@@ -651,7 +651,7 @@ describe('Worker class', function () {
         worker = new Worker(mockQueue, 'test', workerFn, defaultWorkerOptions);
 
         worker._performJob(job)
-        .then(() => done());
+          .then(() => done());
       });
 
       it('should update the job with the workerFn output', function () {
@@ -662,17 +662,17 @@ describe('Worker class', function () {
         worker = new Worker(mockQueue, 'test', workerFn, defaultWorkerOptions);
 
         return worker._performJob(job)
-        .then(() => {
-          sinon.assert.calledOnce(updateSpy);
-          const query = updateSpy.firstCall.args[0];
-          expect(query).to.have.property('index', job._index);
-          expect(query).to.have.property('type', job._type);
-          expect(query).to.have.property('id', job._id);
-          expect(query).to.have.property('version', job._version);
-          expect(query.body.doc).to.have.property('output');
-          expect(query.body.doc.output).to.have.property('content_type', false);
-          expect(query.body.doc.output).to.have.property('content', payload);
-        });
+          .then(() => {
+            sinon.assert.calledOnce(updateSpy);
+            const query = updateSpy.firstCall.args[0];
+            expect(query).to.have.property('index', job._index);
+            expect(query).to.have.property('type', job._type);
+            expect(query).to.have.property('id', job._id);
+            expect(query).to.have.property('version', job._version);
+            expect(query.body.doc).to.have.property('output');
+            expect(query.body.doc.output).to.have.property('content_type', false);
+            expect(query.body.doc.output).to.have.property('content', payload);
+          });
       });
 
       it('should update the job status and completed time', function () {
@@ -686,14 +686,14 @@ describe('Worker class', function () {
         worker = new Worker(mockQueue, 'test', workerFn, defaultWorkerOptions);
 
         return worker._performJob(job)
-        .then(() => {
-          sinon.assert.calledOnce(updateSpy);
-          const doc = updateSpy.firstCall.args[0].body.doc;
-          expect(doc).to.have.property('status', constants.JOB_STATUS_COMPLETED);
-          expect(doc).to.have.property('completed_at');
-          const completedTimestamp = moment(doc.completed_at).valueOf();
-          expect(completedTimestamp).to.be.greaterThan(startTime);
-        });
+          .then(() => {
+            sinon.assert.calledOnce(updateSpy);
+            const doc = updateSpy.firstCall.args[0].body.doc;
+            expect(doc).to.have.property('status', constants.JOB_STATUS_COMPLETED);
+            expect(doc).to.have.property('completed_at');
+            const completedTimestamp = moment(doc.completed_at).valueOf();
+            expect(completedTimestamp).to.be.greaterThan(startTime);
+          });
       });
 
       it('should emit completion event', function (done) {
@@ -731,10 +731,10 @@ describe('Worker class', function () {
         const failStub = sinon.stub(worker, '_failJob');
 
         return worker._performJob(job)
-        .then(() => {
-          sinon.assert.calledOnce(failStub);
-          sinon.assert.calledWith(failStub, job, 'Error: test error');
-        });
+          .then(() => {
+            sinon.assert.calledOnce(failStub);
+            sinon.assert.calledWith(failStub, job, 'Error: test error');
+          });
       });
 
       it('should handle async errors', function () {
@@ -747,10 +747,10 @@ describe('Worker class', function () {
         const failStub = sinon.stub(worker, '_failJob');
 
         return worker._performJob(job)
-        .then(() => {
-          sinon.assert.calledOnce(failStub);
-          sinon.assert.calledWith(failStub, job, 'Error: test error');
-        });
+          .then(() => {
+            sinon.assert.calledOnce(failStub);
+            sinon.assert.calledWith(failStub, job, 'Error: test error');
+          });
       });
 
       it('should handle rejecting with strings', function () {
@@ -764,10 +764,10 @@ describe('Worker class', function () {
         const failStub = sinon.stub(worker, '_failJob');
 
         return worker._performJob(job)
-        .then(() => {
-          sinon.assert.calledOnce(failStub);
-          sinon.assert.calledWith(failStub, job, errorMessage);
-        });
+          .then(() => {
+            sinon.assert.calledOnce(failStub);
+            sinon.assert.calledWith(failStub, job, errorMessage);
+          });
       });
 
       it('should handle empty rejection', function (done) {
@@ -845,9 +845,9 @@ describe('Worker class', function () {
       it('should not fail job', function () {
         // fire of the job worker
         return worker._performJob(job)
-        .then(() => {
-          sinon.assert.notCalled(failStub);
-        });
+          .then(() => {
+            sinon.assert.notCalled(failStub);
+          });
       });
 
       it('should emit timeout if not completed in time', function (done) {
@@ -919,9 +919,9 @@ describe('Worker class', function () {
 
         it('should fail the job', function () {
           return worker._performJob(job)
-          .then(() => {
-            sinon.assert.calledOnce(failStub);
-          });
+            .then(() => {
+              sinon.assert.calledOnce(failStub);
+            });
         });
 
         it('should emit worker execution error', function (done) {
@@ -953,9 +953,9 @@ describe('Worker class', function () {
 
         it('should fail the job', function () {
           return worker._performJob(job)
-          .then(() => {
-            sinon.assert.calledOnce(failStub);
-          });
+            .then(() => {
+              sinon.assert.calledOnce(failStub);
+            });
         });
 
         it('should emit worker execution error', function (done) {

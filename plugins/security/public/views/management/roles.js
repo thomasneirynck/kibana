@@ -19,8 +19,8 @@ routes.when(ROLES_PATH, {
     roles(ShieldRole, kbnUrl, Promise, Private) {
       // $promise is used here because the result is an ngResource, not a promise itself
       return ShieldRole.query().$promise
-      .catch(checkLicenseError(kbnUrl, Promise, Private))
-      .catch(_.identity); // Return the error if there is one
+        .catch(checkLicenseError(kbnUrl, Promise, Private))
+        .catch(_.identity); // Return the error if there is one
     }
   },
   controller($scope, $route, $q, Notifier, confirmModal) {

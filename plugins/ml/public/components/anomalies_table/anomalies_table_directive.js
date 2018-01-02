@@ -13,7 +13,7 @@
  * strictly prohibited.
  */
 
- /*
+/*
  * AngularJS directive for rendering a table of Machine Learning anomalies.
  */
 
@@ -222,63 +222,63 @@ module.directive('mlAnomaliesTable', function (
           // matching events in the Kibana Discover tab depending on whether the
           // categorization field is of mapping type text (preferred) or keyword.
           mlResultsService.getCategoryDefinition(record.job_id, categoryId)
-          .then((resp) => {
-            let query = null;
-            // Build query using categorization regex (if keyword type) or terms (if text type).
-            // Check for terms or regex in case categoryId represents an anomaly from the absence of the
-            // categorization field in documents (usually indicated by a categoryId of -1).
-            if (categorizationFieldType === ES_FIELD_TYPES.KEYWORD) {
-              if (resp.regex) {
-                query = `${categorizationFieldName}:/${resp.regex}/`;
-              }
-            } else {
-              if (resp.terms) {
-                query = `${categorizationFieldName}:` + resp.terms.split(' ').join(` AND ${categorizationFieldName}:`);
-              }
-            }
-
-            const recordTime = moment(record[scope.timeFieldName]);
-            const from = recordTime.toISOString();
-            const to = recordTime.add(record.bucket_span, 's').toISOString();
-
-            // Use rison to build the URL .
-            const _g = rison.encode({
-              refreshInterval: {
-                display: 'Off',
-                pause: false,
-                value: 0
-              },
-              time: {
-                from: from,
-                to: to,
-                mode: 'absolute'
-              }
-            });
-
-            const appStateProps = {
-              index: indexPatternId,
-              filters: []
-            };
-            if (query !== null) {
-              appStateProps.query = {
-                query_string: {
-                  analyze_wildcard: true,
-                  query: query
+            .then((resp) => {
+              let query = null;
+              // Build query using categorization regex (if keyword type) or terms (if text type).
+              // Check for terms or regex in case categoryId represents an anomaly from the absence of the
+              // categorization field in documents (usually indicated by a categoryId of -1).
+              if (categorizationFieldType === ES_FIELD_TYPES.KEYWORD) {
+                if (resp.regex) {
+                  query = `${categorizationFieldName}:/${resp.regex}/`;
                 }
+              } else {
+                if (resp.terms) {
+                  query = `${categorizationFieldName}:` + resp.terms.split(' ').join(` AND ${categorizationFieldName}:`);
+                }
+              }
+
+              const recordTime = moment(record[scope.timeFieldName]);
+              const from = recordTime.toISOString();
+              const to = recordTime.add(record.bucket_span, 's').toISOString();
+
+              // Use rison to build the URL .
+              const _g = rison.encode({
+                refreshInterval: {
+                  display: 'Off',
+                  pause: false,
+                  value: 0
+                },
+                time: {
+                  from: from,
+                  to: to,
+                  mode: 'absolute'
+                }
+              });
+
+              const appStateProps = {
+                index: indexPatternId,
+                filters: []
               };
-            }
-            const _a = rison.encode(appStateProps);
+              if (query !== null) {
+                appStateProps.query = {
+                  query_string: {
+                    analyze_wildcard: true,
+                    query: query
+                  }
+                };
+              }
+              const _a = rison.encode(appStateProps);
 
-            // Need to encode the _a parameter as it will contain characters such as '+' if using the regex.
-            let path = chrome.getBasePath();
-            path += '/app/kibana#/discover';
-            path += '?_g=' + _g;
-            path += '&_a=' + encodeURIComponent(_a);
-            $window.open(path, '_blank');
+              // Need to encode the _a parameter as it will contain characters such as '+' if using the regex.
+              let path = chrome.getBasePath();
+              path += '/app/kibana#/discover';
+              path += '?_g=' + _g;
+              path += '&_a=' + encodeURIComponent(_a);
+              $window.open(path, '_blank');
 
-          }).catch((resp) => {
-            console.log('viewExamples(): error loading categoryDefinition:', resp);
-          });
+            }).catch((resp) => {
+              console.log('viewExamples(): error loading categoryDefinition:', resp);
+            });
         } else {
           console.log(`viewExamples(): error finding type of field ${categorizationFieldName} in indices:`,
             datafeedIndices);
@@ -329,21 +329,21 @@ module.directive('mlAnomaliesTable', function (
           const categoryId = record.mlcategory[0];
 
           mlResultsService.getCategoryDefinition(jobId, categoryId)
-          .then((resp) => {
+            .then((resp) => {
             // Prefix each of the terms with '+' so that the Elasticsearch Query String query
             // run in a drilldown Kibana dashboard has to match on all terms.
-            const termsArray = _.map(resp.terms.split(' '), (term) => { return '+' + term; });
-            record.mlcategoryterms = termsArray.join(' ');
-            record.mlcategoryregex = resp.regex;
+              const termsArray = _.map(resp.terms.split(' '), (term) => { return '+' + term; });
+              record.mlcategoryterms = termsArray.join(' ');
+              record.mlcategoryregex = resp.regex;
 
-            // Replace any tokens in the configured url_value with values from the source record,
-            // and then open link in a new tab/window.
-            const urlPath = replaceStringTokens(customUrl.url_value, record, true);
-            $window.open(urlPath, '_blank');
+              // Replace any tokens in the configured url_value with values from the source record,
+              // and then open link in a new tab/window.
+              const urlPath = replaceStringTokens(customUrl.url_value, record, true);
+              $window.open(urlPath, '_blank');
 
-          }).catch((resp) => {
-            console.log('openCustomUrl(): error loading categoryDefinition:', resp);
-          });
+            }).catch((resp) => {
+              console.log('openCustomUrl(): error loading categoryDefinition:', resp);
+            });
 
         } else {
           // Replace any tokens in the configured url_value with values from the source record,
@@ -717,12 +717,12 @@ module.directive('mlAnomaliesTable', function (
           if (_.has(record, 'entityValue') && record.entityName === 'mlcategory') {
             // Obtain the category definition and display the examples in the expanded row.
             mlResultsService.getCategoryDefinition(record.jobId, record.entityValue)
-            .then((resp) => {
-              rowScope.categoryDefinition = {
-                'examples': _.slice(resp.examples, 0, Math.min(resp.examples.length, MAX_NUMBER_CATEGORY_EXAMPLES)) };
-            }).catch((resp) => {
-              console.log('Anomalies table createTableRow(): error loading categoryDefinition:', resp);
-            });
+              .then((resp) => {
+                rowScope.categoryDefinition = {
+                  'examples': _.slice(resp.examples, 0, Math.min(resp.examples.length, MAX_NUMBER_CATEGORY_EXAMPLES)) };
+              }).catch((resp) => {
+                console.log('Anomalies table createTableRow(): error loading categoryDefinition:', resp);
+              });
           }
 
           rowScope.$broadcast('initRow', record);
@@ -788,7 +788,7 @@ module.directive('mlAnomaliesTable', function (
         if (addEntity !== undefined) {
           if (_.has(record, 'entityValue')) {
             if (record.entityName !== 'mlcategory') {
-               // Escape single quotes and backslash characters in the HTML for the event handlers.
+              // Escape single quotes and backslash characters in the HTML for the event handlers.
               const safeEntityName = record.entityName.replace(/(['\\])/g, '\\$1');
               const safeEntityValue = record.entityValue.replace(/(['\\])/g, '\\$1');
 
@@ -916,11 +916,11 @@ module.directive('mlAnomaliesTable', function (
         scope.categoryExamplesByJob = {};
         _.each(categoryIdsByJobId, (categoryIds, jobId) => {
           mlResultsService.getCategoryExamples(jobId, categoryIds, MAX_NUMBER_CATEGORY_EXAMPLES)
-          .then((resp) => {
-            scope.categoryExamplesByJob[jobId] = resp.examplesByCategoryId;
-          }).catch((resp) => {
-            console.log('Anomalies table - error getting category examples:', resp);
-          });
+            .then((resp) => {
+              scope.categoryExamplesByJob[jobId] = resp.examplesByCategoryId;
+            }).catch((resp) => {
+              console.log('Anomalies table - error getting category examples:', resp);
+            });
         });
       }
 

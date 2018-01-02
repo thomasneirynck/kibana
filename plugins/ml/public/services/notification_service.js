@@ -24,7 +24,7 @@ const module = uiModules.get('apps/ml');
 
 module.service('mlNotificationService', function ($q, es) {
 
-    // search for audit messages, jobId is optional.
+  // search for audit messages, jobId is optional.
   // without it, all jobs will be listed.
   // fromRange should be a string formatted in ES time units. e.g. 12h, 1d, 7d
   this.getJobAuditMessages = function (fromRange, jobId) {
@@ -93,17 +93,17 @@ module.service('mlNotificationService', function ($q, es) {
         }
       }
     })
-    .then((resp) => {
-      if (resp.hits.total !== 0) {
-        _.each(resp.hits.hits, (hit) => {
-          messages.push(hit._source);
-        });
-      }
-      deferred.resolve({ messages });
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+      .then((resp) => {
+        if (resp.hits.total !== 0) {
+          _.each(resp.hits.hits, (hit) => {
+            messages.push(hit._source);
+          });
+        }
+        deferred.resolve({ messages });
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
     return deferred.promise;
   };
 
@@ -162,21 +162,21 @@ module.service('mlNotificationService', function ($q, es) {
         }
       }
     })
-    .then((resp) => {
-      if (resp.hits.total !== 0 &&
+      .then((resp) => {
+        if (resp.hits.total !== 0 &&
         resp.aggregations &&
         resp.aggregations.levelsPerJob &&
         resp.aggregations.levelsPerJob.buckets &&
         resp.aggregations.levelsPerJob.buckets.length) {
-        _.each(resp.aggregations.levelsPerJob.buckets, (agg) => {
-          aggs.push(agg);
-        });
-      }
-      deferred.resolve({ messagesPerJob: aggs });
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+          _.each(resp.aggregations.levelsPerJob.buckets, (agg) => {
+            aggs.push(agg);
+          });
+        }
+        deferred.resolve({ messagesPerJob: aggs });
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
     return deferred.promise;
   };
 

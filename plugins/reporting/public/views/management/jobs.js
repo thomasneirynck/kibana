@@ -54,32 +54,32 @@ routes.when('/management/kibana/reporting', {
 
     const getJobs = (page = 0) => {
       return reportingJobQueue.list(page)
-      .then((jobs) => {
-        return reportingJobQueue.total()
-        .then((total) => {
-          const mappedJobs = mapJobs(jobs);
+        .then((jobs) => {
+          return reportingJobQueue.total()
+            .then((total) => {
+              const mappedJobs = mapJobs(jobs);
+              return {
+                jobs: mappedJobs,
+                total: total,
+                pages: Math.ceil(total / pageSize),
+              };
+            });
+        })
+        .catch((err) => {
+          if (!licenseAllowsToShowThisPage()) {
+            return notifyAndRedirectToManagementOverviewPage();
+          }
+
+          if (err.status !== 401 && err.status !== 403) {
+            notifier.error(err.statusText || 'Request failed');
+          }
+
           return {
-            jobs: mappedJobs,
-            total: total,
-            pages: Math.ceil(total / pageSize),
+            jobs: [],
+            total: 0,
+            pages: 1,
           };
         });
-      })
-      .catch((err) => {
-        if (!licenseAllowsToShowThisPage()) {
-          return notifyAndRedirectToManagementOverviewPage();
-        }
-
-        if (err.status !== 401 && err.status !== 403) {
-          notifier.error(err.statusText || 'Request failed');
-        }
-
-        return {
-          jobs: [],
-          total: 0,
-          pages: 1,
-        };
-      });
     };
 
     const toggleLoading = () => {
@@ -88,9 +88,9 @@ routes.when('/management/kibana/reporting', {
 
     const updateJobs = () => {
       return getJobs(this.currentPage - 1)
-      .then((jobs) => {
-        this.reportingJobs = jobs;
-      });
+        .then((jobs) => {
+          this.reportingJobs = jobs;
+        });
     };
 
     const updateJobsLoading = () => {
@@ -123,12 +123,12 @@ routes.when('/management/kibana/reporting', {
     // fetch and show job error details
     this.showError = (jobId) => {
       reportingJobQueue.getContent(jobId)
-      .then((doc) => {
-        this.errorMessage = {
-          job_id: jobId,
-          message: doc.content,
-        };
-      });
+        .then((doc) => {
+          this.errorMessage = {
+            job_id: jobId,
+            message: doc.content,
+          };
+        });
     };
 
     $scope.$watch('jobsCtrl.currentPage', updateJobsLoading);

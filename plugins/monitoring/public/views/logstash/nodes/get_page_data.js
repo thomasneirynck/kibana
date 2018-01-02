@@ -14,10 +14,10 @@ export function getPageData($injector) {
       max: timeBounds.max.toISOString()
     }
   })
-  .then(response => response.data)
-  .catch((err) => {
-    const Private = $injector.get('Private');
-    const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
-    return ajaxErrorHandlers(err);
-  });
+    .then(response => response.data)
+    .catch((err) => {
+      const Private = $injector.get('Private');
+      const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
+      return ajaxErrorHandlers(err);
+    });
 }

@@ -1,6 +1,0 @@
----
-rules:
-  block-spacing: [error, always]
-  curly: [error, all]
-  no-unused-vars: [error, {args: 'all', argsIgnorePattern: '^_'}]
-  no-else-return: error

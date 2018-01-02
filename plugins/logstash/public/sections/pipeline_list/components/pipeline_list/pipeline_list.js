@@ -45,13 +45,13 @@ app.directive('pipelineList', function ($injector) {
 
         // load pipelines
         this.loadPipelines()
-        .then(() => {
+          .then(() => {
           // notify the users if the UI is read-only only after we
           // successfully loaded pipelines
-          if (this.isReadOnly) {
-            this.notifier.info(licenseService.message);
-          }
-        });
+            if (this.isReadOnly) {
+              this.notifier.info(licenseService.message);
+            }
+          });
 
         // react to pipeline and ui changes
         $scope.$watchMulti([
@@ -65,29 +65,29 @@ app.directive('pipelineList', function ($injector) {
 
       loadPipelines = () => {
         return pipelinesService.getPipelineList()
-        .then(pipelines => {
-          this.isLoading = false;
-          this.isForbidden = false;
-          this.pipelines = pipelines;
-        })
-        .catch(err => {
-          return licenseService.checkValidity()
-          .then(() => {
-            if (err.status === 403) {
-              this.isLoading = false;
-              // check if the 403 is from license check or a RBAC permission issue with the index
-              if (this.isReadOnly) {
-                // if read only, we show the contents
-                this.isForbidden = false;
-              } else {
-                this.isForbidden = true;
-              }
-            } else {
-              this.isForbidden = false;
-              this.notifier.error(err);
-            }
+          .then(pipelines => {
+            this.isLoading = false;
+            this.isForbidden = false;
+            this.pipelines = pipelines;
+          })
+          .catch(err => {
+            return licenseService.checkValidity()
+              .then(() => {
+                if (err.status === 403) {
+                  this.isLoading = false;
+                  // check if the 403 is from license check or a RBAC permission issue with the index
+                  if (this.isReadOnly) {
+                    // if read only, we show the contents
+                    this.isForbidden = false;
+                  } else {
+                    this.isForbidden = true;
+                  }
+                } else {
+                  this.isForbidden = false;
+                  this.notifier.error(err);
+                }
+              });
           });
-        });
       }
 
       get hasPageOfPipelines() {
@@ -144,25 +144,25 @@ app.directive('pipelineList', function ($injector) {
 
         const pipelineIds = this.selectedPipelines.map(pipeline => pipeline.id);
         return pipelinesService.deletePipelines(pipelineIds)
-        .then(results => {
-          const numSuccesses = results.numSuccesses;
-          const numErrors = results.numErrors;
-          const numTotal = this.selectedPipelines.length;
+          .then(results => {
+            const numSuccesses = results.numSuccesses;
+            const numErrors = results.numErrors;
+            const numTotal = this.selectedPipelines.length;
 
-          if (numSuccesses > 0) {
-            this.notifier.info(`Deleted ${numSuccesses} out of ${numTotal} selected ${pipelinesStr}`);
-          }
+            if (numSuccesses > 0) {
+              this.notifier.info(`Deleted ${numSuccesses} out of ${numTotal} selected ${pipelinesStr}`);
+            }
 
-          if (numErrors > 0) {
-            this.notifier.error(`Could not delete ${numErrors} out of ${numTotal} selected ${pipelinesStr}`);
-          }
+            if (numErrors > 0) {
+              this.notifier.error(`Could not delete ${numErrors} out of ${numTotal} selected ${pipelinesStr}`);
+            }
 
-          this.loadPipelines();
-        })
-        .catch(err => {
-          return licenseService.checkValidity()
-          .then(() => this.notifier.error(err));
-        });
+            this.loadPipelines();
+          })
+          .catch(err => {
+            return licenseService.checkValidity()
+              .then(() => this.notifier.error(err));
+          });
       }
 
       onSelectedChange = (selectedPipelines) => {

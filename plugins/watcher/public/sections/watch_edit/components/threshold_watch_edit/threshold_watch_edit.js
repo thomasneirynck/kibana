@@ -183,16 +183,16 @@ app.directive('thresholdWatchEdit', function ($injector) {
         });
 
         return watchService.visualizeWatch(this.watch, visualizeOptions)
-        .then(({ visualizeData }) => {
-          this.visualizeData = visualizeData;
-          this.visualizeDataPageCount = Object.keys(visualizeData).length;
-          this.setVisualizationPageByKey(this.visualizeDataKey);
-          this.restartRefreshWatchVisualizationTimer();
-        })
-        .catch(e => {
-          this.notifier.error(e);
-          this.stopRefreshWatchVisualizationTimer();
-        });
+          .then(({ visualizeData }) => {
+            this.visualizeData = visualizeData;
+            this.visualizeDataPageCount = Object.keys(visualizeData).length;
+            this.setVisualizationPageByKey(this.visualizeDataKey);
+            this.restartRefreshWatchVisualizationTimer();
+          })
+          .catch(e => {
+            this.notifier.error(e);
+            this.stopRefreshWatchVisualizationTimer();
+          });
       }, 500);
 
       setVisualizationPageByKey = (key) => {
@@ -249,50 +249,50 @@ app.directive('thresholdWatchEdit', function ($injector) {
         }
 
         return this.isExistingWatch()
-        .then(existingWatch => {
-          if (!existingWatch) {
-            return this.saveWatch();
-          }
+          .then(existingWatch => {
+            if (!existingWatch) {
+              return this.saveWatch();
+            }
 
-          const confirmModalOptions = {
-            onConfirm: this.saveWatch,
-            confirmButtonText: 'Overwrite Watch'
-          };
+            const confirmModalOptions = {
+              onConfirm: this.saveWatch,
+              confirmButtonText: 'Overwrite Watch'
+            };
 
-          const watchNameMessageFragment = existingWatch.name ? ` (name: "${existingWatch.name}")` : '';
-          const message = `Watch with ID "${this.watch.id}"${watchNameMessageFragment} already exists. Do you want to overwrite it?`;
-          return confirmModal(message, confirmModalOptions);
-        })
-        .catch(err => this.notifier.error(err));
+            const watchNameMessageFragment = existingWatch.name ? ` (name: "${existingWatch.name}")` : '';
+            const message = `Watch with ID "${this.watch.id}"${watchNameMessageFragment} already exists. Do you want to overwrite it?`;
+            return confirmModal(message, confirmModalOptions);
+          })
+          .catch(err => this.notifier.error(err));
       }
 
       isExistingWatch = () => {
         return watchService.loadWatch(this.watch.id)
-        .then(existingWatch => {
-          return existingWatch;
-        })
-        .catch(err => {
-          return licenseService.checkValidity()
-          .then(() => {
-            if (err.status === 404) {
-              return false;
-            }
-            throw err;
+          .then(existingWatch => {
+            return existingWatch;
+          })
+          .catch(err => {
+            return licenseService.checkValidity()
+              .then(() => {
+                if (err.status === 404) {
+                  return false;
+                }
+                throw err;
+              });
           });
-        });
       }
 
       saveWatch = () => {
         return watchService.saveWatch(this.watch)
-        .then(() => {
-          this.watch.isNew = false; // without this, the message displays 'New Watch'
-          this.notifier.info(`Saved Watch "${this.watch.displayName}"`);
-          this.onClose();
-        })
-        .catch(err => {
-          return licenseService.checkValidity()
-          .then(() => this.notifier.error(err));
-        });
+          .then(() => {
+            this.watch.isNew = false; // without this, the message displays 'New Watch'
+            this.notifier.info(`Saved Watch "${this.watch.displayName}"`);
+            this.onClose();
+          })
+          .catch(err => {
+            return licenseService.checkValidity()
+              .then(() => this.notifier.error(err));
+          });
       }
     }
   };

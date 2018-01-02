@@ -31,14 +31,14 @@ export function getMetrics(req, indexPattern, filters = []) {
       return getSeries(req, indexPattern, metricName, filters, { min, max, bucketSize });
     });
   })
-  .then(rows => {
-    const data = {};
-    metrics.forEach((key, index) => {
+    .then(rows => {
+      const data = {};
+      metrics.forEach((key, index) => {
       // keyName must match the value stored in the html template
-      const keyName = isPlainObject(key) ? key.name : key;
-      data[keyName] = rows[index];
-    });
+        const keyName = isPlainObject(key) ? key.name : key;
+        data[keyName] = rows[index];
+      });
 
-    return data;
-  });
+      return data;
+    });
 }

@@ -43,11 +43,11 @@ module.service('prlHttpService', function ($http, $q) {
         params: (options.params || {}),
         data: (options.data || null)
       })
-      .then(function successCallback(response) {
-        deferred.resolve(response.data);
-      }, function errorCallback(response) {
-        deferred.reject(response.data);
-      });
+        .then(function successCallback(response) {
+          deferred.resolve(response.data);
+        }, function errorCallback(response) {
+          deferred.reject(response.data);
+        });
 
       return deferred.promise;
     }

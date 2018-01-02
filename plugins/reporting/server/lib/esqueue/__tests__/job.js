@@ -364,19 +364,19 @@ describe('Job Class', function () {
       const job = new Job(mockQueue, index, type, payload);
 
       return job.get()
-      .then((doc) => {
-        const jobDoc = job.document; // document should be resolved
-        expect(doc).to.have.property('index', index);
-        expect(doc).to.have.property('type', jobDoc.type);
-        expect(doc).to.have.property('id', jobDoc.id);
-        expect(doc).to.have.property('version', jobDoc.version);
-        expect(doc).to.have.property('created_by', defaultCreatedBy);
+        .then((doc) => {
+          const jobDoc = job.document; // document should be resolved
+          expect(doc).to.have.property('index', index);
+          expect(doc).to.have.property('type', jobDoc.type);
+          expect(doc).to.have.property('id', jobDoc.id);
+          expect(doc).to.have.property('version', jobDoc.version);
+          expect(doc).to.have.property('created_by', defaultCreatedBy);
 
-        expect(doc).to.have.property('payload');
-        expect(doc).to.have.property('jobtype');
-        expect(doc).to.have.property('priority');
-        expect(doc).to.have.property('timeout');
-      });
+          expect(doc).to.have.property('payload');
+          expect(doc).to.have.property('jobtype');
+          expect(doc).to.have.property('priority');
+          expect(doc).to.have.property('timeout');
+        });
     });
 
     it('should contain optional data', function () {
@@ -386,15 +386,15 @@ describe('Job Class', function () {
 
       const job = new Job(mockQueue, index, type, payload, optionals);
       return Promise.resolve(client.get({}, optionals))
-      .then((doc) => {
-        sinon.stub(client, 'get').returns(Promise.resolve(doc));
-      })
-      .then(() => {
-        return job.get()
         .then((doc) => {
-          expect(doc).to.have.property('created_by', optionals.created_by);
+          sinon.stub(client, 'get').returns(Promise.resolve(doc));
+        })
+        .then(() => {
+          return job.get()
+            .then((doc) => {
+              expect(doc).to.have.property('created_by', optionals.created_by);
+            });
         });
-      });
     });
   });
 

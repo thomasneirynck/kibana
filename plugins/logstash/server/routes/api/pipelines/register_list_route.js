@@ -16,7 +16,7 @@ function fetchPipelines(callWithRequest) {
   };
 
   return callWithRequest('search', params)
-  .then(response => fetchAllFromScroll(response, callWithRequest));
+    .then(response => fetchAllFromScroll(response, callWithRequest));
 }
 
 export function registerListRoute(server) {
@@ -29,16 +29,16 @@ export function registerListRoute(server) {
       const callWithRequest = callWithRequestFactory(server, request);
 
       return fetchPipelines(callWithRequest)
-      .then((pipelinesHits = []) => {
+        .then((pipelinesHits = []) => {
 
-        const pipelines = pipelinesHits.map(pipeline => {
-          return PipelineListItem.fromUpstreamJSON(pipeline).downstreamJSON;
-        });
+          const pipelines = pipelinesHits.map(pipeline => {
+            return PipelineListItem.fromUpstreamJSON(pipeline).downstreamJSON;
+          });
 
-        reply({ pipelines });
+          reply({ pipelines });
 
-      })
-      .catch(e => reply(wrapEsError(e)));
+        })
+        .catch(e => reply(wrapEsError(e)));
     },
     config: {
       pre: [ licensePreRouting ]

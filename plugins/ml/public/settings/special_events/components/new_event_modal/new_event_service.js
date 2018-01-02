@@ -30,8 +30,8 @@ module.service('mlNewEventService', function ($q, $modal) {
       });
 
       modal.result
-      .then(resolve)
-      .catch(reject);
+        .then(resolve)
+        .catch(reject);
     });
   };
 

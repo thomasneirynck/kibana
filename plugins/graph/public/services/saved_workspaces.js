@@ -68,12 +68,12 @@ export function SavedWorkspacesProvider(kbnUrl, Private, Promise) {
       perPage: size,
       searchFields: ['title^3', 'description']
     })
-    .then(resp => {
-      return {
-        total: resp.total,
-        hits: resp.savedObjects.map((hit) => this.mapHits(hit))
-      };
-    });
+      .then(resp => {
+        return {
+          total: resp.total,
+          hits: resp.savedObjects.map((hit) => this.mapHits(hit))
+        };
+      });
   };
 }
 // This is the only thing that gets injected into controllers

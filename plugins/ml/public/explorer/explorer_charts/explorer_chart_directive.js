@@ -118,7 +118,7 @@ module.directive('mlExplorerChart', function (
         .each(function () {
           maxYAxisLabelWidth = Math.max(this.getBBox().width + yAxis.tickPadding(), maxYAxisLabelWidth);
         })
-      .remove();
+        .remove();
       d3.select('.temp-axis-label').remove();
 
       margin.left = (Math.max(maxYAxisLabelWidth, 40));

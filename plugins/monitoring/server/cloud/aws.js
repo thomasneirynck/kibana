@@ -33,9 +33,9 @@ export class AWSCloudService extends CloudService {
     };
 
     return fromCallback(callback => request(req, callback), { multiArgs: true })
-    .then(response => this._parseResponse(response[1], (body) => this._parseBody(body)))
+      .then(response => this._parseResponse(response[1], (body) => this._parseBody(body)))
     // fall back to file detection
-    .catch(() => this._tryToDetectUuid());
+      .catch(() => this._tryToDetectUuid());
   }
 
   /**
@@ -91,18 +91,18 @@ export class AWSCloudService extends CloudService {
     // Windows does not have an easy way to check
     if (!this._isWindows) {
       return fromCallback(callback => this._fs.readFile('/sys/hypervisor/uuid', 'utf8', callback))
-      .then(uuid => {
-        if (isString(uuid)) {
+        .then(uuid => {
+          if (isString(uuid)) {
           // Some AWS APIs return it lowercase (like the file did in testing), while others return it uppercase
-          uuid = uuid.trim().toLowerCase();
+            uuid = uuid.trim().toLowerCase();
 
-          if (uuid.startsWith('ec2')) {
-            return new CloudServiceResponse(this._name, true, { id: uuid });
+            if (uuid.startsWith('ec2')) {
+              return new CloudServiceResponse(this._name, true, { id: uuid });
+            }
           }
-        }
 
-        return this._createUnconfirmedResponse();
-      });
+          return this._createUnconfirmedResponse();
+        });
     }
 
     return Promise.resolve(this._createUnconfirmedResponse());

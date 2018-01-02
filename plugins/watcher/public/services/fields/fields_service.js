@@ -9,8 +9,8 @@ export class FieldsService {
 
   getFields(indexes = ['*']) {
     return this.$http.post(`${this.basePath}/fields`, { indexes })
-    .then(response => {
-      return response.data.fields;
-    });
+      .then(response => {
+        return response.data.fields;
+      });
   }
 }

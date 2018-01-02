@@ -21,17 +21,17 @@ uiModule.service('monitoringClusters', ($injector) => {
         max: max.toISOString()
       }
     })
-    .then(response => response.data)
-    .then(data => {
-      if (clusterUuid) {
-        return data[0]; // return single cluster
-      }
-      return data; // return set of clusters
-    })
-    .catch(err => {
-      const Private = $injector.get('Private');
-      const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
-      return ajaxErrorHandlers(err);
-    });
+      .then(response => response.data)
+      .then(data => {
+        if (clusterUuid) {
+          return data[0]; // return single cluster
+        }
+        return data; // return set of clusters
+      })
+      .catch(err => {
+        const Private = $injector.get('Private');
+        const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
+        return ajaxErrorHandlers(err);
+      });
   };
 });

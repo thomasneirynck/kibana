@@ -123,10 +123,10 @@ export class TypeCollector {
         type: collectorType,
         result: collector.fetch()
       })
-      .catch(err => {
-        this._log.warn(err);
-        this._log.warn(`Unable to fetch data from ${collectorType} collector`);
-      });
+        .catch(err => {
+          this._log.warn(err);
+          this._log.warn(`Unable to fetch data from ${collectorType} collector`);
+        });
     });
   }
 

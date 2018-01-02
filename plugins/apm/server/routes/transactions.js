@@ -34,12 +34,12 @@ export function initTransactionsApi(server) {
     },
     handler: (req, reply) => {
       const { serviceName } = req.params;
-      const { transaction_type } = req.query;
+      const { transaction_type: transactionType } = req.query;
       const { setup } = req.pre;
 
       return getTopTransactions({
         serviceName,
-        transactionType: transaction_type,
+        transactionType,
         setup
       })
         .then(reply)

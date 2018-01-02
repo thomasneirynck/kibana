@@ -59,18 +59,18 @@ export function jobs(server) {
       const { docId } = request.params;
 
       jobsQuery.get(request.pre.user, docId, { includeContent: true })
-      .then((doc) => {
-        if (!doc) {
-          return reply(boom.notFound());
-        }
+        .then((doc) => {
+          if (!doc) {
+            return reply(boom.notFound());
+          }
 
-        const { jobtype: jobType } = doc._source;
-        if (!request.pre.management.jobTypes.includes(jobType)) {
-          return reply(boom.unauthorized(`Sorry, you are not authorized to download ${jobType} reports`));
-        }
+          const { jobtype: jobType } = doc._source;
+          if (!request.pre.management.jobTypes.includes(jobType)) {
+            return reply(boom.unauthorized(`Sorry, you are not authorized to download ${jobType} reports`));
+          }
 
-        reply(doc._source.output);
-      });
+          reply(doc._source.output);
+        });
     },
     config: getRouteConfig(),
   });

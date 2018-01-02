@@ -294,13 +294,13 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
     // if anything has changed, post the changes
     if (Object.keys(jobData).length) {
       mlJobService.updateJob(jobId, jobData)
-      .then((resp) => {
-        if (resp.success) {
-          saveDatafeed();
-        } else {
-          saveFail(resp);
-        }
-      });
+        .then((resp) => {
+          if (resp.success) {
+            saveDatafeed();
+          } else {
+            saveFail(resp);
+          }
+        });
     } else {
       saveDatafeed();
     }
@@ -309,13 +309,13 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
       if (Object.keys(datafeedData).length) {
         const datafeedId = $scope.job.datafeed_config.datafeed_id;
         mlJobService.updateDatafeed(datafeedId, datafeedData)
-        .then((resp) => {
-          if (resp.success) {
-            saveComplete();
-          } else {
-            saveFail(resp);
-          }
-        });
+          .then((resp) => {
+            if (resp.success) {
+              saveComplete();
+            } else {
+              saveFail(resp);
+            }
+          });
       } else {
         saveComplete();
       }

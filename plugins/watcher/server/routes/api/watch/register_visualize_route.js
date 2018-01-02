@@ -31,21 +31,21 @@ export function registerVisualizeRoute(server) {
       const body = watch.getVisualizeQuery(options);
 
       return fetchVisualizeData(callWithRequest, watch.index, body)
-      .then(hits => {
-        const visualizeData = watch.formatVisualizeData(hits);
+        .then(hits => {
+          const visualizeData = watch.formatVisualizeData(hits);
 
-        reply({ visualizeData });
-      })
-      .catch(err => {
+          reply({ visualizeData });
+        })
+        .catch(err => {
 
         // Case: Error from Elasticsearch JS client
-        if (isEsError(err)) {
-          return reply(wrapEsError(err));
-        }
+          if (isEsError(err)) {
+            return reply(wrapEsError(err));
+          }
 
-        // Case: default
-        reply(wrapUnknownError(err));
-      });
+          // Case: default
+          reply(wrapUnknownError(err));
+        });
     },
     config: {
       pre: [ licensePreRouting ]

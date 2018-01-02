@@ -229,9 +229,9 @@ export function Range(startRow, startColumn, endRow, endColumn) {
     const screenPosEnd = session.documentToScreenPosition(this.end);
 
     return new Range(
-            screenPosStart.row, screenPosStart.column,
-            screenPosEnd.row, screenPosEnd.column
-        );
+      screenPosStart.row, screenPosStart.column,
+      screenPosEnd.row, screenPosEnd.column
+    );
   };
   this.moveBy = function (row, column) {
     this.start.row += row;

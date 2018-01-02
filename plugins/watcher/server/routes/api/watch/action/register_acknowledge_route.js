@@ -18,29 +18,29 @@ export function registerAcknowledgeRoute(server) {
       const { watchId, actionId } = request.params;
 
       return acknowledgeAction(callWithRequest, watchId, actionId)
-      .then(hit => {
-        const watchStatusJson = get(hit, 'status');
-        const json = {
-          id: watchId,
-          watchStatusJson: watchStatusJson
-        };
+        .then(hit => {
+          const watchStatusJson = get(hit, 'status');
+          const json = {
+            id: watchId,
+            watchStatusJson: watchStatusJson
+          };
 
-        const watchStatus = WatchStatus.fromUpstreamJson(json);
-        reply({ watchStatus: watchStatus.downstreamJson });
-      })
-      .catch(err => {
+          const watchStatus = WatchStatus.fromUpstreamJson(json);
+          reply({ watchStatus: watchStatus.downstreamJson });
+        })
+        .catch(err => {
 
         // Case: Error from Elasticsearch JS client
-        if (isEsError(err)) {
-          const statusCodeToMessageMap = {
-            404: `Watch with id = ${watchId} not found`
-          };
-          return reply(wrapEsError(err, statusCodeToMessageMap));
-        }
+          if (isEsError(err)) {
+            const statusCodeToMessageMap = {
+              404: `Watch with id = ${watchId} not found`
+            };
+            return reply(wrapEsError(err, statusCodeToMessageMap));
+          }
 
-        // Case: default
-        reply(wrapUnknownError(err));
-      });
+          // Case: default
+          reply(wrapUnknownError(err));
+        });
     },
     config: {
       pre: [ licensePreRouting ]

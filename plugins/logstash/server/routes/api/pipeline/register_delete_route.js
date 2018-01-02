@@ -23,8 +23,8 @@ export function registerDeleteRoute(server) {
       const pipelineId = request.params.id;
 
       return deletePipeline(callWithRequest, pipelineId)
-      .then(reply)
-      .catch(e => reply(wrapEsError(e)));
+        .then(reply)
+        .catch(e => reply(wrapEsError(e)));
     },
     config: {
       pre: [ licensePreRouting ]

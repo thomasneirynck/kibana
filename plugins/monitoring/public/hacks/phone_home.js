@@ -69,29 +69,29 @@ export class PhoneHome {
         max: (new Date()).toISOString()
       }
     })
-    .then(response => {
+      .then(response => {
       // TODO: support arrays after https://github.com/elastic/infra/issues/2350
-      return response.data.map(cluster => {
-        const req = {
-          method: 'POST',
-          url: this._statsReportUrl,
-          data: cluster
-        };
-        // if passing data externally to Infra, suppress kbnXsrfToken
-        if (this._statsReportUrl.match(/^https/)) { req.kbnXsrfToken = false; }
-        return this._$http(req);
-      });
-    })
-    .then(response => {
+        return response.data.map(cluster => {
+          const req = {
+            method: 'POST',
+            url: this._statsReportUrl,
+            data: cluster
+          };
+          // if passing data externally to Infra, suppress kbnXsrfToken
+          if (this._statsReportUrl.match(/^https/)) { req.kbnXsrfToken = false; }
+          return this._$http(req);
+        });
+      })
+      .then(response => {
       // we sent a report, so we need to record and store the current time stamp
-      this._set('lastReport', Date.now());
-      this._saveToBrowser();
-      return response;
-    })
-    .catch(() => {
+        this._set('lastReport', Date.now());
+        this._saveToBrowser();
+        return response;
+      })
+      .catch(() => {
       // no ajaxErrorHandlers for phone home
-      return Promise.resolve(null);
-    });
+        return Promise.resolve(null);
+      });
   }
 
   /*

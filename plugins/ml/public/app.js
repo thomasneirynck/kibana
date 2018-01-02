@@ -56,7 +56,7 @@ if (typeof uiRoutes.enable === 'function') {
 }
 
 uiRoutes
-.otherwise({
-  redirectTo: '/jobs'
-});
+  .otherwise({
+    redirectTo: '/jobs'
+  });
 

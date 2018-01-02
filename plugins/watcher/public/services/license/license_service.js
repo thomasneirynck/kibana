@@ -54,8 +54,8 @@ export class LicenseService {
 
   refreshLicense() {
     return this.$http.get(`${this.basePath}/license/refresh`)
-    .then(response => {
-      return response.data.success;
-    });
+      .then(response => {
+        return response.data.success;
+      });
   }
 }

@@ -20,7 +20,7 @@ export function createFormatCsvValues(escapeValue, separator, fields, formatsMap
 
       return value.toString();
     })
-    .map(escapeValue)
-    .join(separator);
+      .map(escapeValue)
+      .join(separator);
   };
 }

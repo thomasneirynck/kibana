@@ -219,14 +219,14 @@ module.directive('mlPopulationJobChart', function (Private, mlChartTooltipServic
         .classed('values-dots', true);
       dotGroup.selectAll('circle').data(data)
         .enter().append('circle')
-          .attr('cx', (d) => chartXScale(d.date))
-          .attr('cy', (d) => chartYScale(d.value))
-          .attr('r', 3)
-          .style('display', (d) => d.value === null ? 'none' : 'auto')
-          .on('mouseover', function (d) {
-            showTooltip(d, this);
-          })
-          .on('mouseout', () => mlChartTooltipService.hide());
+        .attr('cx', (d) => chartXScale(d.date))
+        .attr('cy', (d) => chartYScale(d.value))
+        .attr('r', 3)
+        .style('display', (d) => d.value === null ? 'none' : 'auto')
+        .on('mouseover', function (d) {
+          showTooltip(d, this);
+        })
+        .on('mouseout', () => mlChartTooltipService.hide());
     }
 
     function showTooltip(data, el) {

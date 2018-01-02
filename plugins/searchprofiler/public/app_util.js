@@ -44,7 +44,7 @@ function getJSONParseError(json) {
   const parser = clarinet.parser();
   let firstError = undefined;
 
-    // generate a detailed error using the parser's state
+  // generate a detailed error using the parser's state
   function makeError(e) {
     let currentNL = 0;
     let nextNL = json.indexOf('\n');
@@ -62,7 +62,7 @@ function getJSONParseError(json) {
     };
   }
 
-    // trigger the parse error
+  // trigger the parse error
   parser.onerror = e => {
     firstError = makeError(e);
     parser.close();

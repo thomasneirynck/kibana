@@ -136,13 +136,15 @@ export async function getTimeseriesData({
   );
 
   const tpmBuckets = sortBy(
-    transactionResultBuckets.map(({ key, timeseries, overall_avg }) => ({
-      key,
-      avg: overall_avg.avg,
-      values: timeseries.buckets
-        .slice(1, -1)
-        .map(bucket => get(bucket.rpm, 'normalized_value') || 0)
-    })),
+    transactionResultBuckets.map(
+      ({ key, timeseries, overall_avg: overallAvg }) => ({
+        key,
+        avg: overallAvg.avg,
+        values: timeseries.buckets
+          .slice(1, -1)
+          .map(bucket => get(bucket.rpm, 'normalized_value') || 0)
+      })
+    ),
     bucket => bucket.key.replace(/^HTTP (\d)xx$/, '00$1') // ensure that HTTP 3xx are sorted at the top
   );
 

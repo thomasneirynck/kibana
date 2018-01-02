@@ -117,16 +117,16 @@ module.service('mlCreateWatchService', function ($http, $q, Private) {
 
       if (id !== '') {
         saveWatch(watchModel)
-        .then(() => {
-          this.status.watch = this.STATUS.SAVED;
-          this.config.watcherEditURL =
+          .then(() => {
+            this.status.watch = this.STATUS.SAVED;
+            this.config.watcherEditURL =
             `${chrome.getBasePath()}/app/kibana#/management/elasticsearch/watcher/watches/watch/${id}/edit?_g=()`;
-          deferred.resolve();
-        })
-        .catch((resp) => {
-          this.status.watch = this.STATUS.SAVE_FAILED;
-          deferred.reject(resp);
-        });
+            deferred.resolve();
+          })
+          .catch((resp) => {
+            this.status.watch = this.STATUS.SAVE_FAILED;
+            deferred.reject(resp);
+          });
       }
     } else {
       this.status.watch = this.STATUS.SAVE_FAILED;
@@ -140,9 +140,9 @@ module.service('mlCreateWatchService', function ($http, $q, Private) {
     const url = `${basePath}/watch/${watchModel.id}`;
 
     return $http.put(url, watchModel.upstreamJSON)
-    .catch(e => {
-      throw e.data.message;
-    });
+      .catch(e => {
+        throw e.data.message;
+      });
   }
 
   this.isWatcherEnabled = function () {
@@ -154,9 +154,9 @@ module.service('mlCreateWatchService', function ($http, $q, Private) {
     const basePath = chrome.addBasePath('/api/watcher');
     const url = `${basePath}/watch/${id}`;
     return $http.get(url)
-    .catch(e => {
-      throw e.data.message;
-    });
+      .catch(e => {
+        throw e.data.message;
+      });
   };
 
 

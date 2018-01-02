@@ -14,28 +14,28 @@ module.exports = {
       return client.info({
         maxRetries: 0
       })
-      .then(
-        function (resp) {
-          if (resp.name !== 'esjs-shield-test-runner') {
-            throw new Error('Almosted wiped out another es node. Shut-down all instances of ES and try again.');
-          }
+        .then(
+          function (resp) {
+            if (resp.name !== 'esjs-shield-test-runner') {
+              throw new Error('Almosted wiped out another es node. Shut-down all instances of ES and try again.');
+            }
 
-          // create a new client
-          doCreateClient();
-          return client;
-        },
-        function (err) {
-          if (err && --attemptsRemaining) {
-            return Promise.delay(timeout).then(ping);
-          }
+            // create a new client
+            doCreateClient();
+            return client;
+          },
+          function (err) {
+            if (err && --attemptsRemaining) {
+              return Promise.delay(timeout).then(ping);
+            }
 
-          throw new Error('unable to establish contact with ES at ' + JSON.stringify({
-            host: 'localhost',
-            port: port,
-            err: err
-          }));
-        }
-      );
+            throw new Error('unable to establish contact with ES at ' + JSON.stringify({
+              host: 'localhost',
+              port: port,
+              err: err
+            }));
+          }
+        );
     }());
 
     function doCreateClient() {

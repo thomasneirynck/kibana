@@ -13,8 +13,8 @@
  * strictly prohibited.
  */
 
- // a copy of Kibana's pretty duration directive
- // adding extra zoom in / zoom out buttons to the left of the timepicker.
+// a copy of Kibana's pretty duration directive
+// adding extra zoom in / zoom out buttons to the left of the timepicker.
 
 
 import _ from 'lodash';

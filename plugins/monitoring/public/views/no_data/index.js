@@ -9,13 +9,13 @@ uiRoutes.when('/no-data', {
       const kbnUrl = $injector.get('kbnUrl');
 
       return monitoringClusters()
-      .then(clusters => {
-        if (clusters && clusters.length) {
-          kbnUrl.changePath('/home');
-          return Promise.reject();
-        }
-        return Promise.resolve();
-      });
+        .then(clusters => {
+          if (clusters && clusters.length) {
+            kbnUrl.changePath('/home');
+            return Promise.reject();
+          }
+          return Promise.resolve();
+        });
     }
   },
   controller($injector, $scope) {
@@ -58,4 +58,4 @@ uiRoutes.when('/no-data', {
     $scope.$on('$destroy', $executor.destroy);
   }
 })
-.otherwise({ redirectTo: '/home' });
+  .otherwise({ redirectTo: '/home' });

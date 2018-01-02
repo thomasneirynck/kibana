@@ -41,8 +41,8 @@ export function logstashPipelineRoute(server) {
       const pipelineHash = req.params.pipelineHash;
 
       return getPipeline(req, config, lsIndexPattern, clusterUuid, pipelineId, pipelineHash)
-      .then(reply)
-      .catch(err => reply(handleError(err, req)));
+        .then(reply)
+        .catch(err => reply(handleError(err, req)));
     }
   });
 }

@@ -21,12 +21,12 @@ const module = uiModules.get('apps/ml');
 
 module.controller('MlJobTimepickerModal', function (
   $scope,
-   $rootScope,
-   $modalInstance,
-   params,
-   mlJobService,
-   mlCreateWatchService,
-   mlMessageBarService) {
+  $rootScope,
+  $modalInstance,
+  params,
+  mlJobService,
+  mlCreateWatchService,
+  mlMessageBarService) {
   const msgs = mlMessageBarService;
   $scope.saveLock = false;
   $scope.watcherEnabled = mlCreateWatchService.isWatcherEnabled();
@@ -95,42 +95,42 @@ module.controller('MlJobTimepickerModal', function (
     // Attempt to open the job first.
     // If it's already open, ignore the 409 error
     mlJobService.openJob($scope.jobId)
-    .then(() => {
-      doStart();
-    })
-    .catch((resp) => {
-      if (resp.statusCode === 409) {
+      .then(() => {
         doStart();
-      } else {
-        if (resp.statusCode === 500) {
-          if (doStartCalled === false) {
+      })
+      .catch((resp) => {
+        if (resp.statusCode === 409) {
+          doStart();
+        } else {
+          if (resp.statusCode === 500) {
+            if (doStartCalled === false) {
             // doStart hasn't been called yet, this 500 has returned before 10s,
             // so it's not due to a timeout
+              msgs.error(`Could not open ${$scope.jobId}`, resp);
+            }
+          } else {
             msgs.error(`Could not open ${$scope.jobId}`, resp);
           }
-        } else {
-          msgs.error(`Could not open ${$scope.jobId}`, resp);
+          $scope.saveLock = false;
         }
-        $scope.saveLock = false;
-      }
-    });
+      });
 
     // start the datafeed
     function doStart() {
       if (doStartCalled === false) {
         doStartCalled = true;
         mlJobService.startDatafeed($scope.datafeedId, $scope.jobId, $scope.start, $scope.end)
-        .then(() => {
-          $rootScope.$broadcast('jobsUpdated');
+          .then(() => {
+            $rootScope.$broadcast('jobsUpdated');
 
-          if ($scope.ui.createWatch) {
-            $rootScope.$broadcast('openCreateWatchWindow', job);
-          }
-        })
-        .catch((resp) => {
-          $scope.saveLock = false;
-          msgs.error(resp.message);
-        });
+            if ($scope.ui.createWatch) {
+              $rootScope.$broadcast('openCreateWatchWindow', job);
+            }
+          })
+          .catch((resp) => {
+            $scope.saveLock = false;
+            msgs.error(resp.message);
+          });
       }
     }
 

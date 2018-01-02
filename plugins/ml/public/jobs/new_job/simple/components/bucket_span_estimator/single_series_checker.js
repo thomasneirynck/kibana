@@ -50,13 +50,13 @@ export function SingleSeriesCheckerProvider($injector) {
         const start = () => {
           // run all tests, returns a suggested interval
           this.runTests()
-          .then((interval) => {
-            this.interval = interval;
-            resolve(this.interval);
-          })
-          .catch((resp) => {
-            reject(resp);
-          });
+            .then((interval) => {
+              this.interval = interval;
+              resolve(this.interval);
+            })
+            .catch((resp) => {
+              reject(resp);
+            });
         };
 
         // if a field has been selected, first create ref data used in metric check
@@ -64,13 +64,13 @@ export function SingleSeriesCheckerProvider($injector) {
           start();
         } else {
           this.createRefMetricData(REF_DATA_INTERVAL.ms)
-          .then(() => {
-            start();
-          })
-          .catch((resp) => {
-            console.log('SingleSeriesChecker: Could not load metric reference data', this);
-            reject(resp);
-          });
+            .then(() => {
+              start();
+            })
+            .catch((resp) => {
+              console.log('SingleSeriesChecker: Could not load metric reference data', this);
+              reject(resp);
+            });
         }
       });
     }
@@ -117,51 +117,51 @@ export function SingleSeriesCheckerProvider($injector) {
         const runTest = (i) => {
           const interval = intervals[i];
           this.performSearch(interval.ms)
-          .then((resp) => {
-            const buckets = resp.aggregations.non_empty_buckets.buckets;
-            const fullBuckets = this.getFullBuckets(buckets);
-            if (fullBuckets.length) {
-              let pass = true;
+            .then((resp) => {
+              const buckets = resp.aggregations.non_empty_buckets.buckets;
+              const fullBuckets = this.getFullBuckets(buckets);
+              if (fullBuckets.length) {
+                let pass = true;
 
-              // test that the more than 20% of the buckets contain data
-              if (pass && this.testBucketPercentage(fullBuckets, buckets) === false) {
-                pass = false;
-              }
-
-              // test that the full buckets contain at least 5 documents
-              if (this.aggType.name === 'sum' || this.aggType.name === 'count') {
-                if (pass && this.testSumCountBuckets(fullBuckets) === false) {
+                // test that the more than 20% of the buckets contain data
+                if (pass && this.testBucketPercentage(fullBuckets, buckets) === false) {
                   pass = false;
                 }
-              }
 
-              // scale variation test
-              // only run this test for bucket spans less than 1 hour
-              if (this.refMetricData.created && this.field !== null && interval.ms < 3600000) {
-                if (pass && this.testMetricData(fullBuckets) === false) {
-                  pass = false;
+                // test that the full buckets contain at least 5 documents
+                if (this.aggType.name === 'sum' || this.aggType.name === 'count') {
+                  if (pass && this.testSumCountBuckets(fullBuckets) === false) {
+                    pass = false;
+                  }
                 }
-              }
 
-              if (pass) {
-                resolve(interval);
-              } else {
-                count++;
-                if (count === intervals.length) {
+                // scale variation test
+                // only run this test for bucket spans less than 1 hour
+                if (this.refMetricData.created && this.field !== null && interval.ms < 3600000) {
+                  if (pass && this.testMetricData(fullBuckets) === false) {
+                    pass = false;
+                  }
+                }
+
+                if (pass) {
                   resolve(interval);
                 } else {
-                  runTest(count);
+                  count++;
+                  if (count === intervals.length) {
+                    resolve(interval);
+                  } else {
+                    runTest(count);
+                  }
                 }
+              } else {
+                console.log('SingleSeriesChecker: runTest stopped because fullBuckets is empty', this);
+                reject('runTest stopped because fullBuckets is empty');
               }
-            } else {
-              console.log('SingleSeriesChecker: runTest stopped because fullBuckets is empty', this);
-              reject('runTest stopped because fullBuckets is empty');
-            }
-          })
-          .catch((resp) => {
+            })
+            .catch((resp) => {
             // do something better with this
-            reject(resp);
-          });
+              reject(resp);
+            });
         };
 
         runTest(count);
@@ -271,19 +271,19 @@ export function SingleSeriesCheckerProvider($injector) {
         }
 
         this.performSearch(intervalMs) // 1h
-        .then((resp) => {
-          const buckets = resp.aggregations.non_empty_buckets.buckets;
-          const fullBuckets = this.getFullBuckets(buckets);
-          if (fullBuckets.length) {
-            this.refMetricData = this.createMetricData(fullBuckets);
-            this.refMetricData.created = true;
-          }
+          .then((resp) => {
+            const buckets = resp.aggregations.non_empty_buckets.buckets;
+            const fullBuckets = this.getFullBuckets(buckets);
+            if (fullBuckets.length) {
+              this.refMetricData = this.createMetricData(fullBuckets);
+              this.refMetricData.created = true;
+            }
 
-          resolve();
-        })
-        .catch((resp) => {
-          reject(resp);
-        });
+            resolve();
+          })
+          .catch((resp) => {
+            reject(resp);
+          });
       });
     }
 

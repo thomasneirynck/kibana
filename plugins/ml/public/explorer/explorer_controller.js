@@ -42,14 +42,14 @@ import { refreshIntervalWatcher } from 'plugins/ml/util/refresh_interval_watcher
 import { IntervalHelperProvider, getBoundsRoundedToInterval } from 'plugins/ml/util/ml_time_buckets';
 
 uiRoutes
-.when('/explorer/?', {
-  template,
-  resolve: {
-    CheckLicense: checkLicense,
-    privileges: checkGetJobsPrivilege,
-    indexPatterns: getIndexPatterns
-  }
-});
+  .when('/explorer/?', {
+    template,
+    resolve: {
+      CheckLicense: checkLicense,
+      privileges: checkGetJobsPrivilege,
+      indexPatterns: getIndexPatterns
+    }
+  });
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -160,16 +160,16 @@ module.controller('MlExplorerController', function (
     mlResultsService.getRecordsForInfluencer(
       jobIds, influencers, 0, earliestMs, latestMs, 500
     )
-    .then((resp) => {
+      .then((resp) => {
       // Sort in descending time order before storing in scope.
-      $scope.anomalyRecords = _.chain(resp.records).sortBy(record => record[$scope.timeFieldName]).reverse().value();
-      console.log('Explorer anomalies table data set:', $scope.anomalyRecords);
+        $scope.anomalyRecords = _.chain(resp.records).sortBy(record => record[$scope.timeFieldName]).reverse().value();
+        console.log('Explorer anomalies table data set:', $scope.anomalyRecords);
 
-      // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
-      $timeout(() => {
-        $scope.$broadcast('renderTable');
-      }, 0);
-    });
+        // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
+        $timeout(() => {
+          $scope.$broadcast('renderTable');
+        }, 0);
+      });
   };
 
   $scope.setSelectedJobs = function (selectedIds) {

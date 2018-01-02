@@ -43,7 +43,7 @@ export function getMlJobs(req, esIndexPattern) {
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
-  .then(handleResponse);
+    .then(handleResponse);
 }
 
 /*
@@ -75,9 +75,9 @@ export function getMlJobsForCluster(req, esIndexPattern, cluster) {
     const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
 
     return callWithRequest(req, 'search', params)
-    .then(response => {
-      return get(response, 'aggregations.jobs_count.value', 0);
-    });
+      .then(response => {
+        return get(response, 'aggregations.jobs_count.value', 0);
+      });
   }
 
   // ML is not supported

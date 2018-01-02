@@ -36,37 +36,37 @@ module.service('mlCalendarService', function ($q, ml, mlJobService, mlMessageBar
       });
 
       ml.calendars()
-      .then((resp) => {
-        calendars = resp;
-        // loop through calendars and their job_ids and create jobCalendars
-        // if a group is found, expand it out to its member jobs
-        calendars.forEach((cal) => {
-          cal.job_ids.forEach((id) => {
+        .then((resp) => {
+          calendars = resp;
+          // loop through calendars and their job_ids and create jobCalendars
+          // if a group is found, expand it out to its member jobs
+          calendars.forEach((cal) => {
+            cal.job_ids.forEach((id) => {
             // the job_id could be either a job id or a group id
-            if (this.jobCalendars[id] !== undefined) {
-              this.jobCalendars[id].push(cal.calendar_id);
-            } else if (groups[id] !== undefined) {
+              if (this.jobCalendars[id] !== undefined) {
+                this.jobCalendars[id].push(cal.calendar_id);
+              } else if (groups[id] !== undefined) {
               // expand out the group into its jobs and add each job
-              groups[id].jobs.forEach((j) => {
-                this.jobCalendars[j.job_id].push(cal.calendar_id);
-              });
-            }
+                groups[id].jobs.forEach((j) => {
+                  this.jobCalendars[j.job_id].push(cal.calendar_id);
+                });
+              }
+            });
           });
-        });
 
-        // deduplicate as group expansion may have added dupes.
-        _.each(this.jobCalendars, (cal, id) => {
-          this.jobCalendars[id] = _.uniq(cal);
-        });
+          // deduplicate as group expansion may have added dupes.
+          _.each(this.jobCalendars, (cal, id) => {
+            this.jobCalendars[id] = _.uniq(cal);
+          });
 
-        this.calendars = calendars;
-        resolve({ calendars });
-      })
-      .catch((err) => {
-        msgs.error('Calendars list could not be retrieved');
-        msgs.error('', err);
-        reject({ calendars, err });
-      });
+          this.calendars = calendars;
+          resolve({ calendars });
+        })
+        .catch((err) => {
+          msgs.error('Calendars list could not be retrieved');
+          msgs.error('', err);
+          reject({ calendars, err });
+        });
     });
   };
 });

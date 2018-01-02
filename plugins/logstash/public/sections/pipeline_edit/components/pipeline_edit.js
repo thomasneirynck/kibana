@@ -49,14 +49,14 @@ app.directive('pipelineEdit', function ($injector) {
       onPipelineSave = (username) => {
         this.pipeline.username = username;
         return pipelineService.savePipeline(this.pipeline)
-        .then(() => {
-          this.notifier.info(`Saved pipeline "${this.pipeline.id}"`);
-          this.close();
-        })
-        .catch(err => {
-          return licenseService.checkValidity()
-          .then(() => this.notifier.error(err));
-        });
+          .then(() => {
+            this.notifier.info(`Saved pipeline "${this.pipeline.id}"`);
+            this.close();
+          })
+          .catch(err => {
+            return licenseService.checkValidity()
+              .then(() => this.notifier.error(err));
+          });
       }
 
       onPipelineDelete = () => {
@@ -74,14 +74,14 @@ app.directive('pipelineEdit', function ($injector) {
 
       deletePipeline = () => {
         return pipelineService.deletePipeline(this.pipeline.id)
-        .then(() => {
-          this.notifier.info(`Deleted pipeline "${this.pipeline.id}"`);
-          this.close();
-        })
-        .catch(err => {
-          return licenseService.checkValidity()
-          .then(() => this.notifier.error(err));
-        });
+          .then(() => {
+            this.notifier.info(`Deleted pipeline "${this.pipeline.id}"`);
+            this.close();
+          })
+          .catch(err => {
+            return licenseService.checkValidity()
+              .then(() => this.notifier.error(err));
+          });
       }
 
       close = () => {

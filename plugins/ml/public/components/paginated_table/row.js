@@ -13,8 +13,8 @@
  * strictly prohibited.
  */
 
- // copy of ui/public/directives/row.js
- // overridden to add the option for row expansion.
+// copy of ui/public/directives/row.js
+// overridden to add the option for row expansion.
 
 import $ from 'jquery';
 import _ from 'lodash';

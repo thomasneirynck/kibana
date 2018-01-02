@@ -65,46 +65,46 @@ module.service('mlSingleMetricJobService', function (
     const searchJson = getSearchJsonFromConfig(formConfig);
 
     es.search(searchJson)
-    .then((resp) => {
+      .then((resp) => {
 
-      const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
-      let highestValue = 0;
+        const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
+        let highestValue = 0;
 
-      _.each(aggregationsByTime, (dataForTime) => {
-        const time = dataForTime.key;
-        let value = _.get(dataForTime, ['field_value', 'value']);
+        _.each(aggregationsByTime, (dataForTime) => {
+          const time = dataForTime.key;
+          let value = _.get(dataForTime, ['field_value', 'value']);
 
-        if (value === undefined && formConfig.field !== null) {
-          value = _.get(dataForTime, ['field_value', 'values', ML_MEDIAN_PERCENTS]);
-        }
+          if (value === undefined && formConfig.field !== null) {
+            value = _.get(dataForTime, ['field_value', 'values', ML_MEDIAN_PERCENTS]);
+          }
 
-        if (value === undefined && formConfig.field === null) {
-          value = dataForTime.doc_count;
-        }
-        if (!isFinite(value) || dataForTime.doc_count === 0) {
-          value = null;
-        }
-        if (value > highestValue) {
-          highestValue = value;
-        }
+          if (value === undefined && formConfig.field === null) {
+            value = dataForTime.doc_count;
+          }
+          if (!isFinite(value) || dataForTime.doc_count === 0) {
+            value = null;
+          }
+          if (value > highestValue) {
+            highestValue = value;
+          }
 
-        obj.results[time] = {
-          actual: value,
-        };
+          obj.results[time] = {
+            actual: value,
+          };
+        });
+
+        this.chartData.totalResults = resp.hits.total;
+        this.chartData.line = processLineChartResults(obj.results);
+
+        this.chartData.highestValue = Math.ceil(highestValue);
+        // Append extra 10px to width of tick label for highest axis value to allow for tick padding.
+        this.chartData.chartTicksMargin.width = calculateTextWidth(this.chartData.highestValue, true) + 10;
+
+        deferred.resolve(this.chartData);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
       });
-
-      this.chartData.totalResults = resp.hits.total;
-      this.chartData.line = processLineChartResults(obj.results);
-
-      this.chartData.highestValue = Math.ceil(highestValue);
-      // Append extra 10px to width of tick label for highest axis value to allow for tick padding.
-      this.chartData.chartTicksMargin.width = calculateTextWidth(this.chartData.highestValue, true) + 10;
-
-      deferred.resolve(this.chartData);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
 
     return deferred.promise;
   };
@@ -358,13 +358,13 @@ module.service('mlSingleMetricJobService', function (
 
     // DO THE SAVE
     mlJobService.saveNewJob(job)
-    .then((resp) => {
-      if (resp.success) {
-        deferred.resolve(this.job);
-      } else {
-        deferred.reject(resp);
-      }
-    });
+      .then((resp) => {
+        if (resp.success) {
+          deferred.resolve(this.job);
+        } else {
+          deferred.reject(resp);
+        }
+      });
 
     return deferred.promise;
   };
@@ -407,36 +407,36 @@ module.service('mlSingleMetricJobService', function (
       formConfig.resultsIntervalSeconds + 's',
       formConfig.agg.type.mlModelPlotAgg
     )
-    .then(data => {
+      .then(data => {
       // for count, scale the model upper and lower by the
       // ratio of chart interval to bucketspan.
       // this will force the model bounds to be drawn in the correct location
-      let scale = 1;
-      if (formConfig &&
+        let scale = 1;
+        if (formConfig &&
         (formConfig.agg.type.mlName === 'count' ||
         formConfig.agg.type.mlName === 'high_count' ||
         formConfig.agg.type.mlName === 'low_count' ||
         formConfig.agg.type.mlName === 'distinct_count')) {
-        const chartIntervalSeconds = formConfig.chartInterval.getInterval().asSeconds();
-        const bucketSpan = parseInterval(formConfig.bucketSpan);
-        if (bucketSpan !== null) {
-          scale =  chartIntervalSeconds / bucketSpan.asSeconds();
+          const chartIntervalSeconds = formConfig.chartInterval.getInterval().asSeconds();
+          const bucketSpan = parseInterval(formConfig.bucketSpan);
+          if (bucketSpan !== null) {
+            scale =  chartIntervalSeconds / bucketSpan.asSeconds();
+          }
         }
-      }
 
-      this.chartData.model = this.chartData.model.concat(processLineChartResults(data.results, scale));
+        this.chartData.model = this.chartData.model.concat(processLineChartResults(data.results, scale));
 
-      const lastBucket = this.chartData.model[this.chartData.model.length - 1];
-      const time = (lastBucket !== undefined) ? lastBucket.time : formConfig.start;
+        const lastBucket = this.chartData.model[this.chartData.model.length - 1];
+        const time = (lastBucket !== undefined) ? lastBucket.time : formConfig.start;
 
-      const pcnt = ((time -  formConfig.start + formConfig.resultsIntervalSeconds) / (formConfig.end - formConfig.start) * 100);
-      this.chartData.percentComplete = Math.round(pcnt);
+        const pcnt = ((time -  formConfig.start + formConfig.resultsIntervalSeconds) / (formConfig.end - formConfig.start) * 100);
+        this.chartData.percentComplete = Math.round(pcnt);
 
-      deferred.resolve(this.chartData);
-    })
-    .catch(() => {
-      deferred.reject(this.chartData);
-    });
+        deferred.resolve(this.chartData);
+      })
+      .catch(() => {
+        deferred.reject(this.chartData);
+      });
 
     return deferred.promise;
   };
@@ -451,15 +451,15 @@ module.service('mlSingleMetricJobService', function (
       formConfig.resultsIntervalSeconds + 's',
       1
     )
-    .then((data) => {
-      const jobResults = data.results[formConfig.jobId];
-      this.chartData.swimlane = processSwimlaneResults(jobResults);
-      this.chartData.swimlaneInterval = formConfig.resultsIntervalSeconds * 1000;
-      deferred.resolve(this.chartData);
-    })
-    .catch(() => {
-      deferred.resolve(this.chartData);
-    });
+      .then((data) => {
+        const jobResults = data.results[formConfig.jobId];
+        this.chartData.swimlane = processSwimlaneResults(jobResults);
+        this.chartData.swimlaneInterval = formConfig.resultsIntervalSeconds * 1000;
+        deferred.resolve(this.chartData);
+      })
+      .catch(() => {
+        deferred.resolve(this.chartData);
+      });
 
     return deferred.promise;
   };

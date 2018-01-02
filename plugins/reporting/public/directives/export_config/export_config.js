@@ -51,9 +51,9 @@ module.directive('exportConfig', ($rootScope, reportingDocumentControl, reportin
 
       $scope.updateUrl = (options) => {
         return $scope.getRelativePath(options)
-        .then(relativePath => {
-          $scope.exportConfig.absoluteUrl = createAbsoluteUrl(relativePath);
-        });
+          .then(relativePath => {
+            $scope.exportConfig.absoluteUrl = createAbsoluteUrl(relativePath);
+          });
       };
 
       $scope.$watch('options', newOptions => $scope.updateUrl(newOptions), true);
@@ -82,19 +82,19 @@ module.directive('exportConfig', ($rootScope, reportingDocumentControl, reportin
 
       this.export = () => {
         return $scope.getRelativePath()
-        .then(relativePath => {
-          return reportingDocumentControl.create(relativePath);
-        })
-        .then(() => {
-          reportingNotifier.info(`${this.objectType} generation has been queued. You can track its progress under Management.`);
-        })
-        .catch((err) => {
-          if (err.message === 'not exportable') {
-            return reportingNotifier.warning('Only saved dashboards can be exported. Please save your work first.');
-          }
+          .then(relativePath => {
+            return reportingDocumentControl.create(relativePath);
+          })
+          .then(() => {
+            reportingNotifier.info(`${this.objectType} generation has been queued. You can track its progress under Management.`);
+          })
+          .catch((err) => {
+            if (err.message === 'not exportable') {
+              return reportingNotifier.warning('Only saved dashboards can be exported. Please save your work first.');
+            }
 
-          reportingNotifier.error(err);
-        });
+            reportingNotifier.error(err);
+          });
       };
 
       this.copyToClipboard = selector => {

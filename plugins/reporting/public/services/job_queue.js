@@ -16,7 +16,7 @@ module.service('reportingJobQueue', ($http) => {
 
       const headers = addSystemApiHeader({});
       return $http.get(url.format(urlObj), { headers })
-      .then((res) => res.data);
+        .then((res) => res.data);
     },
 
     total() {
@@ -24,13 +24,13 @@ module.service('reportingJobQueue', ($http) => {
 
       const headers = addSystemApiHeader({});
       return $http.get(url.format(urlObj), { headers })
-      .then((res) => res.data);
+        .then((res) => res.data);
     },
 
     getContent(jobId) {
       const urlObj = { pathname: `${baseUrl}/output/${jobId}` };
       return $http.get(url.format(urlObj))
-      .then((res) => res.data);
+        .then((res) => res.data);
     }
   };
 });

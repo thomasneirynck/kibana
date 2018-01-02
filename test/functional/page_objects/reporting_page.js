@@ -107,8 +107,8 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
               resolve(data);
             });
           }).on('error', (e) => {
-            reject(e);
-          });
+          reject(e);
+        });
       });
     }
 

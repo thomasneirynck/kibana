@@ -39,13 +39,13 @@ module.service('mlCreateRecognizerJobsService', function (
       newJob.groups = formConfig.jobGroups;
 
       mlJobService.saveNewJob(newJob)
-      .then((resp) => {
-        if (resp.success) {
-          resolve(resp);
-        } else {
-          reject(resp);
-        }
-      });
+        .then((resp) => {
+          if (resp.success) {
+            resolve(resp);
+          } else {
+            reject(resp);
+          }
+        });
 
     });
   };
@@ -55,12 +55,12 @@ module.service('mlCreateRecognizerJobsService', function (
       const jobId = formConfig.jobLabel + job.id;
 
       mlJobService.saveNewDatafeed(job.datafeedConfig, jobId)
-      .then((resp) => {
-        resolve(resp);
-      })
-      .catch((resp) => {
-        reject(resp);
-      });
+        .then((resp) => {
+          resolve(resp);
+        })
+        .catch((resp) => {
+          reject(resp);
+        });
     });
   };
 
@@ -90,9 +90,9 @@ module.service('mlCreateRecognizerJobsService', function (
     const url = `${basePath}/${type}/${id}`;
 
     return $http.post(url, { attributes: obj })
-    .catch(e => {
-      throw e.data.message;
-    });
+      .catch(e => {
+        throw e.data.message;
+      });
   };
 
   this.indexTimeRange = function (indexPattern, formConfig) {
@@ -119,19 +119,19 @@ module.service('mlCreateRecognizerJobsService', function (
           }
         }
       })
-      .then((resp) => {
-        if (resp.aggregations && resp.aggregations.earliest && resp.aggregations.latest) {
-          obj.start.epoch = resp.aggregations.earliest.value;
-          obj.start.string = resp.aggregations.earliest.value_as_string;
+        .then((resp) => {
+          if (resp.aggregations && resp.aggregations.earliest && resp.aggregations.latest) {
+            obj.start.epoch = resp.aggregations.earliest.value;
+            obj.start.string = resp.aggregations.earliest.value_as_string;
 
-          obj.end.epoch = resp.aggregations.latest.value;
-          obj.end.string = resp.aggregations.latest.value_as_string;
-        }
-        resolve(obj);
-      })
-      .catch((resp) => {
-        reject(resp);
-      });
+            obj.end.epoch = resp.aggregations.latest.value;
+            obj.end.string = resp.aggregations.latest.value_as_string;
+          }
+          resolve(obj);
+        })
+        .catch((resp) => {
+          reject(resp);
+        });
     });
   };
 

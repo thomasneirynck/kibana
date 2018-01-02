@@ -46,12 +46,12 @@ function getPageData($injector) {
       'logstash_queue_events_count'
     ]
   })
-  .then(response => response.data)
-  .catch((err) => {
-    const Private = $injector.get('Private');
-    const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
-    return ajaxErrorHandlers(err);
-  });
+    .then(response => response.data)
+    .catch((err) => {
+      const Private = $injector.get('Private');
+      const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
+      return ajaxErrorHandlers(err);
+    });
 }
 
 uiRoutes.when('/logstash/node/:uuid/advanced', {

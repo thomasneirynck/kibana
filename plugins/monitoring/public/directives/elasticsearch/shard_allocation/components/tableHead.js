@@ -89,7 +89,7 @@ export class TableHead extends React.Component { // eslint-disable-line react/no
 
       return column;
     })
-    .map(this.createColumn);
+      .map(this.createColumn);
 
 
     return (

@@ -29,18 +29,18 @@ app.directive('grokdebugger', function ($injector) {
 
       onSimulateClick = () => {
         return grokdebuggerService.simulate(this.grokdebuggerRequest)
-        .then(simulateResponse => {
-          this.structuredEvent = simulateResponse.structuredEvent;
-          // this error block is for responses which are 200, but still contain
-          // a grok debugger error like pattern not matched.
-          if (!isEmpty(simulateResponse.error)) {
-            this.notifier.error(simulateResponse.error);
-          }
-        })
-        .catch(e => {
+          .then(simulateResponse => {
+            this.structuredEvent = simulateResponse.structuredEvent;
+            // this error block is for responses which are 200, but still contain
+            // a grok debugger error like pattern not matched.
+            if (!isEmpty(simulateResponse.error)) {
+              this.notifier.error(simulateResponse.error);
+            }
+          })
+          .catch(e => {
           // this error is for 4xx and 5xx responses
-          this.notifier.error(e);
-        });
+            this.notifier.error(e);
+          });
       }
 
       onCustomPatternsChange = (customPatterns = '') => {

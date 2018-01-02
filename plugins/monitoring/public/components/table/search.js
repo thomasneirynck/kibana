@@ -16,7 +16,7 @@ export function MonitoringTableSearchBar(props) {
         placeholder={props.placeholder}
         data-test-subj="monitoringTableSearchBar"
       />
-      )
+    )
     : null;
 
   const paginationSection = Boolean(props.paginationControls)
@@ -28,7 +28,7 @@ export function MonitoringTableSearchBar(props) {
 
         { props.paginationControls }
       </KuiToolBarSection>
-      )
+    )
     : null;
 
   return (

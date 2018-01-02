@@ -27,13 +27,13 @@ routes.when(`${EDIT_ROLES_PATH}/:name?`, {
       const name = $route.current.params.name;
       if (name != null) {
         return ShieldRole.get({ name }).$promise
-        .catch((response) => {
-          const notifier = new Notifier();
-          if (response.status !== 404) return notifier.fatal(response);
-          notifier.error(`No "${name}" role found.`);
-          kbnUrl.redirect(ROLES_PATH);
-          return Promise.halt();
-        });
+          .catch((response) => {
+            const notifier = new Notifier();
+            if (response.status !== 404) return notifier.fatal(response);
+            notifier.error(`No "${name}" role found.`);
+            kbnUrl.redirect(ROLES_PATH);
+            return Promise.halt();
+          });
       }
       return new ShieldRole({
         cluster: [],
@@ -44,8 +44,8 @@ routes.when(`${EDIT_ROLES_PATH}/:name?`, {
     users(ShieldUser, kbnUrl, Promise, Private) {
       // $promise is used here because the result is an ngResource, not a promise itself
       return ShieldUser.query().$promise
-      .then(users => _.map(users, 'username'))
-      .catch(checkLicenseError(kbnUrl, Promise, Private));
+        .then(users => _.map(users, 'username'))
+        .catch(checkLicenseError(kbnUrl, Promise, Private));
     },
     indexPatterns(Private) {
       const indexPatterns = Private(IndexPatternsProvider);
@@ -115,8 +115,8 @@ routes.when(`${EDIT_ROLES_PATH}/:name?`, {
       const fieldOptions = this.fieldOptions;
       if (indices && fieldOptions[indices] == null) {
         shieldIndices.getFields(indices)
-        .then((fields) => fieldOptions[indices] = fields)
-        .catch(() => fieldOptions[indices] = []);
+          .then((fields) => fieldOptions[indices] = fields)
+          .catch(() => fieldOptions[indices] = []);
       }
     };
 

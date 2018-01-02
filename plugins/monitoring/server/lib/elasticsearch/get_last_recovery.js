@@ -60,8 +60,8 @@ export function getLastRecovery(req, esIndexPattern) {
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
-  .then((resp) => {
-    return handleLastRecoveries(resp, start);
-  });
+    .then((resp) => {
+      return handleLastRecoveries(resp, start);
+    });
 
 }

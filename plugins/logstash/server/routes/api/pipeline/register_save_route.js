@@ -24,8 +24,8 @@ export function registerSaveRoute(server) {
       const callWithRequest = callWithRequestFactory(server, request);
       const pipeline = Pipeline.fromDownstreamJSON(request.payload);
       return savePipeline(callWithRequest, pipeline.id, pipeline.upstreamJSON)
-      .then(reply)
-      .catch(e => reply(wrapEsError(e)));
+        .then(reply)
+        .catch(e => reply(wrapEsError(e)));
     },
     config: {
       pre: [ licensePreRouting ]

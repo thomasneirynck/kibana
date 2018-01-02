@@ -51,16 +51,16 @@ function lintFiles(filePaths) {
   })
   // eslint() attaches the lint output to the eslint property
   // of the file object so it can be used by other modules.
-  .pipe(g.eslint({
-    fix: isAutoFix,
-  }))
+    .pipe(g.eslint({
+      fix: isAutoFix,
+    }))
   // eslint.format() outputs the lint results to the console.
   // Alternatively use eslint.formatEach() (see Docs).
-  .pipe(g.eslint.formatEach())
-  .pipe(gulpIf(isFixed, gulp.dest('./')))
+    .pipe(g.eslint.formatEach())
+    .pipe(gulpIf(isFixed, gulp.dest('./')))
   // To have the process exit with an error code (1) on
   // lint error, return the stream and pipe to failOnError last.
-  .pipe(g.eslint.failAfterError());
+    .pipe(g.eslint.failAfterError());
 }
 
 gulp.task('prepare', () => downloadBrowsers(browsers));
@@ -71,51 +71,53 @@ gulp.task('lint-staged', () => {
   const kibanaPath = new RegExp('^kibana/');
 
   return stagedFiles.getFiles(__dirname)
-  .then((files) => {
+    .then((files) => {
     // including the period in the extension allows whole names (e.g., build.gradle) to be whitelisted
-    const whitelist = [
-      '\.node-version',
-      '\.nvmrc',
-      '\.asciidoc',
-      '\.css',
-      '\.gradle',
-      '\.gz',
-      '\.html',
-      '\.jpg',
-      '\.js',
-      '\.js\.snap',
-      '\.json',
-      '\.less',
-      '\.md',
-      '\.png',
-      '\.svg',
-      '\.yml' // rename .yaml to .yml if you run into this; don't add .yaml
-    ];
+      const whitelist = [
+        '\.node-version',
+        '\.nvmrc',
+        '\.asciidoc',
+        '\.css',
+        '\.gradle',
+        '\.gz',
+        '\.html',
+        '\.jpg',
+        '\.js',
+        '\.js\.snap',
+        '\.json',
+        '\.less',
+        '\.md',
+        '\.png',
+        '\.svg',
+        '\.yml', // rename .yaml to .yml if you run into this; don't add .yaml
+        '\.prettierrc',
+        '\.eslintignore',
+      ];
 
-    // build's a regex like: /(\.js|\.html|\.less|\.css)$/
-    const acceptableFileExtensions = whitelist.join('|');
-    const whitelistRegex = new RegExp(`(${acceptableFileExtensions})$`);
+      // build's a regex like: /(\.js|\.html|\.less|\.css)$/
+      const acceptableFileExtensions = whitelist.join('|');
+      const whitelistRegex = new RegExp(`(${acceptableFileExtensions})$`);
 
-    const filePaths = files
-    .map((file) => stagedFiles.getFilename(file).replace(kibanaPath, ''));
+      const filePaths = files
+        .map((file) => stagedFiles.getFilename(file).replace(kibanaPath, ''));
 
-    // anything NOT whitelisted needs to be blocked
-    const unwhitelistedFilePaths = filePaths.filter((file) => !file.match(whitelistRegex));
+      // anything NOT whitelisted needs to be blocked
+      const unwhitelistedFilePaths = filePaths.filter((file) => !file.match(whitelistRegex));
 
-    // we need to block the unrecognized files
-    if (unwhitelistedFilePaths.length) {
+      // we need to block the unrecognized files
+      if (unwhitelistedFilePaths.length) {
       // add each unique extension
-      const extensionsSet = new Set(unwhitelistedFilePaths.map((file) => file.substr(file.lastIndexOf('.') + 1)));
+        const extensionsSet = new Set(unwhitelistedFilePaths.map((file) => file.substr(file.lastIndexOf('.') + 1)));
 
-      // log any unique extension
-      g.util.log(`Unrecognized file extensions detected: [ ${Array.from(extensionsSet).join(', ')} ]`);
-      // fail the pre-commit check
-      throw new Error(`Files with unrecognized extensions: [ ${unwhitelistedFilePaths.join(', ')} ]`);
-    }
+        // log any unique extension
+        g.util.log(`Unrecognized file extensions detected: [ ${Array.from(extensionsSet).join(', ')} ]`);
+        // fail the pre-commit check
+        throw new Error(`Files with unrecognized extensions: [ ${unwhitelistedFilePaths.join(', ')} ]`);
+      }
 
-    // we only lint Javascript files
-    return lintFiles(filePaths.filter((file) => file.match(/\.js$/)));
-  });
+      // we only lint Javascript files
+      return lintFiles(filePaths.filter((file) => file.match(/\.js$/)));
+    });
 });
 
 gulp.task('lint', () => {
@@ -123,8 +125,8 @@ gulp.task('lint', () => {
     './*.js',
     './{gulp_helpers,server,test}/**/*.js',
   ]
-  .concat(fileGlobs.forPluginServerTests())
-  .concat(fileGlobs.forPlugins());
+    .concat(fileGlobs.forPluginServerTests())
+    .concat(fileGlobs.forPlugins());
 
   return lintFiles(filePaths);
 });
@@ -145,12 +147,12 @@ gulp.task('clean', ['clean-test'], () => {
 
 gulp.task('report', () => {
   return gitInfo()
-  .then(function (info) {
-    g.util.log('Package Name', g.util.colors.yellow(pkg.name));
-    g.util.log('Version', g.util.colors.yellow(buildVersion));
-    g.util.log('Build Number', g.util.colors.yellow(info.number));
-    g.util.log('Build SHA', g.util.colors.yellow(info.sha));
-  });
+    .then(function (info) {
+      g.util.log('Package Name', g.util.colors.yellow(pkg.name));
+      g.util.log('Version', g.util.colors.yellow(buildVersion));
+      g.util.log('Build Number', g.util.colors.yellow(info.number));
+      g.util.log('Build SHA', g.util.colors.yellow(info.sha));
+    });
 });
 
 gulp.task('build', ['lint', 'clean', 'report', 'prepare'], () => {
@@ -200,12 +202,12 @@ gulp.task('testserver', ['pre-test'], () => {
 
   if (skipTestCoverage) {
     return gulp.src(globs, { read: false })
-    .pipe(g.mocha(MOCHA_OPTIONS));
+      .pipe(g.mocha(MOCHA_OPTIONS));
   }
 
   return gulp.src(globs, { read: false })
-  .pipe(g.mocha(MOCHA_OPTIONS))
-  .pipe(g.istanbul.writeReports());
+    .pipe(g.mocha(MOCHA_OPTIONS))
+    .pipe(g.istanbul.writeReports());
 });
 
 gulp.task('testbrowser', () => {

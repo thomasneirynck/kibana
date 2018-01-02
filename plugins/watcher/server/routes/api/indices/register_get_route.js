@@ -19,36 +19,36 @@ function getIndices(callWithRequest, pattern, limit = 10) {
     index: pattern,
     ignore: [404]
   })
-  .then(aliasResult => {
-    if (aliasResult.status !== 404) {
-      const indicesFromAliasResponse = getIndexNamesFromAliasesResponse(aliasResult);
-      return indicesFromAliasResponse.slice(0, limit);
-    }
+    .then(aliasResult => {
+      if (aliasResult.status !== 404) {
+        const indicesFromAliasResponse = getIndexNamesFromAliasesResponse(aliasResult);
+        return indicesFromAliasResponse.slice(0, limit);
+      }
 
-    const params = {
-      index: pattern,
-      ignore: [404],
-      body: {
-        size: 0, // no hits
-        aggs: {
-          indices: {
-            terms: {
-              field: '_index',
-              size: limit,
+      const params = {
+        index: pattern,
+        ignore: [404],
+        body: {
+          size: 0, // no hits
+          aggs: {
+            indices: {
+              terms: {
+                field: '_index',
+                size: limit,
+              }
             }
           }
         }
-      }
-    };
+      };
 
-    return callWithRequest('search', params)
-    .then(response => {
-      if (response.status === 404 || !response.aggregations) {
-        return [];
-      }
-      return response.aggregations.indices.buckets.map(bucket => bucket.key);
+      return callWithRequest('search', params)
+        .then(response => {
+          if (response.status === 404 || !response.aggregations) {
+            return [];
+          }
+          return response.aggregations.indices.buckets.map(bucket => bucket.key);
+        });
     });
-  });
 }
 
 export function registerGetRoute(server) {
@@ -63,18 +63,18 @@ export function registerGetRoute(server) {
       const { pattern } = request.payload;
 
       return getIndices(callWithRequest, pattern)
-      .then(indices => {
-        reply({ indices });
-      })
-      .catch(err => {
+        .then(indices => {
+          reply({ indices });
+        })
+        .catch(err => {
         // Case: Error from Elasticsearch JS client
-        if (isEsError(err)) {
-          return reply(wrapEsError(err));
-        }
+          if (isEsError(err)) {
+            return reply(wrapEsError(err));
+          }
 
-        // Case: default
-        reply(wrapUnknownError(err));
-      });
+          // Case: default
+          reply(wrapUnknownError(err));
+        });
     },
     config: {
       pre: [ licensePreRouting ]

@@ -117,7 +117,7 @@ module.service('mlJobSelectService', function ($rootScope, mlJobService, globalS
   function warnAboutInvalidJobIds(invalidIds) {
     if (invalidIds.length > 0) {
       const warningText = (invalidIds.length === 1) ? `Requested job ${invalidIds} does not exist` :
-          `Requested jobs ${invalidIds} do not exist`;
+        `Requested jobs ${invalidIds} do not exist`;
       notify.warning(warningText, { lifetime: 30000 });
     }
   }

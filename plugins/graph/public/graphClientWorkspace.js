@@ -1194,7 +1194,7 @@ module.exports = (function () {
     }
 
 
-   //Add missing links between existing nodes
+    //Add missing links between existing nodes
     this.fillInGraph = function () {
       let nodesForLinking = self.getSelectedOrAllTopNodes();
 

@@ -13,7 +13,7 @@
  * strictly prohibited.
  */
 
- /*
+/*
  * AngularJS directive for rendering a select element with threshold levels.
  */
 

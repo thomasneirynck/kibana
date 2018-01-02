@@ -42,8 +42,8 @@ export function dataRecognizer(server, commonRouteConfig) {
       const callWithRequest = callWithRequestFactory(server, request);
       const indexPatternTitle = request.params.indexPatternTitle;
       return recognize(callWithRequest, indexPatternTitle)
-      .then(resp => reply(resp))
-      .catch(resp => reply(wrapError(resp)));
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
     },
     config: {
       ...commonRouteConfig
@@ -57,8 +57,8 @@ export function dataRecognizer(server, commonRouteConfig) {
       const callWithRequest = callWithRequestFactory(server, request);
       const moduleId = request.params.moduleId;
       return getModule(callWithRequest, moduleId)
-      .then(resp => reply(resp))
-      .catch(resp => reply(wrapError(resp)));
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
     },
     config: {
       ...commonRouteConfig

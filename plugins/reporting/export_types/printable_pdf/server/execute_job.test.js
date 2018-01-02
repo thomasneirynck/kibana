@@ -90,8 +90,8 @@ test(`returns content_type of application/pdf`, async () => {
   const generatePdfObservable = generatePdfObservableFactory();
   generatePdfObservable.mockReturnValue(Rx.Observable.of(Buffer.from('')));
 
-  const { content_type } = await executeJob({ headers: encryptedHeaders }, cancellationToken);
-  expect(content_type).toBe('application/pdf');
+  const { content_type: contentType } = await executeJob({ headers: encryptedHeaders }, cancellationToken);
+  expect(contentType).toBe('application/pdf');
 });
 
 test(`returns content of generatePdf getBuffer base64 encoded`, async () => {

@@ -75,9 +75,9 @@ export function indicesByNodes() {
     }, {});
 
     return _(data)
-    .values()
-    .sortBy(index => [ !index.unassignedPrimaries, /^\./.test(index.name), index.name ])
-    .value();
+      .values()
+      .sortBy(index => [ !index.unassignedPrimaries, /^\./.test(index.name), index.name ])
+      .value();
   };
 }
 

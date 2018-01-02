@@ -72,5 +72,5 @@ export function getClustersState(req, esIndexPattern, clusters) {
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
 
   return callWithRequest(req, 'search', params)
-  .then(response => handleResponse(response, clusters));
+    .then(response => handleResponse(response, clusters));
 }

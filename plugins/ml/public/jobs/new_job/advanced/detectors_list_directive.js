@@ -108,17 +108,17 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
 
         // post detector to server for in depth validation
         return mlJobService.validateDetector(dtr)
-        .then((resp) => {
-          return {
-            success: (resp.acknowledged || false)
-          };
-        })
-        .catch((resp) => {
-          return {
-            success: false,
-            message: (resp.message || 'Validation failed')
-          };
-        });
+          .then((resp) => {
+            return {
+              success: (resp.acknowledged || false)
+            };
+          })
+          .catch((resp) => {
+            return {
+              success: false,
+              message: (resp.message || 'Validation failed')
+            };
+          });
       }
 
       $scope.openNewWindow = function (index) {

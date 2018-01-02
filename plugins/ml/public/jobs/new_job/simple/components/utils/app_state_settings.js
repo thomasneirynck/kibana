@@ -31,8 +31,8 @@ export function populateAppStateSettings(appState, scope) {
         return populateMultiMetricSettings(jobSettings, scope);
       }
     }())
-    .then(() => finish(true))
-    .catch(() => finish(false));
+      .then(() => finish(true))
+      .catch(() => finish(false));
 
     function finish(success) {
       if (success) {
@@ -158,9 +158,9 @@ function populatePopulationSettings(jobSettings, scope) {
           const splitField = scope.ui.splitFields.find(o => (o.name === f.split));
           if (splitField !== undefined) {
             scope.splitChange(i, splitField)
-            .then(() => {
-              check(i);
-            });
+              .then(() => {
+                check(i);
+              });
           } else {
             check(i);
           }

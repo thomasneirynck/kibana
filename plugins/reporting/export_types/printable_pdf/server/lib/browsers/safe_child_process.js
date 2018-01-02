@@ -27,11 +27,11 @@ export function safeChildProcess(childProcess, observer) {
     // send termination signals
   const terminate$ = Rx.Observable.merge(
     signalForChildProcess$
-    .do(signal => childProcess.kill(signal)),
+      .do(signal => childProcess.kill(signal)),
 
     ownTerminateSignal$
-    .delay(1)
-    .do(signal => process.kill(process.pid, signal))
+      .delay(1)
+      .do(signal => process.kill(process.pid, signal))
   );
 
   // this is adding unsubscribe logic to our observer

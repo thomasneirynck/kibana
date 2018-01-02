@@ -89,19 +89,19 @@ module.service('mlTimeSeriesSearchService', function (
         earliestMs,
         latestMs,
         interval
-        )
-      .then((resp) => {
-        _.each(resp.results, (value, time) => {
-          obj.results[time] = {
-            'actual': value
-          };
-        });
+      )
+        .then((resp) => {
+          _.each(resp.results, (value, time) => {
+            obj.results[time] = {
+              'actual': value
+            };
+          });
 
-        deferred.resolve(obj);
-      })
-      .catch((resp) => {
-        deferred.reject(resp);
-      });
+          deferred.resolve(obj);
+        })
+        .catch((resp) => {
+          deferred.reject(resp);
+        });
 
       return deferred.promise;
     }
@@ -145,19 +145,19 @@ module.service('mlTimeSeriesSearchService', function (
         chartConfig.timeField,
         earliestMs,
         latestMs)
-      .then((results) => {
-        _.each(blankEntityFields, (field) => {
-          obj.results.entityData.entities.push({
-            fieldName: field.fieldName,
-            cardinality: _.get(results, field.fieldName, 0)
+        .then((results) => {
+          _.each(blankEntityFields, (field) => {
+            obj.results.entityData.entities.push({
+              fieldName: field.fieldName,
+              cardinality: _.get(results, field.fieldName, 0)
+            });
           });
-        });
 
-        deferred.resolve(obj);
-      })
-      .catch((resp) => {
-        deferred.reject(resp);
-      });
+          deferred.resolve(obj);
+        })
+        .catch((resp) => {
+          deferred.reject(resp);
+        });
     }
 
     return deferred.promise;

@@ -128,36 +128,36 @@ export function ChartDataUtilsProvider($q, Private, timefilter, mlSimpleJobSearc
           value: formConfig.firstSplitFieldName
         }
       )
-      .then((data) => {
-        let dtrIndex = 0;
-        _.each(formConfig.fields, (field, key) => {
+        .then((data) => {
+          let dtrIndex = 0;
+          _.each(formConfig.fields, (field, key) => {
 
-          const dtr = chartData.detectors[key];
-          const times = data.results[dtrIndex];
+            const dtr = chartData.detectors[key];
+            const times = data.results[dtrIndex];
 
-          dtr.swimlane = [];
-          _.each(times, (timeObj, t) => {
-            const time = +t;
-            const date = new Date(time);
-            dtr.swimlane.push({
-              date: date,
-              time: time,
-              value: timeObj.recordScore,
-              color: ''
+            dtr.swimlane = [];
+            _.each(times, (timeObj, t) => {
+              const time = +t;
+              const date = new Date(time);
+              dtr.swimlane.push({
+                date: date,
+                time: time,
+                value: timeObj.recordScore,
+                color: ''
+              });
             });
+
+            dtr.percentComplete = chartData.percentComplete;
+            dtr.swimlaneInterval = formConfig.resultsIntervalSeconds * 1000;
+
+            dtrIndex++;
           });
 
-          dtr.percentComplete = chartData.percentComplete;
-          dtr.swimlaneInterval = formConfig.resultsIntervalSeconds * 1000;
-
-          dtrIndex++;
+          resolve(chartData);
+        })
+        .catch(() => {
+          resolve(chartData);
         });
-
-        resolve(chartData);
-      })
-      .catch(() => {
-        resolve(chartData);
-      });
     });
   }
 

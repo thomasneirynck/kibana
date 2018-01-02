@@ -23,20 +23,20 @@ export function registerDeleteRoute(server) {
       const { watchId } = request.params;
 
       return deleteWatch(callWithRequest, watchId)
-      .then(() => reply().code(204))
-      .catch(err => {
+        .then(() => reply().code(204))
+        .catch(err => {
 
         // Case: Error from Elasticsearch JS client
-        if (isEsError(err)) {
-          const statusCodeToMessageMap = {
-            404: `Watch with id = ${watchId} not found`
-          };
-          return reply(wrapEsError(err, statusCodeToMessageMap));
-        }
+          if (isEsError(err)) {
+            const statusCodeToMessageMap = {
+              404: `Watch with id = ${watchId} not found`
+            };
+            return reply(wrapEsError(err, statusCodeToMessageMap));
+          }
 
-        // Case: default
-        reply(wrapUnknownError(err));
-      });
+          // Case: default
+          reply(wrapUnknownError(err));
+        });
     },
     config: {
       pre: [ licensePreRouting ]

@@ -45,7 +45,7 @@ export function getKibanaAdvancedStats(callCluster, kibanaIndex) {
   };
 
   return callCluster('search', advancedStatsParams)
-  .then(handleAdvancedStatsResponse);
+    .then(handleAdvancedStatsResponse);
 }
 
 /**

@@ -44,18 +44,18 @@ describe('Flag Supported Clusters', () => {
 
       // pass 2 gold license clusters and check they all become flagged as supported
       return flagSupportedClusters(req, kbnIndices)(clusters)
-      .then(resultClusters => {
-        expect(resultClusters).to.eql([
-          { ...goldLicense(), isSupported: true },
-          { }, // no license
-          { ...goldLicense(), isSupported: true }
-        ]);
-        sinon.assert.calledWith(
-          logStub,
-          ['debug', 'monitoring-ui', 'supported-clusters'],
-          'Found all non-basic cluster licenses. All clusters will be supported.'
-        );
-      });
+        .then(resultClusters => {
+          expect(resultClusters).to.eql([
+            { ...goldLicense(), isSupported: true },
+            { }, // no license
+            { ...goldLicense(), isSupported: true }
+          ]);
+          sinon.assert.calledWith(
+            logStub,
+            ['debug', 'monitoring-ui', 'supported-clusters'],
+            'Found all non-basic cluster licenses. All clusters will be supported.'
+          );
+        });
     });
 
     it('When all clusters are Basic licensed, admin cluster is supported', () => {
@@ -74,29 +74,29 @@ describe('Flag Supported Clusters', () => {
 
       // pass 2 basic license clusters and check the intended cluster is flagged as supported
       return flagSupportedClusters(req, kbnIndices)(clusters)
-      .then(resultClusters => {
-        expect(resultClusters).to.eql([
-          {
-            cluster_uuid: 'supported_cluster_uuid',
-            isSupported: true,
-            ...basicLicense()
-          },
-          {
-            cluster_uuid: 'unsupported_cluster_uuid',
-            ...basicLicense()
-          }
-        ]);
-        sinon.assert.calledWith(
-          logStub,
-          ['debug', 'monitoring-ui', 'supported-clusters'],
-          'Detected all clusters in monitoring data have basic license. Checking for supported admin cluster UUID for Kibana kibana-1234.'
-        );
-        sinon.assert.calledWith(
-          logStub,
-          ['debug', 'monitoring-ui', 'supported-clusters'],
-          'Found basic license admin cluster UUID for Monitoring UI support: supported_cluster_uuid.'
-        );
-      });
+        .then(resultClusters => {
+          expect(resultClusters).to.eql([
+            {
+              cluster_uuid: 'supported_cluster_uuid',
+              isSupported: true,
+              ...basicLicense()
+            },
+            {
+              cluster_uuid: 'unsupported_cluster_uuid',
+              ...basicLicense()
+            }
+          ]);
+          sinon.assert.calledWith(
+            logStub,
+            ['debug', 'monitoring-ui', 'supported-clusters'],
+            'Detected all clusters in monitoring data have basic license. Checking for supported admin cluster UUID for Kibana kibana-1234.'
+          );
+          sinon.assert.calledWith(
+            logStub,
+            ['debug', 'monitoring-ui', 'supported-clusters'],
+            'Found basic license admin cluster UUID for Monitoring UI support: supported_cluster_uuid.'
+          );
+        });
     });
 
     it('When some clusters are Basic licensed, only non-Basic licensed clusters are supported', () => {
@@ -111,29 +111,29 @@ describe('Flag Supported Clusters', () => {
 
       // pass 2 various-license clusters and check the intended clusters are flagged as supported
       return flagSupportedClusters(req, kbnIndices)(clusters)
-      .then(resultClusters => {
-        expect(resultClusters).to.eql([
-          {
-            cluster_uuid: 'supported_cluster_uuid_1',
-            isSupported: true,
-            ...goldLicense()
-          },
-          {
-            cluster_uuid: 'supported_cluster_uuid_2',
-            isSupported: true,
-            ...goldLicense()
-          },
-          {
-            cluster_uuid: 'unsupported_cluster_uuid',
-            ...basicLicense()
-          }
-        ]);
-        sinon.assert.calledWith(
-          logStub,
-          ['debug', 'monitoring-ui', 'supported-clusters'],
-          'Found some basic license clusters in monitoring data. Only non-basic will be supported.'
-        );
-      });
+        .then(resultClusters => {
+          expect(resultClusters).to.eql([
+            {
+              cluster_uuid: 'supported_cluster_uuid_1',
+              isSupported: true,
+              ...goldLicense()
+            },
+            {
+              cluster_uuid: 'supported_cluster_uuid_2',
+              isSupported: true,
+              ...goldLicense()
+            },
+            {
+              cluster_uuid: 'unsupported_cluster_uuid',
+              ...basicLicense()
+            }
+          ]);
+          sinon.assert.calledWith(
+            logStub,
+            ['debug', 'monitoring-ui', 'supported-clusters'],
+            'Found some basic license clusters in monitoring data. Only non-basic will be supported.'
+          );
+        });
     });
   });
 
@@ -146,16 +146,16 @@ describe('Flag Supported Clusters', () => {
       const kbnIndices = [];
       const clusters = [{ ...basicLicense() }];
       return flagSupportedClusters(req, kbnIndices)(clusters)
-      .then(result => {
-        expect(result).to.eql([
-          { isSupported: true, ...basicLicense() }
-        ]);
-        sinon.assert.calledWith(
-          logStub,
-          ['debug', 'monitoring-ui', 'supported-clusters'],
-          'Found single cluster in monitoring data.'
-        );
-      });
+        .then(result => {
+          expect(result).to.eql([
+            { isSupported: true, ...basicLicense() }
+          ]);
+          sinon.assert.calledWith(
+            logStub,
+            ['debug', 'monitoring-ui', 'supported-clusters'],
+            'Found single cluster in monitoring data.'
+          );
+        });
     });
 
     it('When there is a single Gold-licensed cluster in the data, it is supported', () => {
@@ -163,16 +163,16 @@ describe('Flag Supported Clusters', () => {
       const kbnIndices = [];
       const clusters = [{ ...goldLicense() }];
       return flagSupportedClusters(req, kbnIndices)(clusters)
-      .then(result => {
-        expect(result).to.eql([
-          { isSupported: true, ...goldLicense() }
-        ]);
-        sinon.assert.calledWith(
-          logStub,
-          ['debug', 'monitoring-ui', 'supported-clusters'],
-          'Found single cluster in monitoring data.'
-        );
-      });
+        .then(result => {
+          expect(result).to.eql([
+            { isSupported: true, ...goldLicense() }
+          ]);
+          sinon.assert.calledWith(
+            logStub,
+            ['debug', 'monitoring-ui', 'supported-clusters'],
+            'Found single cluster in monitoring data.'
+          );
+        });
     });
 
     it('When there is a deleted-license cluster in the data, it is NOT supported', () => {
@@ -181,16 +181,16 @@ describe('Flag Supported Clusters', () => {
       const deletedLicense = () => ({ license: null });
       const clusters = [{ ...deletedLicense() }];
       return flagSupportedClusters(req, kbnIndices)(clusters)
-      .then(result => {
-        expect(result).to.eql([
-          { ...deletedLicense() }
-        ]);
-        sinon.assert.calledWith(
-          logStub,
-          ['debug', 'monitoring-ui', 'supported-clusters'],
-          'Found single cluster in monitoring data.'
-        );
-      });
+        .then(result => {
+          expect(result).to.eql([
+            { ...deletedLicense() }
+          ]);
+          sinon.assert.calledWith(
+            logStub,
+            ['debug', 'monitoring-ui', 'supported-clusters'],
+            'Found single cluster in monitoring data.'
+          );
+        });
     });
   });
 });

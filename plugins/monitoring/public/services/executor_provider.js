@@ -5,7 +5,7 @@ export function executorProvider(Promise, $timeout, timefilter) {
   let executionTimer;
   let ignorePaused = false;
 
-    /**
+  /**
      * Resets the timer to start again
      * @returns {void}
      */
@@ -18,7 +18,7 @@ export function executorProvider(Promise, $timeout, timefilter) {
     if (executionTimer) { $timeout.cancel(executionTimer); }
   }
 
-    /**
+  /**
      * Cancels the execution timer
      * @returns {void}
      */
@@ -28,7 +28,7 @@ export function executorProvider(Promise, $timeout, timefilter) {
     timefilter.off('fetch', reFetch);
   }
 
-    /**
+  /**
      * Registers a service with the executor
      * @param {object} service The service to register
      * @returns {void}
@@ -37,7 +37,7 @@ export function executorProvider(Promise, $timeout, timefilter) {
     queue.push(service);
   }
 
-    /**
+  /**
      * Stops the executor and empties the service queue
      * @returns {void}
      */
@@ -47,7 +47,7 @@ export function executorProvider(Promise, $timeout, timefilter) {
     queue.splice(0, queue.length);
   }
 
-    /**
+  /**
      * Runs the queue (all at once)
      * @returns {Promise} a promise of all the services
      */
@@ -72,7 +72,7 @@ export function executorProvider(Promise, $timeout, timefilter) {
     }
   }
 
-    /**
+  /**
      * Starts the executor service if the timefilter is not paused
      * @returns {void}
      */
@@ -84,7 +84,7 @@ export function executorProvider(Promise, $timeout, timefilter) {
     }
   }
 
-    /**
+  /**
      * Expose the methods
      */
   return {

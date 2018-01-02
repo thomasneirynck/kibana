@@ -14,18 +14,18 @@ uiRoutes.when('/home', {
     clusters: (Private, kbnUrl) => {
       const routeInit = Private(routeInitProvider);
       return routeInit()
-      .then(clusters => {
-        if (!clusters || !clusters.length) {
-          kbnUrl.changePath('/no-data');
-          return Promise.reject();
-        }
-        if (clusters.length === 1) {
+        .then(clusters => {
+          if (!clusters || !clusters.length) {
+            kbnUrl.changePath('/no-data');
+            return Promise.reject();
+          }
+          if (clusters.length === 1) {
           // Bypass the cluster listing if there is just 1 cluster
-          kbnUrl.changePath('/overview');
-          return Promise.reject();
-        }
-        return clusters;
-      });
+            kbnUrl.changePath('/overview');
+            return Promise.reject();
+          }
+          return clusters;
+        });
     }
   },
   controllerAs: 'clusters',
@@ -44,4 +44,4 @@ uiRoutes.when('/home', {
     }
   }
 })
-.otherwise({ redirectTo: '/no-data' });
+  .otherwise({ redirectTo: '/no-data' });

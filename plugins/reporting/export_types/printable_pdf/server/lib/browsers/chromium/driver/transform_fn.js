@@ -11,7 +11,7 @@ const transform = (code) => {
     ast: false,
     babelrc: false,
     presets: [
-        [ require.resolve('babel-preset-es2015'), { 'modules': false } ]
+      [ require.resolve('babel-preset-es2015'), { 'modules': false } ]
     ]
   });
   return result.code;

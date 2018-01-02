@@ -79,19 +79,19 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
               // use the promise chain returned from update to scroll to the bottom of the
               // list once it's loaded
               $scope.jobAudit.update()
-              .then(() => {
+                .then(() => {
                 // auto scroll to the bottom of the message list.
-                const div = angular.element('#ml-job-audit-list-' + $scope.job.job_id);
-                if (div && div.length) {
+                  const div = angular.element('#ml-job-audit-list-' + $scope.job.job_id);
+                  if (div && div.length) {
                   // run this asynchronously in a timeout to allow angular time to render the contents first
-                  window.setTimeout(() => {
-                    const table = div.find('table');
-                    if (table && table.length) {
-                      div[0].scrollTop = table[0].offsetHeight - div[0].offsetHeight + 14;
-                    }
-                  }, 0);
-                }
-              });
+                    window.setTimeout(() => {
+                      const table = div.find('table');
+                      if (table && table.length) {
+                        div[0].scrollTop = table[0].offsetHeight - div[0].offsetHeight + 14;
+                      }
+                    }, 0);
+                  }
+                });
             } else if (tab.index === 6) {
               updateDatafeedPreview();
             }
@@ -148,16 +148,16 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
       function updateDatafeedPreview() {
         $scope.datafeedPreview.json = '';
         mlJobService.getDatafeedPreview($scope.job.job_id)
-        .then((resp) => {
-          if (Array.isArray(resp)) {
-            $scope.datafeedPreview.json = angular.toJson(resp.slice(0, ML_DATA_PREVIEW_COUNT), true);
-          } else {
+          .then((resp) => {
+            if (Array.isArray(resp)) {
+              $scope.datafeedPreview.json = angular.toJson(resp.slice(0, ML_DATA_PREVIEW_COUNT), true);
+            } else {
+              msgs.error('Datefeed preview could not be loaded', resp);
+            }
+          })
+          .catch((resp) => {
             msgs.error('Datefeed preview could not be loaded', resp);
-          }
-        })
-        .catch((resp) => {
-          msgs.error('Datefeed preview could not be loaded', resp);
-        });
+          });
       }
 
       // call function defined above.
@@ -229,16 +229,16 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
 })
 // custom filter to filter out objects but allow arrays in a collection
 // used when listing job settings, as id and state are siblings to objects like counts and data_description
-.filter('filterObjects', function () {
-  return function (input, allowArrays = false) {
-    const tempObj = {};
-    _.each(input, (v, i) => {
-      const isObj = typeof v === 'object';
-      if (isObj === false || (allowArrays && isObj && Array.isArray(v))) {
-        tempObj[i] = v;
-      }
-    });
-    return tempObj;
-  };
-});
+  .filter('filterObjects', function () {
+    return function (input, allowArrays = false) {
+      const tempObj = {};
+      _.each(input, (v, i) => {
+        const isObj = typeof v === 'object';
+        if (isObj === false || (allowArrays && isObj && Array.isArray(v))) {
+          tempObj[i] = v;
+        }
+      });
+      return tempObj;
+    };
+  });
 

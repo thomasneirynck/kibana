@@ -3,7 +3,7 @@ const semver = require('semver');
 const pkg = require('../package.json');
 
 yargs
-.alias('r', 'release').describe('r', 'Create a release build, not a snapshot');
+  .alias('r', 'release').describe('r', 'Create a release build, not a snapshot');
 const argv = yargs.argv;
 
 function getVersion() {

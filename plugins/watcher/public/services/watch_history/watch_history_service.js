@@ -14,8 +14,8 @@ export class WatchHistoryService {
    */
   loadWatchHistoryItem(watchHistoryItemId) {
     return this.$http.get(`${this.basePath}/history/${watchHistoryItemId}`)
-    .then(response => {
-      return WatchHistoryItem.fromUpstreamJson(response.data.watchHistoryItem);
-    });
+      .then(response => {
+        return WatchHistoryItem.fromUpstreamJson(response.data.watchHistoryItem);
+      });
   }
 }

@@ -126,22 +126,22 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               }
             }
             this.loadDatafeeds()
-            .then((datafeedsResp) => {
-              for (let i = 0; i < jobs.length; i++) {
-                for (let j = 0; j < datafeedsResp.datafeeds.length; j++) {
-                  if (jobs[i].job_id === datafeedsResp.datafeeds[j].job_id) {
-                    jobs[i].datafeed_config = datafeedsResp.datafeeds[j];
+              .then((datafeedsResp) => {
+                for (let i = 0; i < jobs.length; i++) {
+                  for (let j = 0; j < datafeedsResp.datafeeds.length; j++) {
+                    if (jobs[i].job_id === datafeedsResp.datafeeds[j].job_id) {
+                      jobs[i].datafeed_config = datafeedsResp.datafeeds[j];
 
-                    datafeedIds[jobs[i].job_id] = datafeedsResp.datafeeds[j].datafeed_id;
+                      datafeedIds[jobs[i].job_id] = datafeedsResp.datafeeds[j].datafeed_id;
+                    }
                   }
                 }
-              }
-              processBasicJobInfo(this, jobs);
-              this.jobs = jobs;
-              createJobStats(this.jobs, this.jobStats);
-              createJobUrls(this.jobs, this.jobUrls);
-              deferred.resolve({ jobs: this.jobs });
-            });
+                processBasicJobInfo(this, jobs);
+                this.jobs = jobs;
+                createJobStats(this.jobs, this.jobStats);
+                createJobUrls(this.jobs, this.jobUrls);
+                deferred.resolve({ jobs: this.jobs });
+              });
           })
           .catch((err) => {
             error(err);
@@ -200,21 +200,21 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               const datafeedId = this.getDatafeedId(jobId);
 
               this.loadDatafeeds(datafeedId)
-              .then((datafeedsResp) => {
-                for (let i = 0; i < jobs.length; i++) {
-                  for (let j = 0; j < datafeedsResp.datafeeds.length; j++) {
-                    if (jobs[i].job_id === datafeedsResp.datafeeds[j].job_id) {
-                      jobs[i].datafeed_config = datafeedsResp.datafeeds[j];
+                .then((datafeedsResp) => {
+                  for (let i = 0; i < jobs.length; i++) {
+                    for (let j = 0; j < datafeedsResp.datafeeds.length; j++) {
+                      if (jobs[i].job_id === datafeedsResp.datafeeds[j].job_id) {
+                        jobs[i].datafeed_config = datafeedsResp.datafeeds[j];
 
-                      datafeedIds[jobs[i].job_id] = datafeedsResp.datafeeds[j].datafeed_id;
+                        datafeedIds[jobs[i].job_id] = datafeedsResp.datafeeds[j].datafeed_id;
+                      }
                     }
                   }
-                }
-                this.jobs = jobs;
-                createJobStats(this.jobs, this.jobStats);
-                createJobUrls(this.jobs, this.jobUrls);
-                deferred.resolve({ jobs: this.jobs });
-              });
+                  this.jobs = jobs;
+                  createJobStats(this.jobs, this.jobStats);
+                  createJobUrls(this.jobs, this.jobUrls);
+                  deferred.resolve({ jobs: this.jobs });
+                });
             })
             .catch((err) => {
               error(err);
@@ -308,23 +308,23 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
           const datafeedId = this.getDatafeedId(jobId);
 
           this.loadDatafeeds(datafeedId)
-          .then((datafeedsResp) => {
-            for (let i = 0; i < jobs.length; i++) {
-              for (let j = 0; j < datafeedsResp.datafeeds.length; j++) {
-                if (jobs[i].job_id === datafeedsResp.datafeeds[j].job_id) {
-                  jobs[i].datafeed_config = datafeedsResp.datafeeds[j];
+            .then((datafeedsResp) => {
+              for (let i = 0; i < jobs.length; i++) {
+                for (let j = 0; j < datafeedsResp.datafeeds.length; j++) {
+                  if (jobs[i].job_id === datafeedsResp.datafeeds[j].job_id) {
+                    jobs[i].datafeed_config = datafeedsResp.datafeeds[j];
 
-                  datafeedIds[jobs[i].job_id] = datafeedsResp.datafeeds[j].datafeed_id;
+                    datafeedIds[jobs[i].job_id] = datafeedsResp.datafeeds[j].datafeed_id;
+                  }
                 }
               }
-            }
-            createJobStats(this.jobs, this.jobStats);
-            createJobUrls(this.jobs, this.jobUrls);
-            deferred.resolve({ jobs: this.jobs });
-          })
-          .catch((err) => {
-            error(err);
-          });
+              createJobStats(this.jobs, this.jobStats);
+              createJobUrls(this.jobs, this.jobUrls);
+              deferred.resolve({ jobs: this.jobs });
+            })
+            .catch((err) => {
+              error(err);
+            });
         } else {
           deferred.resolve({ jobs: this.jobs });
         }
@@ -410,9 +410,9 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
             this.loadJobs().then(() => {
               deferred.resolve({ jobs: this.jobs, listChanged: true });
             })
-            .catch((err) => {
-              error(err);
-            });
+              .catch((err) => {
+                error(err);
+              });
           } else {
             createJobStats(this.jobs, this.jobStats);
             createJobUrls(this.jobs, this.jobUrls);
@@ -423,9 +423,9 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
           error(err);
         });
     })
-    .catch((err) => {
-      error(err);
-    });
+      .catch((err) => {
+        error(err);
+      });
 
     function error(err) {
       console.log('updateAllJobStats error getting list job details:', err);
@@ -453,18 +453,18 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     const datafeedId = this.getDatafeedId(jobId);
 
     ml.datafeedStats({ datafeedId })
-    .then((resp) => {
+      .then((resp) => {
       // console.log('updateSingleJobCounts controller query response:', resp);
-      const datafeeds = resp.datafeeds;
-      let state = 'UNKNOWN';
-      if (datafeeds && datafeeds.length) {
-        state = datafeeds[0].state;
-      }
-      deferred.resolve(state);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+        const datafeeds = resp.datafeeds;
+        let state = 'UNKNOWN';
+        if (datafeeds && datafeeds.length) {
+          state = datafeeds[0].state;
+        }
+        deferred.resolve(state);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
 
     return deferred.promise;
   };
@@ -492,29 +492,29 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       const datafeedId = this.getDatafeedId(job.job_id);
       // stop datafeed
       ml.forceDeleteDatafeed({ datafeedId: datafeedId })
-      .then(() => {
-        status.deleteDatafeed = 1;
-        deleteJob();
-      })
-      .catch((resp) => {
-        status.deleteDatafeed = -1;
-        status.deleteJob = -1;
-        deleteFailed(resp, 'Delete datafeed');
-      });
+        .then(() => {
+          status.deleteDatafeed = 1;
+          deleteJob();
+        })
+        .catch((resp) => {
+          status.deleteDatafeed = -1;
+          status.deleteJob = -1;
+          deleteFailed(resp, 'Delete datafeed');
+        });
     } else {
       deleteJob();
     }
 
     function deleteJob() {
       ml.forceDeleteJob({ jobId: job.job_id })
-      .then(() => {
-        status.deleteJob = 1;
-        deferred.resolve({ success: true });
-      })
-      .catch((resp) => {
-        status.deleteJob = -1;
-        deleteFailed(resp, 'Delete job');
-      });
+        .then(() => {
+          status.deleteJob = 1;
+          deferred.resolve({ success: true });
+        })
+        .catch((resp) => {
+          status.deleteJob = -1;
+          deleteFailed(resp, 'Delete job');
+        });
     }
 
     function deleteFailed(resp, txt) {
@@ -700,18 +700,18 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       size: 1,
       _source: field,
     })
-    .then((resp) => {
-      if (resp.hits.total !== 0 && resp.hits.hits.length) {
-        const hit = resp.hits.hits[0];
-        if (hit._source && hit._source[field]) {
-          obj.time = hit._source[field];
+      .then((resp) => {
+        if (resp.hits.total !== 0 && resp.hits.hits.length) {
+          const hit = resp.hits.hits[0];
+          if (hit._source && hit._source[field]) {
+            obj.time = hit._source[field];
+          }
         }
-      }
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
     return deferred.promise;
   };
 
@@ -806,12 +806,12 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       };
 
       es.search(data)
-      .then((resp) => {
-        deferred.resolve(resp);
-      })
-      .catch((resp) => {
-        deferred.reject(resp);
-      });
+        .then((resp) => {
+          deferred.resolve(resp);
+        })
+        .catch((resp) => {
+          deferred.reject(resp);
+        });
     }
 
     return deferred.promise;
@@ -842,14 +842,14 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
   this.updateDatafeed = function (datafeedId, datafeedConfig) {
     return ml.updateDatafeed({ datafeedId, datafeedConfig })
-    .then((resp) => {
-      console.log('update datafeed', resp);
-      return { success: true };
-    }).catch((err) => {
-      msgs.error('Could not update datafeed: ' + datafeedId);
-      console.log('update datafeed', err);
-      return { success: false, message: err.message };
-    });
+      .then((resp) => {
+        console.log('update datafeed', resp);
+        return { success: true };
+      }).catch((err) => {
+        msgs.error('Could not update datafeed: ' + datafeedId);
+        console.log('update datafeed', err);
+        return { success: false, message: err.message };
+      });
   };
 
   this.deleteDatafeed = function () {
@@ -872,14 +872,14 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       start,
       end
     })
-    .then((resp) => {
-      deferred.resolve(resp);
+      .then((resp) => {
+        deferred.resolve(resp);
 
-    }).catch((err) => {
-      console.log('MlJobsList error starting datafeed:', err);
-      msgs.error('Could not start datafeed for ' + jobId, err);
-      deferred.reject(err);
-    });
+      }).catch((err) => {
+        console.log('MlJobsList error starting datafeed:', err);
+        msgs.error('Could not start datafeed for ' + jobId, err);
+        deferred.reject(err);
+      });
     return deferred.promise;
   };
 

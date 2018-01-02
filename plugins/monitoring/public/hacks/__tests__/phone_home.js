@@ -56,8 +56,34 @@ describe('phone home class', () => {
         mockBasePath
       );
       return sender._sendIfDue()
-      .then(result => {
-        expect(result).to.eql([
+        .then(result => {
+          expect(result).to.eql([
+            {
+              method: 'POST',
+              url: 'https://testo.com/',
+              data: { cluster_uuid: 'fake-123' },
+              kbnXsrfToken: false
+            },
+            {
+              method: 'POST',
+              url: 'https://testo.com/',
+              data: { cluster_uuid: 'fake-456' },
+              kbnXsrfToken: false
+            }
+          ]);
+        });
+    });
+
+    it('interval check finds last report over a day ago', () => {
+      const sender = new PhoneHome(
+        getMockInjector({
+          allowReport: true,
+          lastReport: (new Date()).getTime() - 86401000 // reported 1 day + 1 second ago
+        }),
+        mockBasePath
+      );
+      return sender._sendIfDue()
+        .then(result => expect(result).to.eql([
           {
             method: 'POST',
             url: 'https://testo.com/',
@@ -70,33 +96,7 @@ describe('phone home class', () => {
             data: { cluster_uuid: 'fake-456' },
             kbnXsrfToken: false
           }
-        ]);
-      });
-    });
-
-    it('interval check finds last report over a day ago', () => {
-      const sender = new PhoneHome(
-        getMockInjector({
-          allowReport: true,
-          lastReport: (new Date()).getTime() - 86401000 // reported 1 day + 1 second ago
-        }),
-        mockBasePath
-      );
-      return sender._sendIfDue()
-      .then(result => expect(result).to.eql([
-        {
-          method: 'POST',
-          url: 'https://testo.com/',
-          data: { cluster_uuid: 'fake-123' },
-          kbnXsrfToken: false
-        },
-        {
-          method: 'POST',
-          url: 'https://testo.com/',
-          data: { cluster_uuid: 'fake-456' },
-          kbnXsrfToken: false
-        }
-      ]));
+        ]));
     });
   });
 
@@ -104,7 +104,7 @@ describe('phone home class', () => {
     it('config does not allow report', () => {
       const sender = new PhoneHome(getMockInjector({ allowReport: false }), mockBasePath);
       return sender._sendIfDue()
-      .then(result => expect(result).to.be(null));
+        .then(result => expect(result).to.be(null));
     });
 
     it('interval check finds last report less than a day ago', () => {
@@ -113,10 +113,10 @@ describe('phone home class', () => {
           allowReport: true,
           lastReport: (new Date()).getTime() - 82800000 // reported 23 hours ago
         }),
-        mockBasePath
+      mockBasePath
       );
       return sender._sendIfDue()
-      .then(result => expect(result).to.be(null));
+        .then(result => expect(result).to.be(null));
     });
   });
 });

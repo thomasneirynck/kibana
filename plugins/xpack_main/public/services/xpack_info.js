@@ -35,20 +35,20 @@ export function XPackInfoProvider($window, $injector, Private) {
       const $http = $injector.get('$http');
       inProgressRefreshPromise = (
         $http.get(chrome.addBasePath('/api/xpack/v1/info'))
-        .catch((err) => {
+          .catch((err) => {
           // if we are unable to fetch the updated info, we should
           // prevent reusing stale info
-          xpackInfo.clear();
-          xpackInfoSignature.clear();
-          throw err;
-        })
-        .then((xpackInfoResponse) => {
-          xpackInfo.setAll(convertKeysToCamelCaseDeep(xpackInfoResponse.data));
-          xpackInfoSignature.set(xpackInfoResponse.headers('kbn-xpack-sig'));
-        })
-        .finally(() => {
-          inProgressRefreshPromise = null;
-        })
+            xpackInfo.clear();
+            xpackInfoSignature.clear();
+            throw err;
+          })
+          .then((xpackInfoResponse) => {
+            xpackInfo.setAll(convertKeysToCamelCaseDeep(xpackInfoResponse.data));
+            xpackInfoSignature.set(xpackInfoResponse.headers('kbn-xpack-sig'));
+          })
+          .finally(() => {
+            inProgressRefreshPromise = null;
+          })
       );
       return inProgressRefreshPromise;
     }

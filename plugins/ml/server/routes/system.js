@@ -34,8 +34,8 @@ export function systemRoutes(server, commonRouteConfig) {
       } else {
         const body = request.payload;
         return callWithRequest('ml.privilegeCheck', { body })
-        .then(resp => reply(resp))
-        .catch(resp => reply(wrapError(resp)));
+          .then(resp => reply(resp))
+          .catch(resp => reply(wrapError(resp)));
       }
     },
     config: {

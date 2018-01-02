@@ -83,23 +83,23 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
         // bucket span tests.
         if (splitField !== undefined) {
           getRandomFieldValues($scope.formConfig.indexPattern.title, splitField, query)
-          .then((resp) => {
-            splitFieldValues = resp;
-            createBucketSpanEstimator(
-              $scope.formConfig.indexPattern.title,
-              $scope.formConfig.timeField,
-              aggTypes,
-              fields,
-              duration,
-              query,
-              splitField,
-              splitFieldValues);
-          })
-          .catch((resp) => {
-            console.log('Bucket span could not be estimated', resp);
-            $scope.ui.bucketSpanEstimator.status = STATUS.FAILED;
-            $scope.ui.bucketSpanEstimator.message = 'Bucket span could not be estimated';
-          });
+            .then((resp) => {
+              splitFieldValues = resp;
+              createBucketSpanEstimator(
+                $scope.formConfig.indexPattern.title,
+                $scope.formConfig.timeField,
+                aggTypes,
+                fields,
+                duration,
+                query,
+                splitField,
+                splitFieldValues);
+            })
+            .catch((resp) => {
+              console.log('Bucket span could not be estimated', resp);
+              $scope.ui.bucketSpanEstimator.status = STATUS.FAILED;
+              $scope.ui.bucketSpanEstimator.message = 'Bucket span could not be estimated';
+            });
         } else {
           // no partition field selected or we're in the single metric config
           createBucketSpanEstimator(
@@ -141,19 +141,19 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
           splitFieldValues);
 
         $q.when(bss.run())
-        .then((interval) => {
-          const notify = ($scope.formConfig.bucketSpan !== interval.name);
-          $scope.formConfig.bucketSpan = interval.name;
-          $scope.ui.bucketSpanEstimator.status = STATUS.FINISHED;
-          if (notify && typeof $scope.bucketSpanFieldChange === 'function') {
-            $scope.bucketSpanFieldChange();
-          }
-        })
-        .catch((resp) => {
-          console.log('Bucket span could not be estimated', resp);
-          $scope.ui.bucketSpanEstimator.status = STATUS.FAILED;
-          $scope.ui.bucketSpanEstimator.message = 'Bucket span could not be estimated';
-        });
+          .then((interval) => {
+            const notify = ($scope.formConfig.bucketSpan !== interval.name);
+            $scope.formConfig.bucketSpan = interval.name;
+            $scope.ui.bucketSpanEstimator.status = STATUS.FINISHED;
+            if (notify && typeof $scope.bucketSpanFieldChange === 'function') {
+              $scope.bucketSpanFieldChange();
+            }
+          })
+          .catch((resp) => {
+            console.log('Bucket span could not be estimated', resp);
+            $scope.ui.bucketSpanEstimator.status = STATUS.FAILED;
+            $scope.ui.bucketSpanEstimator.message = 'Bucket span could not be estimated';
+          });
       }
 
       function getRandomFieldValues(index, field, query) {
@@ -163,40 +163,40 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
           // use a partitioned search to load 10 random fields
           // load ten fields, to test that there are at least 10.
           getFieldCardinality(index, field)
-          .then((value) => {
-            const numPartitions = (Math.floor(value / NUM_PARTITIONS)) || 1;
-            es.search({
-              index,
-              size: 0,
-              body: {
-                query,
-                aggs: {
-                  fields_bucket_counts: {
-                    terms: {
-                      field,
-                      include: {
-                        partition: 0,
-                        num_partitions: numPartitions
+            .then((value) => {
+              const numPartitions = (Math.floor(value / NUM_PARTITIONS)) || 1;
+              es.search({
+                index,
+                size: 0,
+                body: {
+                  query,
+                  aggs: {
+                    fields_bucket_counts: {
+                      terms: {
+                        field,
+                        include: {
+                          partition: 0,
+                          num_partitions: numPartitions
+                        }
                       }
                     }
                   }
                 }
-              }
+              })
+                .then((partitionResp) => {
+                  if(_.has(partitionResp, 'aggregations.fields_bucket_counts.buckets')) {
+                    const buckets = partitionResp.aggregations.fields_bucket_counts.buckets;
+                    fieldValues = _.map(buckets, b => b.key);
+                  }
+                  resolve(fieldValues);
+                })
+                .catch((partitionResp) => {
+                  reject(partitionResp);
+                });
             })
-            .then((partitionResp) => {
-              if(_.has(partitionResp, 'aggregations.fields_bucket_counts.buckets')) {
-                const buckets = partitionResp.aggregations.fields_bucket_counts.buckets;
-                fieldValues = _.map(buckets, b => b.key);
-              }
-              resolve(fieldValues);
-            })
-            .catch((partitionResp) => {
-              reject(partitionResp);
+            .catch((resp) => {
+              reject(resp);
             });
-          })
-          .catch((resp) => {
-            reject(resp);
-          });
         });
       }
 
@@ -215,13 +215,13 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
               }
             }
           })
-          .then((resp) => {
-            const value = _.get(resp, ['aggregations', 'field_count', 'value'], 0);
-            resolve(value);
-          })
-          .catch((resp) => {
-            reject(resp);
-          });
+            .then((resp) => {
+              const value = _.get(resp, ['aggregations', 'field_count', 'value'], 0);
+              resolve(value);
+            })
+            .catch((resp) => {
+              reject(resp);
+            });
         });
       }
     }

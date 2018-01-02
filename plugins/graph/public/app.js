@@ -91,11 +91,11 @@ uiRoutes
     resolve: {
       savedWorkspace: function (savedGraphWorkspaces, courier, $route) {
         return savedGraphWorkspaces.get($route.current.params.id)
-        .catch(
-          function () {
-            notify.error('Missing workspace');
-          }
-      );
+          .catch(
+            function () {
+              notify.error('Missing workspace');
+            }
+          );
 
       },
       //Copied from example found in wizard.js ( Kibana TODO - can't
@@ -128,12 +128,12 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
 
   function handleSuccess(data) {
     return checkLicense(Private, Promise, kbnBaseUrl)
-    .then(() => data);
+      .then(() => data);
   }
 
   function handleError(err) {
     return checkLicense(Private, Promise, kbnBaseUrl)
-    .then(() => notify.error(err));
+      .then(() => notify.error(err));
   }
 
   $scope.title = 'Graph';
@@ -308,56 +308,56 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
 
     const promise = $route.current.locals.GetIndexPatternProvider.get(selectedIndex.id);
     promise
-    .then(handleSuccess)
-    .then(function (indexPattern) {
-      const patternFields = indexPattern.getNonScriptedFields();
-      const blockedFieldNames = ['_id', '_index', '_score', '_source', '_type'];
-      patternFields.forEach(function (field, index) {
-        if (blockedFieldNames.indexOf(field.name) >= 0) {
-          return;
-        }
-        const graphFieldDef = {
-          'name': field.name
-        };
-        $scope.allFields.push(graphFieldDef);
-        graphFieldDef.hopSize = 5; //Default the number of results returned per hop
-        graphFieldDef.lastValidHopSize = graphFieldDef.hopSize;
-        graphFieldDef.icon = $scope.iconChoices[0];
-        for (let i = 0; i < $scope.iconChoices.length; i++) {
-          const icon = $scope.iconChoices[i];
-          for (let p = 0; p < icon.patterns.length; p++) {
-            const pattern = icon.patterns[p];
-            if (pattern.test(graphFieldDef.name)) {
-              graphFieldDef.icon = icon;
-              break;
+      .then(handleSuccess)
+      .then(function (indexPattern) {
+        const patternFields = indexPattern.getNonScriptedFields();
+        const blockedFieldNames = ['_id', '_index', '_score', '_source', '_type'];
+        patternFields.forEach(function (field, index) {
+          if (blockedFieldNames.indexOf(field.name) >= 0) {
+            return;
+          }
+          const graphFieldDef = {
+            'name': field.name
+          };
+          $scope.allFields.push(graphFieldDef);
+          graphFieldDef.hopSize = 5; //Default the number of results returned per hop
+          graphFieldDef.lastValidHopSize = graphFieldDef.hopSize;
+          graphFieldDef.icon = $scope.iconChoices[0];
+          for (let i = 0; i < $scope.iconChoices.length; i++) {
+            const icon = $scope.iconChoices[i];
+            for (let p = 0; p < icon.patterns.length; p++) {
+              const pattern = icon.patterns[p];
+              if (pattern.test(graphFieldDef.name)) {
+                graphFieldDef.icon = icon;
+                break;
+              }
             }
           }
-        }
-        graphFieldDef.color = $scope.colors[index % $scope.colors.length];
-      });
-      $scope.setAllFieldStatesToDefault();
+          graphFieldDef.color = $scope.colors[index % $scope.colors.length];
+        });
+        $scope.setAllFieldStatesToDefault();
 
-      $scope.allFields.sort(function (a, b) {
+        $scope.allFields.sort(function (a, b) {
         // TODO - should we use "popularity" setting from index pattern definition?
         // What is its intended use? Couldn't see it on the patternField objects
-        if (a.name < b.name) {
-          return -1;
-        } else if (a.name > b.name) {
-          return 1;
+          if (a.name < b.name) {
+            return -1;
+          } else if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
+        });
+        $scope.filteredFields = $scope.allFields;
+        if ($scope.allFields.length > 0) {
+          $scope.selectedField = $scope.allFields[0];
         }
-        return 0;
-      });
-      $scope.filteredFields = $scope.allFields;
-      if ($scope.allFields.length > 0) {
-        $scope.selectedField = $scope.allFields[0];
-      }
 
 
-      if (postInitHandler) {
-        postInitHandler();
-      }
+        if (postInitHandler) {
+          postInitHandler();
+        }
 
-    }, handleError);
+      }, handleError);
 
   };
 
@@ -839,7 +839,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
             break;
           }
         }
-          //TODO what if field name no longer exists as part of the index-pattern definition?
+        //TODO what if field name no longer exists as part of the index-pattern definition?
       }
 
       $scope.updateLiveResponseFields();

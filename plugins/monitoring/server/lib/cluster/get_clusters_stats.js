@@ -17,9 +17,9 @@ import { getClustersState } from './get_clusters_state';
  */
 export function getClustersStats(req, esIndexPattern, clusterUuid) {
   return fetchClusterStats(req, esIndexPattern, clusterUuid)
-  .then(response => handleClusterStats(response, req.server))
+    .then(response => handleClusterStats(response, req.server))
   // augment older documents (e.g., from 2.x - 5.4) with their cluster_state
-  .then(clusters => getClustersState(req, esIndexPattern, clusters));
+    .then(clusters => getClustersState(req, esIndexPattern, clusters));
 }
 
 /**
@@ -99,5 +99,5 @@ export function handleClusterStats(response, server) {
 
     return cluster;
   })
-  .filter(Boolean);
+    .filter(Boolean);
 }

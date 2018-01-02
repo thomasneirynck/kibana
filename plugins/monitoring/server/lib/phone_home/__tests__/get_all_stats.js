@@ -11,9 +11,9 @@ describe('get_all_stats', () => {
   const server = {
     config: sinon.stub().returns({
       get: sinon.stub().withArgs('xpack.monitoring.elasticsearch.index_pattern').returns('.monitoring-es-N-*')
-                       .withArgs('xpack.monitoring.kibana.index_pattern').returns('.monitoring-kibana-N-*')
-                       .withArgs('xpack.monitoring.logstash.index_pattern').returns('.monitoring-logstash-N-*')
-                       .withArgs('xpack.monitoring.max_bucket_size').returns(size)
+        .withArgs('xpack.monitoring.kibana.index_pattern').returns('.monitoring-kibana-N-*')
+        .withArgs('xpack.monitoring.logstash.index_pattern').returns('.monitoring-logstash-N-*')
+        .withArgs('xpack.monitoring.max_bucket_size').returns(size)
     }),
     plugins: {
       elasticsearch: {
@@ -167,16 +167,16 @@ describe('get_all_stats', () => {
       ];
 
       callWithRequest.withArgs(req, 'search')
-                     .onCall(0).returns(Promise.resolve(clusterUuidsResponse))
-                     .onCall(1).returns(Promise.resolve(esStatsResponse))
-                     .onCall(2).returns(Promise.resolve(kibanaStatsResponse))
-                     .onCall(3).returns(Promise.resolve(logstashStatsResponse));
+        .onCall(0).returns(Promise.resolve(clusterUuidsResponse))
+        .onCall(1).returns(Promise.resolve(esStatsResponse))
+        .onCall(2).returns(Promise.resolve(kibanaStatsResponse))
+        .onCall(3).returns(Promise.resolve(logstashStatsResponse));
 
       callWithInternalUser.withArgs('search')
-                          .onCall(0).returns(Promise.resolve(clusterUuidsResponse))
-                          .onCall(1).returns(Promise.resolve(esStatsResponse))
-                          .onCall(2).returns(Promise.resolve(kibanaStatsResponse))
-                          .onCall(3).returns(Promise.resolve(logstashStatsResponse));
+        .onCall(0).returns(Promise.resolve(clusterUuidsResponse))
+        .onCall(1).returns(Promise.resolve(esStatsResponse))
+        .onCall(2).returns(Promise.resolve(kibanaStatsResponse))
+        .onCall(3).returns(Promise.resolve(logstashStatsResponse));
 
       expect(await getAllStats(req, start, end)).to.eql(allClusters);
       expect(await getAllStatsForServer(server, start, end)).to.eql(allClusters);

@@ -60,5 +60,5 @@ export function getReportingJobTypeCount(callCluster, config, numExportTypes) {
   };
 
   return callCluster('search', params)
-  .then(response => handleResponse(response));
+    .then(response => handleResponse(response));
 }

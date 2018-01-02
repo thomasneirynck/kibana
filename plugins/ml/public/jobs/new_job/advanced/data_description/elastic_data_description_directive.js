@@ -95,7 +95,7 @@ module.directive('mlElasticDataDescription', function () {
               $scope.ui.wizard.forward();
             }
           } else if ($scope.mode === MODE.CLONE && $scope.ui.isDatafeed) {
-           // first load mappings, then extract types and fields.
+            // first load mappings, then extract types and fields.
             setUpClonedJob();
           }
         });
@@ -277,35 +277,35 @@ module.directive('mlElasticDataDescription', function () {
 
         $scope.ui.validation.setTabValid(4, true);
         mlJobService.getESMappings()
-        .then((indices) => {
-          $scope.ui.indices  = indices;
-          $scope.ui.esServerOk = 1;
-          console.log('getMappings():', $scope.ui.indices);
+          .then((indices) => {
+            $scope.ui.indices  = indices;
+            $scope.ui.esServerOk = 1;
+            console.log('getMappings():', $scope.ui.indices);
 
-          if ($scope.mode === MODE.CLONE) {
-            setUpClonedJob();
-          }
+            if ($scope.mode === MODE.CLONE) {
+              setUpClonedJob();
+            }
 
-          deferred.resolve();
+            deferred.resolve();
 
-        })
-        .catch((err) => {
-          console.log('getMappings:', err);
-          if (err.statusCode) {
-            if (err.statusCode === 401) {
-              $scope.ui.validation.setTabValid(4, false);
-            } else if (err.statusCode === 403) {
-              $scope.ui.validation.setTabValid(4, false);
+          })
+          .catch((err) => {
+            console.log('getMappings:', err);
+            if (err.statusCode) {
+              if (err.statusCode === 401) {
+                $scope.ui.validation.setTabValid(4, false);
+              } else if (err.statusCode === 403) {
+                $scope.ui.validation.setTabValid(4, false);
+              } else {
+                clearMappings();
+              }
+              $scope.ui.esServerOk = -1;
             } else {
               clearMappings();
             }
-            $scope.ui.esServerOk = -1;
-          } else {
-            clearMappings();
-          }
 
-          deferred.reject();
-        });
+            deferred.reject();
+          });
 
         function clearMappings() {
           $scope.ui.indices = [];

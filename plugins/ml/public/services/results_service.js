@@ -124,29 +124,29 @@ module.service('mlResultsService', function ($q, es, ml) {
         }
       }
     })
-    .then((resp) => {
-      const dataByJobId = _.get(resp, ['aggregations', 'jobId', 'buckets'], []);
-      _.each(dataByJobId, (dataForJob) => {
-        const jobId = dataForJob.key;
+      .then((resp) => {
+        const dataByJobId = _.get(resp, ['aggregations', 'jobId', 'buckets'], []);
+        _.each(dataByJobId, (dataForJob) => {
+          const jobId = dataForJob.key;
 
-        const resultsForTime = {};
+          const resultsForTime = {};
 
-        const dataByTime = _.get(dataForJob, ['byTime', 'buckets'], []);
-        _.each(dataByTime, (dataForTime) => {
-          const value = _.get(dataForTime, ['anomalyScore', 'value']);
-          if (value !== undefined) {
-            const time = dataForTime.key;
-            resultsForTime[time] = _.get(dataForTime, ['anomalyScore', 'value']);
-          }
+          const dataByTime = _.get(dataForJob, ['byTime', 'buckets'], []);
+          _.each(dataByTime, (dataForTime) => {
+            const value = _.get(dataForTime, ['anomalyScore', 'value']);
+            if (value !== undefined) {
+              const time = dataForTime.key;
+              resultsForTime[time] = _.get(dataForTime, ['anomalyScore', 'value']);
+            }
+          });
+          obj.results[jobId] = resultsForTime;
         });
-        obj.results[jobId] = resultsForTime;
-      });
 
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
     return deferred.promise;
   };
 
@@ -250,30 +250,30 @@ module.service('mlResultsService', function ($q, es, ml) {
         }
       }
     })
-    .then((resp) => {
-      const fieldNameBuckets = _.get(resp, ['aggregations', 'influencerFieldNames', 'buckets'], []);
-      _.each(fieldNameBuckets, (nameBucket) => {
-        const fieldName = nameBucket.key;
-        const fieldValues = [];
+      .then((resp) => {
+        const fieldNameBuckets = _.get(resp, ['aggregations', 'influencerFieldNames', 'buckets'], []);
+        _.each(fieldNameBuckets, (nameBucket) => {
+          const fieldName = nameBucket.key;
+          const fieldValues = [];
 
-        const fieldValueBuckets = _.get(nameBucket, ['influencerFieldValues', 'buckets'], []);
-        _.each(fieldValueBuckets, (valueBucket) => {
-          const fieldValueResult = {
-            'influencerFieldValue': valueBucket.key,
-            'maxAnomalyScore': valueBucket.maxAnomalyScore.value,
-            'sumAnomalyScore': valueBucket.sumAnomalyScore.value
-          };
-          fieldValues.push(fieldValueResult);
+          const fieldValueBuckets = _.get(nameBucket, ['influencerFieldValues', 'buckets'], []);
+          _.each(fieldValueBuckets, (valueBucket) => {
+            const fieldValueResult = {
+              'influencerFieldValue': valueBucket.key,
+              'maxAnomalyScore': valueBucket.maxAnomalyScore.value,
+              'sumAnomalyScore': valueBucket.sumAnomalyScore.value
+            };
+            fieldValues.push(fieldValueResult);
+          });
+
+          obj.influencers[fieldName] = fieldValues;
         });
 
-        obj.influencers[fieldName] = fieldValues;
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
       });
-
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
     return deferred.promise;
   };
 
@@ -362,21 +362,21 @@ module.service('mlResultsService', function ($q, es, ml) {
         }
       }
     })
-    .then((resp) => {
-      const buckets = _.get(resp, ['aggregations', 'influencerFieldValues', 'buckets'], []);
-      _.each(buckets, (bucket) => {
-        const result = {
-          'influencerFieldValue': bucket.key,
-          'maxAnomalyScore': bucket.maxAnomalyScore.value,
-          'sumAnomalyScore': bucket.sumAnomalyScore.value };
-        obj.results.push(result);
-      });
+      .then((resp) => {
+        const buckets = _.get(resp, ['aggregations', 'influencerFieldValues', 'buckets'], []);
+        _.each(buckets, (bucket) => {
+          const result = {
+            'influencerFieldValue': bucket.key,
+            'maxAnomalyScore': bucket.maxAnomalyScore.value,
+            'sumAnomalyScore': bucket.sumAnomalyScore.value };
+          obj.results.push(result);
+        });
 
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
     return deferred.promise;
   };
 
@@ -394,20 +394,20 @@ module.service('mlResultsService', function ($q, es, ml) {
       start: earliestMs,
       end: latestMs
     })
-    .then(resp => {
-      const dataByTime = _.get(resp, ['overall_buckets'], []);
-      _.each(dataByTime, (dataForTime) => {
-        const value = _.get(dataForTime, ['overall_score']);
-        if (value !== undefined) {
-          obj.results[dataForTime.timestamp] = value;
-        }
-      });
+      .then(resp => {
+        const dataByTime = _.get(resp, ['overall_buckets'], []);
+        _.each(dataByTime, (dataForTime) => {
+          const value = _.get(dataForTime, ['overall_score']);
+          if (value !== undefined) {
+            obj.results[dataForTime.timestamp] = value;
+          }
+        });
 
-      deferred.resolve(obj);
-    })
-    .catch(resp => {
-      deferred.reject(resp);
-    });
+        deferred.resolve(obj);
+      })
+      .catch(resp => {
+        deferred.reject(resp);
+      });
     return deferred.promise;
   };
 
@@ -530,27 +530,27 @@ module.service('mlResultsService', function ($q, es, ml) {
         }
       }
     })
-    .then((resp) => {
-      const fieldValueBuckets = _.get(resp, ['aggregations', 'influencerFieldValues', 'buckets'], []);
-      _.each(fieldValueBuckets, (valueBucket) => {
-        const fieldValue = valueBucket.key;
-        const fieldValues = {};
+      .then((resp) => {
+        const fieldValueBuckets = _.get(resp, ['aggregations', 'influencerFieldValues', 'buckets'], []);
+        _.each(fieldValueBuckets, (valueBucket) => {
+          const fieldValue = valueBucket.key;
+          const fieldValues = {};
 
-        const timeBuckets = _.get(valueBucket, ['byTime', 'buckets'], []);
-        _.each(timeBuckets, (timeBucket) => {
-          const time = timeBucket.key;
-          const score = timeBucket.maxAnomalyScore.value;
-          fieldValues[time] = score;
+          const timeBuckets = _.get(valueBucket, ['byTime', 'buckets'], []);
+          _.each(timeBuckets, (timeBucket) => {
+            const time = timeBucket.key;
+            const score = timeBucket.maxAnomalyScore.value;
+            fieldValues[time] = score;
+          });
+
+          obj.results[fieldValue] = fieldValues;
         });
 
-        obj.results[fieldValue] = fieldValues;
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
       });
-
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
     return deferred.promise;
   };
 
@@ -576,19 +576,19 @@ module.service('mlResultsService', function ($q, es, ml) {
         }
       }
     })
-    .then((resp) => {
-      if (resp.hits.total !== 0) {
-        const source = _.first(resp.hits.hits)._source;
-        obj.categoryId = source.category_id;
-        obj.regex = source.regex;
-        obj.terms = source.terms;
-        obj.examples = source.examples;
-      }
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+      .then((resp) => {
+        if (resp.hits.total !== 0) {
+          const source = _.first(resp.hits.hits)._source;
+          obj.categoryId = source.category_id;
+          obj.regex = source.regex;
+          obj.terms = source.terms;
+          obj.examples = source.examples;
+        }
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
     return deferred.promise;
   };
 
@@ -615,23 +615,23 @@ module.service('mlResultsService', function ($q, es, ml) {
         }
       }
     })
-    .then((resp) => {
-      if (resp.hits.total !== 0) {
-        _.each(resp.hits.hits, (hit) => {
-          if (maxExamples) {
-            obj.examplesByCategoryId[hit._source.category_id] =
+      .then((resp) => {
+        if (resp.hits.total !== 0) {
+          _.each(resp.hits.hits, (hit) => {
+            if (maxExamples) {
+              obj.examplesByCategoryId[hit._source.category_id] =
               _.slice(hit._source.examples, 0, Math.min(hit._source.examples.length, maxExamples));
-          } else {
-            obj.examplesByCategoryId[hit._source.category_id] = hit._source.examples;
-          }
+            } else {
+              obj.examplesByCategoryId[hit._source.category_id] = hit._source.examples;
+            }
 
-        });
-      }
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+          });
+        }
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
     return deferred.promise;
   };
 
@@ -726,17 +726,17 @@ module.service('mlResultsService', function ($q, es, ml) {
         ],
       }
     })
-    .then((resp) => {
-      if (resp.hits.total !== 0) {
-        _.each(resp.hits.hits, (hit) => {
-          obj.records.push(hit._source);
-        });
-      }
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+      .then((resp) => {
+        if (resp.hits.total !== 0) {
+          _.each(resp.hits.hits, (hit) => {
+            obj.records.push(hit._source);
+          });
+        }
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
     return deferred.promise;
   };
 
@@ -847,17 +847,17 @@ module.service('mlResultsService', function ($q, es, ml) {
         ],
       }
     })
-    .then((resp) => {
-      if (resp.hits.total !== 0) {
-        _.each(resp.hits.hits, (hit) => {
-          obj.records.push(hit._source);
-        });
-      }
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+      .then((resp) => {
+        if (resp.hits.total !== 0) {
+          _.each(resp.hits.hits, (hit) => {
+            obj.records.push(hit._source);
+          });
+        }
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
     return deferred.promise;
   };
 
@@ -962,17 +962,17 @@ module.service('mlResultsService', function ($q, es, ml) {
         ],
       }
     })
-    .then((resp) => {
-      if (resp.hits.total !== 0) {
-        _.each(resp.hits.hits, (hit) => {
-          obj.records.push(hit._source);
-        });
-      }
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+      .then((resp) => {
+        if (resp.hits.total !== 0) {
+          _.each(resp.hits.hits, (hit) => {
+            obj.records.push(hit._source);
+          });
+        }
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
     return deferred.promise;
   };
 
@@ -1064,17 +1064,17 @@ module.service('mlResultsService', function ($q, es, ml) {
         ],
       }
     })
-    .then((resp) => {
-      if (resp.hits.total !== 0) {
-        _.each(resp.hits.hits, (hit) => {
-          obj.records.push(hit._source);
-        });
-      }
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+      .then((resp) => {
+        if (resp.hits.total !== 0) {
+          _.each(resp.hits.hits, (hit) => {
+            obj.records.push(hit._source);
+          });
+        }
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
     return deferred.promise;
   };
 
@@ -1198,31 +1198,31 @@ module.service('mlResultsService', function ($q, es, ml) {
       index,
       body
     })
-    .then((resp) => {
-      const dataByTime = _.get(resp, ['aggregations', 'byTime', 'buckets'], []);
-      _.each(dataByTime, (dataForTime) => {
-        if (metricFunction === 'count') {
-          obj.results[dataForTime.key] = dataForTime.doc_count;
-        } else {
-          const value = _.get(dataForTime, ['metric', 'value']);
-          const values = _.get(dataForTime, ['metric', 'values']);
-          if (dataForTime.doc_count === 0) {
-            obj.results[dataForTime.key] = null;
-          } else if (value !== undefined) {
-            obj.results[dataForTime.key] = value;
-          } else if (values !== undefined) {
-            obj.results[dataForTime.key] = values[ML_MEDIAN_PERCENTS];
+      .then((resp) => {
+        const dataByTime = _.get(resp, ['aggregations', 'byTime', 'buckets'], []);
+        _.each(dataByTime, (dataForTime) => {
+          if (metricFunction === 'count') {
+            obj.results[dataForTime.key] = dataForTime.doc_count;
           } else {
-            obj.results[dataForTime.key] = null;
+            const value = _.get(dataForTime, ['metric', 'value']);
+            const values = _.get(dataForTime, ['metric', 'values']);
+            if (dataForTime.doc_count === 0) {
+              obj.results[dataForTime.key] = null;
+            } else if (value !== undefined) {
+              obj.results[dataForTime.key] = value;
+            } else if (values !== undefined) {
+              obj.results[dataForTime.key] = values[ML_MEDIAN_PERCENTS];
+            } else {
+              obj.results[dataForTime.key] = null;
+            }
           }
-        }
-      });
+        });
 
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
     return deferred.promise;
   };
 
@@ -1286,19 +1286,19 @@ module.service('mlResultsService', function ($q, es, ml) {
         }
       }
     })
-    .then((resp) => {
-      const dataByTimeBucket = _.get(resp, ['aggregations', 'eventRate', 'buckets'], []);
-      _.each(dataByTimeBucket, (dataForTime) => {
-        const time = dataForTime.key;
-        obj.results[time] = dataForTime.doc_count;
-      });
-      obj.total = resp.hits.total;
+      .then((resp) => {
+        const dataByTimeBucket = _.get(resp, ['aggregations', 'eventRate', 'buckets'], []);
+        _.each(dataByTimeBucket, (dataForTime) => {
+          const time = dataForTime.key;
+          obj.results[time] = dataForTime.doc_count;
+        });
+        obj.total = resp.hits.total;
 
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
     return deferred.promise;
   };
 
@@ -1319,11 +1319,11 @@ module.service('mlResultsService', function ($q, es, ml) {
     // if an aggType object has been passed in, use it.
     // otherwise default to min and max aggs for the upper and lower bounds
     const modelAggs = (aggType === undefined) ?
-    { max: 'max', min: 'min' } :
-    {
-      max: aggType.max,
-      min: aggType.min
-    };
+      { max: 'max', min: 'min' } :
+      {
+        max: aggType.max,
+        min: aggType.min
+      };
 
     // Build the criteria to use in the bool filter part of the request.
     // Add criteria for the job ID and time range.
@@ -1416,33 +1416,33 @@ module.service('mlResultsService', function ($q, es, ml) {
         }
       }
     })
-    .then((resp) => {
-      const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
-      _.each(aggregationsByTime, (dataForTime) => {
-        const time = dataForTime.key;
-        let modelUpper = _.get(dataForTime, ['modelUpper', 'value']);
-        let modelLower = _.get(dataForTime, ['modelLower', 'value']);
-        const actual = _.get(dataForTime, ['actual', 'value']);
+      .then((resp) => {
+        const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
+        _.each(aggregationsByTime, (dataForTime) => {
+          const time = dataForTime.key;
+          let modelUpper = _.get(dataForTime, ['modelUpper', 'value']);
+          let modelLower = _.get(dataForTime, ['modelLower', 'value']);
+          const actual = _.get(dataForTime, ['actual', 'value']);
 
-        if (modelUpper === undefined || isFinite(modelUpper) === false) {
-          modelUpper = null;
-        }
-        if (modelLower === undefined || isFinite(modelLower) === false) {
-          modelLower = null;
-        }
+          if (modelUpper === undefined || isFinite(modelUpper) === false) {
+            modelUpper = null;
+          }
+          if (modelLower === undefined || isFinite(modelLower) === false) {
+            modelLower = null;
+          }
 
-        obj.results[time] = {
-          actual,
-          modelUpper,
-          modelLower
-        };
+          obj.results[time] = {
+            actual,
+            modelUpper,
+            modelLower
+          };
+        });
+
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
       });
-
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
 
     return deferred.promise;
   };
@@ -1551,20 +1551,20 @@ module.service('mlResultsService', function ($q, es, ml) {
         }
       }
     })
-    .then((resp) => {
-      const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
-      _.each(aggregationsByTime, (dataForTime) => {
-        const time = dataForTime.key;
-        obj.results[time] = {
-          score: _.get(dataForTime, ['recordScore', 'value']),
-        };
-      });
+      .then((resp) => {
+        const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
+        _.each(aggregationsByTime, (dataForTime) => {
+          const time = dataForTime.key;
+          obj.results[time] = {
+            score: _.get(dataForTime, ['recordScore', 'value']),
+          };
+        });
 
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
     return deferred.promise;
   };
 

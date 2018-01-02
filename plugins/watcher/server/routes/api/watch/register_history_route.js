@@ -33,7 +33,7 @@ function fetchHistoryItems(callWithRequest, watchId, startTime) {
   }
 
   return callWithRequest('search', params)
-  .then(response => fetchAllFromScroll(response, callWithRequest));
+    .then(response => fetchAllFromScroll(response, callWithRequest));
 }
 
 export function registerHistoryRoute(server) {
@@ -49,32 +49,32 @@ export function registerHistoryRoute(server) {
       const { startTime } = request.query;
 
       return fetchHistoryItems(callWithRequest, watchId, startTime)
-      .then(hits => {
-        const watchHistoryItems = hits.map(hit => {
-          const id = get(hit, '_id');
-          const watchHistoryItemJson = get(hit, '_source');
+        .then(hits => {
+          const watchHistoryItems = hits.map(hit => {
+            const id = get(hit, '_id');
+            const watchHistoryItemJson = get(hit, '_source');
 
-          const opts = { includeDetails: false };
-          return WatchHistoryItem.fromUpstreamJson({
-            id,
-            watchId,
-            watchHistoryItemJson
-          }, opts);
-        });
+            const opts = { includeDetails: false };
+            return WatchHistoryItem.fromUpstreamJson({
+              id,
+              watchId,
+              watchHistoryItemJson
+            }, opts);
+          });
 
-        reply({
-          watchHistoryItems: watchHistoryItems.map(watchHistoryItem => watchHistoryItem.downstreamJson)
-        });
-      })
-      .catch(err => {
+          reply({
+            watchHistoryItems: watchHistoryItems.map(watchHistoryItem => watchHistoryItem.downstreamJson)
+          });
+        })
+        .catch(err => {
         // Case: Error from Elasticsearch JS client
-        if (isEsError(err)) {
-          return reply(wrapEsError(err));
-        }
+          if (isEsError(err)) {
+            return reply(wrapEsError(err));
+          }
 
-        // Case: default
-        reply(wrapUnknownError(err));
-      });
+          // Case: default
+          reply(wrapUnknownError(err));
+        });
     },
     config: {
       pre: [ licensePreRouting ]

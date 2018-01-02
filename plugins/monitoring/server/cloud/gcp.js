@@ -23,8 +23,8 @@ class GCPCloudService extends CloudService {
       responses are arrays containing [fullResponse, body];
       because GCP returns plaintext, we have no way of validating without using the response code
      */
-    .then(responses => responses.map(response => this._extractBody(...response)))
-    .then(([id, machineType, zone]) => this._combineResponses(id, machineType, zone));
+      .then(responses => responses.map(response => this._extractBody(...response)))
+      .then(([id, machineType, zone]) => this._combineResponses(id, machineType, zone));
   }
 
   _createRequestForField(field) {

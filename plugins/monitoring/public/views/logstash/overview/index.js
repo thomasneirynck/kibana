@@ -26,12 +26,12 @@ function getPageData($injector) {
       'logstash_cluster_events_latency'
     ]
   })
-  .then(response => response.data)
-  .catch((err) => {
-    const Private = $injector.get('Private');
-    const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
-    return ajaxErrorHandlers(err);
-  });
+    .then(response => response.data)
+    .catch((err) => {
+      const Private = $injector.get('Private');
+      const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
+      return ajaxErrorHandlers(err);
+    });
 }
 
 uiRoutes.when('/logstash', {

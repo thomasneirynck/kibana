@@ -41,16 +41,16 @@ describe('fetch_all_from_scroll', () => {
 
       it('should return an empty array of hits', () => {
         return fetchAllFromScroll(mockResponse)
-        .then(hits => {
-          expect(hits).to.eql([]);
-        });
+          .then(hits => {
+            expect(hits).to.eql([]);
+          });
       });
 
       it('should not call callWithRequest', () => {
         return fetchAllFromScroll(mockResponse, stubCallWithRequest)
-        .then(() => {
-          expect(stubCallWithRequest.called).to.be(false);
-        });
+          .then(() => {
+            expect(stubCallWithRequest.called).to.be(false);
+          });
       });
     });
 
@@ -63,22 +63,22 @@ describe('fetch_all_from_scroll', () => {
 
       it('should return the hits from the response', () => {
         return fetchAllFromScroll(mockResponse, stubCallWithRequest)
-        .then(hits => {
-          expect(hits).to.eql([ 'foo', 'bar', 'newhit' ]);
-        });
+          .then(hits => {
+            expect(hits).to.eql([ 'foo', 'bar', 'newhit' ]);
+          });
       });
 
       it('should call callWithRequest', () => {
         return fetchAllFromScroll(mockResponse, stubCallWithRequest)
-        .then(() => {
-          expect(stubCallWithRequest.calledTwice).to.be(true);
+          .then(() => {
+            expect(stubCallWithRequest.calledTwice).to.be(true);
 
-          const firstCallWithRequestCallArgs = stubCallWithRequest.args[0];
-          expect(firstCallWithRequestCallArgs[1].body.scroll_id).to.eql('originalScrollId');
+            const firstCallWithRequestCallArgs = stubCallWithRequest.args[0];
+            expect(firstCallWithRequestCallArgs[1].body.scroll_id).to.eql('originalScrollId');
 
-          const secondCallWithRequestCallArgs = stubCallWithRequest.args[1];
-          expect(secondCallWithRequestCallArgs[1].body.scroll_id).to.eql('newScrollId');
-        });
+            const secondCallWithRequestCallArgs = stubCallWithRequest.args[1];
+            expect(secondCallWithRequestCallArgs[1].body.scroll_id).to.eql('newScrollId');
+          });
       });
     });
   });

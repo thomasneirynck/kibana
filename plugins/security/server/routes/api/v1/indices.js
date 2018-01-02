@@ -15,17 +15,17 @@ export function initIndicesApi(server) {
         allowNoIndices: false,
         includeDefaults: true
       })
-      .then((mappings) => reply(
-        _(mappings)
-        .map('mappings')
-        .map(_.values)
-        .flatten()
-        .map(_.keys)
-        .flatten()
-        .uniq()
-        .value()
-      ))
-      .catch(_.flow(wrapError, reply));
+        .then((mappings) => reply(
+          _(mappings)
+            .map('mappings')
+            .map(_.values)
+            .flatten()
+            .map(_.keys)
+            .flatten()
+            .uniq()
+            .value()
+        ))
+        .catch(_.flow(wrapError, reply));
     }
   });
 }

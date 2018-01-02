@@ -35,8 +35,8 @@ export function clusterRoutes(server) {
       const clusterUuid = req.params.clusterUuid;
 
       return getClustersFromRequest(req, indexPatterns, { clusterUuid })
-      .then(reply)
-      .catch(err => reply(handleError(err, req)));
+        .then(reply)
+        .catch(err => reply(handleError(err, req)));
     }
   });
 }

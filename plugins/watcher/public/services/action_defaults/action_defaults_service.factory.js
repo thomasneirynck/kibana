@@ -7,10 +7,10 @@ import './actions/logging_action';
 import './actions/slack_action';
 
 uiModules.get('xpack/watcher')
-.factory('xpackWatcherActionDefaultsService', ($injector) => {
-  const config = $injector.get('config');
-  const Private = $injector.get('Private');
-  const registry = Private(ActionDefaultsRegistryProvider);
+  .factory('xpackWatcherActionDefaultsService', ($injector) => {
+    const config = $injector.get('config');
+    const Private = $injector.get('Private');
+    const registry = Private(ActionDefaultsRegistryProvider);
 
-  return new XpackWatcherActionDefaultsService(config, registry);
-});
+    return new XpackWatcherActionDefaultsService(config, registry);
+  });

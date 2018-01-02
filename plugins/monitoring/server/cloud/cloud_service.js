@@ -34,7 +34,7 @@ export class CloudService {
    */
   checkIfService() {
     return this._checkIfService(this._request)
-    .catch(() => this._createUnconfirmedResponse());
+      .catch(() => this._createUnconfirmedResponse());
   }
 
   /**

@@ -68,16 +68,16 @@ module.service('mlMessageBarService', function () {
   }
 })
 
-.controller('MlMessageBarController', function ($scope, mlMessageBarService) {
-  $scope.messages = mlMessageBarService.messages;
-  $scope.removeMessage = mlMessageBarService.removeMessage;
-})
+  .controller('MlMessageBarController', function ($scope, mlMessageBarService) {
+    $scope.messages = mlMessageBarService.messages;
+    $scope.removeMessage = mlMessageBarService.removeMessage;
+  })
 
-.directive('mlMessageBar', function () {
-  return {
-    restrict: 'AE',
-    template
-  };
+  .directive('mlMessageBar', function () {
+    return {
+      restrict: 'AE',
+      template
+    };
 
-});
+  });
 

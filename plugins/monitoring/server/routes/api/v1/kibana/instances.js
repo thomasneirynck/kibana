@@ -9,7 +9,7 @@ import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 const getKibanaClusterStatus = function (req, kbnIndexPattern, { clusterUuid }) {
   const clusters = [{ cluster_uuid: clusterUuid }];
   return getKibanasForClusters(req, kbnIndexPattern, clusters)
-  .then(kibanas => get(kibanas, '[0].stats'));
+    .then(kibanas => get(kibanas, '[0].stats'));
 };
 
 /*

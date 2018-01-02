@@ -30,16 +30,16 @@ describe('BasicAuthenticationProvider', () => {
     });
 
     it('fails if state exists, but authorization property is missing.',
-    async () => {
-      const authenticationResult = await provider.authenticate(
-        { headers: {} },
-        {}
-      );
+      async () => {
+        const authenticationResult = await provider.authenticate(
+          { headers: {} },
+          {}
+        );
 
-      expect(authenticationResult.failed()).to.be(true);
-      expect(authenticationResult.error).to.be.a(Error);
-      expect(authenticationResult.error.message).to.be('Provider state is not valid.');
-    });
+        expect(authenticationResult.failed()).to.be(true);
+        expect(authenticationResult.error).to.be.a(Error);
+        expect(authenticationResult.error.message).to.be('Provider state is not valid.');
+      });
 
     it('succeeds if only `authorization` header is available.', async () => {
       const request = BasicCredentials.decorateRequest({ headers: {} }, 'user', 'password');

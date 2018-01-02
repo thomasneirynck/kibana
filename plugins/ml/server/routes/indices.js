@@ -25,8 +25,8 @@ export function indicesRoutes(server, commonRouteConfig) {
       const callWithRequest = callWithRequestFactory(server, request);
       const params = { index: '*', filterPath: '*.mappings,*.aliases' };
       return callWithRequest('indices.get', params)
-      .then(resp => reply(resp))
-      .catch(resp => reply(wrapError(resp)));
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
     },
     config: {
       ...commonRouteConfig

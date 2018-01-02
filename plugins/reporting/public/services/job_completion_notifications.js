@@ -31,6 +31,6 @@ class JobCompletionNotifications {
 }
 
 uiModules.get('xpack/reporting')
-.factory('reportingJobCompletionNotifications', function () {
-  return new JobCompletionNotifications();
-});
+  .factory('reportingJobCompletionNotifications', function () {
+    return new JobCompletionNotifications();
+  });

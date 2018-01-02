@@ -10,11 +10,11 @@ export class GrokdebuggerService {
 
   simulate(grokdebuggerRequest) {
     return this.$http.post(`${this.basePath}/simulate`, grokdebuggerRequest.upstreamJSON)
-    .then(response => {
-      return GrokdebuggerResponse.fromUpstreamJSON(response.data.grokdebuggerResponse);
-    })
-    .catch(e => {
-      throw e.data.message;
-    });
+      .then(response => {
+        return GrokdebuggerResponse.fromUpstreamJSON(response.data.grokdebuggerResponse);
+      })
+      .catch(e => {
+        throw e.data.message;
+      });
   }
 }

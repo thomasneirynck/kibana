@@ -13,7 +13,7 @@
  * strictly prohibited.
  */
 
- /*
+/*
   * Contains utility functions for building and processing queries.
   */
 

@@ -14,9 +14,9 @@ export function fetchAllFromScroll(response, callWithRequest, hits = []) {
         scroll_id: scrollId
       }
     })
-    .then(innerResponse => {
-      return fetchAllFromScroll(innerResponse, callWithRequest, hits);
-    });
+      .then(innerResponse => {
+        return fetchAllFromScroll(innerResponse, callWithRequest, hits);
+      });
   }
 
   return Promise.resolve(hits);

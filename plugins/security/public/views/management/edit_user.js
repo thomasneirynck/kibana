@@ -25,13 +25,13 @@ routes.when(`${EDIT_USERS_PATH}/:username?`, {
       const username = $route.current.params.username;
       if (username != null) {
         return ShieldUser.get({ username }).$promise
-        .catch((response) => {
-          const notifier = new Notifier();
-          if (response.status !== 404) return notifier.fatal(response);
-          notifier.error(`No "${username}" user found.`);
-          kbnUrl.redirect(USERS_PATH);
-          return Promise.halt();
-        });
+          .catch((response) => {
+            const notifier = new Notifier();
+            if (response.status !== 404) return notifier.fatal(response);
+            notifier.error(`No "${username}" user found.`);
+            kbnUrl.redirect(USERS_PATH);
+            return Promise.halt();
+          });
       }
       return new ShieldUser({ roles: [] });
     },
@@ -39,8 +39,8 @@ routes.when(`${EDIT_USERS_PATH}/:username?`, {
     roles(ShieldRole, kbnUrl, Promise, Private) {
       // $promise is used here because the result is an ngResource, not a promise itself
       return ShieldRole.query().$promise
-      .then((roles) => _.map(roles, 'name'))
-      .catch(checkLicenseError(kbnUrl, Promise, Private));
+        .then((roles) => _.map(roles, 'name'))
+        .catch(checkLicenseError(kbnUrl, Promise, Private));
     }
   },
   controllerAs: 'editUser',
@@ -72,9 +72,9 @@ routes.when(`${EDIT_USERS_PATH}/:username?`, {
       // newPassword is unexepcted by the API.
       delete user.newPassword;
       user.$save()
-      .then(() => notifier.info('The user has been updated.'))
-      .then($scope.goToUserList)
-      .catch(error => notifier.error(_.get(error, 'data.message')));
+        .then(() => notifier.info('The user has been updated.'))
+        .then($scope.goToUserList)
+        .catch(error => notifier.error(_.get(error, 'data.message')));
     };
 
     $scope.goToUserList = () => {
@@ -89,14 +89,14 @@ routes.when(`${EDIT_USERS_PATH}/:username?`, {
       }
 
       $scope.user.$changePassword()
-      .then(() => notifier.info('The password has been changed.'))
-      .then(onSuccess)
-      .catch(error => {
-        if (error.status === 401) {
-          onIncorrectPassword();
-        }
-        else notifier.error(_.get(error, 'data.message'));
-      });
+        .then(() => notifier.info('The password has been changed.'))
+        .then(onSuccess)
+        .catch(error => {
+          if (error.status === 401) {
+            onIncorrectPassword();
+          }
+          else notifier.error(_.get(error, 'data.message'));
+        });
     };
   }
 });

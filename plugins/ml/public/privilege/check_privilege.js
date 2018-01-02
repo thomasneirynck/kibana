@@ -20,16 +20,16 @@ export function checkGetJobsPrivilege(Private, Promise, kbnUrl) {
 
   return new Promise((resolve, reject) => {
     mlPrivilegeService.getPrivileges()
-    .then((privileges) => {
+      .then((privileges) => {
       // the minimum privilege for using ML is being able to get the jobs list.
       // all other functionality is controlled by the return privileges object
-      if (privileges.canGetJobs) {
-        return resolve(privileges);
-      } else {
-        kbnUrl.redirect('/access-denied');
-        return reject();
-      }
-    });
+        if (privileges.canGetJobs) {
+          return resolve(privileges);
+        } else {
+          kbnUrl.redirect('/access-denied');
+          return reject();
+        }
+      });
   });
 }
 
@@ -38,15 +38,15 @@ export function checkCreateJobsPrivilege(Private, Promise, kbnUrl) {
 
   return new Promise((resolve, reject) => {
     mlPrivilegeService.getPrivileges()
-    .then((privileges) => {
-      if (privileges.canCreateJob) {
-        return resolve(privileges);
-      } else {
+      .then((privileges) => {
+        if (privileges.canCreateJob) {
+          return resolve(privileges);
+        } else {
         // if the user has no permission to create a job,
         // redirect them back to the Jobs Management page
-        kbnUrl.redirect('/jobs');
-        return reject();
-      }
-    });
+          kbnUrl.redirect('/jobs');
+          return reject();
+        }
+      });
   });
 }

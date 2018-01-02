@@ -5,7 +5,7 @@ module.service('shieldIndices', ($http, chrome) => {
   return {
     getFields: (query) => {
       return $http.get(chrome.addBasePath(`/api/security/v1/fields/${query}`))
-      .then(response => response.data);
+        .then(response => response.data);
     }
   };
 });

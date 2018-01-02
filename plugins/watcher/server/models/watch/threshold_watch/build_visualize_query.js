@@ -15,12 +15,12 @@ function buildRange({ rangeFrom, rangeTo, timeField }) {
   };
 }
 
-function buildDateAgg({ field, interval, time_zone }) {
+function buildDateAgg({ field, interval, timeZone }) {
   return {
     date_histogram: {
       field,
       interval,
-      time_zone,
+      time_zone: timeZone,
       min_doc_count: 1
     }
   };
@@ -92,7 +92,7 @@ export function buildVisualizeQuery(watch, visualizeOptions) {
   const dateAgg = buildDateAgg({
     field: watch.timeField,
     interval: visualizeOptions.interval,
-    time_zone: visualizeOptions.timezone
+    timeZone: visualizeOptions.timezone
   });
 
   // override the query range

@@ -22,40 +22,40 @@ export function routeInitProvider(Private, monitoringClusters, globalState, lice
   return function routeInit() {
     return monitoringClusters()
     // Set the clusters collection and current cluster in globalState
-    .then((clusters) => {
-      const cluster = (() => {
-        const existingCurrent = _.find(clusters, { cluster_uuid: globalState.cluster_uuid });
-        if (existingCurrent) { return existingCurrent; }
+      .then((clusters) => {
+        const cluster = (() => {
+          const existingCurrent = _.find(clusters, { cluster_uuid: globalState.cluster_uuid });
+          if (existingCurrent) { return existingCurrent; }
 
-        const firstCluster = _.first(clusters);
-        if (firstCluster && firstCluster.cluster_uuid) { return firstCluster; }
+          const firstCluster = _.first(clusters);
+          if (firstCluster && firstCluster.cluster_uuid) { return firstCluster; }
 
-        return null;
-      })();
+          return null;
+        })();
 
-      if (cluster && cluster.license) {
-        globalState.cluster_uuid = cluster.cluster_uuid;
-        globalState.ccs = cluster.ccs;
-        globalState.save();
-      } else {
-        return kbnUrl.redirect('/no-data');
-      }
+        if (cluster && cluster.license) {
+          globalState.cluster_uuid = cluster.cluster_uuid;
+          globalState.ccs = cluster.ccs;
+          globalState.save();
+        } else {
+          return kbnUrl.redirect('/no-data');
+        }
 
-      const clusterLicense = cluster.license;
-      license.setLicenseType(clusterLicense.type);
+        const clusterLicense = cluster.license;
+        license.setLicenseType(clusterLicense.type);
 
-      // check if we need to redirect because of license expiration
-      if (!(isOnPage('license') || isOnPage('home')) && !isLicenseFresh(clusterLicense.expiry_date_in_millis)) {
-        return kbnUrl.redirect('/license');
-      }
+        // check if we need to redirect because of license expiration
+        if (!(isOnPage('license') || isOnPage('home')) && !isLicenseFresh(clusterLicense.expiry_date_in_millis)) {
+          return kbnUrl.redirect('/license');
+        }
 
-      // check if we need to redirect because of license limitations to multi-cluster monitoring
-      if (!isOnPage('home') && !cluster.isSupported) {
-        return kbnUrl.redirect('/home');
-      }
+        // check if we need to redirect because of license limitations to multi-cluster monitoring
+        if (!isOnPage('home') && !cluster.isSupported) {
+          return kbnUrl.redirect('/home');
+        }
 
-      return clusters;
-    })
-    .catch(ajaxErrorHandlers);
+        return clusters;
+      })
+      .catch(ajaxErrorHandlers);
   };
 }

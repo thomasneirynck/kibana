@@ -48,10 +48,10 @@ export function getPageData($injector) {
       'node_segment_count'
     ]
   })
-  .then(response => response.data)
-  .catch((err) => {
-    const Private = $injector.get('Private');
-    const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
-    return ajaxErrorHandlers(err);
-  });
+    .then(response => response.data)
+    .catch((err) => {
+      const Private = $injector.get('Private');
+      const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
+      return ajaxErrorHandlers(err);
+    });
 }

@@ -3,7 +3,7 @@ export function monitoringBulk(Client, _config, components) {
   Client.prototype.monitoring = components.clientAction.namespaceFactory();
   const monitoring = Client.prototype.monitoring.prototype;
 
- /**
+  /**
   * Perform a [monitoring.bulk](http://www.elastic.co/guide/en/elasticsearch/reference/master/docs-bulk.html) request
   *
   * @param {Object} params - An object with parameters used to carry out this action

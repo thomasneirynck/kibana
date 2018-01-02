@@ -8,14 +8,14 @@ export function createGenerateCsv(logger) {
   const hitIterator = createHitIterator(logger);
 
   return async function generateCsv({
-                                      searchRequest,
-                                      fields,
-                                      formatsMap,
-                                      metaFields,
-                                      conflictedTypesFields,
-                                      callEndpoint,
-                                      cancellationToken,
-                                      settings
+    searchRequest,
+    fields,
+    formatsMap,
+    metaFields,
+    conflictedTypesFields,
+    callEndpoint,
+    cancellationToken,
+    settings
   }) {
     const escapeValue = createEscapeValue(settings.quoteValues);
     const flattenHit = createFlattenHit(fields, metaFields, conflictedTypesFields);

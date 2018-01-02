@@ -17,11 +17,11 @@ export function registerGrokSimulateRoute(server) {
       const callWithRequest = callWithRequestFactory(server, request);
       const grokdebuggerRequest = GrokdebuggerRequest.fromDownstreamJSON(request.payload);
       return simulateGrok(callWithRequest, grokdebuggerRequest.upstreamJSON)
-      .then((simulateResponseFromES) => {
-        const grokdebuggerResponse = GrokdebuggerResponse.fromUpstreamJSON(simulateResponseFromES);
-        reply({ grokdebuggerResponse });
-      })
-      .catch(e => reply(wrapEsError(e)));
+        .then((simulateResponseFromES) => {
+          const grokdebuggerResponse = GrokdebuggerResponse.fromUpstreamJSON(simulateResponseFromES);
+          reply({ grokdebuggerResponse });
+        })
+        .catch(e => reply(wrapEsError(e)));
     }
   });
 }

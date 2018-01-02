@@ -61,14 +61,14 @@ export function getNodes(req, lsIndexPattern, { clusterUuid }) {
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
-  .then(resp => {
-    const instances = get(resp, 'hits.hits', []);
+    .then(resp => {
+      const instances = get(resp, 'hits.hits', []);
 
-    return instances.map(hit => {
-      return {
-        ...get(hit, '_source.logstash_stats'),
-        availability: calculateAvailability(get(hit, '_source.timestamp'))
-      };
+      return instances.map(hit => {
+        return {
+          ...get(hit, '_source.logstash_stats'),
+          availability: calculateAvailability(get(hit, '_source.timestamp'))
+        };
+      });
     });
-  });
 }

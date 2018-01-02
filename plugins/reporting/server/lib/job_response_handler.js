@@ -11,32 +11,32 @@ function jobResponseHandlerFn(server) {
   return function jobResponseHandler(validJobTypes, user, reply, params, opts = {}) {
     const { docId } = params;
     return jobsQuery.get(user, docId, { includeContent: !opts.excludeContent })
-    .then((doc) => {
-      if (!doc) return reply(boom.notFound());
+      .then((doc) => {
+        if (!doc) return reply(boom.notFound());
 
-      const { jobtype: jobType } = doc._source;
-      if (!validJobTypes.includes(jobType)) {
-        return reply(boom.unauthorized(`Sorry, you are not authorized to download ${jobType} reports`));
-      }
+        const { jobtype: jobType } = doc._source;
+        if (!validJobTypes.includes(jobType)) {
+          return reply(boom.unauthorized(`Sorry, you are not authorized to download ${jobType} reports`));
+        }
 
-      const output = getDocumentPayload(doc);
+        const output = getDocumentPayload(doc);
 
-      if (!WHITELISTED_JOB_CONTENT_TYPES.includes(output.contentType)) {
-        return reply(boom.badImplementation(`Unsupported content-type of ${output.contentType} specified by job output`));
-      }
+        if (!WHITELISTED_JOB_CONTENT_TYPES.includes(output.contentType)) {
+          return reply(boom.badImplementation(`Unsupported content-type of ${output.contentType} specified by job output`));
+        }
 
-      const response = reply(output.content);
-      response.type(output.contentType);
-      response.code(output.statusCode);
+        const response = reply(output.content);
+        response.type(output.contentType);
+        response.code(output.statusCode);
 
-      if (output.headers) {
-        Object.keys(output.headers).forEach(key => {
-          response.header(key, output.headers[key]);
-        });
-      }
+        if (output.headers) {
+          Object.keys(output.headers).forEach(key => {
+            response.header(key, output.headers[key]);
+          });
+        }
 
-      return response;
-    });
+        return response;
+      });
   };
 }
 

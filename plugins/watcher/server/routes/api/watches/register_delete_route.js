@@ -7,20 +7,20 @@ function deleteWatches(callWithRequest, watchIds) {
     return callWithRequest('watcher.deleteWatch', {
       id: watchId
     })
-    .then(success => ({ success }))
-    .catch(error => ({ error }));
+      .then(success => ({ success }))
+      .catch(error => ({ error }));
   });
 
   return Promise.all(deletePromises)
-  .then(results => {
-    const successes = results.filter(result => Boolean(result.success));
-    const errors = results.filter(result => Boolean(result.error));
+    .then(results => {
+      const successes = results.filter(result => Boolean(result.success));
+      const errors = results.filter(result => Boolean(result.error));
 
-    return {
-      numSuccesses: successes.length,
-      numErrors: errors.length
-    };
-  });
+      return {
+        numSuccesses: successes.length,
+        numErrors: errors.length
+      };
+    });
 }
 
 export function registerDeleteRoute(server) {
@@ -34,12 +34,12 @@ export function registerDeleteRoute(server) {
       const callWithRequest = callWithRequestFactory(server, request);
 
       return deleteWatches(callWithRequest, request.payload.watchIds)
-      .then(results => {
-        reply({ results });
-      })
-      .catch(err => {
-        reply(wrapUnknownError(err));
-      });
+        .then(results => {
+          reply({ results });
+        })
+        .catch(err => {
+          reply(wrapUnknownError(err));
+        });
     },
     config: {
       pre: [ licensePreRouting ]

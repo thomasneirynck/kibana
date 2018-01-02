@@ -81,7 +81,7 @@ function renderHeader(colaObjects, title, subtitle) {
     .attr('class', 'lspvVertexSubtitle')
     .text(d => subtitle ? ` (${subtitle(d).display})` : null)
     .append('title')
-      .text(d => subtitle ? subtitle(d).complete : null);
+    .text(d => subtitle ? subtitle(d).complete : null);
 
 
   const autoGenIdPluginVertexGroup = colaObjects
@@ -94,13 +94,13 @@ function renderHeader(colaObjects, title, subtitle) {
       const titleEl = gEl.select('.lspvVertexTitle')[0][0];
 
       gEl
-      .append('image')
-      .attr('xlink:href', infoIcon)
-      .attr('x', titleEl.getComputedTextLength() + (ICON_WIDTH_PX / 2) + NO_ID_ICON_OFFSET_LEFT_PX)
-      .attr('y', NO_ID_ICON_OFFSET_TOP_PX)
-      .attr('height', ICON_HEIGHT_PX)
-      .attr('width', ICON_WIDTH_PX)
-      .append('title')
+        .append('image')
+        .attr('xlink:href', infoIcon)
+        .attr('x', titleEl.getComputedTextLength() + (ICON_WIDTH_PX / 2) + NO_ID_ICON_OFFSET_LEFT_PX)
+        .attr('y', NO_ID_ICON_OFFSET_TOP_PX)
+        .attr('height', ICON_HEIGHT_PX)
+        .attr('width', ICON_WIDTH_PX)
+        .append('title')
         .text(tooltipText);
     });
 }
@@ -141,32 +141,32 @@ export function enterProcessorVertex(processors) {
 
   processors
     .append('rect')
-      .attr('data-lspv-percent-execution-bg', '')
-      .attr('x', PCT_EXECUTION_BG_OFFSET_LEFT_PX)
-      .attr('y', PCT_EXECUTION_BG_OFFSET_TOP_PX)
-      .attr('width', PCT_EXECUTION_BG_WIDTH_PX)
-      .attr('height', PCT_EXECUTION_BG_HEIGHT_PX)
-      .attr('ry', PCT_EXECUTION_BG_RADIUS_PX)
-      .attr('rx', PCT_EXECUTION_BG_RADIUS_PX)
-      .attr('fill', 'none');
+    .attr('data-lspv-percent-execution-bg', '')
+    .attr('x', PCT_EXECUTION_BG_OFFSET_LEFT_PX)
+    .attr('y', PCT_EXECUTION_BG_OFFSET_TOP_PX)
+    .attr('width', PCT_EXECUTION_BG_WIDTH_PX)
+    .attr('height', PCT_EXECUTION_BG_HEIGHT_PX)
+    .attr('ry', PCT_EXECUTION_BG_RADIUS_PX)
+    .attr('rx', PCT_EXECUTION_BG_RADIUS_PX)
+    .attr('fill', 'none');
 
   processors
     .append('text')
-      .attr('class', 'lspvStat')
-      .attr('data-lspv-percent-execution', '')
-      .attr('x', PCT_EXECUTION_OFFSET_LEFT_PX)
-      .attr('y', PCT_EXECUTION_OFFSET_TOP_PX);
+    .attr('class', 'lspvStat')
+    .attr('data-lspv-percent-execution', '')
+    .attr('x', PCT_EXECUTION_OFFSET_LEFT_PX)
+    .attr('y', PCT_EXECUTION_OFFSET_TOP_PX);
 
   processors
     .append('rect')
-      .attr('data-lspv-per-event-duration-in-millis-bg', '')
-      .attr('x', EVENT_DURATION_BG_OFFSET_LEFT_PX)
-      .attr('y', EVENT_DURATION_BG_OFFSET_TOP_PX)
-      .attr('width', EVENT_DURATION_BG_WIDTH_PX)
-      .attr('height', EVENT_DURATION_BG_HEIGHT_PX)
-      .attr('ry', EVENT_DURATION_BG_RADIUS_PX)
-      .attr('rx', EVENT_DURATION_BG_RADIUS_PX)
-      .attr('fill', 'none');
+    .attr('data-lspv-per-event-duration-in-millis-bg', '')
+    .attr('x', EVENT_DURATION_BG_OFFSET_LEFT_PX)
+    .attr('y', EVENT_DURATION_BG_OFFSET_TOP_PX)
+    .attr('width', EVENT_DURATION_BG_WIDTH_PX)
+    .attr('height', EVENT_DURATION_BG_HEIGHT_PX)
+    .attr('ry', EVENT_DURATION_BG_RADIUS_PX)
+    .attr('rx', EVENT_DURATION_BG_RADIUS_PX)
+    .attr('fill', 'none');
 
   processors
     .append('text')

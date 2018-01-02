@@ -206,5 +206,5 @@ export function getSeries(req, indexPattern, metricName, filters, { min, max, bu
 
   const metric = metrics[metricName];
   return fetchSeries(req, indexPattern, metric, min, max, bucketSize, filters)
-  .then(response => handleSeries(metric, min, max, bucketSize, response));
+    .then(response => handleSeries(metric, min, max, bucketSize, response));
 }

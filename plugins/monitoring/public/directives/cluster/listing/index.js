@@ -52,7 +52,7 @@ const clusterRowFactory = (scope, globalState, kbnUrl, showLicenseExpiration) =>
 
     handleClickIncompatibleLicense() {
       this.licenseWarning(
-`You can't view the "${this.props.cluster_name}" cluster because the
+        `You can't view the "${this.props.cluster_name}" cluster because the
 Basic license does not support multi-cluster monitoring.
 
 Need to monitor multiple clusters? [Get a license with full functionality](https://www.elastic.co/subscriptions/xpack)
@@ -62,7 +62,7 @@ to enjoy multi-cluster monitoring.`
 
     handleClickInvalidLicense() {
       this.licenseWarning(
-`You can't view the "${this.props.cluster_name}" cluster because the
+        `You can't view the "${this.props.cluster_name}" cluster because the
 license information is invalid.
 
 Need a license? [Get a free Basic license](https://register.elastic.co/xpack_register)

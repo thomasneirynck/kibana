@@ -7,7 +7,7 @@ function getBucketSize({ start, end, config }) {
 
 export async function getDistribution({ serviceName, groupId, setup }) {
   const bucketSize = getBucketSize(setup);
-  const { buckets, total_hits } = await getBuckets({
+  const { buckets, total_hits: totalHits } = await getBuckets({
     serviceName,
     groupId,
     bucketSize,
@@ -15,7 +15,7 @@ export async function getDistribution({ serviceName, groupId, setup }) {
   });
 
   return {
-    total_hits,
+    total_hits: totalHits,
     buckets,
     bucket_size: bucketSize
   };

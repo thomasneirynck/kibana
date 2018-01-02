@@ -44,15 +44,15 @@ export function getPageData($injector) {
       'node_free_space'
     ]
   })
-  .then(response => {
-    return {
-      ...response.data,
-      rows: response.data.rows.map(createRow)
-    };
-  })
-  .catch((err) => {
-    const Private = $injector.get('Private');
-    const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
-    return ajaxErrorHandlers(err);
-  });
+    .then(response => {
+      return {
+        ...response.data,
+        rows: response.data.rows.map(createRow)
+      };
+    })
+    .catch((err) => {
+      const Private = $injector.get('Private');
+      const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
+      return ajaxErrorHandlers(err);
+    });
 }

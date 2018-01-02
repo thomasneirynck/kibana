@@ -8,7 +8,7 @@ export function registerLicenseRoute(server) {
     method: 'PUT',
     handler: (request, reply) => {
       return putLicense(request, xpackInfo)
-      .then(reply, e => reply(wrapEsError(e)));
+        .then(reply, e => reply(wrapEsError(e)));
     }
   });
 }

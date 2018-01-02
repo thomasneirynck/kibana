@@ -22,7 +22,7 @@ function makeMarker(svgDefs, id, fill) {
     .attr('markerWidth', 3)
     .attr('markerHeight', 3)
     .attr('orient', 'auto')
-  .append('path')
+    .append('path')
     .attr('d', 'M0,-5L10,0L0,5L2,0')
     .attr('stroke-width', '0px')
     .attr('fill', fill);
@@ -31,9 +31,9 @@ function makeMarker(svgDefs, id, fill) {
 function makeBackground(parentEl) {
   return parentEl
     .append('rect')
-      .attr('width', '100%')
-      .attr('height', '100%')
-      .attr('fill', '#efefef');
+    .attr('width', '100%')
+    .attr('height', '100%')
+    .attr('fill', '#efefef');
 }
 
 function makeGroup(parentEl) {
@@ -49,16 +49,16 @@ function makeNodes(nodesLayer, colaVertices) {
   nodes
     .enter()
     .append('g')
-      .attr('id', d => `nodeg-${d.vertex.htmlAttrId}`)
-      .attr('class', d => `lspvVertex ${d.vertex.typeString}`)
-      .attr('width', LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.WIDTH_PX)
-      .attr('height', LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.HEIGHT_PX);
+    .attr('id', d => `nodeg-${d.vertex.htmlAttrId}`)
+    .attr('class', d => `lspvVertex ${d.vertex.typeString}`)
+    .attr('width', LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.WIDTH_PX)
+    .attr('height', LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.HEIGHT_PX);
 
   nodes
     .append('rect')
-      .attr('class', 'lspvVertexBounding')
-      .attr('rx', LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.BORDER_RADIUS_PX)
-      .attr('ry', LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.BORDER_RADIUS_PX);
+    .attr('class', 'lspvVertexBounding')
+    .attr('rx', LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.BORDER_RADIUS_PX)
+    .attr('ry', LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.BORDER_RADIUS_PX);
 
   return nodes;
 }
@@ -154,13 +154,13 @@ export class ColaGraph extends React.Component {
     });
 
     this.d3cola
-        .nodes(this.graph.colaVertices)
-        .links(this.graph.colaEdges)
-        .groups(ifTriangleColaGroups)
-        .constraints(this._getConstraints())
-        // This number controls the max number of iterations for the layout iteration to
-        // solve the constraints. Higher numbers usually wind up in a better layout
-        .start(10000);
+      .nodes(this.graph.colaVertices)
+      .links(this.graph.colaEdges)
+      .groups(ifTriangleColaGroups)
+      .constraints(this._getConstraints())
+    // This number controls the max number of iterations for the layout iteration to
+    // solve the constraints. Higher numbers usually wind up in a better layout
+      .start(10000);
 
     this.makeLinks();
 
@@ -264,8 +264,8 @@ export class ColaGraph extends React.Component {
 
     const linkGroup = this.links.enter()
       .append('g')
-        .attr('id', (d) => `lspvEdge-${d.edge.htmlAttrId}`)
-        .attr('class', (d) => d.edge.svgClass);
+      .attr('id', (d) => `lspvEdge-${d.edge.htmlAttrId}`)
+      .attr('class', (d) => d.edge.svgClass);
     linkGroup.append('path');
 
     const booleanLinks = linkGroup.filter('.lspvEdgeBoolean');
@@ -275,11 +275,11 @@ export class ColaGraph extends React.Component {
 
     this.booleanLabels
       .append('circle')
-        .attr('r', LOGSTASH.PIPELINE_VIEWER.GRAPH.EDGES.LABEL_RADIUS);
+      .attr('r', LOGSTASH.PIPELINE_VIEWER.GRAPH.EDGES.LABEL_RADIUS);
     this.booleanLabels
       .append('text')
-        .attr('text-anchor', 'middle') // Position the text on its vertical
-        .text(d => d.edge.when ? 'T' : 'F');
+      .attr('text-anchor', 'middle') // Position the text on its vertical
+      .text(d => d.edge.when ? 'T' : 'F');
   }
 
   updateGraph(nextState = {}) {

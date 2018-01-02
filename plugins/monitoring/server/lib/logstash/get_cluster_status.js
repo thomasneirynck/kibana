@@ -17,5 +17,5 @@ export function getClusterStatus(req, lsIndexPattern, { clusterUuid }) {
 
   const clusters = [{ cluster_uuid: clusterUuid }];
   return getLogstashForClusters(req, lsIndexPattern, clusters)
-  .then(clusterStatus => get(clusterStatus, '[0].stats'));
+    .then(clusterStatus => get(clusterStatus, '[0].stats'));
 }

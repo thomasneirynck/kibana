@@ -5,8 +5,8 @@ import template from './index.html';
 
 const tryPrivilege = ($http, kbnUrl) => {
   return $http.get('../api/monitoring/v1/check_access')
-  .then(() => kbnUrl.redirect('/home'))
-  .catch(noop);
+    .then(() => kbnUrl.redirect('/home'))
+    .catch(noop);
 };
 
 uiRoutes.when('/access-denied', {

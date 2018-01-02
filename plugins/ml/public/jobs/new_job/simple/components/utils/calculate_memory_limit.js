@@ -98,9 +98,9 @@ export function CalculateModelMemoryLimitProvider(Private) {
 
         response(`${mmlMB}MB`);
       })
-      .catch((error) => {
-        reject(error);
-      });
+        .catch((error) => {
+          reject(error);
+        });
     });
   };
 

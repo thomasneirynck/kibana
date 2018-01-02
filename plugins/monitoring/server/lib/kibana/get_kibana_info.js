@@ -46,5 +46,5 @@ export function getKibanaInfo(req, kbnIndexPattern, { clusterUuid, kibanaUuid })
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
-  .then(handleResponse);
+    .then(handleResponse);
 }

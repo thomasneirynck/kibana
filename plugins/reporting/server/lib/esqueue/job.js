@@ -62,27 +62,27 @@ export class Job extends events.EventEmitter {
     }
 
     this.ready = createIndex(this.client, this.index, this.doctype, this.indexSettings)
-    .then(() => this.client.index(indexParams))
-    .then((doc) => {
-      this.document = {
-        id: doc._id,
-        type: doc._type,
-        index: doc._index,
-        version: doc._version,
-      };
-      this.debug(`Job created in index ${this.index}`);
+      .then(() => this.client.index(indexParams))
+      .then((doc) => {
+        this.document = {
+          id: doc._id,
+          type: doc._type,
+          index: doc._index,
+          version: doc._version,
+        };
+        this.debug(`Job created in index ${this.index}`);
 
-      return this.client.indices.refresh({
-        index: this.index
-      }).then(() => {
-        this.debug(`Job index refreshed ${this.index}`);
-        this.emit(constants.EVENT_JOB_CREATED, this.document);
+        return this.client.indices.refresh({
+          index: this.index
+        }).then(() => {
+          this.debug(`Job index refreshed ${this.index}`);
+          this.emit(constants.EVENT_JOB_CREATED, this.document);
+        });
+      })
+      .catch((err) => {
+        this.debug('Job creation failed', err);
+        this.emit(constants.EVENT_JOB_CREATE_ERROR, err);
       });
-    })
-    .catch((err) => {
-      this.debug('Job creation failed', err);
-      this.emit(constants.EVENT_JOB_CREATE_ERROR, err);
-    });
   }
 
   emit(name, ...args) {
@@ -92,21 +92,21 @@ export class Job extends events.EventEmitter {
 
   get() {
     return this.ready
-    .then(() => {
-      return this.client.get({
-        index: this.index,
-        type: this.doctype,
-        id: this.id
+      .then(() => {
+        return this.client.get({
+          index: this.index,
+          type: this.doctype,
+          id: this.id
+        });
+      })
+      .then((doc) => {
+        return Object.assign(doc._source, {
+          index: doc._index,
+          id: doc._id,
+          type: doc._type,
+          version: doc._version,
+        });
       });
-    })
-    .then((doc) => {
-      return Object.assign(doc._source, {
-        index: doc._index,
-        id: doc._id,
-        type: doc._type,
-        version: doc._version,
-      });
-    });
   }
 
   toJSON() {

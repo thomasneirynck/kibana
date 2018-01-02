@@ -36,21 +36,21 @@ module.service('mlJsonTooltipService', function () {
 // directive for placing an i icon with a popover tooltip anywhere on a page
 // tooltip format: <i ml-info-icon="the_id" />
 // the_id will match an entry in tooltips.json
-.directive('mlInfoIcon', function () {
-  return {
-    scope: {
-      id: '@mlInfoIcon',
-    },
-    restrict: 'AE',
-    replace: true,
-    template: `
+  .directive('mlInfoIcon', function () {
+    return {
+      scope: {
+        id: '@mlInfoIcon',
+      },
+      restrict: 'AE',
+      replace: true,
+      template: `
       <i aria-hidden="true" class="fa fa-info-circle" tooltip="{{text}}">
         <span id="ml_aria_description_{{id}}" class="ml-info-tooltip-text">{{text}}</span>
       </i>
     `,
-    controller: function ($scope) {
-      $scope.text = (tooltips[$scope.id]) ? tooltips[$scope.id].text : '';
-    }
-  };
+      controller: function ($scope) {
+        $scope.text = (tooltips[$scope.id]) ? tooltips[$scope.id].text : '';
+      }
+    };
 
-});
+  });

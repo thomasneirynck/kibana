@@ -8,7 +8,7 @@ describe('get_es_stats', () => {
   const server = {
     config: sinon.stub().returns({
       get: sinon.stub().withArgs('xpack.monitoring.elasticsearch.index_pattern').returns('.monitoring-es-N-*')
-                       .withArgs('xpack.monitoring.max_bucket_size').returns(size)
+        .withArgs('xpack.monitoring.max_bucket_size').returns(size)
     })
   };
   const response = {

@@ -13,7 +13,7 @@
  * strictly prohibited.
  */
 
- /*
+/*
  * AngularJS directive+service for a checkbox element to toggle charts display.
  */
 

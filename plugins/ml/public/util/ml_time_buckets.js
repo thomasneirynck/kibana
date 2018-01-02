@@ -13,10 +13,10 @@
  * strictly prohibited.
  */
 
- // custom TimeBuckets which inherits from the standrd kibana TimeBuckets
- // this adds the ability to override the barTarget and maxBars settings
- // allowing for a more granular visualization interval without having to
- // modify the global settings stored in the kibana config
+// custom TimeBuckets which inherits from the standrd kibana TimeBuckets
+// this adds the ability to override the barTarget and maxBars settings
+// allowing for a more granular visualization interval without having to
+// modify the global settings stored in the kibana config
 
 import _ from 'lodash';
 import moment from 'moment';

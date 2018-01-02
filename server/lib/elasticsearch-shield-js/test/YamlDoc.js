@@ -44,14 +44,14 @@ const versionRangeRE = new RegExp('^(?:' + versionExp + ')\\s*\\-\\s*(?:' + vers
  */
 function getVersionFromES() {
   return client
-  .get()
-  .info({})
-  .then(function (resp) {
-    return resp.version.number;
-  })
-  .catch(function () {
-    throw new Error('unable to get info about ES');
-  });
+    .get()
+    .info({})
+    .then(function (resp) {
+      return resp.version.number;
+    })
+    .catch(function () {
+      throw new Error('unable to get info about ES');
+    });
 }
 
 /**
@@ -91,9 +91,9 @@ function rangeMatchesCurrentVersion(rangeString) {
   }
 
   return getVersionFromES()
-  .then(function (esVersion) {
-    return YamlDoc.compareRangeToVersion(rangeString, esVersion);
-  });
+    .then(function (esVersion) {
+      return YamlDoc.compareRangeToVersion(rangeString, esVersion);
+    });
 }
 
 
@@ -255,17 +255,17 @@ YamlDoc.prototype = {
 
     if (args.version) {
       return rangeMatchesCurrentVersion(args.version)
-      .then(function (match) {
-        if (match) {
-          if (self.description === 'setup') {
-            self.file.skipping = true;
+        .then(function (match) {
+          if (match) {
+            if (self.description === 'setup') {
+              self.file.skipping = true;
             // console.log('skipping self file' + (args.reason ? ' because ' + args.reason : ''));
-          } else {
-            self.skipping = true;
+            } else {
+              self.skipping = true;
             // console.log('skipping the rest of self doc' + (args.reason ? ' because ' + args.reason : ''));
+            }
           }
-        }
-      });
+        });
     }
 
     if (args.features) {
@@ -361,29 +361,29 @@ YamlDoc.prototype = {
       }, 20000);
 
       req
-      .finally(function () {
-        clearTimeout(timeoutId);
-      })
-      .then(function (resp) {
-        self._last_requests_response = resp;
-      })
-      .catch(function (err) {
-        if (catcher.regexp) {
+        .finally(function () {
+          clearTimeout(timeoutId);
+        })
+        .then(function (resp) {
+          self._last_requests_response = resp;
+        })
+        .catch(function (err) {
+          if (catcher.regexp) {
           // error message should match the regexp
-          expect(err.message).to.match(catcher.regexp);
-        }
+            expect(err.message).to.match(catcher.regexp);
+          }
 
-        else if (catcher.type) {
+          else if (catcher.type) {
           // error should be an instance of
-          expect(err).to.be.a(catcher.type);
-        }
+            expect(err).to.be.a(catcher.type);
+          }
 
-        else {
-          throw err;
-        }
+          else {
+            throw err;
+          }
 
-      })
-      .then(resolve, reject);
+        })
+        .then(resolve, reject);
 
     });
   },

@@ -106,28 +106,28 @@ module.service('mlSimpleJobSearchService', function ($q, es) {
         }
       }
     })
-    .then((resp) => {
-      const detectorsByIndex = _.get(resp, ['aggregations', 'detector_index', 'buckets'], []);
-      _.each(detectorsByIndex, (dtr) => {
-        const dtrResults = {};
-        const dtrIndex = +dtr.key;
+      .then((resp) => {
+        const detectorsByIndex = _.get(resp, ['aggregations', 'detector_index', 'buckets'], []);
+        _.each(detectorsByIndex, (dtr) => {
+          const dtrResults = {};
+          const dtrIndex = +dtr.key;
 
-        const buckets = _.get(dtr, ['byTime', 'buckets'], []);
-        for (let j = 0; j < buckets.length; j++) {
-          const bkt = buckets[j];
-          const time = bkt.key;
-          dtrResults[time] = {
-            recordScore: _.get(bkt, ['recordScore', 'value']),
-          };
-        }
-        obj.results[dtrIndex] = dtrResults;
+          const buckets = _.get(dtr, ['byTime', 'buckets'], []);
+          for (let j = 0; j < buckets.length; j++) {
+            const bkt = buckets[j];
+            const time = bkt.key;
+            dtrResults[time] = {
+              recordScore: _.get(bkt, ['recordScore', 'value']),
+            };
+          }
+          obj.results[dtrIndex] = dtrResults;
+        });
+
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
       });
-
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
     return deferred.promise;
   };
 
@@ -153,18 +153,18 @@ module.service('mlSimpleJobSearchService', function ($q, es) {
         }
       }
     })
-    .then((resp) => {
-      obj.results.values  = [];
-      const catFields = _.get(resp, ['aggregations', 'catFields', 'buckets'], []);
-      _.each(catFields, (f) => {
-        obj.results.values.push(f.key);
-      });
+      .then((resp) => {
+        obj.results.values  = [];
+        const catFields = _.get(resp, ['aggregations', 'catFields', 'buckets'], []);
+        _.each(catFields, (f) => {
+          obj.results.values.push(f.key);
+        });
 
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
 
     return deferred.promise;
   };

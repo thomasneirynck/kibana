@@ -136,7 +136,7 @@ describe('extract', () => {
     if (isWindows) {
       it(`Windows doesn't support chmod, so it's missing access tests. Windows is throwing EEXIST.`);
     } else {
-      it('throws an ExtractError with cause.code of EACESS when target is un-writeable', async() => {
+      it('throws an ExtractError with cause.code of EACESS when target is un-writeable', async () => {
         await fsp.mkdir(EXTRACT_TARGET_FOLDER, 0o444);
 
         let thrownException;

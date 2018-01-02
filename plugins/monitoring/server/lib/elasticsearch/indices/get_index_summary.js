@@ -57,5 +57,5 @@ export function getIndexSummary(req, esIndexPattern, shardStats, { clusterUuid, 
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
-  .then(handleResponse(shardStats, indexUuid));
+    .then(handleResponse(shardStats, indexUuid));
 }

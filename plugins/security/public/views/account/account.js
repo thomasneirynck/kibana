@@ -31,14 +31,14 @@ routes.when('/account', {
       }
 
       $scope.user.$changePassword()
-      .then(() => notifier.info('The password has been changed.'))
-      .then(onSuccess)
-      .catch(error => {
-        if (error.status === 401) {
-          onIncorrectPassword();
-        }
-        else notifier.error(_.get(error, 'data.message'));
-      });
+        .then(() => notifier.info('The password has been changed.'))
+        .then(onSuccess)
+        .catch(error => {
+          if (error.status === 401) {
+            onIncorrectPassword();
+          }
+          else notifier.error(_.get(error, 'data.message'));
+        });
     };
 
     this.getEmail = () => {

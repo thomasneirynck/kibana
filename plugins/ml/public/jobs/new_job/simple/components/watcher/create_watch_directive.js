@@ -72,12 +72,12 @@ module.directive('mlCreateWatch', function (es, ml, mlCreateWatchService) {
       // check to see whether a watch for this job has already been created.
       // display a warning if it has.
       mlCreateWatchService.loadWatch($scope.jobId)
-      .then(() => {
-        $scope.ui.watchAlreadyExists = true;
-      })
-      .catch(() => {
-        $scope.ui.watchAlreadyExists = false;
-      });
+        .then(() => {
+          $scope.ui.watchAlreadyExists = true;
+        })
+        .catch(() => {
+          $scope.ui.watchAlreadyExists = false;
+        });
     }
   };
 });

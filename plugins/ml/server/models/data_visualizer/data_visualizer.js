@@ -333,7 +333,7 @@ export class DataVisualizer {
     earliestMs,
     latestMs,
     interval
-    ) {
+  ) {
 
     const index = indexPatternTitle;
     const size = 0;

@@ -13,7 +13,7 @@
  * strictly prohibited.
  */
 
- /*
+/*
   * Angular controller for the modal dialog which allows the
   * user to run and view time series forecasts.
   */
@@ -111,17 +111,17 @@ module.controller('MlForecastingModal', function (
       job.data_description.time_field,
       job.data_counts.earliest_record_timestamp,
       job.data_counts.latest_record_timestamp)
-    .then((results) => {
-      let numPartitions = 1;
-      _.each(results, (cardinality) => {
-        numPartitions = numPartitions * cardinality;
+      .then((results) => {
+        let numPartitions = 1;
+        _.each(results, (cardinality) => {
+          numPartitions = numPartitions * cardinality;
+        });
+        $scope.showNumPartitionsWarning = (numPartitions > WARN_NUM_PARTITIONS);
+        $scope.$apply();
+      })
+      .catch((resp) => {
+        console.log('Time series forecast modal - error obtaining cardinality of fields:', resp);
       });
-      $scope.showNumPartitionsWarning = (numPartitions > WARN_NUM_PARTITIONS);
-      $scope.$apply();
-    })
-    .catch((resp) => {
-      console.log('Time series forecast modal - error obtaining cardinality of fields:', resp);
-    });
   }
 
   $scope.viewForecast = function (forecastId) {
@@ -173,17 +173,17 @@ module.controller('MlForecastingModal', function (
     $scope.runStatus.jobOpening = REQUEST_STATES.WAITING;
 
     mlJobService.openJob(job.job_id)
-    .then(() => {
+      .then(() => {
       // If open was successful run the forecast, then close the job again.
-      $scope.runStatus.jobOpening = REQUEST_STATES.DONE;
-      runForecast(true);
-    })
-    .catch((resp) => {
-      console.log('Time series forecast modal - could not open job:', resp);
-      msgs.error('Error opening job before running forecast.', resp);
-      $scope.isForecastRunning = false;
-      $scope.runStatus.jobOpening = REQUEST_STATES.ERROR;
-    });
+        $scope.runStatus.jobOpening = REQUEST_STATES.DONE;
+        runForecast(true);
+      })
+      .catch((resp) => {
+        console.log('Time series forecast modal - could not open job:', resp);
+        msgs.error('Error opening job before running forecast.', resp);
+        $scope.isForecastRunning = false;
+        $scope.runStatus.jobOpening = REQUEST_STATES.ERROR;
+      });
   }
 
   function runForecast(closeJobAfterRunning) {
@@ -195,22 +195,22 @@ module.controller('MlForecastingModal', function (
     const durationInSeconds = parseInterval($scope.newForecastDuration).asSeconds();
 
     mlForecastService.runForecast(job.job_id, `${durationInSeconds}s`)
-    .then((resp) => {
+      .then((resp) => {
       // Endpoint will return { acknowledged:true, id: <now timestamp> } before forecast is complete.
       // So wait for results and then refresh the dashboard to the end of the forecast.
-      if (resp.forecast_id !== undefined) {
-        waitForForecastResults(resp.forecast_id, closeJobAfterRunning);
-      } else {
+        if (resp.forecast_id !== undefined) {
+          waitForForecastResults(resp.forecast_id, closeJobAfterRunning);
+        } else {
+          $scope.runStatus.forecastProgress = REQUEST_STATES.ERROR;
+          console.log('Unexpected response from running forecast', resp);
+          msgs.error('Unexpected response from running forecast. The request may have failed.');
+        }
+      })
+      .catch((resp) => {
         $scope.runStatus.forecastProgress = REQUEST_STATES.ERROR;
-        console.log('Unexpected response from running forecast', resp);
+        console.log('Time series forecast modal - error running forecast:', resp);
         msgs.error('Unexpected response from running forecast. The request may have failed.');
-      }
-    })
-    .catch((resp) => {
-      $scope.runStatus.forecastProgress = REQUEST_STATES.ERROR;
-      console.log('Time series forecast modal - error running forecast:', resp);
-      msgs.error('Unexpected response from running forecast. The request may have failed.');
-    });
+      });
 
   }
 
@@ -222,71 +222,71 @@ module.controller('MlForecastingModal', function (
     let noProgressMs = 0;
     forecastChecker = $interval(() => {
       mlForecastService.getForecastRequestStats(job, forecastId)
-      .then((resp) => {
-        const progress = _.get(resp, ['stats', 'forecast_progress'], previousProgress);
-        const status = _.get(resp, ['stats', 'forecast_status']);
+        .then((resp) => {
+          const progress = _.get(resp, ['stats', 'forecast_progress'], previousProgress);
+          const status = _.get(resp, ['stats', 'forecast_status']);
 
-        // Update the progress (stats value is between 0 and 1).
-        $scope.runStatus.forecastProgress = Math.round(100 * progress);
+          // Update the progress (stats value is between 0 and 1).
+          $scope.runStatus.forecastProgress = Math.round(100 * progress);
 
-        // Display any messages returned in the request stats.
-        const messages =  _.get(resp, ['stats', 'forecast_messages'], previousProgress);
-        _.each(messages, (message) => {
-          msgs.warning(message);
-        });
+          // Display any messages returned in the request stats.
+          const messages =  _.get(resp, ['stats', 'forecast_messages'], previousProgress);
+          _.each(messages, (message) => {
+            msgs.warning(message);
+          });
 
-        if (status === FORECAST_REQUEST_STATE.FINISHED) {
-          $interval.cancel(forecastChecker);
-          $scope.isForecastRunning = false;
+          if (status === FORECAST_REQUEST_STATE.FINISHED) {
+            $interval.cancel(forecastChecker);
+            $scope.isForecastRunning = false;
 
-          if (closeJobAfterRunning === true) {
-            $scope.runStatus.jobClosing = REQUEST_STATES.WAITING;
-            mlJobService.closeJob(job.job_id)
-            .then(() => {
-              $scope.isForecastRunning = false;
-              $scope.runStatus.jobClosing = REQUEST_STATES.DONE;
+            if (closeJobAfterRunning === true) {
+              $scope.runStatus.jobClosing = REQUEST_STATES.WAITING;
+              mlJobService.closeJob(job.job_id)
+                .then(() => {
+                  $scope.isForecastRunning = false;
+                  $scope.runStatus.jobClosing = REQUEST_STATES.DONE;
+                  loadForForecastId(forecastId);
+                  closeAfterRunningForecast();
+                })
+                .catch((closeResp) => {
+                  // Load the forecast data in the main page,
+                  // but leave this dialog open so the error can be viewed.
+                  msgs.error('Error closing job after running forecast.', closeResp);
+                  $scope.runStatus.jobClosing = REQUEST_STATES.ERROR;
+                  loadForForecastId(forecastId);
+                  $scope.isForecastRunning = false;
+                });
+            } else {
               loadForForecastId(forecastId);
               closeAfterRunningForecast();
-            })
-            .catch((closeResp) => {
-              // Load the forecast data in the main page,
-              // but leave this dialog open so the error can be viewed.
-              msgs.error('Error closing job after running forecast.', closeResp);
-              $scope.runStatus.jobClosing = REQUEST_STATES.ERROR;
-              loadForForecastId(forecastId);
-              $scope.isForecastRunning = false;
-            });
+            }
           } else {
-            loadForForecastId(forecastId);
-            closeAfterRunningForecast();
-          }
-        } else {
           // Display a warning and abort check if the forecast hasn't
           // progressed for WARN_NO_PROGRESS_MS.
-          if (progress === previousProgress) {
-            noProgressMs += FORECAST_STATS_POLL_FREQUENCY;
-            if (noProgressMs > WARN_NO_PROGRESS_MS) {
-              console.log(`Forecast request has not progressed for ${WARN_NO_PROGRESS_MS}ms. Cancelling check.`);
-              msgs.error(`No progress reported for the new forecast for ${WARN_NO_PROGRESS_MS}ms. ` +
+            if (progress === previousProgress) {
+              noProgressMs += FORECAST_STATS_POLL_FREQUENCY;
+              if (noProgressMs > WARN_NO_PROGRESS_MS) {
+                console.log(`Forecast request has not progressed for ${WARN_NO_PROGRESS_MS}ms. Cancelling check.`);
+                msgs.error(`No progress reported for the new forecast for ${WARN_NO_PROGRESS_MS}ms. ` +
                 'An error may have occurred whilst running the forecast.');
 
-              // Try and load any results which may have been created.
-              loadForForecastId(forecastId);
-              $scope.runStatus.forecastProgress = REQUEST_STATES.ERROR;
-              $interval.cancel(forecastChecker);
-            }
+                // Try and load any results which may have been created.
+                loadForForecastId(forecastId);
+                $scope.runStatus.forecastProgress = REQUEST_STATES.ERROR;
+                $interval.cancel(forecastChecker);
+              }
 
-          } else {
-            previousProgress = progress;
+            } else {
+              previousProgress = progress;
+            }
           }
-        }
-      }).catch((resp) => {
-        console.log('Time series forecast modal - error loading stats of forecast from elasticsearch:', resp);
-        msgs.error('Error loading stats of running forecast.', resp);
-        $scope.isForecastRunning = false;
-        $scope.runStatus.forecastProgress = REQUEST_STATES.ERROR;
-        $interval.cancel(forecastChecker);
-      });
+        }).catch((resp) => {
+          console.log('Time series forecast modal - error loading stats of forecast from elasticsearch:', resp);
+          msgs.error('Error loading stats of running forecast.', resp);
+          $scope.isForecastRunning = false;
+          $scope.runStatus.forecastProgress = REQUEST_STATES.ERROR;
+          $interval.cancel(forecastChecker);
+        });
     }, FORECAST_STATS_POLL_FREQUENCY);
 
   }

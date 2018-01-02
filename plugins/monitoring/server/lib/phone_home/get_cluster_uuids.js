@@ -13,7 +13,7 @@ import { ElasticsearchMetric } from '../metrics';
  */
 export function getClusterUuids(server, callCluster, start, end) {
   return fetchClusterUuids(server, callCluster, start, end)
-  .then(handleClusterUuidsResponse);
+    .then(handleClusterUuidsResponse);
 }
 
 /**

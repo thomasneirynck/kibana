@@ -80,18 +80,18 @@ export function alertsClusterSearch(req, alertsIndex, cluster, checkLicense, opt
 
     const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
     return callWithRequest(req, 'search', params)
-    .then(result => {
-      const hits = get(result, 'hits.hits', []);
-      const alerts = hits.map(alert => alert._source);
+      .then(result => {
+        const hits = get(result, 'hits.hits', []);
+        const alerts = hits.map(alert => alert._source);
 
-      const staticAlert = staticAlertForCluster(cluster);
+        const staticAlert = staticAlertForCluster(cluster);
 
-      if (staticAlert) {
-        alerts.push(staticAlert);
-      }
+        if (staticAlert) {
+          alerts.push(staticAlert);
+        }
 
-      return alerts;
-    });
+        return alerts;
+      });
   }
 
   return Promise.resolve({ message: prodLicenseInfo.message });

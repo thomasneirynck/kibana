@@ -130,7 +130,7 @@ function mapToList(map, keyName) {
  */
 export function getHighLevelStats(server, callCluster, clusterUuids, start, end, product) {
   return fetchHighLevelStats(server, callCluster, clusterUuids, start, end, product)
-  .then(response => handleHighLevelStatsResponse(response, product));
+    .then(response => handleHighLevelStatsResponse(response, product));
 }
 
 /**

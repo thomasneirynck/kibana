@@ -72,17 +72,17 @@ module.directive('mlPostSaveOptions', function (mlPostSaveService, mlCreateWatch
     const datafeedId = mlJobService.getDatafeedId(jobId);
 
     mlJobService.openJob(jobId)
-    .finally(() => {
-      mlJobService.startDatafeed(datafeedId, jobId, 0, undefined)
-      .then(() => {
-        this.status.realtimeJob = this.STATUS.SAVED;
-        deferred.resolve();
-      }).catch((resp) => {
-        msgs.error('Could not start datafeed: ', resp);
-        this.status.realtimeJob = this.STATUS.SAVE_FAILED;
-        deferred.reject();
+      .finally(() => {
+        mlJobService.startDatafeed(datafeedId, jobId, 0, undefined)
+          .then(() => {
+            this.status.realtimeJob = this.STATUS.SAVED;
+            deferred.resolve();
+          }).catch((resp) => {
+            msgs.error('Could not start datafeed: ', resp);
+            this.status.realtimeJob = this.STATUS.SAVE_FAILED;
+            deferred.reject();
+          });
       });
-    });
 
     return deferred.promise;
   };
@@ -90,11 +90,11 @@ module.directive('mlPostSaveOptions', function (mlPostSaveService, mlCreateWatch
   this.apply = function (jobId, runInRealtime, createWatch) {
     if (runInRealtime) {
       this.startRealtimeJob(jobId)
-      .then(() => {
-        if (createWatch) {
-          mlCreateWatchService.createNewWatch(jobId);
-        }
-      });
+        .then(() => {
+          if (createWatch) {
+            mlCreateWatchService.createNewWatch(jobId);
+          }
+        });
     }
   };
 });

@@ -1,3 +1,5 @@
+/* eslint-env jest */
+
 function $() {
   return {
     on: jest.fn(),

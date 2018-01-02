@@ -57,15 +57,15 @@ export function checkLicense(Private, Promise, kbnBaseUrl) {
 // if the user's license has expired.
 export function checkLicenseExpired(Private, Promise, kbnBaseUrl, kbnUrl) {
   return checkLicense(Private, Promise, kbnBaseUrl)
-  .then((features) => {
-    if (features.hasExpired) {
-      kbnUrl.redirect('/jobs');
+    .then((features) => {
+      if (features.hasExpired) {
+        kbnUrl.redirect('/jobs');
+        return Promise.halt();
+      } else {
+        return Promise.resolve(features);
+      }
+    })
+    .catch(() => {
       return Promise.halt();
-    } else {
-      return Promise.resolve(features);
-    }
-  })
-  .catch(() => {
-    return Promise.halt();
-  });
+    });
 }

@@ -89,106 +89,106 @@ module.service('mlPopulationJobService', function (
     const searchJson = getSearchJsonFromConfig(formConfig);
 
     es.search(searchJson)
-    .then((resp) => {
+      .then((resp) => {
       // if this is the last chart load, wipe all previous chart data
-      if (thisLoadTimestamp === this.chartData.lastLoadTimestamp) {
-        fieldIds.forEach((fieldId, i) => {
-          this.chartData.detectors[i] = {
-            line: [],
-            swimlane: []
-          };
-        });
-      } else {
-        deferred.resolve(this.chartData);
-      }
-      const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
-      let highestValue = Math.max(this.chartData.eventRateHighestValue, this.chartData.highestValue);
+        if (thisLoadTimestamp === this.chartData.lastLoadTimestamp) {
+          fieldIds.forEach((fieldId, i) => {
+            this.chartData.detectors[i] = {
+              line: [],
+              swimlane: []
+            };
+          });
+        } else {
+          deferred.resolve(this.chartData);
+        }
+        const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
+        let highestValue = Math.max(this.chartData.eventRateHighestValue, this.chartData.highestValue);
 
-      _.each(aggregationsByTime, (dataForTime) => {
-        const time = +dataForTime.key;
-        const date = new Date(time);
+        _.each(aggregationsByTime, (dataForTime) => {
+          const time = +dataForTime.key;
+          const date = new Date(time);
 
-        this.chartData.job.swimlane.push({
-          date: date,
-          time: time,
-          value: 0,
-          color: '',
-          percentComplete: 0
-        });
+          this.chartData.job.swimlane.push({
+            date: date,
+            time: time,
+            value: 0,
+            color: '',
+            percentComplete: 0
+          });
 
-        this.chartData.job.earliestTime = (time < this.chartData.job.earliestTime) ? time : this.chartData.job.earliestTime;
+          this.chartData.job.earliestTime = (time < this.chartData.job.earliestTime) ? time : this.chartData.job.earliestTime;
 
-        this.chartData.job.line.push({
-          date: date,
-          time: time,
-          value: null,
-        });
+          this.chartData.job.line.push({
+            date: date,
+            time: time,
+            value: null,
+          });
 
-        fieldIds.forEach((fieldId, i) => {
-          const populationBuckets = _.get(dataForTime, ['population', 'buckets'], []);
-          const values = [];
-          if (fieldId === EVENT_RATE_COUNT_FIELD) {
-            populationBuckets.forEach(b => {
+          fieldIds.forEach((fieldId, i) => {
+            const populationBuckets = _.get(dataForTime, ['population', 'buckets'], []);
+            const values = [];
+            if (fieldId === EVENT_RATE_COUNT_FIELD) {
+              populationBuckets.forEach(b => {
               // check to see if the data is split.
-              if (b[i] === undefined) {
-                values.push({ label: b.key, value: b.doc_count });
-              } else {
+                if (b[i] === undefined) {
+                  values.push({ label: b.key, value: b.doc_count });
+                } else {
                 // a split is being used, so an additional filter was added to the search
-                values.push({ label: b.key, value: b[i].doc_count });
-              }
-            });
-          } else if (typeof dataForTime.population !== 'undefined') {
-            populationBuckets.forEach(b => {
-              const tempBucket = b[i];
-              let value = null;
-              // check to see if the data is split
-              // if the field has been split, an additional filter and aggregation
-              // has been added to the search in the form of splitValue
-              const tempValue = (tempBucket.value === undefined && tempBucket.splitValue !== undefined) ?
-                tempBucket.splitValue : tempBucket;
+                  values.push({ label: b.key, value: b[i].doc_count });
+                }
+              });
+            } else if (typeof dataForTime.population !== 'undefined') {
+              populationBuckets.forEach(b => {
+                const tempBucket = b[i];
+                let value = null;
+                // check to see if the data is split
+                // if the field has been split, an additional filter and aggregation
+                // has been added to the search in the form of splitValue
+                const tempValue = (tempBucket.value === undefined && tempBucket.splitValue !== undefined) ?
+                  tempBucket.splitValue : tempBucket;
 
-              // check to see if values is exists rather than value.
-              // if values exists, the aggregation was median
-              if (tempValue.value === undefined && tempValue.values !== undefined) {
-                value = tempValue.values[ML_MEDIAN_PERCENTS];
-              } else {
-                value = tempValue.value;
-              }
-              values.push({ label: b.key, value: (isFinite(value) ? value : null) });
-            });
-          }
+                // check to see if values is exists rather than value.
+                // if values exists, the aggregation was median
+                if (tempValue.value === undefined && tempValue.values !== undefined) {
+                  value = tempValue.values[ML_MEDIAN_PERCENTS];
+                } else {
+                  value = tempValue.value;
+                }
+                values.push({ label: b.key, value: (isFinite(value) ? value : null) });
+              });
+            }
 
-          const highestValueField = _.reduce(values, (p, c) => (c.value > p.value) ? c : p, { value: 0 });
-          if (highestValueField.value > highestValue) {
-            highestValue = highestValueField.value;
-          }
+            const highestValueField = _.reduce(values, (p, c) => (c.value > p.value) ? c : p, { value: 0 });
+            if (highestValueField.value > highestValue) {
+              highestValue = highestValueField.value;
+            }
 
-          if (this.chartData.detectors[i]) {
-            this.chartData.detectors[i].line.push({
-              date,
-              time,
-              values,
-            });
+            if (this.chartData.detectors[i]) {
+              this.chartData.detectors[i].line.push({
+                date,
+                time,
+                values,
+              });
 
-            // init swimlane
-            this.chartData.detectors[i].swimlane.push({
-              date,
-              time,
-              value: 0,
-              color: '',
-              percentComplete: 0
-            });
-          }
+              // init swimlane
+              this.chartData.detectors[i].swimlane.push({
+                date,
+                time,
+                value: 0,
+                color: '',
+                percentComplete: 0
+              });
+            }
+          });
         });
+
+        this.chartData.highestValue = Math.ceil(highestValue);
+
+        deferred.resolve(this.chartData);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
       });
-
-      this.chartData.highestValue = Math.ceil(highestValue);
-
-      deferred.resolve(this.chartData);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
 
     return deferred.promise;
   };
@@ -408,13 +408,13 @@ module.service('mlPopulationJobService', function (
 
     // DO THE SAVE
     mlJobService.saveNewJob(job)
-    .then((resp) => {
-      if (resp.success) {
-        deferred.resolve(this.job);
-      } else {
-        deferred.reject(resp);
-      }
-    });
+      .then((resp) => {
+        if (resp.success) {
+          deferred.resolve(this.job);
+        } else {
+          deferred.reject(resp);
+        }
+      });
 
     return deferred.promise;
   };

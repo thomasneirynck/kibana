@@ -13,4 +13,4 @@
  * strictly prohibited.
  */
 
- import './agg_types_filter';
+import './agg_types_filter';

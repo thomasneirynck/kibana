@@ -52,14 +52,14 @@ import template from './timeseriesexplorer.html';
 import forecastingModalTemplate from 'plugins/ml/timeseriesexplorer/forecasting_modal/forecasting_modal.html';
 
 uiRoutes
-.when('/timeseriesexplorer/?', {
-  template,
-  resolve: {
-    CheckLicense: checkLicense,
-    privileges: checkGetJobsPrivilege,
-    indexPatterns: getIndexPatterns
-  }
-});
+  .when('/timeseriesexplorer/?', {
+    template,
+    resolve: {
+      CheckLicense: checkLicense,
+      privileges: checkGetJobsPrivilege,
+      indexPatterns: getIndexPatterns
+    }
+  });
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -120,73 +120,73 @@ module.controller('MlTimeSeriesExplorerController', function (
 
     // Load the job info needed by the visualization, then do the first load.
     mlJobService.loadJobs()
-    .then((resp) => {
+      .then((resp) => {
 
-      if (resp.jobs.length > 0) {
-        $scope.jobs = createTimeSeriesJobData(resp.jobs);
-        const timeSeriesJobIds = $scope.jobs.map(j => j.id);
+        if (resp.jobs.length > 0) {
+          $scope.jobs = createTimeSeriesJobData(resp.jobs);
+          const timeSeriesJobIds = $scope.jobs.map(j => j.id);
 
-        // Select any jobs set in the global state (i.e. passed in the URL).
-        let selectedJobIds = mlJobSelectService.getSelectedJobIds(true);
+          // Select any jobs set in the global state (i.e. passed in the URL).
+          let selectedJobIds = mlJobSelectService.getSelectedJobIds(true);
 
-        // Check if any of the jobs set in the URL are not time series jobs
-        // (e.g. if switching to this view straight from the Anomaly Explorer).
-        const invalidIds = _.difference(selectedJobIds, timeSeriesJobIds);
-        selectedJobIds = _.without(selectedJobIds, ...invalidIds);
-        if (invalidIds.length > 0) {
-          const s = invalidIds.length === 1 ? '' : 's';
-          let warningText = `Requested job${s} ${invalidIds} cannot be viewed in this dashboard`;
-          if (selectedJobIds.length === 0 && timeSeriesJobIds.length > 0) {
-            warningText += ', auto selecting first job';
+          // Check if any of the jobs set in the URL are not time series jobs
+          // (e.g. if switching to this view straight from the Anomaly Explorer).
+          const invalidIds = _.difference(selectedJobIds, timeSeriesJobIds);
+          selectedJobIds = _.without(selectedJobIds, ...invalidIds);
+          if (invalidIds.length > 0) {
+            const s = invalidIds.length === 1 ? '' : 's';
+            let warningText = `Requested job${s} ${invalidIds} cannot be viewed in this dashboard`;
+            if (selectedJobIds.length === 0 && timeSeriesJobIds.length > 0) {
+              warningText += ', auto selecting first job';
+            }
+            notify.warning(warningText, { lifetime: 30000 });
           }
-          notify.warning(warningText, { lifetime: 30000 });
-        }
 
-        if (selectedJobIds.length > 1 || mlJobSelectService.groupIds.length) {
+          if (selectedJobIds.length > 1 || mlJobSelectService.groupIds.length) {
           // if more than one job or a group has been loaded from the URL
-          if (selectedJobIds.length > 1) {
+            if (selectedJobIds.length > 1) {
             // if more than one job, select the first job from the selection.
-            notify.warning('Only one job may be viewed at a time in this dashboard', { lifetime: 30000 });
-            mlJobSelectService.setJobIds([selectedJobIds[0]]);
-          } else {
-            // if a group has been loaded
-            if (selectedJobIds.length > 0) {
-              // if the group contains valid jobs, select the first
               notify.warning('Only one job may be viewed at a time in this dashboard', { lifetime: 30000 });
               mlJobSelectService.setJobIds([selectedJobIds[0]]);
-            } else if ($scope.jobs.length > 0) {
+            } else {
+            // if a group has been loaded
+              if (selectedJobIds.length > 0) {
+              // if the group contains valid jobs, select the first
+                notify.warning('Only one job may be viewed at a time in this dashboard', { lifetime: 30000 });
+                mlJobSelectService.setJobIds([selectedJobIds[0]]);
+              } else if ($scope.jobs.length > 0) {
               // if there are no valid jobs in the group but there are valid jobs
               // in the list of all jobs, select the first
+                mlJobSelectService.setJobIds([$scope.jobs[0].id]);
+              } else {
+              // if there are no valid jobs left.
+                $scope.loading = false;
+              }
+            }
+          } else if (invalidIds.length > 0 && selectedJobIds.length > 0) {
+          // if some ids have been filtered out because they were invalid.
+          // refresh the URL with the first valid id
+            mlJobSelectService.setJobIds([selectedJobIds[0]]);
+          } else if (selectedJobIds.length > 0) {
+          // normal behavior. a job ID has been loaded from the URL
+            loadForJobId(selectedJobIds[0]);
+          } else {
+            if (selectedJobIds.length === 0 && $scope.jobs.length > 0) {
+            // no jobs were loaded from the URL, so add the first job
+            // from the full jobs list.
               mlJobSelectService.setJobIds([$scope.jobs[0].id]);
             } else {
-              // if there are no valid jobs left.
+            // Jobs exist, but no time series jobs.
               $scope.loading = false;
             }
           }
-        } else if (invalidIds.length > 0 && selectedJobIds.length > 0) {
-          // if some ids have been filtered out because they were invalid.
-          // refresh the URL with the first valid id
-          mlJobSelectService.setJobIds([selectedJobIds[0]]);
-        } else if (selectedJobIds.length > 0) {
-          // normal behavior. a job ID has been loaded from the URL
-          loadForJobId(selectedJobIds[0]);
         } else {
-          if (selectedJobIds.length === 0 && $scope.jobs.length > 0) {
-            // no jobs were loaded from the URL, so add the first job
-            // from the full jobs list.
-            mlJobSelectService.setJobIds([$scope.jobs[0].id]);
-          } else {
-            // Jobs exist, but no time series jobs.
-            $scope.loading = false;
-          }
+          $scope.loading = false;
         }
-      } else {
-        $scope.loading = false;
-      }
 
-    }).catch((resp) => {
-      console.log('Time series explorer - error getting job info from elasticsearch:', resp);
-    });
+      }).catch((resp) => {
+        console.log('Time series explorer - error getting job info from elasticsearch:', resp);
+      });
   };
 
   $scope.refresh = function () {
@@ -336,12 +336,12 @@ module.controller('MlTimeSeriesExplorerController', function (
         searchBounds.max.valueOf(),
         $scope.contextAggregationInterval.expression,
         aggType)
-      .then((resp) => {
-        $scope.contextForecastData = processForecastResults(resp.results);
-        finish(counter);
-      }).catch((resp) => {
-        console.log(`Time series explorer - error loading data for forecast ID ${forecastId}`, resp);
-      });
+        .then((resp) => {
+          $scope.contextForecastData = processForecastResults(resp.results);
+          finish(counter);
+        }).catch((resp) => {
+          console.log(`Time series explorer - error loading data for forecast ID ${forecastId}`, resp);
+        });
     }
 
     // Populate the entity input datalists with the values from the top records by score
@@ -353,24 +353,24 @@ module.controller('MlTimeSeriesExplorerController', function (
       searchBounds.min.valueOf(),
       searchBounds.max.valueOf(),
       ANOMALIES_MAX_RESULTS)
-    .then((resp) => {
-      if (resp.records && resp.records.length > 0) {
-        const firstRec = resp.records[0];
+      .then((resp) => {
+        if (resp.records && resp.records.length > 0) {
+          const firstRec = resp.records[0];
 
-        _.each($scope.entities, (entity) => {
-          if (firstRec.partition_field_name === entity.fieldName) {
-            entity.fieldValues = _.chain(resp.records).pluck('partition_field_value').uniq().value();
-          }
-          if (firstRec.over_field_name === entity.fieldName) {
-            entity.fieldValues = _.chain(resp.records).pluck('over_field_value').uniq().value();
-          }
-          if (firstRec.by_field_name === entity.fieldName) {
-            entity.fieldValues = _.chain(resp.records).pluck('by_field_value').uniq().value();
-          }
-        });
-      }
+          _.each($scope.entities, (entity) => {
+            if (firstRec.partition_field_name === entity.fieldName) {
+              entity.fieldValues = _.chain(resp.records).pluck('partition_field_value').uniq().value();
+            }
+            if (firstRec.over_field_name === entity.fieldName) {
+              entity.fieldValues = _.chain(resp.records).pluck('over_field_value').uniq().value();
+            }
+            if (firstRec.by_field_name === entity.fieldName) {
+              entity.fieldValues = _.chain(resp.records).pluck('by_field_value').uniq().value();
+            }
+          });
+        }
 
-    });
+      });
   };
 
   $scope.refreshFocusData = function (fromDate, toDate) {
@@ -466,13 +466,13 @@ module.controller('MlTimeSeriesExplorerController', function (
         searchBounds.max.valueOf(),
         $scope.focusAggregationInterval.expression,
         aggType)
-      .then((resp) => {
-        $scope.focusForecastData = processForecastResults(resp.results);
-        $scope.showForecastCheckbox = ($scope.focusForecastData.length > 0);
-        finish();
-      }).catch((resp) => {
-        console.log(`Time series explorer - error loading data for forecast ID ${forecastId}`, resp);
-      });
+        .then((resp) => {
+          $scope.focusForecastData = processForecastResults(resp.results);
+          $scope.showForecastCheckbox = ($scope.focusForecastData.length > 0);
+          finish();
+        }).catch((resp) => {
+          console.log(`Time series explorer - error loading data for forecast ID ${forecastId}`, resp);
+        });
     }
 
   };

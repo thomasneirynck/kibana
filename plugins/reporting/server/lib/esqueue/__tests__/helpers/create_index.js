@@ -20,7 +20,7 @@ describe('Create Index', function () {
       const result = createIndex(client, indexName);
 
       return result
-      .then((exists) => expect(exists).to.be(true));
+        .then((exists) => expect(exists).to.be(true));
     });
 
     it('should create the index with type mappings and default settings', function () {
@@ -30,17 +30,17 @@ describe('Create Index', function () {
       const result = createIndex(client, indexName);
 
       return result
-      .then(function () {
-        const payload = createSpy.getCall(0).args[0];
-        sinon.assert.callCount(createSpy, 1);
-        expect(payload).to.have.property('index', indexName);
-        expect(payload).to.have.property('body');
-        expect(payload.body).to.have.property('settings');
-        expect(payload.body.settings).to.eql(settings);
-        expect(payload.body).to.have.property('mappings');
-        expect(payload.body.mappings).to.have.property(docType);
-        expect(payload.body.mappings[docType]).to.have.property('properties');
-      });
+        .then(function () {
+          const payload = createSpy.getCall(0).args[0];
+          sinon.assert.callCount(createSpy, 1);
+          expect(payload).to.have.property('index', indexName);
+          expect(payload).to.have.property('body');
+          expect(payload.body).to.have.property('settings');
+          expect(payload.body.settings).to.eql(settings);
+          expect(payload.body).to.have.property('mappings');
+          expect(payload.body.mappings).to.have.property(docType);
+          expect(payload.body.mappings[docType]).to.have.property('properties');
+        });
     });
 
     it('should accept a custom doctype', function () {
@@ -50,17 +50,17 @@ describe('Create Index', function () {
       const result = createIndex(client, indexName, docType);
 
       return result
-      .then(function () {
-        const payload = createSpy.getCall(0).args[0];
-        sinon.assert.callCount(createSpy, 1);
-        expect(payload).to.have.property('index', indexName);
-        expect(payload).to.have.property('body');
-        expect(payload.body).to.have.property('settings');
-        expect(payload.body.settings).to.eql(settings);
-        expect(payload.body).to.have.property('mappings');
-        expect(payload.body.mappings).to.have.property(docType);
-        expect(payload.body.mappings[docType]).to.have.property('properties');
-      });
+        .then(function () {
+          const payload = createSpy.getCall(0).args[0];
+          sinon.assert.callCount(createSpy, 1);
+          expect(payload).to.have.property('index', indexName);
+          expect(payload).to.have.property('body');
+          expect(payload.body).to.have.property('settings');
+          expect(payload.body.settings).to.eql(settings);
+          expect(payload.body).to.have.property('mappings');
+          expect(payload.body.mappings).to.have.property(docType);
+          expect(payload.body.mappings[docType]).to.have.property('properties');
+        });
     });
 
     it('should create the index with custom settings', function () {
@@ -76,17 +76,17 @@ describe('Create Index', function () {
       const result = createIndex(client, indexName, docType, settings);
 
       return result
-      .then(function () {
-        const payload = createSpy.getCall(0).args[0];
-        sinon.assert.callCount(createSpy, 1);
-        expect(payload).to.have.property('index', indexName);
-        expect(payload).to.have.property('body');
-        expect(payload.body).to.have.property('settings');
-        expect(payload.body.settings).to.eql(settings);
-        expect(payload.body).to.have.property('mappings');
-        expect(payload.body.mappings).to.have.property(docType);
-        expect(payload.body.mappings[docType]).to.have.property('properties');
-      });
+        .then(function () {
+          const payload = createSpy.getCall(0).args[0];
+          sinon.assert.callCount(createSpy, 1);
+          expect(payload).to.have.property('index', indexName);
+          expect(payload).to.have.property('body');
+          expect(payload.body).to.have.property('settings');
+          expect(payload.body.settings).to.eql(settings);
+          expect(payload.body).to.have.property('mappings');
+          expect(payload.body.mappings).to.have.property(docType);
+          expect(payload.body.mappings[docType]).to.have.property('properties');
+        });
     });
   });
 
@@ -105,7 +105,7 @@ describe('Create Index', function () {
       const result = createIndex(client, indexName);
 
       return result
-      .then((exists) => expect(exists).to.be(true));
+        .then((exists) => expect(exists).to.be(true));
     });
 
     it('should not create the index', function () {
@@ -113,9 +113,9 @@ describe('Create Index', function () {
       const result = createIndex(client, indexName);
 
       return result
-      .then(function () {
-        sinon.assert.callCount(createSpy, 0);
-      });
+        .then(function () {
+          sinon.assert.callCount(createSpy, 0);
+        });
     });
 
   });

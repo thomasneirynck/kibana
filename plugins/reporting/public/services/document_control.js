@@ -5,28 +5,28 @@ import { uiModules } from 'ui/modules';
 
 
 uiModules.get('xpack/reporting')
-.service('reportingDocumentControl', function (Private, $http, reportingJobCompletionNotifications, $injector) {
-  const $Promise = $injector.get('Promise');
-  const mainEntry = '/api/reporting/generate';
-  const reportPrefix = chrome.addBasePath(mainEntry);
+  .service('reportingDocumentControl', function (Private, $http, reportingJobCompletionNotifications, $injector) {
+    const $Promise = $injector.get('Promise');
+    const mainEntry = '/api/reporting/generate';
+    const reportPrefix = chrome.addBasePath(mainEntry);
 
-  const getJobParams = (exportType, controller, options) => {
-    const jobParamsProvider = Private(exportType.JobParamsProvider);
-    return $Promise.resolve(jobParamsProvider(controller, options));
-  };
+    const getJobParams = (exportType, controller, options) => {
+      const jobParamsProvider = Private(exportType.JobParamsProvider);
+      return $Promise.resolve(jobParamsProvider(controller, options));
+    };
 
-  this.getPath = (exportType, controller, options) => {
-    return getJobParams(exportType, controller, options)
-      .then(jobParams => {
-        return `${reportPrefix}/${exportType.id}?jobParams=${rison.encode(jobParams)}`;
-      });
-  };
+    this.getPath = (exportType, controller, options) => {
+      return getJobParams(exportType, controller, options)
+        .then(jobParams => {
+          return `${reportPrefix}/${exportType.id}?jobParams=${rison.encode(jobParams)}`;
+        });
+    };
 
-  this.create = (relativePath) => {
-    return $http.post(relativePath, {})
-      .then(({ data }) => {
-        reportingJobCompletionNotifications.add(data.job.id);
-        return data;
-      });
-  };
-});
+    this.create = (relativePath) => {
+      return $http.post(relativePath, {})
+        .then(({ data }) => {
+          reportingJobCompletionNotifications.add(data.job.id);
+          return data;
+        });
+    };
+  });

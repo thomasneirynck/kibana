@@ -88,9 +88,9 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
 
     const focusValuesLine = d3.svg.line()
-       .x(function (d) { return focusXScale(d.date); })
-       .y(function (d) { return focusYScale(d.value); })
-       .defined(d => d.value !== null);
+      .x(function (d) { return focusXScale(d.date); })
+      .y(function (d) { return focusYScale(d.value); })
+      .defined(d => d.value !== null);
     const focusBoundedArea = d3.svg.area()
       .x (function (d) { return focusXScale(d.date) || 1; })
       .y0(function (d) { return focusYScale(d.upper); })
@@ -195,7 +195,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         .each(function () {
           maxYAxisLabelWidth = Math.max(this.getBBox().width + focusYAxis.tickPadding(), maxYAxisLabelWidth);
         })
-      .remove();
+        .remove();
       d3.select('.temp-axis-label').remove();
 
       margin.left = (Math.max(maxYAxisLabelWidth, 40));
@@ -427,9 +427,9 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       const xAxisTickFormat = timeBuckets.getScaledDateFormat();
       focusChart.select('.x.axis')
         .call(focusXAxis.ticks(numTicksForDateFormat(vizWidth), xAxisTickFormat)
-        .tickFormat((d) => {
-          return moment(d).format(xAxisTickFormat);
-        }));
+          .tickFormat((d) => {
+            return moment(d).format(xAxisTickFormat);
+          }));
       focusChart.select('.y.axis')
         .call(focusYAxis);
 
@@ -650,9 +650,9 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       }
 
       const contextValuesLine = d3.svg.line()
-       .x((d) => { return contextXScale(d.date); })
-       .y((d) => { return contextYScale(d.value); })
-       .defined(d => d.value !== null);
+        .x((d) => { return contextXScale(d.date); })
+        .y((d) => { return contextYScale(d.value); })
+        .defined(d => d.value !== null);
 
       cxtGroup.append('path')
         .datum(data)
@@ -708,7 +708,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       contextGroup.append('g')
         .attr('class', 'x brush')
         .call(brush)
-      .selectAll('rect')
+        .selectAll('rect')
         .attr('y', -1)
         .attr('height', contextChartHeight + swimlaneHeight + 1);
 

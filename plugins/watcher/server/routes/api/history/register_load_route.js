@@ -33,37 +33,37 @@ export function registerLoadRoute(server) {
       const id = request.params.id;
 
       return fetchHistoryItem(callWithRequest, id)
-      .then((responseFromES) => {
-        const hit = get(responseFromES, 'hits.hits[0]');
-        if (!hit) {
-          return reply(
-            wrapCustomError(
-              new Error(`Watch History Item with id = ${id} not found`), 404
-            )
-          );
-        }
+        .then((responseFromES) => {
+          const hit = get(responseFromES, 'hits.hits[0]');
+          if (!hit) {
+            return reply(
+              wrapCustomError(
+                new Error(`Watch History Item with id = ${id} not found`), 404
+              )
+            );
+          }
 
-        const watchHistoryItemJson = get(hit, '_source');
-        const watchId = get(hit, '_source.watch_id');
-        const json = {
-          id,
-          watchId,
-          watchHistoryItemJson,
-          includeDetails: true
-        };
+          const watchHistoryItemJson = get(hit, '_source');
+          const watchId = get(hit, '_source.watch_id');
+          const json = {
+            id,
+            watchId,
+            watchHistoryItemJson,
+            includeDetails: true
+          };
 
-        const watchHistoryItem = WatchHistoryItem.fromUpstreamJson(json);
-        reply({ watchHistoryItem: watchHistoryItem.downstreamJson });
-      })
-      .catch(err => {
+          const watchHistoryItem = WatchHistoryItem.fromUpstreamJson(json);
+          reply({ watchHistoryItem: watchHistoryItem.downstreamJson });
+        })
+        .catch(err => {
         // Case: Error from Elasticsearch JS client
-        if (isEsError(err)) {
-          return reply(wrapEsError(err));
-        }
+          if (isEsError(err)) {
+            return reply(wrapEsError(err));
+          }
 
-        // Case: default
-        reply(wrapUnknownError(err));
-      });
+          // Case: default
+          reply(wrapUnknownError(err));
+        });
     },
     config: {
       pre: [ licensePreRouting ]

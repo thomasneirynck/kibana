@@ -37,11 +37,11 @@ const getPageData = ($injector) => {
       nodesCountMetric,
     ]
   })
-  .then(response => processPipelinesAPIResponse(response.data, throughputMetric, nodesCountMetric))
-  .catch((err) => {
-    const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
-    return ajaxErrorHandlers(err);
-  });
+    .then(response => processPipelinesAPIResponse(response.data, throughputMetric, nodesCountMetric))
+    .catch((err) => {
+      const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
+      return ajaxErrorHandlers(err);
+    });
 };
 
 function makeUpgradeMessage(logstashVersion) {
@@ -53,38 +53,38 @@ function makeUpgradeMessage(logstashVersion) {
 }
 
 uiRoutes
-.when('/logstash/node/:uuid/pipelines', {
-  template,
-  resolve: {
-    clusters(Private) {
-      const routeInit = Private(routeInitProvider);
-      return routeInit();
+  .when('/logstash/node/:uuid/pipelines', {
+    template,
+    resolve: {
+      clusters(Private) {
+        const routeInit = Private(routeInitProvider);
+        return routeInit();
+      },
+      pageData: getPageData
     },
-    pageData: getPageData
-  },
-  controller($injector, $scope) {
-    const $route = $injector.get('$route');
-    const globalState = $injector.get('globalState');
-    const timefilter = $injector.get('timefilter');
-    const title = $injector.get('title');
-    const $executor = $injector.get('$executor');
+    controller($injector, $scope) {
+      const $route = $injector.get('$route');
+      const globalState = $injector.get('globalState');
+      const timefilter = $injector.get('timefilter');
+      const title = $injector.get('title');
+      const $executor = $injector.get('$executor');
 
-    $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
-    $scope.pageData = $route.current.locals.pageData;
+      $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
+      $scope.pageData = $route.current.locals.pageData;
 
-    $scope.upgradeMessage = makeUpgradeMessage($scope.pageData.nodeSummary.version);
-    timefilter.enableTimeRangeSelector();
-    timefilter.enableAutoRefreshSelector();
+      $scope.upgradeMessage = makeUpgradeMessage($scope.pageData.nodeSummary.version);
+      timefilter.enableTimeRangeSelector();
+      timefilter.enableAutoRefreshSelector();
 
-    title($scope.cluster, `Logstash - ${$scope.pageData.nodeSummary.name} - Pipelines`);
+      title($scope.cluster, `Logstash - ${$scope.pageData.nodeSummary.name} - Pipelines`);
 
-    $executor.register({
-      execute: () => getPageData($injector),
-      handleResponse: (response) => $scope.pageData = response
-    });
+      $executor.register({
+        execute: () => getPageData($injector),
+        handleResponse: (response) => $scope.pageData = response
+      });
 
-    $executor.start();
+      $executor.start();
 
-    $scope.$on('$destroy', $executor.destroy);
-  }
-});
+      $scope.$on('$destroy', $executor.destroy);
+    }
+  });

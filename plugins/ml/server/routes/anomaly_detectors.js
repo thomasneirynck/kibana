@@ -24,8 +24,8 @@ export function jobRoutes(server, commonRouteConfig) {
     handler(request, reply) {
       const callWithRequest = callWithRequestFactory(server, request);
       return callWithRequest('ml.jobs')
-      .then(resp => reply(resp))
-      .catch(resp => reply(wrapError(resp)));
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
     },
     config: {
       ...commonRouteConfig
@@ -39,8 +39,8 @@ export function jobRoutes(server, commonRouteConfig) {
       const callWithRequest = callWithRequestFactory(server, request);
       const jobId = request.params.jobId;
       return callWithRequest('ml.jobs', { jobId })
-      .then(resp => reply(resp))
-      .catch(resp => reply(wrapError(resp)));
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
     },
     config: {
       ...commonRouteConfig
@@ -53,8 +53,8 @@ export function jobRoutes(server, commonRouteConfig) {
     handler(request, reply) {
       const callWithRequest = callWithRequestFactory(server, request);
       return callWithRequest('ml.jobStats')
-      .then(resp => reply(resp))
-      .catch(resp => reply(wrapError(resp)));
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
     },
     config: {
       ...commonRouteConfig
@@ -68,8 +68,8 @@ export function jobRoutes(server, commonRouteConfig) {
       const callWithRequest = callWithRequestFactory(server, request);
       const jobId = request.params.jobId;
       return callWithRequest('ml.jobStats', { jobId })
-      .then(resp => reply(resp))
-      .catch(resp => reply(wrapError(resp)));
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
     },
     config: {
       ...commonRouteConfig
@@ -84,8 +84,8 @@ export function jobRoutes(server, commonRouteConfig) {
       const jobId = request.params.jobId;
       const body = request.payload;
       return callWithRequest('ml.addJob', { jobId, body })
-      .then(resp => reply(resp))
-      .catch(resp => reply(wrapError(resp)));
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
     },
     config: {
       ...commonRouteConfig
@@ -100,8 +100,8 @@ export function jobRoutes(server, commonRouteConfig) {
       const jobId = request.params.jobId;
       const body = request.payload;
       return callWithRequest('ml.updateJob', { jobId, body })
-      .then(resp => reply(resp))
-      .catch(resp => reply(wrapError(resp)));
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
     },
     config: {
       ...commonRouteConfig
@@ -115,8 +115,8 @@ export function jobRoutes(server, commonRouteConfig) {
       const callWithRequest = callWithRequestFactory(server, request);
       const jobId = request.params.jobId;
       return callWithRequest('ml.openJob', { jobId })
-      .then(resp => reply(resp))
-      .catch(resp => reply(wrapError(resp)));
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
     },
     config: {
       ...commonRouteConfig
@@ -136,8 +136,8 @@ export function jobRoutes(server, commonRouteConfig) {
         options.force = force;
       }
       return callWithRequest('ml.closeJob', options)
-      .then(resp => reply(resp))
-      .catch(resp => reply(wrapError(resp)));
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
     },
     config: {
       ...commonRouteConfig
@@ -157,8 +157,8 @@ export function jobRoutes(server, commonRouteConfig) {
         options.force = force;
       }
       return callWithRequest('ml.deleteJob', options)
-      .then(resp => reply(resp))
-      .catch(resp => reply(wrapError(resp)));
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
     },
     config: {
       ...commonRouteConfig
@@ -172,8 +172,8 @@ export function jobRoutes(server, commonRouteConfig) {
       const callWithRequest = callWithRequestFactory(server, request);
       const body = request.payload;
       return callWithRequest('ml.validateDetector', { body })
-      .then(resp => reply(resp))
-      .catch(resp => reply(wrapError(resp)));
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
     },
     config: {
       ...commonRouteConfig
@@ -188,8 +188,8 @@ export function jobRoutes(server, commonRouteConfig) {
       const jobId = request.params.jobId;
       const duration = request.payload.duration;
       return callWithRequest('ml.forecast', { jobId, duration })
-      .then(resp => reply(resp))
-      .catch(resp => reply(wrapError(resp)));
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
     },
     config: {
       ...commonRouteConfig
@@ -208,8 +208,8 @@ export function jobRoutes(server, commonRouteConfig) {
         start: request.payload.start,
         end: request.payload.end
       })
-      .then(resp => reply(resp))
-      .catch(resp => reply(wrapError(resp)));
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
     },
     config: {
       ...commonRouteConfig

@@ -79,7 +79,7 @@ describe(`when job is incomplete`, () => {
 
   const getIncompleteResponse = async () => {
     mockServer.plugins.elasticsearch.getCluster('admin')
-    .callWithInternalUser.mockReturnValue(Promise.resolve(getHits({ jobtype: 'unencodedJobType', status: 'pending' })));
+      .callWithInternalUser.mockReturnValue(Promise.resolve(getHits({ jobtype: 'unencodedJobType', status: 'pending' })));
 
     jobs(mockServer);
 
@@ -146,10 +146,10 @@ describe(`when job is failed`, () => {
 
 describe(`when job is completed`, () => {
   const getCompletedResponse = async ({
-      jobType = 'unencodedJobType',
-      outputContent = 'job output content',
-      outputContentType = 'application/pdf'
-    } = {}) => {
+    jobType = 'unencodedJobType',
+    outputContent = 'job output content',
+    outputContentType = 'application/pdf'
+  } = {}) => {
 
     const hits = getHits({
       jobtype: jobType,

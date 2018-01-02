@@ -45,33 +45,33 @@ const manageAngularLifecycle = ($scope, $route, elem) => {
 };
 
 routes
-.when(`${BASE_PATH}:view?`, {
-  template: template,
-  controllerAs: 'licenseManagement',
-  controller: class LicenseManagementController {
+  .when(`${BASE_PATH}:view?`, {
+    template: template,
+    controllerAs: 'licenseManagement',
+    controller: class LicenseManagementController {
 
-    constructor($injector, $window, $rootScope, $scope, $route, kbnUrl) {
-      let autoLogout = null;
-      /* if security is disabled, there will be no autoLogout service,
+      constructor($injector, $window, $rootScope, $scope, $route, kbnUrl) {
+        let autoLogout = null;
+        /* if security is disabled, there will be no autoLogout service,
          so just substitute noop function in that case */
-      try {
-        autoLogout = $injector.get('autoLogout');
-      } catch (e) {
-        autoLogout = () => {};
-      }
-      const elem = document.getElementById('licenseReactRoot');
-      const xPackInfo = xpackInfoProvider($window, $injector, $injector.get('Private'));
-      const initialState = { license: xPackInfo.get('license') };
-      const kbnUrlWrapper = {
-        change(url) {
-          kbnUrl.change(url);
-          $rootScope.$digest();
+        try {
+          autoLogout = $injector.get('autoLogout');
+        } catch (e) {
+          autoLogout = () => {};
         }
-      };
-      const services = { autoLogout, xPackInfo, kbnUrl: kbnUrlWrapper };
-      const store = licenseManagementStore(initialState, services);
-      renderReact(elem, store);
-      manageAngularLifecycle($scope, $route, elem);
+        const elem = document.getElementById('licenseReactRoot');
+        const xPackInfo = xpackInfoProvider($window, $injector, $injector.get('Private'));
+        const initialState = { license: xPackInfo.get('license') };
+        const kbnUrlWrapper = {
+          change(url) {
+            kbnUrl.change(url);
+            $rootScope.$digest();
+          }
+        };
+        const services = { autoLogout, xPackInfo, kbnUrl: kbnUrlWrapper };
+        const store = licenseManagementStore(initialState, services);
+        renderReact(elem, store);
+        manageAngularLifecycle($scope, $route, elem);
+      }
     }
-  }
-});
+  });

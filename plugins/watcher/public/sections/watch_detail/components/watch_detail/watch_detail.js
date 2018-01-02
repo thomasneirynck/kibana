@@ -70,14 +70,14 @@ app.directive('watchDetail', function ($injector) {
 
       loadWatchHistory = () => {
         return watchService.loadWatchHistory(this.watch.id, this.historyRange)
-        .then(watchHistoryItems => {
-          this.isHistoryLoading = false;
-          this.watchHistoryItems = watchHistoryItems;
-        })
-        .catch(err => {
-          return licenseService.checkValidity()
-          .then(() => this.notifier.error(err));
-        });
+          .then(watchHistoryItems => {
+            this.isHistoryLoading = false;
+            this.watchHistoryItems = watchHistoryItems;
+          })
+          .catch(err => {
+            return licenseService.checkValidity()
+              .then(() => this.notifier.error(err));
+          });
       }
 
       // update the watch history items when the time range changes
@@ -110,14 +110,14 @@ app.directive('watchDetail', function ($injector) {
 
       onActionAcknowledge = (actionStatus) => {
         return watchService.acknowledgeWatchAction(this.watch.id, actionStatus.id)
-        .then(watchStatus => {
-          this.watch.updateWatchStatus(watchStatus);
-          this.applySortToActionStatusTable();
-        })
-        .catch(err => {
-          return licenseService.checkValidity()
-          .then(() => this.notifier.error(err));
-        });
+          .then(watchStatus => {
+            this.watch.updateWatchStatus(watchStatus);
+            this.applySortToActionStatusTable();
+          })
+          .catch(err => {
+            return licenseService.checkValidity()
+              .then(() => this.notifier.error(err));
+          });
       }
 
       /**
@@ -126,24 +126,24 @@ app.directive('watchDetail', function ($injector) {
 
       onWatchDeactivate = () => {
         return watchService.deactivateWatch(this.watch.id)
-        .then(watchStatus => {
-          this.watch.updateWatchStatus(watchStatus);
-        })
-        .catch(err => {
-          return licenseService.checkValidity()
-          .then(() => this.notifier.error(err));
-        });
+          .then(watchStatus => {
+            this.watch.updateWatchStatus(watchStatus);
+          })
+          .catch(err => {
+            return licenseService.checkValidity()
+              .then(() => this.notifier.error(err));
+          });
       };
 
       onWatchActivate = () => {
         return watchService.activateWatch(this.watch.id)
-        .then(watchStatus => {
-          this.watch.updateWatchStatus(watchStatus);
-        })
-        .catch(err => {
-          return licenseService.checkValidity()
-          .then(() => this.notifier.error(err));
-        });
+          .then(watchStatus => {
+            this.watch.updateWatchStatus(watchStatus);
+          })
+          .catch(err => {
+            return licenseService.checkValidity()
+              .then(() => this.notifier.error(err));
+          });
       }
 
       onWatchDelete = () => {
@@ -157,14 +157,14 @@ app.directive('watchDetail', function ($injector) {
 
       deleteWatch = () => {
         return watchService.deleteWatch(this.watch.id)
-        .then(() => {
-          this.notifier.info(`Deleted Watch "${this.watch.displayName}"`);
-          this.close();
-        })
-        .catch(err => {
-          return licenseService.checkValidity()
-          .then(() => this.notifier.error(err));
-        });
+          .then(() => {
+            this.notifier.info(`Deleted Watch "${this.watch.displayName}"`);
+            this.close();
+          })
+          .catch(err => {
+            return licenseService.checkValidity()
+              .then(() => this.notifier.error(err));
+          });
       }
 
       close = () => {

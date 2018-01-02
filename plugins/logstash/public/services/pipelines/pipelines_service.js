@@ -13,7 +13,7 @@ export class PipelinesService {
    */
   getPipelineList() {
     return this.$http.get(`${this.basePath}/pipelines`)
-    .then(response => response.data.pipelines.map(pipeline => PipelineListItem.fromUpstreamJSON(pipeline)));
+      .then(response => response.data.pipelines.map(pipeline => PipelineListItem.fromUpstreamJSON(pipeline)));
   }
 
   /**
@@ -31,6 +31,6 @@ export class PipelinesService {
       headers: { 'Content-Type': 'application/json' }
     };
     return this.$http.delete(`${this.basePath}/pipelines`, requestOpts)
-    .then(response => response.data.results);
+      .then(response => response.data.results);
   }
 }

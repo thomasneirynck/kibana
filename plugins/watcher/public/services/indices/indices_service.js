@@ -9,8 +9,8 @@ export class IndicesService {
 
   getMatchingIndices(pattern) {
     return this.$http.post(`${this.basePath}/indices`, { pattern })
-    .then(response => {
-      return response.data.indices;
-    });
+      .then(response => {
+        return response.data.indices;
+      });
   }
 }

@@ -126,7 +126,7 @@ function outerAggs(pipelineId, pipelineHash, maxBucketSize) {
 }
 
 export async function getPipelineStatsAggregation(callWithRequest, req, logstashIndexPattern,
-                                                  { clusterUuid, start, end, pipelineId, pipelineHash }) {
+  { clusterUuid, start, end, pipelineId, pipelineHash }) {
   const filters = [
     {
       nested: {

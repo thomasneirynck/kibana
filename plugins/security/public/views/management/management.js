@@ -62,8 +62,8 @@ routes.defaults(/\/management/, {
       //
       // $promise is used here because the result is an ngResource, not a promise itself
       return ShieldUser.getCurrent().$promise
-      .then(ensureSecurityRegistered)
-      .catch(deregisterSecurity);
+        .then(ensureSecurityRegistered)
+        .catch(deregisterSecurity);
     }
   }
 });

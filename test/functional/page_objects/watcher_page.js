@@ -41,7 +41,7 @@ export function WatcherPageProvider({ getPageObjects, getService }) {
       await testSubjects.click('btnDeleteWatches');
     }
 
-//get all the watches in the list
+    //get all the watches in the list
     async getWatches() {
       const watches = await remote.findAllByCssSelector('.kuiTableRow');
       return mapAsync(watches, async watch => {
@@ -56,6 +56,6 @@ export function WatcherPageProvider({ getPageObjects, getService }) {
         };
       });
     }
-   }
+  }
   return new WatcherPage();
 }

@@ -29,8 +29,8 @@ export function clusterAlertsRoute(server) {
       const alertsIndex = prefixIndexPattern(config, 'xpack.monitoring.cluster_alerts.index', ccs);
 
       return getClusterLicense(req, esIndexPattern, clusterUuid)
-      .then(license => alertsClusterSearch(req, alertsIndex, { cluster_uuid: clusterUuid, license }, checkLicense))
-      .then(reply);
+        .then(license => alertsClusterSearch(req, alertsIndex, { cluster_uuid: clusterUuid, license }, checkLicense))
+        .then(reply);
     }
   });
 }

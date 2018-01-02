@@ -356,11 +356,11 @@ export function calculateTextWidth(txt, isNumber, elementSelection) {
   }
 
   const tempLabelText = svg.append('g')
-      .attr('class', 'temp-axis-label tick')
-      .selectAll('text.temp.axis').data('a')
-      .enter()
-      .append('text')
-      .text(txt);
+    .attr('class', 'temp-axis-label tick')
+    .selectAll('text.temp.axis').data('a')
+    .enter()
+    .append('text')
+    .text(txt);
   const width = tempLabelText[0][0].getBBox().width;
 
   d3.select('.temp-axis-label').remove();

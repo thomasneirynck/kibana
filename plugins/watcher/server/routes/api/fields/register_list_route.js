@@ -30,8 +30,8 @@ export function registerListRoute(server) {
       return fetchFields(callWithRequest, indexes)
         .then(response => {
           const json = (response.status === 404)
-             ? { fields: [] }
-             : response;
+            ? { fields: [] }
+            : response;
 
           const fields = Fields.fromUpstreamJson(json);
 

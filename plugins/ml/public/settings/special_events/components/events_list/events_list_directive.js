@@ -36,11 +36,11 @@ module.directive('mlEventsList', function (mlNewEventService) {
 
       $scope.clickNewEvent = function () {
         mlNewEventService.openNewEventWindow()
-        .then((event) => {
-          console.log(event);
-          $scope.events.push(event);
-        })
-        .catch(() => {});
+          .then((event) => {
+            console.log(event);
+            $scope.events.push(event);
+          })
+          .catch(() => {});
       };
 
       $scope.formatTime = function (timeMs) {

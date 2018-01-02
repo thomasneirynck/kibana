@@ -85,86 +85,86 @@ module.service('mlMultiMetricJobService', function (
     const searchJson = getSearchJsonFromConfig(formConfig);
 
     es.search(searchJson)
-    .then((resp) => {
+      .then((resp) => {
       // if this is the last chart load, wipe all previous chart data
-      if (thisLoadTimestamp === this.chartData.lastLoadTimestamp) {
-        _.each(fieldIds, (fieldId) => {
-          this.chartData.detectors[fieldId] = {
-            line: [],
-            swimlane: []
-          };
+        if (thisLoadTimestamp === this.chartData.lastLoadTimestamp) {
+          _.each(fieldIds, (fieldId) => {
+            this.chartData.detectors[fieldId] = {
+              line: [],
+              swimlane: []
+            };
+          });
+        } else {
+          deferred.resolve(this.chartData);
+        }
+        const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
+        let highestValue = Math.max(this.chartData.eventRateHighestValue, this.chartData.highestValue);
+
+        _.each(aggregationsByTime, (dataForTime) => {
+          const time = +dataForTime.key;
+          const date = new Date(time);
+          const docCount = +dataForTime.doc_count;
+
+          this.chartData.job.swimlane.push({
+            date: date,
+            time: time,
+            value: 0,
+            color: '',
+            percentComplete: 0
+          });
+          this.chartData.job.earliestTime = (time < this.chartData.job.earliestTime) ? time : this.chartData.job.earliestTime;
+
+          // used to draw the x axis labels on first render
+          this.chartData.job.line.push({
+            date: date,
+            time: time,
+            value: null,
+          });
+
+          _.each(fieldIds, (fieldId) => {
+            let value;
+            if (fieldId === EVENT_RATE_COUNT_FIELD) {
+              value = docCount;
+            } else if (typeof dataForTime[fieldId].value !== 'undefined') {
+              value = dataForTime[fieldId].value;
+            } else if (typeof dataForTime[fieldId].values !== 'undefined') {
+              value = dataForTime[fieldId].values[ML_MEDIAN_PERCENTS];
+            }
+
+            if (!isFinite(value) || docCount === 0) {
+              value = null;
+            }
+
+            if (value > highestValue) {
+              highestValue = value;
+            }
+
+            if (this.chartData.detectors[fieldId]) {
+              this.chartData.detectors[fieldId].line.push({
+                date,
+                time,
+                value,
+              });
+
+              // init swimlane
+              this.chartData.detectors[fieldId].swimlane.push({
+                date,
+                time,
+                value: 0,
+                color: '',
+                percentComplete: 0
+              });
+            }
+          });
         });
-      } else {
+
+        this.chartData.highestValue = Math.ceil(highestValue);
+
         deferred.resolve(this.chartData);
-      }
-      const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
-      let highestValue = Math.max(this.chartData.eventRateHighestValue, this.chartData.highestValue);
-
-      _.each(aggregationsByTime, (dataForTime) => {
-        const time = +dataForTime.key;
-        const date = new Date(time);
-        const docCount = +dataForTime.doc_count;
-
-        this.chartData.job.swimlane.push({
-          date: date,
-          time: time,
-          value: 0,
-          color: '',
-          percentComplete: 0
-        });
-        this.chartData.job.earliestTime = (time < this.chartData.job.earliestTime) ? time : this.chartData.job.earliestTime;
-
-        // used to draw the x axis labels on first render
-        this.chartData.job.line.push({
-          date: date,
-          time: time,
-          value: null,
-        });
-
-        _.each(fieldIds, (fieldId) => {
-          let value;
-          if (fieldId === EVENT_RATE_COUNT_FIELD) {
-            value = docCount;
-          } else if (typeof dataForTime[fieldId].value !== 'undefined') {
-            value = dataForTime[fieldId].value;
-          } else if (typeof dataForTime[fieldId].values !== 'undefined') {
-            value = dataForTime[fieldId].values[ML_MEDIAN_PERCENTS];
-          }
-
-          if (!isFinite(value) || docCount === 0) {
-            value = null;
-          }
-
-          if (value > highestValue) {
-            highestValue = value;
-          }
-
-          if (this.chartData.detectors[fieldId]) {
-            this.chartData.detectors[fieldId].line.push({
-              date,
-              time,
-              value,
-            });
-
-            // init swimlane
-            this.chartData.detectors[fieldId].swimlane.push({
-              date,
-              time,
-              value: 0,
-              color: '',
-              percentComplete: 0
-            });
-          }
-        });
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
       });
-
-      this.chartData.highestValue = Math.ceil(highestValue);
-
-      deferred.resolve(this.chartData);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
 
     return deferred.promise;
   };
@@ -316,13 +316,13 @@ module.service('mlMultiMetricJobService', function (
 
     // DO THE SAVE
     mlJobService.saveNewJob(job)
-    .then((resp) => {
-      if (resp.success) {
-        deferred.resolve(this.job);
-      } else {
-        deferred.reject(resp);
-      }
-    });
+      .then((resp) => {
+        if (resp.success) {
+          deferred.resolve(this.job);
+        } else {
+          deferred.reject(resp);
+        }
+      });
 
     return deferred.promise;
   };

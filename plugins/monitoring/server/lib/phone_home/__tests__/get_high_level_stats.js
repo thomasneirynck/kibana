@@ -12,7 +12,7 @@ describe('get_high_level_stats', () => {
   const server = {
     config: sinon.stub().returns({
       get: sinon.stub().withArgs(`xpack.monitoring.${product}.index_pattern`).returns(`.monitoring-${product}-N-*`)
-                       .withArgs('xpack.monitoring.max_bucket_size').returns(size)
+        .withArgs('xpack.monitoring.max_bucket_size').returns(size)
     })
   };
   const response = {

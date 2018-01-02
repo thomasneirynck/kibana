@@ -77,9 +77,9 @@ module.directive('mlMultiMetricJobChart', function (Private) {
       lineChartYScale = d3.scale.linear().range([lineChartHeight, 0]);
 
       lineChartValuesLine = d3.svg.line()
-      .x(d => lineChartXScale(d.date))
-      .y(d => lineChartYScale(d.value))
-      .defined(d => d.value !== null);
+        .x(d => lineChartXScale(d.date))
+        .y(d => lineChartYScale(d.value))
+        .defined(d => d.value !== null);
     }
 
 

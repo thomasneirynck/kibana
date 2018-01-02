@@ -85,39 +85,39 @@ export function getNodes(req, esIndexPattern) {
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
-  .then((resp) => {
-    if (!resp.hits.total) {
-      return {
-        nodes: {},
-        rows: []
-      };
-    }
-
-    const buckets = resp.aggregations.items.buckets;
-
-    return {
-      // for node names
-      nodes: buckets.reduce(function (prev, curr) {
-        prev[curr.key] = {
-          name: getLatestAggKey(curr.node_name.buckets),
-          transport_address: getLatestAggKey(curr.node_transport_address.buckets),
-          node_ids: curr.node_ids.buckets.map(bucket => bucket.key), // needed in calculate_node_type to check if current master node
-          attributes: {
-            data: getNodeAttribute(curr.node_data_attributes.buckets),
-            master: getNodeAttribute(curr.node_master_attributes.buckets)
-          }
+    .then((resp) => {
+      if (!resp.hits.total) {
+        return {
+          nodes: {},
+          rows: []
         };
-        return prev;
-      }, {}),
-      // for listing metrics
-      rows: mapResponse({
-        type: 'nodes',
-        items: buckets,
-        listingMetrics,
-        min,
-        max,
-        bucketSize
-      })
-    };
-  });
+      }
+
+      const buckets = resp.aggregations.items.buckets;
+
+      return {
+      // for node names
+        nodes: buckets.reduce(function (prev, curr) {
+          prev[curr.key] = {
+            name: getLatestAggKey(curr.node_name.buckets),
+            transport_address: getLatestAggKey(curr.node_transport_address.buckets),
+            node_ids: curr.node_ids.buckets.map(bucket => bucket.key), // needed in calculate_node_type to check if current master node
+            attributes: {
+              data: getNodeAttribute(curr.node_data_attributes.buckets),
+              master: getNodeAttribute(curr.node_master_attributes.buckets)
+            }
+          };
+          return prev;
+        }, {}),
+        // for listing metrics
+        rows: mapResponse({
+          type: 'nodes',
+          items: buckets,
+          listingMetrics,
+          min,
+          max,
+          bucketSize
+        })
+      };
+    });
 }

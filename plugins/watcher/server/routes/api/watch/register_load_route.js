@@ -24,31 +24,31 @@ export function registerLoadRoute(server) {
       const id = request.params.id;
 
       return fetchWatch(callWithRequest, id)
-      .then((hit) => {
-        const watchJson = get(hit, 'watch');
-        const watchStatusJson = get(hit, 'status');
-        const json = {
-          id,
-          watchJson,
-          watchStatusJson
-        };
+        .then((hit) => {
+          const watchJson = get(hit, 'watch');
+          const watchStatusJson = get(hit, 'status');
+          const json = {
+            id,
+            watchJson,
+            watchStatusJson
+          };
 
-        const watch = Watch.fromUpstreamJson(json);
-        reply({ watch: watch.downstreamJson });
-      })
-      .catch(err => {
+          const watch = Watch.fromUpstreamJson(json);
+          reply({ watch: watch.downstreamJson });
+        })
+        .catch(err => {
 
         // Case: Error from Elasticsearch JS client
-        if (isEsError(err)) {
-          const statusCodeToMessageMap = {
-            404: `Watch with id = ${id} not found`
-          };
-          return reply(wrapEsError(err, statusCodeToMessageMap));
-        }
+          if (isEsError(err)) {
+            const statusCodeToMessageMap = {
+              404: `Watch with id = ${id} not found`
+            };
+            return reply(wrapEsError(err, statusCodeToMessageMap));
+          }
 
-        // Case: default
-        reply(wrapUnknownError(err));
-      });
+          // Case: default
+          reply(wrapUnknownError(err));
+        });
     },
     config: {
       pre: [ licensePreRouting ]

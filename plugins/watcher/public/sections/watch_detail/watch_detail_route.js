@@ -9,72 +9,72 @@ import { updateWatchSections } from 'plugins/watcher/lib/update_management_secti
 import 'plugins/watcher/services/license';
 
 routes
-.when('/management/elasticsearch/watcher/watches/watch/:id', {
-  redirectTo: '/management/elasticsearch/watcher/watches/watch/:id/status'
-});
+  .when('/management/elasticsearch/watcher/watches/watch/:id', {
+    redirectTo: '/management/elasticsearch/watcher/watches/watch/:id/status'
+  });
 
 routes
-.when('/management/elasticsearch/watcher/watches/watch/:id/status', {
-  template: template,
-  resolve: {
-    watchTabs: ($injector) => {
-      const $route = $injector.get('$route');
-      const watchId = $route.current.params.id;
-      updateWatchSections(watchId);
+  .when('/management/elasticsearch/watcher/watches/watch/:id/status', {
+    template: template,
+    resolve: {
+      watchTabs: ($injector) => {
+        const $route = $injector.get('$route');
+        const watchId = $route.current.params.id;
+        updateWatchSections(watchId);
+      },
+      initialHistoryRange: function () {
+        return WATCH_HISTORY.INITIAL_RANGE;
+      },
+      watch: function ($injector) {
+        const $route = $injector.get('$route');
+        const watchService = $injector.get('xpackWatcherWatchService');
+        const kbnUrl = $injector.get('kbnUrl');
+
+        const notifier = new Notifier({ location: 'Watcher' });
+
+        const watchId = $route.current.params.id;
+
+        return watchService.loadWatch(watchId)
+          .catch(err => {
+            if (err.status !== 403) {
+              notifier.error(err);
+            }
+
+            kbnUrl.redirect('/management/elasticsearch/watcher/watches');
+            return Promise.reject();
+          });
+      },
+      watchHistoryItems: function ($injector) {
+        const $route = $injector.get('$route');
+        const watchService = $injector.get('xpackWatcherWatchService');
+        const kbnUrl = $injector.get('kbnUrl');
+
+        const notifier = new Notifier({ location: 'Watcher' });
+
+        const watchId = $route.current.params.id;
+
+        return watchService.loadWatchHistory(watchId, WATCH_HISTORY.INITIAL_RANGE)
+          .catch(err => {
+            if (err.status !== 403) {
+              notifier.error(err);
+            }
+
+            kbnUrl.redirect('/management/elasticsearch/watcher/watches');
+            return Promise.reject();
+          });
+      },
+      checkLicense: ($injector) => {
+        const licenseService = $injector.get('xpackWatcherLicenseService');
+        return licenseService.checkValidity();
+      }
     },
-    initialHistoryRange: function () {
-      return WATCH_HISTORY.INITIAL_RANGE;
-    },
-    watch: function ($injector) {
-      const $route = $injector.get('$route');
-      const watchService = $injector.get('xpackWatcherWatchService');
-      const kbnUrl = $injector.get('kbnUrl');
-
-      const notifier = new Notifier({ location: 'Watcher' });
-
-      const watchId = $route.current.params.id;
-
-      return watchService.loadWatch(watchId)
-      .catch(err => {
-        if (err.status !== 403) {
-          notifier.error(err);
-        }
-
-        kbnUrl.redirect('/management/elasticsearch/watcher/watches');
-        return Promise.reject();
-      });
-    },
-    watchHistoryItems: function ($injector) {
-      const $route = $injector.get('$route');
-      const watchService = $injector.get('xpackWatcherWatchService');
-      const kbnUrl = $injector.get('kbnUrl');
-
-      const notifier = new Notifier({ location: 'Watcher' });
-
-      const watchId = $route.current.params.id;
-
-      return watchService.loadWatchHistory(watchId, WATCH_HISTORY.INITIAL_RANGE)
-      .catch(err => {
-        if (err.status !== 403) {
-          notifier.error(err);
-        }
-
-        kbnUrl.redirect('/management/elasticsearch/watcher/watches');
-        return Promise.reject();
-      });
-    },
-    checkLicense: ($injector) => {
-      const licenseService = $injector.get('xpackWatcherLicenseService');
-      return licenseService.checkValidity();
+    controllerAs: 'watchDetailRoute',
+    controller: class WatchDetailRouteController {
+      constructor($injector) {
+        const $route = $injector.get('$route');
+        this.initialHistoryRange = $route.current.locals.initialHistoryRange;
+        this.watch = $route.current.locals.watch;
+        this.watchHistoryItems = $route.current.locals.watchHistoryItems;
+      }
     }
-  },
-  controllerAs: 'watchDetailRoute',
-  controller: class WatchDetailRouteController {
-    constructor($injector) {
-      const $route = $injector.get('$route');
-      this.initialHistoryRange = $route.current.locals.initialHistoryRange;
-      this.watch = $route.current.locals.watch;
-      this.watchHistoryItems = $route.current.locals.watchHistoryItems;
-    }
-  }
-});
+  });

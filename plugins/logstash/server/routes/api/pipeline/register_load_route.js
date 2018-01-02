@@ -28,11 +28,11 @@ export function registerLoadRoute(server) {
       const pipelineId = request.params.id;
 
       return fetchPipeline(callWithRequest, pipelineId)
-      .then((pipelineResponseFromES) => {
-        const pipeline = Pipeline.fromUpstreamJSON(pipelineResponseFromES);
-        reply({ pipeline });
-      })
-      .catch((e) => reply(Boom.internal(e)));
+        .then((pipelineResponseFromES) => {
+          const pipeline = Pipeline.fromUpstreamJSON(pipelineResponseFromES);
+          reply({ pipeline });
+        })
+        .catch((e) => reply(Boom.internal(e)));
     },
     config: {
       pre: [ licensePreRouting ]

@@ -92,7 +92,7 @@ export default function ({ getService, getPageObjects }) {
         await PageObjects.security.clickSaveEditUser();
       });
 
-      after('logout', async() => {
+      after('logout', async () => {
         await PageObjects.security.logout();
       });
 

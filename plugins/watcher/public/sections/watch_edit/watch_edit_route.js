@@ -10,69 +10,69 @@ import { updateWatchSections } from 'plugins/watcher/lib/update_management_secti
 import 'plugins/watcher/services/license';
 
 routes
-.when('/management/elasticsearch/watcher/watches/watch/:id/edit')
-.when('/management/elasticsearch/watcher/watches/new-watch/:watchType')
-.defaults(/management\/elasticsearch\/watcher\/watches\/(new-watch\/:watchType|watch\/:id\/edit)/, {
-  template: template,
-  controller: class WatchEditRouteController {
-    constructor($injector) {
-      const $route = $injector.get('$route');
-      this.watch = $route.current.locals.xpackWatch;
-      this.WATCH_TYPES = WATCH_TYPES;
-    }
-  },
-  controllerAs: 'watchEditRoute',
-  resolve: {
-    watchTabs: ($injector) => {
-      const $route = $injector.get('$route');
-      const watchId = $route.current.params.id;
-      updateWatchSections(watchId);
-    },
-    xpackWatch: function ($injector) {
-      const $route = $injector.get('$route');
-      const watchService = $injector.get('xpackWatcherWatchService');
-      const licenseService = $injector.get('xpackWatcherLicenseService');
-      const kbnUrl = $injector.get('kbnUrl');
-
-      const notifier = new Notifier({ location: 'Watcher' });
-
-      const watchId = $route.current.params.id;
-      const watchType = $route.current.params.watchType;
-
-      if (!watchId) {
-        return licenseService.refreshLicense()
-        .then(() => {
-          return watchService.newWatch(watchType);
-        })
-        .catch(err => {
-          return licenseService.checkValidity()
-          .then(() => {
-            if (err.status !== 403) {
-              notifier.error(err);
-            }
-
-            kbnUrl.redirect('/management/elasticsearch/watcher/watches');
-            return Promise.reject();
-          });
-        });
+  .when('/management/elasticsearch/watcher/watches/watch/:id/edit')
+  .when('/management/elasticsearch/watcher/watches/new-watch/:watchType')
+  .defaults(/management\/elasticsearch\/watcher\/watches\/(new-watch\/:watchType|watch\/:id\/edit)/, {
+    template: template,
+    controller: class WatchEditRouteController {
+      constructor($injector) {
+        const $route = $injector.get('$route');
+        this.watch = $route.current.locals.xpackWatch;
+        this.WATCH_TYPES = WATCH_TYPES;
       }
-
-      return watchService.loadWatch(watchId)
-      .catch(err => {
-        return licenseService.checkValidity()
-        .then(() => {
-          if (err.status !== 403) {
-            notifier.error(err);
-          }
-
-          kbnUrl.redirect('/management/elasticsearch/watcher/watches');
-          return Promise.reject();
-        });
-      });
     },
-    checkLicense: ($injector) => {
-      const licenseService = $injector.get('xpackWatcherLicenseService');
-      return licenseService.checkValidity();
+    controllerAs: 'watchEditRoute',
+    resolve: {
+      watchTabs: ($injector) => {
+        const $route = $injector.get('$route');
+        const watchId = $route.current.params.id;
+        updateWatchSections(watchId);
+      },
+      xpackWatch: function ($injector) {
+        const $route = $injector.get('$route');
+        const watchService = $injector.get('xpackWatcherWatchService');
+        const licenseService = $injector.get('xpackWatcherLicenseService');
+        const kbnUrl = $injector.get('kbnUrl');
+
+        const notifier = new Notifier({ location: 'Watcher' });
+
+        const watchId = $route.current.params.id;
+        const watchType = $route.current.params.watchType;
+
+        if (!watchId) {
+          return licenseService.refreshLicense()
+            .then(() => {
+              return watchService.newWatch(watchType);
+            })
+            .catch(err => {
+              return licenseService.checkValidity()
+                .then(() => {
+                  if (err.status !== 403) {
+                    notifier.error(err);
+                  }
+
+                  kbnUrl.redirect('/management/elasticsearch/watcher/watches');
+                  return Promise.reject();
+                });
+            });
+        }
+
+        return watchService.loadWatch(watchId)
+          .catch(err => {
+            return licenseService.checkValidity()
+              .then(() => {
+                if (err.status !== 403) {
+                  notifier.error(err);
+                }
+
+                kbnUrl.redirect('/management/elasticsearch/watcher/watches');
+                return Promise.reject();
+              });
+          });
+      },
+      checkLicense: ($injector) => {
+        const licenseService = $injector.get('xpackWatcherLicenseService');
+        return licenseService.checkValidity();
+      }
     }
-  }
-});
+  });

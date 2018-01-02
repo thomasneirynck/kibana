@@ -15,20 +15,20 @@ function getPageData($injector) {
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/alerts`;
 
   return $http.post(url, { ccs: globalState.ccs })
-  .then(response => {
-    const alerts = get(response, 'data', []);
-    return alerts.map(alert => {
-      return {
-        ...alert,
-        since: formatTimestampToDuration(alert.timestamp, CALCULATE_DURATION_SINCE),
-        severity_group: mapSeverity(alert.metadata.severity).value
-      };
+    .then(response => {
+      const alerts = get(response, 'data', []);
+      return alerts.map(alert => {
+        return {
+          ...alert,
+          since: formatTimestampToDuration(alert.timestamp, CALCULATE_DURATION_SINCE),
+          severity_group: mapSeverity(alert.metadata.severity).value
+        };
+      });
+    })
+    .catch((err) => {
+      const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
+      return ajaxErrorHandlers(err);
     });
-  })
-  .catch((err) => {
-    const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
-    return ajaxErrorHandlers(err);
-  });
 }
 
 uiRoutes.when('/alerts', {

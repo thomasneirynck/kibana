@@ -21,19 +21,19 @@ export function registerLoadRoute(server) {
     method: 'GET',
     handler: (request, reply) => {
       return fetchClusterSettings(callWithInternalUser)
-      .then((settings) => {
-        reply(Settings.fromUpstreamJson(settings).downstreamJson);
-      })
-      .catch(err => {
+        .then((settings) => {
+          reply(Settings.fromUpstreamJson(settings).downstreamJson);
+        })
+        .catch(err => {
 
         // Case: Error from Elasticsearch JS client
-        if (isEsError(err)) {
-          return reply(wrapEsError(err));
-        }
+          if (isEsError(err)) {
+            return reply(wrapEsError(err));
+          }
 
-        // Case: default
-        reply(wrapUnknownError(err));
-      });
+          // Case: default
+          reply(wrapUnknownError(err));
+        });
     },
     config: {
       pre: [ licensePreRouting ]

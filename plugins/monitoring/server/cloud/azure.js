@@ -26,7 +26,7 @@ class AzureCloudService extends CloudService {
 
     return fromCallback(callback => request(req, callback), { multiArgs: true })
     // Note: there is no fallback option for Azure
-    .then(response => this._parseResponse(response[1], (body) => this._parseBody(body)));
+      .then(response => this._parseResponse(response[1], (body) => this._parseBody(body)));
   }
 
   /**

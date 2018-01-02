@@ -18,7 +18,7 @@ function fetchWatches(callWithRequest) {
   };
 
   return callWithRequest('search', params)
-  .then(response => fetchAllFromScroll(response, callWithRequest));
+    .then(response => fetchAllFromScroll(response, callWithRequest));
 }
 
 export function registerListRoute(server) {
@@ -32,33 +32,33 @@ export function registerListRoute(server) {
       const callWithRequest = callWithRequestFactory(server, request);
 
       return fetchWatches(callWithRequest)
-      .then(hits => {
-        const watches = hits.map(hit => {
-          const id = get(hit, '_id');
-          const watchJson = get(hit, '_source');
-          const watchStatusJson = get(hit, '_source.status');
+        .then(hits => {
+          const watches = hits.map(hit => {
+            const id = get(hit, '_id');
+            const watchJson = get(hit, '_source');
+            const watchStatusJson = get(hit, '_source.status');
 
-          return Watch.fromUpstreamJson({
-            id,
-            watchJson,
-            watchStatusJson
+            return Watch.fromUpstreamJson({
+              id,
+              watchJson,
+              watchStatusJson
+            });
           });
-        });
 
-        reply({
-          watches: watches.map(watch => watch.downstreamJson)
-        });
-      })
-      .catch(err => {
+          reply({
+            watches: watches.map(watch => watch.downstreamJson)
+          });
+        })
+        .catch(err => {
 
         // Case: Error from Elasticsearch JS client
-        if (isEsError(err)) {
-          return reply(wrapEsError(err));
-        }
+          if (isEsError(err)) {
+            return reply(wrapEsError(err));
+          }
 
-        // Case: default
-        reply(wrapUnknownError(err));
-      });
+          // Case: default
+          reply(wrapUnknownError(err));
+        });
     },
     config: {
       pre: [ licensePreRouting ]

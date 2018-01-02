@@ -25,17 +25,17 @@ export function registerSaveRoute(server) {
       const watch = Watch.fromDownstreamJson(request.payload);
 
       return saveWatch(callWithRequest, watch.upstreamJson)
-      .then(reply)
-      .catch(err => {
+        .then(reply)
+        .catch(err => {
 
         // Case: Error from Elasticsearch JS client
-        if (isEsError(err)) {
-          return reply(wrapEsError(err));
-        }
+          if (isEsError(err)) {
+            return reply(wrapEsError(err));
+          }
 
-        // Case: default
-        reply(wrapUnknownError(err));
-      });
+          // Case: default
+          reply(wrapUnknownError(err));
+        });
     },
     config: {
       pre: [ licensePreRouting ]

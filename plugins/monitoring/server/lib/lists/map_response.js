@@ -62,10 +62,10 @@ function calculateMetrics(type, partialBucketFilter) {
   const calculators = {
     nodes: function (buckets, metric) {
       const results = _.chain(buckets)
-      .filter(partialBucketFilter) // buckets with whole start/end time range
-      .map(mapChartData(metric)) // calculate metric as X/Y
-      .filter(result => !!result && (!!result.y || result.y === 0)) // take only non-null values
-      .value();
+        .filter(partialBucketFilter) // buckets with whole start/end time range
+        .map(mapChartData(metric)) // calculate metric as X/Y
+        .filter(result => !!result && (!!result.y || result.y === 0)) // take only non-null values
+        .value();
 
       minVal = _.min(_.pluck(results, 'y'));
       maxVal = _.max(_.pluck(results, 'y'));

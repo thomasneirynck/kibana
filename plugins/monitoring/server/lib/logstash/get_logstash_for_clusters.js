@@ -147,40 +147,40 @@ export function getLogstashForClusters(req, lsIndexPattern, clusters) {
 
     const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
     return callWithRequest(req, 'search', params)
-    .then(result => {
-      const aggregations = get(result, 'aggregations', {});
-      const logstashUuids =  get(aggregations, 'logstash_uuids.buckets', []);
-      const logstashVersions = get(aggregations, 'logstash_versions.buckets', []);
+      .then(result => {
+        const aggregations = get(result, 'aggregations', {});
+        const logstashUuids =  get(aggregations, 'logstash_uuids.buckets', []);
+        const logstashVersions = get(aggregations, 'logstash_versions.buckets', []);
 
-      // everything is initialized such that it won't impact any rollup
-      let eventsInTotal = 0;
-      let eventsOutTotal = 0;
-      let memory = 0;
-      let memoryUsed = 0;
-      let maxUptime = 0;
+        // everything is initialized such that it won't impact any rollup
+        let eventsInTotal = 0;
+        let eventsOutTotal = 0;
+        let memory = 0;
+        let memoryUsed = 0;
+        let maxUptime = 0;
 
-      // if the cluster has logstash instances at all
-      if (logstashUuids.length) {
-        eventsInTotal = get(aggregations, 'events_in_total.value');
-        eventsOutTotal = get(aggregations, 'events_out_total.value');
-        memory = get(aggregations, 'memory.value');
-        memoryUsed = get(aggregations, 'memory_used.value');
-        maxUptime = get(aggregations, 'max_uptime.value');
-      }
-
-      return {
-        clusterUuid,
-        stats: {
-          node_count: logstashUuids.length,
-          events_in_total: eventsInTotal,
-          events_out_total: eventsOutTotal,
-          avg_memory: memory,
-          avg_memory_used: memoryUsed,
-          max_uptime: maxUptime,
-          pipeline_count: get(aggregations, 'pipelines_nested.pipelines.value', 0),
-          versions: logstashVersions.map(versionBucket => versionBucket.key)
+        // if the cluster has logstash instances at all
+        if (logstashUuids.length) {
+          eventsInTotal = get(aggregations, 'events_in_total.value');
+          eventsOutTotal = get(aggregations, 'events_out_total.value');
+          memory = get(aggregations, 'memory.value');
+          memoryUsed = get(aggregations, 'memory_used.value');
+          maxUptime = get(aggregations, 'max_uptime.value');
         }
-      };
-    });
+
+        return {
+          clusterUuid,
+          stats: {
+            node_count: logstashUuids.length,
+            events_in_total: eventsInTotal,
+            events_out_total: eventsOutTotal,
+            avg_memory: memory,
+            avg_memory_used: memoryUsed,
+            max_uptime: maxUptime,
+            pipeline_count: get(aggregations, 'pipelines_nested.pipelines.value', 0),
+            versions: logstashVersions.map(versionBucket => versionBucket.key)
+          }
+        };
+      });
   });
 }

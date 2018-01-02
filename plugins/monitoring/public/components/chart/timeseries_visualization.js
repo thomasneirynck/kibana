@@ -123,7 +123,7 @@ export class TimeseriesVisualization extends React.Component {
           onToggle={this.toggleFilter}
           {...this.props}
         />
-        )
+      )
       : null;
 
     return (

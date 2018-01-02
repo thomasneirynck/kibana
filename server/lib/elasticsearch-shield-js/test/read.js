@@ -18,10 +18,10 @@ describe('', function () {
   before(function () {
     this.timeout(5 * 60 * 1000);
     return client.create(port)
-    .then(function () {
+      .then(function () {
       // make sure ES is empty
-      return client.get().clearEs();
-    });
+        return client.get().clearEs();
+      });
   });
 
   const files = glob.sync(resolve(testDir, '**', '*.yaml'));

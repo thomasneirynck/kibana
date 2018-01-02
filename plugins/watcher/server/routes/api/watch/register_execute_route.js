@@ -29,30 +29,30 @@ export function registerExecuteRoute(server) {
       const watch = Watch.fromDownstreamJson(request.payload.watch);
 
       return executeWatch(callWithRequest, executeDetails.upstreamJson, watch.watchJson)
-      .then((hit) => {
-        const id = get(hit, '_id');
-        const watchHistoryItemJson = get(hit, 'watch_record');
-        const watchId = get(hit, 'watch_record.watch_id');
-        const json = {
-          id,
-          watchId,
-          watchHistoryItemJson,
-          includeDetails: true
-        };
+        .then((hit) => {
+          const id = get(hit, '_id');
+          const watchHistoryItemJson = get(hit, 'watch_record');
+          const watchId = get(hit, 'watch_record.watch_id');
+          const json = {
+            id,
+            watchId,
+            watchHistoryItemJson,
+            includeDetails: true
+          };
 
-        const watchHistoryItem = WatchHistoryItem.fromUpstreamJson(json);
-        reply({ watchHistoryItem: watchHistoryItem.downstreamJson });
-      })
-      .catch(err => {
+          const watchHistoryItem = WatchHistoryItem.fromUpstreamJson(json);
+          reply({ watchHistoryItem: watchHistoryItem.downstreamJson });
+        })
+        .catch(err => {
 
         // Case: Error from Elasticsearch JS client
-        if (isEsError(err)) {
-          return reply(wrapEsError(err));
-        }
+          if (isEsError(err)) {
+            return reply(wrapEsError(err));
+          }
 
-        // Case: default
-        reply(wrapUnknownError(err));
-      });
+          // Case: default
+          reply(wrapUnknownError(err));
+        });
     },
     config: {
       pre: [ licensePreRouting ]

@@ -26,13 +26,13 @@ module.service('mlESMappingService', function ($q, mlJobService) {
     const deferred = $q.defer();
 
     mlJobService.getESMappings()
-    .then(indices => {
-      this.indices = indices;
-      deferred.resolve(indices);
+      .then(indices => {
+        this.indices = indices;
+        deferred.resolve(indices);
 
-    }).catch(err => {
-      console.log('getMappings:', err);
-    });
+      }).catch(err => {
+        console.log('getMappings:', err);
+      });
 
     return deferred.promise;
   };

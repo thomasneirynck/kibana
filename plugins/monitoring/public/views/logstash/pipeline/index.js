@@ -23,28 +23,28 @@ function getPageData($injector) {
   return $http.post(url, {
     ccs
   })
-  .then(response => response.data)
-  .then(data => {
-    data.versions = data.versions.map(version => {
-      const relativeFirstSeen = formatTimestampToDuration(version.firstSeen, CALCULATE_DURATION_SINCE);
-      const relativeLastSeen = formatTimestampToDuration(version.lastSeen, CALCULATE_DURATION_SINCE);
+    .then(response => response.data)
+    .then(data => {
+      data.versions = data.versions.map(version => {
+        const relativeFirstSeen = formatTimestampToDuration(version.firstSeen, CALCULATE_DURATION_SINCE);
+        const relativeLastSeen = formatTimestampToDuration(version.lastSeen, CALCULATE_DURATION_SINCE);
 
-      const fudgeFactorSeconds = 2 * minIntervalSeconds;
-      const isLastSeenCloseToNow = (Date.now() - version.lastSeen) <= fudgeFactorSeconds * 1000;
+        const fudgeFactorSeconds = 2 * minIntervalSeconds;
+        const isLastSeenCloseToNow = (Date.now() - version.lastSeen) <= fudgeFactorSeconds * 1000;
 
-      return {
-        ...version,
-        relativeFirstSeen: `${relativeFirstSeen} ago`,
-        relativeLastSeen: isLastSeenCloseToNow ? 'now' : `until ${relativeLastSeen} ago`
-      };
+        return {
+          ...version,
+          relativeFirstSeen: `${relativeFirstSeen} ago`,
+          relativeLastSeen: isLastSeenCloseToNow ? 'now' : `until ${relativeLastSeen} ago`
+        };
+      });
+
+      return data;
+    })
+    .catch((err) => {
+      const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
+      return ajaxErrorHandlers(err);
     });
-
-    return data;
-  })
-  .catch((err) => {
-    const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
-    return ajaxErrorHandlers(err);
-  });
 }
 
 uiRoutes.when('/logstash/pipelines/:id/:hash?', {

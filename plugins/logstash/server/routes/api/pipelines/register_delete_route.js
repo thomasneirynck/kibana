@@ -11,20 +11,20 @@ function deletePipelines(callWithRequest, pipelineIds) {
       id: pipelineId,
       refresh: 'wait_for'
     })
-    .then(success => ({ success }))
-    .catch(error => ({ error }));
+      .then(success => ({ success }))
+      .catch(error => ({ error }));
   });
 
   return Promise.all(deletePromises)
-  .then(results => {
-    const successes = results.filter(result => Boolean(result.success));
-    const errors = results.filter(result => Boolean(result.error));
+    .then(results => {
+      const successes = results.filter(result => Boolean(result.success));
+      const errors = results.filter(result => Boolean(result.error));
 
-    return {
-      numSuccesses: successes.length,
-      numErrors: errors.length
-    };
-  });
+      return {
+        numSuccesses: successes.length,
+        numErrors: errors.length
+      };
+    });
 }
 
 export function registerDeleteRoute(server) {
@@ -37,12 +37,12 @@ export function registerDeleteRoute(server) {
       const callWithRequest = callWithRequestFactory(server, request);
 
       return deletePipelines(callWithRequest, request.payload.pipelineIds)
-      .then(results => {
-        reply({ results });
-      })
-      .catch(err => {
-        reply(wrapUnknownError(err));
-      });
+        .then(results => {
+          reply({ results });
+        })
+        .catch(err => {
+          reply(wrapUnknownError(err));
+        });
     },
     config: {
       pre: [ licensePreRouting ]

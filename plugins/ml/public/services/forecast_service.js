@@ -32,7 +32,7 @@ module.service('mlForecastService', function ($q, es, ml) {
     job,
     earliestMs,
     maxResults
-    ) {
+  ) {
     const deferred = $q.defer();
     const obj = {
       success: true,
@@ -73,18 +73,18 @@ module.service('mlForecastService', function ($q, es, ml) {
         ]
       }
     })
-    .then((resp) => {
-      if (resp.hits.total !== 0) {
-        _.each(resp.hits.hits, (hit) => {
-          obj.forecasts.push(hit._source);
-        });
-      }
+      .then((resp) => {
+        if (resp.hits.total !== 0) {
+          _.each(resp.hits.hits, (hit) => {
+            obj.forecasts.push(hit._source);
+          });
+        }
 
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
 
     return deferred.promise;
   };
@@ -143,14 +143,14 @@ module.service('mlForecastService', function ($q, es, ml) {
         }
       }
     })
-    .then((resp) => {
-      obj.earliest = _.get(resp, 'aggregations.earliest.value', null);
-      obj.latest = _.get(resp, 'aggregations.latest.value', null);
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+      .then((resp) => {
+        obj.earliest = _.get(resp, 'aggregations.earliest.value', null);
+        obj.latest = _.get(resp, 'aggregations.latest.value', null);
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
 
     return deferred.promise;
   };
@@ -244,12 +244,12 @@ module.service('mlForecastService', function ($q, es, ml) {
     // Otherwise default to avg, min and max aggs for the
     // forecast prediction, upper and lower
     const forecastAggs = (aggType === undefined) ?
-    { avg: 'avg', max: 'max', min: 'min' } :
-    {
-      avg: aggType.avg,
-      max: aggType.max,
-      min: aggType.min
-    };
+      { avg: 'avg', max: 'max', min: 'min' } :
+      {
+        avg: aggType.avg,
+        max: aggType.max,
+        min: aggType.min
+      };
 
     es.search({
       index: ML_RESULTS_INDEX_PATTERN,
@@ -288,22 +288,22 @@ module.service('mlForecastService', function ($q, es, ml) {
         }
       }
     })
-    .then((resp) => {
-      const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
-      _.each(aggregationsByTime, (dataForTime) => {
-        const time = dataForTime.key;
-        obj.results[time] = {
-          prediction: _.get(dataForTime, ['prediction', 'value']),
-          forecastUpper: _.get(dataForTime, ['forecastUpper', 'value']),
-          forecastLower: _.get(dataForTime, ['forecastLower', 'value'])
-        };
-      });
+      .then((resp) => {
+        const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
+        _.each(aggregationsByTime, (dataForTime) => {
+          const time = dataForTime.key;
+          obj.results[time] = {
+            prediction: _.get(dataForTime, ['prediction', 'value']),
+            forecastUpper: _.get(dataForTime, ['forecastUpper', 'value']),
+            forecastLower: _.get(dataForTime, ['forecastLower', 'value'])
+          };
+        });
 
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
 
     return deferred.promise;
   };
@@ -317,11 +317,11 @@ module.service('mlForecastService', function ($q, es, ml) {
       jobId,
       duration
     })
-    .then((resp) => {
-      deferred.resolve(resp);
-    }).catch((err) => {
-      deferred.reject(err);
-    });
+      .then((resp) => {
+        deferred.resolve(resp);
+      }).catch((err) => {
+        deferred.reject(err);
+      });
     return deferred.promise;
   };
 
@@ -362,15 +362,15 @@ module.service('mlForecastService', function ($q, es, ml) {
         }
       }
     })
-    .then((resp) => {
-      if (resp.hits.total !== 0) {
-        obj.stats = _.first(resp.hits.hits)._source;
-      }
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+      .then((resp) => {
+        if (resp.hits.total !== 0) {
+          obj.stats = _.first(resp.hits.hits)._source;
+        }
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
 
     return deferred.promise;
   };

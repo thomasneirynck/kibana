@@ -10,7 +10,7 @@ import { get } from 'lodash';
  */
 export function getElasticsearchStats(server, callCluster, clusterUuids) {
   return fetchElasticsearchStats(server, callCluster, clusterUuids)
-  .then(handleElasticsearchStats);
+    .then(handleElasticsearchStats);
 }
 
 /**

@@ -36,58 +36,58 @@ module.directive('mlFullTimeRangeSelector', function (mlFullTimeRangeSelectorSer
     }
   };
 })
-.service('mlFullTimeRangeSelectorService', function (timefilter, Notifier, es, $q) {
-  const notify = new Notifier();
+  .service('mlFullTimeRangeSelectorService', function (timefilter, Notifier, es, $q) {
+    const notify = new Notifier();
 
-  // called on button press
-  this.setFullTimeRange = function (indexPattern, query) {
-    indexTimeRange(indexPattern, query)
-    .then((resp) => {
-      timefilter.time.from = moment(resp.start.epoch).toISOString();
-      timefilter.time.to = moment(resp.end.epoch).toISOString();
-    })
-    .catch((resp) => {
-      notify.error(resp);
-    });
-  };
+    // called on button press
+    this.setFullTimeRange = function (indexPattern, query) {
+      indexTimeRange(indexPattern, query)
+        .then((resp) => {
+          timefilter.time.from = moment(resp.start.epoch).toISOString();
+          timefilter.time.to = moment(resp.end.epoch).toISOString();
+        })
+        .catch((resp) => {
+          notify.error(resp);
+        });
+    };
 
-  // load the earliest and latest time stamps for the index
-  function indexTimeRange(indexPattern, query) {
-    return $q((resolve, reject) => {
-      const obj = { success: true, start: { epoch: 0, string: '' }, end: { epoch: 0, string: '' } };
+    // load the earliest and latest time stamps for the index
+    function indexTimeRange(indexPattern, query) {
+      return $q((resolve, reject) => {
+        const obj = { success: true, start: { epoch: 0, string: '' }, end: { epoch: 0, string: '' } };
 
-      es.search({
-        index: indexPattern.title,
-        size: 0,
-        body: {
-          query,
-          aggs: {
-            earliest: {
-              min: {
-                field: indexPattern.timeFieldName
-              }
-            },
-            latest: {
-              max: {
-                field: indexPattern.timeFieldName
+        es.search({
+          index: indexPattern.title,
+          size: 0,
+          body: {
+            query,
+            aggs: {
+              earliest: {
+                min: {
+                  field: indexPattern.timeFieldName
+                }
+              },
+              latest: {
+                max: {
+                  field: indexPattern.timeFieldName
+                }
               }
             }
           }
-        }
-      })
-      .then((resp) => {
-        if (resp.aggregations && resp.aggregations.earliest && resp.aggregations.latest) {
-          obj.start.epoch = resp.aggregations.earliest.value;
-          obj.start.string = resp.aggregations.earliest.value_as_string;
+        })
+          .then((resp) => {
+            if (resp.aggregations && resp.aggregations.earliest && resp.aggregations.latest) {
+              obj.start.epoch = resp.aggregations.earliest.value;
+              obj.start.string = resp.aggregations.earliest.value_as_string;
 
-          obj.end.epoch = resp.aggregations.latest.value;
-          obj.end.string = resp.aggregations.latest.value_as_string;
-        }
-        resolve(obj);
-      })
-      .catch((resp) => {
-        reject(resp);
+              obj.end.epoch = resp.aggregations.latest.value;
+              obj.end.string = resp.aggregations.latest.value_as_string;
+            }
+            resolve(obj);
+          })
+          .catch((resp) => {
+            reject(resp);
+          });
       });
-    });
-  }
-});
+    }
+  });

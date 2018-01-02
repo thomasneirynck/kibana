@@ -208,14 +208,14 @@ module.directive('mlEventRateChart', function (Private) {
       }
 
       barChartGroup.selectAll('bar')
-      .data(data)
-      .enter().append('rect')
-      .style('fill', '#32a7c2')
-      .attr('class', 'bar')
-      .attr('x', (d) => { return barChartXScale(d.time); })
-      .attr('width', cellWidth)
-      .attr('y', (d) => { return barChartYScale(d.value); })
-      .attr('height', (d) => { return barChartHeight - barChartYScale(d.value); });
+        .data(data)
+        .enter().append('rect')
+        .style('fill', '#32a7c2')
+        .attr('class', 'bar')
+        .attr('x', (d) => { return barChartXScale(d.time); })
+        .attr('width', cellWidth)
+        .attr('y', (d) => { return barChartYScale(d.value); })
+        .attr('height', (d) => { return barChartHeight - barChartYScale(d.value); });
     }
 
     function drawResults() {
