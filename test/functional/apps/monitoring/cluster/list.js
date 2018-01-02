@@ -9,7 +9,7 @@ export default function ({ getService, getPageObjects }) {
   const PageObjects = getPageObjects(['monitoring', 'header']);
 
   describe('monitoring/cluster-list', () => {
-    describe.skip('with trial license clusters', () => { // eslint-disable-line jest/no-disabled-tests
+    describe('with trial license clusters', () => {
       const UNSUPPORTED_CLUSTER_UUID = '6d-9tDFTRe-qT5GoBytdlQ';
 
       before(async () => {
@@ -20,8 +20,8 @@ export default function ({ getService, getPageObjects }) {
         await PageObjects.monitoring.navigateTo();
         await PageObjects.monitoring.getNoDataMessage();
 
-        const fromTime = '2017-08-15 22:02:57.743';
-        const toTime = '2017-08-15 22:10:32.845';
+        const fromTime = '2017-08-15 21:00:00';
+        const toTime = '2017-08-16 00:00:00';
         await PageObjects.header.setAbsoluteRange(fromTime, toTime);
 
         await clusterList.assertDefaults();
