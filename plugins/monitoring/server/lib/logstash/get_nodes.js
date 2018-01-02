@@ -31,7 +31,7 @@ export function getNodes(req, lsIndexPattern, { clusterUuid }) {
       query: createQuery({
         start,
         end,
-        uuid: clusterUuid,
+        clusterUuid,
         metric: ElasticsearchMetric.getMetricFields(),
         type: 'logstash_stats'
       }),

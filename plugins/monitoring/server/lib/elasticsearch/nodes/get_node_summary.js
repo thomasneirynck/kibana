@@ -70,7 +70,7 @@ export function getNodeSummary(req, esIndexPattern, clusterState, shardStats, { 
     body: {
       size: 1,
       sort: { timestamp: { order: 'desc' } },
-      query: createQuery({ type: 'node_stats', start, end, uuid: clusterUuid, metric, filters })
+      query: createQuery({ type: 'node_stats', start, end, clusterUuid, metric, filters })
     }
   };
 

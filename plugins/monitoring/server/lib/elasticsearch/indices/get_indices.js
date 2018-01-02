@@ -58,7 +58,7 @@ export function getIndices(req, esIndexPattern, showSystemIndices = false) {
     });
   }
 
-  const uuid = req.params.clusterUuid;
+  const clusterUuid = req.params.clusterUuid;
   const metricFields = ElasticsearchMetric.getMetricFields();
   const config = req.server.config();
   const params = {
@@ -87,7 +87,7 @@ export function getIndices(req, esIndexPattern, showSystemIndices = false) {
         type: 'index_stats',
         start: min,
         end: max,
-        uuid,
+        clusterUuid,
         metric: metricFields,
         filters
       }),

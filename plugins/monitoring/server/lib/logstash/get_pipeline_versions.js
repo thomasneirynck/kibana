@@ -24,7 +24,7 @@ function fetchPipelineVersions(...args) {
   const query = createQuery({
     type: 'logstash_stats',
     metric: ElasticsearchMetric.getMetricFields(),
-    uuid: clusterUuid,
+    clusterUuid,
     filters
   });
 

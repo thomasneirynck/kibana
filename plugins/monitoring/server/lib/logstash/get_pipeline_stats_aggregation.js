@@ -148,7 +148,7 @@ export async function getPipelineStatsAggregation(callWithRequest, req, logstash
     start,
     end,
     metric: ElasticsearchMetric.getMetricFields(),
-    uuid: clusterUuid,
+    clusterUuid,
     filters
   });
 

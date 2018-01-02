@@ -422,7 +422,7 @@ const metricInstances = {
     // CGroup CPU Utilization Fields
     const quotaMetricConfig = {
       app: 'elasticsearch',
-      uuidField: 'cluster_uuid',
+      uuidField: 'source_node.uuid',
       timestampField: 'timestamp',
       fieldSource: 'node_stats.os.cgroup',
       usageField: 'cpuacct.usage_nanos',
@@ -1162,7 +1162,6 @@ const metricInstances = {
     units: ''
   }),
   'logstash_cluster_pipeline_throughput': new LogstashPipelineThroughputMetric({
-    uuidField: 'cluster_uuid', // TODO: add comment explaining why
     field: 'logstash_stats.pipelines.events.out',
     label: 'Pipeline Throughput',
     description: 'Number of events emitted per second by the Logstash pipeline at the outputs stage.',
@@ -1178,7 +1177,6 @@ const metricInstances = {
     units: 'e/s'
   }),
   'logstash_cluster_pipeline_nodes_count': new LogstashPipelineNodeCountMetric({
-    uuidField: 'cluster_uuid', // TODO: add comment explaining why
     field: 'logstash_stats.logstash.uuid',
     label: 'Pipeline Node Count',
     description: 'Number of nodes on which the Logstash pipeline is running.',

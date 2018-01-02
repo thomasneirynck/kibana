@@ -37,7 +37,7 @@ export function getKibanasForClusters(req, kbnIndexPattern, clusters) {
           type: 'kibana_stats',
           start,
           end,
-          uuid: clusterUuid,
+          clusterUuid,
           metric
         }),
         aggs: {

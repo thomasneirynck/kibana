@@ -38,12 +38,6 @@ function fetchClusterStats(req, esIndexPattern, clusterUuid) {
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
   const metric = ElasticsearchMetric.getMetricFields();
-  const filters = [];
-
-  if (clusterUuid) {
-    filters.push({ term: { cluster_uuid: clusterUuid } });
-  }
-
   const params = {
     index: esIndexPattern,
     ignore: [404],
@@ -58,7 +52,7 @@ function fetchClusterStats(req, esIndexPattern, clusterUuid) {
     ],
     body: {
       size: config.get('xpack.monitoring.max_bucket_size'),
-      query: createQuery({ type: 'cluster_stats', start, end, metric, filters }),
+      query: createQuery({ type: 'cluster_stats', start, end, metric, clusterUuid }),
       collapse: {
         field: 'cluster_uuid'
       },

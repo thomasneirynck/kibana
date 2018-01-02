@@ -20,7 +20,7 @@ export function getMlJobs(req, esIndexPattern) {
   const maxBucketSize = config.get('xpack.monitoring.max_bucket_size');
   const start = req.payload.timeRange.min; // no wrapping in moment :)
   const end = req.payload.timeRange.max;
-  const uuid = req.params.clusterUuid;
+  const clusterUuid = req.params.clusterUuid;
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: esIndexPattern,
@@ -37,7 +37,7 @@ export function getMlJobs(req, esIndexPattern) {
       size: maxBucketSize,
       sort: { timestamp: { order: 'desc' } },
       collapse: { field: 'job_stats.job_id' },
-      query: createQuery({ type: 'job_stats', start, end, uuid, metric })
+      query: createQuery({ type: 'job_stats', start, end, clusterUuid, metric })
     }
   };
 
@@ -57,7 +57,7 @@ export function getMlJobsForCluster(req, esIndexPattern, cluster) {
     // ML is supported
     const start = req.payload.timeRange.min; // no wrapping in moment :)
     const end = req.payload.timeRange.max;
-    const uuid = req.params.clusterUuid;
+    const clusterUuid = req.params.clusterUuid;
     const metric = ElasticsearchMetric.getMetricFields();
     const params = {
       index: esIndexPattern,
@@ -65,7 +65,7 @@ export function getMlJobsForCluster(req, esIndexPattern, cluster) {
       filterPath: 'aggregations.jobs_count.value',
       body: {
         size: 0,
-        query: createQuery({ type: 'job_stats', start, end, uuid, metric }),
+        query: createQuery({ type: 'job_stats', start, end, clusterUuid, metric }),
         aggs: {
           jobs_count: { cardinality: { field: 'job_stats.job_id' } }
         }

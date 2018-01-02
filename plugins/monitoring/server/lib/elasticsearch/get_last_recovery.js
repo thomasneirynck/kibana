@@ -44,7 +44,7 @@ export function getLastRecovery(req, esIndexPattern) {
 
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
-  const uuid = req.params.clusterUuid;
+  const clusterUuid = req.params.clusterUuid;
 
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
@@ -54,7 +54,7 @@ export function getLastRecovery(req, esIndexPattern) {
       _source: [ 'index_recovery.shards' ],
       size: 1,
       sort: { timestamp: { order: 'desc' } },
-      query: createQuery({ type: 'index_recovery', start, end, uuid, metric })
+      query: createQuery({ type: 'index_recovery', start, end, clusterUuid, metric })
     }
   };
 

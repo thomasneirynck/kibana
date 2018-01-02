@@ -17,7 +17,7 @@ export async function getPipelineStateDocument(callWithRequest, req, logstashInd
     // Use the logstash_stats documents to determine whether the instance is up/down
     type: 'logstash_state',
     metric: ElasticsearchMetric.getMetricFields(),
-    uuid: clusterUuid,
+    clusterUuid,
     filters
   });
 

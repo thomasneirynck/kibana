@@ -51,7 +51,7 @@ export function getIndexSummary(req, esIndexPattern, shardStats, { clusterUuid, 
     body: {
       size: 1,
       sort: { timestamp: { order: 'desc' } },
-      query: createQuery({ type: 'index_stats', start, end, uuid: clusterUuid, metric, filters })
+      query: createQuery({ type: 'index_stats', start, end, clusterUuid, metric, filters })
     }
   };
 

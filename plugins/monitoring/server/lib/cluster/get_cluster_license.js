@@ -14,7 +14,7 @@ export function getClusterLicense(req, esIndexPattern, clusterUuid) {
       sort: { timestamp: { order: 'desc' } },
       query: createQuery({
         type: 'cluster_stats',
-        uuid: clusterUuid,
+        clusterUuid,
         metric: ElasticsearchMetric.getMetricFields()
       })
     }

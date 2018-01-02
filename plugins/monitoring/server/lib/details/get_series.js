@@ -30,8 +30,9 @@ function getUuid(req, metric) {
     return req.params.kibanaUuid;
   } else if (metric.app === 'logstash') {
     return req.params.logstashUuid;
+  } else if (metric.app === 'elasticsearch') {
+    return req.params.resolver;
   }
-  return req.params.clusterUuid;
 }
 
 function defaultCalculation(bucket, key, metric, bucketSizeInSeconds) {
@@ -84,6 +85,7 @@ function fetchSeries(req, indexPattern, metric, min, max, bucketSize, filters) {
         start: adjustedMin,
         end: max,
         metric,
+        clusterUuid: req.params.clusterUuid,
         // TODO: Pass in the UUID as an explicit function parameter
         uuid: getUuid(req, metric),
         filters

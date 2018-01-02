@@ -41,7 +41,7 @@ export function getNodes(req, esIndexPattern) {
   const duration = moment.duration(max - orgStart, 'ms');
 
   const config = req.server.config();
-  const uuid = req.params.clusterUuid;
+  const clusterUuid = req.params.clusterUuid;
   const maxBucketSize = config.get('xpack.monitoring.max_bucket_size');
   const metricFields = ElasticsearchMetric.getMetricFields();
   const min = start;
@@ -56,7 +56,7 @@ export function getNodes(req, esIndexPattern) {
     size: 0,
     ignoreUnavailable: true,
     body: {
-      query: createQuery({ type: 'node_stats', start, end, uuid, metric: metricFields }),
+      query: createQuery({ type: 'node_stats', start, end, clusterUuid, metric: metricFields }),
       aggs: {
         items: {
           terms: {

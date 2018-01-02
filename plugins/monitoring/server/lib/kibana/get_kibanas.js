@@ -31,7 +31,7 @@ export function getKibanas(req, kbnIndexPattern, { clusterUuid }) {
         type: 'kibana_stats',
         start,
         end,
-        uuid: clusterUuid,
+        clusterUuid,
         metric: ElasticsearchMetric.getMetricFields()
       }),
       collapse: {

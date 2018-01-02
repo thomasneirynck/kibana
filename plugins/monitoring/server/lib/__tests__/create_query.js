@@ -31,18 +31,13 @@ describe('Create Query', () => {
     expect(result).to.be.eql(expected);
   });
 
-  it('Injects cluster_uuid by default', () => {
-    const options = { uuid: 'abc123', metric };
-    const result = createQuery(options);
-    const expected = set({}, 'bool.filter[0].term.cluster_uuid', 'abc123');
-    expect(result).to.be.eql(expected);
-  });
-
   it('Uses Elasticsearch timestamp field for start and end time range by default', () => {
     const options = { uuid: 'abc123', start: '2016-03-01 10:00:00', end: '2016-03-01 10:00:01', metric };
     const result = createQuery(options);
     let expected = {};
-    expected = set(expected, 'bool.filter[0].term.cluster_uuid', 'abc123');
+    expected = set(expected, 'bool.filter[0].term', {
+      'source_node.uuid': 'abc123'
+    });
     expected = set(expected, 'bool.filter[1].range.timestamp', {
       format: 'epoch_millis',
       gte: 1456826400000,
@@ -111,7 +106,9 @@ describe('Create Query', () => {
     const result = createQuery(options);
     let expected = {};
     expected = set(expected, 'bool.filter[0].bool.should', [ { term: { _type: 'test-type-yay' } }, { term: { type: 'test-type-yay' } } ]);
-    expected = set(expected, 'bool.filter[1].term.cluster_uuid', 'abc123');
+    expected = set(expected, 'bool.filter[1].term', {
+      'source_node.uuid': 'abc123'
+    });
     expected = set(expected, 'bool.filter[2].range.timestamp', {
       format: 'epoch_millis',
       gte: 1456826400000,

@@ -10,7 +10,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '/s',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'cluster_index_request_rate_total': {
@@ -24,7 +24,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '/s',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'cluster_search_request_rate': {
@@ -39,7 +39,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '/s',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'cluster_index_latency': {
@@ -54,7 +54,7 @@ export const expected = {
     'metricAgg': 'sum',
     'units': 'ms',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'aggs': {
@@ -95,7 +95,7 @@ export const expected = {
     'metricAgg': 'sum',
     'units': 'ms',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'aggs': {
@@ -135,7 +135,7 @@ export const expected = {
     'metricAgg': 'sum',
     'units': 'ms',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'aggs': {
@@ -175,7 +175,7 @@ export const expected = {
     'metricAgg': 'sum',
     'units': 'ms',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'aggs': {
@@ -216,7 +216,7 @@ export const expected = {
     'metricAgg': 'sum',
     'units': 'ms',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'aggs': {
@@ -256,7 +256,7 @@ export const expected = {
     'metricAgg': 'sum',
     'units': 'ms',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'aggs': {
@@ -294,7 +294,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'ms',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': true
   },
@@ -308,7 +308,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'ms',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': true
   },
@@ -322,7 +322,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': true
   },
@@ -336,7 +336,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -350,7 +350,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -364,7 +364,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -378,7 +378,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -392,7 +392,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -408,7 +408,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -422,7 +422,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -436,7 +436,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -450,7 +450,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -464,7 +464,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -480,7 +480,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -494,7 +494,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -508,7 +508,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -522,7 +522,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -536,7 +536,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -550,7 +550,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -565,7 +565,7 @@ export const expected = {
     'type': 'index',
     'derivative': true,
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'index_segment_merge_primaries_size': {
@@ -578,7 +578,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': true
   },
@@ -592,7 +592,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': true
   },
@@ -606,7 +606,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'ms',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': true
   },
@@ -620,7 +620,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'ms',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': true
   },
@@ -635,7 +635,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '/s',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'index_searching_time': {
@@ -648,7 +648,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'ms',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': true
   },
@@ -662,7 +662,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': true
   },
@@ -676,7 +676,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -690,7 +690,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -704,7 +704,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -718,7 +718,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -732,7 +732,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'ms',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': true
   },
@@ -746,7 +746,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'ms',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': true
   },
@@ -763,7 +763,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '/s',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_cgroup_periods': {
@@ -778,7 +778,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': true
   },
@@ -794,7 +794,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': true
   },
@@ -808,7 +808,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'ns',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': true
   },
@@ -822,7 +822,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': true
   },
@@ -836,7 +836,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'ns',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': true
   },
@@ -859,7 +859,7 @@ export const expected = {
     'derivative': false,
     'timestampField': 'timestamp',
     'units': '%',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'calculation': new Function(),
     'aggs': {
       'periods': {
@@ -909,7 +909,7 @@ export const expected = {
     'derivative': false,
     'timestampField': 'timestamp',
     'units': '%',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'calculation': new Function(),
     'aggs': {
       'periods': {
@@ -950,7 +950,7 @@ export const expected = {
     'metricAgg': 'avg',
     'units': '%',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -963,7 +963,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -978,7 +978,7 @@ export const expected = {
     'units': '',
     'type': 'node',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_jvm_gc_old_time': {
@@ -992,7 +992,7 @@ export const expected = {
     'units': 'ms',
     'type': 'node',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_jvm_gc_young_count': {
@@ -1006,7 +1006,7 @@ export const expected = {
     'units': '',
     'type': 'node',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_jvm_gc_young_time': {
@@ -1020,7 +1020,7 @@ export const expected = {
     'units': 'ms',
     'type': 'node',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_jvm_mem_max_in_bytes': {
@@ -1033,7 +1033,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1047,7 +1047,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1061,7 +1061,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '%',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1075,7 +1075,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1091,7 +1091,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1107,7 +1107,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1123,7 +1123,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1139,7 +1139,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1153,7 +1153,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1169,7 +1169,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1183,7 +1183,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1197,7 +1197,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1211,7 +1211,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1225,7 +1225,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1241,7 +1241,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1255,7 +1255,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1269,7 +1269,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1283,7 +1283,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1297,7 +1297,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1311,7 +1311,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1327,7 +1327,7 @@ export const expected = {
     'units': '',
     'min': 0,
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_index_threads_bulk_rejected': {
@@ -1342,7 +1342,7 @@ export const expected = {
     'units': '',
     'min': 0,
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_index_threads_get_queue': {
@@ -1357,7 +1357,7 @@ export const expected = {
     'units': '',
     'min': 0,
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_index_threads_get_rejected': {
@@ -1372,7 +1372,7 @@ export const expected = {
     'units': '',
     'min': 0,
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_index_threads_index_queue': {
@@ -1387,7 +1387,7 @@ export const expected = {
     'units': '',
     'min': 0,
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_index_threads_index_rejected': {
@@ -1404,7 +1404,7 @@ export const expected = {
     'units': '',
     'min': 0,
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_index_threads_search_queue': {
@@ -1419,7 +1419,7 @@ export const expected = {
     'units': '',
     'min': 0,
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_index_threads_search_rejected': {
@@ -1434,7 +1434,7 @@ export const expected = {
     'units': '',
     'min': 0,
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_index_total': {
@@ -1448,7 +1448,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_index_time': {
@@ -1462,7 +1462,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'ms',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_free_space': {
@@ -1474,7 +1474,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1489,7 +1489,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_threads_queued_bulk': {
@@ -1504,7 +1504,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1518,8 +1518,8 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
+    'uuidField': 'source_node.uuid',
     'derivative': false
   },
   'node_threads_queued_get': {
@@ -1532,8 +1532,8 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
+    'uuidField': 'source_node.uuid',
     'derivative': false
   },
   'node_threads_queued_index': {
@@ -1546,8 +1546,8 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
+    'uuidField': 'source_node.uuid',
     'derivative': false
   },
   'node_threads_queued_management': {
@@ -1560,8 +1560,8 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
+    'uuidField': 'source_node.uuid',
     'derivative': false
   },
   'node_threads_queued_search': {
@@ -1576,8 +1576,8 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
+    'uuidField': 'source_node.uuid',
     'derivative': false
   },
   'node_threads_queued_watcher': {
@@ -1590,8 +1590,8 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
+    'uuidField': 'source_node.uuid',
     'derivative': false
   },
   'node_threads_rejected_bulk': {
@@ -1605,7 +1605,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_threads_rejected_generic': {
@@ -1619,7 +1619,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_threads_rejected_get': {
@@ -1633,7 +1633,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_threads_rejected_index': {
@@ -1647,7 +1647,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_threads_rejected_management': {
@@ -1661,7 +1661,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_threads_rejected_search': {
@@ -1675,7 +1675,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_threads_rejected_watcher': {
@@ -1689,7 +1689,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'node_throttle_index_time': {
@@ -1704,7 +1704,7 @@ export const expected = {
     'units': 'ms',
     'min': 0,
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'index_throttle_time': {
@@ -1717,7 +1717,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'ms',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'index_document_count': {
@@ -1729,7 +1729,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1746,7 +1746,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '/s',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'index_merge_rate': {
@@ -1759,7 +1759,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': '/s',
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'index_refresh_time': {
@@ -1772,7 +1772,7 @@ export const expected = {
     'type': 'index',
     'derivative': true,
     'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'source_node.uuid',
     'timestampField': 'timestamp'
   },
   'kibana_os_load_1m': {
@@ -1912,7 +1912,6 @@ export const expected = {
     'metricAgg': 'max',
     'units': '/s',
     'app': 'logstash',
-    'uuidField': 'cluster_uuid',
     'timestampField': 'logstash_stats.timestamp',
     'derivative': true,
     'aggs': {
@@ -1951,7 +1950,6 @@ export const expected = {
     'metricAgg': 'max',
     'units': '/s',
     'app': 'logstash',
-    'uuidField': 'cluster_uuid',
     'timestampField': 'logstash_stats.timestamp',
     'derivative': true,
     'aggs': {
@@ -1994,7 +1992,6 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'ms',
     'app': 'logstash',
-    'uuidField': 'cluster_uuid',
     'timestampField': 'logstash_stats.timestamp',
     'derivative': false,
     'aggs': {
@@ -2370,7 +2367,7 @@ export const expected = {
     'format': '0,0.[00]',
     'units': 'e/s',
     'app': 'logstash',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'logstash_stats.logstash.uuid',
     'timestampField': 'logstash_stats.timestamp',
     'derivative': false,
     'calculation': new Function(),
@@ -2439,7 +2436,7 @@ export const expected = {
     'format': '0,0.[00]',
     'units': '',
     'app': 'logstash',
-    'uuidField': 'cluster_uuid',
+    'uuidField': 'logstash_stats.logstash.uuid',
     'timestampField': 'logstash_stats.timestamp',
     'derivative': false,
     'calculation': new Function(),

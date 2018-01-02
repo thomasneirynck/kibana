@@ -35,7 +35,7 @@ export function getLogstashForClusters(req, lsIndexPattern, clusters) {
         query: createQuery({
           start,
           end,
-          uuid: clusterUuid,
+          clusterUuid,
           metric
         }),
         aggs: {

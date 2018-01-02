@@ -38,7 +38,6 @@ export class Metric {
       description: opts.description,
       format: opts.format,
       units: opts.units,
-      uuidField: opts.uuidField,
       timestampField: opts.timestampField
     };
 
@@ -62,7 +61,7 @@ export class ElasticsearchMetric extends Metric {
     super({
       ...opts,
       app: 'elasticsearch',
-      uuidField: 'cluster_uuid',
+      uuidField: 'source_node.uuid',
       timestampField: 'timestamp'
     });
 
@@ -75,7 +74,7 @@ export class ElasticsearchMetric extends Metric {
   static getMetricFields() {
     return {
       timestampField: 'timestamp',
-      uuidField: 'cluster_uuid'
+      uuidField: 'source_node.uuid',
     };
   }
 }
@@ -316,7 +315,6 @@ export class LogstashClusterMetric extends Metric {
     super({
       ...opts,
       app: 'logstash',
-      uuidField: 'cluster_uuid',
       timestampField: 'logstash_stats.timestamp'
     });
   }
@@ -324,8 +322,7 @@ export class LogstashClusterMetric extends Metric {
   // helper method
   static getMetricFields() {
     return {
-      timestampField: 'logstash_stats.timestamp',
-      uuidField: 'cluster_uuid'
+      timestampField: 'logstash_stats.timestamp'
     };
   }
 }

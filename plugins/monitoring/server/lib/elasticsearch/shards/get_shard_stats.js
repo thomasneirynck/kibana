@@ -42,7 +42,7 @@ export function getShardStats(req, esIndexPattern, cluster, { includeNodes = fal
       sort: { timestamp: { order: 'desc' } },
       query: createQuery({
         type: 'shards',
-        uuid: cluster.cluster_uuid,
+        clusterUuid: cluster.cluster_uuid,
         metric,
         filters: [ { term: { state_uuid: get(cluster, 'cluster_state.state_uuid') } } ]
       }),

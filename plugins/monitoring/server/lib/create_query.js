@@ -30,6 +30,7 @@ export const createTypeFilter = (type) => {
  * Options object:
  * @param {String} options.type - `type` field value of the documents
  * @param {Array} options.filters - additional filters to add to the `bool` section of the query. Default: []
+ * @param {string} options.clusterUuid - a UUID of the cluster. Required.
  * @param {string} options.uuid - a UUID of the metric to filter for, or `null` if UUID should not be part of the query
  * @param {Date} options.start - numeric timestamp (optional)
  * @param {Date} options.end - numeric timestamp (optional)
@@ -37,11 +38,16 @@ export const createTypeFilter = (type) => {
  */
 export function createQuery(options) {
   options = _.defaults(options, { filters: [] });
-  const { type, uuid, start, end, filters } = options;
+  const { type, clusterUuid, uuid, start, end, filters } = options;
 
   let typeFilter;
   if (type) {
     typeFilter = createTypeFilter(type);
+  }
+
+  let clusterUuidFilter;
+  if (clusterUuid) {
+    clusterUuidFilter = { term: { 'cluster_uuid': clusterUuid } };
   }
 
   let uuidFilter;
@@ -72,7 +78,7 @@ export function createQuery(options) {
     timeRangeFilter.range[timestampField].lte = moment.utc(end).valueOf();
   }
 
-  const combinedFilters = [typeFilter, uuidFilter, ...filters];
+  const combinedFilters = [typeFilter, clusterUuidFilter, uuidFilter, ...filters];
   if (end || start) {
     combinedFilters.push(timeRangeFilter);
   }

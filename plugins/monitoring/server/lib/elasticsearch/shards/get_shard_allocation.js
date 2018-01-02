@@ -33,13 +33,13 @@ export function getShardAllocation(req, esIndexPattern, { nodeResolver, shardFil
   }
 
   const config = req.server.config();
-  const uuid = req.params.clusterUuid;
+  const clusterUuid = req.params.clusterUuid;
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: esIndexPattern,
     body: {
       size: config.get('xpack.monitoring.max_bucket_size'),
-      query: createQuery({ type: 'shards', uuid, metric, filters })
+      query: createQuery({ type: 'shards', clusterUuid, metric, filters })
     }
   };
 
