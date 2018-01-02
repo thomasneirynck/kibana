@@ -90,13 +90,7 @@ function outerAggs(pipelineId, pipelineHash, maxBucketSize) {
     vertices: nestedVertices(maxBucketSize)
   };
 
-  const aggs = {
-    nodes_count: {
-      cardinality: {
-        field: 'logstash_stats.logstash.uuid',
-        precision_threshold: 10000
-      }
-    },
+  return {
     pipelines: {
       nested: { path: 'logstash_stats.pipelines' },
       aggs: {
@@ -113,15 +107,6 @@ function outerAggs(pipelineId, pipelineHash, maxBucketSize) {
         }
       }
     }
-  };
-
-  const fieldPath = 'logstash_stats.events';
-  const ephemeralIdField = 'logstash_stats.logstash.ephemeral_id';
-
-  return {
-    ...aggs,
-    ...scalarCounterAggregation('in', fieldPath, ephemeralIdField, maxBucketSize),
-    ...scalarCounterAggregation('out', fieldPath, ephemeralIdField, maxBucketSize)
   };
 }
 

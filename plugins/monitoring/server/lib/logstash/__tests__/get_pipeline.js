@@ -229,9 +229,6 @@ describe('get_pipeline', () => {
     it('enriches the state document correctly with stats', () => {
       const enrichedStateDocument = _enrichStateWithStatsAggregation(stateDocument, statsAggregation, timeboundsInMillis);
       expect(enrichedStateDocument).to.eql({
-        events_in: 2900,
-        events_out: 2801,
-        nodes_count: 1,
         pipeline: {
           batch_size: 125,
           ephemeral_id: '2c53e689-62e8-4ef3-bc57-ea968531a848',

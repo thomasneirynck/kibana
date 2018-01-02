@@ -54,10 +54,6 @@ export function _enrichStateWithStatsAggregation(stateDocument, statsAggregation
   const totalProcessorsDurationInMillis = durationStats.max - durationStats.min;
   durationStats.duration = totalProcessorsDurationInMillis;
 
-  logstashState.nodes_count = rootAgg.nodes_count.value;
-  logstashState.events_in = rootAgg.in_total.value;
-  logstashState.events_out = rootAgg.out_total.value;
-
   const verticesById = {};
   vertices.forEach(vertex => {
     verticesById[vertex.id] = vertex;
