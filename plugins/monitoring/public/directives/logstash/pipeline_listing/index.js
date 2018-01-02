@@ -34,7 +34,11 @@ const pipelineRowFactory = (onPipelineClick, onBrush, tooltipXValueFormatter, to
         <KuiTableRowCell>
           <div className="monitoringTableCell__name">
             <KuiKeyboardAccessible>
-              <a className="kuiLink" onClick={onPipelineClick.bind(null, id)}>
+              <a
+                className="kuiLink"
+                onClick={onPipelineClick.bind(null, id)}
+                data-test-subj="id"
+              >
                 { id }
               </a>
             </KuiKeyboardAccessible>
@@ -56,7 +60,10 @@ const pipelineRowFactory = (onPipelineClick, onBrush, tooltipXValueFormatter, to
                 options={{ xaxis: throughputMetric.timeRange }}
               />
             </KuiFlexItem>
-            <KuiFlexItem className="monitoringTableCell__number">
+            <KuiFlexItem
+              className="monitoringTableCell__number"
+              data-test-subj="eventsEmittedRate"
+            >
               { formatMetric(latestThroughput, '0.[0]a', throughputMetric.metric.units) }
             </KuiFlexItem>
           </KuiFlexGroup>
@@ -77,7 +84,10 @@ const pipelineRowFactory = (onPipelineClick, onBrush, tooltipXValueFormatter, to
                 options={{ xaxis: nodesCountMetric.timeRange }}
               />
             </KuiFlexItem>
-            <KuiFlexItem className="monitoringTableCell__number">
+            <KuiFlexItem
+              className="monitoringTableCell__number"
+              data-test-subj="nodeCount"
+            >
               { formatMetric(latestNodesCount, '0a') }
             </KuiFlexItem>
           </KuiFlexGroup>

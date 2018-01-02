@@ -21,6 +21,6 @@ export default function ({ loadTestFile }) {
     // loadTestFile(require.resolve('./logstash/nodes'));
     // loadTestFile(require.resolve('./logstash/node'));
 
-    // loadTestFile(require.resolve('./logstash/pipelines'));
+    loadTestFile(require.resolve('./logstash/pipelines'));
   });
 }

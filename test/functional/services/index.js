@@ -7,6 +7,8 @@ export { MonitoringElasticsearchNodeDetailProvider } from './monitoring/elastics
 export { MonitoringElasticsearchIndicesProvider } from './monitoring/elasticsearch_indices';
 export { MonitoringElasticsearchIndexDetailProvider } from './monitoring/elasticsearch_index_detail';
 export { MonitoringElasticsearchShardsProvider } from './monitoring/elasticsearch_shards';
+export { MonitoringLogstashPipelinesProvider } from './monitoring/logstash_pipelines';
+export { MonitoringLogstashSummaryStatusProvider } from './monitoring/logstash_summary_status';
 export { PipelineListProvider } from './pipeline_list';
 export { PipelineEditorProvider } from './pipeline_editor';
 export { RandomProvider } from './random';

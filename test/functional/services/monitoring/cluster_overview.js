@@ -140,6 +140,9 @@ export function MonitoringClusterOverviewProvider({ getService }) {
     async getLsPipelines() {
       return testSubjects.getVisibleText(SUBJ_LS_PIPELINES);
     }
+    clickLsPipelines() {
+      return testSubjects.click(SUBJ_LS_PIPELINES);
+    }
 
   };
 }
