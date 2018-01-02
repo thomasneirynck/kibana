@@ -30,10 +30,9 @@ const DetailsWrapper = styled.div`
 `;
 
 const DetailsHeader = styled.div`
-  font-weight: 100;
+  margin-bottom: ${px(units.half)};
   font-size: ${fontSizes.small};
-  color: ${colors.gray1};
-  margin-bottom: ${units.quarter};
+  color: ${colors.gray3};
 `;
 
 const DetailsText = styled.div`
