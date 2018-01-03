@@ -19,7 +19,18 @@ let mockServer;
 beforeEach(() => {
   mockServer = {
     expose: () => {},
-    config: memoize(() => ({ get: jest.fn() }))
+    config: memoize(() => ({ get: jest.fn() })),
+    plugins: {
+      elasticsearch: {
+        getCluster: memoize(() => {
+          return {
+            callWithRequest: jest.fn()
+          };
+        })
+      }
+    },
+    savedObjectsClientFactory: jest.fn(),
+    uiSettingsServiceFactory: jest.fn().mockReturnValue({ get: jest.fn() }),
   };
 
   mockServer.config().get.mockImplementation((key) => {
@@ -53,7 +64,7 @@ test(`passes in decrypted headers to generatePdf`, async () => {
   const executeJob = executeJobFactory(mockServer);
   await executeJob({ headers: encryptedHeaders }, cancellationToken);
 
-  expect(generatePdfObservable).toBeCalledWith(undefined, undefined, undefined, headers, undefined, undefined);
+  expect(generatePdfObservable).toBeCalledWith(undefined, undefined, undefined, headers, undefined, undefined, undefined);
 });
 
 test(`omits blacklisted headers`, async () => {
@@ -80,7 +91,23 @@ test(`omits blacklisted headers`, async () => {
   const executeJob = executeJobFactory(mockServer);
   await executeJob({ headers: encryptedHeaders }, cancellationToken);
 
-  expect(generatePdfObservable).toBeCalledWith(undefined, undefined, undefined, permittedHeaders, undefined, undefined);
+  expect(generatePdfObservable).toBeCalledWith(undefined, undefined, undefined, permittedHeaders, undefined, undefined, undefined);
+});
+
+test(`gets logo from uiSettings`, async () => {
+  const encryptedHeaders = await encryptHeaders({});
+
+  const logo = 'custom-logo';
+  mockServer.uiSettingsServiceFactory().get.mockReturnValue(logo);
+
+  const generatePdfObservable = generatePdfObservableFactory();
+  generatePdfObservable.mockReturnValue(Rx.Observable.of(Buffer.from('')));
+
+  const executeJob = executeJobFactory(mockServer);
+  await executeJob({ headers: encryptedHeaders }, cancellationToken);
+
+  expect(mockServer.uiSettingsServiceFactory().get).toBeCalledWith('xpackReporting:customPdfLogo');
+  expect(generatePdfObservable).toBeCalledWith(undefined, undefined, undefined, {}, undefined, undefined, logo);
 });
 
 test(`returns content_type of application/pdf`, async () => {

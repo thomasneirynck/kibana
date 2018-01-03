@@ -1,5 +1,6 @@
 import Rx from 'rxjs/Rx';
 import { omit } from 'lodash';
+import { UI_SETTINGS_CUSTOM_PDF_LOGO } from '../../../common/constants';
 import { oncePerServer } from '../../../server/lib/once_per_server';
 import { generatePdfObservableFactory } from './lib/generate_pdf';
 import { cryptoFactory } from '../../../server/lib/crypto';
@@ -12,6 +13,7 @@ const KBN_SCREENSHOT_HEADER_BLACKLIST = [
 ];
 
 function executeJobFn(server) {
+  const { callWithRequest } = server.plugins.elasticsearch.getCluster('data');
   const generatePdfObservable = generatePdfObservableFactory(server);
   const crypto = cryptoFactory(server);
 
@@ -25,14 +27,35 @@ function executeJobFn(server) {
     return { job, filteredHeaders };
   };
 
+  const getCustomLogo = async ({ job, filteredHeaders }) => {
+    const fakeRequest = {
+      headers: filteredHeaders,
+    };
+
+    const callEndpoint = (endpoint, clientParams = {}, options = {}) => {
+      return callWithRequest(fakeRequest, endpoint, clientParams, options);
+    };
+    const savedObjectsClient = server.savedObjectsClientFactory({
+      callCluster: callEndpoint
+    });
+    const uiSettings = server.uiSettingsServiceFactory({
+      savedObjectsClient
+    });
+
+    const logo = await uiSettings.get(UI_SETTINGS_CUSTOM_PDF_LOGO);
+
+    return { job, filteredHeaders, logo };
+  };
+
   return function executeJob(jobToExecute, cancellationToken) {
 
     const process$ = Rx.Observable.of(jobToExecute)
       .mergeMap(decryptJobHeaders)
       .catch(() => Rx.Observable.throw('Failed to decrypt report job data. Please re-generate this report.'))
       .map(omitBlacklistedHeaders)
-      .mergeMap(({ job, filteredHeaders }) => {
-        return generatePdfObservable(job.title, job.objects, job.query, filteredHeaders, job.browserTimezone, job.layout);
+      .mergeMap(getCustomLogo)
+      .mergeMap(({ job, filteredHeaders, logo }) => {
+        return generatePdfObservable(job.title, job.objects, job.query, filteredHeaders, job.browserTimezone, job.layout, logo);
       })
       .map(buffer => ({
         content_type: 'application/pdf',

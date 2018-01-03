@@ -23,7 +23,7 @@ function getFont(text) {
 }
 
 class PdfMaker {
-  constructor(layout) {
+  constructor(layout, logo) {
     const fontPath = (filename) => path.resolve(assetPath, 'fonts', filename);
     const fonts = {
       Roboto: {
@@ -41,6 +41,7 @@ class PdfMaker {
     };
 
     this._layout = layout;
+    this._logo = logo;
     this._title = '';
     this._content = [];
     this._printer = new Printer(fonts);
@@ -118,7 +119,7 @@ class PdfMaker {
   }
 
   generate() {
-    const docTemplate = _.assign(getTemplate(this._layout, this._title), { content: this._content });
+    const docTemplate = _.assign(getTemplate(this._layout, this._logo, this._title), { content: this._content });
     this._pdfDoc = this._printer.createPdfKitDocument(docTemplate, getDocOptions());
     return this;
   }
@@ -143,7 +144,7 @@ class PdfMaker {
   }
 }
 
-function getTemplate(layout, title) {
+function getTemplate(layout, logo, title) {
   const pageMarginTop = 40;
   const pageMarginBottom = 80;
   const pageMarginWidth = 40;
@@ -187,19 +188,34 @@ function getTemplate(layout, title) {
       const logoPath = path.resolve(assetPath, 'img', 'logo-grey.png');
       return {
         margin: [ pageMarginWidth, pageMarginBottom / 4, pageMarginWidth, 0 ],
-        alignment: 'justify',
-        columns: [
-          {
-            width: 100,
-            image: logoPath,
-          }, {
-            margin: [ 120, 10, 0, 0 ],
-            text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
-            style: {
-              color: '#aaa'
-            },
-          },
-        ]
+        layout: 'noBorder',
+        table: {
+          widths: [ 100, '*', 100],
+          body: [
+            [{
+              fit: [100, 35],
+              image: logo || logoPath,
+            }, {
+              alignment: 'center',
+              text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
+              style: {
+                color: '#aaa'
+              },
+            }, ''],
+            [
+              logo ? {
+                text: 'Powered by Elastic',
+                fontSize: 10,
+                style: {
+                  color: "#aaa"
+                },
+                margin: [0, 2, 0, 0]
+              } : '',
+              '',
+              ''
+            ]
+          ]
+        }
       };
     },
 
@@ -233,6 +249,15 @@ function getTemplate(layout, title) {
 function getDocOptions() {
   return {
     tableLayouts: {
+      noBorder: {
+        // format is function (i, node) { ... };
+        hLineWidth: () => 0,
+        vLineWidth: () => 0,
+        paddingLeft: () => 0,
+        paddingRight: () => 0,
+        paddingTop: () => 0,
+        paddingBottom: () => 0,
+      },
       simpleBorder: {
         // format is function (i, node) { ... };
         hLineWidth: () => tableBorderWidth,
@@ -249,5 +274,5 @@ function getDocOptions() {
 }
 
 export const pdf = {
-  create: (layout) => new PdfMaker(layout)
+  create: (layout, logo) => new PdfMaker(layout, logo)
 };

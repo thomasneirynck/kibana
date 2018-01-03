@@ -43,8 +43,8 @@ function generatePdfObservableFn(server) {
   };
 
 
-  const createPdfWithScreenshots = async ({ title, query, objects, browserTimezone, layout }) => {
-    const pdfOutput = pdf.create(layout);
+  const createPdfWithScreenshots = async ({ title, query, objects, browserTimezone, layout, logo }) => {
+    const pdfOutput = pdf.create(layout, logo);
 
     if (title) {
       const timeRange = some(objects, { isTimepickerEnabled: true }) ? getTimeFilterRange(browserTimezone, query) : null;
@@ -72,13 +72,13 @@ function generatePdfObservableFn(server) {
     return buffer;
   };
 
-  return function generatePdfObservable(title, savedObjects, query, headers, browserTimezone, layoutParams) {
+  return function generatePdfObservable(title, savedObjects, query, headers, browserTimezone, layoutParams, logo) {
     const layout = getLayout(layoutParams);
     const screenshots$ = savedObjectsScreenshotsObservable(savedObjects, headers, layout);
 
     return screenshots$
       .toArray()
-      .mergeMap(objects => createPdfWithScreenshots({ title, query, browserTimezone, objects, layout }));
+      .mergeMap(objects => createPdfWithScreenshots({ title, query, browserTimezone, objects, layout, logo }));
 
   };
 }

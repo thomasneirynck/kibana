@@ -1,5 +1,6 @@
 import { resolve } from 'path';
 import { has } from 'lodash';
+import { UI_SETTINGS_CUSTOM_PDF_LOGO } from './common/constants';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 import { main as mainRoutes } from './server/routes/main';
 import { jobs as jobRoutes } from './server/routes/jobs';
@@ -11,6 +12,10 @@ import { validateConfig } from './server/lib/validate_config';
 import { exportTypesRegistryFactory } from './server/lib/export_types_registry';
 
 export { getReportingUsage } from './server/usage';
+
+const kbToBase64Length = (kb) => {
+  return Math.floor((kb * 1024 * 8) / 6);
+};
 
 export const reporting = (kibana) => {
   return new kibana.Plugin({
@@ -32,6 +37,19 @@ export const reporting = (kibana) => {
         return {
           reportingPollConfig: options.poll
         };
+      },
+      uiSettingDefaults: {
+        [UI_SETTINGS_CUSTOM_PDF_LOGO]: {
+          description: `Custom image to use in the PDF's footer`,
+          value: null,
+          type: 'image',
+          options: {
+            maxSize: {
+              length: kbToBase64Length(200),
+              description: '200 kB',
+            }
+          }
+        }
       }
     },
 
