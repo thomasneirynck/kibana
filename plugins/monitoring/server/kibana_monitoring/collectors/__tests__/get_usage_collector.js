@@ -16,11 +16,9 @@ describe('getUsageCollector', () => {
           getCluster: sinon.stub()
         }
       },
-      getKibanaStats: sinon.stub(),
       config: () => ({ get: sinon.stub() })
     };
     serverStub.plugins.elasticsearch.getCluster.withArgs('admin').returns(clusterStub);
-    serverStub.getKibanaStats.returns({ index: 'foo' });
     callClusterStub = callClusterFactory(serverStub).getCallClusterInternal();
   });
 
@@ -32,14 +30,34 @@ describe('getUsageCollector', () => {
   });
 
   it('calls callWithInternalUser with the `search` method', async () => {
+    callClusterStub.returns({
+      aggregations: {
+        types: {
+          buckets: []
+        }
+      }
+    });
+
     const usageCollector = getUsageCollector(serverStub, callClusterStub);
     await usageCollector.fetch();
 
-    sinon.assert.calledOnce(serverStub.getKibanaStats);
-    sinon.assert.calledWithExactly(serverStub.getKibanaStats, sinon.match({ callCluster: callClusterStub }));
-
     sinon.assert.calledOnce(clusterStub.callWithInternalUser);
-    const [ method ] = clusterStub.callWithInternalUser.getCall(0).args;
-    expect(method).to.be('search');
+    sinon.assert.calledWithExactly(clusterStub.callWithInternalUser, 'search', sinon.match({
+      body: {
+        query: {
+          terms: {
+            type: sinon.match.array
+          },
+        },
+        aggs: {
+          types: {
+            terms: {
+              field: 'type',
+              size: sinon.match.number
+            }
+          }
+        }
+      }
+    }));
   });
 });

@@ -1,75 +1,59 @@
-import { get, snakeCase } from 'lodash';
+import { snakeCase } from 'lodash';
 import { KIBANA_USAGE_TYPE } from '../../../common/constants';
 
-export function handleAdvancedStatsResponse(response) {
-  const buckets = get(response, 'aggregations.types.buckets', []);
-
-  const initial = {
-    graph_workspace: { total: 0 },
-    timelion_sheet: { total: 0 },
-  };
-
-  return buckets.reduce((accum, bucket) => {
-    const key = snakeCase(bucket.key);
-    return {
-      ...accum,
-      [key]: { total: bucket.doc_count },
-    };
-  }, initial);
-}
-
-export function getKibanaAdvancedStats(callCluster, kibanaIndex) {
-  const advancedStatsParams = {
-    index: kibanaIndex,
-    ignoreUnavailable: true,
-    filterPath: 'aggregations.types.buckets',
-    body: {
-      size: 0,
-      query: {
-        bool: {
-          should: [
-            { term: { type: { value: 'graph-workspace' } } },
-            { term: { type: { value: 'timelion-sheet' } } }
-          ]
-        }
-      },
-      aggs: {
-        types: {
-          terms: {
-            field: 'type',
-            size: 2,
-          }
-        }
-      }
-    }
-  };
-
-  return callCluster('search', advancedStatsParams)
-    .then(handleAdvancedStatsResponse);
-}
+const TYPES = [
+  'dashboard',
+  'visualization',
+  'search',
+  'index-pattern',
+  'graph-workspace',
+  'timelion-sheet',
+];
 
 /**
- * Combines saved object client stas from server.getKibanaStats
- * with "advanced" stats that come from querying the .kibana index directly
+ * Fetches saved object client counts by querying the saved object index
  */
 export function getUsageCollector(server, callCluster) {
-
   return {
     type: KIBANA_USAGE_TYPE,
     async fetch() {
-      const stats = await server.getKibanaStats({ callCluster });
-      const advanced = await getKibanaAdvancedStats(callCluster, stats.index);
-
-      stats.visualization = {
-        ...stats.visualization,
-        ...advanced.visualization,
+      const index = server.config().get('kibana.index');
+      const savedObjectCountSearchParams = {
+        index,
+        ignoreUnavailable: true,
+        filterPath: 'aggregations.types.buckets',
+        body: {
+          size: 0,
+          query: {
+            terms: { type: TYPES },
+          },
+          aggs: {
+            types: {
+              terms: { field: 'type', size: TYPES.length }
+            }
+          }
+        }
       };
 
-      delete advanced.visualization;
+      const resp = await callCluster('search', savedObjectCountSearchParams);
+      const buckets = resp.aggregations.types.buckets;
+
+      // get the doc_count from each bucket
+      const bucketCounts = buckets.reduce((acc, bucket) => ({
+        ...acc,
+        [bucket.key]: bucket.doc_count,
+      }), {});
 
       return {
-        ...stats,
-        ...advanced,
+        index,
+
+        // combine the bucketCounts and 0s for types that don't have documents
+        ...TYPES.reduce((acc, type) => ({
+          ...acc,
+          [snakeCase(type)]: {
+            total: bucketCounts[type] || 0
+          }
+        }), {})
       };
     }
   };
