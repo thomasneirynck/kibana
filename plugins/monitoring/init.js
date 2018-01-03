@@ -18,11 +18,13 @@ import { initMonitoringXpackInfo } from './server/init_monitoring_xpack_info';
  */
 export const init = (monitoringPlugin, server) => {
   const xpackMainPlugin = server.plugins.xpack_main;
+
   xpackMainPlugin.status.once('green', async () => {
     const config = server.config();
     const uiEnabled = config.get('xpack.monitoring.ui.enabled');
     const reportStats = config.get('xpack.monitoring.report_stats');
     const features = [];
+    const onceMonitoringGreen = callbackFn => monitoringPlugin.status.once('green', () => callbackFn()); // avoid race condition in things that require ES client
 
     if (uiEnabled || reportStats) {
       // Instantiate the dedicated ES client
@@ -30,7 +32,9 @@ export const init = (monitoringPlugin, server) => {
 
       if (uiEnabled) {
         // route handlers depend on xpackInfo (exposed as server.plugins.monitoring.info)
-        await initMonitoringXpackInfo(server);
+        onceMonitoringGreen(async () => {
+          await initMonitoringXpackInfo(server);
+        });
 
         // Require all routes needed for UI
         features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server));
@@ -42,9 +46,12 @@ export const init = (monitoringPlugin, server) => {
 
     // Send Kibana usage / server ops to the monitoring bulk api
     if (config.get('xpack.monitoring.kibana.collection.enabled')) {
-      features.push(initKibanaMonitoring(monitoringPlugin.kbnServer, server));
+      onceMonitoringGreen(() => {
+        features.push(initKibanaMonitoring(monitoringPlugin.kbnServer, server));
+      });
     }
 
     Promise.all(features);
   });
+
 };
