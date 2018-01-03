@@ -4,7 +4,7 @@ export function MonitoringElasticsearchIndicesProvider({ getService, getPageObje
   const testSubjects = getService('testSubjects');
   const PageObjects = getPageObjects(['monitoring']);
 
-  const SUBJ_LISTING_PAGE = 'elasticsearchIndicesListing';
+  const SUBJ_LISTING_PAGE = 'elasticsearchIndicesListingPage';
 
   const SUBJ_TABLE_CONTAINER = 'indicesTableContainer';
   const SUBJ_TABLE_NO_DATA = `${SUBJ_TABLE_CONTAINER} monitoringTableNoData`;
@@ -24,7 +24,7 @@ export function MonitoringElasticsearchIndicesProvider({ getService, getPageObje
   const SUBJ_INDEX_LINK_PREFIX = `${SUBJ_TABLE_BODY} indexLink-`;
 
   return new class ElasticsearchIndices {
-    async isOnListing() {
+    isOnListing() {
       return testSubjects.exists(SUBJ_LISTING_PAGE);
     }
 
@@ -78,7 +78,7 @@ export function MonitoringElasticsearchIndicesProvider({ getService, getPageObje
       }, []);
     }
 
-    async clickRowByName(indexName) {
+    clickRowByName(indexName) {
       return testSubjects.click(SUBJ_INDEX_LINK_PREFIX + indexName);
     }
 

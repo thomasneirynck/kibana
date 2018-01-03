@@ -50,7 +50,7 @@ export function MonitoringClusterAlertsProvider({ getService, getPageObjects }) 
      * Cluster Overview Page
      */
 
-    async getOverviewAlerts() {
+    getOverviewAlerts() {
       return testSubjects.findAll(`${SUBJ_OVERVIEW_CLUSTER_ALERTS} topAlertItem`);
     }
 
@@ -76,7 +76,7 @@ export function MonitoringClusterAlertsProvider({ getService, getPageObjects }) 
       return alerts[index];
     }
 
-    async clickViewAll() {
+    clickViewAll() {
       return testSubjects.click(SUBJ_OVERVIEW_VIEW_ALL);
     }
 
@@ -84,12 +84,12 @@ export function MonitoringClusterAlertsProvider({ getService, getPageObjects }) 
      * Cluster Alerts Table
      */
 
-    async isOnListingPage() {
+    isOnListingPage() {
       return testSubjects.exists(SUBJ_LISTING_PAGE);
     }
 
-    async getTableAlerts() {
-      return await PageObjects.monitoring.tableGetRows(SUBJ_TABLE_BODY);
+    getTableAlerts() {
+      return PageObjects.monitoring.tableGetRows(SUBJ_TABLE_BODY);
     }
 
     async getTableAlertsAll() {

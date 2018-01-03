@@ -1,25 +1,25 @@
 <div class="monitoring-summary-status">
   <div class="monitoring-summary-status__content" data-test-subj="elasticsearchSummaryStatus">
-    <div data-test-subj="nodesCount">Nodes:
-      <strong>{{ status.nodesCount }}</strong>
+    <div>Nodes:
+      <strong data-test-subj="nodesCount">{{ status.nodesCount }}</strong>
     </div>
-    <div data-test-subj="indicesCount">Indices:
-      <strong>{{ status.indicesCount }}</strong>
+    <div>Indices:
+      <strong data-test-subj="indicesCount">{{ status.indicesCount }}</strong>
     </div>
-    <div data-test-subj="memory">Memory:
-      <strong>{{ status.memUsed|formatNumber:'bytes' }} / {{ status.memMax|formatNumber:'bytes' }}</strong>
+    <div>Memory:
+      <strong data-test-subj="memory">{{ status.memUsed|formatNumber:'bytes' }} / {{ status.memMax|formatNumber:'bytes' }}</strong>
     </div>
-    <div data-test-subj="totalShards">Total Shards:
-      <strong>{{ status.totalShards }}</strong>
+    <div>Total Shards:
+      <strong data-test-subj="totalShards">{{ status.totalShards }}</strong>
     </div>
-    <div data-test-subj="unassignedShards">Unassigned Shards:
-      <strong>{{ status.unassignedShards }}</strong>
+    <div>Unassigned Shards:
+      <strong data-test-subj="unassignedShards">{{ status.unassignedShards }}</strong>
     </div>
-    <div data-test-subj="documentCount">Documents:
-      <strong>{{ status.documentCount|formatNumber:'int_commas' }}</strong>
+    <div>Documents:
+      <strong data-test-subj="documentCount">{{ status.documentCount|formatNumber:'int_commas' }}</strong>
     </div>
-    <div data-test-subj="dataSize">Data:
-      <strong>{{ status.dataSize|formatNumber:'bytes' }}</strong>
+    <div>Data:
+      <strong data-test-subj="dataSize">{{ status.dataSize|formatNumber:'bytes' }}</strong>
     </div>
     <div class="monitoring-summary-status__status-indicator">
       Health:

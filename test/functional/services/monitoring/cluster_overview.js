@@ -37,107 +37,107 @@ export function MonitoringClusterOverviewProvider({ getService }) {
 
   return new class ClusterOverview {
 
-    async isOnClusterOverview() {
+    isOnClusterOverview() {
       return testSubjects.exists(SUBJ_CLUSTER_OVERVIEW);
     }
-    async getClusterName() {
+    getClusterName() {
       return testSubjects.getVisibleText(SUBJ_CLUSTER_NAME);
     }
 
-    async doesClusterAlertsExist() {
+    doesClusterAlertsExist() {
       return testSubjects.exists(SUBJ_CLUSTER_ALERTS);
     }
 
-    async getEsStatus() {
+    getEsStatus() {
       return testSubjects.getVisibleText(SUBJ_ES_STATUS);
     }
-    async getEsVersion() {
+    getEsVersion() {
       return testSubjects.getVisibleText(SUBJ_ES_VERSION);
     }
-    async getEsUptime() {
+    getEsUptime() {
       return testSubjects.getVisibleText(SUBJ_ES_UPTIME);
     }
-    async getEsNumberOfNodes() {
+    getEsNumberOfNodes() {
       return testSubjects.getVisibleText(SUBJ_ES_NUMBER_OF_NODES);
     }
-    async getEsDiskAvailable() {
+    getEsDiskAvailable() {
       return testSubjects.getVisibleText(SUBJ_ES_DISK_AVAILABLE);
     }
-    async getEsJvmHeap() {
+    getEsJvmHeap() {
       return testSubjects.getVisibleText(SUBJ_ES_JVM_HEAP);
     }
-    async getEsNumberOfIndices() {
+    getEsNumberOfIndices() {
       return testSubjects.getVisibleText(SUBJ_ES_NUMBER_OF_INDICES);
     }
-    async getEsDocumentsCount() {
+    getEsDocumentsCount() {
       return testSubjects.getVisibleText(SUBJ_ES_DOCUMENTS_COUNT);
     }
-    async getEsDiskUsage() {
+    getEsDiskUsage() {
       return testSubjects.getVisibleText(SUBJ_ES_DISK_USAGE);
     }
-    async getEsPrimaryShards() {
+    getEsPrimaryShards() {
       return testSubjects.getVisibleText(SUBJ_ES_PRIMARY_SHARDS);
     }
-    async getEsReplicaShards() {
+    getEsReplicaShards() {
       return testSubjects.getVisibleText(SUBJ_ES_REPLICA_SHARDS);
     }
 
-    async clickEsNodes() {
+    clickEsNodes() {
       return testSubjects.click(SUBJ_ES_NUMBER_OF_NODES);
     }
 
-    async clickEsIndices() {
+    clickEsIndices() {
       return testSubjects.click(SUBJ_ES_NUMBER_OF_INDICES);
     }
 
-    async doesEsMlJobsExist() {
+    doesEsMlJobsExist() {
       return testSubjects.exists(SUBJ_ES_ML_JOBS);
     }
-    async getEsMlJobs() {
+    getEsMlJobs() {
       return testSubjects.getVisibleText(SUBJ_ES_ML_JOBS);
     }
 
-    async doesKbnPanelExist() {
+    doesKbnPanelExist() {
       return testSubjects.exists(SUBJ_KBN_PANEL);
     }
-    async getKbnStatus() {
+    getKbnStatus() {
       return testSubjects.getVisibleText(SUBJ_KBN_STATUS);
     }
-    async getKbnRequests() {
+    getKbnRequests() {
       return testSubjects.getVisibleText(SUBJ_KBN_REQUESTS);
     }
-    async getKbnMaxResponseTime() {
+    getKbnMaxResponseTime() {
       return testSubjects.getVisibleText(SUBJ_KBN_MAX_RESPONSE_TIME);
     }
-    async getKbnInstances() {
+    getKbnInstances() {
       return testSubjects.getVisibleText(SUBJ_KBN_INSTANCES);
     }
-    async getKbnConnections() {
+    getKbnConnections() {
       return testSubjects.getVisibleText(SUBJ_KBN_CONNECTIONS);
     }
-    async getKbnMemoryUsage() {
+    getKbnMemoryUsage() {
       return testSubjects.getVisibleText(SUBJ_KBN_MEMORY_USAGE);
     }
 
-    async doesLsPanelExist() {
+    doesLsPanelExist() {
       return testSubjects.exists(SUBJ_LS_PANEL);
     }
-    async getLsEventsReceived() {
+    getLsEventsReceived() {
       return testSubjects.getVisibleText(SUBJ_LS_EVENTS_RECEIVED);
     }
-    async getLsEventsEmitted() {
+    getLsEventsEmitted() {
       return testSubjects.getVisibleText(SUBJ_LS_EVENTS_EMITTED);
     }
-    async getLsNodes() {
+    getLsNodes() {
       return testSubjects.getVisibleText(SUBJ_LS_NODES);
     }
-    async getLsUptime() {
+    getLsUptime() {
       return testSubjects.getVisibleText(SUBJ_LS_UPTIME);
     }
-    async getLsJvmHeap() {
+    getLsJvmHeap() {
       return testSubjects.getVisibleText(SUBJ_LS_JVM_HEAP);
     }
-    async getLsPipelines() {
+    getLsPipelines() {
       return testSubjects.getVisibleText(SUBJ_LS_PIPELINES);
     }
     clickLsPipelines() {
