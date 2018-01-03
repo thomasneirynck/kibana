@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { get } from 'lodash';
 import withErrorHandler from '../../shared/withErrorHandler';
-import { PageHeader, GraphHeader } from '../../shared/UIComponents';
+import { PageHeader } from '../../shared/UIComponents';
 import DetailView from './DetailView';
 import Distribution from './Distribution';
 
@@ -50,6 +50,9 @@ class ErrorGroupDetails extends Component {
     const { errorGroupId } = this.props.urlParams;
     const { errorGroup } = this.props;
 
+    // If there are 0 occurrences, show only distribution chart w. empty message
+    const showDetails = errorGroup.data.occurrencesCount !== 0;
+
     const message =
       get(errorGroup.data.error, ERROR_LOG_MESSAGE) ||
       get(errorGroup.data.error, ERROR_EXC_MESSAGE);
@@ -58,13 +61,19 @@ class ErrorGroupDetails extends Component {
     return (
       <div>
         <PageHeader>Error group {errorGroupId.slice(0, 5) || 'N/A'}</PageHeader>
-        <Titles>
-          <Message>{message || 'N/A'}</Message>
-          <Culprit>{culprit || 'N/A'}</Culprit>
-        </Titles>
-        <GraphHeader>Occurrences</GraphHeader>
+        {showDetails && (
+          <Titles>
+            <Message>{message || 'N/A'}</Message>
+            <Culprit>{culprit || 'N/A'}</Culprit>
+          </Titles>
+        )}
         <Distribution />
-        <DetailView errorGroup={errorGroup} urlParams={this.props.urlParams} />
+        {showDetails && (
+          <DetailView
+            errorGroup={errorGroup}
+            urlParams={this.props.urlParams}
+          />
+        )}
       </div>
     );
   }

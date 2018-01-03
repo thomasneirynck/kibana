@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Histogram from '../../../shared/charts/Histogram';
 import EmptyMessage from '../../../shared/EmptyMessage';
+import { GraphHeader } from '../../../shared/UIComponents';
 
 export function getFormattedBuckets(buckets, bucketSize) {
   if (!buckets) {
@@ -55,6 +56,7 @@ class Distribution extends Component {
 
     return (
       <div>
+        <GraphHeader>Occurrences</GraphHeader>
         <Histogram
           xType="time"
           buckets={buckets}
