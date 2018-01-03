@@ -76,7 +76,8 @@ module.exports = {
     {
       files: ['plugins/apm/**/*'],
       rules: {
-        'no-unused-vars': ['error', { ignoreRestSiblings: true }]
+        'no-unused-vars': ['error', { ignoreRestSiblings: true }],
+        'no-console': ['warn', { allow: ['error'] }]
       }
     },
 

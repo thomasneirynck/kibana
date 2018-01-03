@@ -61,7 +61,7 @@ function getSortedProps(propData, levelTwoKey, level) {
 function formatValue(value) {
   if (_.isObject(value)) {
     return <pre>{JSON.stringify(value, null, 4)}</pre>;
-  } else if (_.isBoolean(value)) {
+  } else if (_.isBoolean(value) || _.isNumber(value)) {
     return String(value);
   } else if (!value) {
     return <EmptyValue>N/A</EmptyValue>;

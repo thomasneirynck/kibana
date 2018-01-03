@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import styled from 'styled-components';
 import {
   unit,
   units,
   px,
   colors,
+  fontFamily,
   fontFamilyCode,
   borderRadius
 } from '../../../style/variables';
 
 import { isEmpty } from 'lodash';
+import { Ellipsis } from '../../shared/Icons';
+import { PropertiesTable } from '../../shared/PropertiesTable';
 
 import SyntaxHighlighter, {
   registerLanguage
@@ -120,6 +123,24 @@ const Code = styled.code`
   z-index: 2;
 `;
 
+const VariablesContainer = styled.div`
+  background: ${colors.white};
+  border-top: 1px solid ${colors.gray4};
+  border-radius: 0 0 ${borderRadius} ${borderRadius};
+  padding: ${px(units.half)} ${px(unit)};
+  font-family: ${fontFamily};
+`;
+
+const VariablesToggle = styled.a`
+  display: block;
+  cursor: pointer;
+  user-select: none;
+`;
+
+const VariablesTableContainer = styled.div`
+  padding: ${px(units.plus)} ${px(unit)} 0;
+`;
+
 const getStackframeLines = stackframe => {
   if (!stackframe.context) {
     return [];
@@ -134,26 +155,47 @@ const getStackframeLines = stackframe => {
 const getStartLineNumber = stackframe =>
   stackframe.line.number - stackframe.context.pre.length;
 
-function CodePreview({ stackframe, codeLanguage, isLibraryFrame }) {
-  const hasContext = !isEmpty(stackframe.context);
+class CodePreview extends PureComponent {
+  state = {
+    variablesVisible: false
+  };
 
-  return (
-    <Container hasContext={hasContext} isLibraryFrame={isLibraryFrame}>
-      <FileDetails>
-        <FileDetail>{stackframe.filename}</FileDetail> in{' '}
-        <FileDetail>{stackframe.function}</FileDetail> at{' '}
-        <FileDetail>line {stackframe.line.number}</FileDetail>
-      </FileDetails>
+  toggleVariables = () =>
+    this.setState(() => {
+      return { variablesVisible: !this.state.variablesVisible };
+    });
 
-      {hasContext && (
-        <Context
-          stackframe={stackframe}
-          codeLanguage={codeLanguage}
-          isLibraryFrame={isLibraryFrame}
-        />
-      )}
-    </Container>
-  );
+  render() {
+    const { stackframe, codeLanguage, isLibraryFrame } = this.props;
+    const hasContext = !isEmpty(stackframe.context);
+    const hasVariables = !isEmpty(stackframe.vars);
+
+    return (
+      <Container hasContext={hasContext} isLibraryFrame={isLibraryFrame}>
+        <FileDetails>
+          <FileDetail>{stackframe.filename}</FileDetail> in{' '}
+          <FileDetail>{stackframe.function}</FileDetail> at{' '}
+          <FileDetail>line {stackframe.line.number}</FileDetail>
+        </FileDetails>
+
+        {hasContext && (
+          <Context
+            stackframe={stackframe}
+            codeLanguage={codeLanguage}
+            isLibraryFrame={isLibraryFrame}
+          />
+        )}
+
+        {hasVariables && (
+          <Variables
+            vars={stackframe.vars}
+            visible={this.state.variablesVisible}
+            onClick={this.toggleVariables}
+          />
+        )}
+      </Container>
+    );
+  }
 }
 
 function Context({ stackframe, codeLanguage, isLibraryFrame }) {
@@ -187,6 +229,22 @@ function Context({ stackframe, codeLanguage, isLibraryFrame }) {
         ))}
       </LineContainer>
     </ContextContainer>
+  );
+}
+
+function Variables({ vars, visible, onClick }) {
+  return (
+    <VariablesContainer>
+      <VariablesToggle onClick={onClick}>
+        <Ellipsis horizontal={visible} style={{ marginRight: units.half }} />{' '}
+        Local variables
+      </VariablesToggle>
+      {visible && (
+        <VariablesTableContainer>
+          <PropertiesTable propData={vars} propKey={'custom'} />
+        </VariablesTableContainer>
+      )}
+    </VariablesContainer>
   );
 }
 
