@@ -4,6 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'ui/autoload/styles';
 import 'react-vis/dist/style.css';
+import './style/global_overrides.css';
 
 import template from './templates/index.html';
 import ReactRoot from './reactRoot';
