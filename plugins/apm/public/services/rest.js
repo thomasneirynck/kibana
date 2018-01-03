@@ -161,12 +161,24 @@ export async function loadCharts({
   });
 }
 
-export async function loadErrorGroupList({ serviceName, start, end }) {
+export async function loadErrorGroupList({
+  serviceName,
+  start,
+  end,
+  size,
+  q,
+  sortBy,
+  sortOrder
+}) {
   return callApi({
     pathname: `${getAppRootPath(serviceName)}/errors`,
     query: {
       start,
-      end
+      end,
+      size,
+      q,
+      sortBy,
+      sortOrder
     }
   });
 }

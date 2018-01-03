@@ -3,21 +3,20 @@ import ErrorGroupOverview from './view';
 import { getUrlParams } from '../../../store/urlParams';
 import {
   getErrorGroupList,
-  loadErrorGroupList
+  loadErrorGroupList,
+  getErrorGroupListArgs
 } from '../../../store/errorGroupLists';
-import sorting, { changeErrorGroupSorting } from '../../../store/sorting';
 
 function mapStateToProps(state = {}) {
   return {
+    listArgs: getErrorGroupListArgs(state),
     urlParams: getUrlParams(state),
-    errorGroupList: getErrorGroupList(state),
-    errorGroupSorting: sorting(state, 'errorGroup').sorting.errorGroup
+    errorGroupList: getErrorGroupList(state)
   };
 }
 
 const mapDispatchToProps = {
-  loadErrorGroupList,
-  changeErrorGroupSorting
+  loadErrorGroupList
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ErrorGroupOverview);

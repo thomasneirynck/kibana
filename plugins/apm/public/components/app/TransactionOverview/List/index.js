@@ -1,46 +1,14 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
+
 import { get } from 'lodash';
 import { TRANSACTION_ID } from '../../../../../common/constants';
 
-import { units, px } from '../../../../style/variables';
-import { KuiTableHeaderCell, KuiInfoButton } from 'ui_framework/components';
-import { Tooltip } from 'pui-react-tooltip';
-import { OverlayTrigger } from 'pui-react-overlay-trigger';
+import { KuiTableHeaderCell } from 'ui_framework/components';
 
-import APMTable from '../../../shared/APMTable';
+import SearchableAPMTable from '../../../shared/APMTable/SearchableAPMTable';
 import ListItem from './ListItem';
 import { tpmUnit } from '../../../../utils/formatters';
-
-const TooltipWrapper = styled.div`
-  position: relative;
-  display: inline-block;
-  top: 1px;
-  left: ${px(units.half)};
-  margin-right: ${px(units.quarter * 3)};
-`;
-
-const ImpactToolTip = () => (
-  <TooltipWrapper>
-    <OverlayTrigger
-      placement="top"
-      trigger="click"
-      overlay={
-        <Tooltip>
-          Impact shows the most used and<br />slowest endpoints in your service.
-        </Tooltip>
-      }
-    >
-      <KuiInfoButton
-        onClick={e => {
-          // TODO: Remove this handler once issue with pui-react-overlay-trigger has been resolved
-          e.stopPropagation();
-          return false;
-        }}
-      />
-    </OverlayTrigger>
-  </TooltipWrapper>
-);
+import ImpactTooltip from './ImpactTooltip';
 
 const getRelativeImpact = (impact, impactMin, impactMax) =>
   Math.max((impact - impactMin) / Math.max(impactMax - impactMin, 1) * 100, 1);
@@ -80,18 +48,18 @@ class List extends Component {
           isSortAscending={!transactionSorting.descending}
         >
           Impact
-          <ImpactToolTip />
+          <ImpactTooltip />
         </KuiTableHeaderCell>
       );
 
       return [...cells, impactCell];
     };
 
-    const renderBody = transactions => {
-      const impacts = transactions.map(({ impact }) => impact);
-      const impactMin = Math.min(...impacts);
-      const impactMax = Math.max(...impacts);
+    const impacts = items.map(({ impact }) => impact);
+    const impactMin = Math.min(...impacts);
+    const impactMax = Math.max(...impacts);
 
+    const renderBody = transactions => {
       return transactions.map(transaction => {
         return (
           <ListItem
@@ -105,14 +73,20 @@ class List extends Component {
       });
     };
 
+    const renderFooterText = () => {
+      return items.length === 500
+        ? 'Showing first 500 results ordered by response time'
+        : '';
+    };
+
     return (
-      <APMTable
+      <SearchableAPMTable
         searchableFields={['name']}
         items={items}
         emptyMessageHeading="No transactions in the selected time range."
-        resultsLimitOrder="response time"
         renderHead={renderHead}
         renderBody={renderBody}
+        renderFooterText={renderFooterText}
       />
     );
   }

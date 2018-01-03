@@ -1,4 +1,3 @@
-import orderBy from 'lodash.orderby';
 import { createSelector } from 'reselect';
 import { getUrlParams } from './urlParams';
 import * as rest from '../services/rest';
@@ -34,29 +33,24 @@ export const loadErrorGroupList = createAction(
   rest.loadErrorGroupList
 );
 
-export const getErrorGroupList = createSelector(
-  state => state.errorGroupLists,
-  state => state.sorting.errorGroup,
-  getUrlParams,
-  (errorGroupLists, errorGroupSorting, urlParams) => {
-    const { serviceName, start, end } = urlParams;
-    const key = getKey({ serviceName, start, end });
+export const getErrorGroupListArgs = createSelector(getUrlParams, urlParams => {
+  const { serviceName, start, end, q, sortBy, sortOrder } = urlParams;
+  return { serviceName, start, end, q, sortBy, sortOrder };
+});
 
-    if (!errorGroupLists[key]) {
-      return INITIAL_STATE;
-    }
+export const getErrorGroupListKey = state => {
+  const args = getErrorGroupListArgs(state);
+  return getKey(args);
+};
 
-    const { key: sortKey, descending } = errorGroupSorting;
+export const getErrorGroupList = state => {
+  const key = getErrorGroupListKey(state);
 
-    return {
-      ...errorGroupLists[key],
-      data: orderBy(
-        errorGroupLists[key].data,
-        sortKey,
-        descending ? 'desc' : 'asc'
-      )
-    };
+  if (!state.errorGroupLists[key]) {
+    return INITIAL_STATE;
   }
-);
+
+  return state.errorGroupLists[key];
+};
 
 export default errorGroupLists;

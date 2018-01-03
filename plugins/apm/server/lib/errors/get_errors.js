@@ -8,13 +8,19 @@ import {
 } from '../../../common/constants';
 import { get } from 'lodash';
 
-export async function getErrors({ serviceName, setup }) {
+export async function getErrors({
+  serviceName,
+  q,
+  sortBy,
+  sortOrder = 'desc',
+  setup
+}) {
   const { start, end, client, config } = setup;
 
   const params = {
     index: config.get('xpack.apm.indexPattern'),
     body: {
-      size: 100,
+      size: 0,
       query: {
         bool: {
           must: [
@@ -32,35 +38,75 @@ export async function getErrors({ serviceName, setup }) {
           ]
         }
       },
-      collapse: {
-        field: ERROR_GROUP_ID,
-        inner_hits: {
-          name: 'occurrences',
-          size: 0
+      aggs: {
+        error_groups: {
+          terms: {
+            field: ERROR_GROUP_ID,
+            size: 500,
+            order: { _count: sortOrder }
+          },
+          aggs: {
+            sample: {
+              top_hits: {
+                _source: [
+                  ERROR_LOG_MESSAGE,
+                  ERROR_EXC_MESSAGE,
+                  ERROR_CULPRIT,
+                  ERROR_GROUP_ID,
+                  '@timestamp'
+                ],
+                sort: [{ '@timestamp': 'desc' }],
+                size: 1
+              }
+            }
+          }
         }
-      },
-      sort: [
-        {
-          '@timestamp': 'desc'
-        }
-      ]
+      }
     }
   };
 
-  const resp = await client('search', params);
-  const hits = get(resp, 'hits.hits', []);
-
-  return hits.map(hit => {
-    const message =
-      get(hit, `_source.${ERROR_LOG_MESSAGE}`) ||
-      get(hit, `_source.${ERROR_EXC_MESSAGE}`);
-
-    return {
-      culprit: get(hit, `_source.${ERROR_CULPRIT}`),
-      message: message,
-      group_id: get(hit, `_source.${ERROR_GROUP_ID}`),
-      occurrence_count: get(hit, `inner_hits.occurrences.hits.total`),
-      latest_occurrence_at: get(hit, `_source.@timestamp`)
+  // sort buckets by last occurence of error
+  if (sortBy === 'latestOccurrenceAt') {
+    params.body.aggs.error_groups.terms.order = {
+      max_timestamp: sortOrder
     };
-  });
+
+    params.body.aggs.error_groups.aggs.max_timestamp = {
+      max: { field: '@timestamp' }
+    };
+  }
+
+  // match query against error fields
+  if (q) {
+    params.body.query.bool.must.push({
+      query_string: {
+        fields: [
+          ERROR_EXC_MESSAGE,
+          ERROR_LOG_MESSAGE,
+          ERROR_CULPRIT,
+          ERROR_GROUP_ID
+        ],
+        query: q
+      }
+    });
+  }
+
+  const resp = await client('search', params);
+  const hits = get(resp, 'aggregations.error_groups.buckets', []).map(
+    bucket => {
+      const source = bucket.sample.hits.hits[0]._source;
+      const message =
+        get(source, ERROR_LOG_MESSAGE) || get(source, ERROR_EXC_MESSAGE);
+
+      return {
+        message,
+        occurrenceCount: bucket.doc_count,
+        culprit: get(source, ERROR_CULPRIT),
+        groupId: get(source, ERROR_GROUP_ID),
+        latestOccurrenceAt: source['@timestamp']
+      };
+    }
+  );
+
+  return hits;
 }

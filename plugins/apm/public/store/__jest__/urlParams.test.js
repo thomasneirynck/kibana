@@ -13,6 +13,7 @@ describe('urlParams', () => {
     );
 
     expect(state).toEqual({
+      page: 0,
       serviceName: 'myServiceName',
       spanId: 10,
       transactionId: 'myTransactionId',

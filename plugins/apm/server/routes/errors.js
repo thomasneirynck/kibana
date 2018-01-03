@@ -23,14 +23,25 @@ export function initErrorsApi(server) {
       validate: {
         query: Joi.object().keys({
           start: dateValidation,
-          end: dateValidation
+          end: dateValidation,
+          q: Joi.string().allow(''),
+          sortBy: Joi.string(),
+          sortOrder: Joi.string()
         })
       }
     },
     handler: (req, reply) => {
       const { setup } = req.pre;
       const { serviceName } = req.params;
-      return getErrors({ serviceName, setup })
+      const { q, sortBy, sortOrder } = req.query;
+
+      return getErrors({
+        serviceName,
+        q,
+        sortBy,
+        sortOrder,
+        setup
+      })
         .then(reply)
         .catch(defaultErrorHandler(reply));
     }

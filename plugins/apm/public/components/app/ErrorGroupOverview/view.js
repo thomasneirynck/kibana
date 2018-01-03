@@ -4,36 +4,34 @@ import { PageHeader } from '../../shared/UIComponents';
 import TabNavigation from '../../shared/TabNavigation';
 import List from './List';
 
-function loadErrorGroupList(props) {
-  const { serviceName, start, end } = props.urlParams;
+function maybeLoadList(props) {
+  const { serviceName, start, end } = props.listArgs;
 
   if (serviceName && start && end && !props.errorGroupList.status) {
-    props.loadErrorGroupList({ serviceName, start, end });
+    props.loadErrorGroupList(props.listArgs);
   }
 }
 
 class ErrorGroupOverview extends Component {
   componentDidMount() {
-    loadErrorGroupList(this.props);
+    maybeLoadList(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
-    loadErrorGroupList(nextProps);
+    maybeLoadList(nextProps);
   }
 
   render() {
     const { serviceName } = this.props.urlParams;
-    const { changeErrorGroupSorting, errorGroupSorting } = this.props;
+
     return (
       <div>
         <PageHeader>{serviceName}</PageHeader>
         <TabNavigation />
 
         <List
-          serviceName={serviceName}
+          urlParams={this.props.urlParams}
           items={this.props.errorGroupList.data}
-          changeErrorGroupSorting={changeErrorGroupSorting}
-          errorGroupSorting={errorGroupSorting}
         />
       </div>
     );

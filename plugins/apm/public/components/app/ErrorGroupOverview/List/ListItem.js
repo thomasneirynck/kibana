@@ -53,7 +53,7 @@ function ListItem({ error, serviceName }) {
   const count = occurrenceCount
     ? numeral(occurrenceCount).format('0.[0]a')
     : 'N/A';
-  const timestamp = latestOccurrenceAt
+  const timeAgo = latestOccurrenceAt
     ? moment(latestOccurrenceAt).fromNow()
     : 'N/A';
 
@@ -71,7 +71,7 @@ function ListItem({ error, serviceName }) {
         <Culprit>{culprit || 'N/A'}</Culprit>
       </MessageAndCulpritCell>
       <OccurrenceCell align={RIGHT_ALIGNMENT}>{count}</OccurrenceCell>
-      <OccurrenceCell align={RIGHT_ALIGNMENT}>{timestamp}</OccurrenceCell>
+      <OccurrenceCell align={RIGHT_ALIGNMENT}>{timeAgo}</OccurrenceCell>
     </KuiTableRow>
   );
 }

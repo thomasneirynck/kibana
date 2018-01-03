@@ -90,7 +90,7 @@ export class InnerCustomPlot extends PureComponent {
   render() {
     const { chartTitle, series, truncateLegends, width } = this.props;
 
-    if (_.isEmpty(series)) {
+    if (_.isEmpty(series) || !width) {
       return null;
     }
 

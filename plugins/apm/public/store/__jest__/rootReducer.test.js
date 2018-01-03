@@ -16,10 +16,6 @@ describe('root reducer', () => {
           key: 'impact',
           descending: true
         },
-        errorGroup: {
-          key: 'latestOccurrenceAt',
-          descending: true
-        },
         service: {
           key: 'serviceName',
           descending: false

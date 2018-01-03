@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 
-import APMTable, {
-  AlignmentKuiTableHeaderCell
-} from '../../../shared/APMTable';
+import SearchableAPMTable from '../../../shared/APMTable/SearchableAPMTable';
+import { AlignmentKuiTableHeaderCell } from '../../../shared/APMTable/APMTable';
 
 import ListItem from './ListItem';
 
@@ -46,14 +45,18 @@ class List extends Component {
       });
     };
 
+    const renderFooterText = () => {
+      return items.length === 500 ? 'Only top 500 services are shown' : '';
+    };
+
     return (
-      <APMTable
-        resultsLimit={500}
+      <SearchableAPMTable
         searchableFields={['serviceName', 'agentName']}
         items={items}
         emptyMessageHeading="No services with data in the selected time range."
         renderHead={renderHead}
         renderBody={renderBody}
+        renderFooterText={renderFooterText}
       />
     );
   }

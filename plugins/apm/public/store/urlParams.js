@@ -26,14 +26,24 @@ function urlParams(state = {}, action) {
         errorGroupId
       } = getPathParams(action.location.pathname);
 
-      const { transactionId, detailTab, spanId } = toQuery(
-        action.location.search
-      );
+      const {
+        transactionId,
+        detailTab,
+        spanId,
+        page,
+        sortBy,
+        sortOrder,
+        q
+      } = toQuery(action.location.search);
 
       return {
         ...state,
 
         // query params
+        q,
+        sortBy,
+        sortOrder,
+        page: toNumber(page) || 0,
         transactionId,
         detailTab,
         spanId: toNumber(spanId),
@@ -90,6 +100,7 @@ export function updateTimePicker(time) {
   return { type: TIMEPICKER_UPDATE, time };
 }
 
+// Selectors
 export const getUrlParams = createSelector(
   state => state.urlParams,
   getDefaultTransactionType,
