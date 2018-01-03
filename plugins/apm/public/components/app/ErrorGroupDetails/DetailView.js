@@ -52,8 +52,8 @@ function getCurrentTab(tabs = [], selectedTab) {
   return tabs.includes(selectedTab) ? selectedTab : tabs[0];
 }
 
-function getTabs(errorGroup) {
-  const dynamicProps = Object.keys(errorGroup.data.error.context);
+function getTabs(context) {
+  const dynamicProps = Object.keys(context);
   return [STACKTRACE_TAB, ...getLevelOneProps(dynamicProps)];
 }
 
@@ -71,10 +71,11 @@ function DetailView({ errorGroup, urlParams }) {
   const timestamp = get(errorGroup, 'data.error.@timestamp');
   const url = get(errorGroup.data.error, 'context.request.url.raw', 'N/A');
 
-  const stackframes = get(errorGroup.data.error.error.exception, 'stacktrace');
+  const stackframes = get(errorGroup.data.error.error, 'exception.stacktrace');
   const codeLanguage = get(errorGroup.data.error, SERVICE_LANGUAGE_NAME);
 
-  const tabs = getTabs(errorGroup);
+  const context = get(errorGroup.data.error.error, 'context', []);
+  const tabs = getTabs(context);
   const currentTab = getCurrentTab(tabs, urlParams.detailTab);
 
   const occurencesCount = errorGroup.data.occurrencesCount;
