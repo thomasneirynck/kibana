@@ -26,6 +26,9 @@ include::{kib-repo-dir}/index-shared3.asciidoc[]
 :edit_url!:
 include::ml/index.asciidoc[]
 
+:edit_url!::
+include::apm/index.asciidoc[]
+
 :edit_url!:
 include::graph/index.asciidoc[]
 
