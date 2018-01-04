@@ -14,6 +14,7 @@
  */
 
 import 'plugins/ml/settings/special_events/components/new_event_modal';
+import 'plugins/ml/settings/special_events/components/import_events_modal';
 
 import template from './events_list.html';
 import moment from 'moment';
@@ -21,7 +22,7 @@ import moment from 'moment';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlEventsList', function (mlNewEventService) {
+module.directive('mlEventsList', function (mlNewEventService, mlImportEventsService) {
   return {
     restrict: 'AE',
     replace: true,
@@ -29,6 +30,7 @@ module.directive('mlEventsList', function (mlNewEventService) {
     template,
     scope: {
       events: '=',
+      showControls: '='
     },
     controller: function ($scope) {
 
@@ -37,7 +39,6 @@ module.directive('mlEventsList', function (mlNewEventService) {
       $scope.clickNewEvent = function () {
         mlNewEventService.openNewEventWindow()
           .then((event) => {
-            console.log(event);
             $scope.events.push(event);
           })
           .catch(() => {});
@@ -52,6 +53,13 @@ module.directive('mlEventsList', function (mlNewEventService) {
         $scope.events.splice(index, 1);
       };
 
+      $scope.clickImportEvents = function () {
+        mlImportEventsService.openImportEventsWindow()
+          .then((events) => {
+            $scope.events.push(...events);
+          })
+          .catch(() => {});
+      };
 
     }
   };

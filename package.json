@@ -107,6 +107,7 @@
     "hapi-auth-cookie": "6.1.1",
     "history": "4.7.2",
     "humps": "2.0.1",
+    "icalendar": "0.7.1",
     "isomorphic-fetch": "2.2.1",
     "joi": "6.10.1",
     "lodash": "3.10.1",

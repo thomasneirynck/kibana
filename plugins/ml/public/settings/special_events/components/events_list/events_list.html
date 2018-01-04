@@ -1,6 +1,8 @@
 <div class="events-list">
-  <div class=" kuiControlledTable kuiVerticalRhythm">
-    <div class="kuiToolBar">
+  <div
+    class="kuiVerticalRhythm"
+    ng-class="{'kuiControlledTable': showControls}">
+    <div ng-if="showControls" class="kuiToolBar">
       <!-- <div class="kuiToolBarSearch">
         <tool-bar-search-box filter="query" on-filter="onQueryChange"></tool-bar-search-box>
       </div> -->
@@ -15,6 +17,17 @@
           ng-click="clickNewEvent()">
           <span aria-hidden="true" class="kuiButton__icon kuiIcon fa-plus"></span>
           New event
+        </a>
+
+        <a
+          class="kuiButton kuiButton--primary"
+          href=""
+          aria-label="Import events"
+          tooltip="Import events"
+          tooltip-append-to-body="true"
+          ng-click="clickImportEvents()">
+          <span aria-hidden="true" class="kuiButton__icon kuiIcon fa-upload"></span>
+          Import events
         </a>
       </div>
 

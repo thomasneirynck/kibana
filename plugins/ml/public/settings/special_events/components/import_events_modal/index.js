@@ -14,5 +14,5 @@
  */
 
 import './styles/main.less';
-import './new_event_service';
-import './new_event_modal_controller';
+import './import_events_service';
+import './import_events_modal_controller';
