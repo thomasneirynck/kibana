@@ -123,6 +123,7 @@ function Step({ step, stepSetId, isLastStep, checkStatus, result, type }) {
                 color: null,
                 padding: px(unit),
                 lineHeight: px(unit * 1.5),
+                fontFamily: fontFamilyCode,
                 background: colors.gray5,
                 overflowX: 'scroll'
               }}

@@ -21,9 +21,11 @@ import { xcode } from 'react-syntax-highlighter/dist/styles';
 
 import javascript from 'react-syntax-highlighter/dist/languages/javascript';
 import python from 'react-syntax-highlighter/dist/languages/python';
+import ruby from 'react-syntax-highlighter/dist/languages/ruby';
 
 registerLanguage('javascript', javascript);
 registerLanguage('python', python);
+registerLanguage('ruby', ruby);
 
 const FileDetails = styled.div`
   color: ${colors.gray3};
