@@ -32,13 +32,6 @@ export function preserveLayoutFactory(server, { dimensions: { height, width }, z
       };
     },
 
-    getElementSize() {
-      return {
-        height: height,
-        width: width,
-      };
-    },
-
     getPdfImageSize() {
       return {
         height: height,

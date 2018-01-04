@@ -4,6 +4,13 @@ export function printLayoutFactory(server) {
   const config = server.config();
   const captureConfig = config.get('xpack.reporting.capture');
 
+  const selectors = {
+    screenshot: '[data-shared-item]',
+    renderComplete: '[data-shared-item]',
+    itemsCountAttribute: 'data-shared-items-count',
+    isTimepickerEnabled: '[data-shared-timefilter=true]'
+  };
+
   return {
 
     getCssOverridesPath() {
@@ -26,11 +33,31 @@ export function printLayoutFactory(server) {
       };
     },
 
-    getElementSize() {
-      return {
+    async positionElements(browser) {
+      const elementSize = {
         width: captureConfig.viewport.width / captureConfig.zoom,
         height: captureConfig.viewport.height / captureConfig.zoom
       };
+
+      await browser.evaluate({
+        fn: function (selector, height, width) {
+          const visualizations = document.querySelectorAll(selector);
+          const visualizationsLength = visualizations.length;
+
+          for (let i = 0; i < visualizationsLength; i++) {
+            const visualization = visualizations[i];
+            const style = visualization.style;
+            style.position = 'fixed';
+            style.top = `${height * i}px`;
+            style.left = 0;
+            style.width = `${width}px`;
+            style.height = `${height}px`;
+            style.zIndex = 1;
+            style.backgroundColor = 'inherit';
+          }
+        },
+        args: [selectors.screenshot, elementSize.height, elementSize.width],
+      });
     },
 
     getPdfImageSize() {
@@ -47,11 +74,7 @@ export function printLayoutFactory(server) {
       return 'A4';
     },
 
-    selectors: {
-      screenshot: '[data-shared-item]',
-      renderComplete: '[data-shared-item]',
-      itemsCountAttribute: 'data-shared-items-count',
-      isTimepickerEnabled: '[data-shared-timefilter=true]'
-    }
+    selectors
+
   };
 }

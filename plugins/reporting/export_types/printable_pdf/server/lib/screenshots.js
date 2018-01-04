@@ -100,63 +100,25 @@ export function screenshotsObservableFactory(server) {
   };
 
   const positionElements = async (browser, layout) => {
-    const elementSize = layout.getElementSize();
-    await browser.evaluate({
-      fn: function (selector, height, width) {
-        const visualizations = document.querySelectorAll(selector);
-        const visualizationsLength = visualizations.length;
-
-        for (let i = 0; i < visualizationsLength; i++) {
-          const visualization = visualizations[i];
-          const style = visualization.style;
-          style.position = 'fixed';
-          style.top = `${height * i}px`;
-          style.left = 0;
-          style.width = `${width}px`;
-          style.height = `${height}px`;
-          style.zIndex = 1;
-          style.backgroundColor = 'inherit';
-        }
-      },
-      args: [layout.selectors.screenshot, elementSize.height, elementSize.width],
-    });
+    if (layout.positionElements) {
+      await layout.positionElements(browser);
+    }
   };
 
   const waitForRenderComplete = async (browser, layout) => {
     await browser.evaluate({
-      fn: function (selector, visLoadDelay, visSettleTime) {
+      fn: function (selector, visLoadDelay) {
         // wait for visualizations to finish loading
         const visualizations = document.querySelectorAll(selector);
         const visCount = visualizations.length;
         const renderedTasks = [];
 
-        // used when visualizations have a render-count attribute
-        function waitForRenderCount(visualization) {
+        function waitForRender(visualization) {
           return new Promise(function (resolve) {
-            const CHECK_DELAY = 300;
-            let lastRenderCount = 0;
-
-            (function checkRenderCount() {
-              const renderCount = parseInt(visualization.getAttribute('render-counter'));
-
-              // vis has rendered at least once
-              if (renderCount > 0) {
-                // resolve once the current and previous render count match
-                if (renderCount === lastRenderCount) {
-                  return resolve();
-                }
-
-                // if they don't match, wait for the visualization to settle and try again
-                lastRenderCount = renderCount;
-                return setTimeout(checkRenderCount, visSettleTime);
-              }
-
-              setTimeout(checkRenderCount, CHECK_DELAY);
-            }());
+            visualization.addEventListener('renderComplete', () => resolve());
           });
         }
 
-        // timeout resolution, used when visualizations don't have a render-count attribute
         function waitForRenderDelay() {
           return new Promise(function (resolve) {
             setTimeout(resolve, visLoadDelay);
@@ -165,18 +127,18 @@ export function screenshotsObservableFactory(server) {
 
         for (let i = 0; i < visCount; i++) {
           const visualization = visualizations[i];
-          const renderCounter = visualization.getAttribute('render-counter');
+          const isRendered = visualization.getAttribute('data-render-complete');
 
-          if (renderCounter !== 'disabled') {
-            renderedTasks.push(waitForRenderCount(visualization));
-          } else {
+          if (isRendered === 'disabled') {
             renderedTasks.push(waitForRenderDelay());
+          } else if (isRendered === 'false') {
+            renderedTasks.push(waitForRender(visualization));
           }
         }
 
         return Promise.all(renderedTasks);
       },
-      args: [layout.selectors.renderComplete, captureConfig.loadDelay, captureConfig.settleTime],
+      args: [layout.selectors.renderComplete, captureConfig.loadDelay],
       awaitPromise: true,
     });
   };

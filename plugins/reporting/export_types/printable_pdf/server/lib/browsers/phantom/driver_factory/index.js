@@ -13,7 +13,7 @@ export class PhantomDriverFactory {
 
   type = 'phantom';
 
-  create({ bridgePort, zoom }) {
+  create({ bridgePort, viewport, zoom }) {
     return Rx.Observable.create(observer => {
       let killed = false;
       let browser;
@@ -34,6 +34,11 @@ export class PhantomDriverFactory {
           safeChildProcess(browser.process, observer);
 
           page = await promisify(browser.createPage)();
+          if (killed) {
+            return;
+          }
+
+          await promisify(page.set)('viewportSize', viewport);
           if (killed) {
             return;
           }

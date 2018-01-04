@@ -93,6 +93,7 @@ export default function ({ getService, getPageObjects }) {
 
           await PageObjects.dashboard.saveDashboard('report test');
           await PageObjects.header.clickToastOK();
+
           await PageObjects.reporting.openReportingPanel();
           await PageObjects.reporting.clickGenerateReportButton();
           await PageObjects.reporting.clickDownloadReportButton(60000);
@@ -144,6 +145,7 @@ export default function ({ getService, getPageObjects }) {
 
       describe.skip('Preserve Layout', () => { // eslint-disable-line jest/no-disabled-tests
         it('matches baseline report', async function () {
+
           // Generating and then comparing reports can take longer than the default 60s timeout because the comparePngs
           // function is taking about 15 seconds per comparison in jenkins.
           this.timeout(180000);
@@ -169,6 +171,7 @@ export default function ({ getService, getPageObjects }) {
           );
           // After expected OS differences, the diff count came to be around 200k
           expect(diffCount).to.be.lessThan(220000);
+
         });
       });
     });
