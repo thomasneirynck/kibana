@@ -8,8 +8,7 @@
         "detector_description": "apache2_access_remote_ip_high_dc_url",
         "function": "high_distinct_count",
         "field_name": "apache2.access.url",
-        "over_field_name": "apache2.access.remote_ip",
-        "detector_rules": []
+        "over_field_name": "apache2.access.remote_ip"
       }
     ],
     "influencers": [
