@@ -1,4 +1,9 @@
-<monitoring-main product="kibana" name="kibana" instance="{{ pageData.kibanaSummary.name }}">
+<monitoring-main
+  product="kibana"
+  name="kibana"
+  instance="{{ pageData.kibanaSummary.name }}"
+  data-test-subj="kibanaInstancePage"
+>
   <monitoring-kibana-summary kibana="pageData.kibanaSummary"></monitoring-kibana-summary>
   <div class="page-row">
     <div class="row" ng-if="pageData.metrics">

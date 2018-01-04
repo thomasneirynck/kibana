@@ -68,7 +68,11 @@ export function ElasticsearchPanel(props) {
           <EuiPanel paddingSize="m">
             <EuiTitle size="s">
               <h3>
-                <EuiLink onClick={goToElasticsearch} aria-label="Elasticsearch Overview">
+                <EuiLink
+                  onClick={goToElasticsearch}
+                  aria-label="Elasticsearch Overview"
+                  data-test-subj="esOverview"
+                >
                   Overview
                 </EuiLink>
               </h3>

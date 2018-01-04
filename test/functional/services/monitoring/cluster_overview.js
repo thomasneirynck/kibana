@@ -9,6 +9,7 @@ export function MonitoringClusterOverviewProvider({ getService }) {
   const SUBJ_ES_STATUS            = `${SUBJ_ES_PANEL} statusIcon`;
   const SUBJ_ES_VERSION           = `${SUBJ_ES_PANEL} esVersion`;
   const SUBJ_ES_UPTIME            = `${SUBJ_ES_PANEL} esUptime`;
+  const SUBJ_ES_OVERVIEW          = `${SUBJ_ES_PANEL} esOverview`;
   const SUBJ_ES_NUMBER_OF_NODES   = `${SUBJ_ES_PANEL} esNumberOfNodes`;
   const SUBJ_ES_DISK_AVAILABLE    = `${SUBJ_ES_PANEL} esDiskAvailable`;
   const SUBJ_ES_JVM_HEAP          = `${SUBJ_ES_PANEL} esJvmHeap`;
@@ -23,9 +24,10 @@ export function MonitoringClusterOverviewProvider({ getService }) {
   const SUBJ_KBN_STATUS            = `${SUBJ_KBN_PANEL} statusIcon`;
   const SUBJ_KBN_REQUESTS          = `${SUBJ_KBN_PANEL} kbnRequests`;
   const SUBJ_KBN_MAX_RESPONSE_TIME = `${SUBJ_KBN_PANEL} kbnMaxResponseTime`;
-  const SUBJ_KBN_INSTANCES         = `${SUBJ_KBN_PANEL} kbnInstances`;
   const SUBJ_KBN_CONNECTIONS       = `${SUBJ_KBN_PANEL} kbnConnections`;
   const SUBJ_KBN_MEMORY_USAGE      = `${SUBJ_KBN_PANEL} kbnMemoryUsage`;
+  const SUBJ_KBN_OVERVIEW          = `${SUBJ_KBN_PANEL} kbnOverview`;
+  const SUBJ_KBN_INSTANCES         = `${SUBJ_KBN_PANEL} kbnInstances`;
 
   const SUBJ_LS_PANEL           = `clusterItemContainerLogstash`;
   const SUBJ_LS_EVENTS_RECEIVED = `${SUBJ_LS_PANEL} lsEventsReceived`;
@@ -82,10 +84,12 @@ export function MonitoringClusterOverviewProvider({ getService }) {
       return testSubjects.getVisibleText(SUBJ_ES_REPLICA_SHARDS);
     }
 
+    clickEsOverview() {
+      return testSubjects.click(SUBJ_ES_OVERVIEW);
+    }
     clickEsNodes() {
       return testSubjects.click(SUBJ_ES_NUMBER_OF_NODES);
     }
-
     clickEsIndices() {
       return testSubjects.click(SUBJ_ES_NUMBER_OF_INDICES);
     }
@@ -117,6 +121,12 @@ export function MonitoringClusterOverviewProvider({ getService }) {
     }
     getKbnMemoryUsage() {
       return testSubjects.getVisibleText(SUBJ_KBN_MEMORY_USAGE);
+    }
+    clickKibanaOverview() {
+      return testSubjects.click(SUBJ_KBN_OVERVIEW);
+    }
+    clickKibanaInstances() {
+      return testSubjects.click(SUBJ_KBN_INSTANCES);
     }
 
     doesLsPanelExist() {

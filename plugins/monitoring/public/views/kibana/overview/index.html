@@ -1,4 +1,8 @@
-<monitoring-main product="kibana" name="overview">
+<monitoring-main
+  product="kibana"
+  name="overview"
+  data-test-subj="kibanaOverviewPage"
+>
   <monitoring-cluster-status-kibana status="pageData.clusterStatus"></monitoring-cluster-status-kibana>
   <div class="page-row">
     <div class="row" ng-if="pageData.metrics">

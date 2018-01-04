@@ -36,6 +36,7 @@ export function KibanaPanel(props) {
                 <EuiLink
                   onClick={goToKibana}
                   aria-label="Kibana Overview"
+                  data-test-subj="kbnOverview"
                 >
                   Overview
                 </EuiLink>

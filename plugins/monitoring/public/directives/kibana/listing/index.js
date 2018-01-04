@@ -34,7 +34,11 @@ const instanceRowFactory = (scope, kbnUrl) => {
         <KuiTableRowCell>
           <div className="monitoringTableCell__name">
             <KuiKeyboardAccessible>
-              <a className="kuiLink" onClick={goToInstance.bind(null, get(props, 'kibana.uuid'))}>
+              <a
+                className="kuiLink"
+                onClick={goToInstance.bind(null, get(props, 'kibana.uuid'))}
+                data-test-subj={`kibanaLink-${props.kibana.name}`}
+              >
                 { props.kibana.name }
               </a>
             </KuiKeyboardAccessible>
