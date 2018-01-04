@@ -66,19 +66,19 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
       // add a filter to the detector
       // called from inside the filter modal
       $scope.addFilter = function (dtr, filter, filterIndex) {
-        if (dtr.detector_rules === undefined) {
-          dtr.detector_rules = [];
+        if (dtr.rules === undefined) {
+          dtr.rules = [];
         }
 
         if (filterIndex >= 0) {
-          dtr.detector_rules[filterIndex] = filter;
+          dtr.rules[filterIndex] = filter;
         } else {
-          dtr.detector_rules.push(filter);
+          dtr.rules.push(filter);
         }
       };
 
       $scope.removeFilter = function (detector, filterIndex) {
-        detector.detector_rules.splice(filterIndex, 1);
+        detector.rules.splice(filterIndex, 1);
       };
 
       $scope.editFilter = function (detector, index) {
@@ -152,7 +152,7 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
         filterIndex = (filterIndex !== undefined ? filterIndex : -1);
         let filter;
         if (filterIndex >= 0) {
-          filter = angular.copy(dtr.detector_rules[filterIndex]);
+          filter = angular.copy(dtr.rules[filterIndex]);
         }
         $modal.open({
           template: detectorFilterModalTemplate,
