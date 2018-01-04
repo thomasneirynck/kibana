@@ -1,4 +1,4 @@
-import { snakeCase } from 'lodash';
+import { get, snakeCase } from 'lodash';
 import { KIBANA_USAGE_TYPE } from '../../../common/constants';
 
 const TYPES = [
@@ -36,7 +36,7 @@ export function getUsageCollector(server, callCluster) {
       };
 
       const resp = await callCluster('search', savedObjectCountSearchParams);
-      const buckets = resp.aggregations.types.buckets;
+      const buckets = get(resp, 'aggregations.types.buckets', []);
 
       // get the doc_count from each bucket
       const bucketCounts = buckets.reduce((acc, bucket) => ({
