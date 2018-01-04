@@ -5,7 +5,7 @@ import { TRANSACTION_ID } from '../../../../../common/constants';
 
 import { KuiTableHeaderCell } from 'ui_framework/components';
 
-import SearchableAPMTable from '../../../shared/APMTable/SearchableAPMTable';
+import FilterableAPMTable from '../../../shared/APMTable/FilterableAPMTable';
 import ListItem from './ListItem';
 import { tpmUnit } from '../../../../utils/formatters';
 import ImpactTooltip from './ImpactTooltip';
@@ -80,7 +80,7 @@ class List extends Component {
     };
 
     return (
-      <SearchableAPMTable
+      <FilterableAPMTable
         searchableFields={['name']}
         items={items}
         emptyMessageHeading="No transactions in the selected time range."

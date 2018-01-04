@@ -41,6 +41,7 @@ function APMTable({
   onClickNext,
   onClickPrev,
   onFilter,
+  inputPlaceholder,
   page,
   renderBody,
   renderFooterText,
@@ -71,7 +72,7 @@ function APMTable({
           defaultValue={defaultSearchQuery}
           onClick={e => e.stopPropagation()}
           onFilter={onFilter}
-          placeholder="Filter…"
+          placeholder={inputPlaceholder}
         />
         {pagination}
       </KuiToolBar>

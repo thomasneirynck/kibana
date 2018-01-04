@@ -78,9 +78,13 @@ class List extends Component {
         <AlignmentKuiTableHeaderCell
           key={key}
           className={alignRight ? 'kuiTableHeaderCell--alignRight' : ''}
-          onSort={() => sortable && this.onSort(key)}
-          isSorted={sortBy === key}
-          isSortAscending={sortOrder === 'asc'}
+          {...(sortable
+            ? {
+                onSort: () => this.onSort(key),
+                isSorted: sortBy === key,
+                isSortAscending: sortOrder === 'asc'
+              }
+            : {})}
         >
           {label}
         </AlignmentKuiTableHeaderCell>

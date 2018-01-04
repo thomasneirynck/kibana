@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import SearchableAPMTable from '../../../shared/APMTable/SearchableAPMTable';
+import FilterableAPMTable from '../../../shared/APMTable/FilterableAPMTable';
 import { AlignmentKuiTableHeaderCell } from '../../../shared/APMTable/APMTable';
 
 import ListItem from './ListItem';
@@ -50,7 +50,7 @@ class List extends Component {
     };
 
     return (
-      <SearchableAPMTable
+      <FilterableAPMTable
         searchableFields={['serviceName', 'agentName']}
         items={items}
         emptyMessageHeading="No services with data in the selected time range."

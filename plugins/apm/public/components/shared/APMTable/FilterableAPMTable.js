@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import APMTable from './APMTable';
 
 const ITEMS_PER_PAGE = 20;
-class SearchableAPMTable extends Component {
+class FilterableAPMTable extends Component {
   state = { searchQuery: '', page: 0 };
 
   onFilter = searchQuery => {
@@ -57,6 +57,7 @@ class SearchableAPMTable extends Component {
         onClickNext={this.onClickNext}
         onClickPrev={this.onClickPrev}
         onFilter={this.onFilter}
+        inputPlaceholder="Filter..."
         page={this.state.page}
         renderBody={renderBody}
         renderHead={renderHead}
@@ -67,7 +68,7 @@ class SearchableAPMTable extends Component {
   }
 }
 
-SearchableAPMTable.propTypes = {
+FilterableAPMTable.propTypes = {
   emptyMessageHeading: PropTypes.string,
   items: PropTypes.array,
   renderBody: PropTypes.func.isRequired,
@@ -76,10 +77,10 @@ SearchableAPMTable.propTypes = {
   searchableFields: PropTypes.array
 };
 
-SearchableAPMTable.defaultProps = {
+FilterableAPMTable.defaultProps = {
   searchableFields: [],
   items: [],
   renderFooterText: () => {}
 };
 
-export default SearchableAPMTable;
+export default FilterableAPMTable;
