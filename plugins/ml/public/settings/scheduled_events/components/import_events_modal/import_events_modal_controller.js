@@ -16,7 +16,7 @@
 const icalendar = require('icalendar');
 import $ from 'jquery';
 
-import 'plugins/ml/settings/special_events/components/events_list';
+import 'plugins/ml/settings/scheduled_events/components/events_list';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');

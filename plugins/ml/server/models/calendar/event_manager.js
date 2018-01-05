@@ -24,7 +24,7 @@ export class EventManager {
   async getCalendarEvents(calendarId) {
     try {
       const resp = await this.callWithRequest('ml.events', { calendarId });
-      return resp.special_events;
+      return resp.events;
     } catch (error) {
       throw Boom.badRequest(error);
     }
@@ -35,7 +35,7 @@ export class EventManager {
     const calendarId = '_all';
     try {
       const resp = await this.callWithRequest('ml.events', { calendarId, jobId });
-      return resp.special_events;
+      return resp.events;
     } catch (error) {
       throw Boom.badRequest(error);
     }

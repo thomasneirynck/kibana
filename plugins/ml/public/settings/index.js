@@ -15,4 +15,4 @@
 
 import './styles/main.less';
 import './settings_controller';
-import './special_events';
+import './scheduled_events';

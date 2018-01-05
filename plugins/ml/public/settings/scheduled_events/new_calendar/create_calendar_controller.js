@@ -15,8 +15,8 @@
 
 import $ from   'jquery';
 
-import 'plugins/ml/settings/special_events/components/item_select';
-import 'plugins/ml/settings/special_events/components/events_list';
+import 'plugins/ml/settings/scheduled_events/components/item_select';
+import 'plugins/ml/settings/scheduled_events/components/events_list';
 
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';

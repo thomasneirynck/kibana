@@ -13,8 +13,8 @@
  * strictly prohibited.
  */
 
-import 'plugins/ml/settings/special_events/components/new_event_modal';
-import 'plugins/ml/settings/special_events/components/import_events_modal';
+import 'plugins/ml/settings/scheduled_events/components/new_event_modal';
+import 'plugins/ml/settings/scheduled_events/components/import_events_modal';
 
 import template from './events_list.html';
 import moment from 'moment';
