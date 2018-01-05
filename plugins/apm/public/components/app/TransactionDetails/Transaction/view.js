@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { STATUS } from '../../../../constants';
 import { units, colors, px, borderRadius } from '../../../../style/variables';
 import { Tab, SectionHeader } from '../../../shared/UIComponents';
-import { capitalize, get } from 'lodash';
+import { isEmpty, capitalize, get } from 'lodash';
 
 import { Properties } from '../../../shared/ContextProperties';
 import {
@@ -18,6 +18,7 @@ import {
 } from '../../../../../common/constants';
 import { fromQuery, toQuery } from '../../../../utils/url';
 import { withRouter } from 'react-router-dom';
+import EmptyMessage from '../../../shared/EmptyMessage';
 
 function loadTransaction(props) {
   const { serviceName, start, end, transactionId } = props.urlParams;
@@ -91,6 +92,10 @@ class Transaction extends Component {
 
     if (transaction.status !== STATUS.SUCCESS) {
       return null;
+    }
+
+    if (isEmpty(transaction.data)) {
+      return <EmptyMessage heading="No transaction sample." />;
     }
 
     const timestamp = get(transaction, 'data.@timestamp');

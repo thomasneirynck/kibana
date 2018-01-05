@@ -32,6 +32,7 @@ describe('loadServiceList', () => {
 
   it('should dispatch SERVICE_LIST_LOADING', () => {
     expect(dispatch).toHaveBeenCalledWith({
+      args: { start: 'myStart', end: 'myEnd' },
       type: SERVICE_LIST_LOADING,
       key
     });
@@ -39,6 +40,7 @@ describe('loadServiceList', () => {
 
   it('should dispatch SERVICE_LIST_SUCCESS with http response', () => {
     expect(dispatch).toHaveBeenCalledWith({
+      args: { start: 'myStart', end: 'myEnd' },
       response,
       type: SERVICE_LIST_SUCCESS,
       key

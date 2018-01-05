@@ -89,6 +89,7 @@ describe('apiHelpers', () => {
 
       it('should dispatch loading action', () => {
         expect(dispatchMock).toHaveBeenCalledWith({
+          args,
           key,
           type: MY_ACTION_TYPE_LOADING
         });
@@ -100,6 +101,7 @@ describe('apiHelpers', () => {
 
       it('should dispatch success action', () => {
         expect(dispatchMock).toHaveBeenCalledWith({
+          args,
           key,
           response: 'foo',
           type: MY_ACTION_TYPE_SUCCESS
@@ -118,6 +120,7 @@ describe('apiHelpers', () => {
         await createAction(actionTypes, apiMock)(args)(dispatchMock);
 
         expect(dispatchMock).toHaveBeenCalledWith({
+          args,
           key,
           error: expect.any(Error),
           type: MY_ACTION_TYPE_FAILURE
@@ -134,6 +137,7 @@ describe('apiHelpers', () => {
         await createAction(actionTypes, apiMock)(args)(dispatchMock);
 
         expect(dispatchMock).toHaveBeenCalledWith({
+          args: {},
           key,
           response: 'foobar',
           type: MY_ACTION_TYPE_SUCCESS

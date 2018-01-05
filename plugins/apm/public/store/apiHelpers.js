@@ -15,16 +15,18 @@ export function createReducer(actionTypes, initialState) {
   return (state = initialState, action) => {
     switch (action.type) {
       case LOADING:
-        return { ...initialState, status: STATUS.LOADING };
+        return { ...initialState, args: action.args, status: STATUS.LOADING };
 
       case SUCCESS:
         return {
+          args: action.args,
           data: action.response || initialState.data,
           status: STATUS.SUCCESS
         };
 
       case FAILURE:
         return {
+          args: action.args,
           ...initialState,
           error: action.error,
           status: STATUS.FAILURE
@@ -41,7 +43,7 @@ export function createAction(actionTypes, callApi) {
   return (args = {}) => {
     return async dispatch => {
       const key = hash(args);
-      dispatch({ type: LOADING, key });
+      dispatch({ type: LOADING, key, args });
 
       let response;
       try {
@@ -49,6 +51,7 @@ export function createAction(actionTypes, callApi) {
       } catch (error) {
         console.error(error);
         return dispatch({
+          args,
           key,
           error,
           type: FAILURE
@@ -57,6 +60,7 @@ export function createAction(actionTypes, callApi) {
 
       try {
         return dispatch({
+          args,
           key,
           response,
           type: SUCCESS
