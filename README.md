@@ -135,6 +135,33 @@ cd x-pack-kibana
 node ../kibana/scripts/functional_test_runner
 ```
 
+#### Running API integration tests
+
+API integration tests are very similar to functional tests in a sense that they are organized in the same way and run against live Kibana and Elasticsearch instances.
+The difference is that API integration tests are intended to test only programmatic API exposed by Kibana. There is no need to run browser and simulate user actions that significantly reduces execution time.
+
+To build, run `x-pack-kibana` with `x-pack-elasticsearch` and then run API integration tests against them use the following command:
+
+```sh
+node scripts/functional_tests_api
+```
+
+If you are **developing api integration tests** then you probably don't want to rebuild `x-pack-elasticsearch` and wait for all that setup on every test run, so instead use this command to get started:
+
+```sh
+node scripts/functional_tests_server
+```
+
+Once Kibana and Elasticsearch are up and running open a new terminal and run this command to just run the tests (without tearing down Elasticsearch, Kibana, etc.)
+
+```sh
+# make sure you are in the x-pack-kibana project
+cd x-pack-kibana
+
+# this command accepts a bunch of arguments to tweak the run, try sending --help to learn more
+node ../kibana/scripts/functional_test_runner --config test/api_integration/config.js
+```
+
 ### Issues starting dev more of creating builds
 
 You may see an error like this when you are getting started:

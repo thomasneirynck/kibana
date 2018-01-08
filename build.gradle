@@ -38,15 +38,22 @@ task jestTests(type: Exec, dependsOn: npmInstall) {
   commandLine 'node', 'scripts/jest', '--ci', '--no-cache', '--verbose'
 }
 
+task apiTests(type: Exec, dependsOn: npmInstall) {
+  group = 'Verification'
+  description = 'Run api tests'
+  commandLine 'node', 'scripts/functional_tests_api'
+}
+
 task functionalTests(type: Exec, dependsOn: npmInstall) {
   group = 'Verification'
   description = 'Run functional tests'
   commandLine 'xvfb-run', 'node', 'scripts/functional_tests', '--bail'
 }
 
-task check(dependsOn: [mochaTests, jestTests, functionalTests]) {
+task check(dependsOn: [mochaTests, jestTests, apiTests, functionalTests]) {
   jestTests.mustRunAfter mochaTests
-  functionalTests.mustRunAfter jestTests
+  apiTests.mustRunAfter jestTests
+  functionalTests.mustRunAfter apiTests
   group = 'Verification'
   description = 'Run all verification tasks'
 }

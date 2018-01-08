@@ -8,7 +8,7 @@ import {
   OPTIMIZE_BUNDLE_DIR
 } from './paths';
 
-export async function runKibanaServer({ procs, ftrConfig, devMode = false }) {
+export async function runKibanaServer({ procs, ftrConfig, devMode = false, enableUI = true }) {
   // start the kibana server and wait for it to log "Server running" before resolving
   await procs.run('kibana', {
     cmd: KIBANA_EXEC,
@@ -21,6 +21,7 @@ export async function runKibanaServer({ procs, ftrConfig, devMode = false }) {
       `--server.port=${ftrConfig.get('servers.kibana.port')}`,
       `--server.uuid=${ftrConfig.get('env').kibana.server.uuid}`,
       `--elasticsearch.url=${formatUrl(ftrConfig.get('servers.elasticsearch'))}`,
+      `--optimize.enabled=${enableUI}`,
       `--optimize.lazyPort=${ftrConfig.get('servers.kibana.port') + 1}`,
       '--optimize.lazyPrebuild=true',
       '--status.allowAnonymous=true',

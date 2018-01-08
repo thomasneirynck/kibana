@@ -43,9 +43,25 @@ export function runFunctionTests() {
       await procs.stop('es');
     });
   })
-  .catch(fatalErrorHandler);
+    .catch(fatalErrorHandler);
 }
 
+export function runApiTests() {
+  withTmpDir(async tmpDir => {
+    await withProcRunner(async procs => {
+      const ftrConfig = await getFtrConfig();
+
+      await runEsWithXpack({ tmpDir, procs, ftrConfig });
+      await runXpackKibanaGulpPrepare({ procs });
+      await runKibanaServer({ procs, ftrConfig, enableUI: false });
+      await runFtr({ procs, configPath: require.resolve('../../test/api_integration/config.js') });
+
+      await procs.stop('kibana');
+      await procs.stop('es');
+    });
+  })
+    .catch(fatalErrorHandler);
+}
 
 export function runFunctionalTestsServer() {
   withTmpDir(async tmpDir => {
@@ -66,5 +82,5 @@ export function runFunctionalTestsServer() {
       await procs.waitForAllToStop();
     });
   })
-  .catch(fatalErrorHandler);
+    .catch(fatalErrorHandler);
 }
