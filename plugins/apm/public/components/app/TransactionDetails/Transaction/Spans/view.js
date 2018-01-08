@@ -105,7 +105,7 @@ function loadSpans(props) {
 
 function getColorByType(types) {
   const assignedColors = {
-    service: colors.apmBlue,
+    app: colors.apmBlue,
     cache: colors.apmGreen,
     ext: colors.apmPurple,
     template: colors.apmRed2,
@@ -115,10 +115,10 @@ function getColorByType(types) {
 
   const unknownTypes = difference(types, Object.keys(assignedColors));
   const unassignedColors = zipObject(unknownTypes, [
-    colors.apmPink,
     colors.apmYellow,
     colors.apmRed,
-    colors.apmBrown
+    colors.apmBrown,
+    colors.apmPink
   ]);
 
   return type => assignedColors[type] || unassignedColors[type];

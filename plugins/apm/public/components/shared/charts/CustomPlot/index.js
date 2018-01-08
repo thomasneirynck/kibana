@@ -10,7 +10,7 @@ import VoronoiPlot from './VoronoiPlot';
 import { createSelector } from 'reselect';
 import { getPlotValues } from './plotUtils';
 
-const VISIBLE_SERIES_COUNT = 5;
+const VISIBLE_SERIES_COUNT = 4;
 
 export class InnerCustomPlot extends PureComponent {
   state = {
