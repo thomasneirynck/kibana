@@ -85,6 +85,7 @@ module.controller('MlExplorerController', function (
   const VIEW_BY_JOB_LABEL = 'job ID';
 
   const ALLOW_CELL_RANGE_SELECTION = mlExplorerDashboardService.allowCellRangeSelection;
+  let disableDragSelectOnMouseLeave = true;
 
   const dragSelect = new DragSelect({
     selectables: document.querySelectorAll('.sl-cell'),
@@ -93,10 +94,22 @@ module.controller('MlExplorerController', function (
         elements = [elements[0]];
       }
 
-      mlExplorerDashboardService.dragSelect.changed({
-        action: 'newSelection',
-        elements
-      });
+      if (elements.length > 0) {
+        mlExplorerDashboardService.dragSelect.changed({
+          action: 'newSelection',
+          elements
+        });
+      }
+
+      disableDragSelectOnMouseLeave = true;
+    },
+    onDragStart() {
+      if (ALLOW_CELL_RANGE_SELECTION) {
+        mlExplorerDashboardService.dragSelect.changed({
+          action: 'dragStart'
+        });
+        disableDragSelectOnMouseLeave = false;
+      }
     },
     onElementSelect() {
       if (ALLOW_CELL_RANGE_SELECTION) {
@@ -205,6 +218,16 @@ module.controller('MlExplorerController', function (
 
     clearSelectedAnomalies();
     loadOverallData();
+  };
+
+  $scope.setSwimlaneSelectActive = function (active) {
+    if (!active && disableDragSelectOnMouseLeave) {
+      dragSelect.clearSelection();
+      dragSelect.stop();
+      return;
+    }
+
+    dragSelect.start();
   };
 
   $scope.setSwimlaneViewBy = function (viewByFieldName) {

@@ -38,11 +38,13 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
       element.addClass('ml-hide-range-selection');
     }
 
+    let cellMouseoverActive = true;
+
     // Listen for dragSelect events
     function dragSelectListener({ action, elements = [] }) {
       if (action === 'newSelection' && elements.length > 0) {
         const firstCellData = $(elements[0]).data('click');
-        if (scope.swimlaneType === firstCellData.swimlaneType) {
+        if (typeof firstCellData !== 'undefined' && scope.swimlaneType === firstCellData.swimlaneType) {
           const selectedData = elements.reduce((d, e) => {
             const cellData = $(e).data('click');
             d.bucketScore = Math.max(d.bucketScore, cellData.bucketScore);
@@ -59,8 +61,12 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
           selectedData.times = _.uniq(selectedData.times);
           cellClick(elements, selectedData);
         }
+        cellMouseoverActive = true;
       } else if (action === 'elementSelect') {
         element.addClass('ml-dragselect-dragging');
+        return;
+      } else if (action === 'dragStart') {
+        cellMouseoverActive = false;
         return;
       }
 
@@ -134,7 +140,7 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
       const xAxisTicks = xAxisScale.ticks(numTicksForDateFormat(scope.chartWidth, xAxisTickFormat));
 
       function cellMouseover($event, laneLabel, bucketScore, index, time) {
-        if (bucketScore === undefined) {
+        if (bucketScore === undefined || cellMouseoverActive === false) {
           return;
         }
 

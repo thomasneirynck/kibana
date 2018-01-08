@@ -44,7 +44,11 @@
         <span class="panel-title">
           Anomaly timeline
         </span>
-        <div class="ml-explorer-swimlane">
+        <div
+          class="ml-explorer-swimlane"
+          ng-mouseenter="setSwimlaneSelectActive(true)"
+          ng-mouseleave="setSwimlaneSelectActive(false)"
+        >
           <ml-explorer-swimlane
             swimlane-type="overall"
             swimlane-data="overallSwimlaneData"
@@ -79,7 +83,12 @@
             </span>
           </div>
 
-          <div class="ml-explorer-swimlane" ng-if="showViewBySwimlane()">
+          <div
+            class="ml-explorer-swimlane"
+            ng-if="showViewBySwimlane()"
+            ng-mouseenter="setSwimlaneSelectActive(true)"
+            ng-mouseleave="setSwimlaneSelectActive(false)"
+          >
             <ml-explorer-swimlane
               swimlane-type="viewBy"
               swimlane-data="viewBySwimlaneData"
