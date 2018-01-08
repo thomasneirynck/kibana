@@ -5,7 +5,7 @@ import { units, colors, px, borderRadius } from '../../../../style/variables';
 import { Tab, SectionHeader } from '../../../shared/UIComponents';
 import { isEmpty, capitalize, get } from 'lodash';
 
-import { Properties } from '../../../shared/ContextProperties';
+import { ContextProperties } from '../../../shared/ContextProperties';
 import {
   PropertiesTable,
   getLevelOneProps
@@ -18,6 +18,7 @@ import {
 } from '../../../../../common/constants';
 import { fromQuery, toQuery } from '../../../../utils/url';
 import { withRouter } from 'react-router-dom';
+import { asTime } from '../../../../utils/formatters';
 import EmptyMessage from '../../../shared/EmptyMessage';
 
 function loadTransaction(props) {
@@ -99,7 +100,25 @@ class Transaction extends Component {
     }
 
     const timestamp = get(transaction, 'data.@timestamp');
-    const url = get(transaction.data, 'context.request.url.raw', 'N/A');
+    const url = get(transaction.data, 'context.request.url.full', 'N/A');
+
+    const stickyProperties = [
+      {
+        name: 'transaction.duration',
+        val: (() => {
+          const duration = get(transaction.data, 'transaction.duration.us');
+          return duration ? asTime(duration) : 'N/A';
+        })()
+      },
+      {
+        name: 'transaction.result',
+        val: get(transaction.data, 'transaction.result', 'N/A')
+      },
+      {
+        name: 'context.user.id',
+        val: get(transaction.data, 'context.user.id', 'N/A')
+      }
+    ];
 
     const agentName = get(transaction.data, SERVICE_AGENT_NAME);
 
@@ -126,7 +145,11 @@ class Transaction extends Component {
           </DiscoverButton>
         </Header>
 
-        <Properties timestamp={timestamp} url={url} />
+        <ContextProperties
+          timestamp={timestamp}
+          url={url}
+          stickyProperties={stickyProperties}
+        />
 
         <TabContainer>
           {[DEFAULT_TAB, ...tabs].map(key => {

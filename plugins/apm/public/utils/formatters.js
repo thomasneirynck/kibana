@@ -35,6 +35,10 @@ export const getTimeFormatterWithoutUnit = memoize(
       : value => asMillis(value, false)
 );
 
+export function asTime(value) {
+  return getTimeFormatter(value)(value);
+}
+
 export function asDecimal(value) {
   return numeral(value).format('0,0.0');
 }

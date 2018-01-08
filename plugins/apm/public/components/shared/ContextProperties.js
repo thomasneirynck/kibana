@@ -20,11 +20,12 @@ const PropertiesContainer = styled.div`
 `;
 
 const Property = styled.div`
-  margin-bottom: ${px(units.plus)};
+  width: 33%;
+  margin-bottom: ${px(units.double)};
+`;
 
-  &:first-of-type {
-    margin-right: ${px(unit * 10)};
-  }
+const PropertyWide = Property.extend`
+  width: 66%;
 `;
 
 const PropertyLabel = styled.div`
@@ -35,6 +36,7 @@ const PropertyLabel = styled.div`
 
 const PropertyValue = styled.div`
   display: inline-block;
+  line-height: ${px(unit)};
 `;
 
 const PropertyValueEmphasis = styled.span`
@@ -44,12 +46,15 @@ const PropertyValueEmphasis = styled.span`
 const PropertyUrl = styled.span`
   display: inline-block;
   ${truncate(px(unit * 35))};
+  line-height: ${px(unit)};
 `;
 
-export function Properties({ timestamp, url }) {
+export function ContextProperties({ timestamp, url, stickyProperties }) {
   const time = moment(timestamp);
-  const timestampFull = time.format('MMMM Do YYYY, HH:mm:ss.SSS');
-  const timestampAgo = time.fromNow();
+  const timestampAgo = timestamp ? time.fromNow() : 'N/A';
+  const timestampFull = timestamp
+    ? time.format('MMMM Do YYYY, HH:mm:ss.SSS')
+    : 'N/A';
 
   return (
     <PropertiesContainer>
@@ -60,10 +65,17 @@ export function Properties({ timestamp, url }) {
           <PropertyValueEmphasis>({timestampFull})</PropertyValueEmphasis>
         </PropertyValue>
       </Property>
-      <Property>
-        <PropertyLabel>request.url.raw</PropertyLabel>
+      <PropertyWide>
+        <PropertyLabel>context.request.url.full</PropertyLabel>
         <PropertyUrl title={url}>{url}</PropertyUrl>
-      </Property>
+      </PropertyWide>
+      {stickyProperties &&
+        stickyProperties.map(({ name, val }, i) => (
+          <Property key={i}>
+            <PropertyLabel>{name}</PropertyLabel>
+            <PropertyValue>{String(val)}</PropertyValue>
+          </Property>
+        ))}
     </PropertiesContainer>
   );
 }

@@ -4,7 +4,7 @@ import { units, px, colors, borderRadius } from '../../../style/variables';
 import { get, capitalize, isEmpty } from 'lodash';
 import { STATUS } from '../../../constants';
 
-import { Properties } from '../../shared/ContextProperties';
+import { ContextProperties } from '../../shared/ContextProperties';
 import { TabLink } from '../../shared/UIComponents';
 import DiscoverButton from '../../shared/DiscoverButton';
 import {
@@ -69,7 +69,22 @@ function DetailView({ errorGroup, urlParams }) {
   const { serviceName } = urlParams;
 
   const timestamp = get(errorGroup, 'data.error.@timestamp');
-  const url = get(errorGroup.data.error, 'context.request.url.raw', 'N/A');
+  const url = get(errorGroup.data.error, 'context.request.url.full', 'N/A');
+
+  const stickyProperties = [
+    {
+      name: 'context.request.method',
+      val: get(errorGroup.data, 'error.context.request.method', 'N/A')
+    },
+    {
+      name: 'error.exception.handled',
+      val: get(errorGroup.data, 'error.error.exception.handled', 'N/A')
+    },
+    {
+      name: 'context.user.id',
+      val: get(errorGroup.data, 'error.context.user.id', 'N/A')
+    }
+  ];
 
   const stackframes = get(errorGroup.data.error.error, 'exception.stacktrace');
   const codeLanguage = get(errorGroup.data.error, SERVICE_LANGUAGE_NAME);
@@ -103,7 +118,11 @@ function DetailView({ errorGroup, urlParams }) {
         </DiscoverButton>
       </Header>
 
-      <Properties timestamp={timestamp} url={url} />
+      <ContextProperties
+        timestamp={timestamp}
+        url={url}
+        stickyProperties={stickyProperties}
+      />
 
       <TabContainer>
         {tabs.map(key => {
