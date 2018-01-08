@@ -35,7 +35,7 @@ uiModule.directive('monitoringChart', (timefilter) => {
       scope.$watch('series', series => {
         render(
           <div className="monitoring-chart__container">
-            <h2 className="monitoring-chart__title">
+            <h2 className="euiTitle">
               { getTitle(series) }{ units ? ` (${units})` : '' }
               <OverlayTrigger
                 placement="left"
