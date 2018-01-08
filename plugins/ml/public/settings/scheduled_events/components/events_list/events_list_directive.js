@@ -30,7 +30,8 @@ module.directive('mlEventsList', function (mlNewEventService, mlImportEventsServ
     template,
     scope: {
       events: '=',
-      showControls: '='
+      showControls: '=',
+      asteriskText: '='
     },
     controller: function ($scope) {
 

@@ -15,6 +15,7 @@
 
 const icalendar = require('icalendar');
 import $ from 'jquery';
+import moment from 'moment';
 
 import 'plugins/ml/settings/scheduled_events/components/events_list';
 
@@ -28,9 +29,13 @@ module.controller('MlImportEventsModal', function (
   $modalInstance) {
 
   $scope.loadingLock = false;
+  $scope.allNewEvents = [];
   $scope.newEvents = [];
   $scope.fileLoaded = false;
   $scope.file = undefined;
+  $scope.includePastEvents = false;
+  $scope.showRecurringWarning = false;
+  $scope.RECURRING_WARNING = 'Recurring events not supported. Only the first event will be imported.';
 
   $timeout(() => {
     $('.modal-dialog').width(750);
@@ -47,7 +52,8 @@ module.controller('MlImportEventsModal', function (
           readFile($scope.file)
             .then((resp) => {
               try {
-                $scope.newEvents = parseICSFile(resp.data);
+                $scope.allNewEvents = parseICSFile(resp.data);
+                $scope.createEventsList();
                 $scope.fileLoaded = true;
                 $scope.loadingLock = false;
               } catch (error) {
@@ -109,23 +115,39 @@ module.controller('MlImportEventsModal', function (
   function createEvents(ical) {
     const events = ical.events();
     const mlEvents = [];
+
     events.forEach((e) => {
       if (e.element === 'VEVENT') {
         const description = e.properties.SUMMARY;
         const start = e.properties.DTSTART;
         const end = e.properties.DTEND;
+        const recurring = (e.properties.RRULE !== undefined);
 
         if (description && start && end && description.length && start.length && end.length) {
           mlEvents.push({
             description: description[0].value,
             start_time: start[0].value.valueOf(),
             end_time: end[0].value.valueOf(),
+            asterisk: recurring
           });
         }
       }
     });
     return mlEvents;
   }
+
+  // populate the newEvents list
+  // filtering out past events if the checkbox is ticked
+  $scope.createEventsList = function () {
+    if ($scope.includePastEvents) {
+      $scope.newEvents = [...$scope.allNewEvents];
+    } else {
+      const now = moment().valueOf();
+      $scope.newEvents = $scope.allNewEvents.filter(e => e.start_time > now);
+    }
+
+    $scope.showRecurringWarning = ($scope.newEvents.find(e => e.asterisk) !== undefined);
+  };
 
   $scope.save = function () {
     $modalInstance.close($scope.newEvents);

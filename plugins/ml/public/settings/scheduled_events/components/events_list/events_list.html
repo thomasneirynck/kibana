@@ -65,15 +65,19 @@
 
           <td class="kuiTableRowCell">
             <div class="kuiTableRowCell__liner">
-              <span title="{{item.watch.name}}">
+              <span>
                 {{event.description}}
               </span>
+              <span
+                ng-if="event.asterisk"
+                class="asterisk"
+                tooltip='{{asteriskText}}'>*</span>
             </div>
           </td>
 
           <td class="kuiTableRowCell">
             <div class="kuiTableRowCell__liner">
-              <span title="{{item.watch.name}}">
+              <span>
                 {{formatTime(event.start_time)}}
               </span>
             </div>
@@ -81,7 +85,7 @@
 
           <td class="kuiTableRowCell">
             <div class="kuiTableRowCell__liner">
-              <span title="{{item.watch.name}}">
+              <span>
                 {{formatTime(event.end_time)}}
               </span>
             </div>

@@ -20,7 +20,7 @@
     <div
       ng-if="fileLoaded===true && newEvents.length >= 0"
       class="kuiFormSection">
-       <span class="kuiFormLabel">Events to import: {{newEvents.length}}</span>
+      <span class="kuiFormLabel">Events to import: {{newEvents.length}}</span>
     </div>
 
     <div
@@ -45,8 +45,27 @@
       <ml-events-list
         events='newEvents'
         show-controls='false'
+        asterisk-text='RECURRING_WARNING'
         >
       </ml-events-list>
+
+      <div class="euiSpacer euiSpacer--m"></div>
+
+      <div ng-if="showRecurringWarning" class="recurring-warning">
+        *{{RECURRING_WARNING}}
+        <div class="euiSpacer euiSpacer--m"></div>
+      </div>
+
+      <div>
+        <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
+          <input
+            ng-model='includePastEvents'
+            type="checkbox"
+            class='kuiCheckBox'
+            ng-click="createEventsList()"/>
+          <span class='kuiCheckBoxLabel__text'>Include past events</span>
+        </label>
+      </div>
     </div>
   </div>
 
