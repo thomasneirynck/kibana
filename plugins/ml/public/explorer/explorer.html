@@ -1,6 +1,6 @@
 <ml-nav-menu name="explorer"></ml-nav-menu>
 <ml-chart-tooltip></ml-chart-tooltip>
-<div class="ml-explorer euiText" ng-controller="MlExplorerController">
+<div class="ml-explorer" ng-controller="MlExplorerController">
   <navbar ng-show="jobs.length > 0 && chrome.getVisible()">
     <job-select-button></job-select-button>
   </navbar>
@@ -13,14 +13,14 @@
   />
 
   <div class="no-results-container" ng-if="jobs.length === 0 && loading === false">
-    <div class="no-results">
+    <div class="no-results euiText">
       <div><i class="fa fa-exclamation-triangle" ></i>No jobs found</div>
       <div><a href="ml#/jobs">Create new job</a></div>
     </div>
   </div>
 
   <div class="no-results-container" ng-show="jobs.length > 0 && loading === false && hasResults === false">
-    <div class="no-results">
+    <div class="no-results euiText">
       <div><i class="fa fa-info-circle" ></i>No results found</div>
       <div>Try widening the time selection or moving further back in time</div>
     </div>
@@ -29,7 +29,7 @@
   <div ng-if="jobs.length > 0 && loading === false && hasResults === true">
     <div class="results-container">
 
-      <div class="influencers-list-container column col-xs-2">
+      <div class="influencers-list-container column col-xs-2 euiText">
         <span class="panel-title">
           Top Influencers
         </span>
@@ -41,11 +41,11 @@
       </div>
 
       <div class="column col-xs-10">
-        <span class="panel-title">
+        <span class="panel-title euiText">
           Anomaly timeline
         </span>
         <div
-          class="ml-explorer-swimlane"
+          class="ml-explorer-swimlane euiText"
           ng-mouseenter="setSwimlaneSelectActive(true)"
           ng-mouseleave="setSwimlaneSelectActive(false)"
         >
@@ -84,7 +84,7 @@
           </div>
 
           <div
-            class="ml-explorer-swimlane"
+            class="ml-explorer-swimlane euiText"
             ng-if="showViewBySwimlane()"
             ng-mouseenter="setSwimlaneSelectActive(true)"
             ng-mouseleave="setSwimlaneSelectActive(false)"
@@ -99,7 +99,7 @@
             </ml-explorer-swimlane>
           </div>
 
-          <div ng-if="!showViewBySwimlane()" class="text-center visualize-error">
+          <div ng-if="!showViewBySwimlane()" class="text-center visualize-error euiText">
             <div class="item top"></div>
             <div class="item">
               <h4 class="euiTitle euiTitle--small">No {{swimlaneViewByFieldName}} influencers found</h4>
@@ -109,7 +109,7 @@
 
         </div>
 
-        <span class="panel-title">
+        <span class="panel-title euiText">
           Anomalies
         </span>
 
@@ -121,7 +121,7 @@
           />
         </div>
 
-        <div ng-controller="MlExplorerChartsContainerController">
+        <div ng-controller="MlExplorerChartsContainerController" class="euiText">
           <ml-explorer-charts-container
             series-to-plot="seriesToPlot"
             time-field-name="timeFieldName"
@@ -135,14 +135,15 @@
           </ml-explorer-charts-container>
         </div>
 
-        <ml-anomalies-table
-          anomaly-records="anomalyRecords"
-          time-field-name="timeFieldName"
-          show-view-series-link="true">
-        </ml-anomalies-table>
+        <div class="euiText">
+          <ml-anomalies-table
+            anomaly-records="anomalyRecords"
+            time-field-name="timeFieldName"
+            show-view-series-link="true">
+          </ml-anomalies-table>
+        </div>
 
       </div>
-
 
     </div>
   </div>
