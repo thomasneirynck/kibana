@@ -44,7 +44,7 @@ module.service('mlJsonTooltipService', function () {
       restrict: 'AE',
       replace: true,
       template: `
-      <i aria-hidden="true" class="fa fa-info-circle" tooltip="{{text}}">
+      <i aria-hidden="true" class="fa fa-info-circle" tooltip="{{text}}" tooltip-append-to-body="1">
         <span id="ml_aria_description_{{id}}" class="ml-info-tooltip-text">{{text}}</span>
       </i>
     `,
