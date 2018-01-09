@@ -47,13 +47,13 @@ export function initTimepicker(history, dispatch, callback) {
       $scope.breadcrumbs = getBreadcrumbs(history.location.pathname);
       $scope.searchQueryTime = toQuery(history.location.search)._g;
 
-      // Add beta feedback menu
+      // Add APM feedback menu
       // TODO: move this somewhere else
       $scope.topNavMenu = [];
       $scope.topNavMenu.push({
-        key: 'Beta feedback',
-        description: 'Beta feedback',
-        tooltip: 'Provide feedback on the APM beta',
+        key: 'APM feedback',
+        description: 'APM feedback',
+        tooltip: 'Provide feedback on APM',
         template: require('../../templates/feedback_menu.html')
       });
 
