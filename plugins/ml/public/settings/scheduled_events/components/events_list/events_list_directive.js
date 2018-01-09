@@ -22,7 +22,11 @@ import moment from 'moment';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlEventsList', function (mlNewEventService, mlImportEventsService) {
+module.directive('mlEventsList', function (
+  $filter,
+  pagerFactory,
+  mlNewEventService,
+  mlImportEventsService) {
   return {
     restrict: 'AE',
     replace: true,
@@ -35,12 +39,43 @@ module.directive('mlEventsList', function (mlNewEventService, mlImportEventsServ
     },
     controller: function ($scope) {
 
+      $scope.pageOfEvents = [];     // Current page of events displayed in the list.
+
       const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+      const PAGE_SIZE = 20;
+
+      // Create objects for sorting and paging through the events.
+      const orderBy = $filter('orderBy');
+      const limitTo = $filter('limitTo');
+      $scope.pager = pagerFactory.create($scope.events.length, PAGE_SIZE, 1);
+      $scope.sortField = 'description';
+      $scope.sortReverse = false;
+
+      $scope.onSortChange = function (field, reverse) {
+        $scope.sortField = field;
+        $scope.sortReverse = reverse;
+      };
+
+      $scope.onPageNext = function () {
+        $scope.pager.nextPage();
+      };
+
+      $scope.onPagePrevious = function () {
+        $scope.pager.previousPage();
+      };
+
+      $scope.$watchMulti([
+        'events',
+        'sortField',
+        'sortReverse',
+        'pager.currentPage'
+      ], applyTableSettings);
 
       $scope.clickNewEvent = function () {
         mlNewEventService.openNewEventWindow()
           .then((event) => {
             $scope.events.push(event);
+            applyTableSettings();
           })
           .catch(() => {});
       };
@@ -50,17 +85,26 @@ module.directive('mlEventsList', function (mlNewEventService, mlImportEventsServ
         return time.format(TIME_FORMAT);
       };
 
-      $scope.deleteEvent = function (index) {
-        $scope.events.splice(index, 1);
+      $scope.deleteEvent = function (eventToDelete) {
+        $scope.events.splice($scope.events.indexOf(eventToDelete), 1);
+        applyTableSettings();
       };
 
       $scope.clickImportEvents = function () {
         mlImportEventsService.openImportEventsWindow()
           .then((events) => {
             $scope.events.push(...events);
+            applyTableSettings();
           })
           .catch(() => {});
       };
+
+      function applyTableSettings() {
+        // Apply sorting and paging to the complete list of events.
+        const pageOfEvents = orderBy($scope.events, $scope.sortField, $scope.sortReverse);
+        $scope.pageOfEvents = limitTo(pageOfEvents, $scope.pager.pageSize, $scope.pager.startIndex);
+        $scope.pager.setTotalItems($scope.events.length);
+      }
 
     }
   };

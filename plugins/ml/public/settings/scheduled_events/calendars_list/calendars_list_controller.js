@@ -13,6 +13,10 @@
  * strictly prohibited.
  */
 
+import _ from 'lodash';
+
+import 'ui/pager_control';
+import 'ui/pager';
 import 'ui/sortable_column';
 
 import uiRoutes from 'ui/routes';
@@ -36,6 +40,8 @@ const module = uiModules.get('apps/ml', ['ui.bootstrap']);
 module.controller('MlCalendarsList',
   function (
     $scope,
+    $filter,
+    pagerFactory,
     ml,
     timefilter,
     mlConfirmModalService) {
@@ -44,22 +50,52 @@ module.controller('MlCalendarsList',
     timefilter.disableAutoRefreshSelector(); // remove time picker from top of page
     const mlConfirm = mlConfirmModalService;
 
-    $scope.calendars = [];
+    let calendars = [];                // Complete list of calendars received from the ML endpoint.
+    $scope.displayCalendars = [];      // List of calendars being displayed after filtering and sorting.
 
-    function loadCalendars() {
-      ml.calendars()
-        .then((resp) => {
-          $scope.calendars = resp;
-        });
-    }
+    // Create a pager object to page through long lists of calendars.
+    const PAGE_SIZE = 20;
+    const limitTo = $filter('limitTo');
+    $scope.pager = pagerFactory.create(0, PAGE_SIZE, 1);
 
-    $scope.allSelected = false;
-    $scope.sortField = 'id';
-    $scope.sortReverse = true;
+    // Sort field labels, to identify column used for sorting the list.
+    const SORT_FIELD_LABELS = {
+      CALENDAR_ID: 'calendar_id',
+      JOB_IDS: 'job_ids',
+      EVENT_COUNT: 'event_count'
+    };
+    $scope.SORT_FIELD_LABELS = SORT_FIELD_LABELS;
+    $scope.sortField = SORT_FIELD_LABELS.CALENDAR_ID;
+    $scope.sortReverse = false;
+
     $scope.onSortChange = function (field, reverse) {
       $scope.sortField = field;
       $scope.sortReverse = reverse;
     };
+
+    // Listen for changes to the search text and build Regexp.
+    $scope.onQueryChange = function (query) {
+      if (query) {
+        $scope.filterRegexp = new RegExp(`(${query})`, 'gi');
+      } else {
+        $scope.filterRegexp = undefined;
+      }
+    };
+
+    $scope.onPageNext = function () {
+      $scope.pager.nextPage();
+    };
+
+    $scope.onPagePrevious = function () {
+      $scope.pager.previousPage();
+    };
+
+    $scope.$watchMulti([
+      'sortField',
+      'sortReverse',
+      'filterRegexp',
+      'pager.currentPage'
+    ], applyTableSettings);
 
     $scope.deleteCalendar = function (calendarId) {
       mlConfirm.open({
@@ -75,6 +111,43 @@ module.controller('MlCalendarsList',
         })
         .catch(() => {});
     };
+
+    function loadCalendars() {
+      ml.calendars()
+        .then((resp) => {
+          calendars = resp;
+          $scope.pager = pagerFactory.create(calendars.length, PAGE_SIZE, 1);
+          applyTableSettings();
+        });
+    }
+
+    function applyTableSettings() {
+      // Applies the settings from the table controls (search filter and sorting).
+      let filteredCalendars = _.filter(calendars, (calendar) => {
+        // If search text has been entered, look for match in the calendar ID or job IDs.
+        return $scope.filterRegexp === undefined ||
+          calendar.calendar_id.match($scope.filterRegexp) ||
+          calendar.job_ids.join(' ').match($scope.filterRegexp);
+      });
+
+      filteredCalendars = _.sortBy(filteredCalendars, (calendar) => {
+        switch ($scope.sortField) {
+          case SORT_FIELD_LABELS.JOB_IDS:
+            return calendar.job_ids.join();
+          case SORT_FIELD_LABELS.EVENT_COUNT:
+            return calendar.events.length;
+          case SORT_FIELD_LABELS.CALENDAR_ID:
+          default:
+            return calendar[$scope.sortField];
+        }
+      });
+      if ($scope.sortReverse === true) {
+        filteredCalendars = filteredCalendars.reverse();
+      }
+
+      $scope.displayCalendars = limitTo(filteredCalendars, $scope.pager.pageSize, $scope.pager.startIndex);
+      $scope.pager.setTotalItems(filteredCalendars.length);
+    }
 
     loadCalendars();
   });

@@ -28,9 +28,17 @@
             </div>
 
             <div class="kuiToolBarSection">
-              <tool-bar-pager-text start-item="watchList.pager.startItem" end-item="watchList.pager.endItem" total-items="watchList.pager.totalItems"></tool-bar-pager-text>
-              <tool-bar-pager-buttons has-previous-page="watchList.pager.hasPreviousPage" has-next-page="watchList.pager.hasNextPage" on-page-next="watchList.onPageNext"
-                on-page-previous="watchList.onPagePrevious"></tool-bar-pager-buttons>
+              <tool-bar-pager-text
+                start-item="pager.startItem"
+                end-item="pager.endItem"
+                total-items="pager.totalItems">
+              </tool-bar-pager-text>
+              <tool-bar-pager-buttons
+                has-previous-page="pager.hasPreviousPage"
+                has-next-page="pager.hasNextPage"
+                on-page-next="onPageNext"
+                on-page-previous="onPagePrevious">
+              </tool-bar-pager-buttons>
             </div>
           </div>
 
@@ -38,17 +46,17 @@
             <thead>
               <tr>
                 <th scope="col" class="kuiTableHeaderCell">
-                  <sortable-column field="id" on-sort-change="onSortChange" sort-field="sortField" sort-reverse="sortReverse">
+                  <sortable-column field="{{SORT_FIELD_LABELS.CALENDAR_ID}}" on-sort-change="onSortChange" sort-field="sortField" sort-reverse="sortReverse">
                     ID
                   </sortable-column>
                 </th>
                 <th scope="col" class="kuiTableHeaderCell">
-                  <sortable-column field="name" on-sort-change="onSortChange" sort-field="sortField" sort-reverse="sortReverse">
+                  <sortable-column field="{{SORT_FIELD_LABELS.JOB_IDS}}" on-sort-change="onSortChange" sort-field="sortField" sort-reverse="sortReverse">
                     Jobs
                   </sortable-column>
                 </th>
                 <th scope="col" class="kuiTableHeaderCell">
-                  <sortable-column field="watchStatus.state" on-sort-change="onSortChange" sort-field="sortField" sort-reverse="sortReverse">
+                  <sortable-column field="{{SORT_FIELD_LABELS.EVENT_COUNT}}" on-sort-change="onSortChange" sort-field="sortField" sort-reverse="sortReverse">
                     Events
                   </sortable-column>
                 </th>
@@ -57,11 +65,11 @@
             </thead>
 
             <tbody>
-              <tr ng-repeat="calendar in calendars" class="kuiTableRow" ng-class="{ 'kuiTableRow-isBeingDeleted': calendar.isBeingDeleted }">
+              <tr ng-repeat="calendar in displayCalendars" class="kuiTableRow" ng-class="{ 'kuiTableRow-isBeingDeleted': calendar.isBeingDeleted }">
 
                 <td class="kuiTableRowCell">
                   <div class="kuiTableRowCell__liner">
-                    <span title="{{item.watch.name}}">
+                    <span title="{{calendar.calendar_id}}">
                       {{calendar.calendar_id}}
                     </span>
                   </div>
@@ -69,15 +77,15 @@
 
                 <td class="kuiTableRowCell">
                   <div class="kuiTableRowCell__liner">
-                    <span title="{{item.watch.name}}">
+                    <span title="{{calendar.job_ids.join(', ')}}">
                       {{calendar.job_ids.join(', ')}}
                     </span>
                   </div>
                 </td>
                 <td class="kuiTableRowCell">
                   <div class="kuiTableRowCell__liner">
-                    <span title="{{item.watch.name}}">
-                       {{calendar.events.length}} events
+                    <span>
+                       {{calendar.events.length}} {{calendar.events.length === 1 ? 'event' : 'events'}}
                     </span>
                   </div>
                 </td>

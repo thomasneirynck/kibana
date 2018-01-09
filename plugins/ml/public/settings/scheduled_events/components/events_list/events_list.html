@@ -3,9 +3,6 @@
     class="kuiVerticalRhythm"
     ng-class="{'kuiControlledTable': showControls}">
     <div ng-if="showControls" class="kuiToolBar">
-      <!-- <div class="kuiToolBarSearch">
-        <tool-bar-search-box filter="query" on-filter="onQueryChange"></tool-bar-search-box>
-      </div> -->
 
       <div class="kuiToolBarSection">
         <a
@@ -32,27 +29,35 @@
       </div>
 
       <div class="kuiToolBarSection">
-        <tool-bar-pager-text start-item="watchList.pager.startItem" end-item="watchList.pager.endItem" total-items="watchList.pager.totalItems"></tool-bar-pager-text>
-        <tool-bar-pager-buttons has-previous-page="watchList.pager.hasPreviousPage" has-next-page="watchList.pager.hasNextPage" on-page-next="watchList.onPageNext"
-          on-page-previous="watchList.onPagePrevious"></tool-bar-pager-buttons>
+        <tool-bar-pager-text
+          start-item="pager.startItem"
+          end-item="pager.endItem"
+          total-items="pager.totalItems">
+        </tool-bar-pager-text>
+        <tool-bar-pager-buttons
+          has-previous-page="pager.hasPreviousPage"
+          has-next-page="pager.hasNextPage"
+          on-page-next="onPageNext"
+          on-page-previous="onPagePrevious">
+        </tool-bar-pager-buttons>
       </div>
     </div>
 
-    <table class="kuiTable" ng-show="events.length">
+    <table class="kuiTable" ng-show="pageOfEvents.length">
       <thead>
         <tr>
           <th scope="col" class="kuiTableHeaderCell">
-            <sortable-column field="id" on-sort-change="onSortChange" sort-field="sortField" sort-reverse="sortReverse">
+            <sortable-column field="description" on-sort-change="onSortChange" sort-field="sortField" sort-reverse="sortReverse">
               Description
             </sortable-column>
           </th>
           <th scope="col" class="kuiTableHeaderCell">
-            <sortable-column field="name" on-sort-change="onSortChange" sort-field="sortField" sort-reverse="sortReverse">
+            <sortable-column field="start_time" on-sort-change="onSortChange" sort-field="sortField" sort-reverse="sortReverse">
               Start
             </sortable-column>
           </th>
           <th scope="col" class="kuiTableHeaderCell">
-            <sortable-column field="watchStatus.state" on-sort-change="onSortChange" sort-field="sortField" sort-reverse="sortReverse">
+            <sortable-column field="end_time" on-sort-change="onSortChange" sort-field="sortField" sort-reverse="sortReverse">
               End
             </sortable-column>
           </th>
@@ -61,7 +66,7 @@
       </thead>
 
       <tbody>
-        <tr ng-repeat="event in events track by $index" class="kuiTableRow" ng-class="{ 'kuiTableRow-isBeingDeleted': event.isBeingDeleted }">
+        <tr ng-repeat="event in pageOfEvents track by $index" class="kuiTableRow" ng-class="{ 'kuiTableRow-isBeingDeleted': event.isBeingDeleted }">
 
           <td class="kuiTableRowCell">
             <div class="kuiTableRowCell__liner">
@@ -93,7 +98,7 @@
           <td class="kuiTableRowCell">
             <div class="kuiTableRowCell__liner">
               <div class="kuiMenuButtonGroup kuiMenuButtonGroup--alignRight">
-                <a class="kuiMenuButton kuiMenuButton--danger kuiMenuButton--iconText" title="Edit" ng-click="deleteEvent($index)"
+                <a class="kuiMenuButton kuiMenuButton--danger kuiMenuButton--iconText" title="Edit" ng-click="deleteEvent(event)"
                   href="">
                   <span class="kuiMenuButton__icon kuiIcon fa-trash"></span>
                   <span>Delete</span>

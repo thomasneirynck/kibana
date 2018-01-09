@@ -91,9 +91,19 @@ module.controller('MlCreateCalendar',
       });
 
     $scope.save = function () {
+      // Just pass the three event properties used by the endpoint, ignoring UI-specific properties
+      // such as 'asterisk' which is used to flag recurring events from an ICS file import.
+      const events = $scope.events.map((event) => {
+        return {
+          description: event.description,
+          start_time: event.start_time,
+          end_time: event.end_time
+        };
+      });
+
       const calendar = {
         calendarId: $scope.calendarId,
-        events: $scope.events,
+        events,
         job_ids: [...$scope.jobIds, ...$scope.groupIds],
       };
 
