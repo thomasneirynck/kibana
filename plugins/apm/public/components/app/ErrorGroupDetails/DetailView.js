@@ -5,7 +5,7 @@ import { get, capitalize, isEmpty } from 'lodash';
 import { STATUS } from '../../../constants';
 
 import { ContextProperties } from '../../shared/ContextProperties';
-import { TabLink } from '../../shared/UIComponents';
+import { TabLink, SectionHeader } from '../../shared/UIComponents';
 import DiscoverButton from '../../shared/DiscoverButton';
 import {
   PropertiesTable,
@@ -32,7 +32,7 @@ const Header = styled.div`
   padding: ${px(units.plus)};
 `;
 
-const Title = styled.h3`
+const Title = styled(SectionHeader)`
   margin-top: -${px(units.quarter)};
 `;
 
