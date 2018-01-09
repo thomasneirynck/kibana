@@ -36,7 +36,7 @@ describe('ML - <ml-loading-indicator>', () => {
   it('Default loading indicator without attributes should not be visible', () => {
     $element = $compile('<ml-loading-indicator />')($scope);
     $scope.$apply();
-    $scope.$on('renderComplete', () => {
+    $element.on('renderComplete', () => {
       expect($element.find('*').length).to.be(0);
     });
   });
@@ -44,7 +44,7 @@ describe('ML - <ml-loading-indicator>', () => {
   it('Enables the loading indicator, checks the default height and non-existant label', () => {
     $element = $compile('<ml-loading-indicator is-loading="true" />')($scope);
     $scope.$apply();
-    $scope.$on('renderComplete', () => {
+    $element.on('renderComplete', () => {
       expect($element.find('.loading-indicator').length).to.be(1);
       expect($element.find('.loading-indicator').css('height')).to.be('100px');
       expect($element.find('[ml-loading-indicator-label]').length).to.be(0);
@@ -54,7 +54,7 @@ describe('ML - <ml-loading-indicator>', () => {
   it('Sets a custom height', () => {
     $element = $compile('<ml-loading-indicator is-loading="true" height="200" />')($scope);
     $scope.$apply();
-    $scope.$on('renderComplete', () => {
+    $element.on('renderComplete', () => {
       expect($element.find('.loading-indicator').css('height')).to.be('200px');
     });
   });
@@ -63,7 +63,7 @@ describe('ML - <ml-loading-indicator>', () => {
     const labelName = 'my-label';
     $element = $compile(`<ml-loading-indicator is-loading="true" label="${labelName}" />`)($scope);
     $scope.$apply();
-    $scope.$on('renderComplete', () => {
+    $element.on('renderComplete', () => {
       expect($element.find('[ml-loading-indicator-label]').text()).to.be(labelName);
     });
   });
@@ -73,12 +73,12 @@ describe('ML - <ml-loading-indicator>', () => {
     $element = $compile('<ml-loading-indicator is-loading="isLoading" />')($scope);
     $scope.$apply();
 
-    $scope.$on('renderComplete', () => {
+    $element.on('renderComplete', () => {
       expect($element.find('*').length).to.be(0);
 
       $scope.isLoading = true;
       $scope.$apply();
-      $scope.$on('renderComplete', () => {
+      $element.on('renderComplete', () => {
         expect($element.find('.loading-indicator').length).to.be(1);
       });
     });
