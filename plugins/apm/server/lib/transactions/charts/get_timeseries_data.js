@@ -111,14 +111,19 @@ export async function getTimeseriesData({
   }
 
   const resp = await client('search', params);
-  const responseTimeBuckets = get(resp, 'aggregations.response_times.buckets');
+  const responseTimeBuckets = get(
+    resp,
+    'aggregations.response_times.buckets',
+    []
+  );
   const transactionResultBuckets = get(
     resp,
-    'aggregations.transaction_results.buckets'
+    'aggregations.transaction_results.buckets',
+    []
   );
   const overallAvg = get(resp, 'aggregations.overall_avg.value');
 
-  const dates = get(transactionResultBuckets, '[0].timeseries.buckets')
+  const dates = get(transactionResultBuckets, '[0].timeseries.buckets', [])
     .slice(1, -1)
     .map(bucket => bucket.key);
 

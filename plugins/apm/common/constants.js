@@ -10,6 +10,7 @@ export const TRANSACTION_TYPE = 'transaction.type';
 export const TRANSACTION_RESULT = 'transaction.result';
 export const TRANSACTION_NAME = 'transaction.name';
 export const TRANSACTION_ID = 'transaction.id';
+export const TRANSACTION_SAMPLED = 'transaction.sampled';
 
 export const SPAN_START = 'span.start.us';
 export const SPAN_DURATION = 'span.duration.us';

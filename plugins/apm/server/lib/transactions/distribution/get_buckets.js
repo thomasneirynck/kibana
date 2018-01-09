@@ -3,7 +3,8 @@ import {
   SERVICE_NAME,
   TRANSACTION_DURATION,
   TRANSACTION_ID,
-  TRANSACTION_NAME
+  TRANSACTION_NAME,
+  TRANSACTION_SAMPLED
 } from '../../../../common/constants';
 
 export async function getBuckets({
@@ -34,7 +35,8 @@ export async function getBuckets({
             },
             { term: { [SERVICE_NAME]: serviceName } },
             { term: { [`${TRANSACTION_NAME}.keyword`]: transactionName } }
-          ]
+          ],
+          should: [{ term: { [TRANSACTION_SAMPLED]: true } }]
         }
       },
       aggs: {
@@ -49,9 +51,9 @@ export async function getBuckets({
             }
           },
           aggs: {
-            sample: {
+            transaction: {
               top_hits: {
-                _source: [TRANSACTION_ID],
+                _source: [TRANSACTION_ID, TRANSACTION_SAMPLED],
                 size: 1
               }
             }
@@ -63,11 +65,15 @@ export async function getBuckets({
 
   const resp = await client('search', params);
 
-  const buckets = resp.aggregations.distribution.buckets.map(bucket => ({
-    key: bucket.key,
-    count: bucket.doc_count,
-    transaction_id: get(bucket.sample.hits.hits[0], `_source.${TRANSACTION_ID}`)
-  }));
+  const buckets = resp.aggregations.distribution.buckets.map(bucket => {
+    const transaction = get(bucket.transaction.hits.hits[0], '_source');
+    return {
+      key: bucket.key,
+      count: bucket.doc_count,
+      transaction_id: get(transaction, TRANSACTION_ID),
+      sampled: get(transaction, TRANSACTION_SAMPLED)
+    };
+  });
 
   return {
     total_hits: resp.hits.total,

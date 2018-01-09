@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { scaleLinear } from 'd3-scale';
 import styled from 'styled-components';
 import SingleRect from './SingleRect';
-
 import {
   XYPlot,
   XAxis,
@@ -19,7 +18,6 @@ import {
 import { unit, colors } from '../../../../style/variables';
 import Tooltip from '../Tooltip';
 
-const barColor = colors.apmLightBlue;
 const XY_HEIGHT = unit * 10;
 const XY_MARGIN = {
   top: unit,
@@ -38,12 +36,12 @@ export class HistogramInner extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      hoveredBucket: null
+      hoveredBucket: {}
     };
   }
 
   onClick = bucket => {
-    if (this.props.onClick && bucket.y > 0) {
+    if (this.props.onClick) {
       this.props.onClick(bucket);
     }
   };
@@ -53,7 +51,7 @@ export class HistogramInner extends PureComponent {
   };
 
   onBlur = () => {
-    this.setState({ hoveredBucket: null });
+    this.setState({ hoveredBucket: {} });
   };
 
   getChartData(items, selectedItem) {
@@ -80,9 +78,12 @@ export class HistogramInner extends PureComponent {
       width: XY_WIDTH,
       formatXValue,
       formatYValue,
-      formatTooltipHeader,
-      tooltipLegendTitle
+      tooltipHeader,
+      tooltipFooter,
+      verticalLineHover,
+      backgroundHover
     } = this.props;
+    const { hoveredBucket } = this.state;
     if (_.isEmpty(buckets) || XY_WIDTH === 0) {
       return null;
     }
@@ -108,10 +109,12 @@ export class HistogramInner extends PureComponent {
     const xDomain = x.domain();
     const yDomain = y.domain();
     const yTickValues = [0, yDomain[1] / 2, yDomain[1]];
-    const hoveredBucket = this.state.hoveredBucket || {};
     const isTimeSeries = this.props.xType === 'time';
     const shouldShowTooltip =
       hoveredBucket.x > 0 && (hoveredBucket.y > 0 || isTimeSeries);
+
+    const showVerticalLineHover = verticalLineHover(hoveredBucket);
+    const showBackgroundHover = backgroundHover(hoveredBucket);
 
     return (
       <ChartsWrapper>
@@ -138,16 +141,16 @@ export class HistogramInner extends PureComponent {
             tickValues={yTickValues}
             tickFormat={formatYValue}
           />
-          {this.props.onClick &&
-            _.get(this.state.hoveredBucket, 'y') > 0 && (
-              <SingleRect
-                x={x(this.state.hoveredBucket.x0)}
-                width={x(bucketSize) - x(0)}
-                style={{
-                  fill: colors.gray5
-                }}
-              />
-            )}
+
+          {showBackgroundHover && (
+            <SingleRect
+              x={x(hoveredBucket.x0)}
+              width={x(bucketSize) - x(0)}
+              style={{
+                fill: colors.gray5
+              }}
+            />
+          )}
 
           {shouldShowTooltip && (
             <Tooltip
@@ -155,18 +158,14 @@ export class HistogramInner extends PureComponent {
                 marginLeft: '1%',
                 marginRight: '1%'
               }}
-              header={formatTooltipHeader(hoveredBucket.x0, hoveredBucket.x)}
-              tooltipPoints={[
-                {
-                  color: barColor,
-                  value: formatYValue(hoveredBucket.y, false),
-                  text: tooltipLegendTitle
-                }
-              ]}
+              header={tooltipHeader(hoveredBucket)}
+              footer={tooltipFooter(hoveredBucket)}
+              tooltipPoints={[{ value: formatYValue(hoveredBucket.y, false) }]}
               x={hoveredBucket.x}
               y={yDomain[1] / 2}
             />
           )}
+
           {selectedBucket && (
             <SingleRect
               x={x(selectedBucket.x0)}
@@ -179,6 +178,7 @@ export class HistogramInner extends PureComponent {
               }}
             />
           )}
+
           <VerticalRectSeries
             colorType="literal"
             color={colors.apmLightBlue}
@@ -188,16 +188,19 @@ export class HistogramInner extends PureComponent {
               ry: '0px'
             }}
           />
-          {isTimeSeries &&
-            hoveredBucket.x > 0 && (
-              <VerticalGridLines tickValues={[hoveredBucket.x]} />
-            )}
+
+          {showVerticalLineHover && (
+            <VerticalGridLines tickValues={[hoveredBucket.x]} />
+          )}
+
           <Voronoi
             extent={[[XY_MARGIN.left, XY_MARGIN.top], [XY_WIDTH, XY_HEIGHT]]}
-            nodes={this.props.buckets.map(item => ({
-              ...item,
-              x: (item.x0 + item.x) / 2
-            }))}
+            nodes={this.props.buckets.map(bucket => {
+              return {
+                ...bucket,
+                x: (bucket.x0 + bucket.x) / 2
+              };
+            })}
             onClick={this.onClick}
             onHover={this.onHover}
             onBlur={this.onBlur}
@@ -219,12 +222,17 @@ HistogramInner.propTypes = {
   xType: PropTypes.string,
   formatXValue: PropTypes.func,
   formatYValue: PropTypes.func,
-  formatTooltipHeader: PropTypes.func,
-  tooltipLegendTitle: PropTypes.string
+  tooltipHeader: PropTypes.func,
+  tooltipFooter: PropTypes.func,
+  verticalLineHover: PropTypes.func,
+  backgroundHover: PropTypes.func
 };
 
 HistogramInner.defaultProps = {
-  formatTooltipHeader: () => null,
+  tooltipHeader: () => null,
+  tooltipFooter: () => null,
+  verticalLineHover: () => null,
+  backgroundHover: () => null,
   formatYValue: value => value,
   xType: 'linear'
 };

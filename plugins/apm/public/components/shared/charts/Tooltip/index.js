@@ -33,19 +33,22 @@ const Header = styled.div`
   color: ${colors.gray3};
 `;
 
-const Legends = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: ${px(units.half)};
-  padding: ${px(units.quarter)} ${px(unit)} ${px(units.quarter)}
-    ${px(units.half)};
+const Content = styled.div`
+  margin: ${px(units.half)};
+  margin-right: ${px(unit)};
+  font-size: ${fontSizes.small};
+`;
+
+const Footer = styled.div`
+  color: ${colors.gray3};
+  margin: ${px(units.half)};
   font-size: ${fontSizes.small};
 `;
 
 const LegendContainer = styled.div`
   display: flex;
   align-items: center;
-  margin: ${px(units.quarter)} 0;
+  margin-bottom: ${px(units.quarter)};
   justify-content: space-between;
 `;
 
@@ -58,27 +61,45 @@ const Value = styled.div`
   font-size: ${fontSize};
 `;
 
-export default function Tooltip({ header, tooltipPoints, x, y, ...props }) {
+export default function Tooltip({
+  header,
+  footer,
+  tooltipPoints,
+  x,
+  y,
+  ...props
+}) {
   if (_.isEmpty(tooltipPoints)) {
     return null;
   }
+
+  // Only show legend labels if there is more than 1 data set
+  const showLegends = tooltipPoints.length > 1;
+
   return (
     <Hint {...props} value={{ x, y }}>
       <TooltipElm>
         <Header>{header || moment(x).format('MMMM Do YYYY, HH:mm:ss')}</Header>
-        <Legends>
-          {tooltipPoints.map((point, i) => (
-            <LegendContainer key={i}>
-              <LegendGray
-                fontSize={fontSize.tiny}
-                radius={units.half}
-                color={point.color}
-                text={point.text}
-              />
-              <Value>{point.value}</Value>
-            </LegendContainer>
-          ))}
-        </Legends>
+
+        <Content>
+          {showLegends ? (
+            tooltipPoints.map((point, i) => (
+              <LegendContainer key={i}>
+                <LegendGray
+                  fontSize={fontSize.tiny}
+                  radius={units.half}
+                  color={point.color}
+                  text={point.text}
+                />
+
+                <Value>{point.value}</Value>
+              </LegendContainer>
+            ))
+          ) : (
+            <Value>{tooltipPoints[0].value}</Value>
+          )}
+        </Content>
+        <Footer>{footer}</Footer>
       </TooltipElm>
     </Hint>
   );

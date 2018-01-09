@@ -8,9 +8,8 @@ export function getFormattedBuckets(buckets, bucketSize) {
     return null;
   }
 
-  return buckets.map(({ count, key }, i) => {
+  return buckets.map(({ count, key }) => {
     return {
-      i,
       x0: key,
       x: key + bucketSize,
       y: count
@@ -58,11 +57,11 @@ class Distribution extends Component {
       <div>
         <GraphHeader>Occurrences</GraphHeader>
         <Histogram
+          verticalLineHover={bucket => bucket.x}
           xType="time"
           buckets={buckets}
           bucketSize={distribution.data.bucketSize}
           formatYValue={value => `${value} occ.`}
-          tooltipLegendTitle="Occurences"
         />
       </div>
     );

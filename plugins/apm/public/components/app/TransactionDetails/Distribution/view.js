@@ -3,20 +3,24 @@ import d3 from 'd3';
 import Histogram from '../../../shared/charts/Histogram';
 import { toQuery, fromQuery } from '../../../../utils/url';
 import { withRouter } from 'react-router-dom';
+import { GraphHeader } from '../../../shared/UIComponents';
 import EmptyMessage from '../../../shared/EmptyMessage';
 import { getTimeFormatter, timeUnit } from '../../../../utils/formatters';
+import SamplingTooltip from './SamplingTooltip';
 
 export function getFormattedBuckets(buckets, bucketSize) {
   if (!buckets) {
     return null;
   }
 
-  return buckets.map(({ count, key, transactionId }) => {
+  return buckets.map(({ sampled, count, key, transactionId }) => {
     return {
+      sampled,
       transactionId,
       x0: key,
       x: key + bucketSize,
-      y: count
+      y: count,
+      style: count > 0 && sampled ? { cursor: 'pointer' } : {}
     };
   });
 }
@@ -73,30 +77,37 @@ class Distribution extends Component {
 
     return (
       <div>
+        <GraphHeader>
+          Response time distribution <SamplingTooltip />
+        </GraphHeader>
         <Histogram
           buckets={buckets}
           bucketSize={distribution.data.bucketSize}
           transactionId={this.props.urlParams.transactionId}
           onClick={bucket => {
-            history.replace({
-              ...location,
-              search: fromQuery({
-                ...toQuery(location.search),
-                transactionId: bucket.transactionId
-              })
-            });
+            if (bucket.sampled && bucket.y > 0) {
+              history.replace({
+                ...location,
+                search: fromQuery({
+                  ...toQuery(location.search),
+                  transactionId: bucket.transactionId
+                })
+              });
+            }
           }}
           formatXValue={timeFormatter}
           formatYValue={this.formatYValue}
-          formatTooltipHeader={(hoveredX0, hoveredX) =>
-            `${timeFormatter(hoveredX0, false)} - ${timeFormatter(
-              hoveredX,
+          verticalLineHover={bucket => bucket.y > 0 && !bucket.sampled}
+          backgroundHover={bucket => bucket.y > 0 && bucket.sampled}
+          tooltipHeader={bucket =>
+            `${timeFormatter(bucket.x0, false)} - ${timeFormatter(
+              bucket.x,
               false
             )} ${unit}`
           }
-          tooltipLegendTitle={transactionLabel(
-            this.props.urlParams.transactionType
-          )}
+          tooltipFooter={bucket =>
+            !bucket.sampled && 'No sample available for this bucket'
+          }
         />
       </div>
     );
@@ -105,10 +116,6 @@ class Distribution extends Component {
 
 function distributionUnit(type) {
   return type === 'request' ? 'req.' : 'trans.';
-}
-
-function transactionLabel(type) {
-  return type === 'request' ? 'Requests' : 'Transactions';
 }
 
 export default withRouter(Distribution);

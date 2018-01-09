@@ -2,7 +2,7 @@
 
 exports[`Histogram Initially should have default markup 1`] = `
 "
-<div class=\\"sc-htoDjs gBxNsV\\">
+<div class=\\"sc-dnqmqq XNMlj\\">
   <div style=\\"width: 800px; height: 160px;\\"
        class=\\"rv-xy-plot \\"
   >
@@ -462,169 +462,169 @@ exports[`Histogram Initially should have default markup 1`] = `
         </rect>
       </g>
       <g class=\\" rv-voronoi\\">
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M105.14285749999999,160L105.14285749999999,16L80,16L80,160Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M105.14285749999999,16L105.14285749999999,160L130.28571449999998,160L130.28571449999998,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M130.28571449999998,16L130.28571449999998,160L155.42857149999998,160L155.42857149999998,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M155.42857149999998,16L155.42857149999998,160L180.5714285,160L180.5714285,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M180.5714285,16L180.5714285,160L205.7142855,160L205.7142855,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M205.7142855,16L205.7142855,160L230.85714249999998,160L230.85714249999998,16Z\\"
               fill=\\"none\\"
-              style=\\"pointer-events: all;\\"
+              style=\\"pointer-events: all; cursor: pointer;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M230.85714249999998,16L230.85714249999998,160L255.99999999999997,160L255.99999999999997,16Z\\"
               fill=\\"none\\"
-              style=\\"pointer-events: all;\\"
+              style=\\"pointer-events: all; cursor: pointer;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M255.99999999999997,16L255.99999999999997,160L281.1428575,160L281.1428575,16Z\\"
               fill=\\"none\\"
-              style=\\"pointer-events: all;\\"
+              style=\\"pointer-events: all; cursor: pointer;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M281.1428575,16L281.1428575,160L306.2857145,160L306.2857145,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M306.2857145,16L306.2857145,160L331.4285715,160L331.4285715,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M331.4285715,16L331.4285715,160L356.5714285,160L356.5714285,16Z\\"
               fill=\\"none\\"
-              style=\\"pointer-events: all;\\"
+              style=\\"pointer-events: all; cursor: pointer;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M356.5714285,16L356.5714285,160L381.71428549999996,160L381.71428549999996,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M381.71428549999996,16L381.71428549999996,160L406.8571425,160L406.8571425,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M406.8571425,16L406.8571425,160L432,160L432,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M432,16L432,160L457.1428575,160L457.1428575,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M457.1428575,16L457.1428575,160L482.2857144999999,160L482.2857144999999,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M482.2857144999999,16L482.2857144999999,160L507.4285715,160L507.4285715,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M507.4285715,16L507.4285715,160L532.5714284999999,160L532.5714284999999,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M532.5714284999999,16L532.5714284999999,160L557.7142855,160L557.7142855,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M557.7142855,16L557.7142855,160L582.8571425,160L582.8571425,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M582.8571425,16L582.8571425,160L608,160L608,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M608,16L608,160L633.1428575,160L633.1428575,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M633.1428575,16L633.1428575,160L658.2857145,160L658.2857145,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M658.2857145,16L658.2857145,160L683.4285715,160L683.4285715,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M683.4285715,16L683.4285715,160L708.5714284999999,160L708.5714284999999,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M708.5714284999999,16L708.5714284999999,160L733.7142855,160L733.7142855,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M733.7142855,16L733.7142855,160L758.8571425,160L758.8571425,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
         >
         </path>
-        <path class=\\"rv-voronoi__cell\\"
+        <path class=\\"rv-voronoi__cell \\"
               d=\\"M758.8571425,16L758.8571425,160L800,160L800,16Z\\"
               fill=\\"none\\"
               style=\\"pointer-events: all;\\"
@@ -647,22 +647,12 @@ exports[`Histogram when hovering over a non-empty bucket should have correct mar
     <div class=\\"sc-bxivhb etAnDE\\">
       811 - 869 ms
     </div>
-    <div class=\\"sc-ifAKCX gVdyMJ\\">
-      <div class=\\"sc-EHOje hxHpbH\\">
-        <div class=\\"sc-bZQynM bHRdln sc-bdVaJa eWvHJG\\"
-             font-size=\\"12px\\"
-        >
-          <span class=\\"sc-bwzfXH hqZZcw\\"
-                color=\\"#80bcd2\\"
-                radius=\\"8\\"
-          >
-          </span>
-          Requests
-        </div>
-        <div class=\\"sc-gzVnrw zwJEr\\">
-          49.0
-        </div>
+    <div class=\\"sc-ifAKCX bNldUA\\">
+      <div class=\\"sc-htoDjs IBSLv\\">
+        49.0
       </div>
+    </div>
+    <div class=\\"sc-EHOje cbycc\\">
     </div>
   </div>
 </div>

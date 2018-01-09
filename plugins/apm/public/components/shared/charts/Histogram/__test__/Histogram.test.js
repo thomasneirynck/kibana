@@ -9,22 +9,7 @@ import {
   asDecimal,
   timeUnit
 } from '../../../../../utils/formatters';
-
-// TODO: Remove duplication of this method
-function getFormattedBuckets(buckets, bucketSize) {
-  if (!buckets) {
-    return null;
-  }
-
-  return buckets.map(({ count, key, transactionId }) => {
-    return {
-      transactionId,
-      x0: key,
-      x: key + bucketSize,
-      y: count
-    };
-  });
-}
+import { getFormattedBuckets } from '../../../../app/TransactionDetails/Distribution/view';
 
 describe('Histogram', () => {
   let wrapper;
@@ -44,13 +29,12 @@ describe('Histogram', () => {
         onClick={onClick}
         formatXValue={timeFormatter}
         formatYValue={asDecimal}
-        formatTooltipHeader={(hoveredX0, hoveredX) =>
-          `${timeFormatter(hoveredX0, false)} - ${timeFormatter(
-            hoveredX,
+        tooltipHeader={bucket =>
+          `${timeFormatter(bucket.x0, false)} - ${timeFormatter(
+            bucket.x,
             false
           )} ${unit}`
         }
-        tooltipLegendTitle="Requests"
         width={800}
       />
     );
@@ -58,7 +42,7 @@ describe('Histogram', () => {
 
   describe('Initially', () => {
     it('should have default state', () => {
-      expect(wrapper.state()).toEqual({ hoveredBucket: null });
+      expect(wrapper.state()).toEqual({ hoveredBucket: {} });
     });
 
     it('should have default markup', () => {
@@ -96,9 +80,7 @@ describe('Histogram', () => {
 
       expect(tooltips.length).toBe(1);
       expect(tooltips.prop('header')).toBe('811 - 869 ms');
-      expect(tooltips.prop('tooltipPoints')).toEqual([
-        { color: '#80bcd2', text: 'Requests', value: '49.0' }
-      ]);
+      expect(tooltips.prop('tooltipPoints')).toEqual([{ value: '49.0' }]);
       expect(tooltips.prop('x')).toEqual(869010);
       expect(tooltips.prop('y')).toEqual(27.5);
     });
@@ -106,6 +88,8 @@ describe('Histogram', () => {
     it('should update state with "hoveredBucket"', () => {
       expect(wrapper.state()).toEqual({
         hoveredBucket: {
+          sampled: true,
+          style: { cursor: 'pointer' },
           transactionId: '99c50a5b-44b4-4289-a3d1-a2815d128192',
           x: 869010,
           x0: 811076,
@@ -130,6 +114,8 @@ describe('Histogram', () => {
 
     it('should call onClick with bucket', () => {
       expect(onClick).toHaveBeenCalledWith({
+        sampled: true,
+        style: { cursor: 'pointer' },
         transactionId: '99c50a5b-44b4-4289-a3d1-a2815d128192',
         x: 869010,
         x0: 811076,

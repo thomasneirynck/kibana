@@ -1,5 +1,5 @@
 import React from 'react';
-import { PageHeader, GraphHeader } from '../../shared/UIComponents';
+import { PageHeader } from '../../shared/UIComponents';
 import Transaction from './Transaction';
 import Distribution from './Distribution';
 import Charts from './Charts';
@@ -9,7 +9,6 @@ function TransactionDetails({ urlParams }) {
     <div>
       <PageHeader>{urlParams.transactionName}</PageHeader>
       <Charts />
-      <GraphHeader>Response time distribution</GraphHeader>
       <Distribution />
       <Transaction />
     </div>
