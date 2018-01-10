@@ -31,6 +31,7 @@ BASE_DIR=$(dirname "$SCRIPT")/..
 BASE_DIR=$(cd "$BASE_DIR"; pwd)
 
 PARENT_DIR=$(cd "$BASE_DIR"/..; pwd)
+KIBANA_DIR="${PARENT_DIR}/kibana"
 
 # go to the parent directory
 cd $PARENT_DIR
@@ -105,16 +106,19 @@ function checkout_sibling {
 }
 
 checkout_sibling "elasticsearch" "${PARENT_DIR}/elasticsearch" "USE_EXISTING_ES"
-checkout_sibling "kibana" "${PARENT_DIR}/kibana" "USE_EXISTING_KIBANA"
+checkout_sibling "kibana" "$KIBANA_DIR" "USE_EXISTING_KIBANA"
 checkout_sibling "x-pack-elasticsearch" "${PARENT_DIR}/elasticsearch-extra/x-pack-elasticsearch" "USE_EXISTING_XPACK"
 
 # back to base directory
 cd "$BASE_DIR"
 
 # run kibana's ci setup script in kibana repo
-cd "${PARENT_DIR}/kibana"
 export CACHE_DIR="${PARENT_DIR}/.cache"
-source ./src/dev/ci_setup/setup.sh
+source "${KIBANA_DIR}/src/dev/ci_setup/setup.sh"
+
+cd "$KIBANA_DIR"
+# install kibana deps
+yarn --frozen-lockfile
 cd -
 
 # output the commands
