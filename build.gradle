@@ -14,37 +14,37 @@ task clean(type: Delete) {
   delete 'node_modules'
 }
 
-task npmInstall(type: Exec) {
+task installDeps(type: Exec) {
   if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-    commandLine 'cmd', '/C', 'npm', 'install'
+    commandLine 'cmd', '/C', 'yarn'
   } else {
-    commandLine 'npm', 'install'
+    commandLine 'yarn'
   }
 }
 
-task mochaTests(type: Exec, dependsOn: npmInstall) {
+task mochaTests(type: Exec, dependsOn: installDeps) {
   group = 'Verification'
-  description = 'Run mocha tests with npm'
+  description = 'Run mocha tests'
   if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-    commandLine 'cmd', '/C', 'npm', 'run', 'test'
+    commandLine 'cmd', '/C', 'yarn', 'test'
   } else {
-    commandLine 'xvfb-run', 'npm', 'run', 'test'
+    commandLine 'xvfb-run', 'yarn', 'test'
   }
 }
 
-task jestTests(type: Exec, dependsOn: npmInstall) {
+task jestTests(type: Exec, dependsOn: installDeps) {
   group = 'Verification'
   description = 'Run jest tests'
   commandLine 'node', 'scripts/jest', '--ci', '--no-cache', '--verbose'
 }
 
-task apiTests(type: Exec, dependsOn: npmInstall) {
+task apiTests(type: Exec, dependsOn: installDeps) {
   group = 'Verification'
   description = 'Run api tests'
   commandLine 'node', 'scripts/functional_tests_api'
 }
 
-task functionalTests(type: Exec, dependsOn: npmInstall) {
+task functionalTests(type: Exec, dependsOn: installDeps) {
   group = 'Verification'
   description = 'Run functional tests'
   commandLine 'xvfb-run', 'node', 'scripts/functional_tests', '--bail'
@@ -58,18 +58,18 @@ task check(dependsOn: [mochaTests, jestTests, apiTests, functionalTests]) {
   description = 'Run all verification tasks'
 }
 
-task npmBuild(type: Exec, dependsOn: npmInstall) {
+task runBuild(type: Exec, dependsOn: installDeps) {
   if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-    commandLine 'cmd', '/C', 'npm', 'run', 'build'
+    commandLine 'cmd', '/C', 'yarn', 'build'
   } else {
-    commandLine 'npm', 'run', 'build'
+    commandLine 'yarn', 'build'
   }
   if (System.getProperty('build.snapshot', 'true') == 'false') {
     args '--', '--release'
   }
 }
 
-task bundlePlugin(type: Zip, dependsOn: npmBuild) {
+task bundlePlugin(type: Zip, dependsOn: runBuild) {
   from 'build/plugin'
   destinationDir file('build/distributions')
   baseName = 'x-pack'

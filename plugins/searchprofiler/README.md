@@ -6,11 +6,11 @@ A UI for the query and aggregation profiler in Elasticsearch
 
 Assuming you've checked out x-plugins next to kibana...
 
-- Run `npm install`
-- Run `npm start` to watch for and sync files on change
-- Open a new terminal to run Kibana - use `npm start` to launch it in dev mode
+- Run `yarn`
+- Run `yarn start` to watch for and sync files on change
+- Open a new terminal to run Kibana - use `yarn start` to launch it in dev mode
   - Kibana will automatically restart as files are synced
-  - If you need debugging output, run `DEBUG=reporting npm start` instead
+  - If you need debugging output, run `DEBUG=reporting yarn start` instead
 
 If you have installed this somewhere other than via x-plugins, and next to the kibana repo, you'll need to change the `pathToKibana` setting in `gulpfile.js`
 

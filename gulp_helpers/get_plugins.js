@@ -9,8 +9,8 @@ const { findPluginSpecs } = require(resolveKibanaPath('src/plugin_discovery'));
     Specifying which plugins to run tests can be done with the --plugins flag.
     One of more plugins can be specified, and each one should be comman separated, like so:
       gulp testserver --plugins monitoring,reporting
-    If using with npm, you'll need an addition -- to pass the argument:
-      npm run testserver -- --plugins graph
+    If using with yarn:
+      yarn test:server --plugins graph
 */
 
 const argv = yargs

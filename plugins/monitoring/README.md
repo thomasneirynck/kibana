@@ -14,7 +14,7 @@ of the x-plugins repository.
 
 To set up Monitoring and automatic file syncing code changes into Kibana's plugin
 directory, clone the kibana and x-plugins repos in the same directory and from
-`x-plugins/kibana/monitoring`, run `npm start`.
+`x-plugins/kibana/monitoring`, run `yarn start`.
 
 Once the syncing process has run at least once, start the Kibana server in
 development mode. It will handle restarting the server and re-optimizing the
@@ -25,7 +25,7 @@ Drawer.
 
 - Run the command:
   ```
-  npm run test
+  yarn test
   ```
 
 - Debug tests
@@ -102,7 +102,7 @@ cluster.
 
 1. Start another Kibana instance:
   ```
-  % npm start
+  % yarn start
   ```
 
 1. Start a Kibana instance connected to the Monitoring cluster (for running queries in Sense on Monitoring data):

@@ -4,10 +4,12 @@ This folder has the Kibana X-Pack plugin code
 
 ### UI Development
 
-First, you will need the plugin dependencies:
+Install the latest version of [yarn](https://yarnpkg.com/en/docs/install).
 
-```
-npm install
+Install dependencies:
+
+```sh
+yarn
 ```
 
 #### Running in development
@@ -25,7 +27,7 @@ $ ls $PATH_TO_REPOS
 Start elasticsearch with x-pack plugins. Follow x-pack-elasticsearch [Setup Instructions](https://github.com/elastic/x-pack-elasticsearch#setup). Execute `gradle run` from within `elasticsearch-extra/x-pack-elasticsearch`.
 Seed elasticsearch with some log data by running `node scripts/makelogs --auth elastic:password` from within `kibana`.
 
-Simply run `npm start` from within `x-pack-kibana`, and it will bring up Kibana with X-Pack. Default username `elastic` and password `password`.
+Simply run `yarn start` from within `x-pack-kibana`, and it will bring up Kibana with X-Pack. Default username `elastic` and password `password`.
 
 #### Alternate: Run the build
 
@@ -33,10 +35,10 @@ If this is not the case, or if you rather lean on Kibana, you'll need to perform
 
 ```
 # in x-pack-kibana
-npm run build
+yarn build
 
 # in kibana
-npm start -- --plugin-path=../path/to/x-pack-kibana/build/kibana/x-pack
+yarn start --plugin-path=../path/to/x-pack-kibana/build/kibana/x-pack
 ```
 
 This is also a useful way to test the build. The downside is that **changes are not automatically synced for you**, so you will need to re-run the build every time you want to use the changes you've made (Kibana will automatically restart when you do, if running in dev mode).
@@ -74,18 +76,18 @@ node --inspect ../kibana/src/cli -c ../kibana/config/kibana.dev.yml --plugin-pat
 You can run unit tests by running:
 
 ```
-npm run test
+yarn test
 ```
 
 If you want to run tests only for a specific plugin (to save some time), you can run:
 
 ```
-npm run test -- --plugins <plugin>[,<plugin>]*    # where <plugin> is "reporting", etc.
+yarn test --plugins <plugin>[,<plugin>]*    # where <plugin> is "reporting", etc.
 ```
 
 #### Running tests with flags
 ```
-npm run test -- <flag args>
+yarn test <flag args>
 ```
 
 Flags
@@ -96,7 +98,7 @@ Edit test file, changing top level `describe` to `describe.only`. Run tests with
 
 #### Debugging browser tests
 ```
-npm run test:browser:dev
+yarn test:browser:dev
 ```
 Initializes an environment for debugging the browser tests. Includes an dedicated instance of the kibana server for building the test bundle, and a karma server. When running this task the build is optimized for the first time and then a karma-owned instance of the browser is opened. Click the "debug" button to open a new tab that executes the unit tests.
 
@@ -106,7 +108,7 @@ Run single tests by appending `grep` parameter to the end of the URL. For exampl
 You can run server-side unit tests by running:
 
 ```
-npm run test:server
+yarn test:server
 ```
 
 #### Running functional tests
@@ -179,19 +181,19 @@ That's thanks to the binary Phantom downloads that have to happen, and Bitbucket
 
 ## Building and Packaging
 
-Make sure you have the dependencies installed by running `npm install`.
+Make sure you have the dependencies installed by running `yarn`.
 
-Once complete, use `npm run build`. Output will be placed in the `build` path (it will be created).
+Once complete, use `yarn build`. Output will be placed in the `build` path (it will be created).
 
 To drop the `SNAPSHOT` off the version, use the release flag, `-r` or `--release`
 
-If you'd like to get a zip package and a sha1 checksum file, use `npm run package`. Output will be placed in the `target` path (it will be created). Resulting build output will also be left in the `build` path.
+If you'd like to get a zip package and a sha1 checksum file, use `yarn package`. Output will be placed in the `target` path (it will be created). Resulting build output will also be left in the `build` path.
 
 ## Releasing
 
-Make sure you have the dependencies installed by running `npm install`.
+Make sure you have the dependencies installed by running `yarn`.
 
-Once complete, use `npm run release`. Build and package output will be placed in the `build` and `target` paths respectively (they will be created).
+Once complete, use `yarn release`. Build and package output will be placed in the `build` and `target` paths respectively (they will be created).
 
 Note that you will need AWS credentials for the upload to succeed. To provide these credentials, create a `~/.aws/credentials` file with your credentials, which should look like this:
 
@@ -207,7 +209,7 @@ aws_secret_access_key = ...
 
 The `default` profile is used automatically, but setting the `AWS_PROFILE` environment variable will allow you to use another profile, if you happen to have multiple.
 
-`AWS_PROFILE=another-config npm run release`
+`AWS_PROFILE=another-config yarn release`
 
 See [the AWS docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html#Creating_the_Shared_Credentials_File) for more information.
 
