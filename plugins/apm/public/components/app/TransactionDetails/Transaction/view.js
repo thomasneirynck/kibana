@@ -55,7 +55,7 @@ const TabContentContainer = styled.div`
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: ${px(units.plus)};
+  padding: ${px(units.plus)} ${px(units.plus)} 0;
 `;
 
 const Title = styled(SectionHeader)`
@@ -104,18 +104,18 @@ class Transaction extends Component {
 
     const stickyProperties = [
       {
-        name: 'transaction.duration',
+        name: 'Duration',
         val: (() => {
           const duration = get(transaction.data, 'transaction.duration.us');
           return duration ? asTime(duration) : 'N/A';
         })()
       },
       {
-        name: 'transaction.result',
+        name: 'Result',
         val: get(transaction.data, 'transaction.result', 'N/A')
       },
       {
-        name: 'context.user.id',
+        name: 'User ID',
         val: get(transaction.data, 'context.user.id', 'N/A')
       }
     ];

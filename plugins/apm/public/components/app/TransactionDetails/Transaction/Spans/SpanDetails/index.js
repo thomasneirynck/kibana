@@ -65,11 +65,11 @@ function SpanDetails({ span, totalDuration, transactionId }) {
     <div>
       <DetailsWrapper>
         <div>
-          <DetailsHeader>Span name</DetailsHeader>
+          <DetailsHeader>Name</DetailsHeader>
           <DetailsText>{spanName}</DetailsText>
         </div>
         <div>
-          <DetailsHeader>Span duration</DetailsHeader>
+          <DetailsHeader>Duration</DetailsHeader>
           <DetailsText>{asMillis(spanDuration)}</DetailsText>
         </div>
         <div>

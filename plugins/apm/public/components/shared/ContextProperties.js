@@ -21,7 +21,7 @@ const PropertiesContainer = styled.div`
 
 const Property = styled.div`
   width: 33%;
-  margin-bottom: ${px(units.double)};
+  margin-bottom: ${px(unit)};
 `;
 
 const PropertyWide = Property.extend`
@@ -59,14 +59,14 @@ export function ContextProperties({ timestamp, url, stickyProperties }) {
   return (
     <PropertiesContainer>
       <Property>
-        <PropertyLabel>@timestamp</PropertyLabel>
+        <PropertyLabel>Timestamp</PropertyLabel>
         <PropertyValue>
           {timestampAgo}{' '}
           <PropertyValueEmphasis>({timestampFull})</PropertyValueEmphasis>
         </PropertyValue>
       </Property>
       <PropertyWide>
-        <PropertyLabel>context.request.url.full</PropertyLabel>
+        <PropertyLabel>URL</PropertyLabel>
         <PropertyUrl title={url}>{url}</PropertyUrl>
       </PropertyWide>
       {stickyProperties &&

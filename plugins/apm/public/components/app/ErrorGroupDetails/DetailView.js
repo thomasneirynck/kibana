@@ -29,7 +29,7 @@ const Container = styled.div`
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: ${px(units.plus)};
+  padding: ${px(units.plus)} ${px(units.plus)} 0;
 `;
 
 const Title = styled(SectionHeader)`
@@ -73,15 +73,15 @@ function DetailView({ errorGroup, urlParams }) {
 
   const stickyProperties = [
     {
-      name: 'context.request.method',
+      name: 'Request method',
       val: get(errorGroup.data, 'error.context.request.method', 'N/A')
     },
     {
-      name: 'error.exception.handled',
+      name: 'Handled',
       val: get(errorGroup.data, 'error.error.exception.handled', 'N/A')
     },
     {
-      name: 'context.user.id',
+      name: 'User ID',
       val: get(errorGroup.data, 'error.context.user.id', 'N/A')
     }
   ];
