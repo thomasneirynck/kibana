@@ -92,6 +92,7 @@ gulp.task('lint-staged', () => {
         '\.yml', // rename .yaml to .yml if you run into this; don't add .yaml
         '\.prettierrc',
         '\.eslintignore',
+        'yarn\.lock',
         'dev-tools/ci',
       ];
 
