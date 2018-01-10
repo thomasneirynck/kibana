@@ -241,22 +241,23 @@ var apm = require('elastic-apm-node').start({
         textPre:
           'Agents are libraries that run inside of your application process. APM services are created programmatically based on the `SERVICE_NAME`.',
         codeLanguage: 'python',
-        code: `# Add the agent to INSTALLED_APPS
+        code: `# Add the agent to INSTALLED_APPS in your settings.py
 INSTALLED_APPS = (
-  'elasticapm.contrib.django',
-  # ...
+    'elasticapm.contrib.django',
+    # ...
 )
 
 # Choose a service name and optionally a secret token
 ELASTIC_APM = {
-  'SERVICE_NAME': '<SERVICE-NAME>',
-  'SECRET_TOKEN': '<SECRET-TOKEN>',
+    # allowed characters in SERVICE_NAME: a-z, A-Z, 0-9, -, _, and space
+    'SERVICE_NAME': '<SERVICE-NAME>',
+    'SECRET_TOKEN': '<SECRET-TOKEN>',
 }
 
 # To send performance metrics, add our tracing middleware:
 MIDDLEWARE = (
-'elasticapm.contrib.django.middleware.TracingMiddleware',
-#...
+    'elasticapm.contrib.django.middleware.TracingMiddleware',
+    #...
 )
 `,
         textPost:
@@ -287,15 +288,17 @@ MIDDLEWARE = (
         textPre:
           'Agents are libraries that run inside of your application process. APM services are created programmatically based on the `SERVICE_NAME`.',
         codeLanguage: 'python',
-        code: `# initialize using environment variables from elasticapm.contrib.flask import ElasticAPM
+        code: `# initialize using environment variables
+from elasticapm.contrib.flask import ElasticAPM
 app = Flask(__name__)
 apm = ElasticAPM(app)
 
-# configure to use ELASTIC_APM in your application's settings from elasticapm.contrib.flask import ElasticAPM
+# or configure to use ELASTIC_APM in your application's settings
+from elasticapm.contrib.flask import ElasticAPM
 app.config['ELASTIC_APM'] = {
-    # allowed SERVICE_NAME chars: a-z, A-Z, 0-9, -, _, and space from elasticapm.contrib.flask
-   'SERVICE_NAME': '',
-   'SECRET_TOKEN': '',
+    # allowed characters in SERVICE_NAME: a-z, A-Z, 0-9, -, _, and space
+    'SERVICE_NAME': '<SERVICE-NAME>',
+    'SECRET_TOKEN': '<SECRET-TOKEN>',
 }
 apm = ElasticAPM(app)
 `,
