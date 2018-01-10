@@ -6,21 +6,18 @@ export const cloud = (kibana) => {
     require: ['kibana', 'elasticsearch', 'xpack_main'],
 
     uiExports: {
-      injectDefaultVars: function (server, options) {
+      injectDefaultVars(server, options) {
         return {
-          isCloudEnabled: options.enabled,
+          isCloudEnabled: !!options.id,
           cloudId: options.id,
         };
       }
     },
 
-    config: function (Joi) {
+    config(Joi) {
       return Joi.object({
-        enabled: Joi.boolean().default(false),
-        id: Joi.string().when('enabled', {
-          is: true,
-          then: Joi.required(),
-        }),
+        enabled: Joi.boolean().default(true),
+        id: Joi.string(),
       }).default();
     },
   });
