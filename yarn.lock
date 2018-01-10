@@ -7258,9 +7258,9 @@ react-tether@^0.5.2:
     prop-types "^15.5.8"
     tether "^1.3.7"
 
-react-vis@1.8.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/react-vis/-/react-vis-1.8.0.tgz#e78d04dd82fcfe57145ff7378b6d2c765932834b"
+react-vis@1.8.1:
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/react-vis/-/react-vis-1.8.1.tgz#3e26d497d376e4616ea9c88efb5447f0b81ce491"
   dependencies:
     d3-array "^1.2.0"
     d3-collection "^1.0.3"
