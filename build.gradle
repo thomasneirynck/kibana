@@ -16,9 +16,9 @@ task clean(type: Delete) {
 
 task installDeps(type: Exec) {
   if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-    commandLine 'cmd', '/C', 'yarn'
+    commandLine 'cmd', '/C', 'yarn', '--frozen-lockfile'
   } else {
-    commandLine 'yarn'
+    commandLine 'yarn', '--frozen-lockfile'
   }
 }
 
