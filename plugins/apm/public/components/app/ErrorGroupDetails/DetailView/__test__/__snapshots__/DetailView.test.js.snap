@@ -1,0 +1,674 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DetailView should render empty state 1`] = `
+"
+null
+"
+`;
+
+exports[`DetailView should render with data 1`] = `
+"
+<div class=\\"sc-brqgnP gzTAIt\\">
+  <div class=\\"sc-cMljjf kRTmxt\\">
+    <h2 class=\\"sc-jAaTju giZDJt sc-htoDjs kEDvNn\\">
+      Error occurrence
+    </h2>
+    <a href=\\"/app/kibana#/discover?_g=&amp;_a=(interval:auto,query:(language:lucene,query:'context.service.name:opbeans-node AND error.grouping_key:c00e245c2fbebaf178fc31eeb2bb0250'),sort:('@timestamp':desc))\\"
+       class=\\"kuiLink \\"
+    >
+      <button class=\\"kuiButton kuiButton--secondary kuiButton--iconText\\">
+        <span class=\\"kuiButton__inner\\">
+          <span aria-hidden=\\"true\\"
+                class=\\"kuiButton__icon kuiIcon fa-compass\\"
+          >
+          </span>
+          <span>
+            View 18 occurences in Discover
+          </span>
+        </span>
+      </button>
+    </a>
+  </div>
+  <div class=\\"sc-bdVaJa fcOFyp\\">
+    <div class=\\"sc-bwzfXH Evm\\">
+      <div class=\\"sc-bxivhb cZfMoG\\">
+        Timestamp
+      </div>
+      <div class=\\"sc-ifAKCX LYQmD\\">
+        1515508740
+        <span class=\\"sc-EHOje fxIYbA\\">
+          (1515508740)
+        </span>
+      </div>
+    </div>
+    <div class=\\"sc-htpNat iGoPZi\\">
+      <div class=\\"sc-bxivhb cZfMoG\\">
+        URL
+      </div>
+      <span class=\\"sc-bZQynM gGoFAs\\"
+            title=\\"N/A\\"
+      >
+        N/A
+      </span>
+    </div>
+    <div class=\\"sc-bwzfXH Evm\\">
+      <div class=\\"sc-bxivhb cZfMoG\\">
+        Request method
+      </div>
+      <div class=\\"sc-ifAKCX LYQmD\\">
+        GET
+      </div>
+    </div>
+    <div class=\\"sc-bwzfXH Evm\\">
+      <div class=\\"sc-bxivhb cZfMoG\\">
+        Handled
+      </div>
+      <div class=\\"sc-ifAKCX LYQmD\\">
+        N/A
+      </div>
+    </div>
+    <div class=\\"sc-bwzfXH Evm\\">
+      <div class=\\"sc-bxivhb cZfMoG\\">
+        User ID
+      </div>
+      <div class=\\"sc-ifAKCX LYQmD\\">
+        N/A
+      </div>
+    </div>
+  </div>
+  <div class=\\"sc-jDwBTQ krGBWu\\">
+    <a class=\\"kuiLink sc-gZMcBi bnHAqj\\"
+       href=\\"#/?detailTab=stacktrace\\"
+    >
+      Stacktrace
+    </a>
+    <a class=\\"kuiLink sc-gZMcBi hbZzgv\\"
+       href=\\"#/?detailTab=request\\"
+    >
+      Request
+    </a>
+    <a class=\\"kuiLink sc-gZMcBi hbZzgv\\"
+       href=\\"#/?detailTab=response\\"
+    >
+      Response
+    </a>
+    <a class=\\"kuiLink sc-gZMcBi hbZzgv\\"
+       href=\\"#/?detailTab=system\\"
+    >
+      System
+    </a>
+    <a class=\\"kuiLink sc-gZMcBi hbZzgv\\"
+       href=\\"#/?detailTab=service\\"
+    >
+      Service
+    </a>
+    <a class=\\"kuiLink sc-gZMcBi hbZzgv\\"
+       href=\\"#/?detailTab=user\\"
+    >
+      User
+    </a>
+    <a class=\\"kuiLink sc-gZMcBi hbZzgv\\"
+       href=\\"#/?detailTab=tags\\"
+    >
+      Tags
+    </a>
+    <a class=\\"kuiLink sc-gZMcBi hbZzgv\\"
+       href=\\"#/?detailTab=custom\\"
+    >
+      Custom
+    </a>
+  </div>
+  <div class=\\"sc-gPEVay dLfQVr\\">
+    <div>
+      <div class=\\"sc-kgoBCf hwbsMN\\">
+        <div class=\\"sc-kAzzGY hKdBNy\\">
+          <span class=\\"sc-chPdSV eHUAig\\">
+            server/coffee.js
+          </span>
+          in
+          <span class=\\"sc-chPdSV eHUAig\\">
+            &lt;anonymous&gt;
+          </span>
+          at
+          <span class=\\"sc-chPdSV eHUAig\\">
+            line 9
+          </span>
+        </div>
+        <div class=\\"sc-kGXeez gPxFIS\\">
+          <div class=\\"sc-kpOJdX ffdQfK\\">
+          </div>
+          <div class=\\"sc-dxgOiQ gkpHDn\\">
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              2.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              3.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              4.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              5.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              6.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              7.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              8.
+            </div>
+            <div class=\\"sc-ckVGcZ cnSVYV\\">
+              9.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              10.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              11.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              12.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              13.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              14.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              15.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              16.
+            </div>
+          </div>
+          <div class=\\"sc-jKJlTe jXrUxz\\">
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                <span style=\\"color: rgb(170, 13, 145);\\">
+                  var
+                </span>
+                express =
+                <span style=\\"color: rgb(92, 38, 153);\\">
+                  require
+                </span>
+                (
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  'express'
+                </span>
+                )
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                <span style=\\"color: rgb(170, 13, 145);\\">
+                  var
+                </span>
+                apm =
+                <span style=\\"color: rgb(92, 38, 153);\\">
+                  require
+                </span>
+                (
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  'elastic-apm-node'
+                </span>
+                )
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                <span style=\\"color: rgb(170, 13, 145);\\">
+                  var
+                </span>
+                app =
+                <span style=\\"color: rgb(92, 38, 153);\\">
+                  module
+                </span>
+                .exports =
+                <span style=\\"color: rgb(170, 13, 145);\\">
+                  new
+                </span>
+                express.Router()
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                app.get(
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  '/is-it-coffee-time'
+                </span>
+                ,
+                <span>
+                  <span style=\\"color: rgb(170, 13, 145);\\">
+                    function
+                  </span>
+                  (
+                  <span style=\\"color: rgb(92, 38, 153);\\">
+                    req, res
+                  </span>
+                  )
+                </span>
+                {
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                <span style=\\"color: rgb(170, 13, 145);\\">
+                  if
+                </span>
+                (req.paarms.level ===
+                <span style=\\"color: rgb(28, 0, 207);\\">
+                  11
+                </span>
+                ) {
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                res.send(
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  'Of course!'
+                </span>
+                )
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                }
+                <span style=\\"color: rgb(170, 13, 145);\\">
+                  else
+                </span>
+                {
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                res.send(
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  'You can\\\\'t have any!'
+                </span>
+                )
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                }
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                })
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                app.get(
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  '/log-error'
+                </span>
+                ,
+                <span>
+                  <span style=\\"color: rgb(170, 13, 145);\\">
+                    function
+                  </span>
+                  (
+                  <span style=\\"color: rgb(92, 38, 153);\\">
+                    req, res
+                  </span>
+                  )
+                </span>
+                {
+              </code>
+            </pre>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class=\\"sc-cvbbAY gYJcTE\\">
+          <a style=\\"cursor: pointer;\\">
+            <i class=\\"fa fa-ellipsis-v undefined\\"
+               style=\\"margin-right: 8px;\\"
+            >
+            </i>
+            14 library frames
+          </a>
+        </div>
+        <div class=\\"sc-jWBwVP fDrbnp\\">
+        </div>
+      </div>
+      <div class=\\"sc-kgoBCf hwbsMN\\">
+        <div class=\\"sc-kAzzGY hKdBNy\\">
+          <span class=\\"sc-chPdSV eHUAig\\">
+            server.js
+          </span>
+          in
+          <span class=\\"sc-chPdSV eHUAig\\">
+            &lt;anonymous&gt;
+          </span>
+          at
+          <span class=\\"sc-chPdSV eHUAig\\">
+            line 27
+          </span>
+        </div>
+        <div class=\\"sc-kGXeez gPxFIS\\">
+          <div class=\\"sc-kpOJdX ffdQfK\\">
+          </div>
+          <div class=\\"sc-dxgOiQ gkpHDn\\">
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              20.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              21.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              22.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              23.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              24.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              25.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              26.
+            </div>
+            <div class=\\"sc-ckVGcZ cnSVYV\\">
+              27.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              28.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              29.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              30.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              31.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              32.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              33.
+            </div>
+            <div class=\\"sc-ckVGcZ VNvOL\\">
+              34.
+            </div>
+          </div>
+          <div class=\\"sc-jKJlTe jXrUxz\\">
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                app.use(
+                <span style=\\"color: rgb(92, 38, 153);\\">
+                  require
+                </span>
+                (
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  'body-parser'
+                </span>
+                ).json())
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                app.use(express.static(
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  'client/build'
+                </span>
+                ))
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                app.use(
+                <span>
+                  <span style=\\"color: rgb(170, 13, 145);\\">
+                    function
+                  </span>
+                  (
+                  <span style=\\"color: rgb(92, 38, 153);\\">
+                    req, res, next
+                  </span>
+                  )
+                </span>
+                {
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                apm.setTag(
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  'foo'
+                </span>
+                ,
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  'bar'
+                </span>
+                )
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                apm.setTag(
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  'lorem'
+                </span>
+                ,
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  'ipsum dolor sit amet, consectetur adipiscing elit. Nulla finibus, ipsum id scelerisque consequat, enim leo vulputate massa, vel ultricies ante neque ac risus. Curabitur tincidunt vitae sapien id pulvinar. Mauris eu vestibulum tortor. Integer sit amet lorem fringilla, egestas tellus vitae, vulputate purus. Nulla feugiat blandit nunc et semper. Morbi purus libero, mattis sed mauris non, euismod iaculis lacus. Curabitur eleifend ante eros, non faucibus velit lacinia id. Duis posuere libero augue, at dignissim urna consectetur eget. Praesent eu congue est, iaculis finibus augue.'
+                </span>
+                )
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                apm.setTag(
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  'this-is-a-very-long-tag-name-without-any-spaces'
+                </span>
+                ,
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  'test'
+                </span>
+                )
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                apm.setTag(
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  'multi-line'
+                </span>
+                ,
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  'foo\\\\nbar\\\\nbaz'
+                </span>
+                )
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                next()
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                })
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                app.use(
+                <span style=\\"color: rgb(92, 38, 153);\\">
+                  require
+                </span>
+                (
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  './server/coffee'
+                </span>
+                ))
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                app.use(
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  '/api'
+                </span>
+                ,
+                <span style=\\"color: rgb(92, 38, 153);\\">
+                  require
+                </span>
+                (
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  './server/routes'
+                </span>
+                ))
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                app.get(
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  '*'
+                </span>
+                ,
+                <span>
+                  <span style=\\"color: rgb(170, 13, 145);\\">
+                    function
+                  </span>
+                  (
+                  <span style=\\"color: rgb(92, 38, 153);\\">
+                    req, res
+                  </span>
+                  )
+                </span>
+                {
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                res.sendFile(path.resolve(__dirname,
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  'client/build'
+                </span>
+                ,
+                <span style=\\"color: rgb(196, 26, 22);\\">
+                  'index.html'
+                </span>
+                ))
+              </code>
+            </pre>
+            <pre class=\\"sc-eNQAEJ hceTwp\\"
+                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            >
+              <code class=\\"sc-hMqMXs fHZgvi\\">
+                })
+              </code>
+            </pre>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class=\\"sc-cvbbAY gYJcTE\\">
+          <a style=\\"cursor: pointer;\\">
+            <i class=\\"fa fa-ellipsis-v undefined\\"
+               style=\\"margin-right: 8px;\\"
+            >
+            </i>
+            15 library frames
+          </a>
+        </div>
+        <div class=\\"sc-jWBwVP fDrbnp\\">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+"
+`;

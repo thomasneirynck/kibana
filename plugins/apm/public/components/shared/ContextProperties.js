@@ -51,7 +51,7 @@ const PropertyUrl = styled.span`
 
 export function ContextProperties({ timestamp, url, stickyProperties }) {
   const time = moment(timestamp);
-  const timestampAgo = timestamp ? time.fromNow() : 'N/A';
+  const timeAgo = timestamp ? time.fromNow() : 'N/A';
   const timestampFull = timestamp
     ? time.format('MMMM Do YYYY, HH:mm:ss.SSS')
     : 'N/A';
@@ -61,7 +61,7 @@ export function ContextProperties({ timestamp, url, stickyProperties }) {
       <Property>
         <PropertyLabel>Timestamp</PropertyLabel>
         <PropertyValue>
-          {timestampAgo}{' '}
+          {timeAgo}{' '}
           <PropertyValueEmphasis>({timestampFull})</PropertyValueEmphasis>
         </PropertyValue>
       </Property>

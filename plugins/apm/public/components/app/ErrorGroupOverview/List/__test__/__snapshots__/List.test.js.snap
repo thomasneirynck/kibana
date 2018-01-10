@@ -1,0 +1,391 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ErrorGroupOverview -> List should render empty state 1`] = `
+"
+<div class=\\"kuiControlledTable\\">
+  <div class=\\"kuiToolBar\\">
+    <div class=\\"kuiToolBarSearch\\">
+      <div class=\\"kuiToolBarSearchBox\\">
+        <div class=\\"kuiToolBarSearchBox__icon kuiIcon fa-search\\">
+        </div>
+        <input type=\\"text\\"
+               class=\\"kuiToolBarSearchBox__input\\"
+               placeholder=\\"Search...\\"
+               aria-label=\\"Filter\\"
+        >
+      </div>
+    </div>
+    <div class=\\"kuiToolBarSection\\">
+      <div class=\\"kuiPager\\">
+        <div class=\\"kuiPagerText\\">
+          0–0 of 0
+        </div>
+        <div class=\\"kuiButtonGroup kuiButtonGroup--united\\"
+             role=\\"group\\"
+        >
+          <button class=\\"kuiButton kuiButton--basic kuiButton--iconText\\"
+                  aria-label=\\"Show previous page\\"
+                  data-test-subj=\\"pagerPreviousButton\\"
+                  disabled
+          >
+            <span class=\\"kuiButton__inner\\">
+              <span aria-hidden=\\"true\\"
+                    class=\\"kuiButton__icon kuiIcon fa-chevron-left\\"
+              >
+              </span>
+            </span>
+          </button>
+          <button class=\\"kuiButton kuiButton--basic kuiButton--iconText\\"
+                  aria-label=\\"Show next page\\"
+                  data-test-subj=\\"pagerNextButton\\"
+                  disabled
+          >
+            <span class=\\"kuiButton__inner\\">
+              <span aria-hidden=\\"true\\"
+                    class=\\"kuiButton__icon kuiIcon fa-chevron-right\\"
+              >
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class=\\"kuiPanel kuiPanel--centered kuiPanel--withToolBar\\">
+    <div class=\\"kuiTableInfo sc-bdVaJa cotoTP\\">
+      No errors in the selected time range.
+      <div class=\\"sc-bwzfXH ePpHnj\\">
+        <span>
+          Oops! You should try another time range. If that's no good, there's always the
+          <a href=\\"https://www.elastic.co/guide/en/apm/get-started/6.1/index.html\\">
+            documentation
+          </a>
+          .
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class=\\"kuiToolBarFooter\\">
+    <div class=\\"kuiToolBarFooterSection\\">
+      <div class=\\"sc-htpNat emgphq\\">
+      </div>
+    </div>
+    <div class=\\"kuiToolBarSection\\">
+      <div class=\\"kuiPager\\">
+        <div class=\\"kuiPagerText\\">
+          0–0 of 0
+        </div>
+        <div class=\\"kuiButtonGroup kuiButtonGroup--united\\"
+             role=\\"group\\"
+        >
+          <button class=\\"kuiButton kuiButton--basic kuiButton--iconText\\"
+                  aria-label=\\"Show previous page\\"
+                  data-test-subj=\\"pagerPreviousButton\\"
+                  disabled
+          >
+            <span class=\\"kuiButton__inner\\">
+              <span aria-hidden=\\"true\\"
+                    class=\\"kuiButton__icon kuiIcon fa-chevron-left\\"
+              >
+              </span>
+            </span>
+          </button>
+          <button class=\\"kuiButton kuiButton--basic kuiButton--iconText\\"
+                  aria-label=\\"Show next page\\"
+                  data-test-subj=\\"pagerNextButton\\"
+                  disabled
+          >
+            <span class=\\"kuiButton__inner\\">
+              <span aria-hidden=\\"true\\"
+                    class=\\"kuiButton__icon kuiIcon fa-chevron-right\\"
+              >
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+"
+`;
+
+exports[`ErrorGroupOverview -> List should render with data 1`] = `
+"
+<div class=\\"kuiControlledTable\\">
+  <div class=\\"kuiToolBar\\">
+    <div class=\\"kuiToolBarSearch\\">
+      <div class=\\"kuiToolBarSearchBox\\">
+        <div class=\\"kuiToolBarSearchBox__icon kuiIcon fa-search\\">
+        </div>
+        <input type=\\"text\\"
+               class=\\"kuiToolBarSearchBox__input\\"
+               placeholder=\\"Search...\\"
+               aria-label=\\"Filter\\"
+        >
+      </div>
+    </div>
+    <div class=\\"kuiToolBarSection\\">
+      <div class=\\"kuiPager\\">
+        <div class=\\"kuiPagerText\\">
+          0–4 of 4
+        </div>
+        <div class=\\"kuiButtonGroup kuiButtonGroup--united\\"
+             role=\\"group\\"
+        >
+          <button class=\\"kuiButton kuiButton--basic kuiButton--iconText\\"
+                  aria-label=\\"Show previous page\\"
+                  data-test-subj=\\"pagerPreviousButton\\"
+                  disabled
+          >
+            <span class=\\"kuiButton__inner\\">
+              <span aria-hidden=\\"true\\"
+                    class=\\"kuiButton__icon kuiIcon fa-chevron-left\\"
+              >
+              </span>
+            </span>
+          </button>
+          <button class=\\"kuiButton kuiButton--basic kuiButton--iconText\\"
+                  aria-label=\\"Show next page\\"
+                  data-test-subj=\\"pagerNextButton\\"
+                  disabled
+          >
+            <span class=\\"kuiButton__inner\\">
+              <span aria-hidden=\\"true\\"
+                    class=\\"kuiButton__icon kuiIcon fa-chevron-right\\"
+              >
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <table class=\\"kuiTable\\">
+    <thead>
+      <tr>
+        <th class=\\"kuiTableHeaderCell sc-bxivhb cgZttI\\"
+            scope=\\"col\\"
+        >
+          <div class=\\"kuiTableHeaderCell__liner\\">
+            Group ID
+          </div>
+        </th>
+        <th class=\\"kuiTableHeaderCell sc-bxivhb cgZttI\\"
+            scope=\\"col\\"
+        >
+          <div class=\\"kuiTableHeaderCell__liner\\">
+            Error message and culprit
+          </div>
+        </th>
+        <th class=\\"kuiTableHeaderCell kuiTableHeaderCell--alignRight sc-bxivhb cgZttI\\"
+            scope=\\"col\\"
+        >
+          <button class=\\"kuiTableHeaderCellButton\\"
+                  aria-label=\\"Sort Group occurrences ascending\\"
+          >
+            <span class=\\"kuiTableHeaderCell__liner\\">
+              Group occurrences
+              <span class=\\"kuiTableSortIcon kuiIcon fa-long-arrow-down\\"
+                    aria-hidden=\\"true\\"
+              >
+              </span>
+            </span>
+          </button>
+        </th>
+        <th class=\\"kuiTableHeaderCell kuiTableHeaderCell--alignRight sc-bxivhb cgZttI\\"
+            scope=\\"col\\"
+        >
+          <button class=\\"kuiTableHeaderCellButton kuiTableHeaderCellButton-isSorted\\"
+                  aria-label=\\"Sort Latest occurrence ascending\\"
+          >
+            <span class=\\"kuiTableHeaderCell__liner\\">
+              Latest occurrence
+              <span class=\\"kuiTableSortIcon kuiIcon fa-long-arrow-down\\"
+                    aria-hidden=\\"true\\"
+              >
+              </span>
+            </span>
+          </button>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class=\\"kuiTableRow\\">
+        <td class=\\"kuiTableRowCell sc-ifAKCX eLsqmG\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+            <a class=\\"kuiLink sc-EHOje eqiICa\\"
+               href=\\"#/opbeans-python/errors/a0ce2c8978ef92cdf2ff163ae28576ee\\"
+            >
+              a0ce2
+            </a>
+          </div>
+        </td>
+        <td class=\\"kuiTableRowCell sc-bZQynM eSphTS\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+            <a class=\\"kuiLink sc-gzVnrw jDLvXO\\"
+               href=\\"#/opbeans-python/errors/a0ce2c8978ef92cdf2ff163ae28576ee\\"
+            >
+              About to blow up!
+            </a>
+            <div class=\\"sc-htoDjs dWBmQn\\">
+              elasticapm.contrib.django.client.capture
+            </div>
+          </div>
+        </td>
+        <td class=\\"kuiTableRowCell sc-dnqmqq AwDsw kuiTableRowCell--alignRight\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+            75
+          </div>
+        </td>
+        <td class=\\"kuiTableRowCell sc-dnqmqq AwDsw kuiTableRowCell--alignRight\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+            1515578797
+          </div>
+        </td>
+      </tr>
+      <tr class=\\"kuiTableRow\\">
+        <td class=\\"kuiTableRowCell sc-ifAKCX eLsqmG\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+            <a class=\\"kuiLink sc-EHOje eqiICa\\"
+               href=\\"#/opbeans-python/errors/f3ac95493913cc7a3cfec30a19d2120a\\"
+            >
+              f3ac9
+            </a>
+          </div>
+        </td>
+        <td class=\\"kuiTableRowCell sc-bZQynM eSphTS\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+            <a class=\\"kuiLink sc-gzVnrw jDLvXO\\"
+               href=\\"#/opbeans-python/errors/f3ac95493913cc7a3cfec30a19d2120a\\"
+            >
+              AssertionError:
+            </a>
+            <div class=\\"sc-htoDjs dWBmQn\\">
+              opbeans.views.oopsie
+            </div>
+          </div>
+        </td>
+        <td class=\\"kuiTableRowCell sc-dnqmqq AwDsw kuiTableRowCell--alignRight\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+            75
+          </div>
+        </td>
+        <td class=\\"kuiTableRowCell sc-dnqmqq AwDsw kuiTableRowCell--alignRight\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+            1515578797
+          </div>
+        </td>
+      </tr>
+      <tr class=\\"kuiTableRow\\">
+        <td class=\\"kuiTableRowCell sc-ifAKCX eLsqmG\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+            <a class=\\"kuiLink sc-EHOje eqiICa\\"
+               href=\\"#/opbeans-python/errors/e90863d04b7a692435305f09bbe8c840\\"
+            >
+              e9086
+            </a>
+          </div>
+        </td>
+        <td class=\\"kuiTableRowCell sc-bZQynM eSphTS\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+            <a class=\\"kuiLink sc-gzVnrw jDLvXO\\"
+               href=\\"#/opbeans-python/errors/e90863d04b7a692435305f09bbe8c840\\"
+            >
+              AssertionError: Bad luck!
+            </a>
+            <div class=\\"sc-htoDjs dWBmQn\\">
+              opbeans.tasks.update_stats
+            </div>
+          </div>
+        </td>
+        <td class=\\"kuiTableRowCell sc-dnqmqq AwDsw kuiTableRowCell--alignRight\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+            24
+          </div>
+        </td>
+        <td class=\\"kuiTableRowCell sc-dnqmqq AwDsw kuiTableRowCell--alignRight\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+            1515578796
+          </div>
+        </td>
+      </tr>
+      <tr class=\\"kuiTableRow\\">
+        <td class=\\"kuiTableRowCell sc-ifAKCX eLsqmG\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+            <a class=\\"kuiLink sc-EHOje eqiICa\\"
+               href=\\"#/opbeans-python/errors/8673d8bf7a032e387c101bafbab0d2bc\\"
+            >
+              8673d
+            </a>
+          </div>
+        </td>
+        <td class=\\"kuiTableRowCell sc-bZQynM eSphTS\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+            <a class=\\"kuiLink sc-gzVnrw jDLvXO\\"
+               href=\\"#/opbeans-python/errors/8673d8bf7a032e387c101bafbab0d2bc\\"
+            >
+              Customer with ID 8517 not found
+            </a>
+            <div class=\\"sc-htoDjs dWBmQn\\">
+              opbeans.views.customer
+            </div>
+          </div>
+        </td>
+        <td class=\\"kuiTableRowCell sc-dnqmqq AwDsw kuiTableRowCell--alignRight\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+            15
+          </div>
+        </td>
+        <td class=\\"kuiTableRowCell sc-dnqmqq AwDsw kuiTableRowCell--alignRight\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+            1515578773
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class=\\"kuiToolBarFooter\\">
+    <div class=\\"kuiToolBarFooterSection\\">
+      <div class=\\"sc-htpNat emgphq\\">
+      </div>
+    </div>
+    <div class=\\"kuiToolBarSection\\">
+      <div class=\\"kuiPager\\">
+        <div class=\\"kuiPagerText\\">
+          0–4 of 4
+        </div>
+        <div class=\\"kuiButtonGroup kuiButtonGroup--united\\"
+             role=\\"group\\"
+        >
+          <button class=\\"kuiButton kuiButton--basic kuiButton--iconText\\"
+                  aria-label=\\"Show previous page\\"
+                  data-test-subj=\\"pagerPreviousButton\\"
+                  disabled
+          >
+            <span class=\\"kuiButton__inner\\">
+              <span aria-hidden=\\"true\\"
+                    class=\\"kuiButton__icon kuiIcon fa-chevron-left\\"
+              >
+              </span>
+            </span>
+          </button>
+          <button class=\\"kuiButton kuiButton--basic kuiButton--iconText\\"
+                  aria-label=\\"Show next page\\"
+                  data-test-subj=\\"pagerNextButton\\"
+                  disabled
+          >
+            <span class=\\"kuiButton__inner\\">
+              <span aria-hidden=\\"true\\"
+                    class=\\"kuiButton__icon kuiIcon fa-chevron-right\\"
+              >
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+"
+`;

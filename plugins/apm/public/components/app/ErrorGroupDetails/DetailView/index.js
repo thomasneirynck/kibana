@@ -1,23 +1,23 @@
 import React from 'react';
 import styled from 'styled-components';
-import { units, px, colors, borderRadius } from '../../../style/variables';
+import { units, px, colors, borderRadius } from '../../../../style/variables';
 import { get, capitalize, isEmpty } from 'lodash';
-import { STATUS } from '../../../constants';
+import { STATUS } from '../../../../constants';
 
-import { ContextProperties } from '../../shared/ContextProperties';
-import { TabLink, SectionHeader } from '../../shared/UIComponents';
-import DiscoverButton from '../../shared/DiscoverButton';
+import { ContextProperties } from '../../../shared/ContextProperties';
+import { TabLink, SectionHeader } from '../../../shared/UIComponents';
+import DiscoverButton from '../../../shared/DiscoverButton';
 import {
   PropertiesTable,
   getLevelOneProps
-} from '../../shared/PropertiesTable';
-import Stacktrace from '../../shared/Stacktrace';
+} from '../../../shared/PropertiesTable';
+import Stacktrace from '../../../shared/Stacktrace';
 import {
   SERVICE_NAME,
   ERROR_GROUP_ID,
   SERVICE_AGENT_NAME,
   SERVICE_LANGUAGE_NAME
-} from '../../../../common/constants';
+} from '../../../../../common/constants';
 
 const Container = styled.div`
   position: relative;
@@ -89,7 +89,8 @@ function DetailView({ errorGroup, urlParams }) {
   const stackframes = get(errorGroup.data.error.error, 'exception.stacktrace');
   const codeLanguage = get(errorGroup.data.error, SERVICE_LANGUAGE_NAME);
 
-  const context = get(errorGroup.data.error.error, 'context', []);
+  const context = get(errorGroup.data.error, 'context', []);
+
   const tabs = getTabs(context);
   const currentTab = getCurrentTab(tabs, urlParams.detailTab);
 

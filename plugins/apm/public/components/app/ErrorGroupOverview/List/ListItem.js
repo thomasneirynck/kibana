@@ -10,7 +10,7 @@ import {
 import { RelativeLink } from '../../../../utils/url';
 import { KuiTableRow, KuiTableRowCell } from 'ui_framework/components';
 import { RIGHT_ALIGNMENT } from '@elastic/eui';
-import numeral from 'numeral';
+import numeral from '@elastic/numeral';
 import moment from 'moment';
 
 const GroupIdCell = styled(KuiTableRowCell)`
