@@ -102,12 +102,6 @@ visualize visualize-legend .legend-value-title {
   font-size: 1.2em;
 }
 
-/* disable display: flex because phantom still doesn't support flex-wrap */
-/* https://github.com/ariya/phantomjs/issues/14365 */
-visualize .metric-vis {
-  display: block;
-}
-
 /**
 *  Dashboard tweaks
 */
