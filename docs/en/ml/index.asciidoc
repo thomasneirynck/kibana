@@ -17,13 +17,19 @@ intuitive UI on the {kib} *Machine Learning* page for creating anomaly detection
 jobs and understanding results.
 
 You can use the *Job Management* pane to create and manage jobs and their
-associated {dfeeds}.  For example:
+associated {dfeeds}:
 
 [role="screenshot"]
 image::ml/images/ml-job-management.jpg[Job Management]
 
+You can use the *Settings* pane to add scheduled events to calendars and to
+associate these calendars with your jobs:
+
+[role="screenshot"]
+image::ml/images/ml-calendar-management.jpg[Calendar Management]
+
 The *Anomaly Explorer* and *Single Metric Viewer* display the results of your
-{ml} jobs.  For example:
+{ml} jobs.  For example: 
 
 [role="screenshot"]
 image::ml/images/ml-single-metric-viewer.jpg[Single Metric Viewer]
