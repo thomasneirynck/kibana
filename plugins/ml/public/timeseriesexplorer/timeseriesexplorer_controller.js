@@ -45,7 +45,8 @@ import {
   processForecastResults,
   processDataForFocusAnomalies,
   processMetricPlotResults,
-  processRecordScoreResults } from 'plugins/ml/timeseriesexplorer/timeseriesexplorer_utils';
+  processRecordScoreResults,
+  processScheduledEventsForChart } from 'plugins/ml/timeseriesexplorer/timeseriesexplorer_utils';
 import { refreshIntervalWatcher } from 'plugins/ml/util/refresh_interval_watcher';
 import { IntervalHelperProvider, getBoundsRoundedToInterval } from 'plugins/ml/util/ml_time_buckets';
 import template from './timeseriesexplorer.html';
@@ -89,6 +90,7 @@ module.controller('MlTimeSeriesExplorerController', function (
   const FORECAST_JOB_MIN_VERSION = '6.1.0'; // Forecasting only allowed for jobs created >= 6.1.0.
   const CHARTS_POINT_TARGET = 500;
   const ANOMALIES_MAX_RESULTS = 500;
+  const MAX_SCHEDULED_EVENTS = 10;          // Max number of scheduled events displayed per bucket.
   const TimeBuckets = Private(IntervalHelperProvider);
 
   $scope.jobPickerSelections = [];
@@ -376,7 +378,7 @@ module.controller('MlTimeSeriesExplorerController', function (
   $scope.refreshFocusData = function (fromDate, toDate) {
 
     // Counter to keep track of what data sets have been loaded.
-    let awaitingCount = 2;
+    let awaitingCount = 3;
 
     // finish() function, called after each data set has been loaded and processed.
     // The last one to call it will trigger the page render.
@@ -387,6 +389,11 @@ module.controller('MlTimeSeriesExplorerController', function (
           $scope.focusChartData,
           $scope.anomalyRecords,
           $scope.timeFieldName);
+
+        processScheduledEventsForChart(
+          $scope.focusChartData,
+          $scope.scheduledEvents);
+
         console.log('Time series explorer focus chart data set:', $scope.focusChartData);
 
         // Tell the results container directives to render the focus chart.
@@ -444,6 +451,21 @@ module.controller('MlTimeSeriesExplorerController', function (
       }).reverse().value();
       console.log('Time series explorer anomalies:', $scope.anomalyRecords);
       finish();
+    });
+
+    // Query 3 - load any scheduled events for the selected job.
+    mlResultsService.getScheduledEventsByBucket(
+      [$scope.selectedJob.job_id],
+      searchBounds.min.valueOf(),
+      searchBounds.max.valueOf(),
+      $scope.focusAggregationInterval.expression,
+      1,
+      MAX_SCHEDULED_EVENTS
+    ).then((resp) => {
+      $scope.scheduledEvents = resp.events[$scope.selectedJob.job_id];
+      finish();
+    }).catch((resp) => {
+      console.log('Time series explorer - error getting scheduled events from elasticsearch:', resp);
     });
 
     // Plus query for forecast data if there is a forecastId stored in the appState.

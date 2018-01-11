@@ -67,7 +67,6 @@ module.service('mlResultsService', function ($q, es, ml) {
       });
     }
 
-    // TODO - remove hardcoded aggregation interval.
     es.search({
       index: ML_RESULTS_INDEX_PATTERN,
       size: 0,
@@ -140,6 +139,121 @@ module.service('mlResultsService', function ($q, es, ml) {
             }
           });
           obj.results[jobId] = resultsForTime;
+        });
+
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
+    return deferred.promise;
+  };
+
+  // Obtains a list of scheduled events by job ID and time.
+  // Pass an empty array or ['*'] to search over all job IDs.
+  // Returned response contains a events property, which will only
+  // contains keys for jobs which have scheduled events for the specified time range.
+  this.getScheduledEventsByBucket = function (
+    jobIds,
+    earliestMs,
+    latestMs,
+    interval,
+    maxJobs,
+    maxEvents) {
+    const deferred = $q.defer();
+    const obj = {
+      success: true,
+      events: {}
+    };
+
+    // Build the criteria to use in the bool filter part of the request.
+    // Adds criteria for the time range plus any specified job IDs.
+    const boolCriteria = [
+      {
+        range: {
+          timestamp: {
+            gte: earliestMs,
+            lte: latestMs,
+            format: 'epoch_millis'
+          }
+        }
+      },
+      {
+        exists: { field: 'scheduled_events' }
+      }
+    ];
+
+    if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
+      let jobIdFilterStr = '';
+      _.each(jobIds, (jobId, i) => {
+        jobIdFilterStr += `${i > 0 ? ' OR ' : ''}job_id:${jobId}`;
+      });
+      boolCriteria.push({
+        query_string: {
+          analyze_wildcard: false,
+          query: jobIdFilterStr
+        }
+      });
+    }
+
+    es.search({
+      index: ML_RESULTS_INDEX_PATTERN,
+      size: 0,
+      body: {
+        query: {
+          bool: {
+            filter: [{
+              query_string: {
+                query: 'result_type:bucket',
+                analyze_wildcard: false
+              }
+            }, {
+              bool: {
+                must: boolCriteria
+              }
+            }]
+          }
+        },
+        aggs: {
+          jobs: {
+            terms: {
+              field: 'job_id',
+              min_doc_count: 1,
+              size: maxJobs
+            },
+            aggs: {
+              times: {
+                date_histogram: {
+                  field: 'timestamp',
+                  interval: interval,
+                  min_doc_count: 1
+                },
+                aggs: {
+                  events: {
+                    terms: {
+                      field: 'scheduled_events',
+                      size: maxEvents
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+      .then((resp) => {
+        const dataByJobId = _.get(resp, ['aggregations', 'jobs', 'buckets'], []);
+        _.each(dataByJobId, (dataForJob) => {
+          const jobId = dataForJob.key;
+          const resultsForTime = {};
+          const dataByTime = _.get(dataForJob, ['times', 'buckets'], []);
+          _.each(dataByTime, (dataForTime) => {
+            const time = dataForTime.key;
+            const events = _.get(dataForTime, ['events', 'buckets']);
+            resultsForTime[time] = _.map(events, 'key');
+          });
+          obj.events[jobId] = resultsForTime;
         });
 
         deferred.resolve(obj);

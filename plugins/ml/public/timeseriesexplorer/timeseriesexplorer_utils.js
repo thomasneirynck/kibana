@@ -112,40 +112,7 @@ export function processDataForFocusAnomalies(
     // Look for a chart point with the same time as the record.
     // If none found, find closest time in chartData set.
     const recordTime = record[timeFieldName];
-    let chartPoint;
-    for (let i = 0; i < chartData.length; i++) {
-      if (chartData[i].date.getTime() === recordTime) {
-        chartPoint = chartData[i];
-        break;
-      }
-    }
-
-    if (chartPoint === undefined) {
-      // Find nearest point in time.
-      // loop through line items until the date is greater than bucketTime
-      // grab the current and previous items and compare the time differences
-      let foundItem;
-      for (let i = 0; i < chartData.length; i++) {
-        const itemTime = chartData[i].date.getTime();
-        if (itemTime > recordTime) {
-          const item = chartData[i];
-          const previousItem = chartData[i - 1];
-
-          const diff1 = Math.abs(recordTime - previousItem.date.getTime());
-          const diff2 = Math.abs(recordTime - itemTime);
-
-          // foundItem should be the item with a date closest to bucketTime
-          if (previousItem === undefined || diff1 > diff2) {
-            foundItem = item;
-          } else {
-            foundItem = previousItem;
-          }
-          break;
-        }
-      }
-
-      chartPoint = foundItem;
-    }
+    let chartPoint = findNearestChartPointToTime(chartData, recordTime);
 
     // TODO - handle case where there is an anomaly due to the absense of data
     // and there is no model plot.
@@ -184,4 +151,60 @@ export function processDataForFocusAnomalies(
   });
 
   return chartData;
+}
+
+// Adds a scheduledEvents property to any points in the chart data set
+// which correspond to times of scheduled events for the job.
+export function processScheduledEventsForChart(chartData, scheduledEvents) {
+  if (scheduledEvents !== undefined) {
+    _.each(scheduledEvents, (events, time) => {
+      const chartPoint = findNearestChartPointToTime(chartData, time);
+      if (chartPoint !== undefined) {
+        // Note if the scheduled event coincides with an absence of the underlying metric data,
+        // we don't worry about plotting the event.
+        chartPoint.scheduledEvents = events;
+      }
+    });
+  }
+
+  return chartData;
+}
+
+function findNearestChartPointToTime(chartData, time) {
+  let chartPoint;
+  for (let i = 0; i < chartData.length; i++) {
+    if (chartData[i].date.getTime() === time) {
+      chartPoint = chartData[i];
+      break;
+    }
+  }
+
+  if (chartPoint === undefined) {
+    // Find nearest point in time.
+    // loop through line items until the date is greater than bucketTime
+    // grab the current and previous items and compare the time differences
+    let foundItem;
+    for (let i = 0; i < chartData.length; i++) {
+      const itemTime = chartData[i].date.getTime();
+      if (itemTime > time) {
+        const item = chartData[i];
+        const previousItem = chartData[i - 1];
+
+        const diff1 = Math.abs(time - previousItem.date.getTime());
+        const diff2 = Math.abs(time - itemTime);
+
+        // foundItem should be the item with a date closest to bucketTime
+        if (previousItem === undefined || diff1 > diff2) {
+          foundItem = item;
+        } else {
+          foundItem = previousItem;
+        }
+        break;
+      }
+    }
+
+    chartPoint = foundItem;
+  }
+
+  return chartPoint;
 }

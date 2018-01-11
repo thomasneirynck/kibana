@@ -60,6 +60,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
     let vizWidth  = svgWidth  - margin.left - margin.right;
 
     const FOCUS_CHART_ANOMALY_RADIUS = 7;
+    const SCHEDULED_EVENT_MARKER_HEIGHT = 5;
 
     const ZOOM_INTERVAL_OPTIONS = [
       { duration: moment.duration(1, 'h'), label: '1h' },
@@ -474,6 +475,26 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
           return markerClass;
         });
 
+      // Add rectangular markers for any scheduled events.
+      const scheduledEventMarkers = d3.select('.focus-chart-markers').selectAll('.scheduled-event-marker')
+        .data(data.filter(d => d.scheduledEvents !== undefined));
+
+      // Remove markers that are no longer needed i.e. if number of chart points has decreased.
+      scheduledEventMarkers.exit().remove();
+
+      // Create any new markers that are needed i.e. if number of chart points has increased.
+      scheduledEventMarkers.enter().append('rect')
+        .attr('width', FOCUS_CHART_ANOMALY_RADIUS * 2)
+        .attr('height', SCHEDULED_EVENT_MARKER_HEIGHT)
+        .attr('class', 'scheduled-event-marker')
+        .attr('rx', 1)
+        .attr('ry', 1);
+
+      // Update all markers to new positions.
+      scheduledEventMarkers.attr('x', (d) => focusXScale(d.date) - FOCUS_CHART_ANOMALY_RADIUS)
+        .attr('y', (d) => focusYScale(d.value) - 3);
+
+      // Plot any forecast data in scope.
       if (scope.focusForecastData !== undefined) {
         focusChart.select('.area.forecast')
           .attr('d', focusBoundedArea(scope.focusForecastData))
@@ -965,6 +986,10 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
           contents += `<br/>upper bounds: ${numeral(marker.upper).format('0,0.[00]')}`;
           contents += `<br/>lower bounds: ${numeral(marker.lower).format('0,0.[00]')}`;
         }
+      }
+
+      if (_.has(marker, 'scheduledEvents')) {
+        contents += `<br/><hr/>Scheduled events:<br/>${marker.scheduledEvents.join('<br/>')}`;
       }
 
       mlChartTooltipService.show(contents, circle, {

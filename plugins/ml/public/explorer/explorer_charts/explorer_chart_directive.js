@@ -52,6 +52,7 @@ module.directive('mlExplorerChart', function (
     let vizWidth = 0;
     const chartHeight = 170;
     const LINE_CHART_ANOMALY_RADIUS = 7;
+    const SCHEDULED_EVENT_MARKER_HEIGHT = 5;
 
     // Left margin is adjusted later for longest y-axis label.
     const margin = { top: 10, right: 0, bottom: 30, left: 60 };
@@ -247,6 +248,24 @@ module.directive('mlExplorerChart', function (
           return markerClass;
         });
 
+      // Add rectangular markers for any scheduled events.
+      const scheduledEventMarkers = lineChartGroup.select('.chart-markers').selectAll('.scheduled-event-marker')
+        .data(data.filter(d => d.scheduledEvents !== undefined));
+
+      // Remove markers that are no longer needed i.e. if number of chart points has decreased.
+      scheduledEventMarkers.exit().remove();
+      // Create any new markers that are needed i.e. if number of chart points has increased.
+      scheduledEventMarkers.enter().append('rect')
+        .attr('width', LINE_CHART_ANOMALY_RADIUS * 2)
+        .attr('height', SCHEDULED_EVENT_MARKER_HEIGHT)
+        .attr('class', 'scheduled-event-marker')
+        .attr('rx', 1)
+        .attr('ry', 1);
+
+      // Update all markers to new positions.
+      scheduledEventMarkers.attr('x', (d) => lineChartXScale(d.date) - LINE_CHART_ANOMALY_RADIUS)
+        .attr('y', (d) => lineChartYScale(d.value) - (SCHEDULED_EVENT_MARKER_HEIGHT / 2));
+
     }
 
     function showLineChartTooltip(marker, circle) {
@@ -281,6 +300,10 @@ module.directive('mlExplorerChart', function (
         }
       } else {
         contents += ('value: ' + numeral(marker.value).format('0,0.[00]'));
+      }
+
+      if (_.has(marker, 'scheduledEvents')) {
+        contents += `<br/><hr/>Scheduled events:<br/>${marker.scheduledEvents.join('<br/>')}`;
       }
 
       mlChartTooltipService.show(contents, circle, {
