@@ -1,12 +1,7 @@
 import { createSelector } from 'reselect';
 import { getUrlParams } from './urlParams';
 import * as rest from '../services/rest';
-import {
-  getKey,
-  createActionTypes,
-  createAction,
-  createReducer
-} from './apiHelpers';
+import { createActionTypes, createAction, createReducer } from './apiHelpers';
 
 const actionTypes = createActionTypes('ERROR_GROUP_LIST');
 export const [
@@ -33,19 +28,21 @@ export const loadErrorGroupList = createAction(
   rest.loadErrorGroupList
 );
 
-export const getErrorGroupListArgs = createSelector(getUrlParams, urlParams => {
-  const { serviceName, start, end, q, sortBy, sortOrder } = urlParams;
-  return { serviceName, start, end, q, sortBy, sortOrder };
-});
+export const getErrorGroupListArgs = createSelector(
+  getUrlParams,
+  ({
+    serviceName,
+    start,
+    end,
+    q,
+    sortBy = 'latestOccurrenceAt',
+    sortOrder = 'desc'
+  }) => {
+    return { serviceName, start, end, q, sortBy, sortOrder };
+  }
+);
 
-export const getErrorGroupListKey = state => {
-  const args = getErrorGroupListArgs(state);
-  return getKey(args);
-};
-
-export const getErrorGroupList = state => {
-  const key = getErrorGroupListKey(state);
-
+export const getErrorGroupList = (state, key) => {
   if (!state.errorGroupLists[key]) {
     return INITIAL_STATE;
   }

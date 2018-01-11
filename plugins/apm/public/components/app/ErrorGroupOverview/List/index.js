@@ -20,16 +20,18 @@ class List extends Component {
   };
 
   onClickNext = () => {
+    const { page } = this.props.urlParams;
     this.updateQuery(prevQuery => ({
       ...prevQuery,
-      page: prevQuery.page + 1
+      page: page + 1
     }));
   };
 
   onClickPrev = () => {
+    const { page } = this.props.urlParams;
     this.updateQuery(prevQuery => ({
       ...prevQuery,
-      page: prevQuery.page - 1
+      page: page - 1
     }));
   };
 
@@ -53,7 +55,7 @@ class List extends Component {
     const { items } = this.props;
     const {
       sortBy = 'latestOccurrenceAt',
-      sortOrder,
+      sortOrder = 'desc',
       page,
       serviceName
     } = this.props.urlParams;
@@ -65,7 +67,7 @@ class List extends Component {
         {
           key: 'occurrenceCount',
           sortable: true,
-          label: 'Group occurrences',
+          label: 'Occurrences',
           alignRight: true
         },
         {
@@ -105,11 +107,15 @@ class List extends Component {
       });
     };
 
+    const startNumber = page * ITEMS_PER_PAGE;
+    const endNumber = (page + 1) * ITEMS_PER_PAGE;
+    const currentPageItems = items.slice(startNumber, endNumber);
+
     return (
       <APMTable
         defaultSearchQuery={this.props.urlParams.q}
         emptyMessageHeading="No errors in the selected time range."
-        items={items}
+        items={currentPageItems}
         itemsPerPage={ITEMS_PER_PAGE}
         onClickNext={this.onClickNext}
         onClickPrev={this.onClickPrev}

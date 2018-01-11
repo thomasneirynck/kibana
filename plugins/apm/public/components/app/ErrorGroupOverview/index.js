@@ -6,12 +6,16 @@ import {
   loadErrorGroupList,
   getErrorGroupListArgs
 } from '../../../store/errorGroupLists';
+import { getKey } from '../../../store/apiHelpers';
 
 function mapStateToProps(state = {}) {
+  const listArgs = getErrorGroupListArgs(state);
+  const key = getKey(listArgs);
+
   return {
-    listArgs: getErrorGroupListArgs(state),
+    listArgs,
     urlParams: getUrlParams(state),
-    errorGroupList: getErrorGroupList(state)
+    errorGroupList: getErrorGroupList(state, key)
   };
 }
 

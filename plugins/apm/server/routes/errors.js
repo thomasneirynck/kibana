@@ -2,7 +2,7 @@ import Joi from 'joi';
 import Boom from 'boom';
 
 import { getDistribution } from '../lib/errors/distribution/get_distribution';
-import { getErrors } from '../lib/errors/get_errors';
+import { getErrorGroups } from '../lib/errors/get_error_groups';
 import { getErrorGroup } from '../lib/errors/get_error_group';
 import { setupRequest } from '../lib/helpers/setup_request';
 import { dateValidation } from '../lib/helpers/date_validation';
@@ -35,7 +35,7 @@ export function initErrorsApi(server) {
       const { serviceName } = req.params;
       const { q, sortBy, sortOrder } = req.query;
 
-      return getErrors({
+      return getErrorGroups({
         serviceName,
         q,
         sortBy,

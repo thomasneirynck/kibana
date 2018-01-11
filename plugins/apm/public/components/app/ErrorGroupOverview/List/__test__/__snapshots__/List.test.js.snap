@@ -182,10 +182,10 @@ exports[`ErrorGroupOverview -> List should render with data 1`] = `
             scope=\\"col\\"
         >
           <button class=\\"kuiTableHeaderCellButton\\"
-                  aria-label=\\"Sort Group occurrences ascending\\"
+                  aria-label=\\"Sort Occurrences ascending\\"
           >
             <span class=\\"kuiTableHeaderCell__liner\\">
-              Group occurrences
+              Occurrences
               <span class=\\"kuiTableSortIcon kuiIcon fa-long-arrow-down\\"
                     aria-hidden=\\"true\\"
               >

@@ -8,7 +8,7 @@ import {
 } from '../../../common/constants';
 import { get } from 'lodash';
 
-export async function getErrors({
+export async function getErrorGroups({
   serviceName,
   q,
   sortBy,
@@ -79,7 +79,7 @@ export async function getErrors({
   // match query against error fields
   if (q) {
     params.body.query.bool.must.push({
-      query_string: {
+      simple_query_string: {
         fields: [
           ERROR_EXC_MESSAGE,
           ERROR_LOG_MESSAGE,
