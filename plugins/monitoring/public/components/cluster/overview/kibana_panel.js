@@ -43,7 +43,7 @@ export function KibanaPanel(props) {
               </h3>
             </EuiTitle>
             <EuiHorizontalRule margin="m" />
-            <EuiDescriptionList type="column" data-test-subj="kibana_overview" data-overview-status={status}>
+            <EuiDescriptionList type="column" data-test-subj="kibana_overview" data-overview-status={props.status}>
               <EuiDescriptionListTitle>Requests</EuiDescriptionListTitle>
               <EuiDescriptionListDescription data-test-subj="kbnRequests">
                 { props.requests_total }
