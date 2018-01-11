@@ -1,3 +1,5 @@
+# Documentation for APM in x-pack-kibana
+
 ### Format with Prettier
 ```
 npx prettier "./plugins/apm/**/*.js" --write
@@ -5,8 +7,14 @@ npx prettier "./plugins/apm/**/*.js" --write
 
 ### Run tests
 ```
-node scripts/jest.js apm --watch
+node scripts/jest.js plugins/apm --watch
 ```
+
+### Update snapshots
+```
+node scripts/jest.js plugins/apm --updateSnapshot
+```
+
 
 ### Lint code
 ```
