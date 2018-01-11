@@ -31,16 +31,16 @@ export const RecognizedResult = ({
   }
 
   return (
-    <div className="kuiFlexItem kuiPanel options-panel recognizer-result">
-      <div className="kuiFlexGroup kuiFlexGroup--gutterLarge">
-        <div className="kuiFlexItem kuiFlexItem--flexGrowZero">
+    <div className="euiFlexItem euiFlexItem--flexGrowZero euiPanel euiPanel--paddingMedium recognizer-result">
+      <div className="euiFlexGroup euiFlexGroup--gutterLarge">
+        <div className="euiFlexItem euiFlexItem--flexGrowZero ml-data-recognizer-logo">
           {logo}
         </div>
-        <div className="kuiFlexItem synopsis">
-          <h4 className="kuiTextTitle synopsisTitle">
-            <a href={href} className="kuiLink">{config.title}</a>
+        <div className="euiFlexItem euiText">
+          <h4>
+            <a href={href} className="euiLink">{config.title}</a>
           </h4>
-          <p className="kuiText kuiSubduedText">
+          <p className="euiTextColor euiTextColor--subdued">
             {config.description}
           </p>
         </div>

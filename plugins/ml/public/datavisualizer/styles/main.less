@@ -63,8 +63,9 @@
   }
 
   .field-sort-controls {
-    margin: 10px 0px;
-    display: inline-block;
+    margin-bottom: 0px;
+    min-width: 300px;
+    padding: 10px 0px;
 
     .field-group-input {
       display: inline;
@@ -77,9 +78,9 @@
   }
 
   .field-filter-controls {
-    display: inline-block;
-    float: right;
-    padding-top: 5px;
+    margin-bottom: 0px;
+    min-width: 400px;
+    padding-bottom: 30px;
     padding-right: 10px;
 
     .type-input {
@@ -133,22 +134,13 @@
   .create-job-content {
     padding-bottom: 5px;
 
-    .title-text {
-      margin: 15px 0px;
-    }
-
     .advanced-job-button {
-      padding: 14px;
-      margin-bottom: 10px 0px;
-
-      .kuiFlexItem--flexGrowZero {
-        margin-right: 0px;
+      .euiFlexItem--flexGrowZero {
         .synopsisIcon {
-          padding-top: 8px;
           color: #00a9e4;
-          font-size: 24px;
-          padding-left: 5px;
-          padding-right: 6px;
+          font-size: 37px;
+          padding-left: 4px;
+          width: 32px;
         }
       }
     }
@@ -160,9 +152,10 @@
         margin-top: 10px;
         margin-bottom: 0px;
       }
-      .kuiFlexItem--flexGrowZero {
-        margin-right: 0px;
-      }
     }
+  }
+
+  p {
+    margin-bottom: 10px;
   }
 }

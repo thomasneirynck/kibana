@@ -2,15 +2,13 @@
 <ml-chart-tooltip></ml-chart-tooltip>
 <ml-datavisualizer class="data-visualizer-container">
   <div ng-controller="MlDataVisualizerViewFields" >
-    <div class="title-container">
-      <h1 class="kuiTitle kuiVerticalRhythm">{{indexPattern.title}}
-        <div class="pull-right">
-          <ml-full-time-range-selector
-            index-pattern='indexPattern'
-            query='searchQuery'
-          ></ml-full-time-range-selector>
-        </div>
-      </h1>
+    <div class="title-container euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--alignItemsCenter euiFlexGroup--responsive">
+      <div class="euiFlexItem euiFlexItem--flexGrowZero euiText">
+        <h1>{{indexPattern.title}}</h1>
+      </div>
+      <div class="euiFlexItem euiFlexItem--flexGrowZero">
+          <ml-full-time-range-selector index-pattern='indexPattern' query='searchQuery' />
+      </div>
     </div>
 
     <div class="main-container">
@@ -65,27 +63,30 @@
           <h2 class="kuiSubTitle kuiVerticalRhythm">Metrics</h2>
         </div>
 
-        <div>
-          <div class="field-sort-controls">
-            <div ng-if="showAllMetrics === false" class="field-count-label">
-              <span class="field-emphasis">{{ metricCards.length }}</span>
-              <ng-pluralize count="metricCards.length" when="{'1':'field exists', 'other':'fields exist'}">fields exist</ng-pluralize> in documents
-              (<span class="field-emphasis">{{ totalMetricFieldCount }}</span> in total)
-            </div>
-
-            <div ng-if="showAllMetrics === true" class="field-count-label">
-              <span class="field-emphasis">{{ metricCards.length }}</span>
-              <ng-pluralize count="metricCards.length" when="{'1':'field', 'other':'fields'}">fields</ng-pluralize>
-              (<span class="field-emphasis">{{ populatedMetricFieldCount }}</span>
-              <ng-pluralize count="populatedMetricFieldCount" when="{'1':'exists', 'other':'exist'}">exist</ng-pluralize> in documents)
-            </div>
-
-            <div class="field-group-input" ng-hide="populatedMetricFieldCount === totalMetricFieldCount">
-              <input id="toggleAllMetricsCheckbox" type="checkbox" class="kuiCheckBox" ng-click="toggleAllMetrics()" ng-checked="showAllMetrics === true">
-              <label for="toggleAllMetricsCheckbox" class="kuiCheckBoxLabel">show empty fields</label>
+        <div class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--responsive euiFlexGroup--wrap">
+          <div class="field-sort-controls euiFlexItem euiFlexItem--flexGrowZero">
+            <div class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--responsive">
+              <div ng-if="showAllMetrics === false" class="field-count-label euiFlexItem euiFlexItem--flexGrowZero">
+                <span class="field-emphasis">{{ metricCards.length }}</span>
+                <ng-pluralize count="metricCards.length" when="{'1':'field exists', 'other':'fields exist'}">fields exist</ng-pluralize> in documents (
+                <span class="field-emphasis">{{ totalMetricFieldCount }}</span> in total)
+              </div>
+              
+              <div ng-if="showAllMetrics === true" class="field-count-label euiFlexItem euiFlexItem--flexGrowZero">
+                <span class="field-emphasis">{{ metricCards.length }}</span>
+                <ng-pluralize count="metricCards.length" when="{'1':'field', 'other':'fields'}">fields</ng-pluralize>
+                (
+                <span class="field-emphasis">{{ populatedMetricFieldCount }}</span>
+                <ng-pluralize count="populatedMetricFieldCount" when="{'1':'exists', 'other':'exist'}">exist</ng-pluralize> in documents)
+              </div>
+              
+              <div ng-hide="populatedMetricFieldCount === totalMetricFieldCount" class="field-group-input euiFlexItem euiFlexItem--flexGrowZero">
+                <input id="toggleAllMetricsCheckbox" type="checkbox" class="kuiCheckBox" ng-click="toggleAllMetrics()" ng-checked="showAllMetrics === true">
+                <label for="toggleAllMetricsCheckbox">show empty fields</label>
+              </div>
             </div>
           </div>
-          <div class="field-filter-controls">
+          <div class="field-filter-controls euiFlexItem euiFlexItem--flexGrowZero">
             <div class="kuiSearchInput kuiSearchInput--large">
               <div class="kuiSearchInput__icon kuiIcon fa-search"></div>
               <input class="kuiSearchInput__input filter-input" type="text" aria-label="Filter" placeholder="Filter"
@@ -120,44 +121,52 @@
         <div>
           <h2 class="kuiSubTitle kuiVerticalRhythm">Fields</h2>
         </div>
-        <div>
-          <div class="field-sort-controls">
-             <div ng-if="showAllFields === false" class="field-count-label">
-              <span class="field-emphasis">{{ fieldCards.length }}</span>
-              <ng-pluralize count="fieldCards.length" when="{'1':'field exists', 'other':'fields exist'}">fields exist</ng-pluralize> in documents
-              (<span class="field-emphasis">{{ totalNonMetricFieldCount }}</span> in total)
-            </div>
 
-            <div ng-if="showAllFields === true" class="field-count-label">
-              <span class="field-emphasis">{{ fieldCards.length }}</span>
-              <ng-pluralize count="fieldCards.length" when="{'1':'field', 'other':'fields'}">fields</ng-pluralize>
-              (<span class="field-emphasis">{{ populatedNonMetricFieldCount }}</span>
-              <ng-pluralize count="populatedNonMetricFieldCount" when="{'1':'exists', 'other':'exist'}">exist</ng-pluralize> in documents)
-            </div>
+        <div class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--responsive euiFlexGroup--wrap">
+          <div class="field-sort-controls euiFlexItem euiFlexItem--flexGrowZero">
+            <div class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--responsive">
+              <div ng-if="showAllFields === false" class="field-count-label euiFlexItem euiFlexItem--flexGrowZero">
+                <span class="field-emphasis">{{ fieldCards.length }}</span>
+                <ng-pluralize count="fieldCards.length" when="{'1':'field exists', 'other':'fields exist'}">fields exist</ng-pluralize> in documents
+                (<span class="field-emphasis">{{ totalNonMetricFieldCount }}</span> in total)
+              </div>
 
-            <div class="field-group-input" ng-hide="populatedNonMetricFieldCount === totalNonMetricFieldCount">
-              <input id="toggleAllFieldsCheckbox" type="checkbox" class="kuiCheckBox" ng-click="toggleAllFields()" ng-checked="showAllFields === true">
-              <label for="toggleAllFieldsCheckbox" class="kuiCheckBoxLabel">show empty fields</label>
+              <div ng-if="showAllFields === true" class="field-count-label euiFlexItem euiFlexItem--flexGrowZero">
+                <span class="field-emphasis">{{ fieldCards.length }}</span>
+                <ng-pluralize count="fieldCards.length" when="{'1':'field', 'other':'fields'}">fields</ng-pluralize>
+                (<span class="field-emphasis">{{ populatedNonMetricFieldCount }}</span>
+                <ng-pluralize count="populatedNonMetricFieldCount" when="{'1':'exists', 'other':'exist'}">exist</ng-pluralize> in documents)
+              </div>
+
+              <div ng-hide="populatedNonMetricFieldCount === totalNonMetricFieldCount" class="field-group-input euiFlexItem euiFlexItem--flexGrowZero">
+                <input id="toggleAllFieldsCheckbox" type="checkbox" class="kuiCheckBox" ng-click="toggleAllFields()" ng-checked="showAllFields === true">
+                <label for="toggleAllFieldsCheckbox">show empty fields</label>
+              </div>
             </div>
           </div>
-          <div class="field-filter-controls">
-            <select class="kuiSelect type-input" ng-model="filterFieldType" ng-change="filterFieldTypeChanged(filterFieldType)">
-              <option value="*">All field types</option>
-              <option ng-repeat="type in indexedFieldTypes" value="{{type}}">{{type}} types</option>
-            </select>
-
-            <div class="kuiSearchInput kuiSearchInput--large">
-              <div class="kuiSearchInput__icon kuiIcon fa-search"></div>
-              <input class="kuiSearchInput__input filter-input" type="text" aria-label="Filter" placeholder="Filter"
-                ng-model="fieldFilter" ng-change="fieldFilterChanged()">
-              <div class="filter-progress-icon">
-                <div class="filter-icon" ng-show="fieldFilterIcon===1">
-                  <i class='fa fa-spinner fa-spin'></i>
-                </div>
-                <div class="filter-icon" ng-show="fieldFilterIcon===0">
-                  <a aria-label="Clear filter" ng-click="clearFieldFilter()">
-                    <i class="fa fa-times-circle"></i>
-                  </a>
+          <div class="field-filter-controls euiFlexItem euiFlexItem--flexGrowZero">
+            <div class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--responsive">
+              <div class="euiFlexItem euiFlexItem--flexGrowZero">
+                <select class="kuiSelect type-input" ng-model="filterFieldType" ng-change="filterFieldTypeChanged(filterFieldType)">
+                  <option value="*">All field types</option>
+                  <option ng-repeat="type in indexedFieldTypes" value="{{type}}">{{type}} types</option>
+                </select>
+              </div>
+              <div class="euiFlexItem euiFlexItem--flexGrowZero">
+                <div class="kuiSearchInput kuiSearchInput--large">
+                  <div class="kuiSearchInput__icon kuiIcon fa-search"></div>
+                  <input class="kuiSearchInput__input filter-input" type="text" aria-label="Filter" placeholder="Filter" ng-model="fieldFilter"
+                    ng-change="fieldFilterChanged()">
+                  <div class="filter-progress-icon">
+                    <div class="filter-icon" ng-show="fieldFilterIcon===1">
+                      <i class='fa fa-spinner fa-spin'></i>
+                    </div>
+                    <div class="filter-icon" ng-show="fieldFilterIcon===0">
+                      <a aria-label="Clear filter" ng-click="clearFieldFilter()">
+                        <i class="fa fa-times-circle"></i>
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

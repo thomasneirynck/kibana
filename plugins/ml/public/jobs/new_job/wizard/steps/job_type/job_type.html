@@ -47,15 +47,11 @@
           jobs and associated dashboards.
         </p>
 
-        <div class="kuiFlexGroup kuiFlexGroup--gutterLarge kuiVerticalRhythm">
-
-            <div ml-data-recognizer
-              index-pattern='indexPattern'
-              class-name='"kuiFlexGrid kuiFlexGrid--gutterLarge kuiVerticalRhythmSmall top-features"'
-              results=recognizerResults/>
-
-
-        </div>
+        <ml-data-recognizer
+          class-name='"euiFlexGroup euiFlexGrid--gutterLarge euiFlexGroup--responsive euiFlexGroup--wrap top-features"'
+          item-class-name='""'
+          index-pattern='indexPattern'
+          results=recognizerResults/>
       </div>
 
       <div class="kuiViewContentItem kuiVerticalRhythmXLarge">
