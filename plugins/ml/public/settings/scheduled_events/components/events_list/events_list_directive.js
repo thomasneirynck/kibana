@@ -26,7 +26,8 @@ module.directive('mlEventsList', function (
   $filter,
   pagerFactory,
   mlNewEventService,
-  mlImportEventsService) {
+  mlImportEventsService,
+  config) {
   return {
     restrict: 'AE',
     replace: true,
@@ -40,6 +41,7 @@ module.directive('mlEventsList', function (
     controller: function ($scope) {
 
       $scope.pageOfEvents = [];     // Current page of events displayed in the list.
+      $scope.dateFormatTz = config.get('dateFormat:tz');
 
       const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
       const PAGE_SIZE = 20;
