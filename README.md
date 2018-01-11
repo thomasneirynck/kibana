@@ -276,17 +276,24 @@ See [the AWS docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-config
 This repo is used to build the Kibana User Guide. In particular, it builds a
 version of the guide that includes X-Pack-specific information in 5.5 and later.
 
-To build the Kibana User Guide on your local machine:
+To build the Kibana User Guide on your local machine, ensure you have the following folders:
+
+```
+$ ls $PATH_TO_REPOS
+ ├── kibana
+ ├─- kibana-extra/x-pack-kibana
+ ├── elasticsearch (optional)
+ └── elasticsearch-extra/x-pack-elasticsearch (optional)
+
+```
 
 - Use the `index.asciidoc` file in the docs/en folder.
 - Specify the location of the `kibana/docs/` directory with the `--resource` option when you run `build_docs.pl`.
-- Specify the location of the `elasticsearch-extra/x-pack-elasticsearch/docs/en` directory with the `--resource` option,
-since some of the monitoring settings re-use SSL information from that repository
 
 For example:
 
 ```
-docs/build_docs.pl --doc x-pack-kibana/docs/en/index.asciidoc --resource=kibana/docs/ --chunk 1 
+docs/build_docs.pl --doc kibana-extra/x-pack-kibana/docs/en/index.asciidoc --resource=kibana/docs/ --chunk 1
 ```
 
 To build a release notes page for the pull requests in this repository:
