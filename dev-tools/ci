@@ -30,7 +30,7 @@ BASE_DIR=$(dirname "$SCRIPT")/..
 # make BASE_DIR absolute
 BASE_DIR=$(cd "$BASE_DIR"; pwd)
 
-PARENT_DIR=$(cd "$BASE_DIR"/../..; pwd)
+PARENT_DIR=$(cd "$BASE_DIR"/..; pwd)
 KIBANA_DIR="${PARENT_DIR}/kibana"
 
 # go to the parent directory

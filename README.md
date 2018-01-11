@@ -2,74 +2,6 @@
 
 This folder has the Kibana X-Pack plugin code
 
-## Setup
-
-You must checkout `x-pack-kibana` and `kibana` with a specific directory structure. The
-`kibana` checkout will be used when building `x-pack-kibana`. The structure is:
-
-```
-$ ls $PATH_TO_REPOS
- ├── kibana
- └── kibana-extra/x-pack-kibana
- └── elasticsearch (optional)
- └── elasticsearch-extra/x-pack-elasticsearch (optional)
-```
-
-I.e. `x-pack-kibana` must live within the `kibana-extra` folder.
-
-#### Working on x-pack-kibana up to and including 6.1?
-
-Up to and including the 6.1 release, x-pack-kibana required a different directory
-structure:
-
-```
-$ ls $PATH_TO_REPOS
- ├── kibana
- └── x-pack-kibana
- └── elasticsearch (optional)
- └── x-pack-elasticsearch (optional)
-```
-
-I.e. `x-pack-kibana` had to be a sibling directory to `kibana`. If you're working
-on multiple versions of `x-pack-kibana` and therefore need to handle both types
-of directory structures, versioned folders can help, e.g.:
-
-```
-├── legacy
-│   ├── elasticsearch
-│   ├── elasticsearch-extra
-│   │   └── x-pack-elasticsearch
-│   ├── kibana
-│   └── x-pack-kibana
-├── master
-│   ├── elasticsearch
-│   ├── elasticsearch-extra
-│   │   └── x-pack-elasticsearch
-│   ├── kibana
-│   └── kibana-extra
-│       └── x-pack-kibana
-└── 6.x
-    ├── elasticsearch
-    ├── elasticsearch-extra
-    │   └── x-pack-elasticsearch
-    ├── kibana
-    └── kibana-extra
-        └── x-pack-kibana
-```
-
-Another approach is to keep both `../x-pack-kibana` and `../kibana-extra/x-pack-kibana`
-in the same folder, e.g.:
-
-```
-├── elasticsearch
-├── elasticsearch-extra
-│   └── x-pack-elasticsearch
-├── kibana
-│── x-pack-kibana
-└── kibana-extra
-    └── x-pack-kibana
-```
-
 ### UI Development
 
 Install the latest version of [yarn](https://yarnpkg.com/en/docs/install).
@@ -81,6 +13,16 @@ yarn
 ```
 
 #### Running in development
+
+Assuming that you have the `x-pack-kibana` repo as a sibling to your `kibana` directory, it's really simple to get going.
+
+```
+$ ls $PATH_TO_REPOS
+ ├── kibana
+ └── elasticsearch (optional)
+ └── elasticsearch-extra/x-pack-elasticsearch (optional)
+ └── x-pack-kibana
+```
 
 Start elasticsearch with x-pack plugins. Follow x-pack-elasticsearch [Setup Instructions](https://github.com/elastic/x-pack-elasticsearch#setup). Execute `gradle run` from within `elasticsearch-extra/x-pack-elasticsearch`.
 Seed elasticsearch with some log data by running `node scripts/makelogs --auth elastic:password` from within `kibana`.
@@ -96,7 +38,7 @@ If this is not the case, or if you rather lean on Kibana, you'll need to perform
 yarn build
 
 # in kibana
-yarn start --plugin-path=../kibana-extra/x-pack-kibana
+yarn start --plugin-path=../path/to/x-pack-kibana/build/kibana/x-pack
 ```
 
 This is also a useful way to test the build. The downside is that **changes are not automatically synced for you**, so you will need to re-run the build every time you want to use the changes you've made (Kibana will automatically restart when you do, if running in dev mode).
@@ -126,7 +68,7 @@ bin/kibana --config=config/xpack.yml --dev
 
 ```
 # in x-pack-kibana
-node --inspect ../../kibana/src/cli -c ../../kibana/config/kibana.dev.yml --plugin-path ./
+node --inspect ../kibana/src/cli -c ../kibana/config/kibana.dev.yml --plugin-path ./
 ```
 
 #### Running unit tests_bundle
@@ -192,7 +134,7 @@ After all of the setup is running open a new terminal and run this command to ju
 cd x-pack-kibana
 
 # this command accepts a bunch of arguments to tweak the run, try sending --help to learn more
-node ../../kibana/scripts/functional_test_runner
+node ../kibana/scripts/functional_test_runner
 ```
 
 #### Running API integration tests

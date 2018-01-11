@@ -74,9 +74,9 @@
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@elastic/eslint-config-kibana/-/eslint-config-kibana-0.14.0.tgz#beb7f6d6421c4b28dda3f3cc38e0df4022508e00"
 
-"@elastic/eslint-import-resolver-kibana@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@elastic/eslint-import-resolver-kibana/-/eslint-import-resolver-kibana-2.0.0.tgz#23a0a60a84789a0031b65cc5729817c95a710279"
+"@elastic/eslint-import-resolver-kibana@0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@elastic/eslint-import-resolver-kibana/-/eslint-import-resolver-kibana-0.9.0.tgz#fccb9c77d0b822b242eb77d79b1bf42130bb34ae"
   dependencies:
     debug "^2.6.6"
     eslint-import-resolver-node "^0.3.0"
@@ -121,9 +121,9 @@
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@elastic/numeral/-/numeral-2.2.1.tgz#035b4afbda1e7e6b98bb0441fd36527ec5d326f1"
 
-"@elastic/plugin-helpers@9.0.0":
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/@elastic/plugin-helpers/-/plugin-helpers-9.0.0.tgz#c122aceed2cbdf1467e7f3f975dddb856aaf7e59"
+"@elastic/plugin-helpers@8.1.0":
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/@elastic/plugin-helpers/-/plugin-helpers-8.1.0.tgz#abb907c0c625495b6bb9e502cc82ae9c10385130"
   dependencies:
     argv-split "^2.0.1"
     commander "^2.9.0"
