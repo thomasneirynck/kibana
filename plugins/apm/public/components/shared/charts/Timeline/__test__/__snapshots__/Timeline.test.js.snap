@@ -1,0 +1,351 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Timline should render with data 1`] = `
+"
+<div>
+  <div style=\\"width: 100%; height: 100%;\\">
+    <div>
+      <div>
+        <div>
+        </div>
+        <div style=\\"position: absolute; background-color: rgb(255, 255, 255); border-bottom: 1px solid #999999; height: 100px; z-index: 2;\\">
+          <div>
+            Hello - i am a header
+          </div>
+          <div style=\\"width: 100px; height: 40px;\\"
+               class=\\"rv-xy-plot \\"
+          >
+            <svg class=\\"rv-xy-plot__inner\\"
+                 width=\\"100\\"
+                 height=\\"40\\"
+            >
+              <g transform=\\"translate(50,0)\\"
+                 class=\\"rv-xy-plot__axis rv-xy-plot__axis--horizontal \\"
+              >
+                <g transform=\\"translate(0, 40)\\"
+                   class=\\"rv-xy-plot__axis__ticks\\"
+                >
+                  <g transform=\\"translate(0, 0)\\"
+                     class=\\"rv-xy-plot__axis__tick\\"
+                  >
+                    <line x1=\\"0\\"
+                          x2=\\"0\\"
+                          y1=\\"0\\"
+                          y2=\\"0\\"
+                          class=\\"rv-xy-plot__axis__tick__line\\"
+                    >
+                    </line>
+                    <text text-anchor=\\"middle\\"
+                          dy=\\"0\\"
+                          transform=\\"translate(0, -8)\\"
+                          class=\\"rv-xy-plot__axis__tick__text\\"
+                          style=\\"fill: #999999;\\"
+                    >
+                      0
+                    </text>
+                  </g>
+                  <g transform=\\"translate(0, 0)\\"
+                     class=\\"rv-xy-plot__axis__tick\\"
+                  >
+                    <line x1=\\"0\\"
+                          x2=\\"0\\"
+                          y1=\\"0\\"
+                          y2=\\"0\\"
+                          class=\\"rv-xy-plot__axis__tick__line\\"
+                    >
+                    </line>
+                    <text text-anchor=\\"middle\\"
+                          dy=\\"0\\"
+                          transform=\\"translate(0, -8)\\"
+                          class=\\"rv-xy-plot__axis__tick__text\\"
+                          style=\\"fill: #999999;\\"
+                    >
+                      20 ms
+                    </text>
+                  </g>
+                  <g transform=\\"translate(0, 0)\\"
+                     class=\\"rv-xy-plot__axis__tick\\"
+                  >
+                    <line x1=\\"0\\"
+                          x2=\\"0\\"
+                          y1=\\"0\\"
+                          y2=\\"0\\"
+                          class=\\"rv-xy-plot__axis__tick__line\\"
+                    >
+                    </line>
+                    <text text-anchor=\\"middle\\"
+                          dy=\\"0\\"
+                          transform=\\"translate(0, -8)\\"
+                          class=\\"rv-xy-plot__axis__tick__text\\"
+                          style=\\"fill: #999999;\\"
+                    >
+                      40 ms
+                    </text>
+                  </g>
+                  <g transform=\\"translate(0, 0)\\"
+                     class=\\"rv-xy-plot__axis__tick\\"
+                  >
+                    <line x1=\\"0\\"
+                          x2=\\"0\\"
+                          y1=\\"0\\"
+                          y2=\\"0\\"
+                          class=\\"rv-xy-plot__axis__tick__line\\"
+                    >
+                    </line>
+                    <text text-anchor=\\"middle\\"
+                          dy=\\"0\\"
+                          transform=\\"translate(0, -8)\\"
+                          class=\\"rv-xy-plot__axis__tick__text\\"
+                          style=\\"fill: #999999;\\"
+                    >
+                      60 ms
+                    </text>
+                  </g>
+                  <g transform=\\"translate(0, 0)\\"
+                     class=\\"rv-xy-plot__axis__tick\\"
+                  >
+                    <line x1=\\"0\\"
+                          x2=\\"0\\"
+                          y1=\\"0\\"
+                          y2=\\"0\\"
+                          class=\\"rv-xy-plot__axis__tick__line\\"
+                    >
+                    </line>
+                    <text text-anchor=\\"middle\\"
+                          dy=\\"0\\"
+                          transform=\\"translate(0, -8)\\"
+                          class=\\"rv-xy-plot__axis__tick__text\\"
+                          style=\\"fill: #999999;\\"
+                    >
+                      80 ms
+                    </text>
+                  </g>
+                  <g transform=\\"translate(0, 0)\\"
+                     class=\\"rv-xy-plot__axis__tick\\"
+                  >
+                    <line x1=\\"0\\"
+                          x2=\\"0\\"
+                          y1=\\"0\\"
+                          y2=\\"0\\"
+                          class=\\"rv-xy-plot__axis__tick__line\\"
+                    >
+                    </line>
+                    <text text-anchor=\\"middle\\"
+                          dy=\\"0\\"
+                          transform=\\"translate(0, -8)\\"
+                          class=\\"rv-xy-plot__axis__tick__text\\"
+                          style=\\"fill: #999999;\\"
+                    >
+                      100 ms
+                    </text>
+                  </g>
+                  <g transform=\\"translate(0, 0)\\"
+                     class=\\"rv-xy-plot__axis__tick\\"
+                  >
+                    <line x1=\\"0\\"
+                          x2=\\"0\\"
+                          y1=\\"0\\"
+                          y2=\\"0\\"
+                          class=\\"rv-xy-plot__axis__tick__line\\"
+                    >
+                    </line>
+                    <text text-anchor=\\"middle\\"
+                          dy=\\"0\\"
+                          transform=\\"translate(0, -8)\\"
+                          class=\\"rv-xy-plot__axis__tick__text\\"
+                          style=\\"fill: #999999;\\"
+                    >
+                      120 ms
+                    </text>
+                  </g>
+                  <g transform=\\"translate(0, 0)\\"
+                     class=\\"rv-xy-plot__axis__tick\\"
+                  >
+                    <line x1=\\"0\\"
+                          x2=\\"0\\"
+                          y1=\\"0\\"
+                          y2=\\"0\\"
+                          class=\\"rv-xy-plot__axis__tick__line\\"
+                    >
+                    </line>
+                    <text text-anchor=\\"middle\\"
+                          dy=\\"0\\"
+                          transform=\\"translate(0, -8)\\"
+                          class=\\"rv-xy-plot__axis__tick__text\\"
+                          style=\\"fill: #999999;\\"
+                    >
+                      140 ms
+                    </text>
+                  </g>
+                  <g transform=\\"translate(0, 0)\\"
+                     class=\\"rv-xy-plot__axis__tick\\"
+                  >
+                    <line x1=\\"0\\"
+                          x2=\\"0\\"
+                          y1=\\"0\\"
+                          y2=\\"0\\"
+                          class=\\"rv-xy-plot__axis__tick__line\\"
+                    >
+                    </line>
+                    <text text-anchor=\\"middle\\"
+                          dy=\\"0\\"
+                          transform=\\"translate(0, -8)\\"
+                          class=\\"rv-xy-plot__axis__tick__text\\"
+                          style=\\"fill: #999999;\\"
+                    >
+                      160 ms
+                    </text>
+                  </g>
+                  <g transform=\\"translate(0, 0)\\"
+                     class=\\"rv-xy-plot__axis__tick\\"
+                  >
+                    <line x1=\\"0\\"
+                          x2=\\"0\\"
+                          y1=\\"0\\"
+                          y2=\\"0\\"
+                          class=\\"rv-xy-plot__axis__tick__line\\"
+                    >
+                    </line>
+                    <text text-anchor=\\"middle\\"
+                          dy=\\"0\\"
+                          transform=\\"translate(0, -8)\\"
+                          class=\\"rv-xy-plot__axis__tick__text\\"
+                          style=\\"fill: #999999;\\"
+                    >
+                      180 ms
+                    </text>
+                  </g>
+                </g>
+              </g>
+              <g transform=\\"translate(50, 40)\\">
+                <text text-anchor=\\"middle\\"
+                      dy=\\"0\\"
+                      transform=\\"translate(0, -8)\\"
+                >
+                  205 ms
+                </text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div style=\\"position: absolute; top: 0px; left: 0px;\\">
+        <div style=\\"width: 100px; height: 216px;\\"
+             class=\\"rv-xy-plot \\"
+        >
+          <svg class=\\"rv-xy-plot__inner\\"
+               width=\\"100\\"
+               height=\\"216\\"
+          >
+            <g transform=\\"translate(50,100)\\"
+               class=\\"rv-xy-plot__grid-lines\\"
+            >
+              <line x1=\\"0\\"
+                    x2=\\"0\\"
+                    y1=\\"0\\"
+                    y2=\\"116\\"
+                    class=\\"rv-xy-plot__grid-lines__line\\"
+                    style=\\"stroke: #f5f5f5;\\"
+              >
+              </line>
+              <line x1=\\"0\\"
+                    x2=\\"0\\"
+                    y1=\\"0\\"
+                    y2=\\"116\\"
+                    class=\\"rv-xy-plot__grid-lines__line\\"
+                    style=\\"stroke: #f5f5f5;\\"
+              >
+              </line>
+              <line x1=\\"0\\"
+                    x2=\\"0\\"
+                    y1=\\"0\\"
+                    y2=\\"116\\"
+                    class=\\"rv-xy-plot__grid-lines__line\\"
+                    style=\\"stroke: #f5f5f5;\\"
+              >
+              </line>
+              <line x1=\\"0\\"
+                    x2=\\"0\\"
+                    y1=\\"0\\"
+                    y2=\\"116\\"
+                    class=\\"rv-xy-plot__grid-lines__line\\"
+                    style=\\"stroke: #f5f5f5;\\"
+              >
+              </line>
+              <line x1=\\"0\\"
+                    x2=\\"0\\"
+                    y1=\\"0\\"
+                    y2=\\"116\\"
+                    class=\\"rv-xy-plot__grid-lines__line\\"
+                    style=\\"stroke: #f5f5f5;\\"
+              >
+              </line>
+              <line x1=\\"0\\"
+                    x2=\\"0\\"
+                    y1=\\"0\\"
+                    y2=\\"116\\"
+                    class=\\"rv-xy-plot__grid-lines__line\\"
+                    style=\\"stroke: #f5f5f5;\\"
+              >
+              </line>
+              <line x1=\\"0\\"
+                    x2=\\"0\\"
+                    y1=\\"0\\"
+                    y2=\\"116\\"
+                    class=\\"rv-xy-plot__grid-lines__line\\"
+                    style=\\"stroke: #f5f5f5;\\"
+              >
+              </line>
+              <line x1=\\"0\\"
+                    x2=\\"0\\"
+                    y1=\\"0\\"
+                    y2=\\"116\\"
+                    class=\\"rv-xy-plot__grid-lines__line\\"
+                    style=\\"stroke: #f5f5f5;\\"
+              >
+              </line>
+              <line x1=\\"0\\"
+                    x2=\\"0\\"
+                    y1=\\"0\\"
+                    y2=\\"116\\"
+                    class=\\"rv-xy-plot__grid-lines__line\\"
+                    style=\\"stroke: #f5f5f5;\\"
+              >
+              </line>
+              <line x1=\\"0\\"
+                    x2=\\"0\\"
+                    y1=\\"0\\"
+                    y2=\\"116\\"
+                    class=\\"rv-xy-plot__grid-lines__line\\"
+                    style=\\"stroke: #f5f5f5;\\"
+              >
+              </line>
+              <line x1=\\"0\\"
+                    x2=\\"0\\"
+                    y1=\\"0\\"
+                    y2=\\"116\\"
+                    class=\\"rv-xy-plot__grid-lines__line\\"
+                    style=\\"stroke: #f5f5f5;\\"
+              >
+              </line>
+            </g>
+            <g transform=\\"translate(50,100)\\"
+               class=\\"rv-xy-plot__grid-lines\\"
+            >
+              <line x1=\\"0\\"
+                    x2=\\"0\\"
+                    y1=\\"0\\"
+                    y2=\\"116\\"
+                    class=\\"rv-xy-plot__grid-lines__line\\"
+                    style=\\"stroke: #999999;\\"
+              >
+              </line>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+"
+`;

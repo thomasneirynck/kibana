@@ -28,13 +28,6 @@ export function timeUnit(max) {
   return max > UNIT_CUT_OFF ? 's' : 'ms';
 }
 
-export const getTimeFormatterWithoutUnit = memoize(
-  max =>
-    max > UNIT_CUT_OFF
-      ? value => asSeconds(value, false)
-      : value => asMillis(value, false)
-);
-
 export function asTime(value) {
   return getTimeFormatter(value)(value);
 }

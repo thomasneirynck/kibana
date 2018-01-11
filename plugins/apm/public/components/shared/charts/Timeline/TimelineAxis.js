@@ -4,13 +4,7 @@ import { Sticky } from 'react-sticky';
 import { XYPlot, XAxis } from 'react-vis';
 import LastTickValue from './LastTickValue';
 import { colors, px } from '../../../../style/variables';
-
-const tickFormatSeconds = value => `${value / 1000} s`;
-const tickFormatMilliSeconds = value => `${value} ms`;
-const getTickFormat = _.memoize(
-  highestValue =>
-    highestValue < 5000 ? tickFormatMilliSeconds : tickFormatSeconds
-);
+import { getTimeFormatter } from '../../../../utils/formatters';
 
 // Remove last tick if it's too close to xMax
 const getXAxisTickValues = (tickValues, xMax) =>
@@ -18,7 +12,7 @@ const getXAxisTickValues = (tickValues, xMax) =>
 
 function TimelineAxis({ header, plotValues }) {
   const { margins, tickValues, width, xDomain, xMax, xScale } = plotValues;
-  const tickFormat = getTickFormat(xMax);
+  const tickFormat = getTimeFormatter(xMax);
   const xAxisTickValues = getXAxisTickValues(tickValues, xMax);
 
   return (
