@@ -14,7 +14,8 @@
       <input
         type='file'
         ng-disabled="(loadingLock === true)"
-        onchange="angular.element(this).scope().fileNameChanged(this)" />
+        ml-file-input-on-change="fileNameChanged"
+        />
     </div>
 
     <div

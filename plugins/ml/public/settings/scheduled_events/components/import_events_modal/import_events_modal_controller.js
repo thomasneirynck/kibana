@@ -43,11 +43,11 @@ module.controller('MlImportEventsModal', function (
 
   const MAX_FILE_SIZE_MB = 100;
   // called when a file is selected using the file browser
-  $scope.fileNameChanged = function (el) {
+  $scope.fileNameChanged = function (event) {
     $scope.$apply(() => {
-      if (el.files.length) {
+      if (event.target.files.length) {
         reset();
-        $scope.file = el.files[0];
+        $scope.file = event.target.files[0];
         if ($scope.file.size <= (MAX_FILE_SIZE_MB * 1000000)) {
           readFile($scope.file)
             .then((resp) => {
@@ -156,5 +156,17 @@ module.controller('MlImportEventsModal', function (
 
   $scope.cancel = function () {
     $modalInstance.dismiss('cancel');
+  };
+}).directive('mlFileInputOnChange', function () {
+  return {
+    restrict: 'A',
+    link: function (scope, element, attrs) {
+      const onChangeHandler = scope.$eval(attrs.mlFileInputOnChange);
+      element.on('change', onChangeHandler);
+      element.on('$destroy', () => {
+        element.off();
+      });
+
+    }
   };
 });
