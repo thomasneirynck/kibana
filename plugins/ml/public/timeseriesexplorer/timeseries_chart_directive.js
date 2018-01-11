@@ -335,13 +335,6 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       }
 
 
-      // Define the div for the tooltip.
-      // TODO - append to the chartElement rather than the body.
-      d3.select('body').selectAll('div.ml-timeseries-point-tooltip').remove();
-      d3.select('body').append('div')
-        .attr('class', 'ml-timeseries-point-tooltip')
-        .style('opacity', 0);
-
       fcsGroup.append('rect')
         .attr('x', 0)
         .attr('y', 0)
