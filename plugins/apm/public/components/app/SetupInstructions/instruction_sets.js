@@ -396,7 +396,7 @@ at_exit { ElasticAPM.stop }`,
   },
   {
     id: 'js',
-    name: 'JS (Beta)',
+    name: 'JS (Alpha)',
     steps: [
       {
         indicatorNumber: 1,
@@ -437,7 +437,7 @@ var apm = initApm({
         textPre:
           "Let's check that the agent is running and sending up data to APM Server.",
         textPost:
-          '**Warning: The JS agent is currently in Beta and not meant for production use.**',
+          '**Warning: The JS agent is currently in Alpha and not meant for production use.**',
         isStatusStep: true
       }
     ]
