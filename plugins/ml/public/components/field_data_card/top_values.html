@@ -26,6 +26,6 @@
     {{ 100 * value.doc_count/card.stats.topValuesSampleSize >= 0.1 ? (100 * value.doc_count/card.stats.topValuesSampleSize | number:1): '< 0.1' }}%
   </div>
 </div>
-<div ng-if="card.stats.isTopValuesSampled === true" class="sampled-message">
+<div ng-if="card.stats.isTopValuesSampled === true" class="sampled-message euiText">
   Calculated from sample of {{ card.stats.topValuesSamplerShardSize }} documents per shard
 </div>
