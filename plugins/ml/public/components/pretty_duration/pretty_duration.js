@@ -23,14 +23,13 @@ import moment from 'moment';
 import angular from 'angular';
 import $ from 'jquery';
 
-import 'ui/timepicker/quick_ranges';
 import 'ui/timepicker/time_units';
 import './styles/main.less';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('prettyDuration', function (config, quickRanges, timeUnits, $compile, timefilter) {
+module.directive('prettyDuration', function (config, timeUnits, $compile, timefilter) {
   return {
     restrict: 'E',
     priority: 1,
@@ -40,6 +39,7 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
       to: '='
     },
     link: function ($scope, $elem) {
+      const quickRanges = config.get('timepicker:quickRanges');
       const dateFormat = config.get('dateFormat');
 
       const lookupByRange = {};
@@ -161,4 +161,3 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
     }
   };
 });
-
