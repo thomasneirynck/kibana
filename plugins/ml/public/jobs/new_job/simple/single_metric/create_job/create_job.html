@@ -46,7 +46,7 @@
       </div>
 
       <div class="form-group col-md-4">
-        <ml-form-label label-id="new_job_detector_fieldname_subset">Field</ml-form-label>
+        <ml-form-label label-id="new_job_detector_fieldname_subset" tooltip-append-to-body="true">Field</ml-form-label>
         <ui-select
           aria-labelledby="ml_aria_label_new_job_detector_fieldname_subset"
           aria-describedby="ml_aria_description_new_job_detector_fieldname_subset"
@@ -141,7 +141,7 @@
 
     <div ng-show="ui.showJobInput && (jobState === JOB_STATE.NOT_STARTED || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING)">
       <div class="form-group">
-        <ml-form-label label-id="new_job_id">Name</ml-form-label>
+        <ml-form-label label-id="new_job_id" tooltip-append-to-body="true">Name</ml-form-label>
         <input
           aria-labelledby="ml_aria_label_new_job_id"
           aria-describedby="ml_aria_description_new_job_id"

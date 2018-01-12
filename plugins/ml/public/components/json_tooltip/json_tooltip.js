@@ -39,12 +39,12 @@ module.service('mlJsonTooltipService', function () {
   .directive('mlInfoIcon', function () {
     return {
       scope: {
-        id: '@mlInfoIcon',
+        id: '@mlInfoIcon'
       },
       restrict: 'AE',
       replace: true,
       template: `
-      <i aria-hidden="true" class="fa fa-info-circle" tooltip="{{text}}" tooltip-append-to-body="1">
+      <i aria-hidden="true" class="fa fa-info-circle" tooltip="{{text}}">
         <span id="ml_aria_description_{{id}}" class="ml-info-tooltip-text">{{text}}</span>
       </i>
     `,
