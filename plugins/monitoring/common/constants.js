@@ -171,6 +171,10 @@ export const LOGSTASH = {
          */
         VERTICAL_DISTANCE_PX: 20
       }
+    },
+    ICON: {
+      HEIGHT_PX: 18,
+      WIDTH_PX: 18
     }
   },
 

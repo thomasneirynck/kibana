@@ -63,9 +63,10 @@ function makeNodes(nodesLayer, colaVertices) {
   return nodes;
 }
 
-function addNodesMouseBehaviors(nodes, onMouseover, onMouseout) {
+function addNodesMouseBehaviors(nodes, onMouseover, onMouseout, onMouseclick) {
   nodes.on('mouseover', onMouseover);
   nodes.on('mouseout', onMouseout);
+  nodes.on('click', onMouseclick);
 }
 
 function makeInputNodes(nodes) {
@@ -145,7 +146,7 @@ export class ColaGraph extends React.Component {
     this.ifs = makeIfNodes(this.nodes);
     this.queue = makeQueueNode(this.nodes);
 
-    addNodesMouseBehaviors(this.nodes, this.onMouseover, this.onMouseout);
+    addNodesMouseBehaviors(this.nodes, this.onMouseover, this.onMouseout, this.onMouseclick);
 
     this.linksLayer = makeGroup(vis);
 
@@ -282,7 +283,7 @@ export class ColaGraph extends React.Component {
       .text(d => d.edge.when ? 'T' : 'F');
   }
 
-  updateGraph(nextState = {}) {
+  updateGraph(nextProps = {}, nextState = {}) {
     this.processors.call(updateProcessorVertex);
     this.inputs.call(updateInputVertex);
 
@@ -309,6 +310,14 @@ export class ColaGraph extends React.Component {
       const grayedEdges = this.linksLayer.selectAll('.lspvEdge').filter(d => nonLineageEdges.indexOf(d.edge) >= 0);
       grayedEdges.classed('lspvEdge-grayed', true);
     }
+
+    const detailVertex = nextProps.detailVertex;
+    if (detailVertex) {
+      const selection = this.nodesLayer
+        .selectAll('#nodeg-' + detailVertex.htmlAttrId)
+        .selectAll('rect');
+      selection.classed('lspvVertexBounding-highlighted', true);
+    }
   }
 
   onMouseover = (node) => {
@@ -317,6 +326,10 @@ export class ColaGraph extends React.Component {
 
   onMouseout = () => {
     this.setState({ hoverNode: null });
+  }
+
+  onMouseclick = (e) => {
+    this.props.onShowVertexDetails(e.vertex);
   }
 
   get graph() {
@@ -440,9 +453,9 @@ export class ColaGraph extends React.Component {
     this.updateGraph();
   }
 
-  shouldComponentUpdate(_nextProps, nextState) {
+  shouldComponentUpdate(nextProps, nextState) {
     // Let D3 control updates to this component's DOM.
-    this.updateGraph(nextState);
+    this.updateGraph(nextProps, nextState);
 
     // Since D3 is controlling any updates to this component's DOM,
     // we don't want React to update this component's DOM.

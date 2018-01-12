@@ -1,13 +1,13 @@
-import d3 from 'd3';
 import numeral from 'numeral';
 import inputIcon from 'plugins/monitoring/icons/logstash/input.svg';
 import filterIcon from 'plugins/monitoring/icons/logstash/filter.svg';
 import outputIcon from 'plugins/monitoring/icons/logstash/output.svg';
 import queueIcon from 'plugins/monitoring/icons/logstash/queue.svg';
 import ifIcon from 'plugins/monitoring/icons/logstash/if.svg';
-import infoIcon from 'plugins/monitoring/icons/alert-blue.svg';
 import { PluginVertex } from '../models/graph/plugin_vertex';
 import { IfVertex } from '../models/graph/if_vertex';
+import { LOGSTASH } from 'monitoring-constants';
+import { formatMetric } from '../../../../lib/format_number';
 
 // Each vertex consists of two lines (rows) of text
 // - The first line shows the name and ID of the vertex
@@ -39,21 +39,8 @@ const EVENT_DURATION_BG_RADIUS_PX = 5;
 const EVENTS_PER_SECOND_OFFSET_LEFT_PX = BASE_OFFSET_LEFT_PX + 160;
 const EVENTS_PER_SECOND_OFFSET_TOP_PX = SECOND_LINE_OFFSET_TOP_PX;
 
-const ICON_HEIGHT_PX = 18;
-const ICON_WIDTH_PX = 18;
-
-const NO_ID_ICON_OFFSET_LEFT_PX = 5;
-const NO_ID_ICON_OFFSET_TOP_PX = 5;
-
 const ICON_OFFSET_LEFT_PX = BASE_OFFSET_LEFT_PX + 258;
 const ICON_OFFSET_TOP_PX = FIRST_LINE_OFFSET_TOP_PX + 9;
-
-function tooltipText(d) {
-  const pluginName = d.vertex.name;
-  return 'This plugin does not have an ID explicitly specified. '
-    + 'Specifying an ID allows you to track differences across pipeline changes. '
-    + `You can explicitly specify an ID for this plugin like so:\n\n${pluginName} {\n  id => mySpecialId\n}`;
-}
 
 function renderHeader(colaObjects, title, subtitle) {
   const pluginHeader = colaObjects
@@ -69,8 +56,6 @@ function renderHeader(colaObjects, title, subtitle) {
 
   // For plugin vertices, either we have an explicitly-set plugin ID or an
   // auto-generated plugin ID. For explicitly-set plugin IDs, show the ID.
-  // For auto-generated plugin IDs, show an info icon urging the user to
-  // explicitly set an ID.
   pluginHeader
     .filter(d => {
       const vertex = d.vertex;
@@ -82,27 +67,6 @@ function renderHeader(colaObjects, title, subtitle) {
     .text(d => subtitle ? ` (${subtitle(d).display})` : null)
     .append('title')
     .text(d => subtitle ? subtitle(d).complete : null);
-
-
-  const autoGenIdPluginVertexGroup = colaObjects
-    .filter(d => d.vertex instanceof PluginVertex)
-    .filter(d => !d.vertex.hasExplicitId);
-
-  autoGenIdPluginVertexGroup
-    .each(function () {
-      const gEl = d3.select(this);
-      const titleEl = gEl.select('.lspvVertexTitle')[0][0];
-
-      gEl
-        .append('image')
-        .attr('xlink:href', infoIcon)
-        .attr('x', titleEl.getComputedTextLength() + (ICON_WIDTH_PX / 2) + NO_ID_ICON_OFFSET_LEFT_PX)
-        .attr('y', NO_ID_ICON_OFFSET_TOP_PX)
-        .attr('height', ICON_HEIGHT_PX)
-        .attr('width', ICON_WIDTH_PX)
-        .append('title')
-        .text(tooltipText);
-    });
 }
 
 function renderIcon(selection, icon) {
@@ -111,14 +75,14 @@ function renderIcon(selection, icon) {
     .attr('xlink:href', icon)
     .attr('x', ICON_OFFSET_LEFT_PX)
     .attr('y', ICON_OFFSET_TOP_PX)
-    .attr('height', ICON_HEIGHT_PX)
-    .attr('width', ICON_WIDTH_PX);
+    .attr('height', LOGSTASH.PIPELINE_VIEWER.ICON.HEIGHT_PX)
+    .attr('width', LOGSTASH.PIPELINE_VIEWER.ICON.WIDTH_PX);
 }
 
 export function enterInputVertex(inputs) {
   renderHeader(
     inputs,
-    (d => d.vertex.name),
+    (d => d.vertex.title),
     (d => d.vertex.subtitle)
   );
 
@@ -135,7 +99,7 @@ export function enterInputVertex(inputs) {
 export function enterProcessorVertex(processors) {
   renderHeader(
     processors,
-    (d => d.vertex.name),
+    (d => d.vertex.title),
     (d => d.vertex.subtitle)
   );
 
@@ -188,7 +152,7 @@ export function enterProcessorVertex(processors) {
 export function enterIfVertex(ifs) {
   renderHeader(
     ifs,
-    'if',
+    (d => d.vertex.title),
     (d => d.vertex.subtitle)
   );
 
@@ -198,7 +162,7 @@ export function enterIfVertex(ifs) {
 export function enterQueueVertex(queueVertex) {
   renderHeader(
     queueVertex,
-    'queue'
+    (d => d.vertex.title),
   );
 
   renderIcon(queueVertex, queueIcon);
@@ -206,10 +170,7 @@ export function enterQueueVertex(queueVertex) {
 
 export function updateInputVertex(inputs) {
   inputs.selectAll('[data-lspv-events-per-second]')
-    .text(d => {
-      const v = d.vertex.eventsPerSecond;
-      return v ? v.toFixed(1) + 'e/s' : 'No Data';
-    });
+    .text(d => formatMetric(d.vertex.eventsPerSecond, '0.[00]a', 'e/s'));
 }
 
 export function updateProcessorVertex(processors) {
@@ -225,10 +186,7 @@ export function updateProcessorVertex(processors) {
     });
 
   processors.selectAll('[data-lspv-per-event-duration-in-millis]')
-    .text(d => {
-      const v = d.vertex.millisPerEvent;
-      return v ? numeral(v).format('0.00a') + ' ms/e' : 'No Data';
-    });
+    .text(d => formatMetric(d.vertex.millisPerEvent, '0.[00]a', 'ms/e'));
 
   processors.selectAll('[data-lspv-per-event-duration-in-millis-bg]')
     .attr('fill', d => {
@@ -236,8 +194,5 @@ export function updateProcessorVertex(processors) {
     });
 
   processors.selectAll('[data-lspv-events-per-second]')
-    .text(d => {
-      const v = d.vertex.eventsPerSecond;
-      return v ? numeral(v).format('0.0 a') + ' e/s' : 'No Data';
-    });
+    .text(d => formatMetric(d.vertex.eventsPerSecond, '0.[00]a', 'e/s'));
 }

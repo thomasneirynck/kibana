@@ -14,6 +14,10 @@ export class IfVertex extends Vertex {
     return ifIcon;
   }
 
+  get title() {
+    return 'if';
+  }
+
   get subtitle() {
     return {
       complete: this.name,

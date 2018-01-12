@@ -15,6 +15,10 @@ export class PluginVertex extends Vertex {
     return this.json.config_name;
   }
 
+  get title() {
+    return this.name;
+  }
+
   get pluginType() {
     return this.json.plugin_type;
   }
