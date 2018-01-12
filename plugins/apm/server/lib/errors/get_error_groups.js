@@ -23,7 +23,7 @@ export async function getErrorGroups({
       size: 0,
       query: {
         bool: {
-          must: [
+          filter: [
             { term: { [SERVICE_NAME]: serviceName } },
             { term: { [PROCESSOR_EVENT]: 'error' } },
             {
@@ -78,17 +78,19 @@ export async function getErrorGroups({
 
   // match query against error fields
   if (q) {
-    params.body.query.bool.must.push({
-      simple_query_string: {
-        fields: [
-          ERROR_EXC_MESSAGE,
-          ERROR_LOG_MESSAGE,
-          ERROR_CULPRIT,
-          ERROR_GROUP_ID
-        ],
-        query: q
+    params.body.query.bool.must = [
+      {
+        simple_query_string: {
+          fields: [
+            ERROR_EXC_MESSAGE,
+            ERROR_LOG_MESSAGE,
+            ERROR_CULPRIT,
+            ERROR_GROUP_ID
+          ],
+          query: q
+        }
       }
-    });
+    ];
   }
 
   const resp = await client('search', params);

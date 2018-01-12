@@ -14,7 +14,7 @@ async function getSpans({ transactionId, setup }) {
       size: 500,
       query: {
         bool: {
-          must: [
+          filter: [
             {
               range: {
                 '@timestamp': {

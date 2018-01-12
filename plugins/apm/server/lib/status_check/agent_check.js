@@ -9,7 +9,7 @@ export async function getAgentStatus({ setup }) {
       size: 0,
       query: {
         bool: {
-          must: {
+          filter: {
             exists: {
               field: PROCESSOR_NAME
             }

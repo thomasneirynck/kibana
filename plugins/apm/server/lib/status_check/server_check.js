@@ -7,7 +7,7 @@ export async function getServerStatus({ setup }) {
       size: 0,
       query: {
         bool: {
-          must: {
+          filter: {
             exists: {
               field: 'listening'
             }

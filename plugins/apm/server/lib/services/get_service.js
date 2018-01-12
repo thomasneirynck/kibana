@@ -9,7 +9,7 @@ export async function getService({ serviceName, setup }) {
       size: 0,
       query: {
         bool: {
-          must: [
+          filter: [
             { term: { [SERVICE_NAME]: serviceName } },
             {
               range: {

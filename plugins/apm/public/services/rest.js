@@ -133,7 +133,7 @@ export async function loadTransaction({
   end,
   transactionId
 }) {
-  return callApi({
+  const res = await callApi({
     pathname: `${getAppRootPath(serviceName)}/transactions/${transactionId}`,
     camelcase: false,
     query: {
@@ -141,6 +141,11 @@ export async function loadTransaction({
       end
     }
   });
+  const camelizedRes = camelizeKeys(res);
+  if (res.context) {
+    camelizedRes.context = res.context;
+  }
+  return camelizedRes;
 }
 
 export async function loadCharts({
@@ -198,7 +203,9 @@ export async function loadErrorGroup({
     }
   });
   const camelizedRes = camelizeKeys(res);
-  camelizedRes.error.context = res.error.context;
+  if (res.error.context) {
+    camelizedRes.error.context = res.error.context;
+  }
   return camelizedRes;
 }
 

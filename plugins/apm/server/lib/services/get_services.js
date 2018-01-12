@@ -15,7 +15,7 @@ export async function getServices({ setup }) {
       size: 0,
       query: {
         bool: {
-          must: [
+          filter: [
             {
               bool: {
                 should: [
@@ -32,7 +32,6 @@ export async function getServices({ setup }) {
                 ]
               }
             },
-
             {
               range: {
                 '@timestamp': {

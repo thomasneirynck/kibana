@@ -24,7 +24,7 @@ export async function getTopTransactions({
       size: 0,
       query: {
         bool: {
-          must: [
+          filter: [
             { term: { [SERVICE_NAME]: serviceName } },
             { term: { [TRANSACTION_TYPE]: transactionType } },
             {

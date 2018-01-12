@@ -10,7 +10,7 @@ export async function getErrorGroup({ serviceName, groupId, setup }) {
       size: 1,
       query: {
         bool: {
-          must: [
+          filter: [
             { term: { [SERVICE_NAME]: serviceName } },
             { term: { [ERROR_GROUP_ID]: groupId } },
             {

@@ -13,6 +13,15 @@ import EmptyMessage from '../../../../shared/EmptyMessage';
 const Container = styled.div`
   transition: 0.1s padding ease;
   position: relative;
+  overflow: hidden;
+`;
+
+const DroppedSpansContainer = styled.div`
+  border-top: 1px solid #ddd;
+  height: 43px;
+  line-height: 43px;
+  text-align: center;
+  color: ${colors.gray2};
 `;
 
 const TIMELINE_HEADER_HEIGHT = 100;
@@ -57,41 +66,50 @@ class Spans extends PureComponent {
     const timelineHeight = spanContainerHeight * spans.data.spans.length;
 
     return (
-      <Container>
-        <StickyContainer>
-          <Timeline
-            header={
-              <TimelineHeader
-                legends={spanTypes.map(type => ({
-                  label: getSpanLabel(type),
-                  color: getSpanColor(type)
-                }))}
-                transactionName={urlParams.transactionName}
-              />
-            }
-            duration={totalDuration}
-            height={timelineHeight}
-            margins={TIMELINE_MARGINS}
-          />
-          <div
-            style={{
-              paddingTop: TIMELINE_MARGINS.top
-            }}
-          >
-            {spans.data.spans.map(span => (
-              <Span
-                transactionId={urlParams.transactionId}
-                timelineMargins={TIMELINE_MARGINS}
-                key={get({ span }, SPAN_ID)}
-                color={getSpanColor(getPrimaryType(span.type))}
-                span={span}
-                totalDuration={totalDuration}
-                isSelected={get({ span }, SPAN_ID) === urlParams.spanId}
-              />
-            ))}
-          </div>
-        </StickyContainer>
-      </Container>
+      <div>
+        <Container>
+          <StickyContainer>
+            <Timeline
+              header={
+                <TimelineHeader
+                  legends={spanTypes.map(type => ({
+                    label: getSpanLabel(type),
+                    color: getSpanColor(type)
+                  }))}
+                  transactionName={urlParams.transactionName}
+                />
+              }
+              duration={totalDuration}
+              height={timelineHeight}
+              margins={TIMELINE_MARGINS}
+            />
+            <div
+              style={{
+                paddingTop: TIMELINE_MARGINS.top
+              }}
+            >
+              {spans.data.spans.map(span => (
+                <Span
+                  transactionId={urlParams.transactionId}
+                  timelineMargins={TIMELINE_MARGINS}
+                  key={get({ span }, SPAN_ID)}
+                  color={getSpanColor(getPrimaryType(span.type))}
+                  span={span}
+                  totalDuration={totalDuration}
+                  isSelected={get({ span }, SPAN_ID) === urlParams.spanId}
+                />
+              ))}
+            </div>
+          </StickyContainer>
+        </Container>
+
+        {this.props.droppedSpans > 0 && (
+          <DroppedSpansContainer>
+            {this.props.droppedSpans} spans dropped due to limit of{' '}
+            {spans.data.spans.length}. Learn more in the documentation.
+          </DroppedSpansContainer>
+        )}
+      </div>
     );
   }
 }

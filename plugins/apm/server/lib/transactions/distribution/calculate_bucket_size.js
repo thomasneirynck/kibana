@@ -17,7 +17,7 @@ export async function calculateBucketSize({
       size: 0,
       query: {
         bool: {
-          must: [
+          filter: [
             {
               range: {
                 '@timestamp': {

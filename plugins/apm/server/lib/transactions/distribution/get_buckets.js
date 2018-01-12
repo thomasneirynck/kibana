@@ -23,7 +23,7 @@ export async function getBuckets({
       size: 0,
       query: {
         bool: {
-          must: [
+          filter: [
             {
               range: {
                 '@timestamp': {

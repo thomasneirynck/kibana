@@ -23,7 +23,7 @@ export async function getTimeseriesData({
       size: 0,
       query: {
         bool: {
-          must: [
+          filter: [
             { term: { [SERVICE_NAME]: serviceName } },
             { term: { [TRANSACTION_TYPE]: transactionType } },
             {
@@ -105,9 +105,11 @@ export async function getTimeseriesData({
   };
 
   if (transactionName) {
-    params.body.query.bool.must.push({
-      term: { [`${TRANSACTION_NAME}.keyword`]: transactionName }
-    });
+    params.body.query.bool.must = [
+      {
+        term: { [`${TRANSACTION_NAME}.keyword`]: transactionName }
+      }
+    ];
   }
 
   const resp = await client('search', params);

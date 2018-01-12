@@ -47,8 +47,6 @@ const TabContainer = styled.div`
 `;
 
 const TabContentContainer = styled.div`
-  background-color: ${colors.white};
-  overflow: hidden;
   border-radius: 0 0 ${borderRadius} ${borderRadius};
 `;
 
@@ -175,7 +173,13 @@ class Transaction extends Component {
 
         <TabContentContainer>
           {currentTab === DEFAULT_TAB ? (
-            <Spans />
+            <Spans
+              droppedSpans={get(
+                transaction.data,
+                'transaction.spanCount.dropped.total',
+                0
+              )}
+            />
           ) : (
             <PropertiesTableContainer>
               <PropertiesTable

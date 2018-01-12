@@ -10,7 +10,7 @@ async function getTransaction({ transactionId, setup }) {
       size: 1,
       query: {
         bool: {
-          must: [
+          filter: [
             { term: { [PROCESSOR_EVENT]: 'transaction' } },
             { term: { [TRANSACTION_ID]: transactionId } },
             {

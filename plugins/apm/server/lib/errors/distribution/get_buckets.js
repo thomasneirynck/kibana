@@ -9,7 +9,7 @@ export async function getBuckets({ serviceName, groupId, bucketSize, setup }) {
       size: 0,
       query: {
         bool: {
-          must: [
+          filter: [
             {
               range: {
                 '@timestamp': {

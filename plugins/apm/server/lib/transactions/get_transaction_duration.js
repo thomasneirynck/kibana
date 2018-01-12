@@ -15,7 +15,7 @@ export async function getTransactionDuration({ transactionId, setup }) {
       _source: TRANSACTION_DURATION,
       query: {
         bool: {
-          must: [
+          filter: [
             { term: { [PROCESSOR_EVENT]: 'transaction' } },
             { term: { [TRANSACTION_ID]: transactionId } },
             {
