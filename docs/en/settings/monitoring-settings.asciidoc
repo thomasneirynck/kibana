@@ -6,8 +6,8 @@
 ++++
 
 Monitoring is enabled by default when you install {xpack}. You can adjust
-how monitoring data is displayed in the Monitoring UI by configuring
-`xpack.monitoring` settings in `kibana.yml`. There are also
+how monitoring data is collected from {kib} and displayed in {kib} by
+configuring settings in the `kibana.yml` file. There are also
 `xpack.monitoring.elasticsearch.*` settings, which support the same values as
 <<settings,{kib} configuration settings>>.
 
@@ -22,23 +22,20 @@ For more information, see
 {xpack-ref}/xpack-monitoring.html[Monitoring the Elastic Stack].
 
 [float]
-[[monitoring-ui-settings]]
-==== Monitoring UI Settings
-
-You can set the following `xpack.monitoring` settings in `kibana.yml` to adjust
-how the Monitoring UI displays monitoring data. However, the defaults work best
-in most circumstances. For more information about configuring Kibana, see
-{kibana-ref}/settings.html[Setting Kibana Server Properties].
+[[monitoring-general-settings]]
+==== General Monitoring Settings
 
 `xpack.monitoring.enabled`::
-Set to `false` to disable the {monitoring} UI.
+Set to `false` to disable {monitoring} in {kib}. Unlike the
+`xpack.monitoring.ui.enabled` setting, when this setting is `false`, the
+monitoring back-end does not run and {kib} stats are not sent to the monitoring
+cluster.
 
 `xpack.monitoring.elasticsearch.url`::
-
-The location of the Elasticsearch instance(s) where your monitoring data is
-stored. By default, this is the same as the `elasticsearch.url`. This setting
-enables you to use a single Kibana instance to search and visualize data in
-your production cluster as well as monitor data sent to a dedicated monitoring
+Specifies the location of the {es} cluster where your monitoring data is stored.
+By default, this is the same as the `elasticsearch.url`. This setting enables
+you to use a single {kib} instance to search and visualize data in your
+production cluster as well as monitor data sent to a dedicated monitoring
 cluster.
 
 `xpack.monitoring.elasticsearch.username`::
@@ -49,59 +46,73 @@ from the monitoring cluster. If not set, {kib} uses the value of the
 `xpack.monitoring.elasticsearch.password`::
 Specifies the password that {kib} uses for authentication when it retrieves data
 from the monitoring cluster. If not set, {kib} uses the value of the
-`elasticsearch.password` setting. 
+`elasticsearch.password` setting.
+
+`xpack.monitoring.report_stats`::
+Set to `true` (default) to send cluster statistics to Elastic. Reporting your
+cluster statistics helps us improve your user experience. Your data is never
+shared with anyone. Set to `false` to disable statistics reporting from any
+browser connected to the {kib} instance. You can also opt out through the
+*Advanced Settings* in {kib}.
+
+[float]
+[[monitoring-collection-settings]]
+==== Monitoring Collection Settings
+
+These settings control how data is collected from {kib}.
 
 `xpack.monitoring.kibana.collection.enabled`::
-
-Whether or not to enable data collection from the Kibana NodeJS server for
-Kibana Dashboards to be featured in the Monitoring UI. Defaults to `true`.
+Set to `true` (default) to enable data collection from the {kib} NodeJS server
+for {kib} Dashboards to be featured in the Monitoring.
 
 `xpack.monitoring.kibana.collection.interval`::
+Specifies the number of milliseconds to wait in between data sampling on the
+{kib} NodeJS server for the metrics that are displayed in the {kib} dashboards.
+Defaults to `10000` (10 seconds).
 
-Number of milliseconds to wait in between data sampling for Kibana's NodeJS
-server for the metrics that are displayed in the Kibana dashboards. Defaults to
-`10000` (10 seconds).
+
+[float]
+[[monitoring-ui-settings]]
+==== Monitoring UI Settings
+
+These settings adjust how the {kib} Monitoring page displays monitoring data.
+However, the defaults work best in most circumstances. For more information
+about configuring {kib}, see
+{kibana-ref}/settings.html[Setting Kibana Server Properties].
+
+`xpack.monitoring.ui.enabled`::
+Set to `false` to hide the Monitoring UI in {kib}. The monitoring back-end
+continues to run as an agent for sending {kib} stats to the monitoring
+cluster. Defaults to `true`.
 
 `xpack.monitoring.max_bucket_size`::
-
-The number of term buckets to return out of the overall terms list when
+Specifies the number of term buckets to return out of the overall terms list when
 performing terms aggregations to retrieve index and node metrics. For more
 information about the `size` parameter, see
 {ref}/search-aggregations-bucket-terms-aggregation.html#_size[Terms Aggregation].
-Defaults to 10000.
+Defaults to `10000`.
 
 `xpack.monitoring.min_interval_seconds`::
-
-The minimum number of seconds that a time bucket in a chart can represent.
-Defaults to 10. If you modify the `xpack.monitoring.collection.interval`
-in `elasticsearch.yml`, set this option to the same value.
-
-`xpack.monitoring.report_stats`::
-
-Whether or not to send cluster statistics to Elastic. Reporting your cluster statistics
-helps us improve your user experience. Your data is never shared with anyone. Set to
-`false` to disable statistics reporting from any browser connected to the Kibana instance.
-You can also opt-out through Kibana's Advanced Settings. Defaults to `true`.
-
-`xpack.monitoring.ui.enabled`::
-
-Set to `false` to hide the Monitoring UI in Kibana. The Monitoring back-end
-continues to run as an agent for sending Kibana stats to the Monitoring
-cluster. Defaults to `true`.
+Specifies the minimum number of seconds that a time bucket in a chart can
+represent. Defaults to 10. If you modify the
+`xpack.monitoring.collection.interval` in `elasticsearch.yml`, use the same
+value in this setting.
 
 [float]
 [[monitoring-ui-cgroup-settings]]
 ===== Monitoring UI Container Settings
 
-The Monitoring UI exposes the Cgroup statistics that we collect for you to make better decisions
-about your container performance, rather than guessing based on the overall machine performance.
-If you are not running your applications in a container, then Cgroup statistics will not be useful.
+The Monitoring UI exposes the Cgroup statistics that we collect for you to make
+better decisions about your container performance, rather than guessing based on
+the overall machine performance. If you are not running your applications in a
+container, then Cgroup statistics are not useful.
 
 `xpack.monitoring.ui.container.elasticsearch.enabled`::
 
-For Elasticsearch clusters that are running in containers, this setting changes the Node Listing to
-display the CPU Utilization based on the reported Cgroup statistics. This will also add the calculated
-Cgroup CPU Utilization to the Node Overview page instead of the overall operating system's CPU
-Utilization. Defaults to `false`.
+For {es} clusters that are running in containers, this setting changes the
+*Node Listing* to display the CPU utilization based on the reported Cgroup
+statistics. It also adds the calculated Cgroup CPU utilization to the
+*Node Overview* page instead of the overall operating system's CPU
+utilization. Defaults to `false`.
 +
 image::settings/images/monitoring-es-cgroup-true.png["Elasticsearch Inside a Container",link="images/monitoring-es-cgroup-true.png"]
