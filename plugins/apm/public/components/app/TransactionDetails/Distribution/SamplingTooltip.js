@@ -25,9 +25,9 @@ const SamplingTooltip = () => (
       overlay={
         <Tooltip>
           <TooltipTitle>Sampling</TooltipTitle>
-          Each bucket will show a sample transaction, which contains <br />{' '}
-          details about the performance. If there&apos;s no sample available,
-          it&apos;s <br /> most likely because of the sampling limit set in the
+          Each bucket will show a sample transaction. If there&apos;s no sample
+          available,<br />
+          it&apos;s most likely because of the sampling limit set in the agent
           configuration.
         </Tooltip>
       }
