@@ -560,6 +560,7 @@ module.controller('MlTimeSeriesExplorerController', function (
       template: forecastingModalTemplate,
       controller: 'MlForecastingModal',
       backdrop: 'static',
+      size: 'lg',
       keyboard: false,
 
       resolve: {
