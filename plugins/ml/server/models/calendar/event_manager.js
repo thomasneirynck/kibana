@@ -42,8 +42,7 @@ export class EventManager {
   }
 
   async addEvents(calendarId, events) {
-    // create ndjson string of events
-    const body = events.reduce((str, event) => str += `${JSON.stringify(event)}\n`, '');
+    const body = { events };
 
     try {
       return await this.callWithRequest('ml.addEvent', { calendarId, body });
