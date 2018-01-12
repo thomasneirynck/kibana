@@ -12,9 +12,9 @@ export const serverInstructions = [
         indicatorNumber: 2,
         title: 'Import dashboards (optional)',
         textPre: 'APM Server ships with pre-configured dashboards.',
-        code: './apm-server -setup',
+        code: './apm-server setup',
         textPost:
-          'If you are using an X-Pack secured version of the Elastic Stack, add `-E output.elasticsearch.username=user -E output.elasticsearch.password=pass` to the command.'
+          "If you're using an X-Pack secured version of Elastic Stack, you need to specify credentials in the `apm-server.yml` config file. [Documentation](https://www.elastic.co/guide/en/apm/server/6.2/configuring.html)."
       },
       {
         indicatorNumber: 3,
@@ -45,9 +45,9 @@ export const serverInstructions = [
         indicatorNumber: 2,
         title: 'Import dashboards (optional)',
         textPre: 'APM Server ships with pre-configured dashboards.',
-        code: './apm-server -setup',
+        code: './apm-server setup',
         textPost:
-          'If you are using an X-Pack secured version of the Elastic Stack, add `-E output.elasticsearch.username=user -E output.elasticsearch.password=pass` to the command.'
+          "If you're using an X-Pack secured version of Elastic Stack, you need to specify credentials in the `apm-server.yml` config file. [Documentation](https://www.elastic.co/guide/en/apm/server/6.2/configuring.html)."
       },
       {
         indicatorNumber: 3,
@@ -78,9 +78,9 @@ export const serverInstructions = [
         indicatorNumber: 2,
         title: 'Import dashboards (optional)',
         textPre: 'APM Server ships with pre-configured dashboards.',
-        code: './apm-server -setup',
+        code: './apm-server setup',
         textPost:
-          'If you are using an X-Pack secured version of the Elastic Stack, add `-E output.elasticsearch.username=user -E output.elasticsearch.password=pass` to the command.'
+          "If you're using an X-Pack secured version of Elastic Stack, you need to specify credentials in the `apm-server.yml` config file. [Documentation](https://www.elastic.co/guide/en/apm/server/6.2/configuring.html)."
       },
       {
         indicatorNumber: 3,
@@ -111,9 +111,9 @@ export const serverInstructions = [
         indicatorNumber: 2,
         title: 'Import dashboards (optional)',
         textPre: 'APM Server ships with pre-configured dashboards.',
-        code: './apm-server -setup',
+        code: './apm-server setup',
         textPost:
-          'If you are using an X-Pack secured version of the Elastic Stack, add `-E output.elasticsearch.username=user -E output.elasticsearch.password=pass` to the command.'
+          "If you're using an X-Pack secured version of Elastic Stack, you need to specify credentials in the `apm-server.yml` config file. [Documentation](https://www.elastic.co/guide/en/apm/server/6.2/configuring.html)."
       },
       {
         indicatorNumber: 3,
@@ -144,9 +144,9 @@ export const serverInstructions = [
         indicatorNumber: 2,
         title: 'Import dashboards (optional)',
         textPre: 'APM Server ships with pre-configured dashboards.',
-        code: 'apm-server.exe -setup',
+        code: 'apm-server.exe setup',
         textPost:
-          'If you are using an X-Pack secured version of the Elastic Stack, add `-E output.elasticsearch.username=user -E output.elasticsearch.password=pass` to the command.'
+          "If you're using an X-Pack secured version of Elastic Stack, you need to specify credentials in the `apm-server.yml` config file. [Documentation](https://www.elastic.co/guide/en/apm/server/6.2/configuring.html)."
       },
       {
         indicatorNumber: 3,
@@ -172,8 +172,8 @@ export const serverInstructions = [
         indicatorNumber: 1,
         title: 'Run APM Server in Docker',
         textPre: 'Start APM Server image in Docker.',
-        code: `docker run -p 8200:8200 docker.elastic.co/apm/apm-server:6.1.0 apm-server -e -E output.elasticsearch.hosts=ElasticsearchAddress:9200 -E apm-server.host=:8200`,
-        textPost: `If you are using an X-Pack secured version of the Elastic Stack, add \`-E output.elasticsearch.username=user -E output.elasticsearch.password=pass\` to the command. Read more in the [APM Server on Docker](https://www.elastic.co/guide/en/apm/server/6.1/running-on-docker.html) documentation.`
+        code: `docker run -p 8200:8200 docker.elastic.co/apm/apm-server:6.2.0 apm-server -e`,
+        textPost: `To configure APM Server in Docker, please see [the documentation](https://www.elastic.co/guide/en/apm/server/6.2/running-on-docker.html#running-on-docker).`
       },
       {
         indicatorNumber: 2,
@@ -310,6 +310,134 @@ apm = ElasticAPM(app)
         title: 'APM agent status',
         textPre:
           "Let's check that the agent is running and sending up data to APM Server.",
+        isStatusStep: true
+      }
+    ]
+  },
+  {
+    id: 'rails',
+    name: 'Ruby on Rails (Beta)',
+    steps: [
+      {
+        indicatorNumber: 1,
+        title: 'Install the APM agent',
+        textPre: 'Add the agent to your Gemfile',
+        code: `gem 'elastic-apm'`
+      },
+      {
+        indicatorNumber: 2,
+        title: 'Configure the agent: Ruby on Rails',
+        textPre:
+          'APM is automatically installed. Configure the agent, by creating the config file `config/elastic_apm.yml`',
+        codeLanguage: 'ruby',
+        code: `# config/elastic_apm.yml
+        server_url: 'http://localhost:8200'`,
+        textPost:
+          'See the [documentation](https://www.elastic.co/guide/en/apm/agent/ruby/current/index.html) for configuration options and advanced usage.'
+      },
+      {
+        indicatorNumber: 3,
+        title: 'APM agent status',
+        textPre:
+          "Let's check that the agent is running and sending up data to APM Server.",
+        textPost:
+          '**Warning: The Ruby agent is currently in Beta and not meant for production use.**',
+        isStatusStep: true
+      }
+    ]
+  },
+  {
+    id: 'rack',
+    name: 'Rack (Beta)',
+    steps: [
+      {
+        indicatorNumber: 1,
+        title: 'Install the APM agent',
+        textPre: 'Add the agent to your Gemfile',
+        code: `gem 'elastic-apm'`
+      },
+      {
+        indicatorNumber: 2,
+        title:
+          'Configure the agent: Rack or compatible framework (like Sinatra)',
+        textPre: 'Include the middleware in your app and start the agent.',
+        codeLanguage: 'ruby',
+        code: `# config.ru
+
+require 'sinatra/base'
+class MySinatraApp < Sinatra::Base
+  use ElasticAPM::Middleware
+  
+  # ...
+end
+
+# Takes optional ElasticAPM::Config values
+ElasticAPM.start(
+  app: MySinatraApp, # required
+  server_url: 'http://localhost:8200'
+)
+
+run MySinatraApp
+
+at_exit { ElasticAPM.stop }`,
+        textPost:
+          'See the [documentation](https://www.elastic.co/guide/en/apm/agent/ruby/current/index.html) for configuration options and advanced usage.'
+      },
+      {
+        indicatorNumber: 3,
+        title: 'APM agent status',
+        textPre:
+          "Let's check that the agent is running and sending up data to APM Server.",
+        textPost:
+          '**Warning: The Ruby agent is currently in Beta and not meant for production use.**',
+        isStatusStep: true
+      }
+    ]
+  },
+  {
+    id: 'js',
+    name: 'JS (Beta)',
+    steps: [
+      {
+        indicatorNumber: 1,
+        title: 'Enable experimental frontend support in the APM server',
+        textPre:
+          'Please refer to the [documentation](https://www.elastic.co/guide/en/apm/server/6.2/frontend.html)'
+      },
+      {
+        indicatorNumber: 2,
+        title: 'Install the APM agent',
+        textPre:
+          'Install the APM agent for JavaScript as a dependency to your application:',
+        code: `npm install elastic-apm-js-base --save`
+      },
+      {
+        indicatorNumber: 3,
+        title: 'Configure the agent',
+        textPre: 'Agents are libraries that run inside of your application.',
+        codeLanguage: 'javascript',
+        code: `import { init as initApm } from 'elastic-apm-js-base'
+var apm = initApm({
+  
+  // Set custom APM Server URL (default: http://localhost:8200)
+  serverUrl: 'http://localhost:8200',
+  
+  // Set required service name
+  serviceName: 'service-name',
+  
+  // Set service version (required for sourcemap feature)
+  serviceVersion: 'service-version'
+})`,
+        textPost:
+          'See the [documentation](https://www.elastic.co/guide/en/apm/agent/js-base/6.2/index.html) for advanced usage.'
+      },
+      {
+        indicatorNumber: 4,
+        title: 'APM agent status',
+        textPre:
+          "Let's check that the agent is running and sending up data to APM Server.",
+        textPost:
+          '**Warning: The JS agent is currently in Beta and not meant for production use.**',
         isStatusStep: true
       }
     ]

@@ -70,7 +70,7 @@ function Introduction() {
             </li>
           </ul>
           For more information,{' '}
-          <a href="https://www.elastic.co/guide/en/apm/get-started/6.1/index.html">
+          <a href="https://www.elastic.co/guide/en/apm/get-started/6.2/index.html">
             please see our documentation.
           </a>{' '}
           To get started, follow the steps below.
