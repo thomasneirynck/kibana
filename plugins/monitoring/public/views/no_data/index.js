@@ -1,6 +1,15 @@
 import uiRoutes from 'ui/routes';
 import template from './index.html';
 
+import React from 'react';
+import {
+  render,
+  unmountComponentAtNode
+} from 'react-dom';
+import { NoData } from 'plugins/monitoring/components/no_data';
+
+const REACT_NODE_ID = 'noDataReact';
+
 uiRoutes.when('/no-data', {
   template,
   resolve: {
@@ -37,6 +46,11 @@ uiRoutes.when('/no-data', {
       }
     });
 
+    // Mount the React component to the template
+    $scope.$$postDigest(() => {
+      render(<NoData />, document.getElementById(REACT_NODE_ID));
+    });
+
     // Register the monitoringClusters service.
     const monitoringClusters = $injector.get('monitoringClusters');
     $executor.register({
@@ -55,7 +69,10 @@ uiRoutes.when('/no-data', {
     $executor.start();
 
     // Destory the executor
-    $scope.$on('$destroy', $executor.destroy);
+    $scope.$on('$destroy', () => {
+      $executor.destroy();
+      unmountComponentAtNode(document.getElementById(REACT_NODE_ID));
+    });
   }
 })
   .otherwise({ redirectTo: '/home' });
