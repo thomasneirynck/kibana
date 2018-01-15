@@ -40,6 +40,7 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
       { index: 0, title: 'Job Details', hidden: false },
       { index: 1, title: 'Detectors', hidden: false },
       { index: 2, title: 'Datafeed', hidden: true },
+      { index: 3, title: 'Custom URLs', hidden: false }
     ],
     changeTab: function (tab) {
       $scope.ui.currentTab = tab.index;
@@ -56,7 +57,8 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
       tabs: [
         { index: 0, valid: true, checks: { categorizationFilters: { valid: true } } }
       ]
-    }
+    },
+    editingNewCustomUrl: false
   };
 
   // extract datafeed settings
@@ -72,7 +74,11 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
     $scope.ui.datafeed.scrollSizeText = datafeedConfig.scroll_size;
   }
 
-  $scope.addCustomUrl = function () {
+  $scope.editNewCustomUrl = function () {
+    $scope.ui.editingNewCustomUrl = true;
+  };
+
+  $scope.addCustomUrl = function (customUrl) {
     if (!$scope.job.custom_settings) {
       $scope.job.custom_settings = {};
     }
@@ -80,7 +86,9 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
       $scope.job.custom_settings.custom_urls = [];
     }
 
-    $scope.job.custom_settings.custom_urls.push({ url_name: '', url_value: '' });
+    $scope.job.custom_settings.custom_urls.push(customUrl);
+
+    $scope.ui.editingNewCustomUrl = false;
   };
 
   $scope.removeCustomUrl = function (index) {

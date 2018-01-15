@@ -151,5 +151,23 @@
   },
   "new_job_recognizer_job_prefix": {
     "text": "A prefix which will be added to the beginning of each job ID."
+  },
+  "new_custom_url_experimental": {
+    "text": "Experimental feature for creating a drill-through link for a job."
+  },
+  "new_custom_url_label": {
+    "text": "A label for the drill-through link."
+  },
+  "new_custom_url_link_to": {
+    "text": "Select whether to link to a Kibana dashboard or another URL."
+  },
+  "new_custom_url_dashboard": {
+    "text": "Select the dashboard to link to."
+  },
+  "new_custom_url_query_entity": {
+    "text": "Optional, entities from the anomaly that will be used in the dashboard query."
+  },
+  "new_custom_url_value": {
+    "text": "URL of the drill-through link. Supports string substitution for analyzed fields e.g. $hostname$."
   }
 }

@@ -13,6 +13,6 @@
  * strictly prohibited.
  */
 
-import './edit_job_modal_controller';
-import 'plugins/ml/jobs/components/custom_url_editor';
-import 'plugins/ml/components/job_group_select';
+
+import './custom_url_editor_directive';
+import './styles/main.less';

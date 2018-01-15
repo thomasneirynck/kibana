@@ -15,7 +15,7 @@
 
 import $ from   'jquery';
 
-import 'plugins/ml/settings/scheduled_events/components/item_select';
+import 'plugins/ml/components/item_select';
 import 'plugins/ml/settings/scheduled_events/components/events_list';
 
 import uiRoutes from 'ui/routes';
