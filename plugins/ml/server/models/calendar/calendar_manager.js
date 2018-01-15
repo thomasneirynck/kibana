@@ -110,7 +110,9 @@ export class CalendarManager {
 
 
       // add all new events
-      await this.eventManager.addEvents(calendarId, eventsToAdd);
+      if (eventsToAdd.length !== 0) {
+        await this.eventManager.addEvents(calendarId, eventsToAdd);
+      }
 
       // remove all removed events
       await Promise.all(eventsToRemove.map(async (event) => {
