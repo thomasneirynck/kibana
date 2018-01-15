@@ -2,10 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import { units, px, colors, borderRadius } from '../../../../style/variables';
 import { get, capitalize, isEmpty } from 'lodash';
+import { withRouter } from 'react-router-dom';
 import { STATUS } from '../../../../constants';
 
 import { ContextProperties } from '../../../shared/ContextProperties';
-import { TabLink, SectionHeader } from '../../../shared/UIComponents';
+import { Tab, SectionHeader } from '../../../shared/UIComponents';
 import DiscoverButton from '../../../shared/DiscoverButton';
 import {
   PropertiesTable,
@@ -18,6 +19,7 @@ import {
   SERVICE_AGENT_NAME,
   SERVICE_LANGUAGE_NAME
 } from '../../../../../common/constants';
+import { fromQuery, toQuery } from '../../../../utils/url';
 
 const Container = styled.div`
   position: relative;
@@ -57,7 +59,7 @@ function getTabs(context) {
   return [STACKTRACE_TAB, ...getLevelOneProps(dynamicProps)];
 }
 
-function DetailView({ errorGroup, urlParams }) {
+function DetailView({ errorGroup, urlParams, history, location }) {
   if (errorGroup.status !== STATUS.SUCCESS) {
     return null;
   }
@@ -128,13 +130,21 @@ function DetailView({ errorGroup, urlParams }) {
       <TabContainer>
         {tabs.map(key => {
           return (
-            <TabLink
-              query={{ detailTab: key }}
+            <Tab
+              onClick={() => {
+                history.replace({
+                  ...location,
+                  search: fromQuery({
+                    ...toQuery(location.search),
+                    detailTab: key
+                  })
+                });
+              }}
               selected={currentTab === key}
               key={key}
             >
               {capitalize(key)}
-            </TabLink>
+            </Tab>
           );
         })}
       </TabContainer>
@@ -154,4 +164,4 @@ function DetailView({ errorGroup, urlParams }) {
   );
 }
 
-export default DetailView;
+export default withRouter(DetailView);

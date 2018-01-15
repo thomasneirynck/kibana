@@ -77,46 +77,30 @@ exports[`DetailView should render with data 1`] = `
     </div>
   </div>
   <div class=\\"sc-jDwBTQ krGBWu\\">
-    <a class=\\"kuiLink sc-gZMcBi bnHAqj\\"
-       href=\\"#/?detailTab=stacktrace\\"
-    >
+    <div class=\\"sc-iwsKbI xfglV\\">
       Stacktrace
-    </a>
-    <a class=\\"kuiLink sc-gZMcBi hbZzgv\\"
-       href=\\"#/?detailTab=request\\"
-    >
+    </div>
+    <div class=\\"sc-iwsKbI eQURAw\\">
       Request
-    </a>
-    <a class=\\"kuiLink sc-gZMcBi hbZzgv\\"
-       href=\\"#/?detailTab=response\\"
-    >
+    </div>
+    <div class=\\"sc-iwsKbI eQURAw\\">
       Response
-    </a>
-    <a class=\\"kuiLink sc-gZMcBi hbZzgv\\"
-       href=\\"#/?detailTab=system\\"
-    >
+    </div>
+    <div class=\\"sc-iwsKbI eQURAw\\">
       System
-    </a>
-    <a class=\\"kuiLink sc-gZMcBi hbZzgv\\"
-       href=\\"#/?detailTab=service\\"
-    >
+    </div>
+    <div class=\\"sc-iwsKbI eQURAw\\">
       Service
-    </a>
-    <a class=\\"kuiLink sc-gZMcBi hbZzgv\\"
-       href=\\"#/?detailTab=user\\"
-    >
+    </div>
+    <div class=\\"sc-iwsKbI eQURAw\\">
       User
-    </a>
-    <a class=\\"kuiLink sc-gZMcBi hbZzgv\\"
-       href=\\"#/?detailTab=tags\\"
-    >
+    </div>
+    <div class=\\"sc-iwsKbI eQURAw\\">
       Tags
-    </a>
-    <a class=\\"kuiLink sc-gZMcBi hbZzgv\\"
-       href=\\"#/?detailTab=custom\\"
-    >
+    </div>
+    <div class=\\"sc-iwsKbI eQURAw\\">
       Custom
-    </a>
+    </div>
   </div>
   <div class=\\"sc-gPEVay dLfQVr\\">
     <div>

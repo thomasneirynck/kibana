@@ -1,6 +1,5 @@
 import React from 'react';
 import toDiffableHtml from 'diffable-html';
-import { mount } from 'enzyme';
 import DetailView from '../index';
 import props from './props.json';
 import {
@@ -20,7 +19,7 @@ describe('DetailView', () => {
   });
 
   it('should render empty state', () => {
-    const wrapper = mount(
+    const wrapper = mountWithRouterAndStore(
       <DetailView errorGroup={[]} urlParams={props.urlParams} />,
       storeState
     );

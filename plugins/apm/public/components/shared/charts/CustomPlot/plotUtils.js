@@ -30,6 +30,10 @@ const getYScale = (yMin, yMax) => {
 
 export function getPlotValues(series, width) {
   const allCoordinates = _.flatten(series.map(serie => serie.data));
+  if (_.isEmpty(allCoordinates)) {
+    return null;
+  }
+
   const xMin = d3.min(allCoordinates, d => d.x);
   const xMax = d3.max(allCoordinates, d => d.x);
   const yMin = 0;

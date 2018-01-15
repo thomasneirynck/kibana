@@ -1,9 +1,16 @@
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { getBuckets } from './get_buckets';
 import { calculateBucketSize } from './calculate_bucket_size';
 
 function getDefaultTransactionId(buckets) {
-  const filledBuckets = buckets.filter(bucket => bucket.count);
+  const filledBuckets = buckets.filter(
+    bucket => bucket.count && bucket.sampled
+  );
+
+  if (isEmpty(filledBuckets)) {
+    return;
+  }
+
   const middleIndex = Math.floor(filledBuckets.length / 2);
   return get(filledBuckets, `[${middleIndex}].transaction_id`);
 }

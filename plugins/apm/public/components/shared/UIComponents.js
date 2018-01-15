@@ -24,6 +24,7 @@ export const Tab = styled.div`
   font-size: ${fontSizes.large};
   padding: ${px(unit)} ${px(unit + units.quarter)};
   text-align: center;
+  cursor: pointer;
 
   border-bottom: ${props =>
     props.selected && `${units.quarter / 2}px solid ${colors.blue1}`};

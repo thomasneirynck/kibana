@@ -100,7 +100,11 @@ export class InnerCustomPlot extends PureComponent {
       visibleSeries,
       seriesEnabledState: this.state.seriesEnabledState
     });
+
     const plotValues = this.getPlotValues({ series: enabledSeries, width });
+    if (_.isEmpty(plotValues)) {
+      return null;
+    }
 
     return (
       <div>
