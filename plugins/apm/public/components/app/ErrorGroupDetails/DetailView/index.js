@@ -47,7 +47,8 @@ const TabContentContainer = styled.div`
   padding: ${px(units.plus)} ${px(units.plus)} 0;
 `;
 
-const STACKTRACE_TAB = 'stacktrace';
+const EXC_STACKTRACE_TAB = 'exception_stacktrace';
+const LOG_STACKTRACE_TAB = 'log_stacktrace';
 
 // Ensure the selected tab exists or use the first
 function getCurrentTab(tabs = [], selectedTab) {
@@ -56,7 +57,11 @@ function getCurrentTab(tabs = [], selectedTab) {
 
 function getTabs(context) {
   const dynamicProps = Object.keys(context);
-  return [STACKTRACE_TAB, ...getLevelOneProps(dynamicProps)];
+  return [
+    LOG_STACKTRACE_TAB,
+    EXC_STACKTRACE_TAB,
+    ...getLevelOneProps(dynamicProps)
+  ];
 }
 
 function DetailView({ errorGroup, urlParams, history, location }) {
@@ -88,12 +93,18 @@ function DetailView({ errorGroup, urlParams, history, location }) {
     }
   ];
 
-  const stackframes = get(errorGroup.data.error.error, 'exception.stacktrace');
+  const excStackframes = get(
+    errorGroup.data.error.error,
+    'exception.stacktrace'
+  );
+  const logStackframes = get(errorGroup.data.error.error, 'log.stacktrace');
+
   const codeLanguage = get(errorGroup.data.error, SERVICE_LANGUAGE_NAME);
 
   const context = get(errorGroup.data.error, 'context', []);
 
   const tabs = getTabs(context);
+
   const currentTab = getCurrentTab(tabs, urlParams.detailTab);
 
   const occurencesCount = errorGroup.data.occurrencesCount;
@@ -143,22 +154,39 @@ function DetailView({ errorGroup, urlParams, history, location }) {
               selected={currentTab === key}
               key={key}
             >
-              {capitalize(key)}
+              {capitalize(key.replace('_', ' '))}
             </Tab>
           );
         })}
       </TabContainer>
 
       <TabContentContainer>
-        {currentTab === STACKTRACE_TAB ? (
-          <Stacktrace stackframes={stackframes} codeLanguage={codeLanguage} />
-        ) : (
-          <PropertiesTable
-            propData={errorGroup.data.error.context[currentTab]}
-            propKey={currentTab}
-            agentName={agentName}
-          />
-        )}
+        {(() => {
+          switch (currentTab) {
+            case LOG_STACKTRACE_TAB:
+              return (
+                <Stacktrace
+                  stackframes={logStackframes}
+                  codeLanguage={codeLanguage}
+                />
+              );
+            case EXC_STACKTRACE_TAB:
+              return (
+                <Stacktrace
+                  stackframes={excStackframes}
+                  codeLanguage={codeLanguage}
+                />
+              );
+            default:
+              return (
+                <PropertiesTable
+                  propData={errorGroup.data.error.context[currentTab]}
+                  propKey={currentTab}
+                  agentName={agentName}
+                />
+              );
+          }
+        })()}
       </TabContentContainer>
     </Container>
   );

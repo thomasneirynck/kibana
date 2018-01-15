@@ -6,7 +6,15 @@ import { PageHeader } from '../../shared/UIComponents';
 import DetailView from './DetailView';
 import Distribution from './Distribution';
 
-import { units, px, fontFamilyCode, fontSizes } from '../../../style/variables';
+import { EuiText } from '@elastic/eui';
+import {
+  unit,
+  units,
+  px,
+  colors,
+  fontFamilyCode,
+  fontSizes
+} from '../../../style/variables';
 import {
   ERROR_CULPRIT,
   ERROR_LOG_MESSAGE,
@@ -14,8 +22,14 @@ import {
 } from '../../../../common/constants';
 
 const Titles = styled.div`
-  height: ${px(units.triple)};
+  height: ${px(unit * 10)};
   margin-bottom: ${px(units.plus)};
+`;
+
+const Label = styled.div`
+  margin-bottom: ${px(units.quarter)};
+  font-size: ${fontSizes.small};
+  color: ${colors.gray3};
 `;
 
 const Message = styled.div`
@@ -53,9 +67,9 @@ class ErrorGroupDetails extends Component {
     // If there are 0 occurrences, show only distribution chart w. empty message
     const showDetails = errorGroup.data.occurrencesCount !== 0;
 
-    const message =
-      get(errorGroup.data.error, ERROR_LOG_MESSAGE) ||
-      get(errorGroup.data.error, ERROR_EXC_MESSAGE);
+    const logMessage = get(errorGroup.data.error, ERROR_LOG_MESSAGE);
+    const excMessage = get(errorGroup.data.error, ERROR_EXC_MESSAGE);
+
     const culprit = get(errorGroup.data.error, ERROR_CULPRIT);
 
     return (
@@ -63,8 +77,14 @@ class ErrorGroupDetails extends Component {
         <PageHeader>Error group {errorGroupId.slice(0, 5) || 'N/A'}</PageHeader>
         {showDetails && (
           <Titles>
-            <Message>{message || 'N/A'}</Message>
-            <Culprit>{culprit || 'N/A'}</Culprit>
+            <EuiText>
+              <Label>Log message</Label>
+              <Message>{logMessage || 'N/A'}</Message>
+              <Label>Exception message</Label>
+              <Message>{excMessage || 'N/A'}</Message>
+              <Label>Culprit</Label>
+              <Culprit>{culprit || 'N/A'}</Culprit>
+            </EuiText>
           </Titles>
         )}
         <Distribution />
