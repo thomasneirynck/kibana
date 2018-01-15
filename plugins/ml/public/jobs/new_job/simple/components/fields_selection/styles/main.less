@@ -15,19 +15,21 @@
       display: flex;
       flex-direction: row;
 
-      label {
-        padding-left: 2px;
+      label.kuiCheckBoxLabel {
+        padding-left: 2px !important;
         flex: auto;
         white-space: nowrap;
         overflow: hidden;
         input {
           min-width: 13px !important;
+          vertical-align: middle;
         }
         span {
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
           margin-left: 4px;
+          vertical-align: middle;
         }
       }
 
