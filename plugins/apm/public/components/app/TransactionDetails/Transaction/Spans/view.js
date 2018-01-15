@@ -1,11 +1,16 @@
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
-import { first, get, zipObject, difference, uniq } from 'lodash';
+import { get, uniq } from 'lodash';
 import Span from './Span';
 import TimelineHeader from './TimelineHeader';
 import { SPAN_ID } from '../../../../../../common/constants';
 import { STATUS } from '../../../../../constants';
 import { colors } from '../../../../../style/variables';
+import {
+  getPrimaryType,
+  getSpanLabel,
+  getColorByType
+} from '../../../../../utils/formatters';
 import { StickyContainer } from 'react-sticky';
 import Timeline from '../../../../shared/charts/Timeline';
 import EmptyMessage from '../../../../shared/EmptyMessage';
@@ -59,6 +64,7 @@ class Spans extends PureComponent {
     const spanTypes = uniq(
       spans.data.spanTypes.map(({ type }) => getPrimaryType(type))
     );
+
     const getSpanColor = getColorByType(spanTypes);
 
     const totalDuration = spans.data.duration;
@@ -95,6 +101,7 @@ class Spans extends PureComponent {
                   key={get({ span }, SPAN_ID)}
                   color={getSpanColor(getPrimaryType(span.type))}
                   span={span}
+                  spanTypes={spans.data.spanTypes}
                   totalDuration={totalDuration}
                   isSelected={get({ span }, SPAN_ID) === urlParams.spanId}
                 />
@@ -119,40 +126,6 @@ function loadSpans(props) {
   if (serviceName && start && end && transactionId && !props.spansNext.status) {
     props.loadSpans({ serviceName, start, end, transactionId });
   }
-}
-
-function getColorByType(types) {
-  const assignedColors = {
-    app: colors.apmBlue,
-    cache: colors.apmGreen,
-    ext: colors.apmPurple,
-    template: colors.apmRed2,
-    custom: colors.apmTan,
-    db: colors.apmOrange
-  };
-
-  const unknownTypes = difference(types, Object.keys(assignedColors));
-  const unassignedColors = zipObject(unknownTypes, [
-    colors.apmYellow,
-    colors.apmRed,
-    colors.apmBrown,
-    colors.apmPink
-  ]);
-
-  return type => assignedColors[type] || unassignedColors[type];
-}
-
-function getSpanLabel(type) {
-  switch (type) {
-    case 'db':
-      return 'DB';
-    default:
-      return type;
-  }
-}
-
-function getPrimaryType(type) {
-  return first(type.split('.'));
 }
 
 export default Spans;
