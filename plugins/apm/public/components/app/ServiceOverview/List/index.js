@@ -20,10 +20,10 @@ class List extends Component {
         },
         {
           key: 'transactionsPerMinute',
-          label: 'Transactions / min.',
+          label: 'Trans. per minute',
           alignRight: true
         },
-        { key: 'errorsPerMinute', label: 'Errors  / min.', alignRight: true }
+        { key: 'errorsPerMinute', label: 'Errors per minute', alignRight: true }
       ].map(({ key, label, alignRight }) => (
         <AlignmentKuiTableHeaderCell
           key={key}

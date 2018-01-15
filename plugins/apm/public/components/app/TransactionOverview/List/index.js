@@ -4,14 +4,18 @@ import { get } from 'lodash';
 import { TRANSACTION_ID } from '../../../../../common/constants';
 
 import { KuiTableHeaderCell } from 'ui_framework/components';
+import { AlignmentKuiTableHeaderCell } from '../../../shared/APMTable/APMTable';
 
 import FilterableAPMTable from '../../../shared/APMTable/FilterableAPMTable';
 import ListItem from './ListItem';
-import { tpmUnit } from '../../../../utils/formatters';
 import ImpactTooltip from './ImpactTooltip';
 
 const getRelativeImpact = (impact, impactMin, impactMax) =>
   Math.max((impact - impactMin) / Math.max(impactMax - impactMin, 1) * 100, 1);
+
+function tpmUnitFull(type) {
+  return type === 'request' ? 'Req. per minute' : 'Trans. per minute';
+}
 
 class List extends Component {
   render() {
@@ -25,19 +29,40 @@ class List extends Component {
 
     const renderHead = () => {
       const cells = [
-        { key: 'name', label: 'Name' },
-        { key: 'avg', label: 'Avg. resp. time' },
-        { key: 'p95', label: '95th percentile' },
-        { key: 'rpm', label: tpmUnit(type).toUpperCase() }
-      ].map(({ key, label }) => (
-        <KuiTableHeaderCell
+        { key: 'name', sortable: true, label: 'Name' },
+        {
+          key: 'avg',
+          sortable: true,
+          alignRight: true,
+          label: 'Avg. resp. time'
+        },
+        {
+          key: 'p95',
+          sortable: true,
+          alignRight: true,
+          label: '95th percentile'
+        },
+        {
+          key: 'rpm',
+          sortable: true,
+          alignRight: true,
+          label: tpmUnitFull(type)
+        },
+        { key: 'spacer', sortable: false, label: '' }
+      ].map(({ key, sortable, label, alignRight }) => (
+        <AlignmentKuiTableHeaderCell
           key={key}
-          onSort={() => changeTransactionSorting(key)}
-          isSorted={transactionSorting.key === key}
-          isSortAscending={!transactionSorting.descending}
+          className={alignRight ? 'kuiTableHeaderCell--alignRight' : ''}
+          {...(sortable
+            ? {
+                onSort: () => changeTransactionSorting(key),
+                isSorted: transactionSorting.key === key,
+                isSortAscending: !transactionSorting.descending
+              }
+            : {})}
         >
           {label}
-        </KuiTableHeaderCell>
+        </AlignmentKuiTableHeaderCell>
       ));
 
       const impactCell = (

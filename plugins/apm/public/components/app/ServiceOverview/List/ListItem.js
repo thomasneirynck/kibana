@@ -2,13 +2,19 @@ import React from 'react';
 import styled from 'styled-components';
 import { RelativeLink } from '../../../../utils/url';
 import { KuiTableRow, KuiTableRowCell } from 'ui_framework/components';
-import { px, unit, fontSizes } from '../../../../style/variables';
+import { fontSizes } from '../../../../style/variables';
 import { RIGHT_ALIGNMENT } from '@elastic/eui';
 import { asMillisWithDefault } from '../../../../utils/formatters';
 import numeral from '@elastic/numeral';
 
 const ServiceNameCell = styled(KuiTableRowCell)`
-  max-width: ${px(unit * 2)};
+  max-width: none;
+  width: 40%;
+`;
+
+const ServiceCell = styled(KuiTableRowCell)`
+  max-width: none;
+  width: 15%;
 `;
 
 const AppLink = styled(RelativeLink)`
@@ -20,6 +26,9 @@ function formatString(value) {
 }
 
 function formatNumber(value) {
+  if (value === 0) {
+    return '0';
+  }
   const formatted = numeral(value).format('0.0');
   return formatted <= 0.1 ? '< 0.1' : formatted;
 }
@@ -40,16 +49,16 @@ function ListItem({ service }) {
           {formatString(serviceName)}
         </AppLink>
       </ServiceNameCell>
-      <KuiTableRowCell>{formatString(agentName)}</KuiTableRowCell>
-      <KuiTableRowCell align={RIGHT_ALIGNMENT}>
+      <ServiceCell>{formatString(agentName)}</ServiceCell>
+      <ServiceCell align={RIGHT_ALIGNMENT}>
         {asMillisWithDefault(avgResponseTime)}
-      </KuiTableRowCell>
-      <KuiTableRowCell align={RIGHT_ALIGNMENT}>
-        {formatNumber(transactionsPerMinute)}
-      </KuiTableRowCell>
-      <KuiTableRowCell align={RIGHT_ALIGNMENT}>
-        {formatNumber(errorsPerMinute)}
-      </KuiTableRowCell>
+      </ServiceCell>
+      <ServiceCell align={RIGHT_ALIGNMENT}>
+        {formatNumber(transactionsPerMinute)} tpm
+      </ServiceCell>
+      <ServiceCell align={RIGHT_ALIGNMENT}>
+        {formatNumber(errorsPerMinute)} err.
+      </ServiceCell>
     </KuiTableRow>
   );
 }

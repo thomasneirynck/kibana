@@ -3,13 +3,13 @@ import styled from 'styled-components';
 
 import { KuiTableRow, KuiTableRowCell } from 'ui_framework/components';
 import {
-  unit,
   units,
   borderRadius,
   px,
   colors,
   fontFamilyCode
 } from '../../../../style/variables';
+import { RIGHT_ALIGNMENT } from '@elastic/eui';
 import { RelativeLink, legacyEncodeURIComponent } from '../../../../utils/url';
 
 import { get } from 'lodash';
@@ -22,7 +22,23 @@ import {
 
 const TransactionNameCell = styled(KuiTableRowCell)`
   font-family: ${fontFamilyCode};
-  max-width: ${px(unit * 4)};
+  max-width: none;
+  width: 38%;
+`;
+
+const TransactionKPICell = styled(KuiTableRowCell)`
+  max-width: none;
+  width: 14%;
+`;
+
+const TransactionSpacerCell = styled(KuiTableRowCell)`
+  max-width: none;
+  width: 4%;
+`;
+
+const TransactionImpactCell = styled(KuiTableRowCell)`
+  max-width: none;
+  width: 16%;
 `;
 
 const ImpactBarBackground = styled.div`
@@ -62,14 +78,19 @@ function TransactionListItem({ serviceName, transaction, type, impact }) {
           {transactionName || 'N/A'}
         </RelativeLink>
       </TransactionNameCell>
-      <KuiTableRowCell>{asMillisWithDefault(transaction.avg)}</KuiTableRowCell>
-      <KuiTableRowCell>{asMillisWithDefault(transaction.p95)}</KuiTableRowCell>
-      <KuiTableRowCell>
+      <TransactionKPICell align={RIGHT_ALIGNMENT}>
+        {asMillisWithDefault(transaction.avg)}
+      </TransactionKPICell>
+      <TransactionKPICell align={RIGHT_ALIGNMENT}>
+        {asMillisWithDefault(transaction.p95)}
+      </TransactionKPICell>
+      <TransactionKPICell align={RIGHT_ALIGNMENT}>
         {asDecimal(transaction.rpm)} {tpmUnit(type)}
-      </KuiTableRowCell>
-      <KuiTableRowCell>
+      </TransactionKPICell>
+      <TransactionSpacerCell />
+      <TransactionImpactCell>
         <ImpactSparkline impact={impact} />
-      </KuiTableRowCell>
+      </TransactionImpactCell>
     </KuiTableRow>
   );
 }

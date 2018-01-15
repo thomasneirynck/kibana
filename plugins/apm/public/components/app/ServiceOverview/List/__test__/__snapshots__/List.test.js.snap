@@ -213,10 +213,10 @@ exports[`ErrorGroupOverview -> List should render with data 1`] = `
             scope=\\"col\\"
         >
           <button class=\\"kuiTableHeaderCellButton\\"
-                  aria-label=\\"Sort Transactions / min. descending\\"
+                  aria-label=\\"Sort Trans. per minute descending\\"
           >
             <span class=\\"kuiTableHeaderCell__liner\\">
-              Transactions / min.
+              Trans. per minute
               <span class=\\"kuiTableSortIcon kuiIcon fa-long-arrow-up\\"
                     aria-hidden=\\"true\\"
               >
@@ -228,10 +228,10 @@ exports[`ErrorGroupOverview -> List should render with data 1`] = `
             scope=\\"col\\"
         >
           <button class=\\"kuiTableHeaderCellButton\\"
-                  aria-label=\\"Sort Errors  / min. descending\\"
+                  aria-label=\\"Sort Errors per minute descending\\"
           >
             <span class=\\"kuiTableHeaderCell__liner\\">
-              Errors  / min.
+              Errors per minute
               <span class=\\"kuiTableSortIcon kuiIcon fa-long-arrow-up\\"
                     aria-hidden=\\"true\\"
               >
@@ -243,64 +243,64 @@ exports[`ErrorGroupOverview -> List should render with data 1`] = `
     </thead>
     <tbody>
       <tr class=\\"kuiTableRow\\">
-        <td class=\\"kuiTableRowCell sc-ifAKCX kFpAaU\\">
+        <td class=\\"kuiTableRowCell sc-ifAKCX gYUYKX\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            <a class=\\"kuiLink sc-EHOje kVFMtd\\"
+            <a class=\\"kuiLink sc-bZQynM hhtxjm\\"
                href=\\"#/opbeans-node/transactions\\"
             >
               opbeans-node
             </a>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell\\">
+        <td class=\\"kuiTableRowCell sc-EHOje kWqwVY\\">
           <div class=\\"kuiTableRowCell__liner\\">
             nodejs
           </div>
         </td>
-        <td class=\\"kuiTableRowCell kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-EHOje kWqwVY kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             N/A
           </div>
         </td>
-        <td class=\\"kuiTableRowCell kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-EHOje kWqwVY kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            &lt; 0.1
+            0 tpm
           </div>
         </td>
-        <td class=\\"kuiTableRowCell kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-EHOje kWqwVY kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            46.1
+            46.1 err.
           </div>
         </td>
       </tr>
       <tr class=\\"kuiTableRow\\">
-        <td class=\\"kuiTableRowCell sc-ifAKCX kFpAaU\\">
+        <td class=\\"kuiTableRowCell sc-ifAKCX gYUYKX\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            <a class=\\"kuiLink sc-EHOje kVFMtd\\"
+            <a class=\\"kuiLink sc-bZQynM hhtxjm\\"
                href=\\"#/opbeans-python/transactions\\"
             >
               opbeans-python
             </a>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell\\">
+        <td class=\\"kuiTableRowCell sc-EHOje kWqwVY\\">
           <div class=\\"kuiTableRowCell__liner\\">
             python
           </div>
         </td>
-        <td class=\\"kuiTableRowCell kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-EHOje kWqwVY kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             92 ms
           </div>
         </td>
-        <td class=\\"kuiTableRowCell kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-EHOje kWqwVY kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            86.9
+            86.9 tpm
           </div>
         </td>
-        <td class=\\"kuiTableRowCell kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-EHOje kWqwVY kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            12.6
+            12.6 err.
           </div>
         </td>
       </tr>
