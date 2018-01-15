@@ -186,6 +186,16 @@ module.controller('MlForecastingModal', function (
       });
   }
 
+  function runForecastErrorHandler(resp) {
+    $scope.runStatus.forecastProgress = REQUEST_STATES.ERROR;
+    console.log('Time series forecast modal - error running forecast:', resp);
+    if (resp && resp.message) {
+      msgs.error(resp.message);
+    } else {
+      msgs.error('Unexpected response from running forecast. The request may have failed.');
+    }
+  }
+
   function runForecast(closeJobAfterRunning) {
     $scope.isForecastRunning = true;
     $scope.runStatus.forecastProgress = 0;
@@ -201,16 +211,10 @@ module.controller('MlForecastingModal', function (
         if (resp.forecast_id !== undefined) {
           waitForForecastResults(resp.forecast_id, closeJobAfterRunning);
         } else {
-          $scope.runStatus.forecastProgress = REQUEST_STATES.ERROR;
-          console.log('Unexpected response from running forecast', resp);
-          msgs.error('Unexpected response from running forecast. The request may have failed.');
+          runForecastErrorHandler(resp);
         }
       })
-      .catch((resp) => {
-        $scope.runStatus.forecastProgress = REQUEST_STATES.ERROR;
-        console.log('Time series forecast modal - error running forecast:', resp);
-        msgs.error('Unexpected response from running forecast. The request may have failed.');
-      });
+      .catch(runForecastErrorHandler);
 
   }
 
