@@ -23,13 +23,14 @@ import dateMath from '@elastic/datemath';
 import angular from 'angular';
 
 import uiRoutes from 'ui/routes';
+import { getSafeAggregationName } from 'plugins/ml/../common/util/job_utils';
 import { checkLicenseExpired } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/components/utils/filter_agg_types';
 import { validateJobId } from 'plugins/ml/jobs/new_job/simple/components/utils/validate_job';
 import { adjustIntervalDisplayed } from 'plugins/ml/jobs/new_job/simple/components/utils/adjust_interval';
-import { createSearchItems, getSafeFieldName, createResultsUrl } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
+import { createSearchItems, createResultsUrl } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/components/utils/app_state_settings';
 import { getIndexedFields } from 'plugins/ml/jobs/new_job/simple/components/utils/create_fields';
 import { changeJobIDCase } from 'plugins/ml/jobs/new_job/simple/components/general_job_details/change_job_id_case';
@@ -268,7 +269,7 @@ module
 
       $scope.ui.fields = [];
       _.each(fields, (field, i) => {
-        const id = getSafeFieldName(field.displayName, i);
+        const id = getSafeAggregationName(field.displayName, i);
         const f = {
           id,
           name: field.displayName,

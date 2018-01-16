@@ -41,14 +41,6 @@ export function getQueryFromSavedSearch(formConfig) {
   };
 }
 
-// if a field name contains bad characters which break elasticsearch aggregations
-// use a dummy name.
-// allowed characters: alpha-numeric - _ .
-// e.g. field_0, field_1
-export function getSafeFieldName(displayName, index) {
-  return displayName.match(/^[a-zA-Z0-9-_.]+$/) ? displayName : `field_${index}`;
-}
-
 // create items used for searching and job creation.
 // takes the $route object to retrieve the indexPattern and savedSearch from the url
 export function createSearchItems($route) {

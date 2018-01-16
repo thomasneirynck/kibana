@@ -24,7 +24,8 @@ import {
   mlFunctionToESAggregation,
   isJobIdValid,
   ML_MEDIAN_PERCENTS,
-  prefixDatafeedId
+  prefixDatafeedId,
+  getSafeAggregationName
 } from '../job_utils';
 
 describe('ML - job utils', () => {
@@ -360,5 +361,18 @@ describe('ML - job utils', () => {
     it('returns prefix-job"', () => {
       expect(prefixDatafeedId('job', 'prefix-')).to.be('prefix-job');
     });
+  });
+
+  describe('getSafeAggregationName', () => {
+    it('"foo" should be "foo"', () => {
+      expect(getSafeAggregationName('foo', 0)).to.be('foo');
+    });
+    it('"foo.bar" should be "foo.bar"', () => {
+      expect(getSafeAggregationName('foo.bar', 0)).to.be('foo.bar');
+    });
+    it('"foo&bar" should be "field_0"', () => {
+      expect(getSafeAggregationName('foo&bar', 0)).to.be('field_0');
+    });
+
   });
 });

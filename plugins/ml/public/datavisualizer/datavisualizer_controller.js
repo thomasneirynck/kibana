@@ -177,7 +177,7 @@ module
     };
 
     $scope.metricFieldFilterChanged = function () {
-    // Clear the previous filter timeout.
+      // Clear the previous filter timeout.
       if (metricFieldFilterTimeout !== undefined) {
         $timeout.cancel(metricFieldFilterTimeout);
       }
@@ -416,7 +416,7 @@ module
           fieldFormat: field.format,
           aggregatable: field.aggregatable,
           scripted: field.scripted,
-          loading: !fieldData.existInDocs
+          loading: fieldData.existsInDocs
         };
 
         // Map the field type from the Kibana index pattern to the field type
@@ -507,7 +507,7 @@ module
     }
 
     function loadNonMetricFieldStats() {
-    // Only request data for fields that exist in documents.
+      // Only request data for fields that exist in documents.
       let fields = _.filter($scope.fieldCards, { existsInDocs: true });
 
       // Pass the field name, type and cardinality in the request.
@@ -521,6 +521,7 @@ module
       });
 
       if (fields.length > 0) {
+
         ml.getVisualizerFieldStats({
           indexPatternTitle: indexPattern.title,
           query: $scope.searchQuery,

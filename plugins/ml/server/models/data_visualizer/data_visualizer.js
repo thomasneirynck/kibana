@@ -19,6 +19,7 @@ import {
   buildSamplerAggregation,
   getSamplerAggregationsResponsePath } from '../../lib/query_utils';
 import { ML_JOB_FIELD_TYPES } from '../../../common/constants/field_types';
+import { getSafeAggregationName } from '../../../common/util/job_utils';
 
 const SAMPLER_TOP_TERMS_THRESHOLD = 100000;
 const SAMPLER_TOP_TERMS_SHARD_SIZE = 5000;
@@ -248,13 +249,15 @@ export class DataVisualizer {
     // Value count aggregation faster way of checking if field exists than using
     // filter aggregation with exists query.
     const aggs = {};
-    aggregatableFields.forEach((field) => {
-      aggs[`${field}_count`] = {
+    aggregatableFields.forEach((field, i) => {
+      const safeFieldName = getSafeAggregationName(field, i);
+      aggs[`${safeFieldName}_count`] = {
         value_count: { field }
       };
-      aggs[`${field}_cardinality`] = {
+      aggs[`${safeFieldName}_cardinality`] = {
         cardinality: { field }
       };
+
     });
 
     const body = {
@@ -277,10 +280,11 @@ export class DataVisualizer {
 
     const aggsPath = getSamplerAggregationsResponsePath(samplerShardSize);
     const sampleCount = samplerShardSize > 0 ? _.get(aggregations, ['sample', 'doc_count'], 0) : totalCount;
-    aggregatableFields.forEach((field) => {
-      const count = _.get(aggregations, [...aggsPath, `${field}_count`, 'value'], 0);
+    aggregatableFields.forEach((field, i) => {
+      const safeFieldName = getSafeAggregationName(field, i);
+      const count = _.get(aggregations, [...aggsPath, `${safeFieldName}_count`, 'value'], 0);
       if (count > 0) {
-        const cardinality = _.get(aggregations, [...aggsPath, `${field}_cardinality`, 'value'], 0);
+        const cardinality = _.get(aggregations, [...aggsPath, `${safeFieldName}_cardinality`, 'value'], 0);
         stats.aggregatableExistsFields.push({
           fieldName: field,
           existsInDocs: true,
@@ -401,11 +405,12 @@ export class DataVisualizer {
     const percents = Array.from(Array(MAX_PERCENT / PERCENTILE_SPACING), () => count += PERCENTILE_SPACING);
 
     const aggs = {};
-    fields.forEach((field) => {
-      aggs[`${field.fieldName}_field_stats`] = {
+    fields.forEach((field, i) => {
+      const safeFieldName = getSafeAggregationName(field.fieldName, i);
+      aggs[`${safeFieldName}_field_stats`] = {
         stats: { field: field.fieldName }
       };
-      aggs[`${field.fieldName}_percentiles`] = {
+      aggs[`${safeFieldName}_percentiles`] = {
         percentiles: {
           field: field.fieldName,
           percents: percents,
@@ -426,7 +431,7 @@ export class DataVisualizer {
       // If cardinality >= SAMPLE_TOP_TERMS_THRESHOLD, run the top terms aggregation
       // in a sampler aggregation, even if no sampling has been specified (samplerShardSize < 1).
       if (samplerShardSize < 1 && field.cardinality >= SAMPLER_TOP_TERMS_THRESHOLD) {
-        aggs[`${field.fieldName}_top`] = {
+        aggs[`${safeFieldName}_top`] = {
           sampler: {
             shard_size: SAMPLER_TOP_TERMS_SHARD_SIZE
           },
@@ -435,7 +440,7 @@ export class DataVisualizer {
           }
         };
       } else {
-        aggs[`${field.fieldName}_top`] = top;
+        aggs[`${safeFieldName}_top`] = top;
       }
 
     });
@@ -453,9 +458,10 @@ export class DataVisualizer {
     const aggregations = resp.aggregations;
     const aggsPath = getSamplerAggregationsResponsePath(samplerShardSize);
     const batchStats = [];
-    fields.forEach((field) => {
+    fields.forEach((field, i) => {
+      const safeFieldName = getSafeAggregationName(field.fieldName, i);
       const fieldStatsResp =
-        _.get(aggregations, [...aggsPath, `${field.fieldName}_field_stats`], {});
+        _.get(aggregations, [...aggsPath, `${safeFieldName}_field_stats`], {});
       const stats = {
         fieldName: field.fieldName,
         count: _.get(fieldStatsResp, 'count', 0),
@@ -465,7 +471,7 @@ export class DataVisualizer {
         isTopValuesSampled: field.cardinality >= SAMPLER_TOP_TERMS_THRESHOLD || samplerShardSize > 0
       };
 
-      const topAggsPath = [...aggsPath, `${field.fieldName}_top`];
+      const topAggsPath = [...aggsPath, `${safeFieldName}_top`];
       if (samplerShardSize < 1 && field.cardinality >= SAMPLER_TOP_TERMS_THRESHOLD) {
         topAggsPath.push('top');
       }
@@ -479,7 +485,7 @@ export class DataVisualizer {
       });
 
       if (stats.count > 0) {
-        const percentiles = _.get(aggregations, [...aggsPath, `${field.fieldName}_percentiles`, 'values'], []);
+        const percentiles = _.get(aggregations, [...aggsPath, `${safeFieldName}_percentiles`, 'values'], []);
         const medianPercentile = _.find(percentiles, { key: 50 });
         stats.median = medianPercentile !== undefined ? medianPercentile.value : 0;
         stats.distribution = this.processDistributionData(percentiles, PERCENTILE_SPACING, stats.min);
@@ -505,7 +511,8 @@ export class DataVisualizer {
     const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
 
     const aggs = {};
-    fields.forEach((field) => {
+    fields.forEach((field, i) => {
+      const safeFieldName = getSafeAggregationName(field.fieldName, i);
       const top = {
         terms: {
           field: field.fieldName,
@@ -519,7 +526,7 @@ export class DataVisualizer {
       // If cardinality >= SAMPLE_TOP_TERMS_THRESHOLD, run the top terms aggregation
       // in a sampler aggregation, even if no sampling has been specified (samplerShardSize < 1).
       if (samplerShardSize < 1 && field.cardinality >= SAMPLER_TOP_TERMS_THRESHOLD) {
-        aggs[`${field.fieldName}_top`] = {
+        aggs[`${safeFieldName}_top`] = {
           sampler: {
             shard_size: SAMPLER_TOP_TERMS_SHARD_SIZE
           },
@@ -528,7 +535,7 @@ export class DataVisualizer {
           }
         };
       } else {
-        aggs[`${field.fieldName}_top`] = top;
+        aggs[`${safeFieldName}_top`] = top;
       }
 
     });
@@ -546,13 +553,14 @@ export class DataVisualizer {
     const aggregations = resp.aggregations;
     const aggsPath = getSamplerAggregationsResponsePath(samplerShardSize);
     const batchStats = [];
-    fields.forEach((field) => {
+    fields.forEach((field, i) => {
+      const safeFieldName = getSafeAggregationName(field.fieldName, i);
       const stats = {
         fieldName: field.fieldName,
         isTopValuesSampled: field.cardinality >= SAMPLER_TOP_TERMS_THRESHOLD || samplerShardSize > 0
       };
 
-      const topAggsPath = [...aggsPath, `${field.fieldName}_top`];
+      const topAggsPath = [...aggsPath, `${safeFieldName}_top`];
       if (samplerShardSize < 1 && field.cardinality >= SAMPLER_TOP_TERMS_THRESHOLD) {
         topAggsPath.push('top');
       }
@@ -585,8 +593,9 @@ export class DataVisualizer {
     const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
 
     const aggs = {};
-    fields.forEach((field) => {
-      aggs[`${field.fieldName}_field_stats`] = {
+    fields.forEach((field, i) => {
+      const safeFieldName = getSafeAggregationName(field.fieldName, i);
+      aggs[`${safeFieldName}_field_stats`] = {
         stats: { field: field.fieldName }
       };
     });
@@ -604,9 +613,10 @@ export class DataVisualizer {
     const aggregations = resp.aggregations;
     const aggsPath = getSamplerAggregationsResponsePath(samplerShardSize);
     const batchStats = [];
-    fields.forEach((field) => {
+    fields.forEach((field, i) => {
+      const safeFieldName = getSafeAggregationName(field.fieldName, i);
       const fieldStatsResp =
-        _.get(aggregations, [...aggsPath, `${field.fieldName}_field_stats`], {});
+        _.get(aggregations, [...aggsPath, `${safeFieldName}_field_stats`], {});
       batchStats.push({
         fieldName: field.fieldName,
         count: _.get(fieldStatsResp, 'count', 0),
@@ -631,11 +641,12 @@ export class DataVisualizer {
     const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
 
     const aggs = {};
-    fields.forEach((field) => {
-      aggs[`${field.fieldName}_value_count`] = {
+    fields.forEach((field, i) => {
+      const safeFieldName = getSafeAggregationName(field.fieldName, i);
+      aggs[`${safeFieldName}_value_count`] = {
         value_count: { field: field.fieldName },
       };
-      aggs[`${field.fieldName}_values`] = {
+      aggs[`${safeFieldName}_values`] = {
         terms: {
           field: field.fieldName,
           size: 2
@@ -656,15 +667,16 @@ export class DataVisualizer {
     const aggregations = resp.aggregations;
     const aggsPath = getSamplerAggregationsResponsePath(samplerShardSize);
     const batchStats = [];
-    fields.forEach((field) => {
+    fields.forEach((field, i) => {
+      const safeFieldName = getSafeAggregationName(field.fieldName, i);
       const stats = {
         fieldName: field.fieldName,
-        count: _.get(aggregations, [...aggsPath, `${field.fieldName}_value_count`, 'value'], 0),
+        count: _.get(aggregations, [...aggsPath, `${safeFieldName}_value_count`, 'value'], 0),
         trueCount: 0,
         falseCount: 0
       };
 
-      const valueBuckets = _.get(aggregations, [...aggsPath, `${field.fieldName}_values`, 'buckets'], []);
+      const valueBuckets = _.get(aggregations, [...aggsPath, `${safeFieldName}_values`, 'buckets'], []);
       _.each(valueBuckets, (bucket) => {
         stats[`${bucket.key_as_string}Count`] = bucket.doc_count;
       });
