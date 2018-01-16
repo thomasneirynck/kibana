@@ -23,8 +23,19 @@ import {
   units,
   px,
   colors,
+  borderRadius,
+  fontFamilyCode,
   fontSizes
 } from '../../../../../../style/variables';
+
+import SyntaxHighlighter, {
+  registerLanguage
+} from 'react-syntax-highlighter/dist/light';
+import { xcode } from 'react-syntax-highlighter/dist/styles';
+
+import sql from 'react-syntax-highlighter/dist/languages/sql';
+
+registerLanguage('sql', sql);
 
 const DetailsWrapper = styled.div`
   display: flex;
@@ -47,7 +58,16 @@ const DetailsText = styled.div`
 `;
 
 const StackTraceContainer = styled.div`
-  margin-top: ${unit}px;
+  margin-top: ${px(unit)};
+`;
+
+const DatabaseStatement = styled.div`
+  margin-top: ${px(unit)};
+  padding: ${px(units.half)} ${px(unit)};
+  background: ${colors.yellow};
+  border-radius: ${borderRadius};
+  border: 1px solid ${colors.gray4};
+  font-family: ${fontFamilyCode};
 `;
 
 function SpanDetails({ span, spanTypes, totalDuration, transactionId }) {
@@ -72,6 +92,9 @@ function SpanDetails({ span, spanTypes, totalDuration, transactionId }) {
       sort: { '@timestamp': 'desc' }
     }
   };
+
+  const dbType = get(span, 'context.db.type');
+  const dbStatement = get(span, 'context.db.statement');
 
   return (
     <div>
@@ -100,11 +123,38 @@ function SpanDetails({ span, spanTypes, totalDuration, transactionId }) {
         </DiscoverButton>
       </DetailsWrapper>
 
+      <DatabaseContext dbType={dbType} dbStatement={dbStatement} />
+
       <StackTraceContainer>
         <Stacktrace stackframes={stackframes} codeLanguage={codeLanguage} />
       </StackTraceContainer>
     </div>
   );
+}
+
+function DatabaseContext({ dbType, dbStatement }) {
+  if (dbType && dbType === 'sql') {
+    return (
+      <DatabaseStatement>
+        <SyntaxHighlighter
+          language={'sql'}
+          style={xcode}
+          customStyle={{
+            color: null,
+            background: null,
+            padding: null,
+            lineHeight: px(unit * 1.5),
+            whiteSpace: 'pre-wrap',
+            overflowX: 'scroll'
+          }}
+        >
+          {dbStatement}
+        </SyntaxHighlighter>
+      </DatabaseStatement>
+    );
+  } else {
+    return <DatabaseStatement>{dbStatement}</DatabaseStatement>;
+  }
 }
 
 SpanDetails.propTypes = {
