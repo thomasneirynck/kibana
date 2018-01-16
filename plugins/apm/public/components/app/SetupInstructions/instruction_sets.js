@@ -214,7 +214,7 @@ var apm = require('elastic-apm-node').start({
     serverUrl: ''
 })`,
         textPost:
-          'See [the documentation](https://www.elastic.co/guide/en/apm/agent/nodejs/current/index.html) for advanced usage. Babel users, please refer to the documentation.'
+          'See [the documentation](https://www.elastic.co/guide/en/apm/agent/nodejs/1.x/index.html) for advanced usage, including how to use with [Babel/ES Modules](https://www.elastic.co/guide/en/apm/agent/nodejs/1.x/advanced-setup.html#es-modules).'
       },
       {
         indicatorNumber: 3,
@@ -261,7 +261,7 @@ MIDDLEWARE = (
 )
 `,
         textPost:
-          'See [the documentation](https://www.elastic.co/guide/en/apm/agent/python/current/django-support.html) for advanced usage.'
+          'See the [documentation](https://www.elastic.co/guide/en/apm/agent/python/2.x/django-support.html) for advanced usage.'
       },
       {
         indicatorNumber: 3,
@@ -303,7 +303,7 @@ app.config['ELASTIC_APM'] = {
 apm = ElasticAPM(app)
 `,
         textPost:
-          'See [the documentation](https://www.elastic.co/guide/en/apm/agent/python/current/flask-support.html) for advanced usage.'
+          'See [the documentation](https://www.elastic.co/guide/en/apm/agent/python/2.x/flask-support.html) for advanced usage.'
       },
       {
         indicatorNumber: 3,
@@ -333,7 +333,7 @@ apm = ElasticAPM(app)
         code: `# config/elastic_apm.yml
         server_url: 'http://localhost:8200'`,
         textPost:
-          'See the [documentation](https://www.elastic.co/guide/en/apm/agent/ruby/current/index.html) for configuration options and advanced usage.'
+          'See [the documentation](https://www.elastic.co/guide/en/apm/agent/ruby/1.x/index.html) for configuration options and advanced usage.'
       },
       {
         indicatorNumber: 3,
@@ -381,7 +381,7 @@ run MySinatraApp
 
 at_exit { ElasticAPM.stop }`,
         textPost:
-          'See the [documentation](https://www.elastic.co/guide/en/apm/agent/ruby/current/index.html) for configuration options and advanced usage.'
+          'See [the documentation](https://www.elastic.co/guide/en/apm/agent/ruby/1.x/index.html) for configuration options and advanced usage.'
       },
       {
         indicatorNumber: 3,
@@ -402,7 +402,7 @@ at_exit { ElasticAPM.stop }`,
         indicatorNumber: 1,
         title: 'Enable experimental frontend support in the APM server',
         textPre:
-          'Please refer to the [documentation](https://www.elastic.co/guide/en/apm/server/6.2/frontend.html)'
+          'Please refer to [the documentation](https://www.elastic.co/guide/en/apm/server/6.2/frontend.html).'
       },
       {
         indicatorNumber: 2,
@@ -429,7 +429,7 @@ var apm = initApm({
   serviceVersion: 'service-version'
 })`,
         textPost:
-          'See the [documentation](https://www.elastic.co/guide/en/apm/agent/js-base/6.2/index.html) for advanced usage.'
+          'See [the documentation](https://www.elastic.co/guide/en/apm/agent/js-base/0.x/index.html) for advanced usage.'
       },
       {
         indicatorNumber: 4,

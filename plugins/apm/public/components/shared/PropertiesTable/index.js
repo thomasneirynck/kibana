@@ -97,31 +97,37 @@ function getLevelTwoProps(dynamicProps, currentKey) {
 }
 
 function getTipText(propertyKey, agentName) {
+  const notAvailableText =
+    'This feature is not available in the current version';
+  const userText =
+    'You can configure your agent to add contextual information about your users';
+  const customText =
+    'You can configure your agent to add custom contextual information on transactions';
+  const tagsText =
+    'You can configure your agent to add filterable tags on transactions';
+
   switch (agentName) {
     case 'nodejs':
       switch (propertyKey) {
         case 'user':
           return {
-            text:
-              'You can configure your agent to add contextual information about your users',
+            text: userText,
             url:
-              'https://www.elastic.co/guide/en/apm/agent/nodejs/current/agent-api.html#apm-set-user-context'
+              'https://www.elastic.co/guide/en/apm/agent/nodejs/1.x/agent-api.html#apm-set-user-context'
           };
 
         case 'tags':
           return {
-            text:
-              'You can configure your agent to add filterable tags on transactions',
+            text: tagsText,
             url:
-              'https://www.elastic.co/guide/en/apm/agent/nodejs/current/agent-api.html#apm-set-tag'
+              'https://www.elastic.co/guide/en/apm/agent/nodejs/1.x/agent-api.html#apm-set-tag'
           };
 
         case 'custom':
           return {
-            text:
-              'You can configure your agent to add custom contextual information on transactions',
+            text: customText,
             url:
-              'https://www.elastic.co/guide/en/apm/agent/nodejs/current/agent-api.html#apm-set-custom-context'
+              'https://www.elastic.co/guide/en/apm/agent/nodejs/1.x/agent-api.html#apm-set-custom-context'
           };
 
         default:
@@ -132,26 +138,76 @@ function getTipText(propertyKey, agentName) {
       switch (propertyKey) {
         case 'user':
           return {
-            text:
-              'You can configure your agent to add contextual information about your users',
+            text: userText,
             url:
-              'https://www.elastic.co/guide/en/apm/agent/python/current/index.html'
+              'https://www.elastic.co/guide/en/apm/agent/python/2.x/api.html#api-set-user-context'
           };
 
         case 'tags':
           return {
-            text:
-              'You can configure your agent to add filterable tags on transactions',
+            text: tagsText,
             url:
-              'https://www.elastic.co/guide/en/apm/agent/python/current/index.html'
+              'https://www.elastic.co/guide/en/apm/agent/python/2.x/api.html#api-tag'
           };
 
         case 'custom':
           return {
-            text:
-              'You can configure your agent to add custom contextual information on transactions',
+            text: customText,
             url:
-              'https://www.elastic.co/guide/en/apm/agent/python/current/index.html'
+              'https://www.elastic.co/guide/en/apm/agent/python/2.x/api.html#api-set-custom-context'
+          };
+
+        default:
+          return null;
+      }
+
+    case 'ruby':
+      switch (propertyKey) {
+        case 'user':
+          return {
+            text: userText,
+            url:
+              'https://www.elastic.co/guide/en/apm/agent/ruby/1.x/advanced.html#_providing_info_about_the_user'
+          };
+
+        case 'tags':
+          return {
+            text: tagsText,
+            url:
+              'https://www.elastic.co/guide/en/apm/agent/ruby/1.x/advanced.html#_adding_tags'
+          };
+
+        case 'custom':
+          return {
+            text: customText,
+            url:
+              'https://www.elastic.co/guide/en/apm/agent/ruby/1.x/advanced.html#_adding_custom_context'
+          };
+
+        default:
+          return null;
+      }
+
+    case 'js-react':
+    case 'js-base':
+      switch (propertyKey) {
+        case 'user':
+          return {
+            text: userText,
+            url:
+              'https://www.elastic.co/guide/en/apm/agent/js-base/0.x/api.html#apm-set-user-context'
+          };
+
+        case 'tags':
+          return {
+            text: notAvailableText
+          };
+
+        case 'custom':
+          return {
+            text: customText,
+            url:
+              'https://www.elastic.co/guide/en/apm/agent/js-base/0.x/api.html#apm-set-custom-context'
           };
 
         default:
@@ -186,10 +242,15 @@ function recursiveSort(propData, levelTwoKey, level, agentName) {
 
       {tipText && (
         <TipMessage>
-          {tipText.text} -{' '}
-          <a href={tipText.url} target="_blank">
-            Learn more in the documentation
-          </a>
+          {tipText.text}
+          {tipText.url && (
+            <span>
+              -{' '}
+              <a href={tipText.url} target="_blank">
+                Learn more in the documentation
+              </a>
+            </span>
+          )}
         </TipMessage>
       )}
     </div>

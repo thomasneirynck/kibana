@@ -22,7 +22,7 @@ function EmptyMessage({ heading, showSubheading }) {
         {
           " Oops! You should try another time range. If that's no good, there's always the "
         }
-        <a href="https://www.elastic.co/guide/en/apm/get-started/6.1/index.html">
+        <a href="https://www.elastic.co/guide/en/apm/get-started/6.2/index.html">
           documentation
         </a>.
       </span>
