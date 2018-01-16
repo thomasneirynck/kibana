@@ -106,7 +106,7 @@ visualize visualize-legend .legend-value-title {
 *  Dashboard tweaks
 */
 
-.dashboard-panel .panel-heading {
+.dashboard-panel .panel-heading .kuiMicroButtonGroup {
   /* hide the panel heading with the controls in it like expand */
   display: none !important;
 }
