@@ -3,21 +3,29 @@
     <div class="col-md-6">
       <div class="ml_sub_heading">General</div>
       <div class='ml_job_section_container'>
-        <div>
-          <ml-job-item ng-repeat="(key, value) in job | filterObjects: true">
-            <div class="ml_job_row row">
-              <div class="col-md-3">{{key}}</div>
-              <div ng-switch="key">
-                <div ng-switch-when="location" class="col-md-9"><a target="_blank" href='{{value}}' rel="noopener noreferrer">{{value}}</a></div>
-                <div ng-switch-when="averageBucketProcessingTimeMs" class="col-md-9">{{formatMS(value)}}</div>
-                <div ng-switch-when="create_time" class="col-md-9">{{formatDate(value)}}</div>
-                <div ng-switch-when="finished_time" class="col-md-9">{{formatDate(value)}}</div>
-                <div ng-switch-when="groups" class="col-md-9">{{(value.join(', '))}}</div>
-                <div ng-switch-default class="col-md-9">{{value}}</div>
+        <table class="euiTable euiTable--compressed">
+          <tbody>
+          <tr ng-repeat="(key, value) in job | filterObjects: true" class="euiTableRow">
+            <th class="euiTableRowCell">
+              <div class="euiTableCellContent">
+                <span class="euiTableCellContent__text">{{key}}</span>
               </div>
-            </div>
-          </ml-job-item>
-        </div>
+            </th>
+            <td class="euiTableRowCell">
+              <div class="euiTableCellContent">
+                <span ng-switch="key" class="euiTableCellContent__text">
+                  <span ng-switch-when="location"><a target="_blank" href='{{value}}' rel="noopener noreferrer">{{value}}</a></span>
+                  <span ng-switch-when="averageBucketProcessingTimeMs">{{formatMS(value)}}</span>
+                  <span ng-switch-when="create_time">{{formatDate(value)}}</span>
+                  <span ng-switch-when="finished_time">{{formatDate(value)}}</span>
+                  <span ng-switch-when="groups">{{(value.join(', '))}}</span>
+                  <span ng-switch-default>{{value}}</span>
+                </span>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -41,65 +49,65 @@
         </div>
       </div>
 
-      <div ng-repeat="(key, value) in job">
-        <div ng-switch="key">
-          <div ng-switch-when="custom_settings">
-            <div ng-repeat="(key1, value1) in value">
-              <div ng-switch="key1">
-                <div ng-switch-when="custom_urls">
-                  <div class="ml_sub_heading">Custom URLs</div>
-                  <div class='ml_job_section_container'>
-                    <div>
-                      <ml-job-item ng-repeat="(key2, value2) in value1">
-                        <div class="ml_job_row row">
-                          <div class="col-md-3">{{value2.url_name}}</div>
-                          <div class="col-md-9">{{value2.url_value}}</div>
+      <div ng-repeat="(key, value) in job" ng-if="key==='custom_settings'">
+        <div ng-repeat="(key1, value1) in value">
+          <div ng-switch="key1">
+            <div ng-switch-when="custom_urls">
+              <div class="ml_sub_heading">Custom URLs</div>
+              <div class='ml_job_section_container'>
+                <table class="euiTable euiTable--compressed">
+                  <tbody>
+                    <tr ng-repeat="(key2, value2) in value1" class="euiTableRow">
+                      <th class="euiTableRowCell">
+                        <div class="euiTableCellContent">
+                          <span class="euiTableCellContent__text">{{value2.url_name}}</span>
                         </div>
-                      </ml-job-item>
-                    </div>
-                  </div>
-                </div>
+                      </th>
+                      <td class="euiTableRowCell">
+                        <div class="euiTableCellContent">
+                          <span class="euiTableCellContent__text">{{value2.url_value}}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div ng-repeat="(key, value) in job">
-        <div ng-switch="key">
-          <div ng-switch-when="node">
-            <div class="ml_sub_heading">Node</div>
-            <div class='ml_job_section_container'>
-              <div>
-                <ml-job-item ng-repeat="(key1, value1) in value">
-                  <div ng-switch="key1">
-                    <div ng-switch-when="name">
-                      <div class="row">
-                        <div class="col-md-3">{{key1}}</div>
-                        <div class="col-md-9">{{value1}}</div>
-                      </div>
-                    </div>
+      <div ng-repeat="(key, value) in job" ng-if="key==='node'">
+        <div class="ml_sub_heading">Node</div>
+        <div class='ml_job_section_container'>
+          <table class="euiTable euiTable--compressed">
+            <tbody>
+              <tr ng-repeat="(key1, value1) in value" ng-if="key1==='name'" class="euiTableRow">
+                <th class="euiTableRowCell">
+                  <div class="euiTableCellContent">
+                    <span class="euiTableCellContent__text">{{key1}}</span>
                   </div>
-                </ml-job-item>
-              </div>
-            </div>
-          </div>
+                </th>
+                <td class="euiTableRowCell">
+                  <div class="euiTableCellContent">
+                    <span class="euiTableCellContent__text">{{value1}}</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <div ng-repeat="(key, value) in job">
-        <div ng-switch="key">
-          <div ng-switch-when="calendars">
-            <div class="ml_sub_heading">Calendars</div>
-            <div class='ml_job_section_container'>
-              <div>
-                <ml-job-item>
-                  <div class="ml_job_row row">
-                    <div class="col-md-12">{{value.join(', ')}}</div>
-                  </div>
-                </ml-job-item>
+      <div ng-repeat="(key, value) in job" ng-if="key==='calendars'">
+        <div class="ml_sub_heading">Calendars</div>
+        <div class='ml_job_section_container'>
+          <div>
+            <ml-job-item>
+              <div class="ml_job_row row">
+                <div class="col-md-12">{{value.join(', ')}}</div>
               </div>
-            </div>
+            </ml-job-item>
           </div>
         </div>
       </div>

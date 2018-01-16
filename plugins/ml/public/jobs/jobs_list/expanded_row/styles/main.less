@@ -74,6 +74,33 @@ ml-job-list-expanded-row {
       margin-left: -30px;
       padding-left: 30px;
     }
+
+    table.euiTable {
+      background-color: transparent;
+
+      .euiTableRow:first-child {
+        .euiTableRowCell {
+          border-top: 0px;
+        }
+      }
+
+      .euiTableRow:last-child {
+        .euiTableRowCell {
+          border-bottom: 0px;
+        }
+      }
+
+      tr.euiTableRow {
+        .euiTableRowCell {
+          background-color: transparent;
+          vertical-align: top;
+
+          .euiTableCellContent__text {
+            word-wrap: break-word;
+          }
+        }
+      }
+    }
   }
 
   ml-job-item:last-child {

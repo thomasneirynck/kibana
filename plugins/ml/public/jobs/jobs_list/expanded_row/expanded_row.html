@@ -52,27 +52,54 @@
           Refresh
         </button>
         <div id="ml-job-audit-list-{{job.job_id}}" class="job-audit-list-container">
-        <table>
-          <thead>
-            <th scope="col"></th>
-            <th scope="col">Time</th>
-            <th scope="col">Node</th>
-            <th scope="col">Message</th>
-          </thead>
-          <tbody>
-            <tr ng-repeat="msg in jobAudit.messages">
-              <td>
-                <i ng-show="msg.level === 'system_info'" tooltip='System Info' class="job-system-info fa fa-cogs"></i>
-                <i ng-show="msg.level === 'info'" tooltip='Info' class="job-info fa fa-info-circle"></i>
-                <i ng-show="msg.level === 'warning'" tooltip='Warning' class="job-warning fa fa-exclamation-circle"></i>
-                <i ng-show="msg.level === 'error'" tooltip='Error' class="job-error fa fa-exclamation-triangle"></i>
-              </td>
-              <td>{{msg.time}}</td>
-              <td>{{msg.node_name}}</td>
-              <td>{{msg.message}}</td>
-            </tr>
-          </tbody>
-        </table>
+
+          <table class="euiTable euiTable--compressed">
+            <thead>
+              <tr>
+                <th class="euiTableHeaderCell" scope="col" width="25px">
+                  <div class="euiTableCellContent"></div>
+                </th>
+                <th class="euiTableHeaderCell" scope="col">
+                  <div class="euiTableCellContent">Time</div>
+                </th>
+                <th class="euiTableHeaderCell" scope="col">
+                  <div class="euiTableCellContent">Node</div>
+                </th>
+                <th class="euiTableHeaderCell" scope="col" width="60%">
+                  <div class="euiTableCellContent">Message</div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="msg in jobAudit.messages" class="euiTableRow">
+                <td class="euiTableRowCell">
+                  <div class="euiTableCellContent">
+                    <span class="euiTableCellContent__text">
+                      <i ng-show="msg.level === 'system_info'" tooltip='System Info' class="job-system-info fa fa-cogs"></i>
+                      <i ng-show="msg.level === 'info'" tooltip='Info' class="job-info fa fa-info-circle"></i>
+                      <i ng-show="msg.level === 'warning'" tooltip='Warning' class="job-warning fa fa-exclamation-circle"></i>
+                      <i ng-show="msg.level === 'error'" tooltip='Error' class="job-error fa fa-exclamation-triangle"></i>
+                    </span>
+                  </div>
+                </td>
+                <td class="euiTableRowCell">
+                  <div class="euiTableCellContent">
+                    <span class="euiTableCellContent__text">{{msg.time}}</span>
+                  </div>
+                </td>
+                <td class="euiTableRowCell">
+                  <div class="euiTableCellContent">
+                    <span class="euiTableCellContent__text">{{msg.node_name}}</span>
+                  </div>
+                </td>
+                <td class="euiTableRowCell">
+                  <div class="euiTableCellContent">
+                    <span class="euiTableCellContent__text">{{msg.message}}</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </ml-job-tab-5>
@@ -92,6 +119,5 @@
         </div>
       </div>
     </ml-job-tab-6>
-
 
   </div>
