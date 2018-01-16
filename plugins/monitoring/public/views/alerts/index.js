@@ -4,27 +4,24 @@ import template from './index.html';
 import { MonitoringViewBaseController } from 'plugins/monitoring/views';
 import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
 import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
-import { formatTimestampToDuration } from 'monitoring-common';
-import { CALCULATE_DURATION_SINCE } from 'monitoring-constants';
-import { mapSeverity } from 'plugins/monitoring/components/alerts/map_severity';
 
 function getPageData($injector) {
   const globalState = $injector.get('globalState');
+  const timefilter = $injector.get('timefilter');
   const $http = $injector.get('$http');
   const Private = $injector.get('Private');
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/alerts`;
 
-  return $http.post(url, { ccs: globalState.ccs })
-    .then(response => {
-      const alerts = get(response, 'data', []);
-      return alerts.map(alert => {
-        return {
-          ...alert,
-          since: formatTimestampToDuration(alert.timestamp, CALCULATE_DURATION_SINCE),
-          severity_group: mapSeverity(alert.metadata.severity).value
-        };
-      });
-    })
+  const timeBounds = timefilter.getBounds();
+
+  return $http.post(url, {
+    ccs: globalState.ccs,
+    timeRange: {
+      min: timeBounds.min.toISOString(),
+      max: timeBounds.max.toISOString()
+    }
+  })
+    .then(response => get(response, 'data', []))
     .catch((err) => {
       const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
       return ajaxErrorHandlers(err);
@@ -53,8 +50,7 @@ uiRoutes.when('/alerts', {
         title: 'Cluster Alerts',
         getPageData,
         $scope,
-        $injector,
-        options: { enableTimeFilter: false }
+        $injector
       });
 
       this.data = $route.current.locals.alerts;

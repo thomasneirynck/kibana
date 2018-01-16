@@ -29,8 +29,8 @@ export default function ({ getService, getPageObjects }) {
         await esArchiver.unload('monitoring/singlecluster-green-gold');
       });
 
-      it('does not show alerts panel, because cluster status is Green', async () => {
-        expect(await overview.doesClusterAlertsExist()).to.be(false);
+      it('shows alerts panel, because there are resolved alerts in the time range', async () => {
+        expect(await overview.doesClusterAlertsExist()).to.be(true);
       });
 
       it('elasticsearch panel has no ML line, because license is Gold', async () => {

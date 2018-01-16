@@ -17,7 +17,11 @@ export function clusterAlertsRoute(server) {
           clusterUuid: Joi.string().required()
         }),
         payload: Joi.object({
-          ccs: Joi.string().optional()
+          ccs: Joi.string().optional(),
+          timeRange: Joi.object({
+            min: Joi.date().required(),
+            max: Joi.date().required()
+          }).required()
         })
       }
     },
@@ -27,9 +31,13 @@ export function clusterAlertsRoute(server) {
       const clusterUuid = req.params.clusterUuid;
       const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
       const alertsIndex = prefixIndexPattern(config, 'xpack.monitoring.cluster_alerts.index', ccs);
+      const options = {
+        start: req.payload.timeRange.min,
+        end: req.payload.timeRange.max
+      };
 
       return getClusterLicense(req, esIndexPattern, clusterUuid)
-        .then(license => alertsClusterSearch(req, alertsIndex, { cluster_uuid: clusterUuid, license }, checkLicense))
+        .then(license => alertsClusterSearch(req, alertsIndex, { cluster_uuid: clusterUuid, license }, checkLicense, options))
         .then(reply);
     }
   });

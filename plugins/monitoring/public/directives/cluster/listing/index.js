@@ -9,6 +9,7 @@ import {
   KuiTableRowCell,
   KuiTableRow
 } from 'ui_framework/components';
+import { EuiHealth } from '@elastic/eui';
 import { Notifier } from 'ui/notify/notifier';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { Tooltip } from 'plugins/monitoring/components/tooltip';
@@ -143,7 +144,9 @@ to enjoy multi-cluster monitoring.`
       return (
         <KuiKeyboardAccessible>
           <div className="kuiLink" onClick={this.handleClickInvalidLicense.bind(this)}>
-            N/A
+            <EuiHealth color="subdued" data-test-subj="alertIcon">
+              N/A
+            </EuiHealth>
           </div>
         </KuiKeyboardAccessible>
       );
@@ -187,7 +190,9 @@ to enjoy multi-cluster monitoring.`
             placement="bottom"
             trigger="hover"
           >
-            <span>N/A</span>
+            <EuiHealth color="subdued" data-test-subj="alertIcon">
+              N/A
+            </EuiHealth>
           </Tooltip>
         );
       };

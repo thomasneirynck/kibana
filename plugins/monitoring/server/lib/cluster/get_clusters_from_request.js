@@ -34,7 +34,7 @@ export function normalizeClustersData(clusters) {
 /**
  * Get all clusters or the cluster associated with {@code clusterUuid} when it is defined.
  */
-export async function getClustersFromRequest(req, indexPatterns, { clusterUuid } = {}) {
+export async function getClustersFromRequest(req, indexPatterns, { clusterUuid, start, end } = {}) {
   const { esIndexPattern, kbnIndexPattern, lsIndexPattern, alertsIndex } = indexPatterns;
 
   // get clusters with stats and cluster state
@@ -53,7 +53,11 @@ export async function getClustersFromRequest(req, indexPatterns, { clusterUuid }
     if (mlJobs !== null) {
       cluster.ml = { jobs: mlJobs };
     }
-    const alerts = await alertsClusterSearch(req, alertsIndex, cluster, checkLicenseForAlerts, { size: CLUSTER_ALERTS_SEARCH_SIZE });
+    const alerts = await alertsClusterSearch(req, alertsIndex, cluster, checkLicenseForAlerts, {
+      start,
+      end,
+      size: CLUSTER_ALERTS_SEARCH_SIZE
+    });
     if (alerts) {
       cluster.alerts = alerts;
     }

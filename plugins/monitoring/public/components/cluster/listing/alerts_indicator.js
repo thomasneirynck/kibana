@@ -1,11 +1,11 @@
 import React from 'react';
 import { Tooltip } from 'plugins/monitoring/components/tooltip';
-import { SeverityIcon }  from 'plugins/monitoring/components/alerts/severity_icon';
+import { mapSeverity } from 'plugins/monitoring/components/alerts/map_severity';
+import { EuiHealth } from '@elastic/eui';
 
-const HIGH_SEVERITY = 1999;
-const MEDIUM_SEVERITY = 999;
+const HIGH_SEVERITY = 2000;
+const MEDIUM_SEVERITY = 1000;
 const LOW_SEVERITY = 0;
-const STATUS_OK = -2;
 
 export function AlertsIndicator({ alerts }) {
   if (alerts && alerts.count > 0) {
@@ -14,7 +14,7 @@ export function AlertsIndicator({ alerts }) {
       if (alerts.medium > 0) { return MEDIUM_SEVERITY; }
       return LOW_SEVERITY;
     })();
-    const icon = <SeverityIcon severity={severity} />;
+    const severityIcon = mapSeverity(severity);
     const tooltipText = (() => {
       switch (severity) {
         case HIGH_SEVERITY:
@@ -29,14 +29,18 @@ export function AlertsIndicator({ alerts }) {
 
     return (
       <Tooltip text={tooltipText} placement="bottom" trigger="hover">
-        { icon }
+        <EuiHealth color={severityIcon.color} data-test-subj="alertIcon">
+          Alerts
+        </EuiHealth>
       </Tooltip>
     );
   }
 
   return (
     <Tooltip text="Cluster status is clear!" placement="bottom" trigger="hover">
-      <SeverityIcon severity={STATUS_OK} />
+      <EuiHealth color="success" data-test-subj="alertIcon">
+        Clear
+      </EuiHealth>
     </Tooltip>
   );
 }

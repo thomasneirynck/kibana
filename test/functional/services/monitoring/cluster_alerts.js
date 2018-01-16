@@ -94,7 +94,7 @@ export function MonitoringClusterAlertsProvider({ getService, getPageObjects }) 
 
     async getTableAlertsAll() {
       const tableRows = await this.getTableAlerts();
-      const alertIcons = await testSubjects.getPropertyAll(SUBJ_TABLE_ICONS, 'alt');
+      const alertIcons = await testSubjects.getAttributeAll(SUBJ_TABLE_ICONS, 'aria-label');
 
       return await this._getAlertSetAll({
         size: tableRows.length,
