@@ -4,6 +4,7 @@ import {
   ERROR_CULPRIT,
   ERROR_EXC_MESSAGE,
   ERROR_LOG_MESSAGE,
+  ERROR_EXC_HANDLED,
   PROCESSOR_EVENT
 } from '../../../common/constants';
 import { get } from 'lodash';
@@ -51,6 +52,7 @@ export async function getErrorGroups({
                 _source: [
                   ERROR_LOG_MESSAGE,
                   ERROR_EXC_MESSAGE,
+                  ERROR_EXC_HANDLED,
                   ERROR_CULPRIT,
                   ERROR_GROUP_ID,
                   '@timestamp'
@@ -105,7 +107,8 @@ export async function getErrorGroups({
         occurrenceCount: bucket.doc_count,
         culprit: get(source, ERROR_CULPRIT),
         groupId: get(source, ERROR_GROUP_ID),
-        latestOccurrenceAt: source['@timestamp']
+        latestOccurrenceAt: source['@timestamp'],
+        handled: get(source, ERROR_EXC_HANDLED)
       };
     }
   );

@@ -6,7 +6,7 @@ import { PageHeader } from '../../shared/UIComponents';
 import DetailView from './DetailView';
 import Distribution from './Distribution';
 
-import { EuiText } from '@elastic/eui';
+import { EuiText, EuiBadge } from '@elastic/eui';
 import {
   unit,
   units,
@@ -18,12 +18,18 @@ import {
 import {
   ERROR_CULPRIT,
   ERROR_LOG_MESSAGE,
-  ERROR_EXC_MESSAGE
+  ERROR_EXC_MESSAGE,
+  ERROR_EXC_HANDLED
 } from '../../../../common/constants';
 
 const Titles = styled.div`
   height: ${px(unit * 10)};
   margin-bottom: ${px(units.plus)};
+`;
+
+const UnhandledBadge = styled(EuiBadge)`
+  margin-left: ${px(unit)};
+  margin-top: -${px(units.half - 1)};
 `;
 
 const Label = styled.div`
@@ -72,9 +78,16 @@ class ErrorGroupDetails extends Component {
 
     const culprit = get(errorGroup.data.error, ERROR_CULPRIT);
 
+    const isUnhandled = get(errorGroup.data.error, ERROR_EXC_HANDLED) === false;
+
     return (
       <div>
-        <PageHeader>Error group {errorGroupId.slice(0, 5) || 'N/A'}</PageHeader>
+        <PageHeader>
+          Error group {errorGroupId.slice(0, 5) || 'N/A'}
+          {isUnhandled && (
+            <UnhandledBadge color="warning">Unhandled</UnhandledBadge>
+          )}
+        </PageHeader>
         {showDetails && (
           <Titles>
             <EuiText>

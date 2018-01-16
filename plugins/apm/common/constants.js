@@ -23,3 +23,4 @@ export const ERROR_GROUP_ID = 'error.grouping_key';
 export const ERROR_CULPRIT = 'error.culprit';
 export const ERROR_LOG_MESSAGE = 'error.log.message';
 export const ERROR_EXC_MESSAGE = 'error.exception.message';
+export const ERROR_EXC_HANDLED = 'error.exception.handled';

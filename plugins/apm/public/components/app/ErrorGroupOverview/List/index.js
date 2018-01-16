@@ -64,6 +64,7 @@ class List extends Component {
       const cells = [
         { key: 'groupId', sortable: false, label: 'Group ID' },
         { key: 'message', sortable: false, label: 'Error message and culprit' },
+        { key: 'handled', sortable: false, label: '', alignRight: true },
         {
           key: 'occurrenceCount',
           sortable: true,

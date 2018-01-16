@@ -181,6 +181,12 @@ exports[`ErrorGroupOverview -> List should render with data 1`] = `
         <th class=\\"kuiTableHeaderCell kuiTableHeaderCell--alignRight sc-bxivhb cgZttI\\"
             scope=\\"col\\"
         >
+          <div class=\\"kuiTableHeaderCell__liner\\">
+          </div>
+        </th>
+        <th class=\\"kuiTableHeaderCell kuiTableHeaderCell--alignRight sc-bxivhb cgZttI\\"
+            scope=\\"col\\"
+        >
           <button class=\\"kuiTableHeaderCellButton\\"
                   aria-label=\\"Sort Occurrences ascending\\"
           >
@@ -212,7 +218,7 @@ exports[`ErrorGroupOverview -> List should render with data 1`] = `
     </thead>
     <tbody>
       <tr class=\\"kuiTableRow\\">
-        <td class=\\"kuiTableRowCell sc-ifAKCX eLsqmG\\">
+        <td class=\\"kuiTableRowCell sc-ifAKCX khKUSb\\">
           <div class=\\"kuiTableRowCell__liner\\">
             <a class=\\"kuiLink sc-EHOje eqiICa\\"
                href=\\"#/opbeans-python/errors/a0ce2c8978ef92cdf2ff163ae28576ee\\"
@@ -221,9 +227,10 @@ exports[`ErrorGroupOverview -> List should render with data 1`] = `
             </a>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-bZQynM eSphTS\\">
+        <td class=\\"kuiTableRowCell sc-bZQynM fjyoDI\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            <a class=\\"kuiLink sc-gzVnrw jDLvXO\\"
+            <a class=\\"kuiLink sc-gzVnrw atJSu\\"
+               title=\\"About to blow up!\\"
                href=\\"#/opbeans-python/errors/a0ce2c8978ef92cdf2ff163ae28576ee\\"
             >
               About to blow up!
@@ -233,19 +240,23 @@ exports[`ErrorGroupOverview -> List should render with data 1`] = `
             </div>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-dnqmqq AwDsw kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-dnqmqq uGYec kuiTableRowCell--alignRight\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+          </div>
+        </td>
+        <td class=\\"kuiTableRowCell sc-iwsKbI hZhUfU kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             75
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-dnqmqq AwDsw kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-iwsKbI hZhUfU kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             1515578797
           </div>
         </td>
       </tr>
       <tr class=\\"kuiTableRow\\">
-        <td class=\\"kuiTableRowCell sc-ifAKCX eLsqmG\\">
+        <td class=\\"kuiTableRowCell sc-ifAKCX khKUSb\\">
           <div class=\\"kuiTableRowCell__liner\\">
             <a class=\\"kuiLink sc-EHOje eqiICa\\"
                href=\\"#/opbeans-python/errors/f3ac95493913cc7a3cfec30a19d2120a\\"
@@ -254,9 +265,10 @@ exports[`ErrorGroupOverview -> List should render with data 1`] = `
             </a>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-bZQynM eSphTS\\">
+        <td class=\\"kuiTableRowCell sc-bZQynM fjyoDI\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            <a class=\\"kuiLink sc-gzVnrw jDLvXO\\"
+            <a class=\\"kuiLink sc-gzVnrw atJSu\\"
+               title=\\"AssertionError: \\"
                href=\\"#/opbeans-python/errors/f3ac95493913cc7a3cfec30a19d2120a\\"
             >
               AssertionError:
@@ -266,19 +278,23 @@ exports[`ErrorGroupOverview -> List should render with data 1`] = `
             </div>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-dnqmqq AwDsw kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-dnqmqq uGYec kuiTableRowCell--alignRight\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+          </div>
+        </td>
+        <td class=\\"kuiTableRowCell sc-iwsKbI hZhUfU kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             75
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-dnqmqq AwDsw kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-iwsKbI hZhUfU kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             1515578797
           </div>
         </td>
       </tr>
       <tr class=\\"kuiTableRow\\">
-        <td class=\\"kuiTableRowCell sc-ifAKCX eLsqmG\\">
+        <td class=\\"kuiTableRowCell sc-ifAKCX khKUSb\\">
           <div class=\\"kuiTableRowCell__liner\\">
             <a class=\\"kuiLink sc-EHOje eqiICa\\"
                href=\\"#/opbeans-python/errors/e90863d04b7a692435305f09bbe8c840\\"
@@ -287,9 +303,10 @@ exports[`ErrorGroupOverview -> List should render with data 1`] = `
             </a>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-bZQynM eSphTS\\">
+        <td class=\\"kuiTableRowCell sc-bZQynM fjyoDI\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            <a class=\\"kuiLink sc-gzVnrw jDLvXO\\"
+            <a class=\\"kuiLink sc-gzVnrw atJSu\\"
+               title=\\"AssertionError: Bad luck!\\"
                href=\\"#/opbeans-python/errors/e90863d04b7a692435305f09bbe8c840\\"
             >
               AssertionError: Bad luck!
@@ -299,19 +316,23 @@ exports[`ErrorGroupOverview -> List should render with data 1`] = `
             </div>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-dnqmqq AwDsw kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-dnqmqq uGYec kuiTableRowCell--alignRight\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+          </div>
+        </td>
+        <td class=\\"kuiTableRowCell sc-iwsKbI hZhUfU kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             24
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-dnqmqq AwDsw kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-iwsKbI hZhUfU kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             1515578796
           </div>
         </td>
       </tr>
       <tr class=\\"kuiTableRow\\">
-        <td class=\\"kuiTableRowCell sc-ifAKCX eLsqmG\\">
+        <td class=\\"kuiTableRowCell sc-ifAKCX khKUSb\\">
           <div class=\\"kuiTableRowCell__liner\\">
             <a class=\\"kuiLink sc-EHOje eqiICa\\"
                href=\\"#/opbeans-python/errors/8673d8bf7a032e387c101bafbab0d2bc\\"
@@ -320,9 +341,10 @@ exports[`ErrorGroupOverview -> List should render with data 1`] = `
             </a>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-bZQynM eSphTS\\">
+        <td class=\\"kuiTableRowCell sc-bZQynM fjyoDI\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            <a class=\\"kuiLink sc-gzVnrw jDLvXO\\"
+            <a class=\\"kuiLink sc-gzVnrw atJSu\\"
+               title=\\"Customer with ID 8517 not found\\"
                href=\\"#/opbeans-python/errors/8673d8bf7a032e387c101bafbab0d2bc\\"
             >
               Customer with ID 8517 not found
@@ -332,12 +354,16 @@ exports[`ErrorGroupOverview -> List should render with data 1`] = `
             </div>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-dnqmqq AwDsw kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-dnqmqq uGYec kuiTableRowCell--alignRight\\">
+          <div class=\\"kuiTableRowCell__liner\\">
+          </div>
+        </td>
+        <td class=\\"kuiTableRowCell sc-iwsKbI hZhUfU kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             15
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-dnqmqq AwDsw kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-iwsKbI hZhUfU kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             1515578773
           </div>

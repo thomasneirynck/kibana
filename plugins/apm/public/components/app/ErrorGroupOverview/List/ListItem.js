@@ -5,17 +5,18 @@ import {
   px,
   colors,
   fontFamilyCode,
-  fontSizes
+  fontSizes,
+  truncate
 } from '../../../../style/variables';
 import { RelativeLink } from '../../../../utils/url';
 import { KuiTableRow, KuiTableRowCell } from 'ui_framework/components';
-import { RIGHT_ALIGNMENT } from '@elastic/eui';
+import { RIGHT_ALIGNMENT, EuiBadge } from '@elastic/eui';
 import numeral from '@elastic/numeral';
 import moment from 'moment';
 
 const GroupIdCell = styled(KuiTableRowCell)`
   max-width: none;
-  width: ${px(unit * 6)};
+  width: 100px;
 `;
 
 const GroupIdLink = styled(RelativeLink)`
@@ -24,17 +25,24 @@ const GroupIdLink = styled(RelativeLink)`
 `;
 
 const MessageAndCulpritCell = styled(KuiTableRowCell)`
-  max-width: none;
+  ${truncate(px(unit * 32))};
 `;
 
 const MessageLink = styled(RelativeLink)`
   display: block;
   font-family: ${fontFamilyCode};
   font-size: ${fontSizes.large};
+  ${truncate(px(unit * 32))};
+  max-width: 90%;
 `;
 
 const Culprit = styled.div`
   font-family: ${fontFamilyCode};
+`;
+
+const UnhandledCell = styled(KuiTableRowCell)`
+  max-width: none;
+  width: 100px;
 `;
 
 const OccurrenceCell = styled(KuiTableRowCell)`
@@ -46,10 +54,12 @@ function ListItem({ error, serviceName }) {
     groupId,
     culprit,
     message,
+    handled,
     occurrenceCount,
     latestOccurrenceAt
   } = error;
 
+  const isUnhandled = handled === false;
   const count = occurrenceCount
     ? numeral(occurrenceCount).format('0.[0]a')
     : 'N/A';
@@ -65,11 +75,14 @@ function ListItem({ error, serviceName }) {
         </GroupIdLink>
       </GroupIdCell>
       <MessageAndCulpritCell>
-        <MessageLink path={`${serviceName}/errors/${groupId}`}>
+        <MessageLink title={message} path={`${serviceName}/errors/${groupId}`}>
           {message || 'N/A'}
         </MessageLink>
         <Culprit>{culprit || 'N/A'}</Culprit>
       </MessageAndCulpritCell>
+      <UnhandledCell align={RIGHT_ALIGNMENT}>
+        {isUnhandled && <EuiBadge color="warning">Unhandled</EuiBadge>}
+      </UnhandledCell>
       <OccurrenceCell align={RIGHT_ALIGNMENT}>{count}</OccurrenceCell>
       <OccurrenceCell align={RIGHT_ALIGNMENT}>{timeAgo}</OccurrenceCell>
     </KuiTableRow>
