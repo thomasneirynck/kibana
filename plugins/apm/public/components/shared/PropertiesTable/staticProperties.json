@@ -17,16 +17,12 @@
   {
     "key": "service",
     "required": false,
-    "children": [
-      "pid",
-      "process_title",
-      "argv",
-      "runtime",
-      "framework",
-      "agent",
-      "version",
-      "git_ref"
-    ]
+    "children": ["runtime", "framework", "agent", "version", "git_ref"]
+  },
+  {
+    "key": "process",
+    "required": false,
+    "children": ["pid", "title", "argv"]
   },
   { "key": "user", "required": true, "children": ["id", "username", "email"] },
   { "key": "tags", "required": true, "children": [] },

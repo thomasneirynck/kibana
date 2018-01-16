@@ -96,6 +96,9 @@ exports[`DetailView should render with data 1`] = `
       Service
     </div>
     <div class=\\"sc-iwsKbI eQURAw\\">
+      Process
+    </div>
+    <div class=\\"sc-iwsKbI eQURAw\\">
       User
     </div>
     <div class=\\"sc-iwsKbI eQURAw\\">
