@@ -76,6 +76,7 @@ function SpanDetails({ span, spanTypes, totalDuration, transactionId }) {
   const spanName = get({ span }, SPAN_NAME);
   const stackframes = span.stacktrace;
   const codeLanguage = get(span, SERVICE_LANGUAGE_NAME);
+  const dbContext = get(span, 'context.db');
 
   const allSpanTypes = uniq(spanTypes.map(({ type }) => getPrimaryType(type)));
   const getSpanColor = getColorByType(allSpanTypes);
@@ -92,9 +93,6 @@ function SpanDetails({ span, spanTypes, totalDuration, transactionId }) {
       sort: { '@timestamp': 'desc' }
     }
   };
-
-  const dbType = get(span, 'context.db.type');
-  const dbStatement = get(span, 'context.db.statement');
 
   return (
     <div>
@@ -123,7 +121,7 @@ function SpanDetails({ span, spanTypes, totalDuration, transactionId }) {
         </DiscoverButton>
       </DetailsWrapper>
 
-      <DatabaseContext dbType={dbType} dbStatement={dbStatement} />
+      <DatabaseContext dbContext={dbContext} />
 
       <StackTraceContainer>
         <Stacktrace stackframes={stackframes} codeLanguage={codeLanguage} />
@@ -132,8 +130,12 @@ function SpanDetails({ span, spanTypes, totalDuration, transactionId }) {
   );
 }
 
-function DatabaseContext({ dbType, dbStatement }) {
-  if (dbType && dbType === 'sql') {
+function DatabaseContext({ dbContext }) {
+  if (!dbContext) {
+    return null;
+  }
+
+  if (dbContext.type && dbContext.type === 'sql') {
     return (
       <DatabaseStatement>
         <SyntaxHighlighter
@@ -148,12 +150,14 @@ function DatabaseContext({ dbType, dbStatement }) {
             overflowX: 'scroll'
           }}
         >
-          {dbStatement}
+          {dbContext.statement || 'N/A'}
         </SyntaxHighlighter>
       </DatabaseStatement>
     );
   } else {
-    return <DatabaseStatement>{dbStatement}</DatabaseStatement>;
+    return (
+      <DatabaseStatement>{dbContext.statement || 'N/A'}</DatabaseStatement>
+    );
   }
 }
 
