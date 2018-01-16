@@ -17,6 +17,7 @@
 // data on forecasts that have been performed.
 import _ from 'lodash';
 
+import { FORECAST_REQUEST_STATE } from 'plugins/ml/../common/constants/states';
 import { ML_RESULTS_INDEX_PATTERN } from 'plugins/ml/constants/index_patterns';
 
 import { uiModules } from 'ui/modules';
@@ -41,9 +42,11 @@ module.service('mlForecastService', function ($q, es, ml) {
 
     // Build the criteria to use in the bool filter part of the request.
     // Add criteria for the job ID, result type and earliest time.
+    // Only include forecasts with a status of "finished", so we don't expose
+    // failed forecasts in the UI.
     const filterCriteria = [{
       query_string: {
-        query: 'result_type:model_forecast_request_stats',
+        query: `result_type:model_forecast_request_stats AND forecast_status:${FORECAST_REQUEST_STATE.FINISHED}`,
         analyze_wildcard: true
       }
     },
