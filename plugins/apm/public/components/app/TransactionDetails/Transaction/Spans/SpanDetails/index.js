@@ -16,7 +16,8 @@ import {
   SPAN_DURATION,
   SPAN_NAME,
   TRANSACTION_ID,
-  SERVICE_LANGUAGE_NAME
+  SERVICE_LANGUAGE_NAME,
+  PROCESSOR_EVENT
 } from '../../../../../../../common/constants';
 import {
   unit,
@@ -88,7 +89,7 @@ function SpanDetails({ span, spanTypes, totalDuration, transactionId }) {
       interval: 'auto',
       query: {
         language: 'lucene',
-        query: `${TRANSACTION_ID}:${transactionId}`
+        query: `${PROCESSOR_EVENT}:span AND ${TRANSACTION_ID}:${transactionId}`
       },
       sort: { '@timestamp': 'desc' }
     }

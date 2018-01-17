@@ -14,6 +14,7 @@ import Spans from './Spans';
 import DiscoverButton from '../../../shared/DiscoverButton';
 import {
   TRANSACTION_ID,
+  PROCESSOR_EVENT,
   SERVICE_AGENT_NAME
 } from '../../../../../common/constants';
 import { fromQuery, toQuery } from '../../../../utils/url';
@@ -128,7 +129,7 @@ class Transaction extends Component {
         interval: 'auto',
         query: {
           language: 'lucene',
-          query: `${TRANSACTION_ID}:${transactionId}`
+          query: `${PROCESSOR_EVENT}:transaction AND ${TRANSACTION_ID}:${transactionId}`
         },
         sort: { '@timestamp': 'desc' }
       }
