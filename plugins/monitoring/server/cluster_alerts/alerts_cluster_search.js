@@ -158,7 +158,6 @@ export function alertsClusterSearch(req, alertsIndex, cluster, checkLicense, opt
                 // This will cause anything un-resolved to be sorted above anything that is resolved
                 // From there, those items are sorted by their severity, then by their timestamp (age)
                 function_score: {
-                  boost: 1,
                   boost_mode: 'max',
                   functions: [
                     {
