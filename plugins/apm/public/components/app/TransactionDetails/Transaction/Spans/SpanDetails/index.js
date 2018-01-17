@@ -58,6 +58,11 @@ const DetailsText = styled.div`
   font-size: ${fontSizes.large};
 `;
 
+const LegendLabel = styled.span`
+  display: inline-block;
+  margin-left: -${px(unit)};
+`;
+
 const StackTraceContainer = styled.div`
   margin-top: ${px(unit)};
 `;
@@ -106,7 +111,7 @@ function SpanDetails({ span, spanTypes, totalDuration, transactionId }) {
           <DetailsHeader>Type</DetailsHeader>
           <DetailsText>
             <Legend clickable={false} color={spanColor} />
-            {spanLabel}
+            <LegendLabel>{spanLabel}</LegendLabel>
           </DetailsText>
         </div>
         <div>
