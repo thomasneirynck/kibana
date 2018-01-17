@@ -87,7 +87,7 @@ module.directive('prettyDuration', function (config, timeUnits, $compile, timefi
             if ($scope[time] === 'now') {
               display[time] = 'now';
             } else {
-              const tryParse = dateMath.parse($scope[time], time === 'to' ? true : false);
+              const tryParse = dateMath.parse($scope[time], { roundUp: time === 'to' });
               display[time] = moment.isMoment(tryParse) ? '~ ' + tryParse.fromNow() : $scope[time];
             }
           }
@@ -124,7 +124,7 @@ module.directive('prettyDuration', function (config, timeUnits, $compile, timefi
         } else {
           timefilter.time.mode = 'absolute';
           return {
-            to: dateMath.parse(timefilter.time.to, true),
+            to: dateMath.parse(timefilter.time.to, { roundUp: true }),
             from: dateMath.parse(timefilter.time.from)
           };
         }

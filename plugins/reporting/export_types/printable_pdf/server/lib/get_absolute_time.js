@@ -6,8 +6,6 @@ export function getAbsoluteTime(time) {
   const timeFrom = get(time, 'from');
   const timeTo = get(time, 'to');
 
-  const roundToEnd = true;
-
   if (!mode || !timeFrom || !timeTo) return time;
   if (mode === 'absolute') {
     return time;
@@ -15,7 +13,7 @@ export function getAbsoluteTime(time) {
 
   const output = { mode: 'absolute' };
   output.from = datemath.parse(timeFrom);
-  output.to = datemath.parse(timeTo, roundToEnd);
+  output.to = datemath.parse(timeTo, { roundUp: true });
 
   return output;
 }
