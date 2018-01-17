@@ -13,6 +13,7 @@ import {
 
 const Title = styled.div`
   font-size: ${fontSizes.large};
+  margin-bottom: ${px(units.half)};
 `;
 
 const Container = styled.div`

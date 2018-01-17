@@ -1,6 +1,12 @@
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
-import { units, px, colors, fontSizes } from '../../../../style/variables';
+import {
+  unit,
+  units,
+  px,
+  colors,
+  fontSizes
+} from '../../../../style/variables';
 
 const Container = styled.div`
   display: flex;
@@ -9,12 +15,8 @@ const Container = styled.div`
   color: ${colors.gray2};
   cursor: ${props => (props.clickable ? 'pointer' : 'initial')};
   opacity: ${props => (props.disabled ? 0.4 : 1)};
-  margin-right: ${px(units.half)};
+  margin-right: ${px(unit)};
   user-select: none;
-
-  &:last-of-type {
-    margin-right: 0;
-  }
 `;
 
 const Indicator = styled.span`
