@@ -175,6 +175,7 @@ class Transaction extends Component {
         <TabContentContainer>
           {currentTab === DEFAULT_TAB ? (
             <Spans
+              agentName={agentName}
               droppedSpans={get(
                 transaction.data,
                 'transaction.spanCount.dropped.total',

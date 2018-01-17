@@ -47,7 +47,7 @@ class Spans extends PureComponent {
   }
 
   render() {
-    const { spans, urlParams } = this.props;
+    const { spans, agentName, urlParams } = this.props;
     if (spans.status !== STATUS.SUCCESS) {
       return null;
     }
@@ -113,12 +113,38 @@ class Spans extends PureComponent {
         {this.props.droppedSpans > 0 && (
           <DroppedSpansContainer>
             {this.props.droppedSpans} spans dropped due to limit of{' '}
-            {spans.data.spans.length}. Learn more in the documentation.
+            {spans.data.spans.length}.{' '}
+            <DocumentationLink agentName={agentName} />
           </DroppedSpansContainer>
         )}
       </div>
     );
   }
+}
+
+function DocumentationLink({ agentName }) {
+  let url;
+
+  switch (agentName) {
+    case 'nodejs':
+      url =
+        'https://www.elastic.co/guide/en/apm/agent/nodejs/1.x/agent-api.html#transaction-max-spans';
+      break;
+
+    case 'python':
+      url =
+        'https://www.elastic.co/guide/en/apm/agent/python/2.x/configuration.html#config-transaction-max-spans';
+      break;
+
+    default:
+      return null;
+  }
+
+  return (
+    <a href={url} target="_blank">
+      Learn more in the documentation.
+    </a>
+  );
 }
 
 function loadSpans(props) {
