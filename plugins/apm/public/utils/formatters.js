@@ -50,10 +50,14 @@ export function getColorByType(types) {
   const assignedColors = {
     app: colors.apmBlue,
     cache: colors.apmGreen,
+    components: colors.apmGreen,
     ext: colors.apmPurple,
+    xhr: colors.apmPurple,
     template: colors.apmRed2,
+    resource: colors.apmRed2,
     custom: colors.apmTan,
-    db: colors.apmOrange
+    db: colors.apmOrange,
+    'hard-navigation': colors.apmYellow
   };
 
   const unknownTypes = difference(types, Object.keys(assignedColors));
@@ -71,6 +75,8 @@ export function getSpanLabel(type) {
   switch (type) {
     case 'db':
       return 'DB';
+    case 'hard-navigation':
+      return 'Navigation timing';
     default:
       return type;
   }
