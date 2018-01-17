@@ -22,6 +22,7 @@ import _ from 'lodash';
 import rison from 'rison-node';
 
 import 'plugins/kibana/visualize/styles/main.less';
+import 'plugins/ml/components/form_filter_input';
 
 import 'ui/courier';
 import chrome from 'ui/chrome';

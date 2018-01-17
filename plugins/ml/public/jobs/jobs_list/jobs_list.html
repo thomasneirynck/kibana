@@ -27,21 +27,24 @@
         </div>
 
 
-        <div class="col-xs-2" >
-          <input
-            ng-model="filterText"
-            placeholder="Job filter"
-            ng-change="applyFilter()"
-            class="form-control job-filter-input"
-             />
-          <div class="job-filter-progress-icon" >
-            <div class="filter-icon" ng-show="filterIcon===1">
-              <i class='fa fa-spinner fa-spin'></i>
-            </div>
-            <div class="filter-icon" ng-show="filterIcon===0">
-              <a aria-label="Clear filter" ng-click="clearFilter()" href="">
-                <i class="fa fa-times-circle"></i>
-              </a>
+        <div class="col-xs-2">
+          <div class="ml-filter-input">
+            <input
+              type="text"
+              ng-model="filterText"
+              placeholder="Job filter"
+              ng-change="applyFilter()"
+              class="form-control"
+               />
+            <div class="ml-filter-progress-icon">
+              <div ng-show="filterIcon===1">
+                <i class='fa fa-spinner fa-spin'></i>
+              </div>
+              <div ng-show="filterIcon===0">
+                <a aria-label="Clear filter" ng-click="clearFilter()" href="">
+                  <i class="fa fa-times-circle"></i>
+                </a>
+              </div>
             </div>
           </div>
 

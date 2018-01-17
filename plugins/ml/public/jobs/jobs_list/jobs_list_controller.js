@@ -18,6 +18,7 @@ import $ from 'jquery';
 import moment from 'moment';
 import angular from 'angular';
 
+import 'plugins/ml/components/form_filter_input';
 import jobsListControlsHtml from './jobs_list_controls.html';
 import jobsListArrow from 'plugins/ml/components/paginated_table/open.html';
 import { isTimeSeriesViewJob } from 'plugins/ml/../common/util/job_utils';

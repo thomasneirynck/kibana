@@ -87,15 +87,15 @@
             </div>
           </div>
           <div class="field-filter-controls euiFlexItem euiFlexItem--flexGrowZero">
-            <div class="kuiSearchInput kuiSearchInput--large">
-              <div class="kuiSearchInput__icon kuiIcon fa-search"></div>
-              <input class="kuiSearchInput__input filter-input" type="text" aria-label="Filter" placeholder="Filter"
+            <div class="ml-filter-input">
+              <div class="ml-filter-search-icon fa fa-search"></div>
+              <input class="form-control ml-filter-input-left-icon" type="text" aria-label="Filter" placeholder="Filter"
                 ng-model="metricFieldFilter" ng-change="metricFieldFilterChanged()">
-              <div class="filter-progress-icon">
-                <div class="filter-icon" ng-show="metricFilterIcon===1">
+              <div class="ml-filter-progress-icon">
+                <div ng-show="metricFilterIcon===1">
                   <i class='fa fa-spinner fa-spin'></i>
                 </div>
-                <div class="filter-icon" ng-show="metricFilterIcon===0">
+                <div ng-show="metricFilterIcon===0">
                   <a aria-label="Clear filter" ng-click="clearMetricFilter()">
                     <i class="fa fa-times-circle"></i>
                   </a>
@@ -153,15 +153,15 @@
                 </select>
               </div>
               <div class="euiFlexItem euiFlexItem--flexGrowZero">
-                <div class="kuiSearchInput kuiSearchInput--large">
-                  <div class="kuiSearchInput__icon kuiIcon fa-search"></div>
-                  <input class="kuiSearchInput__input filter-input" type="text" aria-label="Filter" placeholder="Filter" ng-model="fieldFilter"
+                <div class="ml-filter-input">
+                  <div class="ml-filter-search-icon fa fa-search"></div>
+                  <input class="form-control ml-filter-input-left-icon" type="text" aria-label="Filter" placeholder="Filter" ng-model="fieldFilter"
                     ng-change="fieldFilterChanged()">
-                  <div class="filter-progress-icon">
-                    <div class="filter-icon" ng-show="fieldFilterIcon===1">
+                  <div class="ml-filter-progress-icon">
+                    <div ng-show="fieldFilterIcon===1">
                       <i class='fa fa-spinner fa-spin'></i>
                     </div>
-                    <div class="filter-icon" ng-show="fieldFilterIcon===0">
+                    <div ng-show="fieldFilterIcon===0">
                       <a aria-label="Clear filter" ng-click="clearFieldFilter()">
                         <i class="fa fa-times-circle"></i>
                       </a>
