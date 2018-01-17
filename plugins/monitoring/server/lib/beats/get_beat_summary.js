@@ -13,11 +13,11 @@ export function handleResponse(response, beatUuid) {
     type: capitalize(get(stats, 'beat.type')),
     output: capitalize(get(stats, 'metrics.libbeat.output.type')),
     eventsPublished: get(stats, 'metrics.libbeat.pipeline.events.published'),
-    eventsEmitted: get(stats, 'metrics.libbeat.pipeline.events.total'), // TODO: confirm this is the correct field
+    eventsEmitted: get(stats, 'metrics.libbeat.pipeline.events.total'), // TODO: confirm this is the correct field. https://github.com/elastic/x-pack-kibana/pull/3993
     eventsDropped: get(stats, 'metrics.libbeat.pipeline.events.dropped'),
     bytesWritten: get(stats, 'metrics.libbeat.output.write.bytes'),
     configReloads: get(stats, 'metrics.libbeat.config.reloads'),
-    uptime: get(stats, [ 'metrics', 'beat', 'info', 'uptime.ms' ]), // NOTE: The uptime fieldname has a dot in it
+    uptime: get(stats, 'metrics.beat.info.uptime.ms'),
   };
 }
 

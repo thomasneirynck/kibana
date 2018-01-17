@@ -30,7 +30,14 @@ export function getPageData($injector) {
           'beat_events_acknowledged_rate',
         ]
       },
-      'beat_cpu_utilization',
+      {
+        name: 'beat_os_load',
+        keys: [
+          'beat_system_os_load_1',
+          'beat_system_os_load_5',
+          'beat_system_os_load_15',
+        ]
+      },
       {
         name: 'beat_dropped_retry_filtered',
         keys: [
@@ -39,7 +46,13 @@ export function getPageData($injector) {
           'beat_events_filtered_rate',
         ]
       },
-      'beat_bytes_mem_alloc', // TODO: Beats team to provide total process memory consumption.
+      {
+        name: 'beat_bytes_mem',
+        keys: [
+          'beat_bytes_mem_alloc',
+          'beat_bytes_mem_rss',
+        ]
+      }
     ]
   })
     .then(response => response.data)

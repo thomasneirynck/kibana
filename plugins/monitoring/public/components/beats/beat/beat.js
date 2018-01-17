@@ -101,9 +101,9 @@ export function Beat({ summary, metrics, ...props }) {
           <div className="col-md-6">{renderChart(metrics.beat_published_and_acknowledged, props)}</div>
           <div className="col-md-6">{renderChart(metrics.beat_bytes_written, props)}</div>
           <div className="col-md-6">{renderChart(metrics.beat_failed_and_queued, props)}</div>
-          <div className="col-md-6">{renderChart(metrics.beat_cpu_utilization, props)}</div>
+          <div className="col-md-6">{renderChart(metrics.beat_bytes_mem, props)}</div>
           <div className="col-md-6">{renderChart(metrics.beat_dropped_retry_filtered, props)}</div>
-          <div className="col-md-6">{renderChart(metrics.beat_bytes_mem_alloc, props)}</div>
+          <div className="col-md-6">{renderChart(metrics.beat_os_load, props)}</div>
         </div>
       </div>
     </div>

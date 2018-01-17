@@ -38,7 +38,9 @@ describe('get_beat_summary', () => {
                 metrics: {
                   beat: {
                     info: {
-                      ['uptime.ms']: 32 * 1000 * 1000 * 1000,
+                      uptime: {
+                        ms: 32 * 1000 * 1000 * 1000,
+                      }
                     }
                   },
                   libbeat: {
