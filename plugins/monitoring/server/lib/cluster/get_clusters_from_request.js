@@ -5,6 +5,7 @@ import { flagSupportedClusters } from './flag_supported_clusters';
 import { getMlJobsForCluster } from '../elasticsearch';
 import { getKibanasForClusters } from '../kibana';
 import { getLogstashForClusters } from '../logstash';
+import { getBeatsForClusters } from '../beats';
 import { calculateOverallStatus } from '../calculate_overall_status';
 import { alertsClustersAggregation } from '../../cluster_alerts/alerts_clusters_aggregation';
 import { alertsClusterSearch } from '../../cluster_alerts/alerts_cluster_search';
@@ -35,7 +36,7 @@ export function normalizeClustersData(clusters) {
  * Get all clusters or the cluster associated with {@code clusterUuid} when it is defined.
  */
 export async function getClustersFromRequest(req, indexPatterns, { clusterUuid, start, end } = {}) {
-  const { esIndexPattern, kbnIndexPattern, lsIndexPattern, alertsIndex } = indexPatterns;
+  const { esIndexPattern, kbnIndexPattern, lsIndexPattern, beatsIndexPattern, alertsIndex } = indexPatterns;
 
   // get clusters with stats and cluster state
   let clusters = await getClustersStats(req, esIndexPattern, clusterUuid);
@@ -100,6 +101,13 @@ export async function getClustersFromRequest(req, indexPatterns, { clusterUuid, 
   logstashes.forEach(logstash => {
     const clusterIndex = findIndex(clusters, { cluster_uuid: logstash.clusterUuid });
     set(clusters[clusterIndex], 'logstash', logstash.stats);
+  });
+
+  // add beats data
+  const beatsByCluster = await getBeatsForClusters(req, beatsIndexPattern, clusters);
+  beatsByCluster.forEach(beats => {
+    const clusterIndex = findIndex(clusters, { cluster_uuid: beats.clusterUuid });
+    set(clusters[clusterIndex], 'beats', beats.stats);
   });
 
   return normalizeClustersData(clusters);

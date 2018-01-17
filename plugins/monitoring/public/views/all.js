@@ -22,3 +22,6 @@ import './logstash/node/advanced';
 import './logstash/node/pipelines';
 import './logstash/pipelines';
 import './logstash/pipeline';
+import './beats/overview';
+import './beats/listing';
+import './beats/beat';

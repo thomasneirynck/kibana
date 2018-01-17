@@ -27,7 +27,7 @@ export function getNodes(req, lsIndexPattern, { clusterUuid }) {
     index: lsIndexPattern,
     ignoreUnavailable: true,
     body: {
-      size: config.get('xpack.monitoring.max_bucket_size'),
+      size: config.get('xpack.monitoring.max_bucket_size'), // FIXME
       query: createQuery({
         start,
         end,

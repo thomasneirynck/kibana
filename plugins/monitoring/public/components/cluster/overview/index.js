@@ -4,6 +4,7 @@ import { LicenseText } from './license_text';
 import { KibanaPanel } from './kibana_panel';
 import { LogstashPanel } from './logstash_panel';
 import { AlertsPanel } from './alerts_panel';
+import { BeatsPanel } from './beats_panel';
 
 import {
   EuiPage,
@@ -26,6 +27,8 @@ export function Overview(props) {
       <KibanaPanel {...props.cluster.kibana} changeUrl={props.changeUrl}/>
 
       <LogstashPanel {...props.cluster.logstash} changeUrl={props.changeUrl}/>
+
+      <BeatsPanel {...props.cluster.beats} changeUrl={props.changeUrl}/>
 
     </EuiPage>
   );

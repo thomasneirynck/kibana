@@ -32,7 +32,8 @@ export function ClusterItemContainer(props) {
   const iconMap = {
     elasticsearch: 'logoElasticSearch',
     kibana: 'logoKibana',
-    logstash: 'logoLogstash'
+    logstash: 'logoLogstash',
+    beats: 'logoBeats',
   };
   const icon = iconMap[props.url];
 

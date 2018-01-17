@@ -60,6 +60,34 @@
           <a ng-if="monitoringMain.instance" class="kuiLocalTab">{{ monitoringMain.instance }}</a>
         </div>
 
+        <div ng-if="monitoringMain.inBeats" class="kuiLocalTabs" role="navigation">
+          <a
+            ng-if="!monitoringMain.instance"
+            kbn-href="#/beats"
+            class="kuiLocalTab"
+            ng-class="{'kuiLocalTab-isSelected':
+            monitoringMain.isActiveTab('overview')}"
+          >
+            Overview
+          </a>
+          <a
+            ng-if="!monitoringMain.instance"
+            kbn-href="#/beats/beats"
+            class="kuiLocalTab"
+            ng-class="{'kuiLocalTab-isSelected': monitoringMain.isActiveTab('beats')}"
+          >
+            Instances
+          </a>
+          <a
+            ng-if="monitoringMain.instance"
+            kbn-href="#/beats/beat/{{ monitoringMain.resolver }}"
+            class="kuiLocalTab"
+            ng-class="{'kuiLocalTab-isSelected': monitoringMain.page === 'overview'}"
+          >
+            Overview
+          </a>
+        </div>
+
         <div ng-if="monitoringMain.inLogstash" class="kuiLocalTabs" role="navigation">
           <a
             ng-if="!monitoringMain.instance && !monitoringMain.pipelineId"

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { MissingRequiredError } from '../error_missing_required';
 import {
-  LARGE_FLOAT, SMALL_FLOAT, SMALL_BYTES
+  LARGE_FLOAT, SMALL_FLOAT, SMALL_BYTES, LARGE_BYTES
 } from '../../../common/formatting';
 
 /**
@@ -43,6 +43,7 @@ export class Metric {
 
     const undefKey = _.findKey(requireds, _.isUndefined);
     if (undefKey) {
+      console.log(`Missing required field: [${undefKey}]`);
       throw new MissingRequiredError(undefKey);
     }
 
@@ -552,6 +553,25 @@ export class LogstashPipelineThroughputMetric extends LogstashMetric {
   }
 }
 
+export class BeatsMetric extends Metric {
+  constructor(opts) {
+    super({
+      app: 'beats',
+      uuidField: 'cluster_uuid',
+      timestampField: 'beats_stats.timestamp',
+      ...opts,
+    });
+  }
+
+  // helper method
+  static getMetricFields() {
+    return {
+      timestampField: 'beats_stats.timestamp',
+      uuidField: 'cluster_uuid'
+    };
+  }
+}
+
 export class LogstashPipelineNodeCountMetric extends LogstashMetric {
   constructor(opts) {
     super({
@@ -596,5 +616,48 @@ export class LogstashPipelineNodeCountMetric extends LogstashMetric {
 
       return pipelineNodesCounts;
     };
+  }
+}
+
+export class BeatsEventsRateMetric extends BeatsMetric {
+  constructor(opts) {
+    super({
+      format: LARGE_FLOAT,
+      metricAgg: 'max',
+      units: '/s',
+      derivative: true,
+      ...opts,
+    });
+  }
+}
+
+export class BeatsByteRateMetric extends BeatsMetric {
+  constructor(opts) {
+    super({
+      format: LARGE_BYTES,
+      metricAgg: 'max',
+      units: '/s',
+      derivative: true,
+      ...opts,
+    });
+  }
+}
+
+export class BeatsEventsRateClusterMetric extends BeatsEventsRateMetric {
+  constructor(opts) {
+    super({
+      uuidField: 'cluster_uuid',
+      metricAgg: 'sum',
+      ...opts,
+    });
+  }
+}
+
+export class BeatsByteRateClusterMetric extends BeatsByteRateMetric {
+  constructor(opts) {
+    super({
+      uuidField: 'cluster_uuid',
+      ...opts,
+    });
   }
 }

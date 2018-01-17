@@ -37,6 +37,13 @@ export function MonitoringClusterOverviewProvider({ getService }) {
   const SUBJ_LS_JVM_HEAP        = `${SUBJ_LS_PANEL} lsJvmHeap`;
   const SUBJ_LS_PIPELINES       = `${SUBJ_LS_PANEL} lsPipelines`;
 
+  const SUBJ_BEATS_PANEL            = `clusterItemContainerBeats`;
+  const SUBJ_BEATS_OVERVIEW         = `${SUBJ_BEATS_PANEL} beatsOverview`;
+  const SUBJ_BEATS_PUBLISHED_EVENTS = `${SUBJ_BEATS_PANEL} beatsPublishedEvents`;
+  const SUBJ_BEATS_BYTES_SENT       = `${SUBJ_BEATS_PANEL} beatsBytesSent`;
+  const SUBJ_BEATS_LISTING          = `${SUBJ_BEATS_PANEL} beatsListing`;
+  const SUBJ_BEATS_TYPES_COUNTS     = `${SUBJ_BEATS_PANEL} beatTypeCount`;
+
   return new class ClusterOverview {
 
     isOnClusterOverview() {
@@ -152,6 +159,36 @@ export function MonitoringClusterOverviewProvider({ getService }) {
     }
     clickLsPipelines() {
       return testSubjects.click(SUBJ_LS_PIPELINES);
+    }
+
+    getBeatsPublishedEventsRate() {
+      return testSubjects.getVisibleText(SUBJ_BEATS_PUBLISHED_EVENTS);
+    }
+    getBeatsTotalBytesSentRate() {
+      return testSubjects.getVisibleText(SUBJ_BEATS_BYTES_SENT);
+    }
+    async getBeatsListingDetail() {
+      const total = await testSubjects.getVisibleText(SUBJ_BEATS_LISTING + ' beatsTotal');
+      const counts = await testSubjects.getAttributeAll(SUBJ_BEATS_TYPES_COUNTS, 'data-test-beat-type-count');
+
+      const countsByType = counts.reduce((accum, text) => {
+        const [ type, count ] = text.split(':');
+        return {
+          ...accum,
+          [type.toLowerCase()]: count
+        };
+      }, {});
+
+      return {
+        total,
+        types: countsByType
+      };
+    }
+    clickBeatsOverview() {
+      return testSubjects.click(SUBJ_BEATS_OVERVIEW);
+    }
+    clickBeatsListing() {
+      return testSubjects.click(SUBJ_BEATS_LISTING);
     }
 
   };

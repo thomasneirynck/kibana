@@ -61,6 +61,20 @@ function getLogstashBreadcrumbs(mainInstance) {
   return breadcrumbs;
 }
 
+// generate Beats breadcrumbs
+function getBeatsBreadcrumbs(mainInstance) {
+  const breadcrumbs = [];
+  if (mainInstance.instance) {
+    breadcrumbs.push(createCrumb('#/beats', 'Beats'));
+    breadcrumbs.push(createCrumb('#/beats/beats', 'Instances'));
+    breadcrumbs.push(createCrumb(null, mainInstance.instance));
+  } else {
+    breadcrumbs.push(createCrumb(null, 'Beats'));
+  }
+
+  return breadcrumbs;
+}
+
 export function breadcrumbsProvider() {
   return function createBreadcrumbs(clusterName, mainInstance) {
     let breadcrumbs = [ createCrumb('#/home', 'Clusters', 'breadcrumbClusters') ];
@@ -77,6 +91,9 @@ export function breadcrumbsProvider() {
     }
     if (mainInstance.inLogstash) {
       breadcrumbs = breadcrumbs.concat(getLogstashBreadcrumbs(mainInstance));
+    }
+    if (mainInstance.inBeats) {
+      breadcrumbs = breadcrumbs.concat(getBeatsBreadcrumbs(mainInstance));
     }
 
     return breadcrumbs;

@@ -2575,6 +2575,232 @@ export const expected = {
         }
       }
     }
+  },
+  beat_cluster_events_failed_rate: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    format: '0,0.[00]',
+    metricAgg: 'sum',
+    units: '/s',
+    derivative: true,
+    field: 'beats_stats.metrics.libbeat.pipeline.events.failed',
+    title: 'Failed and Queued Events Rate',
+    label: 'Failed Events Rate',
+    description:
+      'Number of events lost because the client was in shutdown phase, or because the queue was full and`DropIfFull` was set'
+  },
+  beat_cluster_events_queued_rate: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    format: '0,0.[00]',
+    metricAgg: 'sum',
+    units: '/s',
+    derivative: true,
+    field: 'beats_stats.metrics.libbeat.pipeline.events.total',
+    title: 'Failed and Queued Events Rate',
+    label: 'Queued Events Rate',
+    description: 'Total number of events the clients have attempted to publish'
+  },
+  beat_cluster_events_acknowledged_rate: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    format: '0,0.[00]',
+    metricAgg: 'sum',
+    units: '/s',
+    derivative: true,
+    field: 'beats_stats.metrics.libbeat.pipeline.queue.acked',
+    title: 'Published and Acknowledged Events Rate',
+    label: 'Acknowledged Events Rate',
+    description: 'Number of events acknowledged by the queue/broker in use'
+  },
+  beat_cluster_events_published_rate: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    format: '0,0.[00]',
+    metricAgg: 'sum',
+    units: '/s',
+    derivative: true,
+    field: 'beats_stats.metrics.libbeat.pipeline.events.published',
+    title: 'Published and Acknowledged Events Rate',
+    label: 'Published Events Rate',
+    description:
+      'Number of events the clients have managed to push into the publisher pipeline'
+  },
+  beat_cluster_throughput_bytes_rate: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    format: '0,0.0 b',
+    metricAgg: 'max',
+    units: '/s',
+    derivative: true,
+    field: 'beats_stats.metrics.libbeat.output.write.bytes',
+    title: 'Throughput',
+    label: 'Throughput Bytes /s',
+    description: 'Rate of bytes throughput for all the beats in the cluster'
+  },
+  beat_events_queued_rate: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    format: '0,0.[00]',
+    metricAgg: 'max',
+    units: '/s',
+    derivative: true,
+    field: 'beats_stats.metrics.libbeat.pipeline.events.total',
+    title: 'Failed and Queued Events Rate',
+    label: 'Queued Events Rate',
+    description: 'Total number of events the client has attempted to publish'
+  },
+  beat_events_failed_rate: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    format: '0,0.[00]',
+    metricAgg: 'max',
+    units: '/s',
+    derivative: true,
+    field: 'beats_stats.metrics.libbeat.pipeline.events.failed',
+    title: 'Failed and Queued Events Rate',
+    label: 'Failed Events Rate',
+    description:
+      'Number of events lost because the client was in shutdown phase, or because the queue was full and`DropIfFull` was set'
+  },
+  beat_bytes_read: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    format: '0,0.0 b',
+    metricAgg: 'max',
+    units: '/s',
+    derivative: true,
+    field: 'beats_stats.metrics.libbeat.output.read.bytes',
+    // title: 'Bytes Read / Written',
+    label: 'Bytes Read',
+    description: 'Amount of data read in by the Beat'
+  },
+  beat_bytes_written: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    format: '0,0.0 b',
+    metricAgg: 'max',
+    units: '/s',
+    derivative: true,
+    field: 'beats_stats.metrics.libbeat.output.write.bytes',
+    // title: 'Bytes Read / Written',
+    label: 'Bytes Sent',
+    description: 'Amount of data written by the output'
+  },
+  beat_events_published_rate: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    format: '0,0.[00]',
+    metricAgg: 'max',
+    units: '/s',
+    derivative: true,
+    field: 'beats_stats.metrics.libbeat.pipeline.events.published',
+    title: 'Published and Acknowledged Events Rate',
+    label: 'Published Events Rate',
+    description:
+      'Number of events the client has managed to push into the publisher pipeline'
+  },
+  beat_events_acknowledged_rate: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    format: '0,0.[00]',
+    metricAgg: 'max',
+    units: '/s',
+    derivative: true,
+    field: 'beats_stats.metrics.libbeat.pipeline.queue.acked',
+    title: 'Published and Acknowledged Events Rate',
+    label: 'Acknowledged Events Rate',
+    description: 'Number of events acknowledged by the queue/broker in use'
+  },
+  beat_events_dropped_rate: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    format: '0,0.[00]',
+    metricAgg: 'max',
+    units: '/s',
+    derivative: true,
+    field: 'beats_stats.metrics.libbeat.pipeline.events.dropped',
+    title: 'Dropped, Retried, and Filtered Events Rate',
+    label: 'Dropped Events Rate',
+    description:
+      'Number of events lost because the configured `max_retries` was reached.'
+  },
+  beat_events_retry_rate: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    format: '0,0.[00]',
+    metricAgg: 'max',
+    units: '/s',
+    derivative: true,
+    field: 'beats_stats.metrics.libbeat.pipeline.events.retry',
+    title: 'Dropped, Retried, and Filtered Events Rate',
+    label: 'Retried Events Rate',
+    description:
+      'Number of events pushed to the output worker queue by the retryer'
+  },
+  beat_events_filtered_rate: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    format: '0,0.[00]',
+    metricAgg: 'max',
+    units: '/s',
+    derivative: true,
+    field: 'beats_stats.metrics.libbeat.pipeline.events.filtered',
+    title: 'Dropped, Retried, and Filtered Events Rate',
+    label: 'Filtered Events Rate',
+    description:
+      'Number of events the client has filtered out (on purpose or failed)',
+  },
+  beat_cpu_utilization: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    field: 'beats_stats.metrics.beat.cpu.total.pct',
+    label: 'CPU Utilization',
+    description: 'CPU usage of the Beat process in percentage',
+    format: '0,0.[00]',
+    metricAgg: 'max',
+    units: '%',
+    derivative: false
+  },
+  beat_bytes_mem_alloc: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    field: 'beats_stats.metrics.beat.memstats.memory_alloc',
+    label: 'Bytes Allocated',
+    title: 'Memory',
+    description: 'Memory in active use by the Beat',
+    format: '0,0.0 b',
+    metricAgg: 'max',
+    units: 'B',
+    derivative: false
+  },
+  beat_bytes_mem_total: {
+    app: 'beats',
+    uuidField: 'cluster_uuid',
+    timestampField: 'beats_stats.timestamp',
+    field: 'beats_stats.metrics.beat.memstats.memory_total',
+    label: 'Total',
+    title: 'Memory',
+    description: 'All memory allocated by the Beat over time',
+    format: '0,0.0 b',
+    metricAgg: 'max',
+    units: 'B',
+    derivative: false
   }
-
 };

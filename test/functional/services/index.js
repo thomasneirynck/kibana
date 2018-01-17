@@ -8,6 +8,10 @@ export { MonitoringElasticsearchNodeDetailProvider } from './monitoring/elastics
 export { MonitoringElasticsearchIndicesProvider } from './monitoring/elasticsearch_indices';
 export { MonitoringElasticsearchIndexDetailProvider } from './monitoring/elasticsearch_index_detail';
 export { MonitoringElasticsearchShardsProvider } from './monitoring/elasticsearch_shards';
+export { MonitoringBeatsOverviewProvider } from './monitoring/beats_overview';
+export { MonitoringBeatsListingProvider } from './monitoring/beats_listing';
+export { MonitoringBeatDetailProvider } from './monitoring/beat_detail';
+export { MonitoringBeatsSummaryStatusProvider } from './monitoring/beats_summary_status';
 export { MonitoringLogstashPipelinesProvider } from './monitoring/logstash_pipelines';
 export { MonitoringLogstashSummaryStatusProvider } from './monitoring/logstash_summary_status';
 export { MonitoringKibanaOverviewProvider } from './monitoring/kibana_overview';

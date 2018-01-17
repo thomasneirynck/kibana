@@ -36,6 +36,9 @@ export const config = (Joi) => {
     logstash: object({
       index_pattern: string().default('.monitoring-logstash-2-*,.monitoring-logstash-6-*')
     }).default(),
+    beats: object({
+      index_pattern: string().default('.monitoring-beats-6-*')
+    }).default(),
     cluster_alerts: object({
       enabled: boolean().default(true),
       index: string().default('.monitoring-alerts-6'),

@@ -2,6 +2,7 @@ export {
   LatencyMetric,
   QuotaMetric,
   ElasticsearchMetric,
-  LogstashClusterMetric
+  LogstashClusterMetric,
+  BeatsMetric,
 } from './classes';
 export { metrics } from './metrics';

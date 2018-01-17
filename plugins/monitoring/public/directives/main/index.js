@@ -15,6 +15,7 @@ export class MonitoringMainController {
     this.inElasticsearch = false;
     this.inKibana = false;
     this.inLogstash = false;
+    this.inBeats = false;
   }
 
   // kick things off from the directive link function
@@ -30,6 +31,7 @@ export class MonitoringMainController {
       this.inElasticsearch = this.product === 'elasticsearch';
       this.inKibana = this.product === 'kibana';
       this.inLogstash = this.product === 'logstash';
+      this.inBeats = this.product === 'beats';
     } else {
       this.inOverview = this.name === 'overview';
       this.inAlerts = this.name === 'alerts';

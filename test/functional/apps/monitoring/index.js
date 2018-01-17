@@ -22,5 +22,10 @@ export default function ({ loadTestFile }) {
     // loadTestFile(require.resolve('./logstash/node'));
 
     loadTestFile(require.resolve('./logstash/pipelines'));
+
+    loadTestFile(require.resolve('./beats/cluster'));
+    loadTestFile(require.resolve('./beats/overview'));
+    loadTestFile(require.resolve('./beats/listing'));
+    loadTestFile(require.resolve('./beats/beat_detail'));
   });
 }
