@@ -1,10 +1,10 @@
 import Joi from 'joi';
-import { getAllStats } from '../../../../lib/phone_home';
+import { getAllStats } from '../../../../lib/telemetry';
 import { handleError } from '../../../../lib/errors';
 
-export function phoneHomeRoutes(server) {
+export function telemetryRoutes(server) {
   /**
-   * Phone Home Data Gathering
+   * Telemetry Data
    *
    * This provides a mechanism for fetching minor details about all clusters, including details related to the rest of the
    * stack (e.g., Kibana).

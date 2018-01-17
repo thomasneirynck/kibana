@@ -39,8 +39,8 @@ export const init = (monitoringPlugin, server) => {
         // Require all routes needed for UI
         features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server));
       } else {
-        // Require only routes needed for stats reporting
-        features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', 'phone_home.js'), server));
+        // Require only routes needed for telemetry
+        features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', 'telemetry.js'), server));
       }
     }
 

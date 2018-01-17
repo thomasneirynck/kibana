@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
-import { PhoneHome } from '../phone_home';
+import { Telemetry } from '../telemetry';
 import { uiModules } from 'ui/modules';
 
 uiModules.get('kibana')
@@ -42,16 +42,16 @@ const getMockInjector = ({ allowReport, lastReport }) => {
 };
 const mockBasePath = '/testo';
 
-describe('phone home class', () => {
+describe('telemetry class', () => {
   it('start method for beginning a timer', () => {
-    const sender = new PhoneHome(getMockInjector({ allowReport: true }), mockBasePath);
+    const sender = new Telemetry(getMockInjector({ allowReport: true }), mockBasePath);
     expect(sender.start).to.be.a('function');
   });
 
   // call the private method
   describe('should send a report', () => {
     it('never reported before', () => {
-      const sender = new PhoneHome(
+      const sender = new Telemetry(
         getMockInjector({ allowReport: true }),
         mockBasePath
       );
@@ -75,7 +75,7 @@ describe('phone home class', () => {
     });
 
     it('interval check finds last report over a day ago', () => {
-      const sender = new PhoneHome(
+      const sender = new Telemetry(
         getMockInjector({
           allowReport: true,
           lastReport: (new Date()).getTime() - 86401000 // reported 1 day + 1 second ago
@@ -102,13 +102,13 @@ describe('phone home class', () => {
 
   describe('should not send the report', () => {
     it('config does not allow report', () => {
-      const sender = new PhoneHome(getMockInjector({ allowReport: false }), mockBasePath);
+      const sender = new Telemetry(getMockInjector({ allowReport: false }), mockBasePath);
       return sender._sendIfDue()
         .then(result => expect(result).to.be(null));
     });
 
     it('interval check finds last report less than a day ago', () => {
-      const sender = new PhoneHome(getMockInjector(
+      const sender = new Telemetry(getMockInjector(
         {
           allowReport: true,
           lastReport: (new Date()).getTime() - 82800000 // reported 23 hours ago

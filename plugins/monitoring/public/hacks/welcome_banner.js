@@ -55,7 +55,7 @@ function customBanner($injector, _renderBanner = renderBanner) {
   const Private = $injector.get('Private');
   const config = $injector.get('config');
 
-  // no banner if the server config has phone home disabled
+  // no banner if the server config has telemetry disabled
   if (!reportStats) {
     return;
   }

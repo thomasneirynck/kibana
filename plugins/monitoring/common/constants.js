@@ -61,7 +61,7 @@ export const SORT_ASCENDING = 1;
 export const SORT_DESCENDING = -1;
 
 /*
- * config options for welcome banner / allow phone home
+ * config options for welcome banner / allow telemetry
  * @type {string}
  */
 export const CONFIG_SHOW_BANNER = 'xPackMonitoring:showBanner';

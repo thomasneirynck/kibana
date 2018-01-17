@@ -4,7 +4,7 @@ import { CONFIG_ALLOW_REPORT, REPORT_INTERVAL_MS } from 'monitoring-constants';
 
 const STORAGE_KEY = 'xpack.monitoring.data';
 
-export class PhoneHome {
+export class Telemetry {
 
   /*
    * @param {Object} $injector - AngularJS injector service
@@ -38,7 +38,7 @@ export class PhoneHome {
    */
   _checkReportStatus() {
 
-    // check if opt-in for phone home is enabled in config (reportStats) and
+    // check if opt-in for telemetry is enabled in config (reportStats) and
     // browser setting (config) "true"
     if (this._reportStats && this._config.get(CONFIG_ALLOW_REPORT, true)) {
       // If the last report is empty it means we've never sent an report and
@@ -89,7 +89,7 @@ export class PhoneHome {
         return response;
       })
       .catch(() => {
-      // no ajaxErrorHandlers for phone home
+      // no ajaxErrorHandlers for telemetry
         return Promise.resolve(null);
       });
   }
