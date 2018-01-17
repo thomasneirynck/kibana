@@ -54,8 +54,8 @@ export const config = (Joi) => {
     node_resolver: string().valid('uuid').default('uuid'), // deprecated in 5.6; we can make them set it properly before we remove it
     stats_report_url: Joi.when('$dev', { // `when` can't be deconstructed
       is: true,
-      then: string().default('https://telemetry-staging.elastic.co/xpack/v1/phone-home'),
-      otherwise: string().default('https://telemetry.elastic.co/xpack/v1/phone-home')
+      then: string().default('https://telemetry-staging.elastic.co/xpack/v1/send'),
+      otherwise: string().default('https://telemetry.elastic.co/xpack/v1/send')
     }),
     agent: object({
       interval: string().regex(/[\d\.]+[yMwdhms]/).default('10s')
