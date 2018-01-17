@@ -126,7 +126,7 @@ class Span extends React.Component {
           }}
         />
         <SpanLabel style={{ left: `${left}%`, width: `${100 - left}%` }}>
-          {spanName}
+          &lrm;{spanName}&lrm;
         </SpanLabel>
 
         <Modal
