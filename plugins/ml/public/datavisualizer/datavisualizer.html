@@ -87,21 +87,11 @@
             </div>
           </div>
           <div class="field-filter-controls euiFlexItem euiFlexItem--flexGrowZero">
-            <div class="ml-filter-input">
-              <div class="fa fa-search"></div>
-              <input class="form-control ml-filter-input-left-icon" type="text" aria-label="Filter" placeholder="Filter"
-                ng-model="metricFieldFilter" ng-change="metricFieldFilterChanged()">
-              <div class="ml-filter-progress-icon">
-                <div ng-show="metricFilterIcon===1">
-                  <i class='fa fa-spinner fa-spin'></i>
-                </div>
-                <div ng-show="metricFilterIcon===0">
-                  <a aria-label="Clear filter" ng-click="clearMetricFilter()">
-                    <i class="fa fa-times-circle"></i>
-                  </a>
-                </div>
-              </div>
-            </div>
+            <ml-form-filter-input
+              filter="metricFieldFilter"
+              filter-icon="metricFilterIcon"
+              filter-changed="metricFieldFilterChanged"
+              clear-filter="clearMetricFilter" />
           </div>
         </div>
 
@@ -153,21 +143,11 @@
                 </select>
               </div>
               <div class="euiFlexItem euiFlexItem--flexGrowZero">
-                <div class="ml-filter-input">
-                  <div class="fa fa-search"></div>
-                  <input class="form-control ml-filter-input-left-icon" type="text" aria-label="Filter" placeholder="Filter" ng-model="fieldFilter"
-                    ng-change="fieldFilterChanged()">
-                  <div class="ml-filter-progress-icon">
-                    <div ng-show="fieldFilterIcon===1">
-                      <i class='fa fa-spinner fa-spin'></i>
-                    </div>
-                    <div ng-show="fieldFilterIcon===0">
-                      <a aria-label="Clear filter" ng-click="clearFieldFilter()">
-                        <i class="fa fa-times-circle"></i>
-                      </a>
-                    </div>
-                  </div>
-                </div>
+                <ml-form-filter-input
+                  filter="fieldFilter"
+                  filter-icon="fieldFilterIcon"
+                  filter-changed="fieldFilterChanged"
+                  clear-filter="clearFieldFilter" />
               </div>
             </div>
           </div>
