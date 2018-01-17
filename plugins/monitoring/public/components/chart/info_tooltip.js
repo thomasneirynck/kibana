@@ -14,7 +14,7 @@ export function InfoTooltip({ series }) {
   });
 
   return (
-    <table>
+    <table className="monitoring-chart-tooltip">
       <tbody>
         <tr>
           <td className="monitoring-chart-tooltip__label">Interval</td>
