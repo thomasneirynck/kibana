@@ -10,7 +10,7 @@ import {
   borderRadius
 } from '../../../style/variables';
 
-import { isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { Ellipsis } from '../../shared/Icons';
 import { PropertiesTable } from '../../shared/PropertiesTable';
 
@@ -144,18 +144,23 @@ const VariablesTableContainer = styled.div`
 `;
 
 const getStackframeLines = stackframe => {
-  if (!stackframe.context) {
+  if (!(stackframe.context || stackframe.line.context)) {
     return [];
   }
-  return [
-    ...(stackframe.context.pre || []),
-    stackframe.line.context,
-    ...(stackframe.context.post || [])
-  ];
+
+  const preContext = stackframe.context
+    ? get(stackframe, 'context.pre', [])
+    : [];
+  const postContext = stackframe.context
+    ? get(stackframe, 'context.post', [])
+    : [];
+  return [...preContext, stackframe.line.context, ...postContext];
 };
 
-const getStartLineNumber = stackframe =>
-  stackframe.line.number - stackframe.context.pre.length;
+const getStartLineNumber = stackframe => {
+  const preLines = stackframe.context ? stackframe.context.pre.length : 0;
+  return stackframe.line.number - preLines;
+};
 
 class CodePreview extends PureComponent {
   state = {
@@ -169,7 +174,9 @@ class CodePreview extends PureComponent {
 
   render() {
     const { stackframe, codeLanguage, isLibraryFrame } = this.props;
-    const hasContext = !isEmpty(stackframe.context);
+    const hasContext = !(
+      isEmpty(stackframe.context) && isEmpty(stackframe.line.context)
+    );
     const hasVariables = !isEmpty(stackframe.vars);
 
     return (
@@ -203,7 +210,7 @@ class CodePreview extends PureComponent {
 function Context({ stackframe, codeLanguage, isLibraryFrame }) {
   const lines = getStackframeLines(stackframe);
   const startLineNumber = getStartLineNumber(stackframe);
-  const lineIndex = stackframe.context.pre.length;
+  const lineIndex = stackframe.context ? stackframe.context.pre.length : 0;
   const language = codeLanguage || 'javascript'; // TODO: Add support for more languages
 
   return (
