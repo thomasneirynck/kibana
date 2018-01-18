@@ -23,7 +23,7 @@ export function getQueryFromSavedSearch(formConfig) {
   must.push(formConfig.query);
 
   formConfig.filters.forEach(f => {
-    const query = migrateFilter(f.query);
+    const query = migrateFilter(f.query || f);
     if(f.meta.disabled === false) {
       if(f.meta.negate) {
         mustNot.push(query);
