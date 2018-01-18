@@ -35,7 +35,7 @@ export function Stats({ stats }) {
           </strong>
         </div>
         <div>
-          Total Bytes Sent:&nbsp;
+          Bytes Sent:&nbsp;
           <strong data-test-subj="bytesSent">
             {formatMetric(get(stats, 'stats.bytesSent'), 'bytes')}
           </strong>

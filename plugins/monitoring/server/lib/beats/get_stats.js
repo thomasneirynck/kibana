@@ -48,5 +48,6 @@ export async function getStats(req, beatsIndexPattern, clusterUuid) {
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const response = await callWithRequest(req, 'search', params);
+
   return handleResponse(response, start, end);
 }

@@ -972,6 +972,9 @@
                                 "type": "long"
                               }
                             }
+                          },
+                          "ephemeral_id": {
+                            "type": "keyword"
                           }
                         }
                       },

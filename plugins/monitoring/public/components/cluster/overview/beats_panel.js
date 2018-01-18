@@ -61,7 +61,7 @@ export function BeatsPanel(props) {
               <EuiDescriptionListDescription data-test-subj="beatsPublishedEvents">
                 {formatMetric(props.publishedEvents, '0.[0]a')}
               </EuiDescriptionListDescription>
-              <EuiDescriptionListTitle>Total Bytes Sent</EuiDescriptionListTitle>
+              <EuiDescriptionListTitle>Bytes Sent</EuiDescriptionListTitle>
               <EuiDescriptionListDescription data-test-subj="beatsBytesSent">
                 {formatMetric(props.bytesSent, 'bytes')}
               </EuiDescriptionListDescription>

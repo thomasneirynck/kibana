@@ -1,11 +1,27 @@
 import { capitalize, get } from 'lodash';
 
+export const getDiffCalculation = (max, min) => {
+  // no need to test max >= 0, but min <= 0 which is normal for a derivative after restart
+  // because we are aggregating/collapsing on ephemeral_ids
+  if (
+    max !== null && min !== null &&
+    max >= 0 && min >= 0 &&
+    max >= min
+  ) {
+    return max - min;
+  }
+
+  return null;
+};
+
 export const beatsAggFilterPath = [
   'aggregations.total',
   'aggregations.types.buckets.key',
   'aggregations.types.buckets.uuids.buckets.doc_count',
-  'aggregations.events_published_sum_upper_bound',
-  'aggregations.bytes_sent_sum_upper_bound',
+  'aggregations.min_events_published_total.value',
+  'aggregations.max_events_published_total.value',
+  'aggregations.min_bytes_sent_total.value',
+  'aggregations.max_bytes_sent_total.value',
 ];
 
 export const beatsUuidsAgg = maxBucketSize => ({
@@ -29,53 +45,52 @@ export const beatsUuidsAgg = maxBucketSize => ({
       precision_threshold: 10000
     }
   },
-  beat_uuids: {
+  ephemeral_ids: {
     terms: {
-      field: 'beats_stats.beat.uuid',
+      field: 'beats_stats.metrics.beat.info.ephemeral_id',
       size: maxBucketSize
     },
     aggs: {
-      upper_bound_stats: {
-        terms: {
-          field: 'beats_stats.timestamp',
-          size: 1,
-          order: {
-            _key: 'desc'
-          }
-        },
-        aggs: {
-          events_published: {
-            max: {
-              field: 'beats_stats.metrics.libbeat.pipeline.events.published'
-            }
-          },
-          bytes_sent: {
-            max: {
-              field: 'beats_stats.metrics.libbeat.output.write.bytes'
-            }
-          }
+      min_events_published: {
+        min: {
+          field: 'beats_stats.metrics.libbeat.pipeline.events.published'
         }
       },
-      events_published_upper_bound: {
-        sum_bucket: {
-          buckets_path: 'upper_bound_stats>events_published'
+      max_events_published: {
+        max: {
+          field: 'beats_stats.metrics.libbeat.pipeline.events.published'
         }
       },
-      bytes_sent_upper_bound: {
-        sum_bucket: {
-          buckets_path: 'upper_bound_stats>bytes_sent'
+      min_bytes_sent: {
+        min: {
+          field: 'beats_stats.metrics.libbeat.output.write.bytes'
         }
       },
+      max_bytes_sent: {
+        max: {
+          field: 'beats_stats.metrics.libbeat.output.write.bytes'
+        }
+      },
+    },
+  },
+  min_events_published_total: {
+    sum_bucket: {
+      buckets_path: 'ephemeral_ids>min_events_published'
     }
   },
-  events_published_sum_upper_bound: {
+  max_events_published_total: {
     sum_bucket: {
-      buckets_path: 'beat_uuids>events_published_upper_bound'
+      buckets_path: 'ephemeral_ids>max_events_published'
     }
   },
-  bytes_sent_sum_upper_bound: {
+  min_bytes_sent_total: {
     sum_bucket: {
-      buckets_path: 'beat_uuids>bytes_sent_upper_bound'
+      buckets_path: 'ephemeral_ids>min_bytes_sent'
+    }
+  },
+  max_bytes_sent_total: {
+    sum_bucket: {
+      buckets_path: 'ephemeral_ids>max_bytes_sent'
     }
   },
 });
@@ -83,7 +98,7 @@ export const beatsUuidsAgg = maxBucketSize => ({
 export const beatsAggResponseHandler = response => {
   // beat types stat
   const buckets = get(response, 'aggregations.types.buckets', []);
-  const beatTotal = get(response, 'aggregations.total.value');
+  const beatTotal = get(response, 'aggregations.total.value', null);
   const beatTypes = buckets.reduce((types, typeBucket) => {
     return [
       ...types,
@@ -94,10 +109,15 @@ export const beatsAggResponseHandler = response => {
     ];
   }, []);
 
+  const eventsPublishedMax = get(response, 'aggregations.max_events_published_total.value', null);
+  const eventsPublishedMin = get(response, 'aggregations.min_events_published_total.value', null);
+  const bytesSentMax = get(response, 'aggregations.max_bytes_sent_total.value', null);
+  const bytesSentMin = get(response, 'aggregations.min_bytes_sent_total.value', null);
+
   return {
     beatTotal,
     beatTypes,
-    publishedEvents: get(response, 'aggregations.events_published_sum_upper_bound.value'),
-    bytesSent: get(response, 'aggregations.bytes_sent_sum_upper_bound.value'),
+    publishedEvents: getDiffCalculation(eventsPublishedMax, eventsPublishedMin),
+    bytesSent: getDiffCalculation(bytesSentMax, bytesSentMin),
   };
 };

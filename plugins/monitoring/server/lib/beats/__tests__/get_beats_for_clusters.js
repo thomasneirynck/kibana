@@ -9,10 +9,10 @@ describe('get_beats_for_clusters', () => {
     expect(handleResponse(clusterUuid, response)).to.eql({
       clusterUuid: 'foo_uuid',
       stats: {
-        publishedEvents: undefined,
-        bytesSent: undefined,
+        publishedEvents: null,
+        bytesSent: null,
         beats: {
-          total: undefined,
+          total: null,
           types: [],
         }
       }
@@ -32,19 +32,17 @@ describe('get_beats_for_clusters', () => {
             { key: 'metricbeat', uuids: { buckets: new Array(1200) } },
           ]
         },
-        events_published_sum_upper_bound: {
-          value: 80000
-        },
-        bytes_sent_sum_upper_bound: {
-          value: 500000
-        }
+        min_events_published_total: { value: 83472836 },
+        max_events_published_total: { value: 89972836 },
+        min_bytes_sent_total: { value: 293476 },
+        max_bytes_sent_total: { value: 333476 },
       }
     };
     expect(handleResponse(clusterUuid, response)).to.eql({
       clusterUuid: 'foo_uuid',
       stats: {
-        publishedEvents: 80000,
-        bytesSent: 500000,
+        publishedEvents: 6500000,
+        bytesSent: 40000,
         beats: {
           total: 1400,
           types: [
