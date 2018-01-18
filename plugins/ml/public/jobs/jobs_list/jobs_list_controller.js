@@ -579,6 +579,13 @@ module.controller('MlJobsList',
       // typing the filter when this function is first called.
       // after a second, if no more keystrokes have happened, redraw the jobs list
       jobFilterTimeout = $timeout(() => {
+        // create the regexp used for highlighting the filter string for each job
+        if ($scope.filterText) {
+          filterRegexp = new RegExp(`(${$scope.filterText})`, 'gi');
+        } else {
+          filterRegexp = undefined;
+        }
+
         displayJobs($scope.jobs);
         jobFilterTimeout = undefined;
       }, 1000);
@@ -590,13 +597,6 @@ module.controller('MlJobsList',
       $timeout(() => {
         $scope.filterIcon = 1;
       }, 250);
-
-      // create the regexp used for highlighting the filter string for each job
-      if ($scope.filterText) {
-        filterRegexp = new RegExp('(' + $scope.filterText + ')', 'gi');
-      } else {
-        filterRegexp = undefined;
-      }
     };
 
     // clear the filter text and regexp and apply the empty filter
