@@ -8,8 +8,8 @@ import {
   MonitoringTimeseries,
   InfoTooltip,
 } from 'plugins/monitoring/components/chart';
-import { Tooltip } from 'pui-react-tooltip';
-import { OverlayTrigger } from 'pui-react-overlay-trigger';
+import { Tooltip } from 'pivotal-ui/react/tooltip';
+import { OverlayTrigger } from 'pivotal-ui/react/overlay-trigger';
 import { KuiInfoButton } from 'ui_framework/components';
 
 const uiModule = uiModules.get('plugins/monitoring/directives', []);

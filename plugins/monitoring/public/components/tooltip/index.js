@@ -1,6 +1,6 @@
 import React from 'react';
-import { Tooltip as PuiTooltip } from 'pui-react-tooltip';
-import { OverlayTrigger as PuiOverlayTrigger } from 'pui-react-overlay-trigger';
+import { Tooltip as PuiTooltip } from 'pivotal-ui/react/tooltip';
+import { OverlayTrigger as PuiOverlayTrigger } from 'pivotal-ui/react/overlay-trigger';
 
 export const Tooltip = props => {
   const tooltip = (
