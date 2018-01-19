@@ -9,7 +9,7 @@
       class="kuiButton kuiButton--basic kuiButton--small"
       data-toggle="tooltip"
       aria-label="{{((job.datafeed_config && job.datafeed_config.state==='started')?'Stop':'Start')}} datafeed"
-      ng-disabled="(privileges.canStartStopDatafeed===false || licenseDetails.hasExpired===true) || job.state==='closing' || job.state==='opening' || job.state==='failed'"
+      ng-disabled="(job.datafeed_config.datafeed_id === undefined || privileges.canStartStopDatafeed===false || licenseDetails.hasExpired===true) || job.state==='closing' || job.state==='opening' || job.state==='failed'"
       tooltip="{{(job.datafeed_config && job.datafeed_config.state==='started')?'Stop datafeed for':'Start datafeed for'}} {{job.job_id}}">
         <i ng-show="job.datafeed_config && job.datafeed_config.state==='started' && job.state!=='failed'" aria-hidden="true" class="fa fa-stop"></i>
         <i ng-show="job.datafeed_config && job.datafeed_config.state==='stopped' && (job.state==='opened' || job.state==='closed')" aria-hidden="true" class="fa fa-play"></i>
