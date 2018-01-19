@@ -53,8 +53,8 @@ export function JobParamsProvider(Private, config) {
     return {
       savedObjectId: objectId,
       objectType: appType.objectType,
-      queryString: encodeURIComponent(query),
-      browserTimezone: encodeURIComponent(browserTimezone)
+      queryString: query,
+      browserTimezone: browserTimezone
     };
   }
 

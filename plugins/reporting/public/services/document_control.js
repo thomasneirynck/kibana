@@ -2,7 +2,7 @@ import 'plugins/reporting/services/job_completion_notifications';
 import chrome from 'ui/chrome';
 import rison from 'rison-node';
 import { uiModules } from 'ui/modules';
-
+import { QueryString } from 'ui/utils/query_string';
 
 uiModules.get('xpack/reporting')
   .service('reportingDocumentControl', function (Private, $http, reportingJobCompletionNotifications, $injector) {
@@ -18,7 +18,7 @@ uiModules.get('xpack/reporting')
     this.getPath = (exportType, controller, options) => {
       return getJobParams(exportType, controller, options)
         .then(jobParams => {
-          return `${reportPrefix}/${exportType.id}?jobParams=${rison.encode(jobParams)}`;
+          return `${reportPrefix}/${exportType.id}?${QueryString.param('jobParams', rison.encode(jobParams))}`;
         });
     };
 
