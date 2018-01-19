@@ -8,13 +8,13 @@ import {
 } from './_beats_stats';
 
 export function handleResponse(...args) {
-  const { beatTotal, beatTypes, publishedEvents, bytesSent } = beatsAggResponseHandler(...args);
+  const { beatTotal, beatTypes, totalEvents, bytesSent } = beatsAggResponseHandler(...args);
 
   return {
     total: beatTotal,
     types: beatTypes,
     stats: {
-      publishedEvents,
+      totalEvents,
       bytesSent,
     }
   };

@@ -16,20 +16,55 @@ export function getPageData($injector) {
     },
     metrics: [
       {
-        name: 'beat_failed_and_queued',
+        name: 'beat_event_rates',
         keys: [
-          'beat_events_failed_rate',
-          'beat_events_queued_rate',
+          'beat_pipeline_events_total_rate',
+          'beat_output_events_total',
+          'beat_output_events_ack_rate',
+          'beat_pipeline_events_emitted_rate',
         ]
       },
-      'beat_bytes_written',
       {
-        name: 'beat_published_and_acknowledged',
+        name: 'beat_fail_rates',
         keys: [
-          'beat_events_published_rate',
-          'beat_events_acknowledged_rate',
+          'beat_pipeline_events_failed_rate',
+          'beat_pipeline_events_dropped_rate',
+          'beat_output_events_dropped_rate',
+          'beat_pipeline_events_retry_rate',
         ]
       },
+      {
+        name: 'beat_throughput_rates',
+        keys: [
+          'beat_bytes_written',
+          'beat_output_write_bytes_rate',
+        ]
+      },
+      {
+        name: 'beat_output_errors',
+        keys: [
+          'beat_output_sending_errors',
+          'beat_output_receiving_errors',
+        ]
+      },
+      {
+        name: 'beat_memory',
+        keys: [
+          'beat_mem_alloc',
+          'beat_mem_rss',
+          'beat_mem_gc_next',
+        ]
+      },
+      /*
+       * TODO: CPU is not yet available in libbeat:
+       * https://github.com/elastic/beats/issues/6063
+       * {
+       *   name: 'beat_cpu',
+       *   keys: [
+       *     'beat_cpu_process_utilization',
+       *     'beat_cpu_system_utilization',
+       *   ]
+       * }, */
       {
         name: 'beat_os_load',
         keys: [
@@ -38,21 +73,6 @@ export function getPageData($injector) {
           'beat_system_os_load_15',
         ]
       },
-      {
-        name: 'beat_dropped_retry_filtered',
-        keys: [
-          'beat_events_dropped_rate',
-          'beat_events_retry_rate',
-          'beat_events_filtered_rate',
-        ]
-      },
-      {
-        name: 'beat_bytes_mem',
-        keys: [
-          'beat_bytes_mem_alloc',
-          'beat_bytes_mem_rss',
-        ]
-      }
     ]
   })
     .then(response => response.data)

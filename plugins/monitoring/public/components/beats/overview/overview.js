@@ -87,9 +87,10 @@ export function BeatsOverview({ latestActive, latestTypes, latestVersions, stats
 
       <div className="page-row">
         <div className="row">
-          <div className="col-md-12">{renderChart(metrics.beat_published_and_acknowledged, props)}</div>
-          <div className="col-md-12">{renderChart(metrics.beat_cluster_throughput_bytes_rate, props)}</div>
-          <div className="col-md-12">{renderChart(metrics.beat_failed_and_queued, props)}</div>
+          <div className="col-md-6">{renderChart(metrics.beat_event_rates, props)}</div>
+          <div className="col-md-6">{renderChart(metrics.beat_fail_rates, props)}</div>
+          <div className="col-md-6">{renderChart(metrics.beat_throughput_rates, props)}</div>
+          <div className="col-md-6">{renderChart(metrics.beat_output_errors, props)}</div>
         </div>
       </div>
 

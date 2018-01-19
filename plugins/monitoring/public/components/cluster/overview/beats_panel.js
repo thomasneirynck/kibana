@@ -57,9 +57,9 @@ export function BeatsPanel(props) {
             </EuiTitle>
             <EuiHorizontalRule margin="m" />
             <EuiDescriptionList type="column">
-              <EuiDescriptionListTitle>Published Events</EuiDescriptionListTitle>
-              <EuiDescriptionListDescription data-test-subj="beatsPublishedEvents">
-                {formatMetric(props.publishedEvents, '0.[0]a')}
+              <EuiDescriptionListTitle>Total Events</EuiDescriptionListTitle>
+              <EuiDescriptionListDescription data-test-subj="beatsTotalEvents">
+                {formatMetric(props.totalEvents, '0.[0]a')}
               </EuiDescriptionListDescription>
               <EuiDescriptionListTitle>Bytes Sent</EuiDescriptionListTitle>
               <EuiDescriptionListDescription data-test-subj="beatsBytesSent">

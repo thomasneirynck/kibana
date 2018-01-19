@@ -39,7 +39,7 @@ export function MonitoringClusterOverviewProvider({ getService }) {
 
   const SUBJ_BEATS_PANEL            = `clusterItemContainerBeats`;
   const SUBJ_BEATS_OVERVIEW         = `${SUBJ_BEATS_PANEL} beatsOverview`;
-  const SUBJ_BEATS_PUBLISHED_EVENTS = `${SUBJ_BEATS_PANEL} beatsPublishedEvents`;
+  const SUBJ_BEATS_TOTAL_EVENTS = `${SUBJ_BEATS_PANEL} beatsTotalEvents`;
   const SUBJ_BEATS_BYTES_SENT       = `${SUBJ_BEATS_PANEL} beatsBytesSent`;
   const SUBJ_BEATS_LISTING          = `${SUBJ_BEATS_PANEL} beatsListing`;
   const SUBJ_BEATS_TYPES_COUNTS     = `${SUBJ_BEATS_PANEL} beatTypeCount`;
@@ -161,8 +161,8 @@ export function MonitoringClusterOverviewProvider({ getService }) {
       return testSubjects.click(SUBJ_LS_PIPELINES);
     }
 
-    getBeatsPublishedEventsRate() {
-      return testSubjects.getVisibleText(SUBJ_BEATS_PUBLISHED_EVENTS);
+    getBeatsTotalEventsRate() {
+      return testSubjects.getVisibleText(SUBJ_BEATS_TOTAL_EVENTS);
     }
     getBeatsTotalBytesSentRate() {
       return testSubjects.getVisibleText(SUBJ_BEATS_BYTES_SENT);

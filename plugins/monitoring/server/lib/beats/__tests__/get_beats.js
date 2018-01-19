@@ -33,12 +33,16 @@ describe('beats/get_beats', () => {
                     output: {
                       type: 'Redis',
                       write: {
-                        bytes: 140000
+                        bytes: 140000,
+                        errors: 8,
+                      },
+                      read: {
+                        errors: 3,
                       }
                     },
                     pipeline: {
                       events: {
-                        published: 23000
+                        total: 23000
                       }
                     }
                   }
@@ -57,12 +61,16 @@ describe('beats/get_beats', () => {
                             libbeat: {
                               output: {
                                 write: {
-                                  bytes: 4000
+                                  bytes: 4000,
+                                  errors: 3,
+                                },
+                                read: {
+                                  errors: 1,
                                 }
                               },
                               pipeline: {
                                 events: {
-                                  published: 2300
+                                  total: 2300
                                 }
                               }
                             }
@@ -82,10 +90,11 @@ describe('beats/get_beats', () => {
     expect(handleResponse(response, start, end)).to.eql([
       {
         bytes_sent_rate: 18.756344057548876,
+        errors: 7,
         memory: 2340,
         name: 'beat-listing.test-0101',
         output: 'Redis',
-        published_events_rate: 2.8548258969945715,
+        total_events_rate: 2.8548258969945715,
         type: 'Filebeat',
         uuid: 'fooUuid',
         version: '6.2.0'

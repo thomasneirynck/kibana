@@ -1196,94 +1196,202 @@ const metricInstances = {
     format: LARGE_FLOAT,
     units: ''
   }),
-  'beat_cluster_events_failed_rate': new BeatsEventsRateClusterMetric({
-    field: 'beats_stats.metrics.libbeat.pipeline.events.failed',
-    title: 'Failed and Queued Events Rate',
-    label: 'Failed Events Rate',
-    description: 'Number of events lost because the client was in shutdown phase, or because the queue was full and`DropIfFull` was set',
-  }),
-  'beat_cluster_events_queued_rate': new BeatsEventsRateClusterMetric({
+
+  /*
+   * Beat Overview
+   */
+
+  'beat_cluster_pipeline_events_total_rate': new BeatsEventsRateClusterMetric({
     field: 'beats_stats.metrics.libbeat.pipeline.events.total',
-    title: 'Failed and Queued Events Rate',
-    label: 'Queued Events Rate',
-    description: 'Total number of events the clients have attempted to publish',
+    title: 'Events Rate',
+    label: 'Total',
+    description: 'All events newly created in the publishing pipeline',
   }),
-  'beat_cluster_events_acknowledged_rate': new BeatsEventsRateClusterMetric({
-    field: 'beats_stats.metrics.libbeat.pipeline.queue.acked',
-    title: 'Published and Acknowledged Events Rate',
-    label: 'Acknowledged Events Rate',
-    description: 'Number of events acknowledged by the queue/broker in use',
+  'beat_cluster_output_events_total': new BeatsByteRateClusterMetric({
+    field: 'beats_stats.metrics.libbeat.output.events.total',
+    title: 'Events Rate',
+    label: 'Emitted',
+    description: 'Events processed by the output (including retries)',
   }),
-  'beat_cluster_events_published_rate': new BeatsEventsRateClusterMetric({
+  'beat_cluster_output_events_ack_rate': new BeatsEventsRateClusterMetric({
+    field: 'beats_stats.metrics.libbeat.output.events.acked',
+    title: 'Events Rate',
+    label: 'Acknowledged',
+    description: 'Events acknowledged by the output (includes events dropped by the output)',
+  }),
+  'beat_cluster_pipeline_events_emitted_rate': new BeatsEventsRateClusterMetric({
     field: 'beats_stats.metrics.libbeat.pipeline.events.published',
-    title: 'Published and Acknowledged Events Rate',
-    label: 'Published Events Rate',
-    description: 'Number of events the clients have managed to push into the publisher pipeline',
+    title: 'Events Rate',
+    label: 'Queued',
+    description: 'Events added to the event pipeline queue',
   }),
-  'beat_cluster_throughput_bytes_rate': new BeatsByteRateClusterMetric({
+
+  'beat_cluster_output_write_bytes_rate': new BeatsByteRateClusterMetric({
     field: 'beats_stats.metrics.libbeat.output.write.bytes',
     title: 'Throughput',
-    label: 'Throughput Bytes /s',
-    description: 'Rate of bytes throughput for all the beats in the cluster',
+    label: 'Bytes Sent',
+    description: 'Bytes written to the output (consists of size of network headers and compressed payload)',
   }),
-  'beat_events_queued_rate': new BeatsEventsRateMetric({
-    field: 'beats_stats.metrics.libbeat.pipeline.events.total',
-    title: 'Failed and Queued Events Rate',
-    label: 'Queued Events Rate',
-    description: 'Total number of events the client has attempted to publish',
-    label: 'Queued Events Rate',
-  }),
-  'beat_events_failed_rate': new BeatsEventsRateMetric({
-    field: 'beats_stats.metrics.libbeat.pipeline.events.failed',
-    title: 'Failed and Queued Events Rate',
-    label: 'Failed Events Rate',
-    description: 'Number of events lost because the client was in shutdown phase, or because the queue was full and`DropIfFull` was set',
-  }),
-  /* NOTE: this is not used as we're unsure what the field means. "This implies
-   * that output.read.bytes is the number of bytes returned by the output and
-   * read by the Beat" */
-  'beat_bytes_read': new BeatsByteRateMetric({
+  'beat_cluster_output_read_bytes_rate': new BeatsByteRateClusterMetric({
     field: 'beats_stats.metrics.libbeat.output.read.bytes',
-    // title: 'Bytes Read / Written',
-    label: 'Bytes Read',
-    description: 'Amount of data read in by the Beat',
+    title: 'Throughput',
+    label: 'Bytes Received',
+    description: 'Bytes read in response from the output',
   }),
+
+  'beat_cluster_pipeline_events_failed_rate': new BeatsEventsRateClusterMetric({
+    field: 'beats_stats.metrics.libbeat.pipeline.events.failed',
+    title: 'Fail Rates',
+    label: 'Failed in Pipeline',
+    description: 'Failures that happened before event was added to the publishing pipeline (output was disabled or publisher client closed)'
+  }),
+  'beat_cluster_pipeline_events_dropped_rate': new BeatsEventsRateClusterMetric({
+    field: 'beats_stats.metrics.libbeat.pipeline.events.dropped',
+    title: 'Fail Rates',
+    label: 'Dropped in Pipeline',
+    description: 'Events that have been dropped after N retries (N = max_retries setting)',
+  }),
+  'beat_cluster_output_events_dropped_rate': new BeatsEventsRateClusterMetric({
+    field: 'beats_stats.metrics.libbeat.output.events.dropped',
+    title: 'Fail Rates',
+    label: 'Dropped in Output',
+    description: (
+      '(Fatal drop) Events dropped by the output as being "invalid." The output ' +
+      'still acknowledges the event for the Beat to remove it from the queue.'
+    ),
+  }),
+  'beat_cluster_pipeline_events_retry_rate': new BeatsEventsRateClusterMetric({
+    field: 'beats_stats.metrics.libbeat.pipeline.events.retry',
+    title: 'Fail Rates',
+    label: 'Retry in Pipeline',
+    description: 'Events in the pipeline that are trying again to be sent to the output',
+  }),
+
+  'beat_cluster_output_sending_errors': new BeatsEventsRateClusterMetric({
+    field: 'beats_stats.metrics.libbeat.output.write.errors',
+    title: 'Output Errors',
+    label: 'Sending',
+    description: 'Errors in writing the response from the output',
+  }),
+  'beat_cluster_output_receiving_errors': new BeatsEventsRateClusterMetric({
+    field: 'beats_stats.metrics.libbeat.output.read.errors',
+    title: 'Output Errors',
+    label: 'Receiving',
+    description: 'Errors in reading the response from the output',
+  }),
+
+  /*
+   * Beat Detail
+   */
+
+  'beat_pipeline_events_total_rate': new BeatsEventsRateMetric({
+    field: 'beats_stats.metrics.libbeat.pipeline.events.total',
+    title: 'Events Rate',
+    label: 'New',
+    description: 'New events sent to the publishing pipeline',
+  }),
+  'beat_output_events_total': new BeatsEventsRateMetric({
+    field: 'beats_stats.metrics.libbeat.output.events.total',
+    title: 'Events Rate',
+    label: 'Emitted',
+    description: 'Events processed by the output (including retries)',
+  }),
+  'beat_output_events_ack_rate': new BeatsEventsRateMetric({
+    field: 'beats_stats.metrics.libbeat.output.events.acked',
+    title: 'Events Rate',
+    label: 'Acknowledged',
+    description: 'Events acknowledged by the output (includes events dropped by the output)',
+  }),
+  'beat_pipeline_events_emitted_rate': new BeatsEventsRateMetric({
+    field: 'beats_stats.metrics.libbeat.pipeline.events.published',
+    title: 'Events Rate',
+    label: 'Queued',
+    description: 'Events added to the event pipeline queue',
+  }),
+
+  'beat_pipeline_events_failed_rate': new BeatsEventsRateMetric({
+    field: 'beats_stats.metrics.libbeat.pipeline.events.failed',
+    title: 'Fail Rates',
+    label: 'Failed in Pipeline',
+    description: 'Failures that happened before event was added to the publishing pipeline (output was disabled or publisher client closed)'
+  }),
+  'beat_pipeline_events_dropped_rate': new BeatsEventsRateMetric({
+    field: 'beats_stats.metrics.libbeat.pipeline.events.dropped',
+    title: 'Fail Rates',
+    label: 'Dropped in Pipeline',
+    description: 'Events that have been dropped after N retries (N = max_retries setting)',
+  }),
+  'beat_output_events_dropped_rate': new BeatsEventsRateMetric({
+    field: 'beats_stats.metrics.libbeat.output.events.dropped',
+    title: 'Fail Rates',
+    label: 'Dropped in Output',
+    description: (
+      '(Fatal drop) Events dropped by the output as being "invalid." The output ' +
+      'still acknowledges the event for the Beat to remove it from the queue.'
+    ),
+  }),
+  'beat_pipeline_events_retry_rate': new BeatsEventsRateMetric({
+    field: 'beats_stats.metrics.libbeat.pipeline.events.retry',
+    title: 'Fail Rates',
+    label: 'Retry in Pipeline',
+    description: 'Events in the pipeline that are trying again to be sent to the output',
+  }),
+
   'beat_bytes_written': new BeatsByteRateMetric({
     field: 'beats_stats.metrics.libbeat.output.write.bytes',
+    title: 'Throughput',
     label: 'Bytes Sent',
-    description: 'Amount of data written by the output',
+    description: 'Bytes written to the output (consists of size of network headers and compressed payload)',
   }),
-  'beat_events_published_rate': new BeatsEventsRateMetric({
-    field: 'beats_stats.metrics.libbeat.pipeline.events.published',
-    title: 'Published and Acknowledged Events Rate',
-    label: 'Published Events Rate',
-    description: 'Number of events the client has managed to push into the publisher pipeline',
+  'beat_output_write_bytes_rate': new BeatsByteRateMetric({
+    field: 'beats_stats.metrics.libbeat.output.read.bytes',
+    title: 'Throughput',
+    label: 'Bytes Received',
+    description: 'Bytes read in response from the output',
   }),
-  'beat_events_acknowledged_rate': new BeatsEventsRateMetric({
-    field: 'beats_stats.metrics.libbeat.pipeline.queue.acked',
-    title: 'Published and Acknowledged Events Rate',
-    label: 'Acknowledged Events Rate',
-    description: 'Number of events acknowledged by the queue/broker in use',
+
+  'beat_output_sending_errors': new BeatsEventsRateMetric({
+    field: 'beats_stats.metrics.libbeat.output.write.errors',
+    title: 'Output Errors',
+    label: 'Sending',
+    description: 'Errors in writing the response from the output',
   }),
-  'beat_events_dropped_rate': new BeatsEventsRateMetric({
-    field: 'beats_stats.metrics.libbeat.pipeline.events.dropped',
-    title: 'Dropped, Retried, and Filtered Events Rate',
-    label: 'Dropped Events Rate',
-    description: 'Number of events lost because the configured `max_retries` was reached.',
+  'beat_output_receiving_errors': new BeatsEventsRateMetric({
+    field: 'beats_stats.metrics.libbeat.output.read.errors',
+    title: 'Output Errors',
+    label: 'Receiving',
+    description: 'Errors in reading the response from the output',
   }),
-  'beat_events_retry_rate': new BeatsEventsRateMetric({
-    field: 'beats_stats.metrics.libbeat.pipeline.events.retry',
-    title: 'Dropped, Retried, and Filtered Events Rate',
-    label: 'Retried Events Rate',
-    description: 'Number of events pushed to the output worker queue by the retryer',
+
+  'beat_mem_alloc': new BeatsMetric({
+    field: 'beats_stats.metrics.beat.memstats.memory_alloc',
+    label: 'Active',
+    title: 'Memory',
+    description: 'Private memory in active use by the Beat',
+    format: LARGE_BYTES,
+    metricAgg: 'max',
+    units: 'B',
   }),
-  'beat_events_filtered_rate': new BeatsEventsRateMetric({
-    field: 'beats_stats.metrics.libbeat.pipeline.events.filtered',
-    title: 'Dropped, Retried, and Filtered Events Rate',
-    label: 'Filtered Events Rate',
-    description: 'Number of events the client has filtered out (on purpose or failed)',
+  'beat_mem_rss': new BeatsMetric({
+    field: 'beats_stats.metrics.beat.memstats.rss',
+    label: 'Process Total',
+    title: 'Memory',
+    description: 'Resident set size of memory reserved by the Beat from the OS',
+    format: LARGE_BYTES,
+    metricAgg: 'max',
+    units: 'B',
   }),
-  'beat_cpu_process_utilization': new BeatsMetric ({ // TODO: this is currently not used. Depends on https://github.com/elastic/beats/issues/6063
+  'beat_mem_gc_next': new BeatsMetric({
+    field: 'beats_stats.metrics.beat.memstats.gc_next',
+    label: 'GC Next',
+    title: 'Memory',
+    description: 'Limit of allocated memory at which garbage collection will occur',
+    format: LARGE_BYTES,
+    metricAgg: 'max',
+    units: 'B',
+  }),
+
+  'beat_cpu_process_utilization': new BeatsMetric ({
     field: 'beats_stats.metrics.beat.cpu.total.pct',
     label: 'Process',
     title: 'CPU Utilization',
@@ -1292,7 +1400,7 @@ const metricInstances = {
     metricAgg: 'max',
     units: '%',
   }),
-  'beat_cpu_system_utilization': new BeatsMetric ({ // TODO Depends on https://github.com/elastic/beats/issues/6063
+  'beat_cpu_system_utilization': new BeatsMetric ({
     field: 'beats_stats.metrics.system.cpu.total.pct',
     label: 'System',
     title: 'CPU Utilization',
@@ -1301,6 +1409,7 @@ const metricInstances = {
     metricAgg: 'max',
     units: '%',
   }),
+
   'beat_system_os_load_1': new BeatsMetric({
     field: 'beats_stats.metrics.system.load.1',
     label: '1m',
@@ -1327,24 +1436,6 @@ const metricInstances = {
     format: LARGE_FLOAT,
     metricAgg: 'max',
     units: '',
-  }),
-  'beat_bytes_mem_alloc': new BeatsMetric({
-    field: 'beats_stats.metrics.beat.memstats.memory_alloc',
-    label: 'Active',
-    title: 'Memory',
-    description: 'Private memory in active use by the Beat',
-    format: LARGE_BYTES,
-    metricAgg: 'max',
-    units: 'B',
-  }),
-  'beat_bytes_mem_rss': new BeatsMetric({
-    field: 'beats_stats.metrics.beat.memstats.rss',
-    label: 'Process Total',
-    title: 'Memory',
-    description: 'Resident set size of memory reserved by the Beat from the OS',
-    format: LARGE_BYTES,
-    metricAgg: 'max',
-    units: 'B',
   }),
 };
 

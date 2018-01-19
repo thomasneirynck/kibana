@@ -7,11 +7,11 @@ import {
 } from './_beats_stats';
 
 export function handleResponse(clusterUuid, response) {
-  const { beatTotal, beatTypes, publishedEvents, bytesSent } = beatsAggResponseHandler(response);
+  const { beatTotal, beatTypes, totalEvents, bytesSent } = beatsAggResponseHandler(response);
 
   // combine stats
   const stats = {
-    publishedEvents,
+    totalEvents,
     bytesSent,
     beats: {
       total: beatTotal,

@@ -4,7 +4,7 @@ export function MonitoringBeatsSummaryStatusProvider({ getService }) {
   const SUBJ_SUMMARY = 'beatsSummaryStatus';
   const SUBJ_TYPES_COUNTS = `${SUBJ_SUMMARY} typeCount`;
 
-  const SUBJ_PUBLISHED_EVENTS   = `${SUBJ_SUMMARY} publishedEvents`;
+  const SUBJ_TOTAL_EVENTS   = `${SUBJ_SUMMARY} totalEvents`;
   const SUBJ_BYTES_SENT = `${SUBJ_SUMMARY} bytesSent`;
 
   return new class BeatsSummaryStatus {
@@ -22,7 +22,7 @@ export function MonitoringBeatsSummaryStatusProvider({ getService }) {
 
       return {
         ...countsByType,
-        publishedEvents: await testSubjects.getVisibleText(SUBJ_PUBLISHED_EVENTS),
+        totalEvents: await testSubjects.getVisibleText(SUBJ_TOTAL_EVENTS),
         bytesSent: await testSubjects.getVisibleText(SUBJ_BYTES_SENT),
       };
     }

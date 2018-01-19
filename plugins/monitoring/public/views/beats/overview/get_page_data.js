@@ -15,20 +15,37 @@ export function getPageData($injector) {
     },
     metrics: [
       {
-        name: 'beat_failed_and_queued',
+        name: 'beat_event_rates',
         keys: [
-          'beat_cluster_events_failed_rate',
-          'beat_cluster_events_queued_rate',
+          'beat_cluster_pipeline_events_total_rate',
+          'beat_cluster_output_events_total',
+          'beat_cluster_output_events_ack_rate',
+          'beat_cluster_pipeline_events_emitted_rate',
         ]
       },
       {
-        name: 'beat_published_and_acknowledged',
+        name: 'beat_fail_rates',
         keys: [
-          'beat_cluster_events_published_rate',
-          'beat_cluster_events_acknowledged_rate',
+          'beat_cluster_pipeline_events_failed_rate',
+          'beat_cluster_pipeline_events_dropped_rate',
+          'beat_cluster_output_events_dropped_rate',
+          'beat_cluster_pipeline_events_retry_rate',
         ]
       },
-      'beat_cluster_throughput_bytes_rate',
+      {
+        name: 'beat_throughput_rates',
+        keys: [
+          'beat_cluster_output_write_bytes_rate',
+          'beat_cluster_output_read_bytes_rate',
+        ]
+      },
+      {
+        name: 'beat_output_errors',
+        keys: [
+          'beat_cluster_output_sending_errors',
+          'beat_cluster_output_receiving_errors',
+        ]
+      },
     ]
   })
     .then(response => response.data)

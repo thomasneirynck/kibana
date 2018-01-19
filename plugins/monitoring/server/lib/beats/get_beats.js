@@ -3,6 +3,7 @@ import { capitalize, get } from 'lodash';
 import { checkParam } from '../error_missing_required';
 import { createBeatsQuery } from './create_beats_query';
 import { calculateRate } from '../calculate_rate';
+import { getDiffCalculation } from './_beats_stats';
 
 export function handleResponse(response, start, end) {
   const hits = get(response, 'hits.hits', []);
@@ -23,26 +24,36 @@ export function handleResponse(response, start, end) {
       ...rateOptions
     });
 
-    const { rate: publishedEventsRate } = calculateRate({
-      latestTotal: get(stats, 'metrics.libbeat.pipeline.events.published'),
-      earliestTotal: get(earliestStats, 'metrics.libbeat.pipeline.events.published'),
+    const { rate: totalEventsRate } = calculateRate({
+      latestTotal: get(stats, 'metrics.libbeat.pipeline.events.total'),
+      earliestTotal: get(earliestStats, 'metrics.libbeat.pipeline.events.total'),
       ...rateOptions
     });
+
+    const errorsWrittenLatest = get(stats, 'metrics.libbeat.output.write.errors');
+    const errorsWrittenEarliest = get(earliestStats, 'metrics.libbeat.output.write.errors');
+    const errorsReadLatest = get(stats, 'metrics.libbeat.output.read.errors');
+    const errorsReadEarliest = get(earliestStats, 'metrics.libbeat.output.read.errors');
+    const errors = getDiffCalculation(
+      errorsWrittenLatest + errorsReadLatest,
+      errorsWrittenEarliest + errorsReadEarliest
+    );
 
     return {
       uuid: get(stats, 'beat.uuid'),
       name: get(stats, 'beat.name'),
-      version: get(stats, 'beat.version'),
-      bytes_sent_rate: bytesSentRate,
-      published_events_rate: publishedEventsRate,
-      memory: get(stats, 'metrics.beat.memstats.memory_alloc'),
       type: capitalize(get(stats, 'beat.type')),
       output: capitalize(get(stats, 'metrics.libbeat.output.type')),
+      total_events_rate: totalEventsRate,
+      bytes_sent_rate: bytesSentRate,
+      errors,
+      memory: get(stats, 'metrics.beat.memstats.memory_alloc'),
+      version: get(stats, 'beat.version'),
     };
   });
 }
 
-export function getBeats(req, beatsIndexPattern, clusterUuid) {
+export async function getBeats(req, beatsIndexPattern, clusterUuid) {
   checkParam(beatsIndexPattern, 'beatsIndexPattern in getBeats');
 
   const config = req.server.config();
@@ -60,17 +71,23 @@ export function getBeats(req, beatsIndexPattern, clusterUuid) {
       'hits.hits._source.beats_stats.beat.type',
       'hits.hits._source.beats_stats.beat.version',
       'hits.hits._source.beats_stats.metrics.libbeat.output.type',
+      'hits.hits._source.beats_stats.metrics.libbeat.output.read.errors',
+      'hits.hits._source.beats_stats.metrics.libbeat.output.write.errors',
       'hits.hits._source.beats_stats.metrics.beat.memstats.memory_alloc',
 
       // latest hits for calculating metrics
       'hits.hits._source.beats_stats.timestamp',
       'hits.hits._source.beats_stats.metrics.libbeat.output.write.bytes',
-      'hits.hits._source.beats_stats.metrics.libbeat.pipeline.events.published',
+      'hits.hits._source.beats_stats.metrics.libbeat.pipeline.events.total',
 
       // earliest hits for calculating metrics
       'hits.hits.inner_hits.earliest.hits.hits._source.beats_stats.timestamp',
       'hits.hits.inner_hits.earliest.hits.hits._source.beats_stats.metrics.libbeat.output.write.bytes',
-      'hits.hits.inner_hits.earliest.hits.hits._source.beats_stats.metrics.libbeat.pipeline.events.published',
+      'hits.hits.inner_hits.earliest.hits.hits._source.beats_stats.metrics.libbeat.pipeline.events.total',
+
+      // earliest hits for calculating diffs
+      'hits.hits.inner_hits.earliest.hits.hits._source.beats_stats.metrics.libbeat.output.read.errors',
+      'hits.hits.inner_hits.earliest.hits.hits._source.beats_stats.metrics.libbeat.output.write.errors',
     ],
     body: {
       query: createBeatsQuery({
@@ -79,7 +96,7 @@ export function getBeats(req, beatsIndexPattern, clusterUuid) {
         uuid: clusterUuid,
       }),
       collapse: {
-        field: 'beats_stats.beat.uuid',
+        field: 'beats_stats.metrics.beat.info.ephemeral_id', // collapse on ephemeral_id to handle restarts
         inner_hits: {
           name: 'earliest',
           size: 1,
@@ -91,6 +108,7 @@ export function getBeats(req, beatsIndexPattern, clusterUuid) {
   };
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
-  return callWithRequest(req, 'search', params)
-    .then(response => handleResponse(response, start, end));
+  const response = await callWithRequest(req, 'search', params);
+
+  return handleResponse(response, start, end);
 }

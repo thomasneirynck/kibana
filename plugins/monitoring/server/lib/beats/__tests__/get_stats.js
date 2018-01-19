@@ -6,7 +6,7 @@ describe('beats/get_stats', () => {
     expect(handleResponse()).to.eql({
       stats: {
         bytesSent: null,
-        publishedEvents: null
+        totalEvents: null
       },
       total: null,
       types: []
@@ -23,8 +23,8 @@ describe('beats/get_stats', () => {
             { key: 'metricbeat', uuids: { buckets: new Array(1200) } }
           ]
         },
-        min_events_published_total: { value: 83472836 },
-        max_events_published_total: { value: 89972836 },
+        min_events_total: { value: 83472836 },
+        max_events_total: { value: 89972836 },
         min_bytes_sent_total: { value: 293476 },
         max_bytes_sent_total: { value: 333476 },
       }
@@ -33,7 +33,7 @@ describe('beats/get_stats', () => {
     expect(handleResponse(response)).to.eql({
       stats: {
         bytesSent: 40000,
-        publishedEvents: 6500000
+        totalEvents: 6500000
       },
       total: 2200,
       types: [
@@ -53,8 +53,8 @@ describe('beats/get_stats', () => {
             { key: 'metricbeat', uuids: { buckets: new Array(1200) } }
           ]
         },
-        min_events_published_total: { value: 89972836 },
-        max_events_published_total: { value: 662836 },
+        min_events_total: { value: 89972836 },
+        max_events_total: { value: 662836 },
         min_bytes_sent_total: { value: 293476 },
         max_bytes_sent_total: { value: 88476 },
       }
@@ -63,7 +63,7 @@ describe('beats/get_stats', () => {
     expect(handleResponse(response)).to.eql({
       stats: {
         bytesSent: null,
-        publishedEvents: null,
+        totalEvents: null,
       },
       total: 2200,
       types: [

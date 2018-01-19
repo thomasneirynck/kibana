@@ -18,8 +18,8 @@ export const beatsAggFilterPath = [
   'aggregations.total',
   'aggregations.types.buckets.key',
   'aggregations.types.buckets.uuids.buckets.doc_count',
-  'aggregations.min_events_published_total.value',
-  'aggregations.max_events_published_total.value',
+  'aggregations.min_events_total.value',
+  'aggregations.max_events_total.value',
   'aggregations.min_bytes_sent_total.value',
   'aggregations.max_bytes_sent_total.value',
 ];
@@ -51,14 +51,14 @@ export const beatsUuidsAgg = maxBucketSize => ({
       size: maxBucketSize
     },
     aggs: {
-      min_events_published: {
+      min_events: {
         min: {
-          field: 'beats_stats.metrics.libbeat.pipeline.events.published'
+          field: 'beats_stats.metrics.libbeat.pipeline.events.total'
         }
       },
-      max_events_published: {
+      max_events: {
         max: {
-          field: 'beats_stats.metrics.libbeat.pipeline.events.published'
+          field: 'beats_stats.metrics.libbeat.pipeline.events.total'
         }
       },
       min_bytes_sent: {
@@ -73,14 +73,14 @@ export const beatsUuidsAgg = maxBucketSize => ({
       },
     },
   },
-  min_events_published_total: {
+  min_events_total: {
     sum_bucket: {
-      buckets_path: 'ephemeral_ids>min_events_published'
+      buckets_path: 'ephemeral_ids>min_events'
     }
   },
-  max_events_published_total: {
+  max_events_total: {
     sum_bucket: {
-      buckets_path: 'ephemeral_ids>max_events_published'
+      buckets_path: 'ephemeral_ids>max_events'
     }
   },
   min_bytes_sent_total: {
@@ -109,15 +109,15 @@ export const beatsAggResponseHandler = response => {
     ];
   }, []);
 
-  const eventsPublishedMax = get(response, 'aggregations.max_events_published_total.value', null);
-  const eventsPublishedMin = get(response, 'aggregations.min_events_published_total.value', null);
+  const eventsTotalMax = get(response, 'aggregations.max_events_total.value', null);
+  const eventsTotalMin = get(response, 'aggregations.min_events_total.value', null);
   const bytesSentMax = get(response, 'aggregations.max_bytes_sent_total.value', null);
   const bytesSentMin = get(response, 'aggregations.min_bytes_sent_total.value', null);
 
   return {
     beatTotal,
     beatTypes,
-    publishedEvents: getDiffCalculation(eventsPublishedMax, eventsPublishedMin),
+    totalEvents: getDiffCalculation(eventsTotalMax, eventsTotalMin),
     bytesSent: getDiffCalculation(bytesSentMax, bytesSentMin),
   };
 };

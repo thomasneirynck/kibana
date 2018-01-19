@@ -20,8 +20,9 @@ const columns = [
   { title: 'Name', sortKey: 'name', sortOrder: SORT_ASCENDING },
   { title: 'Type', sortKey: 'type' },
   { title: 'Output Enabled', sortKey: 'output' },
-  { title: 'Published Events Rate', sortKey: 'published_events_rate', secondarySortOrder: SORT_DESCENDING },
+  { title: 'Total Events Rate', sortKey: 'total_events_rate', secondarySortOrder: SORT_DESCENDING },
   { title: 'Bytes Sent Rate', sortKey: 'bytes_sent_rate' },
+  { title: 'Output Errors', sortKey: 'errors' },
   { title: 'Allocated Memory', sortKey: 'memory' },
   { title: 'Version', sortKey: 'version' },
 ];
@@ -65,10 +66,13 @@ const beatRowFactory = (scope, kbnUrl) => {
           {props.output}
         </KuiTableRowCell>
         <KuiTableRowCell>
-          {formatMetric(props.published_events_rate, '', '/s')}
+          {formatMetric(props.total_events_rate, '', '/s')}
         </KuiTableRowCell>
         <KuiTableRowCell>
           {formatMetric(props.bytes_sent_rate, 'byte', '/s')}
+        </KuiTableRowCell>
+        <KuiTableRowCell>
+          {formatMetric(props.errors, '0')}
         </KuiTableRowCell>
         <KuiTableRowCell>
           {formatMetric(props.memory, 'byte')}

@@ -17,7 +17,7 @@ export default function ({ getService, getPageObjects }) {
     });
 
     it('shows beats panel with data', async () => {
-      expect(await overview.getBeatsPublishedEventsRate()).to.be('699.9k');
+      expect(await overview.getBeatsTotalEventsRate()).to.be('699.9k');
       expect(await overview.getBeatsTotalBytesSentRate()).to.be('428MB');
       expect(await overview.getBeatsListingDetail()).to.eql({
         total: 404,

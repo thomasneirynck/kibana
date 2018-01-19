@@ -29,9 +29,9 @@ export function Stats({ stats }) {
         </div>
         {types}
         <div>
-          Published Events:&nbsp;
-          <strong data-test-subj="publishedEvents">
-            {formatMetric(get(stats, 'stats.publishedEvents'), '0.[0]a')}
+          Total Events:&nbsp;
+          <strong data-test-subj="totalEvents">
+            {formatMetric(get(stats, 'stats.totalEvents'), '0.[0]a')}
           </strong>
         </div>
         <div>

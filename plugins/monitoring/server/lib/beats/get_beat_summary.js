@@ -7,13 +7,13 @@ export function handleResponse(response, beatUuid) {
   const firstStats = get(response, 'hits.hits[0].inner_hits.first_hit.hits.hits[0]._source.beats_stats');
   const stats = get(response, 'hits.hits[0]._source.beats_stats');
 
-  const eventsPublishedFirst = get(firstStats, 'metrics.libbeat.pipeline.events.published', null);
-  const eventsEmittedFirst = get(firstStats, 'metrics.libbeat.pipeline.events.total', null); // TODO: confirm this is the correct field. https://github.com/elastic/x-pack-kibana/pull/3993
+  const eventsTotalFirst = get(firstStats, 'metrics.libbeat.pipeline.events.total', null);
+  const eventsEmittedFirst = get(firstStats, 'metrics.libbeat.pipeline.events.published', null);
   const eventsDroppedFirst = get(firstStats, 'metrics.libbeat.pipeline.events.dropped', null);
   const bytesWrittenFirst = get(firstStats, 'metrics.libbeat.output.write.bytes', null);
 
-  const eventsPublishedLast = get(stats, 'metrics.libbeat.pipeline.events.published', null);
-  const eventsEmittedLast = get(stats, 'metrics.libbeat.pipeline.events.total', null);
+  const eventsTotalLast = get(stats, 'metrics.libbeat.pipeline.events.total', null);
+  const eventsEmittedLast = get(stats, 'metrics.libbeat.pipeline.events.published', null);
   const eventsDroppedLast = get(stats, 'metrics.libbeat.pipeline.events.dropped', null);
   const bytesWrittenLast = get(stats, 'metrics.libbeat.output.write.bytes', null);
 
@@ -26,7 +26,7 @@ export function handleResponse(response, beatUuid) {
     output: capitalize(get(stats, 'metrics.libbeat.output.type')) || null,
     configReloads: get(stats, 'metrics.libbeat.config.reloads', null),
     uptime: get(stats, 'metrics.beat.info.uptime.ms', null),
-    eventsPublished: getDiffCalculation(eventsPublishedLast, eventsPublishedFirst),
+    eventsTotal: getDiffCalculation(eventsTotalLast, eventsTotalFirst),
     eventsEmitted: getDiffCalculation(eventsEmittedLast, eventsEmittedFirst),
     eventsDropped: getDiffCalculation(eventsDroppedLast, eventsDroppedFirst),
     bytesWritten: getDiffCalculation(bytesWrittenLast, bytesWrittenFirst),

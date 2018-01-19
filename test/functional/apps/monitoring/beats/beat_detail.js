@@ -35,7 +35,7 @@ export default function ({ getService, getPageObjects }) {
         output: 'Elasticsearch',
         configReloads: 0,
         uptime: '6 minutes',
-        eventsPublished: 17,
+        eventsTotal: 17,
         eventsEmitted: 17,
         eventsDropped: 0,
         bytesWritten: '18KB',

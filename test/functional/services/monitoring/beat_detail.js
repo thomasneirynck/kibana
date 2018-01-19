@@ -12,7 +12,7 @@ export function MonitoringBeatDetailProvider({ getService }) {
   const SUBJ_SUMMARY_UPTIME = `${SUBJ_SUMMARY_01} uptime`;
 
   const SUBJ_SUMMARY_02 = 'beatSummaryStatus02';
-  const SUBJ_SUMMARY_EVENTS_PUBLISHED = `${SUBJ_SUMMARY_02} eventsPublished`;
+  const SUBJ_SUMMARY_EVENTS_TOTAL = `${SUBJ_SUMMARY_02} eventsTotal`;
   const SUBJ_SUMMARY_EVENTS_EMITTED = `${SUBJ_SUMMARY_02} eventsEmitted`;
   const SUBJ_SUMMARY_EVENTS_DROPPED = `${SUBJ_SUMMARY_02} eventsDropped`;
   const SUBJ_SUMMARY_BYTES_WRITTEN = `${SUBJ_SUMMARY_02} bytesWritten`;
@@ -32,7 +32,7 @@ export function MonitoringBeatDetailProvider({ getService }) {
         output: await testSubjects.getVisibleText(SUBJ_SUMMARY_OUTPUT),
         configReloads: await testSubjects.getVisibleText(SUBJ_SUMMARY_CONFIG_RELOADS),
         uptime: await testSubjects.getVisibleText(SUBJ_SUMMARY_UPTIME),
-        eventsPublished: await testSubjects.getVisibleText(SUBJ_SUMMARY_EVENTS_PUBLISHED),
+        eventsTotal: await testSubjects.getVisibleText(SUBJ_SUMMARY_EVENTS_TOTAL),
         eventsEmitted: await testSubjects.getVisibleText(SUBJ_SUMMARY_EVENTS_EMITTED),
         eventsDropped: await testSubjects.getVisibleText(SUBJ_SUMMARY_EVENTS_DROPPED),
         bytesWritten: await testSubjects.getVisibleText(SUBJ_SUMMARY_BYTES_WRITTEN),

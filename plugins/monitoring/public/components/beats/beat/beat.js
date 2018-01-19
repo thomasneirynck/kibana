@@ -82,7 +82,7 @@ export function Beat({ summary, metrics, ...props }) {
           data-test-subj="beatSummaryStatus02"
         >
           <div>
-            Events Published: <strong data-test-subj="eventsPublished">{formatMetric(summary.eventsPublished, 'int_commas')}</strong>
+            Events Total: <strong data-test-subj="eventsTotal">{formatMetric(summary.eventsTotal, 'int_commas')}</strong>
           </div>
           <div>
             Events Emitted: <strong data-test-subj="eventsEmitted">{formatMetric(summary.eventsEmitted, 'int_commas')}</strong>
@@ -98,11 +98,11 @@ export function Beat({ summary, metrics, ...props }) {
 
       <div className="page-row">
         <div className="row">
-          <div className="col-md-6">{renderChart(metrics.beat_published_and_acknowledged, props)}</div>
-          <div className="col-md-6">{renderChart(metrics.beat_bytes_written, props)}</div>
-          <div className="col-md-6">{renderChart(metrics.beat_failed_and_queued, props)}</div>
-          <div className="col-md-6">{renderChart(metrics.beat_bytes_mem, props)}</div>
-          <div className="col-md-6">{renderChart(metrics.beat_dropped_retry_filtered, props)}</div>
+          <div className="col-md-6">{renderChart(metrics.beat_event_rates, props)}</div>
+          <div className="col-md-6">{renderChart(metrics.beat_fail_rates, props)}</div>
+          <div className="col-md-6">{renderChart(metrics.beat_throughput_rates, props)}</div>
+          <div className="col-md-6">{renderChart(metrics.beat_output_errors, props)}</div>
+          <div className="col-md-6">{renderChart(metrics.beat_memory, props)}</div>
           <div className="col-md-6">{renderChart(metrics.beat_os_load, props)}</div>
         </div>
       </div>
