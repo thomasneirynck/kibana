@@ -31,7 +31,6 @@ export default function ({ getService, getPageObjects }) {
         filebeat: 200,
         heartbeat: 100,
         metricbeat: 100,
-        chickenbeat: 1,
         cowbeat: 1,
         duckbeat: 1,
         sheepbeat: 1,

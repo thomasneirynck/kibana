@@ -1,8 +1,7 @@
 import moment from 'moment';
 import { capitalize, get } from 'lodash';
 import { checkParam } from '../error_missing_required';
-import { BeatsMetric } from '../metrics';
-import { createQuery } from '../create_query';
+import { createBeatsQuery } from './create_beats_query';
 import { calculateRate } from '../calculate_rate';
 
 export function handleResponse(response, start, end) {
@@ -74,12 +73,10 @@ export function getBeats(req, beatsIndexPattern, clusterUuid) {
       'hits.hits.inner_hits.earliest.hits.hits._source.beats_stats.metrics.libbeat.pipeline.events.published',
     ],
     body: {
-      query: createQuery({
+      query: createBeatsQuery({
         start,
         end,
         uuid: clusterUuid,
-        metric: BeatsMetric.getMetricFields(),
-        type: 'beats_stats',
       }),
       collapse: {
         field: 'beats_stats.beat.uuid',

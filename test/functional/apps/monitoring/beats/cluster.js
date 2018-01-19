@@ -20,12 +20,11 @@ export default function ({ getService, getPageObjects }) {
       expect(await overview.getBeatsPublishedEventsRate()).to.be('699.9k');
       expect(await overview.getBeatsTotalBytesSentRate()).to.be('428MB');
       expect(await overview.getBeatsListingDetail()).to.eql({
-        total: 405,
+        total: 404,
         types: {
           filebeat: 200,
           heartbeat: 100,
           metricbeat: 100,
-          chickenbeat: 1,
           cowbeat: 1,
           duckbeat: 1,
           sheepbeat: 1,

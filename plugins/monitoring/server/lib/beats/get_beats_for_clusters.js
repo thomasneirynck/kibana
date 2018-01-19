@@ -1,6 +1,5 @@
 import { checkParam } from '../error_missing_required';
-import { createQuery } from '../create_query.js';
-import { BeatsMetric } from '../metrics';
+import { createBeatsQuery } from './create_beats_query.js';
 import {
   beatsAggFilterPath,
   beatsUuidsAgg,
@@ -32,7 +31,6 @@ export function getBeatsForClusters(req, beatsIndexPattern, clusters) {
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
   const config = req.server.config();
-  const metric = BeatsMetric.getMetricFields();
   const maxBucketSize = config.get('xpack.monitoring.max_bucket_size');
 
   return Promise.all(clusters.map(async cluster => {
@@ -43,13 +41,13 @@ export function getBeatsForClusters(req, beatsIndexPattern, clusters) {
       ignoreUnavailable: true,
       filterPath: beatsAggFilterPath,
       body: {
-        query: createQuery({
+        query: createBeatsQuery({
           start,
           end,
           uuid: clusterUuid,
-          metric,
         }),
-        aggs: beatsUuidsAgg(maxBucketSize)        }
+        aggs: beatsUuidsAgg(maxBucketSize)
+      }
     };
 
     const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');

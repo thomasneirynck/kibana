@@ -1,7 +1,6 @@
 import { capitalize, get } from 'lodash';
 import { checkParam } from '../error_missing_required';
-import { createQuery } from '../create_query';
-import { BeatsMetric } from '../metrics';
+import { createBeatsQuery } from './create_beats_query';
 
 export function handleResponse(response) {
   const aggs = get(response, 'aggregations');
@@ -77,10 +76,8 @@ export function getLatestStats(req, beatsIndexPattern, clusterUuid) {
     ignoreUnavailable: true,
     filterPath: 'aggregations',
     body: {
-      query: createQuery({
+      query: createBeatsQuery({
         uuid: clusterUuid,
-        metric: BeatsMetric.getMetricFields(),
-        type: 'beats_stats',
         filters: [ lastDayFilter ],
       }),
       aggs: {

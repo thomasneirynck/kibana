@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { defaults, get } from 'lodash';
 import { MissingRequiredError } from './error_missing_required';
 import moment from 'moment';
 
@@ -37,7 +37,7 @@ export const createTypeFilter = (type) => {
  * @param {Metric} options.metric - Metric instance or metric fields object @see ElasticsearchMetric.getMetricFields
  */
 export function createQuery(options) {
-  options = _.defaults(options, { filters: [] });
+  options = defaults(options, { filters: [] });
   const { type, clusterUuid, uuid, start, end, filters } = options;
 
   let typeFilter;
@@ -53,14 +53,14 @@ export function createQuery(options) {
   let uuidFilter;
   // options.uuid can be null, for example getting all the clusters
   if (uuid) {
-    const uuidField = _.get(options, 'metric.uuidField');
+    const uuidField = get(options, 'metric.uuidField');
     if (!uuidField) {
       throw new MissingRequiredError('options.uuid given but options.metric.uuidField is false');
     }
     uuidFilter = { term: { [uuidField]: uuid } };
   }
 
-  const timestampField = _.get(options, 'metric.timestampField');
+  const timestampField = get(options, 'metric.timestampField');
   if (!timestampField) {
     throw new MissingRequiredError('metric.timestampField');
   }
@@ -85,7 +85,7 @@ export function createQuery(options) {
 
   return {
     bool: {
-      filter: _.filter(combinedFilters, (val) => !_.isUndefined(val))
+      filter: combinedFilters.filter(Boolean)
     }
   };
 }

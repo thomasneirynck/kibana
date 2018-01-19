@@ -1,7 +1,6 @@
 import { capitalize, get } from 'lodash';
 import { checkParam } from '../error_missing_required';
-import { createQuery } from '../create_query.js';
-import { BeatsMetric } from '../metrics';
+import { createBeatsQuery } from './create_beats_query.js';
 import { getDiffCalculation } from './_beats_stats';
 
 export function handleResponse(response, beatUuid) {
@@ -37,7 +36,6 @@ export function handleResponse(response, beatUuid) {
 export async function getBeatSummary(req, beatsIndexPattern, { clusterUuid, beatUuid, start, end }) {
   checkParam(beatsIndexPattern, 'beatsIndexPattern in beats/getBeatSummary');
 
-  const metric = BeatsMetric.getMetricFields();
   const filters = [
     { term: { 'beats_stats.beat.uuid': beatUuid } }
   ];
@@ -64,12 +62,10 @@ export async function getBeatSummary(req, beatsIndexPattern, { clusterUuid, beat
     body: {
       size: 1,
       sort: { timestamp: { order: 'desc' } },
-      query: createQuery({
-        type: 'beats_stats',
+      query: createBeatsQuery({
         start,
         end,
         uuid: clusterUuid,
-        metric,
         filters
       }),
       collapse: {

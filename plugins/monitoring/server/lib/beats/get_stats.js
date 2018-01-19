@@ -1,7 +1,6 @@
 import moment from 'moment';
 import { checkParam } from '../error_missing_required';
-import { createQuery } from '../create_query';
-import { BeatsMetric } from '../metrics';
+import { createBeatsQuery } from './create_beats_query';
 import {
   beatsAggFilterPath,
   beatsUuidsAgg,
@@ -35,12 +34,10 @@ export async function getStats(req, beatsIndexPattern, clusterUuid) {
     filterPath: beatsAggFilterPath,
     ignoreUnavailable: true,
     body: {
-      query: createQuery({
+      query: createBeatsQuery({
         start,
         end,
         uuid: clusterUuid,
-        metric: BeatsMetric.getMetricFields(),
-        type: 'beats_stats',
       }),
       aggs: beatsUuidsAgg(maxBucketSize)
     }
