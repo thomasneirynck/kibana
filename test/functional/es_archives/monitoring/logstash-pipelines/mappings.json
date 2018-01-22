@@ -1,7 +1,428 @@
 {
   "type": "index",
   "value": {
-    "index": ".monitoring-es-6-2017.12.22",
+    "index": ".monitoring-logstash-6-2018.01.22",
+    "settings": {
+      "index": {
+        "codec": "best_compression",
+        "number_of_shards": "1",
+        "auto_expand_replicas": "0-1",
+        "format": "6",
+        "number_of_replicas": "0"
+      }
+    },
+    "mappings": {
+      "doc": {
+        "dynamic": "false",
+        "properties": {
+          "cluster_uuid": {
+            "type": "keyword"
+          },
+          "interval_ms": {
+            "type": "long"
+          },
+          "logstash_state": {
+            "properties": {
+              "ephemeral_id": {
+                "type": "keyword"
+              },
+              "host": {
+                "type": "keyword"
+              },
+              "http_address": {
+                "type": "keyword"
+              },
+              "name": {
+                "type": "keyword"
+              },
+              "pipeline": {
+                "properties": {
+                  "batch_size": {
+                    "type": "integer"
+                  },
+                  "ephemeral_id": {
+                    "type": "keyword"
+                  },
+                  "format": {
+                    "type": "keyword"
+                  },
+                  "hash": {
+                    "type": "keyword"
+                  },
+                  "id": {
+                    "type": "keyword"
+                  },
+                  "representation": {
+                    "type": "object",
+                    "enabled": false
+                  },
+                  "version": {
+                    "type": "keyword"
+                  },
+                  "workers": {
+                    "type": "short"
+                  }
+                }
+              },
+              "snapshot": {
+                "type": "boolean"
+              },
+              "status": {
+                "type": "keyword"
+              },
+              "uuid": {
+                "type": "keyword"
+              },
+              "version": {
+                "type": "keyword"
+              }
+            }
+          },
+          "logstash_stats": {
+            "properties": {
+              "batch_size": {
+                "type": "integer"
+              },
+              "events": {
+                "properties": {
+                  "duration_in_millis": {
+                    "type": "long"
+                  },
+                  "filtered": {
+                    "type": "long"
+                  },
+                  "in": {
+                    "type": "long"
+                  },
+                  "out": {
+                    "type": "long"
+                  }
+                }
+              },
+              "jvm": {
+                "properties": {
+                  "gc": {
+                    "properties": {
+                      "collectors": {
+                        "properties": {
+                          "old": {
+                            "properties": {
+                              "collection_count": {
+                                "type": "long"
+                              },
+                              "collection_time_in_millis": {
+                                "type": "long"
+                              }
+                            }
+                          },
+                          "young": {
+                            "properties": {
+                              "collection_count": {
+                                "type": "long"
+                              },
+                              "collection_time_in_millis": {
+                                "type": "long"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "mem": {
+                    "properties": {
+                      "heap_max_in_bytes": {
+                        "type": "long"
+                      },
+                      "heap_used_in_bytes": {
+                        "type": "long"
+                      },
+                      "heap_used_percent": {
+                        "type": "long"
+                      }
+                    }
+                  },
+                  "uptime_in_millis": {
+                    "type": "long"
+                  }
+                }
+              },
+              "logstash": {
+                "properties": {
+                  "ephemeral_id": {
+                    "type": "keyword"
+                  },
+                  "host": {
+                    "type": "keyword"
+                  },
+                  "http_address": {
+                    "type": "keyword"
+                  },
+                  "name": {
+                    "type": "keyword"
+                  },
+                  "pipeline": {
+                    "properties": {
+                      "batch_size": {
+                        "type": "long"
+                      },
+                      "workers": {
+                        "type": "short"
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "boolean"
+                  },
+                  "status": {
+                    "type": "keyword"
+                  },
+                  "uuid": {
+                    "type": "keyword"
+                  },
+                  "version": {
+                    "type": "keyword"
+                  }
+                }
+              },
+              "os": {
+                "properties": {
+                  "cgroup": {
+                    "properties": {
+                      "cpu": {
+                        "properties": {
+                          "control_group": {
+                            "type": "keyword"
+                          },
+                          "stat": {
+                            "properties": {
+                              "number_of_elapsed_periods": {
+                                "type": "long"
+                              },
+                              "number_of_times_throttled": {
+                                "type": "long"
+                              },
+                              "time_throttled_nanos": {
+                                "type": "long"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "cpuacct": {
+                        "properties": {
+                          "control_group": {
+                            "type": "keyword"
+                          },
+                          "usage_nanos": {
+                            "type": "long"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "cpu": {
+                    "properties": {
+                      "load_average": {
+                        "properties": {
+                          "15m": {
+                            "type": "half_float"
+                          },
+                          "1m": {
+                            "type": "half_float"
+                          },
+                          "5m": {
+                            "type": "half_float"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "pipelines": {
+                "type": "nested",
+                "properties": {
+                  "ephemeral_id": {
+                    "type": "keyword"
+                  },
+                  "events": {
+                    "properties": {
+                      "duration_in_millis": {
+                        "type": "long"
+                      },
+                      "filtered": {
+                        "type": "long"
+                      },
+                      "in": {
+                        "type": "long"
+                      },
+                      "out": {
+                        "type": "long"
+                      },
+                      "queue_push_duration_in_millis": {
+                        "type": "long"
+                      }
+                    }
+                  },
+                  "hash": {
+                    "type": "keyword"
+                  },
+                  "id": {
+                    "type": "keyword"
+                  },
+                  "queue": {
+                    "properties": {
+                      "events_count": {
+                        "type": "long"
+                      },
+                      "type": {
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "reloads": {
+                    "properties": {
+                      "failures": {
+                        "type": "long"
+                      },
+                      "successes": {
+                        "type": "long"
+                      }
+                    }
+                  },
+                  "vertices": {
+                    "type": "nested",
+                    "properties": {
+                      "double_gauges": {
+                        "type": "nested",
+                        "properties": {
+                          "name": {
+                            "type": "keyword"
+                          },
+                          "value": {
+                            "type": "double"
+                          }
+                        }
+                      },
+                      "duration_in_millis": {
+                        "type": "long"
+                      },
+                      "events_in": {
+                        "type": "long"
+                      },
+                      "events_out": {
+                        "type": "long"
+                      },
+                      "id": {
+                        "type": "keyword"
+                      },
+                      "long_counters": {
+                        "type": "nested",
+                        "properties": {
+                          "name": {
+                            "type": "keyword"
+                          },
+                          "value": {
+                            "type": "long"
+                          }
+                        }
+                      },
+                      "pipeline_ephemeral_id": {
+                        "type": "keyword"
+                      },
+                      "queue_push_duration_in_millis": {
+                        "type": "long"
+                      }
+                    }
+                  }
+                }
+              },
+              "process": {
+                "properties": {
+                  "cpu": {
+                    "properties": {
+                      "percent": {
+                        "type": "long"
+                      }
+                    }
+                  },
+                  "max_file_descriptors": {
+                    "type": "long"
+                  },
+                  "open_file_descriptors": {
+                    "type": "long"
+                  }
+                }
+              },
+              "queue": {
+                "properties": {
+                  "events_count": {
+                    "type": "long"
+                  },
+                  "type": {
+                    "type": "keyword"
+                  }
+                }
+              },
+              "reloads": {
+                "properties": {
+                  "failures": {
+                    "type": "long"
+                  },
+                  "successes": {
+                    "type": "long"
+                  }
+                }
+              },
+              "timestamp": {
+                "type": "date"
+              },
+              "workers": {
+                "type": "short"
+              }
+            }
+          },
+          "source_node": {
+            "properties": {
+              "host": {
+                "type": "keyword"
+              },
+              "ip": {
+                "type": "keyword"
+              },
+              "name": {
+                "type": "keyword"
+              },
+              "timestamp": {
+                "type": "date",
+                "format": "date_time"
+              },
+              "transport_address": {
+                "type": "keyword"
+              },
+              "uuid": {
+                "type": "keyword"
+              }
+            }
+          },
+          "timestamp": {
+            "type": "date",
+            "format": "date_time"
+          },
+          "type": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}
+
+{
+  "type": "index",
+  "value": {
+    "index": ".monitoring-es-6-2018.01.22",
     "settings": {
       "index": {
         "codec": "best_compression",
@@ -912,427 +1333,6 @@
           },
           "state_uuid": {
             "type": "keyword"
-          },
-          "timestamp": {
-            "type": "date",
-            "format": "date_time"
-          },
-          "type": {
-            "type": "keyword"
-          }
-        }
-      }
-    }
-  }
-}
-
-{
-  "type": "index",
-  "value": {
-    "index": ".monitoring-logstash-6-2017.12.22",
-    "settings": {
-      "index": {
-        "codec": "best_compression",
-        "number_of_shards": "1",
-        "auto_expand_replicas": "0-1",
-        "format": "6",
-        "number_of_replicas": "0"
-      }
-    },
-    "mappings": {
-      "doc": {
-        "dynamic": "false",
-        "properties": {
-          "cluster_uuid": {
-            "type": "keyword"
-          },
-          "interval_ms": {
-            "type": "long"
-          },
-          "logstash_state": {
-            "properties": {
-              "ephemeral_id": {
-                "type": "keyword"
-              },
-              "host": {
-                "type": "keyword"
-              },
-              "http_address": {
-                "type": "keyword"
-              },
-              "name": {
-                "type": "keyword"
-              },
-              "pipeline": {
-                "properties": {
-                  "batch_size": {
-                    "type": "integer"
-                  },
-                  "ephemeral_id": {
-                    "type": "keyword"
-                  },
-                  "format": {
-                    "type": "keyword"
-                  },
-                  "hash": {
-                    "type": "keyword"
-                  },
-                  "id": {
-                    "type": "keyword"
-                  },
-                  "representation": {
-                    "type": "object",
-                    "enabled": false
-                  },
-                  "version": {
-                    "type": "keyword"
-                  },
-                  "workers": {
-                    "type": "short"
-                  }
-                }
-              },
-              "snapshot": {
-                "type": "boolean"
-              },
-              "status": {
-                "type": "keyword"
-              },
-              "uuid": {
-                "type": "keyword"
-              },
-              "version": {
-                "type": "keyword"
-              }
-            }
-          },
-          "logstash_stats": {
-            "properties": {
-              "batch_size": {
-                "type": "integer"
-              },
-              "events": {
-                "properties": {
-                  "duration_in_millis": {
-                    "type": "long"
-                  },
-                  "filtered": {
-                    "type": "long"
-                  },
-                  "in": {
-                    "type": "long"
-                  },
-                  "out": {
-                    "type": "long"
-                  }
-                }
-              },
-              "jvm": {
-                "properties": {
-                  "gc": {
-                    "properties": {
-                      "collectors": {
-                        "properties": {
-                          "old": {
-                            "properties": {
-                              "collection_count": {
-                                "type": "long"
-                              },
-                              "collection_time_in_millis": {
-                                "type": "long"
-                              }
-                            }
-                          },
-                          "young": {
-                            "properties": {
-                              "collection_count": {
-                                "type": "long"
-                              },
-                              "collection_time_in_millis": {
-                                "type": "long"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "mem": {
-                    "properties": {
-                      "heap_max_in_bytes": {
-                        "type": "long"
-                      },
-                      "heap_used_in_bytes": {
-                        "type": "long"
-                      },
-                      "heap_used_percent": {
-                        "type": "long"
-                      }
-                    }
-                  },
-                  "uptime_in_millis": {
-                    "type": "long"
-                  }
-                }
-              },
-              "logstash": {
-                "properties": {
-                  "ephemeral_id": {
-                    "type": "keyword"
-                  },
-                  "host": {
-                    "type": "keyword"
-                  },
-                  "http_address": {
-                    "type": "keyword"
-                  },
-                  "name": {
-                    "type": "keyword"
-                  },
-                  "pipeline": {
-                    "properties": {
-                      "batch_size": {
-                        "type": "long"
-                      },
-                      "workers": {
-                        "type": "short"
-                      }
-                    }
-                  },
-                  "snapshot": {
-                    "type": "boolean"
-                  },
-                  "status": {
-                    "type": "keyword"
-                  },
-                  "uuid": {
-                    "type": "keyword"
-                  },
-                  "version": {
-                    "type": "keyword"
-                  }
-                }
-              },
-              "os": {
-                "properties": {
-                  "cgroup": {
-                    "properties": {
-                      "cpu": {
-                        "properties": {
-                          "control_group": {
-                            "type": "keyword"
-                          },
-                          "stat": {
-                            "properties": {
-                              "number_of_elapsed_periods": {
-                                "type": "long"
-                              },
-                              "number_of_times_throttled": {
-                                "type": "long"
-                              },
-                              "time_throttled_nanos": {
-                                "type": "long"
-                              }
-                            }
-                          }
-                        }
-                      },
-                      "cpuacct": {
-                        "properties": {
-                          "control_group": {
-                            "type": "keyword"
-                          },
-                          "usage_nanos": {
-                            "type": "long"
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "cpu": {
-                    "properties": {
-                      "load_average": {
-                        "properties": {
-                          "15m": {
-                            "type": "half_float"
-                          },
-                          "1m": {
-                            "type": "half_float"
-                          },
-                          "5m": {
-                            "type": "half_float"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "pipelines": {
-                "type": "nested",
-                "properties": {
-                  "ephemeral_id": {
-                    "type": "keyword"
-                  },
-                  "events": {
-                    "properties": {
-                      "duration_in_millis": {
-                        "type": "long"
-                      },
-                      "filtered": {
-                        "type": "long"
-                      },
-                      "in": {
-                        "type": "long"
-                      },
-                      "out": {
-                        "type": "long"
-                      },
-                      "queue_push_duration_in_millis": {
-                        "type": "long"
-                      }
-                    }
-                  },
-                  "hash": {
-                    "type": "keyword"
-                  },
-                  "id": {
-                    "type": "keyword"
-                  },
-                  "queue": {
-                    "properties": {
-                      "events_count": {
-                        "type": "long"
-                      },
-                      "type": {
-                        "type": "keyword"
-                      }
-                    }
-                  },
-                  "reloads": {
-                    "properties": {
-                      "failures": {
-                        "type": "long"
-                      },
-                      "successes": {
-                        "type": "long"
-                      }
-                    }
-                  },
-                  "vertices": {
-                    "type": "nested",
-                    "properties": {
-                      "double_gauges": {
-                        "type": "nested",
-                        "properties": {
-                          "name": {
-                            "type": "keyword"
-                          },
-                          "value": {
-                            "type": "double"
-                          }
-                        }
-                      },
-                      "duration_in_millis": {
-                        "type": "long"
-                      },
-                      "events_in": {
-                        "type": "long"
-                      },
-                      "events_out": {
-                        "type": "long"
-                      },
-                      "id": {
-                        "type": "keyword"
-                      },
-                      "long_counters": {
-                        "type": "nested",
-                        "properties": {
-                          "name": {
-                            "type": "keyword"
-                          },
-                          "value": {
-                            "type": "long"
-                          }
-                        }
-                      },
-                      "pipeline_ephemeral_id": {
-                        "type": "keyword"
-                      },
-                      "queue_push_duration_in_millis": {
-                        "type": "long"
-                      }
-                    }
-                  }
-                }
-              },
-              "process": {
-                "properties": {
-                  "cpu": {
-                    "properties": {
-                      "percent": {
-                        "type": "long"
-                      }
-                    }
-                  },
-                  "max_file_descriptors": {
-                    "type": "long"
-                  },
-                  "open_file_descriptors": {
-                    "type": "long"
-                  }
-                }
-              },
-              "queue": {
-                "properties": {
-                  "events_count": {
-                    "type": "long"
-                  },
-                  "type": {
-                    "type": "keyword"
-                  }
-                }
-              },
-              "reloads": {
-                "properties": {
-                  "failures": {
-                    "type": "long"
-                  },
-                  "successes": {
-                    "type": "long"
-                  }
-                }
-              },
-              "timestamp": {
-                "type": "date"
-              },
-              "workers": {
-                "type": "short"
-              }
-            }
-          },
-          "source_node": {
-            "properties": {
-              "host": {
-                "type": "keyword"
-              },
-              "ip": {
-                "type": "keyword"
-              },
-              "name": {
-                "type": "keyword"
-              },
-              "timestamp": {
-                "type": "date",
-                "format": "date_time"
-              },
-              "transport_address": {
-                "type": "keyword"
-              },
-              "uuid": {
-                "type": "keyword"
-              }
-            }
           },
           "timestamp": {
             "type": "date",

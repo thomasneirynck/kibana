@@ -16,8 +16,8 @@ export default function ({ getService, getPageObjects }) {
       await remote.setWindowSize(1600, 1000);
 
       await esArchiver.load(archiveId);
-      const fromTime = '2017-12-21 23:59:59.000';
-      const toTime = '2017-12-22 01:05:00.000';
+      const fromTime = '2018-01-22 9:10:00.000';
+      const toTime = '2018-01-22 9:41:00.000';
       await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
 
       await PageObjects.monitoring.navigateTo();
@@ -37,9 +37,9 @@ export default function ({ getService, getPageObjects }) {
     it('Logstash Cluster Summary Status shows correct info', async () => {
       expect(await lsClusterSummaryStatus.getContent()).to.eql({
         nodeCount: '2',
-        memoryUsed: '610MB / 2GB',
-        eventsInTotal: '245.7k',
-        eventsOutTotal: '242.7k'
+        memoryUsed: '528MB / 2GB',
+        eventsInTotal: '117.9k',
+        eventsOutTotal: '111.9k'
       });
     });
 
@@ -50,10 +50,10 @@ export default function ({ getService, getPageObjects }) {
       const pipelinesAll = await pipelinesList.getPipelinesAll();
 
       const tableData = [
-        { id: 'main', eventsEmittedRate: '100 e/s', nodeCount: '1' },
-        { id: 'nginx_logs', eventsEmittedRate: '2.6 e/s', nodeCount: '1' },
+        { id: 'main', eventsEmittedRate: '108.3 e/s', nodeCount: '1' },
+        { id: 'nginx_logs', eventsEmittedRate: '29.2 e/s', nodeCount: '1' },
         { id: 'test_interpolation', eventsEmittedRate: '0 e/s', nodeCount: '1' },
-        { id: 'tweets_about_labradoodles', eventsEmittedRate: '3.6 e/s', nodeCount: '1' },
+        { id: 'tweets_about_labradoodles', eventsEmittedRate: '0.6 e/s', nodeCount: '1' },
       ];
 
       // check the all data in the table
@@ -74,9 +74,9 @@ export default function ({ getService, getPageObjects }) {
 
       const tableData = [
         { id: 'test_interpolation', eventsEmittedRate: '0 e/s', nodeCount: '1' },
-        { id: 'nginx_logs', eventsEmittedRate: '2.6 e/s', nodeCount: '1' },
-        { id: 'tweets_about_labradoodles', eventsEmittedRate: '3.6 e/s', nodeCount: '1' },
-        { id: 'main', eventsEmittedRate: '100 e/s', nodeCount: '1' },
+        { id: 'tweets_about_labradoodles', eventsEmittedRate: '0.6 e/s', nodeCount: '1' },
+        { id: 'nginx_logs', eventsEmittedRate: '29.2 e/s', nodeCount: '1' },
+        { id: 'main', eventsEmittedRate: '108.3 e/s', nodeCount: '1' },
       ];
 
       // check the all data in the table
