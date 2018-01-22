@@ -8,7 +8,7 @@ function SelectionMarker({ innerHeight, marginTop, start, end }) {
     <rect
       pointerEvents="none"
       fill="black"
-      opacity="0.2"
+      fillOpacity="0.1"
       x={x}
       y={marginTop}
       width={width}

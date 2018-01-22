@@ -555,7 +555,7 @@ exports[`when response has data when dragging without releasing should display S
 "
 <rect pointer-events=\\"none\\"
       fill=\\"black\\"
-      opacity=\\"0.2\\"
+      fill-opacity=\\"0.1\\"
       x=\\"314.66666666666663\\"
       y=\\"16\\"
       width=\\"234.66666666666663\\"
