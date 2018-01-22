@@ -18,6 +18,8 @@ import $ from   'jquery';
 import 'plugins/ml/components/item_select';
 import 'plugins/ml/settings/scheduled_events/components/events_list';
 
+import { validateCalendarId } from 'plugins/ml/settings/scheduled_events/components/utils/validate_calendar';
+
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
@@ -50,7 +52,10 @@ module.controller('MlCreateCalendar',
     $location,
     ml,
     timefilter,
+    mlMessageBarService,
     mlJobService) {
+    const msgs = mlMessageBarService;
+    msgs.clear();
 
     const calendarId = $route.current.params.calendarId;
     $scope.isNewCalendar = (calendarId === undefined);
@@ -58,6 +63,7 @@ module.controller('MlCreateCalendar',
     $scope.pageTitle = $scope.isNewCalendar ? 'Create new calendar' : `Edit calendar ${calendarId}`;
 
     $scope.calendarId = calendarId || '';
+    $scope.description = '';
     $scope.events = [];
     $scope.jobIds = [];
     $scope.allJobs = [];
@@ -65,6 +71,11 @@ module.controller('MlCreateCalendar',
     $scope.allGroups = [];
     $scope.updateJobsList = {};
     $scope.updateGroupsList = {};
+    $scope.validation = {
+      checks: {
+        calendarId: { valid: true },
+      }
+    };
 
     mlJobService.loadJobs()
       .then(() => {
@@ -75,6 +86,7 @@ module.controller('MlCreateCalendar',
           ml.calendars({ calendarId })
             .then((calendar) => {
               $scope.events = calendar.events || [];
+              $scope.description = calendar.description || '';
 
               calendar.job_ids.forEach(id => {
                 if ($scope.allJobs.find((j) => j.id === id)) {
@@ -91,6 +103,7 @@ module.controller('MlCreateCalendar',
       });
 
     $scope.save = function () {
+      msgs.clear();
       // Just pass the three event properties used by the endpoint, ignoring UI-specific properties
       // such as 'asterisk' which is used to flag recurring events from an ICS file import.
       const events = $scope.events.map((event) => {
@@ -103,18 +116,21 @@ module.controller('MlCreateCalendar',
 
       const calendar = {
         calendarId: $scope.calendarId,
+        description: $scope.description,
         events,
         job_ids: [...$scope.jobIds, ...$scope.groupIds],
       };
 
-      const saveFunc = $scope.isNewCalendar ? ml.addCalendar : ml.updateCalendar;
-      saveFunc(calendar)
-        .then(() => {
-          $location.path('settings/calendars_list');
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      if (validateCalendarId(calendar.calendarId, $scope.validation.checks)) {
+        const saveFunc = $scope.isNewCalendar ? ml.addCalendar : ml.updateCalendar;
+        saveFunc(calendar)
+          .then(() => {
+            $location.path('settings/calendars_list');
+          })
+          .catch((error) => {
+            msgs.error('Save calendar failed: ', error);
+          });
+      }
     };
 
     $scope.cancel = function () {

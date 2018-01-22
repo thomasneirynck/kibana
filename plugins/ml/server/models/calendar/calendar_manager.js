@@ -45,11 +45,11 @@ export class CalendarManager {
       const calendarsResp = await this.callWithRequest('ml.calendars');
       const events = await this.eventManager.getAllEvents();
       const calendars = calendarsResp.calendars;
-      calendars.forEach((cal) => cal.events = []);
+      calendars.forEach(cal => cal.events = []);
 
       // loop events and combine with related calendars
       events.forEach((event) => {
-        const calendar = calendars.find((cal) => cal.calendar_id === event.calendar_id);
+        const calendar = calendars.find(cal => cal.calendar_id === event.calendar_id);
         if (calendar) {
           calendar.events.push(event);
         }
@@ -69,8 +69,8 @@ export class CalendarManager {
       await this.callWithRequest('ml.addCalendar', { calendarId, body: calendar });
       await this.eventManager.addEvents(calendarId, events);
 
-      // return await this.getCalendar(calendarId); do this?????
-      return;
+      // return the newly created calendar
+      return await this.getCalendar(calendarId);
     } catch (error) {
       return Boom.badRequest(error);
     }
@@ -123,7 +123,8 @@ export class CalendarManager {
       return Boom.badRequest(error);
     }
 
-    return {};
+    // return the updated calendar
+    return await this.getCalendar(calendarId);
   }
 
   async deleteCalendar(calendarId) {

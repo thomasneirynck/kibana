@@ -47,7 +47,7 @@ export class EventManager {
     try {
       return await this.callWithRequest('ml.addEvent', { calendarId, body });
     } catch (error) {
-      return Boom.badRequest(error);
+      throw Boom.badRequest(error);
     }
   }
 
