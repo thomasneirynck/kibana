@@ -11,7 +11,7 @@ import {
   getPrimaryType,
   getSpanLabel
 } from '../../../../../../utils/formatters';
-import Legend from '../../../../../shared/charts/Legend';
+import { Indicator } from '../../../../../shared/charts/Legend';
 import {
   SPAN_DURATION,
   SPAN_NAME,
@@ -26,8 +26,12 @@ import {
   colors,
   borderRadius,
   fontFamilyCode,
-  fontSizes
+  fontSizes,
+  truncate
 } from '../../../../../../style/variables';
+import LabelTooltip, {
+  fieldNameHelper
+} from '../../../../../shared/LabelTooltip';
 
 import SyntaxHighlighter, {
   registerLanguage
@@ -47,20 +51,31 @@ const DetailsWrapper = styled.div`
   position: relative;
 `;
 
+const DetailsElement = styled.div`
+  min-width: 0;
+  max-width: 50%;
+  line-height: 1.5;
+`;
+
 const DetailsHeader = styled.div`
-  margin-bottom: ${px(units.half)};
   font-size: ${fontSizes.small};
   color: ${colors.gray3};
+
+  span {
+    cursor: help;
+  }
 `;
 
 const DetailsText = styled.div`
-  display: flex;
   font-size: ${fontSizes.large};
 `;
 
-const LegendLabel = styled.span`
+const SpanName = styled.div`
+  ${truncate('100%')};
+`;
+
+const LegendIndicator = styled(Indicator)`
   display: inline-block;
-  margin-left: -${px(unit)};
 `;
 
 const StackTraceContainer = styled.div`
@@ -103,28 +118,46 @@ function SpanDetails({ span, spanTypes, totalDuration, transactionId }) {
   return (
     <div>
       <DetailsWrapper>
-        <div>
-          <DetailsHeader>Name</DetailsHeader>
-          <DetailsText>{spanName}</DetailsText>
-        </div>
-        <div>
-          <DetailsHeader>Type</DetailsHeader>
+        <DetailsElement>
+          <DetailsHeader>
+            <LabelTooltip text={fieldNameHelper('span.name')}>
+              <span>Name</span>
+            </LabelTooltip>
+          </DetailsHeader>
           <DetailsText>
-            <Legend clickable={false} color={spanColor} />
-            <LegendLabel>{spanLabel}</LegendLabel>
+            <LabelTooltip text={`${spanName || 'N/A'}`}>
+              <SpanName>{spanName || 'N/A'}</SpanName>
+            </LabelTooltip>
           </DetailsText>
-        </div>
-        <div>
-          <DetailsHeader>Duration</DetailsHeader>
+        </DetailsElement>
+        <DetailsElement>
+          <DetailsHeader>
+            <LabelTooltip text={fieldNameHelper('span.type')}>
+              <span>Type</span>
+            </LabelTooltip>
+          </DetailsHeader>
+          <DetailsText>
+            <LegendIndicator radius={units.minus - 1} color={spanColor} />
+            {spanLabel}
+          </DetailsText>
+        </DetailsElement>
+        <DetailsElement>
+          <DetailsHeader>
+            <LabelTooltip text={fieldNameHelper('span.duration.us')}>
+              <span>Duration</span>
+            </LabelTooltip>
+          </DetailsHeader>
           <DetailsText>{asMillis(spanDuration)}</DetailsText>
-        </div>
-        <div>
+        </DetailsElement>
+        <DetailsElement>
           <DetailsHeader>% of total time</DetailsHeader>
           <DetailsText>{numeral(relativeDuration).format('0.00%')}</DetailsText>
-        </div>
-        <DiscoverButton query={discoverQuery}>
-          {`View spans in Discover`}
-        </DiscoverButton>
+        </DetailsElement>
+        <DetailsElement>
+          <DiscoverButton query={discoverQuery}>
+            {`View spans in Discover`}
+          </DiscoverButton>
+        </DetailsElement>
       </DetailsWrapper>
 
       <DatabaseContext dbContext={dbContext} />

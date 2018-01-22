@@ -17,7 +17,7 @@ const ImpactTooltip = () => (
   <TooltipWrapper>
     <OverlayTrigger
       placement="top"
-      trigger="click"
+      trigger="hover"
       overlay={
         <Tooltip>
           Impact shows the most used and<br />slowest endpoints in your service.

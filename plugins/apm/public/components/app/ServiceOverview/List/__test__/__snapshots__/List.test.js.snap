@@ -243,62 +243,64 @@ exports[`ErrorGroupOverview -> List should render with data 1`] = `
     </thead>
     <tbody>
       <tr class=\\"kuiTableRow\\">
-        <td class=\\"kuiTableRowCell sc-ifAKCX gYUYKX\\">
+        <td class=\\"kuiTableRowCell sc-EHOje jXLSDR\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            <a class=\\"kuiLink sc-bZQynM hhtxjm\\"
+            <a class=\\"kuiLink sc-gzVnrw hfGdFM\\"
+               aria-describedby=\\"overlay1\\"
                href=\\"#/opbeans-node/transactions\\"
             >
               opbeans-node
             </a>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-EHOje kWqwVY\\">
+        <td class=\\"kuiTableRowCell sc-bZQynM ckLYrQ\\">
           <div class=\\"kuiTableRowCell__liner\\">
             nodejs
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-EHOje kWqwVY kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-bZQynM ckLYrQ kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             N/A
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-EHOje kWqwVY kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-bZQynM ckLYrQ kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             0 tpm
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-EHOje kWqwVY kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-bZQynM ckLYrQ kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             46.1 err.
           </div>
         </td>
       </tr>
       <tr class=\\"kuiTableRow\\">
-        <td class=\\"kuiTableRowCell sc-ifAKCX gYUYKX\\">
+        <td class=\\"kuiTableRowCell sc-EHOje jXLSDR\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            <a class=\\"kuiLink sc-bZQynM hhtxjm\\"
+            <a class=\\"kuiLink sc-gzVnrw hfGdFM\\"
+               aria-describedby=\\"overlay2\\"
                href=\\"#/opbeans-python/transactions\\"
             >
               opbeans-python
             </a>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-EHOje kWqwVY\\">
+        <td class=\\"kuiTableRowCell sc-bZQynM ckLYrQ\\">
           <div class=\\"kuiTableRowCell__liner\\">
             python
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-EHOje kWqwVY kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-bZQynM ckLYrQ kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             92 ms
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-EHOje kWqwVY kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-bZQynM ckLYrQ kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             86.9 tpm
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-EHOje kWqwVY kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-bZQynM ckLYrQ kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             12.6 err.
           </div>

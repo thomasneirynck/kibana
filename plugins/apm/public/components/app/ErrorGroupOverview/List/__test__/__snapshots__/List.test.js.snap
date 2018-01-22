@@ -218,152 +218,160 @@ exports[`ErrorGroupOverview -> List should render with data 1`] = `
     </thead>
     <tbody>
       <tr class=\\"kuiTableRow\\">
-        <td class=\\"kuiTableRowCell sc-ifAKCX khKUSb\\">
+        <td class=\\"kuiTableRowCell sc-EHOje bViATk\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            <a class=\\"kuiLink sc-EHOje eqiICa\\"
+            <a class=\\"kuiLink sc-bZQynM kpFovI\\"
                href=\\"#/opbeans-python/errors/a0ce2c8978ef92cdf2ff163ae28576ee\\"
             >
               a0ce2
             </a>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-bZQynM fjyoDI\\">
+        <td class=\\"kuiTableRowCell sc-gzVnrw elNRko\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            <a class=\\"kuiLink sc-gzVnrw atJSu\\"
-               title=\\"About to blow up!\\"
+            <a class=\\"kuiLink sc-htoDjs gDiqmH\\"
+               aria-describedby=\\"overlay1\\"
                href=\\"#/opbeans-python/errors/a0ce2c8978ef92cdf2ff163ae28576ee\\"
             >
               About to blow up!
             </a>
-            <div class=\\"sc-htoDjs dWBmQn\\">
+            <div class=\\"sc-dnqmqq gqgRbk\\"
+                 aria-describedby=\\"overlay2\\"
+            >
               elasticapm.contrib.django.client.capture
             </div>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-dnqmqq uGYec kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-iwsKbI kMnJfK kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-iwsKbI hZhUfU kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-gZMcBi kInltV kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             75
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-iwsKbI hZhUfU kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-gZMcBi kInltV kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             1515578797
           </div>
         </td>
       </tr>
       <tr class=\\"kuiTableRow\\">
-        <td class=\\"kuiTableRowCell sc-ifAKCX khKUSb\\">
+        <td class=\\"kuiTableRowCell sc-EHOje bViATk\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            <a class=\\"kuiLink sc-EHOje eqiICa\\"
+            <a class=\\"kuiLink sc-bZQynM kpFovI\\"
                href=\\"#/opbeans-python/errors/f3ac95493913cc7a3cfec30a19d2120a\\"
             >
               f3ac9
             </a>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-bZQynM fjyoDI\\">
+        <td class=\\"kuiTableRowCell sc-gzVnrw elNRko\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            <a class=\\"kuiLink sc-gzVnrw atJSu\\"
-               title=\\"AssertionError: \\"
+            <a class=\\"kuiLink sc-htoDjs gDiqmH\\"
+               aria-describedby=\\"overlay3\\"
                href=\\"#/opbeans-python/errors/f3ac95493913cc7a3cfec30a19d2120a\\"
             >
               AssertionError:
             </a>
-            <div class=\\"sc-htoDjs dWBmQn\\">
+            <div class=\\"sc-dnqmqq gqgRbk\\"
+                 aria-describedby=\\"overlay4\\"
+            >
               opbeans.views.oopsie
             </div>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-dnqmqq uGYec kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-iwsKbI kMnJfK kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-iwsKbI hZhUfU kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-gZMcBi kInltV kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             75
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-iwsKbI hZhUfU kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-gZMcBi kInltV kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             1515578797
           </div>
         </td>
       </tr>
       <tr class=\\"kuiTableRow\\">
-        <td class=\\"kuiTableRowCell sc-ifAKCX khKUSb\\">
+        <td class=\\"kuiTableRowCell sc-EHOje bViATk\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            <a class=\\"kuiLink sc-EHOje eqiICa\\"
+            <a class=\\"kuiLink sc-bZQynM kpFovI\\"
                href=\\"#/opbeans-python/errors/e90863d04b7a692435305f09bbe8c840\\"
             >
               e9086
             </a>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-bZQynM fjyoDI\\">
+        <td class=\\"kuiTableRowCell sc-gzVnrw elNRko\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            <a class=\\"kuiLink sc-gzVnrw atJSu\\"
-               title=\\"AssertionError: Bad luck!\\"
+            <a class=\\"kuiLink sc-htoDjs gDiqmH\\"
+               aria-describedby=\\"overlay5\\"
                href=\\"#/opbeans-python/errors/e90863d04b7a692435305f09bbe8c840\\"
             >
               AssertionError: Bad luck!
             </a>
-            <div class=\\"sc-htoDjs dWBmQn\\">
+            <div class=\\"sc-dnqmqq gqgRbk\\"
+                 aria-describedby=\\"overlay6\\"
+            >
               opbeans.tasks.update_stats
             </div>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-dnqmqq uGYec kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-iwsKbI kMnJfK kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-iwsKbI hZhUfU kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-gZMcBi kInltV kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             24
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-iwsKbI hZhUfU kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-gZMcBi kInltV kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             1515578796
           </div>
         </td>
       </tr>
       <tr class=\\"kuiTableRow\\">
-        <td class=\\"kuiTableRowCell sc-ifAKCX khKUSb\\">
+        <td class=\\"kuiTableRowCell sc-EHOje bViATk\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            <a class=\\"kuiLink sc-EHOje eqiICa\\"
+            <a class=\\"kuiLink sc-bZQynM kpFovI\\"
                href=\\"#/opbeans-python/errors/8673d8bf7a032e387c101bafbab0d2bc\\"
             >
               8673d
             </a>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-bZQynM fjyoDI\\">
+        <td class=\\"kuiTableRowCell sc-gzVnrw elNRko\\">
           <div class=\\"kuiTableRowCell__liner\\">
-            <a class=\\"kuiLink sc-gzVnrw atJSu\\"
-               title=\\"Customer with ID 8517 not found\\"
+            <a class=\\"kuiLink sc-htoDjs gDiqmH\\"
+               aria-describedby=\\"overlay7\\"
                href=\\"#/opbeans-python/errors/8673d8bf7a032e387c101bafbab0d2bc\\"
             >
               Customer with ID 8517 not found
             </a>
-            <div class=\\"sc-htoDjs dWBmQn\\">
+            <div class=\\"sc-dnqmqq gqgRbk\\"
+                 aria-describedby=\\"overlay8\\"
+            >
               opbeans.views.customer
             </div>
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-dnqmqq uGYec kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-iwsKbI kMnJfK kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-iwsKbI hZhUfU kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-gZMcBi kInltV kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             15
           </div>
         </td>
-        <td class=\\"kuiTableRowCell sc-iwsKbI hZhUfU kuiTableRowCell--alignRight\\">
+        <td class=\\"kuiTableRowCell sc-gZMcBi kInltV kuiTableRowCell--alignRight\\">
           <div class=\\"kuiTableRowCell__liner\\">
             1515578773
           </div>

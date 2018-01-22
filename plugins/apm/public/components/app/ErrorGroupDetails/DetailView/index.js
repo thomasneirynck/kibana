@@ -81,14 +81,17 @@ function DetailView({ errorGroup, urlParams, history, location }) {
   const stickyProperties = [
     {
       name: 'Request method',
+      fieldName: 'context.request.method',
       val: get(errorGroup.data, 'error.context.request.method', 'N/A')
     },
     {
       name: 'Handled',
+      fieldName: 'error.exception.handled',
       val: get(errorGroup.data, 'error.error.exception.handled', 'N/A')
     },
     {
       name: 'User ID',
+      fieldName: 'context.user.id',
       val: get(errorGroup.data, 'error.context.user.id', 'N/A')
     }
   ];

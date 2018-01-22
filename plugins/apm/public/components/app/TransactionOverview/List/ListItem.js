@@ -7,10 +7,12 @@ import {
   borderRadius,
   px,
   colors,
-  fontFamilyCode
+  fontFamilyCode,
+  truncate
 } from '../../../../style/variables';
 import { RIGHT_ALIGNMENT } from '@elastic/eui';
 import { RelativeLink, legacyEncodeURIComponent } from '../../../../utils/url';
+import LabelTooltip from '../../../shared/LabelTooltip';
 
 import { get } from 'lodash';
 import { TRANSACTION_NAME } from '../../../../../common/constants';
@@ -22,8 +24,11 @@ import {
 
 const TransactionNameCell = styled(KuiTableRowCell)`
   font-family: ${fontFamilyCode};
-  max-width: none;
   width: 38%;
+`;
+
+const TransactionNameLink = styled(RelativeLink)`
+  ${truncate('100%')};
 `;
 
 const TransactionKPICell = styled(KuiTableRowCell)`
@@ -74,9 +79,11 @@ function TransactionListItem({ serviceName, transaction, type, impact }) {
   return (
     <KuiTableRow>
       <TransactionNameCell>
-        <RelativeLink path={transactionUrl}>
-          {transactionName || 'N/A'}
-        </RelativeLink>
+        <LabelTooltip text={transactionName || 'N/A'}>
+          <TransactionNameLink path={transactionUrl}>
+            {transactionName || 'N/A'}
+          </TransactionNameLink>
+        </LabelTooltip>
       </TransactionNameCell>
       <TransactionKPICell align={RIGHT_ALIGNMENT}>
         {asMillisWithDefault(transaction.avg)}

@@ -104,6 +104,7 @@ class Transaction extends Component {
     const stickyProperties = [
       {
         name: 'Duration',
+        fieldName: 'transaction.duration.us',
         val: (() => {
           const duration = get(transaction.data, 'transaction.duration.us');
           return duration ? asTime(duration) : 'N/A';
@@ -111,10 +112,12 @@ class Transaction extends Component {
       },
       {
         name: 'Result',
+        fieldName: 'transaction.result',
         val: get(transaction.data, 'transaction.result', 'N/A')
       },
       {
         name: 'User ID',
+        fieldName: 'context.user.id',
         val: get(transaction.data, 'context.user.id', 'N/A')
       }
     ];

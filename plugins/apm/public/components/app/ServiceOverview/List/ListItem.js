@@ -2,23 +2,23 @@ import React from 'react';
 import styled from 'styled-components';
 import { RelativeLink } from '../../../../utils/url';
 import { KuiTableRow, KuiTableRowCell } from 'ui_framework/components';
-import { fontSizes } from '../../../../style/variables';
+import { fontSizes, truncate } from '../../../../style/variables';
+import LabelTooltip from '../../../shared/LabelTooltip';
 import { RIGHT_ALIGNMENT } from '@elastic/eui';
 import { asMillisWithDefault } from '../../../../utils/formatters';
 import numeral from '@elastic/numeral';
 
 const ServiceNameCell = styled(KuiTableRowCell)`
-  max-width: none;
   width: 40%;
 `;
 
 const ServiceCell = styled(KuiTableRowCell)`
-  max-width: none;
   width: 15%;
 `;
 
 const AppLink = styled(RelativeLink)`
   font-size: ${fontSizes.large};
+  ${truncate('100%')};
 `;
 
 function formatString(value) {
@@ -45,9 +45,11 @@ function ListItem({ service }) {
   return (
     <KuiTableRow>
       <ServiceNameCell>
-        <AppLink path={`${serviceName}/transactions`}>
-          {formatString(serviceName)}
-        </AppLink>
+        <LabelTooltip text={formatString(serviceName)}>
+          <AppLink path={`${serviceName}/transactions`}>
+            {formatString(serviceName)}
+          </AppLink>
+        </LabelTooltip>
       </ServiceNameCell>
       <ServiceCell>{formatString(agentName)}</ServiceCell>
       <ServiceCell align={RIGHT_ALIGNMENT}>

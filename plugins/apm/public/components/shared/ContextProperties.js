@@ -11,6 +11,8 @@ import {
   truncate
 } from '../../style/variables';
 
+import LabelTooltip, { fieldNameHelper } from '../shared/LabelTooltip';
+
 const PropertiesContainer = styled.div`
   display: flex;
   padding: 0 ${px(units.plus)};
@@ -32,6 +34,10 @@ const PropertyLabel = styled.div`
   margin-bottom: ${px(units.half)};
   font-size: ${fontSizes.small};
   color: ${colors.gray3};
+
+  span {
+    cursor: help;
+  }
 `;
 
 const PropertyValue = styled.div`
@@ -45,7 +51,7 @@ const PropertyValueEmphasis = styled.span`
 
 const PropertyUrl = styled.span`
   display: inline-block;
-  ${truncate(px(unit * 35))};
+  ${truncate('100%')};
   line-height: ${px(unit)};
 `;
 
@@ -59,20 +65,38 @@ export function ContextProperties({ timestamp, url, stickyProperties }) {
   return (
     <PropertiesContainer>
       <Property>
-        <PropertyLabel>Timestamp</PropertyLabel>
+        <PropertyLabel>
+          <LabelTooltip text={fieldNameHelper('@timestamp')}>
+            <span>Timestamp</span>
+          </LabelTooltip>
+        </PropertyLabel>
         <PropertyValue>
           {timeAgo}{' '}
           <PropertyValueEmphasis>({timestampFull})</PropertyValueEmphasis>
         </PropertyValue>
       </Property>
       <PropertyWide>
-        <PropertyLabel>URL</PropertyLabel>
-        <PropertyUrl title={url}>{url}</PropertyUrl>
+        <PropertyLabel>
+          <LabelTooltip text={fieldNameHelper('context.request.url.full')}>
+            <span>URL</span>
+          </LabelTooltip>
+        </PropertyLabel>
+        <LabelTooltip text={url}>
+          <PropertyUrl>{url}</PropertyUrl>
+        </LabelTooltip>
       </PropertyWide>
       {stickyProperties &&
-        stickyProperties.map(({ name, val }, i) => (
+        stickyProperties.map(({ name, val, fieldName }, i) => (
           <Property key={i}>
-            <PropertyLabel>{name}</PropertyLabel>
+            {fieldName ? (
+              <PropertyLabel>
+                <LabelTooltip text={fieldNameHelper(fieldName)}>
+                  <span>{name}</span>
+                </LabelTooltip>
+              </PropertyLabel>
+            ) : (
+              <PropertyLabel>{name}</PropertyLabel>
+            )}
             <PropertyValue>{String(val)}</PropertyValue>
           </Property>
         ))}

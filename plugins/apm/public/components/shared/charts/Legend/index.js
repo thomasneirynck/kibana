@@ -19,7 +19,7 @@ const Container = styled.div`
   user-select: none;
 `;
 
-const Indicator = styled.span`
+export const Indicator = styled.span`
   width: ${props => px(props.radius)};
   height: ${props => px(props.radius)};
   margin-right: ${props => px(props.radius / 2)};

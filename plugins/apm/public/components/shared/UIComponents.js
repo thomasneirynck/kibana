@@ -1,5 +1,12 @@
 import styled from 'styled-components';
-import { unit, units, px, fontSizes, colors } from '../../style/variables';
+import {
+  unit,
+  units,
+  px,
+  fontSizes,
+  colors,
+  truncate
+} from '../../style/variables';
 import { RelativeLink } from '../../utils/url';
 
 export const PageHeader = styled.h1`
@@ -7,6 +14,7 @@ export const PageHeader = styled.h1`
   margin: 0 0 ${px(units.plus)} 0;
   height: ${px(unit * 2.5)};
   line-height: ${px(unit * 2.5)};
+  ${truncate('100%')};
 `;
 
 export const SectionHeader = styled.h2`

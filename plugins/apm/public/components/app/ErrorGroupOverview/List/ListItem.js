@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import {
   unit,
   px,
-  colors,
   fontFamilyCode,
   fontSizes,
   truncate
@@ -11,6 +10,7 @@ import {
 import { RelativeLink } from '../../../../utils/url';
 import { KuiTableRow, KuiTableRowCell } from 'ui_framework/components';
 import { RIGHT_ALIGNMENT, EuiBadge } from '@elastic/eui';
+import LabelTooltip from '../../../shared/LabelTooltip';
 import numeral from '@elastic/numeral';
 import moment from 'moment';
 
@@ -21,7 +21,6 @@ const GroupIdCell = styled(KuiTableRowCell)`
 
 const GroupIdLink = styled(RelativeLink)`
   font-family: ${fontFamilyCode};
-  color: ${colors.gray2};
 `;
 
 const MessageAndCulpritCell = styled(KuiTableRowCell)`
@@ -29,11 +28,9 @@ const MessageAndCulpritCell = styled(KuiTableRowCell)`
 `;
 
 const MessageLink = styled(RelativeLink)`
-  display: block;
   font-family: ${fontFamilyCode};
   font-size: ${fontSizes.large};
-  ${truncate(px(unit * 32))};
-  max-width: 90%;
+  ${truncate('100%')};
 `;
 
 const Culprit = styled.div`
@@ -75,10 +72,14 @@ function ListItem({ error, serviceName }) {
         </GroupIdLink>
       </GroupIdCell>
       <MessageAndCulpritCell>
-        <MessageLink title={message} path={`${serviceName}/errors/${groupId}`}>
-          {message || 'N/A'}
-        </MessageLink>
-        <Culprit>{culprit || 'N/A'}</Culprit>
+        <LabelTooltip text={message || 'N/A'}>
+          <MessageLink path={`${serviceName}/errors/${groupId}`}>
+            {message || 'N/A'}
+          </MessageLink>
+        </LabelTooltip>
+        <LabelTooltip text={culprit || 'N/A'}>
+          <Culprit>{culprit || 'N/A'}</Culprit>
+        </LabelTooltip>
       </MessageAndCulpritCell>
       <UnhandledCell align={RIGHT_ALIGNMENT}>
         {isUnhandled && <EuiBadge color="warning">Unhandled</EuiBadge>}

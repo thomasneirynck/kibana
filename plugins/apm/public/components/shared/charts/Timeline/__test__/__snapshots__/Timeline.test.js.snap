@@ -8,7 +8,7 @@ exports[`Timline should render with data 1`] = `
       <div>
         <div>
         </div>
-        <div style=\\"position: absolute; background-color: rgb(255, 255, 255); border-bottom: 1px solid #999999; height: 100px; z-index: 2;\\">
+        <div style=\\"position: absolute; background-color: rgb(255, 255, 255); border-bottom: 1px solid #999999; height: 100px; z-index: 2; width: 100%;\\">
           <div>
             Hello - i am a header
           </div>

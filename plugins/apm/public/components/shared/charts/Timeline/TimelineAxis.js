@@ -26,6 +26,7 @@ function TimelineAxis({ header, plotValues }) {
               borderBottom: `1px solid ${colors.gray3}`,
               height: px(margins.top),
               zIndex: 2,
+              width: '100%',
               ...style
             }}
           >
