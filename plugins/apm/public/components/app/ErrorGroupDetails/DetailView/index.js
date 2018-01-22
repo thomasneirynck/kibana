@@ -55,10 +55,10 @@ function getCurrentTab(tabs = [], selectedTab) {
   return tabs.includes(selectedTab) ? selectedTab : tabs[0];
 }
 
-function getTabs(context) {
+function getTabs(context, logStackframes) {
   const dynamicProps = Object.keys(context);
   return [
-    LOG_STACKTRACE_TAB,
+    ...(logStackframes ? [LOG_STACKTRACE_TAB] : []),
     EXC_STACKTRACE_TAB,
     ...getLevelOneProps(dynamicProps)
   ];
@@ -103,7 +103,7 @@ function DetailView({ errorGroup, urlParams, history, location }) {
 
   const context = get(errorGroup.data.error, 'context', []);
 
-  const tabs = getTabs(context);
+  const tabs = getTabs(context, logStackframes);
 
   const currentTab = getCurrentTab(tabs, urlParams.detailTab);
 

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Fragment, Component } from 'react';
 import styled from 'styled-components';
 import { get } from 'lodash';
 import withErrorHandler from '../../shared/withErrorHandler';
@@ -23,7 +23,6 @@ import {
 } from '../../../../common/constants';
 
 const Titles = styled.div`
-  height: ${px(unit * 10)};
   margin-bottom: ${px(units.plus)};
 `;
 
@@ -91,8 +90,12 @@ class ErrorGroupDetails extends Component {
         {showDetails && (
           <Titles>
             <EuiText>
-              <Label>Log message</Label>
-              <Message>{logMessage || 'N/A'}</Message>
+              {logMessage && (
+                <Fragment>
+                  <Label>Log message</Label>
+                  <Message>{logMessage || 'N/A'}</Message>
+                </Fragment>
+              )}
               <Label>Exception message</Label>
               <Message>{excMessage || 'N/A'}</Message>
               <Label>Culprit</Label>
