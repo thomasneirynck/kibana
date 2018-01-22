@@ -82,11 +82,14 @@ describe('parseNext', () => {
     });
 
     // disallow network-path references
-    it('should return basePath if next is url without protocol', () => {
-      const basePath = '/iqf';
-      const next = '//example.com';
-      const href = `${basePath}/login?next=${next}`;
-      expect(parseNext(href, basePath)).to.equal(`${basePath}/`);
+    it('should return / if next is url without protocol', () => {
+      const nextWithTwoSlashes = '//example.com';
+      const hrefWithTwoSlashes = `/login?next=${nextWithTwoSlashes}`;
+      expect(parseNext(hrefWithTwoSlashes)).to.equal('/');
+
+      const nextWithThreeSlashes = '///example.com';
+      const hrefWithThreeSlashes = `/login?next=${nextWithThreeSlashes}`;
+      expect(parseNext(hrefWithThreeSlashes)).to.equal('/');
     });
   });
 
@@ -151,9 +154,13 @@ describe('parseNext', () => {
 
     // disallow network-path references
     it('should return / if next is url without protocol', () => {
-      const next = '//example.com';
-      const href = `/login?next=${next}`;
-      expect(parseNext(href)).to.equal('/');
+      const nextWithTwoSlashes = '//example.com';
+      const hrefWithTwoSlashes = `/login?next=${nextWithTwoSlashes}`;
+      expect(parseNext(hrefWithTwoSlashes)).to.equal('/');
+
+      const nextWithThreeSlashes = '///example.com';
+      const hrefWithThreeSlashes = `/login?next=${nextWithThreeSlashes}`;
+      expect(parseNext(hrefWithThreeSlashes)).to.equal('/');
     });
   });
 });

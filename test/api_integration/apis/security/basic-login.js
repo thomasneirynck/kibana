@@ -153,6 +153,44 @@ export default function ({ getService }) {
 
         expect(logoutResponse.headers.location).to.be('/login?next=%2Fabc%2Fxyz&msg=test');
       });
+
+      it('should not render login page nd redirect to `next` URL', async () => {
+        const loginViewResponse = await supertest
+          .get('/login?next=%2Fapp%2Fml%3Fone%3Dtwo')
+          .set('Cookie', sessionCookie.cookieString())
+          .expect(302);
+
+        expect(loginViewResponse.headers.location).to.be('/app/ml?one=two');
+      });
+
+      it('should not render login page and redirect to the base path if `next` is absolute URL', async () => {
+        const loginViewResponse = await supertest
+          .get('/login?next=http%3A%2F%2Fhack.you%2F%3Fone%3Dtwo')
+          .set('Cookie', sessionCookie.cookieString())
+          .expect(302);
+
+        expect(loginViewResponse.headers.location).to.be('/');
+      });
+
+      it('should not render login page and redirect to the base path if `next` is network-path reference',
+        async () => {
+          // Try `//hack.you` that NodeJS URL parser with `slashesDenoteHost` option
+          let loginViewResponse = await supertest
+            .get('/login?next=%2F%2Fhack.you%2F%3Fone%3Dtwo')
+            .set('Cookie', sessionCookie.cookieString())
+            .expect(302);
+
+          expect(loginViewResponse.headers.location).to.be('/');
+
+          // Try link with 3 slashes, that is still valid redirect target for browsers (for bwc reasons),
+          // but is parsed in a different by NodeJS URL parser.
+          loginViewResponse = await supertest
+            .get('/login?next=%2F%2F%2Fhack.you%2F%3Fone%3Dtwo')
+            .set('Cookie', sessionCookie.cookieString())
+            .expect(302);
+
+          expect(loginViewResponse.headers.location).to.be('/');
+        });
     });
   });
 }
