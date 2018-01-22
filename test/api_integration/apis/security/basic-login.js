@@ -60,6 +60,45 @@ export default function ({ getService }) {
       expect(sessionCookie.httpOnly).to.be(true);
     });
 
+    it('should reject access to the API with wrong credentials in the header', async () => {
+      const wrongUsername = `wrong-${validUsername}`;
+      const wrongPassword = `wrong-${validPassword}`;
+
+      await supertest.get('/api/security/v1/me')
+        .set('kbn-xsrf', 'xxx')
+        .set('Authorization', `Basic ${new Buffer(`${wrongUsername}:${wrongPassword}`).toString('base64')}`)
+        .expect(401);
+
+      await supertest.get('/api/security/v1/me')
+        .set('kbn-xsrf', 'xxx')
+        .set('Authorization', `Basic ${new Buffer(`${validUsername}:${wrongPassword}`).toString('base64')}`)
+        .expect(401);
+
+      await supertest.get('/api/security/v1/me')
+        .set('kbn-xsrf', 'xxx')
+        .set('Authorization', `Basic ${new Buffer(`${wrongUsername}:${validPassword}`).toString('base64')}`)
+        .expect(401);
+    });
+
+    it('should allow access to the API with valid credentials in the header', async () => {
+      const apiResponse = await supertest
+        .get('/api/security/v1/me')
+        .set('kbn-xsrf', 'xxx')
+        .set('Authorization', `Basic ${new Buffer(`${validUsername}:${validPassword}`).toString('base64')}`)
+        .expect(200);
+
+      expect(apiResponse.body).to.only.have.keys([
+        'username',
+        'full_name',
+        'email',
+        'roles',
+        'scope',
+        'metadata',
+        'enabled'
+      ]);
+      expect(apiResponse.body.username).to.be(validUsername);
+    });
+
     describe('with session cookie', () => {
       let sessionCookie;
       beforeEach(async () => {
@@ -97,11 +136,10 @@ export default function ({ getService }) {
         expect(apiResponse.body.username).to.be(validUsername);
       });
 
-      it('should clear cookie on logout', async ()=> {
-        const logoutResponse = await supertest.post('/api/security/v1/logout')
-          .set('kbn-xsrf', 'xxx')
+      it('should clear cookie on logout and redirect to login', async ()=> {
+        const logoutResponse = await supertest.get('/api/security/v1/logout?next=%2Fabc%2Fxyz&msg=test')
           .set('Cookie', sessionCookie.cookieString())
-          .expect(204);
+          .expect(302);
 
         const cookies = logoutResponse.headers['set-cookie'];
         expect(cookies).to.have.length(1);
@@ -112,6 +150,8 @@ export default function ({ getService }) {
         expect(logoutCookie.path).to.be('/');
         expect(logoutCookie.httpOnly).to.be(true);
         expect(logoutCookie.maxAge).to.be(0);
+
+        expect(logoutResponse.headers.location).to.be('/login?next=%2Fabc%2Fxyz&msg=test');
       });
     });
   });

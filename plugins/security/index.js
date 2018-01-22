@@ -7,7 +7,7 @@ import { initIndicesApi } from './server/routes/api/v1/indices';
 import { initLoginView } from './server/routes/views/login';
 import { initLogoutView } from './server/routes/views/logout';
 import { validateConfig } from './server/lib/validate_config';
-import { createScheme } from './server/lib/login_scheme';
+import { authenticateFactory } from './server/lib/auth_redirect';
 import { checkLicense } from './server/lib/check_license';
 import { initAuthenticator } from './server/lib/authentication/authenticator';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
@@ -25,7 +25,12 @@ export const security = (kibana) => new kibana.Plugin({
       cookieName: Joi.string().default('sid'),
       encryptionKey: Joi.string(),
       sessionTimeout: Joi.number().allow(null).default(null),
-      secureCookies: Joi.boolean().default(false)
+      secureCookies: Joi.boolean().default(false),
+      public: Joi.object({
+        protocol: Joi.string().valid(['http', 'https']),
+        hostname: Joi.string().hostname(),
+        port: Joi.number().integer().min(0).max(65535)
+      }).default(),
     }).default();
   },
 
@@ -83,9 +88,8 @@ export const security = (kibana) => new kibana.Plugin({
     const config = server.config();
     validateConfig(config, message => server.log(['security', 'warning'], message));
 
-    server.auth.scheme('login', createScheme({
-      redirectUrl: (path) => loginUrl(config.get('server.basePath'), path)
-    }));
+    // Create a Hapi auth scheme that should be applied to each request.
+    server.auth.scheme('login', () => ({ authenticate: authenticateFactory(server) }));
 
     // The `required` means that the `session` strategy that is based on `login` schema defined above will be
     // automatically assigned to all routes that don't contain an auth config.
@@ -103,9 +107,3 @@ export const security = (kibana) => new kibana.Plugin({
 
   }
 });
-
-function loginUrl(basePath, requestedPath) {
-  // next must include basePath otherwise it'll be ignored
-  const next = encodeURIComponent(`${basePath}${requestedPath}`);
-  return `${basePath}/login?next=${next}`;
-}

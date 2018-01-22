@@ -3,10 +3,9 @@ import 'plugins/security/views/logout/logout.less';
 
 chrome
   .setVisible(false)
-  .setRootController('logout', ($http, $window) => {
+  .setRootController('logout', ($window) => {
     $window.sessionStorage.clear();
-    const url = `./login${$window.location.search}`;
-    $http.post('./api/security/v1/logout', {}).then(
-      () => $window.location.href = url
-    );
+
+    // Redirect user to the server logout endpoint to complete logout.
+    $window.location.href = chrome.addBasePath(`/api/security/v1/logout${$window.location.search}`);
   });

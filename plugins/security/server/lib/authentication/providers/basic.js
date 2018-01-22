@@ -1,22 +1,37 @@
+import Boom from 'boom';
+import { canRedirectRequest } from '../../can_redirect_request';
 import { AuthenticationResult } from '../authentication_result';
+import { DeauthenticationResult } from '../deauthentication_result';
+
+/**
+ * Object that represents available provider options.
+ * @typedef {{
+ *  protocol: string,
+ *  hostname: string,
+ *  port: string,
+ *  basePath: string,
+ *  client: Client,
+ *  log: Function
+ * }} ProviderOptions
+ */
+
 /**
  * Provider that supports request authentication via Basic HTTP Authentication.
  */
 export class BasicAuthenticationProvider {
   /**
-   * Function that passes request with proper headers to Elasticsearch backend for authentication.
-   * @type {function}
-   * @private
+   * Server options that may be needed by authentication provider.
+   * @type {?ProviderOptions}
+   * @protected
    */
-  _getUser = null;
+  _options = null;
 
   /**
    * Instantiates BasicAuthenticationProvider.
-   * @param {function} getUser Function that passes request with proper headers to Elasticsearch backend
-   * for authentication.
+   * @param {ProviderOptions} options Provider options object.
    */
-  constructor(getUser) {
-    this._getUser = getUser;
+  constructor(options) {
+    this._options = options;
   }
 
   /**
@@ -26,14 +41,34 @@ export class BasicAuthenticationProvider {
    * @returns {Promise.<AuthenticationResult>}
    */
   async authenticate(request, state) {
-    const authenticationResult = await this._authenticateViaHeader(request);
+    this._options.log(['debug', 'security', 'basic'], `Trying to authenticate user request to ${request.url.path}.`);
 
-    // If we didn't succeed in the previous step let's try to authenticate using state if we have one.
-    if (state && !authenticationResult.succeeded()) {
-      return this._authenticateViaState(request, state);
+    let authenticationResult = await this._authenticateViaHeader(request);
+
+    if (authenticationResult.notHandled() && state) {
+      authenticationResult = await this._authenticateViaState(request, state);
+    } else if (authenticationResult.notHandled() && canRedirectRequest(request)) {
+      // If we couldn't handle authentication let's redirect user to the login page.
+      const nextURL = encodeURIComponent(`${this._options.basePath}${request.url.path}`);
+      authenticationResult = AuthenticationResult.redirectTo(
+        `${this._options.basePath}/login?next=${nextURL}`
+      );
     }
 
     return authenticationResult;
+  }
+
+  /**
+   * Redirects user to the login page preserving query string parameters.
+   * @param {Hapi.Request} request HapiJS request instance.
+   * @returns {Promise.<DeauthenticationResult>}
+   */
+  async deauthenticate(request) {
+    // Query string may contain the path where logout has been called or
+    // logout reason that login page may need to know.
+    return DeauthenticationResult.redirectTo(
+      `${this._options.basePath}/login${request.url.search}`
+    );
   }
 
   /**
@@ -44,22 +79,34 @@ export class BasicAuthenticationProvider {
    * @private
    */
   async _authenticateViaHeader(request) {
+    this._options.log(['debug', 'security', 'basic'], 'Trying to authenticate via header.');
+
     const authorization = request.headers.authorization;
     if (!authorization) {
+      this._options.log(['debug', 'security', 'basic'], 'Authorization header is not presented.');
       return AuthenticationResult.notHandled();
     }
 
-    const authorizationType = authorization.split(/\s+/)[0];
-    if (authorizationType.toLowerCase() !== 'basic') {
-      return AuthenticationResult.notHandled();
+    const authenticationSchema = authorization.split(/\s+/)[0];
+    if (authenticationSchema.toLowerCase() !== 'basic') {
+      this._options.log(['debug', 'security', 'basic'], `Unsupported authentication schema: ${authenticationSchema}`);
+
+      // It's essential that we fail if non-empty, but unsupported authentication schema
+      // is provided to allow authenticator to consult other authentication providers
+      // that may support that schema.
+      return AuthenticationResult.failed(
+        Boom.badRequest(`Unsupported authentication schema: ${authenticationSchema}`)
+      );
     }
 
     try {
-      return AuthenticationResult.succeeded(
-        await this._getUser(request),
-        { authorization }
-      );
+      const user = await this._options.client.callWithRequest(request, 'shield.authenticate');
+
+      this._options.log(['debug', 'security', 'basic'], 'Request has been authenticated via header.');
+
+      return AuthenticationResult.succeeded(user, { authorization });
     } catch(err) {
+      this._options.log(['debug', 'security', 'basic'], `Failed to authenticate request via header: ${err.message}`);
       return AuthenticationResult.failed(err);
     }
   }
@@ -72,14 +119,34 @@ export class BasicAuthenticationProvider {
    * @returns {Promise.<AuthenticationResult>}
    * @private
    */
-  async _authenticateViaState(request, state) {
-    if (!state.authorization) {
-      return AuthenticationResult.failed(new Error('Provider state is not valid.'));
+  async _authenticateViaState(request, { authorization }) {
+    this._options.log(['debug', 'security', 'basic'], 'Trying to authenticate via state.');
+
+    if (!authorization) {
+      this._options.log(['debug', 'security', 'basic'], 'Access token is not found in state.');
+      return AuthenticationResult.notHandled();
     }
 
-    request.headers.authorization = state.authorization;
+    request.headers.authorization = authorization;
 
-    return this._authenticateViaHeader(request);
+    try {
+      const user = await this._options.client.callWithRequest(request, 'shield.authenticate');
+
+      this._options.log(['debug', 'security', 'basic'], 'Request has been authenticated via state.');
+
+      return AuthenticationResult.succeeded(user);
+    } catch(err) {
+      this._options.log(['debug', 'security', 'basic'], `Failed to authenticate request via state: ${err.message}`);
+
+      // Reset `Authorization` header we've just set. We know for sure that it hasn't been defined before,
+      // otherwise it would have been used or completely rejected by the `authenticateViaHeader`.
+      // We can't just set `authorization` to `undefined` or `null`, we should remove this property
+      // entirely, otherwise `authorization` header without value will cause `callWithRequest` to crash if
+      // it's called with this request once again down the line (e.g. in the next authentication provider).
+      delete request.headers.authorization;
+
+      return AuthenticationResult.failed(err);
+    }
   }
 }
 

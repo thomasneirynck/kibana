@@ -8,6 +8,10 @@ export function serverFixture() {
     log: stub(),
     route: stub(),
 
+    info: {
+      protocol: 'protocol'
+    },
+
     auth: {
       strategy: stub(),
       test: stub()

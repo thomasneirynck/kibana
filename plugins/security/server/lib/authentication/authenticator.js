@@ -1,18 +1,52 @@
+import { getClient } from '../../../../../server/lib/get_client_shield';
 import { AuthScopeService } from '../auth_scope_service';
 import { BasicAuthenticationProvider } from './providers/basic';
+import { SAMLAuthenticationProvider } from './providers/saml';
 import { AuthenticationResult } from './authentication_result';
+import { DeauthenticationResult } from './deauthentication_result';
 import { Session } from './session';
 
 // Mapping between provider key defined in the config and authentication
 // provider class that can handle specific authentication mechanism.
 const providerMap = new Map([
-  ['basic', BasicAuthenticationProvider]
+  ['basic', BasicAuthenticationProvider],
+  ['saml', SAMLAuthenticationProvider]
 ]);
 
 function assertRequest(request) {
   if (!request || typeof request !== 'object') {
     throw new Error(`Request should be a valid object, was [${typeof request}].`);
   }
+}
+
+/**
+ * Prepares options object that is shared among all authentication providers.
+ * @param {Hapi.Server} server HapiJS Server instance.
+ * @returns {Object}
+ */
+function getProviderOptions(server) {
+  const config = server.config();
+
+  return {
+    client: getClient(server),
+    log: server.log.bind(server),
+
+    protocol: server.info.protocol,
+    hostname: config.get('server.host'),
+    port: config.get('server.port'),
+    basePath: config.get('server.basePath'),
+
+    ...config.get('xpack.security.public')
+  };
+}
+
+/**
+ * Extracts error code from Boom and Elasticsearch "native" errors.
+ * @param {Error} error Error instance to extract status code from.
+ * @returns {number}
+ */
+function getErrorStatusCode(error) {
+  return error.isBoom ? error.output.statusCode : error.statusCode;
 }
 
 /**
@@ -68,15 +102,20 @@ class Authenticator {
     this._authScope = authScope;
     this._session = session;
 
-    const authProviders = this._server.config().get('xpack.security.authProviders');
+    const config = this._server.config();
+    const authProviders = config.get('xpack.security.authProviders');
     if (authProviders.length === 0) {
       throw new Error(
-        '`Basic` authentication provider is not configured. Verify `xpack.security.authProviders` config value.'
+        'No authentication provider is configured. Verify `xpack.security.authProviders` config value.'
       );
     }
 
+    const providerOptions = Object.freeze(getProviderOptions(server));
+
     this._providers = new Map(
-      authProviders.map((providerType) => [providerType, this._instantiateProvider(providerType)])
+      authProviders.map(
+        (providerType) => [providerType, this._instantiateProvider(providerType, providerOptions)]
+      )
     );
   }
 
@@ -92,7 +131,7 @@ class Authenticator {
     const existingSession = await this._session.get(request);
 
     let authenticationResult;
-    for (const [providerType, provider] of this._providers) {
+    for (const [providerType, provider] of this._providerIterator(existingSession)) {
       // Check if current session has been set by this provider.
       const ownsSession = existingSession && existingSession.provider === providerType;
 
@@ -102,13 +141,17 @@ class Authenticator {
       );
 
       if (ownsSession || authenticationResult.state) {
+        // If authentication succeeds or requires redirect we should automatically extend existing user session,
+        // unless authentication has been triggered by a system API request. In case provider explicitly returns new
+        // state we should store it in the session regardless of whether it's a system API request or not.
+        const sessionCanBeUpdated = (authenticationResult.succeeded() || authenticationResult.redirected())
+          && (authenticationResult.state || !isSystemApiRequest);
+
         // If provider owned the session, but failed to authenticate anyway, that likely means
-        // that session is not valid, so we should clear it.
-        if (authenticationResult.notHandled() || authenticationResult.failed()) {
+        // that session is not valid and we should clear it.
+        if (authenticationResult.failed() && getErrorStatusCode(authenticationResult.error) === 401) {
           await this._session.clear(request);
-        } else if (!isSystemApiRequest) {
-          // We set/update session only if it's NOT a system API call. In case provider returns state
-          // value it has a higher priority, otherwise just extend existing session.
+        } else if (sessionCanBeUpdated) {
           await this._session.set(
             request,
             authenticationResult.state
@@ -119,11 +162,13 @@ class Authenticator {
       }
 
       if (authenticationResult.succeeded()) {
-        // Complement user with scopes and return.
         return AuthenticationResult.succeeded({
           ...authenticationResult.user,
+          // Complement user returned from the provider with scopes.
           scope: await this._authScope.getForRequestAndUser(request, authenticationResult.user)
         });
+      } else if (authenticationResult.redirected()) {
+        return authenticationResult;
       }
     }
 
@@ -133,27 +178,88 @@ class Authenticator {
   /**
    * Deauthenticates current request.
    * @param {Hapi.Request} request HapiJS request instance.
-   * @returns {Promise.<void>}
+   * @returns {Promise.<DeauthenticationResult>}
    */
   async deauthenticate(request) {
     assertRequest(request);
 
-    await this._session.clear(request);
+    const sessionValue = await this._getSessionValue(request);
+    if (sessionValue) {
+      await this._session.clear(request);
+
+      return this._providers.get(sessionValue.provider).deauthenticate(request, sessionValue.state);
+    }
+
+    // Normally when there is no active session in Kibana, `deauthenticate` method shouldn't do anything
+    // and user will eventually be redirected to the home page to log in. But if SAML is supported there
+    // is a special case when logout is initiated by the IdP or another SP, then IdP will request _every_
+    // SP associated with the current user session to do the logout. So if Kibana (without active session)
+    // receives such a request it shouldn't redirect user to the home page, but rather redirect back to IdP
+    // with correct logout response and only Elasticsearch knows how to do that.
+    if (request.query.SAMLRequest && this._providers.has('saml')) {
+      return this._providers.get('saml').deauthenticate(request);
+    }
+
+    return DeauthenticationResult.notHandled();
   }
 
   /**
    * Instantiates authentication provider based on the provider key from config.
    * @param {string} providerType Provider type key.
+   * @param {Object} options Options to pass to provider's constructor.
    * @returns {Object} Authentication provider instance.
    * @private
    */
-  _instantiateProvider(providerType) {
+  _instantiateProvider(providerType, options) {
     const ProviderClassName = providerMap.get(providerType);
     if (!ProviderClassName) {
       throw new Error(`Unsupported authentication provider name: ${providerType}.`);
     }
 
-    return new ProviderClassName(this._server.plugins.security.getUser);
+    return new ProviderClassName(options);
+  }
+
+  /**
+   * Returns provider iterator where providers are sorted in the order of priority (based on the session ownership).
+   * @param {Object} sessionValue Current session value.
+   * @returns {Iterator.<Object>}
+   */
+  *_providerIterator(sessionValue) {
+    // If there is no session to predict which provider to use first, let's use the order
+    // providers are configured in. Otherwise return provider that owns session first, and only then the rest
+    // of providers.
+    if (!sessionValue) {
+      yield* this._providers;
+    } else {
+      yield [sessionValue.provider, this._providers.get(sessionValue.provider)];
+
+      for (const [providerType, provider] of this._providers) {
+        if (providerType !== sessionValue.provider) {
+          yield [providerType, provider];
+        }
+      }
+    }
+  }
+
+  /**
+   * Extracts session value for the specified request. Under the hood it can
+   * clear session if it belongs to the provider that is not available.
+   * @param {Hapi.Request} request Request to extract session value for.
+   * @returns {Promise.<Object|null>}
+   * @private
+   */
+  async _getSessionValue(request) {
+    let sessionValue = await this._session.get(request);
+
+    // If for some reason we have a session stored for the provider that is not available
+    // (e.g. when user was logged in with one provider, but then configuration has changed
+    // and that provider is no longer available), then we should clear session entirely.
+    if (sessionValue && !this._providers.has(sessionValue.provider)) {
+      await this._session.clear(request);
+      sessionValue = null;
+    }
+
+    return sessionValue;
   }
 }
 

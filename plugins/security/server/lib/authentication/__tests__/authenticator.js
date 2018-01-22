@@ -3,9 +3,11 @@ import sinon from 'sinon';
 import Boom from 'boom';
 
 import { serverFixture } from '../../__tests__/__fixtures__/server';
+import { requestFixture } from '../../__tests__/__fixtures__/request';
 import { Session } from '../session';
 import { AuthScopeService } from '../../auth_scope_service';
 import { initAuthenticator } from '../authenticator';
+import * as ClientShield from '../../../../../../server/lib/get_client_shield';
 
 describe('Authenticator', () => {
   const sandbox = sinon.sandbox.create();
@@ -13,11 +15,18 @@ describe('Authenticator', () => {
   let config;
   let server;
   let session;
+  let cluster;
   beforeEach(() => {
     server = serverFixture();
     session = sinon.createStubInstance(Session);
 
     config = { get: sinon.stub() };
+    cluster = { callWithRequest: sinon.stub() };
+
+    // Cluster is returned by `getClient` function that is wrapped into `once` making cluster
+    // a static singleton, so we should use sandbox to set/reset its behavior between tests.
+    cluster = sinon.stub({ callWithRequest() {} });
+    sandbox.stub(ClientShield, 'getClient').returns(cluster);
 
     server.config.returns(config);
     server.register.yields();
@@ -42,7 +51,9 @@ describe('Authenticator', () => {
         expect().fail('`initAuthenticator` should fail.');
       } catch(err) {
         expect(err).to.be.a(Error);
-        expect(err.message).to.match(/`Basic` authentication provider is not configured/);
+        expect(err.message).to.be(
+          'No authentication provider is configured. Verify `xpack.security.authProviders` config value.'
+        );
       }
     });
 
@@ -54,7 +65,7 @@ describe('Authenticator', () => {
         expect().fail('`initAuthenticator` should fail.');
       } catch(err) {
         expect(err).to.be.a(Error);
-        expect(err.message).to.match(/Unsupported authentication provider name: super-basic/);
+        expect(err.message).to.be('Unsupported authentication provider name: super-basic.');
       }
     });
   });
@@ -83,13 +94,11 @@ describe('Authenticator', () => {
     });
 
     it('fails if all authentication providers fail.', async () => {
-      const request = { headers: { authorization: 'Basic ***' } };
+      const request = requestFixture({ headers: { authorization: 'Basic ***' } });
       session.get.withArgs(request).returns(Promise.resolve(null));
 
       const failureReason = new Error('Not Authorized');
-      server.plugins.security.getUser
-        .withArgs(request)
-        .returns(Promise.reject(failureReason));
+      cluster.callWithRequest.withArgs(request).returns(Promise.reject(failureReason));
 
       const authenticationResult = await authenticate(request);
 
@@ -98,9 +107,9 @@ describe('Authenticator', () => {
     });
 
     it('returns user that authentication provider returns.', async () => {
-      const request = { headers: { authorization: 'Basic ***' } };
+      const request = requestFixture({ headers: { authorization: 'Basic ***' } });
       const user = { username: 'user' };
-      server.plugins.security.getUser.withArgs(request).returns(Promise.resolve(user));
+      cluster.callWithRequest.withArgs(request).returns(Promise.resolve(user));
 
       const authenticationResult = await authenticate(request);
       expect(authenticationResult.succeeded()).to.be(true);
@@ -110,16 +119,16 @@ describe('Authenticator', () => {
       });
     });
 
-    it('creates session only for non-system API calls.', async () => {
+    it('creates session whenever authentication provider returns state to store.', async () => {
       const user = { username: 'user' };
-      const systemAPIRequest = { headers: { authorization: 'Basic xxx' } };
-      const notSystemAPIRequest = { headers: { authorization: 'Basic yyy' } };
+      const systemAPIRequest = requestFixture({ headers: { authorization: 'Basic xxx' } });
+      const notSystemAPIRequest = requestFixture({ headers: { authorization: 'Basic yyy' } });
 
       server.plugins.kibana.systemApi.isSystemApiRequest
         .withArgs(systemAPIRequest).returns(true)
         .withArgs(notSystemAPIRequest).returns(false);
 
-      server.plugins.security.getUser
+      cluster.callWithRequest
         .withArgs(systemAPIRequest).returns(Promise.resolve(user))
         .withArgs(notSystemAPIRequest).returns(Promise.resolve(user));
 
@@ -129,7 +138,11 @@ describe('Authenticator', () => {
         ...user,
         scope: []
       });
-      sinon.assert.notCalled(session.set);
+      sinon.assert.calledOnce(session.set);
+      sinon.assert.calledWithExactly(session.set, systemAPIRequest, {
+        state: { authorization: systemAPIRequest.headers.authorization },
+        provider: 'basic'
+      });
 
       const notSystemAPIAuthenticationResult = await authenticate(notSystemAPIRequest);
       expect(notSystemAPIAuthenticationResult.succeeded()).to.be(true);
@@ -137,7 +150,7 @@ describe('Authenticator', () => {
         ...user,
         scope: []
       });
-      sinon.assert.calledOnce(session.set);
+      sinon.assert.calledTwice(session.set);
       sinon.assert.calledWithExactly(session.set, notSystemAPIRequest, {
         state: { authorization: notSystemAPIRequest.headers.authorization },
         provider: 'basic'
@@ -146,8 +159,8 @@ describe('Authenticator', () => {
 
     it('extends session only for non-system API calls.', async () => {
       const user = { username: 'user' };
-      const systemAPIRequest = { headers: { xCustomHeader: 'xxx' } };
-      const notSystemAPIRequest = { headers: { xCustomHeader: 'yyy' } };
+      const systemAPIRequest = requestFixture({ headers: { xCustomHeader: 'xxx' } });
+      const notSystemAPIRequest = requestFixture({ headers: { xCustomHeader: 'yyy' } });
 
       session.get.withArgs(systemAPIRequest).returns(Promise.resolve({
         state: { authorization: 'Basic xxx' },
@@ -163,7 +176,7 @@ describe('Authenticator', () => {
         .withArgs(systemAPIRequest).returns(true)
         .withArgs(notSystemAPIRequest).returns(false);
 
-      server.plugins.security.getUser
+      cluster.callWithRequest
         .withArgs(systemAPIRequest).returns(Promise.resolve(user))
         .withArgs(notSystemAPIRequest).returns(Promise.resolve(user));
 
@@ -188,10 +201,42 @@ describe('Authenticator', () => {
       });
     });
 
-    it('replaces existing session with the one returned by provider only for non-system API calls.', async () => {
+    it('does not extend session if authentication fails.', async () => {
+      const systemAPIRequest = requestFixture({ headers: { xCustomHeader: 'xxx' } });
+      const notSystemAPIRequest = requestFixture({ headers: { xCustomHeader: 'yyy' } });
+
+      session.get.withArgs(systemAPIRequest).returns(Promise.resolve({
+        state: { authorization: 'Basic xxx' },
+        provider: 'basic'
+      }));
+
+      session.get.withArgs(notSystemAPIRequest).returns(Promise.resolve({
+        state: { authorization: 'Basic yyy' },
+        provider: 'basic'
+      }));
+
+      server.plugins.kibana.systemApi.isSystemApiRequest
+        .withArgs(systemAPIRequest).returns(true)
+        .withArgs(notSystemAPIRequest).returns(false);
+
+      cluster.callWithRequest
+        .withArgs(systemAPIRequest).returns(Promise.reject(new Error('some error')))
+        .withArgs(notSystemAPIRequest).returns(Promise.reject(new Error('some error')));
+
+      const systemAPIAuthenticationResult = await authenticate(systemAPIRequest);
+      expect(systemAPIAuthenticationResult.failed()).to.be(true);
+
+      const notSystemAPIAuthenticationResult = await authenticate(notSystemAPIRequest);
+      expect(notSystemAPIAuthenticationResult.failed()).to.be(true);
+
+      sinon.assert.notCalled(session.clear);
+      sinon.assert.notCalled(session.set);
+    });
+
+    it('replaces existing session with the one returned by authentication provider.', async () => {
       const user = { username: 'user' };
-      const systemAPIRequest = { headers: { authorization: 'Basic xxx-new' } };
-      const notSystemAPIRequest = { headers: { authorization: 'Basic yyy-new' } };
+      const systemAPIRequest = requestFixture({ headers: { authorization: 'Basic xxx-new' } });
+      const notSystemAPIRequest = requestFixture({ headers: { authorization: 'Basic yyy-new' } });
 
       session.get.withArgs(systemAPIRequest).returns(Promise.resolve({
         state: { authorization: 'Basic xxx-old' },
@@ -207,7 +252,7 @@ describe('Authenticator', () => {
         .withArgs(systemAPIRequest).returns(true)
         .withArgs(notSystemAPIRequest).returns(false);
 
-      server.plugins.security.getUser
+      cluster.callWithRequest
         .withArgs(systemAPIRequest).returns(Promise.resolve(user))
         .withArgs(notSystemAPIRequest).returns(Promise.resolve(user));
 
@@ -217,7 +262,11 @@ describe('Authenticator', () => {
         ...user,
         scope: []
       });
-      sinon.assert.notCalled(session.set);
+      sinon.assert.calledOnce(session.set);
+      sinon.assert.calledWithExactly(session.set, systemAPIRequest, {
+        state: { authorization: 'Basic xxx-new' },
+        provider: 'basic'
+      });
 
       const notSystemAPIAuthenticationResult = await authenticate(notSystemAPIRequest);
       expect(notSystemAPIAuthenticationResult.succeeded()).to.be(true);
@@ -225,16 +274,16 @@ describe('Authenticator', () => {
         ...user,
         scope: []
       });
-      sinon.assert.calledOnce(session.set);
+      sinon.assert.calledTwice(session.set);
       sinon.assert.calledWithExactly(session.set, notSystemAPIRequest, {
         state: { authorization: 'Basic yyy-new' },
         provider: 'basic'
       });
     });
 
-    it('clears session if provider failed to authenticate with active session for any request.', async () => {
-      const systemAPIRequest = { headers: { xCustomHeader: 'xxx' } };
-      const notSystemAPIRequest = { headers: { xCustomHeader: 'yyy' } };
+    it('clears session if provider failed to authenticate request with 401 with active session.', async () => {
+      const systemAPIRequest = requestFixture({ headers: { xCustomHeader: 'xxx' } });
+      const notSystemAPIRequest = requestFixture({ headers: { xCustomHeader: 'yyy' } });
 
       session.get.withArgs(systemAPIRequest).returns(Promise.resolve({
         state: { authorization: 'Basic xxx' },
@@ -248,9 +297,13 @@ describe('Authenticator', () => {
 
       session.clear.returns(Promise.resolve());
 
-      server.plugins.security.getUser
-        .withArgs(systemAPIRequest).returns(Promise.reject(new Error('Not Authorized')))
-        .withArgs(notSystemAPIRequest).returns(Promise.reject(new Error('Not Authorized')));
+      server.plugins.kibana.systemApi.isSystemApiRequest
+        .withArgs(systemAPIRequest).returns(true)
+        .withArgs(notSystemAPIRequest).returns(false);
+
+      cluster.callWithRequest
+        .withArgs(systemAPIRequest).returns(Promise.reject(Boom.unauthorized('token expired')))
+        .withArgs(notSystemAPIRequest).returns(Promise.reject(Boom.unauthorized('invalid token')));
 
       const systemAPIAuthenticationResult = await authenticate(systemAPIRequest);
       expect(systemAPIAuthenticationResult.failed()).to.be(true);
@@ -265,9 +318,49 @@ describe('Authenticator', () => {
       sinon.assert.calledWithExactly(session.clear, notSystemAPIRequest);
     });
 
-    it('clears session if provider can not handle authentication with active session for any request.', async () => {
-      const systemAPIRequest = { headers: { xCustomHeader: 'xxx' } };
-      const notSystemAPIRequest = { headers: { xCustomHeader: 'yyy' } };
+    it('does not clear session if provider failed to authenticate request with non-401 reason with active session.',
+      async () => {
+        const systemAPIRequest = requestFixture({ headers: { xCustomHeader: 'xxx' } });
+        const notSystemAPIRequest = requestFixture({ headers: { xCustomHeader: 'yyy' } });
+
+        session.get.withArgs(systemAPIRequest).returns(Promise.resolve({
+          state: { authorization: 'Basic xxx' },
+          provider: 'basic'
+        }));
+
+        session.get.withArgs(notSystemAPIRequest).returns(Promise.resolve({
+          state: { authorization: 'Basic yyy' },
+          provider: 'basic'
+        }));
+
+        session.clear.returns(Promise.resolve());
+
+        server.plugins.kibana.systemApi.isSystemApiRequest
+          .withArgs(systemAPIRequest).returns(true)
+          .withArgs(notSystemAPIRequest).returns(false);
+
+        cluster.callWithRequest
+          .withArgs(systemAPIRequest).returns(Promise.reject(Boom.badRequest('something went wrong')))
+          .withArgs(notSystemAPIRequest).returns(Promise.reject(new Error('Non boom error')));
+
+        const systemAPIAuthenticationResult = await authenticate(systemAPIRequest);
+        expect(systemAPIAuthenticationResult.failed()).to.be(true);
+
+        const notSystemAPIAuthenticationResult = await authenticate(notSystemAPIRequest);
+        expect(notSystemAPIAuthenticationResult.failed()).to.be(true);
+
+        sinon.assert.notCalled(session.clear);
+      });
+
+    it('does not clear session if provider can not handle request authentication with active session.', async () => {
+      // Add `kbn-xsrf` header to the raw part of the request to make `can_redirect_request`
+      // think that it's AJAX request and redirect logic shouldn't be triggered.
+      const systemAPIRequest = requestFixture({
+        headers: { xCustomHeader: 'xxx', 'kbn-xsrf': 'xsrf' }
+      });
+      const notSystemAPIRequest = requestFixture({
+        headers: { xCustomHeader: 'yyy', 'kbn-xsrf': 'xsrf' }
+      });
 
       session.get.withArgs(systemAPIRequest).returns(Promise.resolve({
         state: { authorization: 'Some weird authentication schema...' },
@@ -281,24 +374,24 @@ describe('Authenticator', () => {
 
       session.clear.returns(Promise.resolve());
 
-      const systemAPIAuthenticationResult = await authenticate(systemAPIRequest);
-      expect(systemAPIAuthenticationResult.notHandled()).to.be(true);
+      server.plugins.kibana.systemApi.isSystemApiRequest
+        .withArgs(systemAPIRequest).returns(true)
+        .withArgs(notSystemAPIRequest).returns(false);
 
-      sinon.assert.calledOnce(session.clear);
-      sinon.assert.calledWithExactly(session.clear, systemAPIRequest);
+      const systemAPIAuthenticationResult = await authenticate(systemAPIRequest);
+      expect(systemAPIAuthenticationResult.failed()).to.be(true);
 
       const notSystemAPIAuthenticationResult = await authenticate(notSystemAPIRequest);
-      expect(notSystemAPIAuthenticationResult.notHandled()).to.be(true);
+      expect(notSystemAPIAuthenticationResult.failed()).to.be(true);
 
-      sinon.assert.calledTwice(session.clear);
-      sinon.assert.calledWithExactly(session.clear, notSystemAPIRequest);
+      sinon.assert.notCalled(session.clear);
     });
 
     it('complements user with `scope` property.', async () => {
       const user = { username: 'user' };
-      const request = { headers: { authorization: 'Basic ***' } };
+      const request = requestFixture({ headers: { authorization: 'Basic ***' } });
 
-      server.plugins.security.getUser.withArgs(request)
+      cluster.callWithRequest.withArgs(request)
         .returns(Promise.resolve(user));
       AuthScopeService.prototype.getForRequestAndUser.withArgs(request, user)
         .returns(Promise.resolve(['foo', 'bar']));
@@ -316,6 +409,7 @@ describe('Authenticator', () => {
     let deauthenticate;
     beforeEach(async () => {
       config.get.withArgs('xpack.security.authProviders').returns(['basic']);
+      config.get.withArgs('server.basePath').returns('/base-path');
 
       await initAuthenticator(server);
 
@@ -333,13 +427,29 @@ describe('Authenticator', () => {
       }
     });
 
-    it('clears session.', async () => {
-      const request = {};
+    it('returns `notHandled` if session does not exist.', async () => {
+      const request = requestFixture();
+      session.get.withArgs(request).returns(null);
 
-      await deauthenticate(request);
+      const deauthenticationResult = await deauthenticate(request);
+
+      expect(deauthenticationResult.notHandled()).to.be(true);
+      sinon.assert.notCalled(session.clear);
+    });
+
+    it('clears session and returns whatever authentication provider returns.', async () => {
+      const request = requestFixture({ search: '?next=%2Fapp%2Fml&msg=SESSION_EXPIRED' });
+      session.get.withArgs(request).returns(Promise.resolve({
+        state: {},
+        provider: 'basic'
+      }));
+
+      const deauthenticationResult = await deauthenticate(request);
 
       sinon.assert.calledOnce(session.clear);
       sinon.assert.calledWithExactly(session.clear, request);
+      expect(deauthenticationResult.redirected()).to.be(true);
+      expect(deauthenticationResult.redirectURL).to.be('/base-path/login?next=%2Fapp%2Fml&msg=SESSION_EXPIRED');
     });
   });
 
@@ -355,7 +465,7 @@ describe('Authenticator', () => {
     });
 
     it('returns `true` if `getUser` succeeds.', async () => {
-      const request = {};
+      const request = requestFixture();
       server.plugins.security.getUser
         .withArgs(request)
         .returns(Promise.resolve({}));
@@ -364,7 +474,7 @@ describe('Authenticator', () => {
     });
 
     it('returns `false` when `getUser` throws a 401 boom error.', async () => {
-      const request = {};
+      const request = requestFixture();
       server.plugins.security.getUser
         .withArgs(request)
         .returns(Promise.reject(Boom.unauthorized()));
@@ -373,7 +483,7 @@ describe('Authenticator', () => {
     });
 
     it('throw non-boom errors.', async () => {
-      const request = {};
+      const request = requestFixture();
       const nonBoomError = new TypeError();
       server.plugins.security.getUser
         .withArgs(request)
@@ -387,9 +497,8 @@ describe('Authenticator', () => {
       }
     });
 
-
     it('throw non-401 boom errors.', async () => {
-      const request = {};
+      const request = requestFixture();
       const non401Error = Boom.wrap(new TypeError());
       server.plugins.security.getUser
         .withArgs(request)

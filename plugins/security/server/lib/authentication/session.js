@@ -54,6 +54,10 @@ export class Session {
           return resolve(null);
         }
 
+        if (err) {
+          this._server.log(['debug', 'security', 'auth', 'session'], err);
+        }
+
         resolve(err ? null : session.value);
       });
     });

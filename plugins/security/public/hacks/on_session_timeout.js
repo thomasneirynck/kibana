@@ -4,6 +4,14 @@ import { isSystemApiRequest } from 'ui/system_api';
 import { PathProvider } from 'plugins/xpack_main/services/path';
 import 'plugins/security/services/auto_logout';
 
+/**
+ * Client session timeout is decreased by this number so that Kibana server
+ * can still access session content during logout request to properly clean
+ * user session up (invalidate access tokens, redirect to logout portal etc.).
+ * @type {number}
+ */
+const SESSION_TIMEOUT_GRACE_PERIOD_MS = 5000;
+
 const module = uiModules.get('security', []);
 module.config(($httpProvider) => {
   $httpProvider.interceptors.push(($timeout, $window, $q, $injector, sessionTimeout, Notifier, Private, autoLogout) => {
@@ -15,7 +23,10 @@ module.config(($httpProvider) => {
       content: 'You will soon be logged out due to inactivity. Click OK to resume.',
       icon: 'warning',
       title: 'Warning',
-      lifetime: Math.min(sessionTimeout, notificationLifetime),
+      lifetime: Math.min(
+        (sessionTimeout - SESSION_TIMEOUT_GRACE_PERIOD_MS),
+        notificationLifetime
+      ),
       actions: ['accept']
     };
 

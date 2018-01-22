@@ -61,13 +61,16 @@ describe('Session', () => {
       }
     });
 
-    it('returns null if validation function fails.', async () => {
+    it('logs the reason of validation function failure.', async () => {
       const request = {};
+      const failureReason = new Error('Invalid cookie.');
       server.auth.test.withArgs('security-cookie', request, sinon.match.func).yields(
-        new Error('Invalid cookie.')
+        failureReason
       );
 
       expect(await session.get(request)).to.be(null);
+      sinon.assert.calledOnce(server.log);
+      sinon.assert.calledWithExactly(server.log, ['debug', 'security', 'auth', 'session'], failureReason);
     });
 
     it('returns null if multiple session cookies are detected.', async () => {

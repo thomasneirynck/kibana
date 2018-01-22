@@ -252,5 +252,108 @@
       method: 'PUT'
     });
 
+    /**
+     * Asks Elasticsearch to prepare SAML authentication request to be sent to
+     * the 3rd-party SAML identity provider.
+     *
+     * @param {string} acs Assertion consumer service URL to use for SAML request or URL in the
+     * Kibana to which identity provider will post SAML response. Based on the ACS Elasticsearch
+     * will choose the right SAML realm.
+     *
+     * @returns {{realm: string, id: string, redirect: string}} Object that includes identifier
+     * of the SAML realm used to prepare authentication request, encrypted request token to be
+     * sent to Elasticsearch with SAML response and redirect URL to the identity provider that
+     * will be used to authenticate user.
+     */
+    shield.samlPrepare = ca({
+      method: 'POST',
+      needBody: true,
+      url: {
+        fmt: '/_xpack/security/saml/prepare'
+      }
+    });
+
+    /**
+     * Sends SAML response returned by identity provider to Elasticsearch for validation.
+     *
+     * @param {Array.<string>} ids A list of encrypted request tokens returned within SAML
+     * preparation response.
+     * @param {string} content SAML response returned by identity provider.
+     *
+     * @returns {{username: string, access_token: string, expires_in: number}} Object that
+     * includes name of the user, access token to use for any consequent requests that
+     * need to be authenticated and a number of seconds after which access token will expire.
+     */
+    shield.samlAuthenticate = ca({
+      method: 'POST',
+      needBody: true,
+      url: {
+        fmt: '/_xpack/security/saml/authenticate'
+      }
+    });
+
+    /**
+     * Invalidates SAML access token.
+     *
+     * @param {string} token SAML access token that needs to be invalidated.
+     *
+     * @returns {{redirect?: string}}
+     */
+    shield.samlLogout = ca({
+      method: 'POST',
+      needBody: true,
+      url: {
+        fmt: '/_xpack/security/saml/logout'
+      }
+    });
+
+    /**
+     * Invalidates SAML access token.
+     *
+     * @param {string} token SAML access token that needs to be invalidated.
+     *
+     * @returns {{redirect?: string}}
+     */
+    shield.samlLogout = ca({
+      method: 'POST',
+      needBody: true,
+      url: {
+        fmt: '/_xpack/security/saml/logout'
+      }
+    });
+
+    /**
+     * Invalidates SAML session based on Logout Request received from the Identity Provider.
+     *
+     * @param {string} queryString URL encoded query string provided by Identity Provider.
+     * @param {string} acs Assertion consumer service URL to use for SAML request or URL in the
+     * Kibana to which identity provider will post SAML response. Based on the ACS Elasticsearch
+     * will choose the right SAML realm to invalidate session.
+     *
+     * @returns {{redirect?: string}}
+     */
+    shield.samlInvalidate = ca({
+      method: 'POST',
+      needBody: true,
+      url: {
+        fmt: '/_xpack/security/saml/invalidate'
+      }
+    });
+
+    /**
+     * Refreshes SAML access token.
+     *
+     * @param {string} grant_type Currently only "refresh_token" grant type is supported.
+     * @param {string} refresh_token One-time refresh token that will be exchanged to the new access/refresh token pair.
+     *
+     * @returns {{access_token: string, type: string, expires_in: number, refresh_token: string}}
+     */
+    shield.samlRefreshAccessToken = ca({
+      method: 'POST',
+      needBody: true,
+      url: {
+        fmt: '/_xpack/security/oauth2/token'
+      }
+    });
   };
 }));
