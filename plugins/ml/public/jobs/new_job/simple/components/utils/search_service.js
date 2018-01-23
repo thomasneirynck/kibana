@@ -36,7 +36,7 @@ module.service('mlSimpleJobSearchService', function ($q, es) {
       // wrapping the value in quotes to do a phrase match.
       // Backslash is a special character in JSON strings, so doubly escape
       // any backslash characters which exist in the field value.
-      jobIdFilterStr += `AND ${escapeForElasticsearchQuery(firstSplitField.name)}:`;
+      jobIdFilterStr += ` AND ${escapeForElasticsearchQuery(firstSplitField.name)}:`;
       jobIdFilterStr += `"${String(firstSplitField.value).replace(/\\/g, '\\\\')}"`;
     }
 
