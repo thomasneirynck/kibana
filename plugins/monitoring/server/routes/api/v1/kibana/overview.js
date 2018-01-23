@@ -1,8 +1,8 @@
 import Joi from 'joi';
 import { get } from 'lodash';
-import { getKibanas } from '../../../../lib/kibana/get_kibanas';
 import { getKibanasForClusters } from '../../../../lib/kibana/get_kibanas_for_clusters';
 import { handleError } from '../../../../lib/errors';
+import { getMetrics } from '../../../../lib/details/get_metrics';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
 const getKibanaClusterStatus = function (req, kbnIndexPattern, { clusterUuid }) {
@@ -13,11 +13,11 @@ const getKibanaClusterStatus = function (req, kbnIndexPattern, { clusterUuid }) 
 
 export function kibanaInstancesRoutes(server) {
   /**
-   * Kibana listing (instances)
+   * Kibana overview (metrics)
    */
   server.route({
     method: 'POST',
-    path: '/api/monitoring/v1/clusters/{clusterUuid}/kibana/instances',
+    path: '/api/monitoring/v1/clusters/{clusterUuid}/kibana',
     config: {
       validate: {
         params: Joi.object({
@@ -28,7 +28,8 @@ export function kibanaInstancesRoutes(server) {
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
-          }).required()
+          }).required(),
+          metrics: Joi.array().required()
         })
       }
     },
@@ -39,14 +40,14 @@ export function kibanaInstancesRoutes(server) {
       const kbnIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.kibana.index_pattern', ccs);
 
       try {
-        const [ clusterStatus, kibanas ] = await Promise.all([
+        const [ clusterStatus, metrics ] = await Promise.all([
           getKibanaClusterStatus(req, kbnIndexPattern, { clusterUuid }),
-          getKibanas(req, kbnIndexPattern, { clusterUuid }),
+          getMetrics(req, kbnIndexPattern),
         ]);
 
         reply({
           clusterStatus,
-          kibanas,
+          metrics,
         });
       } catch(err) {
         reply(handleError(err, req));

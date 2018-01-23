@@ -29,8 +29,7 @@ function getPageData($injector) {
           'kibana_average_response_times'
         ]
       }
-    ],
-    instances: false
+    ]
   })
     .then(response => response.data)
     .catch((err) => {
