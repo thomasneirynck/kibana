@@ -189,7 +189,13 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
           laneDivProps['aria-label'] = `${scope.swimlaneData.fieldName}: ${label}`;
         }
 
-        $lane.append($('<div>', laneDivProps));
+        const $label = $('<div>', laneDivProps);
+        $label.on('click', () => {
+          if (typeof scope.appState.mlExplorerSwimlane.selectedLanes !== 'undefined') {
+            clearSelection();
+          }
+        });
+        $lane.append($label);
 
         const $cellsContainer = $('<div>', {
           class: 'cells-container'
@@ -364,18 +370,38 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
         });
       }
 
-      scope.appState.mlExplorerSwimlane.selectedType = scope.swimlaneType;
-      scope.appState.mlExplorerSwimlane.selectedLanes = laneLabels;
-      scope.appState.mlExplorerSwimlane.selectedTimes = times;
-      scope.appState.save();
+      // Check if the same cells were selected again, if so clear the selection,
+      // otherwise activate the new selection. The two objects are built for
+      // comparison because we cannot simply compare to "scope.appState.mlExplorerSwimlane"
+      // since it also includes the "viewBy" attribute which might differ depending
+      // on whether the overall or viewby swimlane was selected.
+      if (_.isEqual(
+        {
+          selectedType: scope.appState.mlExplorerSwimlane.selectedType,
+          selectedLanes: scope.appState.mlExplorerSwimlane.selectedLanes,
+          selectedTimes: scope.appState.mlExplorerSwimlane.selectedTimes
+        },
+        {
+          selectedType: scope.swimlaneType,
+          selectedLanes: laneLabels,
+          selectedTimes: times
+        }
+      )) {
+        clearSelection();
+      } else {
+        scope.appState.mlExplorerSwimlane.selectedType = scope.swimlaneType;
+        scope.appState.mlExplorerSwimlane.selectedLanes = laneLabels;
+        scope.appState.mlExplorerSwimlane.selectedTimes = times;
+        scope.appState.save();
 
-      mlExplorerDashboardService.swimlaneCellClick.changed({
-        fieldName: scope.swimlaneData.fieldName,
-        laneLabels: laneLabels,
-        time: d3.extent(times),
-        interval: scope.swimlaneData.interval,
-        score: bucketScore
-      });
+        mlExplorerDashboardService.swimlaneCellClick.changed({
+          fieldName: scope.swimlaneData.fieldName,
+          laneLabels,
+          time: d3.extent(times),
+          interval: scope.swimlaneData.interval,
+          score: bucketScore
+        });
+      }
     }
 
     function clearSelection() {
