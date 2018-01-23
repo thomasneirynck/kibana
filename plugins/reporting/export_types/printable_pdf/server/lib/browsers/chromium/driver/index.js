@@ -43,6 +43,7 @@ export class HeadlessChromiumDriver {
     if (frameTree.frame.unreachableUrl) {
       throw new Error('URL open failed. Is the server running?');
     }
+    this.documentNode = await this._client.DOM.getDocument();
     await this.waitForSelector(waitForSelector);
   }
 
@@ -102,12 +103,12 @@ export class HeadlessChromiumDriver {
   }
 
   async waitForSelector(selector) {
-    const document = await this._client.DOM.getDocument();
     while(!this.killed) {
-      const { nodeId } = await this._client.DOM.querySelector({ nodeId: document.root.nodeId, selector });
+      const { nodeId } = await this._client.DOM.querySelector({ nodeId: this.documentNode.root.nodeId, selector });
       if (nodeId) {
         break;
       }
+
       await delay(this._waitForDelayMs);
     }
   }

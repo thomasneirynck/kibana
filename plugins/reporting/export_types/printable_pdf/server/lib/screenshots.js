@@ -67,6 +67,11 @@ export function screenshotsObservableFactory(server) {
     await browser.waitForSelector(`${layout.selectors.renderComplete},[${layout.selectors.itemsCountAttribute}]`);
   };
 
+  const waitForNotFoundError = async (browser) => {
+    await browser.waitForSelector(`.toast.alert.alert-danger`);
+    throw new Error('Reporting subject could not be loaded to take a screenshot.');
+  };
+
   const getNumberOfItems = async (browser, layout) => {
     // returns the value of the `itemsCountAttribute` if it's there, otherwise
     // we just count the number of `itemSelector`
@@ -244,9 +249,12 @@ export function screenshotsObservableFactory(server) {
             browser => injectCustomCss(browser, layout),
             browser => browser
           )
-          .do(() => logger.debug('waiting for elements or items count attribute'))
+          .do(() => logger.debug('waiting for elements or items count attribute; or not found to interrupt'))
           .mergeMap(
-            browser => waitForElementOrItemsCountAttribute(browser, layout),
+            browser => Rx.Observable.race(
+              Rx.Observable.from(waitForElementOrItemsCountAttribute(browser, layout)),
+              Rx.Observable.from(waitForNotFoundError(browser))
+            ),
             browser => browser
           )
           .do(() => logger.debug('determining how many items we have'))

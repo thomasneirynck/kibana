@@ -1,10 +1,10 @@
 import Rx from 'rxjs';
 import { memoize } from 'lodash';
-import { cryptoFactory } from '../../../server/lib/crypto';
-import { executeJobFactory } from './execute_job';
-import { generatePdfObservableFactory } from './lib/generate_pdf';
+import { cryptoFactory } from '../../../../server/lib/crypto';
+import { executeJobFactory } from './index';
+import { generatePdfObservableFactory } from '../lib/generate_pdf';
 
-jest.mock('./lib/generate_pdf', () => {
+jest.mock('../lib/generate_pdf', () => {
   const generatePdfObserable = jest.fn();
   return {
     generatePdfObservableFactory: jest.fn().mockReturnValue(generatePdfObserable)
@@ -48,7 +48,7 @@ const encryptHeaders = async (headers) => {
 
 test(`fails if it can't decrypt headers`, async () => {
   const executeJob = executeJobFactory(mockServer);
-  await expect(executeJob({}, cancellationToken)).rejects.toBeDefined();
+  await expect(executeJob({ objects: [], timeRange: {} }, cancellationToken)).rejects.toBeDefined();
 });
 
 test(`passes in decrypted headers to generatePdf`, async () => {
@@ -62,9 +62,9 @@ test(`passes in decrypted headers to generatePdf`, async () => {
 
   const encryptedHeaders = await encryptHeaders(headers);
   const executeJob = executeJobFactory(mockServer);
-  await executeJob({ headers: encryptedHeaders }, cancellationToken);
+  await executeJob({ objects: [], timeRange: {}, headers: encryptedHeaders }, cancellationToken);
 
-  expect(generatePdfObservable).toBeCalledWith(undefined, undefined, undefined, headers, undefined, undefined, undefined);
+  expect(generatePdfObservable).toBeCalledWith(undefined, [], {}, headers, undefined, undefined);
 });
 
 test(`omits blacklisted headers`, async () => {
@@ -89,9 +89,9 @@ test(`omits blacklisted headers`, async () => {
   generatePdfObservable.mockReturnValue(Rx.Observable.of(Buffer.from('')));
 
   const executeJob = executeJobFactory(mockServer);
-  await executeJob({ headers: encryptedHeaders }, cancellationToken);
+  await executeJob({ objects: [], timeRange: {}, headers: encryptedHeaders }, cancellationToken);
 
-  expect(generatePdfObservable).toBeCalledWith(undefined, undefined, undefined, permittedHeaders, undefined, undefined, undefined);
+  expect(generatePdfObservable).toBeCalledWith(undefined, [], {}, permittedHeaders, undefined, undefined);
 });
 
 test(`gets logo from uiSettings`, async () => {
@@ -104,10 +104,10 @@ test(`gets logo from uiSettings`, async () => {
   generatePdfObservable.mockReturnValue(Rx.Observable.of(Buffer.from('')));
 
   const executeJob = executeJobFactory(mockServer);
-  await executeJob({ headers: encryptedHeaders }, cancellationToken);
+  await executeJob({ objects: [], timeRange: {}, headers: encryptedHeaders }, cancellationToken);
 
   expect(mockServer.uiSettingsServiceFactory().get).toBeCalledWith('xpackReporting:customPdfLogo');
-  expect(generatePdfObservable).toBeCalledWith(undefined, undefined, undefined, {}, undefined, undefined, logo);
+  expect(generatePdfObservable).toBeCalledWith(undefined, [], {}, {}, undefined, logo);
 });
 
 test(`returns content_type of application/pdf`, async () => {
@@ -117,7 +117,7 @@ test(`returns content_type of application/pdf`, async () => {
   const generatePdfObservable = generatePdfObservableFactory();
   generatePdfObservable.mockReturnValue(Rx.Observable.of(Buffer.from('')));
 
-  const { content_type: contentType } = await executeJob({ headers: encryptedHeaders }, cancellationToken);
+  const { content_type: contentType } = await executeJob({ objects: [], timeRange: {}, headers: encryptedHeaders }, cancellationToken);
   expect(contentType).toBe('application/pdf');
 });
 
@@ -129,7 +129,7 @@ test(`returns content of generatePdf getBuffer base64 encoded`, async () => {
 
   const executeJob = executeJobFactory(mockServer);
   const encryptedHeaders = await encryptHeaders({});
-  const { content } = await executeJob({ headers: encryptedHeaders }, cancellationToken);
+  const { content } = await executeJob({ objects: [], timeRange: {}, headers: encryptedHeaders }, cancellationToken);
 
   expect(content).toEqual(Buffer.from(testContent).toString('base64'));
 });

@@ -55,7 +55,6 @@ export const reporting = (kibana) => {
     config: function (Joi) {
       return Joi.object({
         enabled: Joi.boolean().default(true),
-        kibanaApp: Joi.string().regex(/^\//).default('/app/kibana'),
         kibanaServer: Joi.object({
           protocol: Joi.string().valid(['http', 'https']),
           hostname: Joi.string(),
@@ -161,6 +160,7 @@ export const reporting = (kibana) => {
         unused("capture.concurrency"),
         unused("capture.timeout"),
         unused("capture.settleTime"),
+        unused("kibanaApp"),
       ];
     },
   });
