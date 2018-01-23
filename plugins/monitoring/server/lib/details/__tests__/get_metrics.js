@@ -14,7 +14,7 @@ import aggMetricsResults from './fixtures/agg_metrics_results';
 const min = 1498968000000; // 2017-07-02T04:00:00.000Z
 const max = 1499054399999; // 2017-07-03T03:59:59.999Z
 
-function getMockReq(metricsBuckets = [], payloadMetrics = []) {
+function getMockReq(metricsBuckets = []) {
   const config = {
     get: sinon.stub()
   };
@@ -28,20 +28,24 @@ function getMockReq(metricsBuckets = [], payloadMetrics = []) {
       },
       plugins: {
         elasticsearch: {
-          getCluster: sinon.stub().withArgs('monitoring').returns({
-            callWithRequest: sinon.stub().returns(Promise.resolve({
-              aggregations: {
-                check: {
-                  buckets: metricsBuckets
-                }
-              }
-            }))
-          })
+          getCluster: sinon
+            .stub()
+            .withArgs('monitoring')
+            .returns({
+              callWithRequest: sinon.stub().returns(
+                Promise.resolve({
+                  aggregations: {
+                    check: {
+                      buckets: metricsBuckets
+                    }
+                  }
+                })
+              )
+            })
         }
       }
     },
     payload: {
-      metrics: payloadMetrics,
       timeRange: { min, max }
     },
     params: {
@@ -53,90 +57,86 @@ function getMockReq(metricsBuckets = [], payloadMetrics = []) {
 const indexPattern = [];
 
 describe('getMetrics and getSeries', () => {
-
-  it('with non-derivative metric', () => {
-    const req = getMockReq(nonDerivMetricsBuckets, [ 'node_cpu_utilization' ]);
-    return getMetrics(req, indexPattern)
-      .then(result => {
-        expect(result).to.eql({
-          node_cpu_utilization: [
-            {
-              bucket_size: '10 min',
-              timeRange: { min, max },
-              metric: {
-                app: 'elasticsearch',
-                description: 'Percentage of CPU usage for the Elasticsearch process.',
-                field: 'node_stats.process.cpu.percent',
-                label: 'CPU Utilization',
-                format: '0,0.[00]',
-                units: '%'
-              },
-              data: nonDerivMetricsResults
-            }
-          ]
-        });
-      });
+  it('with non-derivative metric', async () => {
+    const req = getMockReq(nonDerivMetricsBuckets);
+    const metricSet = ['node_cpu_utilization'];
+    const result = await getMetrics(req, indexPattern, metricSet);
+    expect(result).to.eql({
+      node_cpu_utilization: [
+        {
+          bucket_size: '10 min',
+          timeRange: { min, max },
+          metric: {
+            app: 'elasticsearch',
+            description:
+              'Percentage of CPU usage for the Elasticsearch process.',
+            field: 'node_stats.process.cpu.percent',
+            label: 'CPU Utilization',
+            format: '0,0.[00]',
+            units: '%'
+          },
+          data: nonDerivMetricsResults
+        }
+      ]
+    });
   });
 
-  it('with derivative metric', () => {
-    const req = getMockReq(derivMetricsBuckets, [ 'cluster_search_request_rate' ]);
-    return getMetrics(req, indexPattern)
-      .then(result => {
-        expect(result).to.eql({
-          cluster_search_request_rate: [
-            {
-              bucket_size: '10 min',
-              timeRange: { min, max },
-              metric: {
-                app: 'elasticsearch',
-                description: (
-                  'Number of search requests being executed across primary and ' +
-                'replica shards. A single search can run against multiple ' +
-                'shards!'
-                ),
-                field: 'indices_stats._all.total.search.query_total',
-                label: 'Total Shards',
-                title: 'Search Rate',
-                format: '0,0.[00]',
-                units: '/s'
-              },
-              data: derivMetricsResults
-            }
-          ]
-        });
-      });
+  it('with derivative metric', async () => {
+    const req = getMockReq(derivMetricsBuckets);
+    const metricSet = ['cluster_search_request_rate'];
+    const result = await getMetrics(req, indexPattern, metricSet);
+    expect(result).to.eql({
+      cluster_search_request_rate: [
+        {
+          bucket_size: '10 min',
+          timeRange: { min, max },
+          metric: {
+            app: 'elasticsearch',
+            description:
+              'Number of search requests being executed across primary and ' +
+              'replica shards. A single search can run against multiple ' +
+              'shards!',
+            field: 'indices_stats._all.total.search.query_total',
+            label: 'Total Shards',
+            title: 'Search Rate',
+            format: '0,0.[00]',
+            units: '/s'
+          },
+          data: derivMetricsResults
+        }
+      ]
+    });
   });
 
-  it('with metric containing custom aggs', () => {
-    const req = getMockReq(aggMetricsBuckets, [ 'cluster_index_latency' ]);
-    return getMetrics(req, indexPattern)
-      .then(result => {
-        expect(result).to.eql({
-          cluster_index_latency: [
-            {
-              bucket_size: '10 min',
-              timeRange: { min, max },
-              metric: {
-                app: 'elasticsearch',
-                description: (
-                  'Average latency for indexing documents, which is time it takes ' +
-                'to index documents divided by number that were indexed. ' +
-                'This only considers primary shards.'
-                ),
-                field: 'indices_stats._all.primaries.indexing.index_total',
-                label: 'Indexing Latency',
-                format: '0,0.[00]',
-                units: 'ms'
-              },
-              data: aggMetricsResults
-            }
-          ]
-        });
-      });
+  it('with metric containing custom aggs', async () => {
+    const req = getMockReq(aggMetricsBuckets);
+    const metricSet = ['cluster_index_latency'];
+    const result = await getMetrics(req, indexPattern, metricSet);
+    expect(result).to.eql({
+      cluster_index_latency: [
+        {
+          bucket_size: '10 min',
+          timeRange: { min, max },
+          metric: {
+            app: 'elasticsearch',
+            description:
+              'Average latency for indexing documents, which is time it takes ' +
+              'to index documents divided by number that were indexed. ' +
+              'This only considers primary shards.',
+            field: 'indices_stats._all.primaries.indexing.index_total',
+            label: 'Indexing Latency',
+            format: '0,0.[00]',
+            units: 'ms'
+          },
+          data: aggMetricsResults
+        }
+      ]
+    });
   });
 
-  it('with object structure for metric', () => {
-    const req = getMockReq(nonDerivMetricsBuckets, [
+  it('with object structure for metric', async () => {
+    const req = getMockReq(nonDerivMetricsBuckets);
+    const metricSet = [
       {
         name: 'index_1',
         keys: [
@@ -146,103 +146,96 @@ describe('getMetrics and getSeries', () => {
           'index_mem_norms'
         ]
       }
-    ]);
-    return getMetrics(req, indexPattern)
-      .then(result => {
-        expect(result).to.eql({
-          index_1: [
-            {
-              bucket_size: '10 min',
-              timeRange: { min, max },
-              metric: {
-                app: 'elasticsearch',
-                description: (
-                  'Total heap memory used by Lucene for current index. This is the sum of other fields for primary and replica shards.'
-                ),
-                field: 'index_stats.total.segments.memory_in_bytes',
-                label: 'Lucene Total',
-                title: 'Index Memory - Lucene 1',
-                format: '0.0 b',
-                units: 'B'
-              },
-              data: nonDerivMetricsResults
-            },
-            {
-              bucket_size: '10 min',
-              timeRange: { min, max },
-              metric: {
-                app: 'elasticsearch',
-                description: (
-                  'Heap memory used by Stored Fields (e.g., _source). This is a part of Lucene Total.'
-                ),
-                field: 'index_stats.total.segments.stored_fields_memory_in_bytes',
-                label: 'Stored Fields',
-                title: 'Index Memory',
-                format: '0.0 b',
-                units: 'B'
-              },
-              data: nonDerivMetricsResults
-            },
-            {
-              bucket_size: '10 min',
-              timeRange: { min, max },
-              metric: {
-                app: 'elasticsearch',
-                description: (
-                  'Heap memory used by Doc Values. This is a part of Lucene Total.'
-                ),
-                field: 'index_stats.total.segments.doc_values_memory_in_bytes',
-                label: 'Doc Values',
-                title: 'Index Memory',
-                format: '0.0 b',
-                units: 'B'
-              },
-              data: nonDerivMetricsResults
-            },
-            {
-              bucket_size: '10 min',
-              timeRange: { min, max },
-              metric: {
-                app: 'elasticsearch',
-                description: (
-                  'Heap memory used by Norms (normalization factors for query-time, text scoring). This is a part of Lucene Total.'
-                ),
-                field: 'index_stats.total.segments.norms_memory_in_bytes',
-                label: 'Norms',
-                title: 'Index Memory',
-                format: '0.0 b',
-                units: 'B'
-              },
-              data: nonDerivMetricsResults
-            }
-          ]
-        });
-      });
+    ];
+    const result = await getMetrics(req, indexPattern, metricSet);
+    expect(result).to.eql({
+      index_1: [
+        {
+          bucket_size: '10 min',
+          timeRange: { min, max },
+          metric: {
+            app: 'elasticsearch',
+            description:
+              'Total heap memory used by Lucene for current index. This is the sum of other fields for primary and replica shards.',
+            field: 'index_stats.total.segments.memory_in_bytes',
+            label: 'Lucene Total',
+            title: 'Index Memory - Lucene 1',
+            format: '0.0 b',
+            units: 'B'
+          },
+          data: nonDerivMetricsResults
+        },
+        {
+          bucket_size: '10 min',
+          timeRange: { min, max },
+          metric: {
+            app: 'elasticsearch',
+            description:
+              'Heap memory used by Stored Fields (e.g., _source). This is a part of Lucene Total.',
+            field: 'index_stats.total.segments.stored_fields_memory_in_bytes',
+            label: 'Stored Fields',
+            title: 'Index Memory',
+            format: '0.0 b',
+            units: 'B'
+          },
+          data: nonDerivMetricsResults
+        },
+        {
+          bucket_size: '10 min',
+          timeRange: { min, max },
+          metric: {
+            app: 'elasticsearch',
+            description:
+              'Heap memory used by Doc Values. This is a part of Lucene Total.',
+            field: 'index_stats.total.segments.doc_values_memory_in_bytes',
+            label: 'Doc Values',
+            title: 'Index Memory',
+            format: '0.0 b',
+            units: 'B'
+          },
+          data: nonDerivMetricsResults
+        },
+        {
+          bucket_size: '10 min',
+          timeRange: { min, max },
+          metric: {
+            app: 'elasticsearch',
+            description:
+              'Heap memory used by Norms (normalization factors for query-time, text scoring). This is a part of Lucene Total.',
+            field: 'index_stats.total.segments.norms_memory_in_bytes',
+            label: 'Norms',
+            title: 'Index Memory',
+            format: '0.0 b',
+            units: 'B'
+          },
+          data: nonDerivMetricsResults
+        }
+      ]
+    });
   });
 
-  it('with metric that uses default calculation', () => {
-    const req = getMockReq(nonDerivMetricsBuckets, [ 'kibana_max_response_times' ]);
-    return getMetrics(req, indexPattern)
-      .then(result => {
-        expect(result).to.eql({
-          kibana_max_response_times: [
-            {
-              bucket_size: '10 min',
-              timeRange: { min, max },
-              metric: {
-                app: 'kibana',
-                description: 'Maximum response time for client requests to the Kibana instance.',
-                field: 'kibana_stats.response_times.max',
-                label: 'Max',
-                title: 'Client Response Time',
-                format: '0.[00]',
-                units: 'ms'
-              },
-              data: nonDerivMetricsResults
-            }
-          ]
-        });
-      });
+  it('with metric that uses default calculation', async () => {
+    const req = getMockReq(nonDerivMetricsBuckets);
+    const metricSet = ['kibana_max_response_times'];
+    const result = await getMetrics(req, indexPattern, metricSet);
+    expect(result).to.eql({
+      kibana_max_response_times: [
+        {
+          bucket_size: '10 min',
+          timeRange: { min, max },
+          metric: {
+            app: 'kibana',
+            description:
+              'Maximum response time for client requests to the Kibana instance.',
+            field: 'kibana_stats.response_times.max',
+            label: 'Max',
+            title: 'Client Response Time',
+            format: '0.[00]',
+            units: 'ms'
+          },
+          data: nonDerivMetricsResults
+        }
+      ]
+    });
   });
-
 });

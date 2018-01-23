@@ -40,6 +40,7 @@ export function nodeRoutes(server) {
         const start = req.payload.timeRange.min;
         const end = req.payload.timeRange.max;
         const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
+        const metricSet = req.payload.metrics;
         const collectShards = req.payload.shards;
 
         const cluster = await getClusterStats(req, esIndexPattern, clusterUuid);
@@ -48,7 +49,7 @@ export function nodeRoutes(server) {
         const clusterState = get(cluster, 'cluster_state', { nodes: {} });
         const shardStats = await getShardStats(req, esIndexPattern, cluster, { includeIndices: true, includeNodes: true });
         const nodeSummary = await getNodeSummary(req, esIndexPattern, clusterState, shardStats, { clusterUuid, resolver, start, end });
-        const metrics = await getMetrics(req, esIndexPattern, [{ term: { [`source_node.${nodeResolver}`]: resolver } }]);
+        const metrics = await getMetrics(req, esIndexPattern, metricSet, [{ term: { [`source_node.${nodeResolver}`]: resolver } }]);
 
         let shardAllocation;
         if (collectShards) {

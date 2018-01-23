@@ -43,10 +43,11 @@ export function logstashNodeRoute(server) {
       const clusterUuid = req.params.clusterUuid;
       const lsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.logstash.index_pattern', ccs);
       const logstashUuid = req.params.logstashUuid;
+      const metricSet = req.payload.metrics;
 
       try {
         const [ metrics, nodeSummary ] = await Promise.all([
-          getMetrics(req, lsIndexPattern),
+          getMetrics(req, lsIndexPattern, metricSet),
           getNodeInfo(req, lsIndexPattern, { clusterUuid, logstashUuid }),
         ]);
 

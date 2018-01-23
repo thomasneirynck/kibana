@@ -38,11 +38,12 @@ export function kibanaInstancesRoutes(server) {
       const ccs = req.payload.ccs;
       const clusterUuid = req.params.clusterUuid;
       const kbnIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.kibana.index_pattern', ccs);
+      const metricSet = req.payload.metrics;
 
       try {
         const [ clusterStatus, metrics ] = await Promise.all([
           getKibanaClusterStatus(req, kbnIndexPattern, { clusterUuid }),
-          getMetrics(req, kbnIndexPattern),
+          getMetrics(req, kbnIndexPattern, metricSet),
         ]);
 
         reply({

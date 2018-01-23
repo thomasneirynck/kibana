@@ -41,10 +41,11 @@ export function logstashOverviewRoute(server) {
       const ccs = req.payload.ccs;
       const clusterUuid = req.params.clusterUuid;
       const lsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.logstash.index_pattern', ccs);
+      const metricSet = req.payload.metrics;
 
       try {
         const [ metrics, clusterStatus ] = await Promise.all([
-          getMetrics(req, lsIndexPattern),
+          getMetrics(req, lsIndexPattern, metricSet),
           getClusterStatus(req, lsIndexPattern, { clusterUuid })
         ]);
 

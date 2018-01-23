@@ -29,6 +29,7 @@ export function beatsOverviewRoute(server) {
       const ccs = req.payload.ccs;
       const clusterUuid = req.params.clusterUuid;
       const beatsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.beats.index_pattern', ccs);
+      const metricSet = req.payload.metrics;
 
       try {
         const [
@@ -38,7 +39,7 @@ export function beatsOverviewRoute(server) {
         ] = await Promise.all([
           getLatestStats(req, beatsIndexPattern, clusterUuid),
           getStats(req, beatsIndexPattern, clusterUuid),
-          getMetrics(req, beatsIndexPattern),
+          getMetrics(req, beatsIndexPattern, metricSet),
         ]);
 
         reply({

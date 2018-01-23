@@ -39,13 +39,14 @@ export function indexRoutes(server) {
         const end = req.payload.timeRange.max;
         const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
         const collectShards = req.payload.shards; // for advanced view
+        const metricSet = req.payload.metrics;
 
         const cluster = await getClusterStats(req, esIndexPattern, clusterUuid);
         const showSystemIndices = true; // hardcode to true, because this could be a system index
 
         const shardStats = await getShardStats(req, esIndexPattern, cluster, { includeNodes: true, includeIndices: true });
         const indexSummary = await getIndexSummary(req, esIndexPattern, shardStats, { clusterUuid, indexUuid, start, end });
-        const metrics = await getMetrics(req, esIndexPattern, [{ term: { 'index_stats.index': indexUuid } }]);
+        const metrics = await getMetrics(req, esIndexPattern, metricSet, [{ term: { 'index_stats.index': indexUuid } }]);
 
         let shardAllocation;
         if (collectShards) {

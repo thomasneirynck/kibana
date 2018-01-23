@@ -5,8 +5,9 @@ import { checkParam } from '../error_missing_required';
 import { getSeries } from './get_series';
 import { calculateTimeseriesInterval } from '../calculate_timeseries_interval';
 
-export function getMetrics(req, indexPattern, filters = []) {
+export function getMetrics(req, indexPattern, metricSet = [], filters = []) {
   checkParam(indexPattern, 'indexPattern in details/getMetrics');
+  checkParam(metricSet, 'metricSet in details/getMetrics');
 
   const config = req.server.config();
   // TODO: Pass in req parameters as explicit function parameters
@@ -15,8 +16,7 @@ export function getMetrics(req, indexPattern, filters = []) {
   const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
   const bucketSize = calculateTimeseriesInterval(min, max, minIntervalSeconds);
 
-  const metrics = req.payload.metrics || [];
-  return Promise.map(metrics, metric => {
+  return Promise.map(metricSet, metric => {
     // metric names match the literal metric name, but they can be supplied in groups or individually
     let metricNames;
 
@@ -32,7 +32,7 @@ export function getMetrics(req, indexPattern, filters = []) {
   })
     .then(rows => {
       const data = {};
-      metrics.forEach((key, index) => {
+      metricSet.forEach((key, index) => {
       // keyName must match the value stored in the html template
         const keyName = isPlainObject(key) ? key.name : key;
         data[keyName] = rows[index];

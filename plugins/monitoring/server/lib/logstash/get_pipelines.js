@@ -3,7 +3,8 @@ import { checkParam } from '../error_missing_required';
 import { getMetrics } from '../details/get_metrics';
 
 async function fetchPipelinesWithMetrics(req, lsIndexPattern) {
-  return await getMetrics(req, lsIndexPattern);
+  const metricSet = req.payload.metrics;
+  return await getMetrics(req, lsIndexPattern, metricSet);
 }
 
 export function _handleResponse(response) {

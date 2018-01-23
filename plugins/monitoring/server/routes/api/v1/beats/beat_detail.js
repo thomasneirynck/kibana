@@ -31,6 +31,7 @@ export function beatsDetailRoute(server) {
       const config = server.config();
       const ccs = req.payload.ccs;
       const beatsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.beats.index_pattern', ccs);
+      const metricSet = req.payload.metrics;
       const summaryOptions = {
         clusterUuid,
         beatUuid,
@@ -41,7 +42,7 @@ export function beatsDetailRoute(server) {
       try {
         const [ summary, metrics ] = await Promise.all([
           getBeatSummary(req, beatsIndexPattern, summaryOptions),
-          getMetrics(req, beatsIndexPattern, [{ term: { 'beats_stats.beat.uuid': beatUuid } }]),
+          getMetrics(req, beatsIndexPattern, metricSet, [{ term: { 'beats_stats.beat.uuid': beatUuid } }]),
         ]);
 
         reply({
