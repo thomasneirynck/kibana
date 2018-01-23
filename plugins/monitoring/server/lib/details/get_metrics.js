@@ -2,8 +2,8 @@ import moment from 'moment';
 import { isPlainObject } from 'lodash';
 import Promise from 'bluebird';
 import { checkParam } from '../error_missing_required';
-import { calculateAuto } from '../calculate_auto';
 import { getSeries } from './get_series';
+import { calculateTimeseriesInterval } from '../calculate_timeseries_interval';
 
 export function getMetrics(req, indexPattern, filters = []) {
   checkParam(indexPattern, 'indexPattern in details/getMetrics');
@@ -12,9 +12,8 @@ export function getMetrics(req, indexPattern, filters = []) {
   // TODO: Pass in req parameters as explicit function parameters
   const min = moment.utc(req.payload.timeRange.min).valueOf();
   const max = moment.utc(req.payload.timeRange.max).valueOf();
-  const duration = moment.duration(max - min, 'ms');
   const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
-  const bucketSize = Math.max(minIntervalSeconds, calculateAuto(100, duration).asSeconds());
+  const bucketSize = calculateTimeseriesInterval(min, max, minIntervalSeconds);
 
   const metrics = req.payload.metrics || [];
   return Promise.map(metrics, metric => {

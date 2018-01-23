@@ -34,7 +34,7 @@ describe('get_pipeline', () => {
         events_in: 10000,
         events_out: 9000,
         duration_in_millis: 18000,
-        events_per_millisecond: 0.01,
+        events_per_millisecond: 0.00001,
         millis_per_event: 2,
         queue_push_duration_in_millis: 100000,
         queue_push_duration_in_millis_per_event: 11.11111111111111
@@ -54,7 +54,7 @@ describe('get_pipeline', () => {
           events_in: 10000,
           events_out: 9000,
           duration_in_millis: 18000,
-          events_per_millisecond: 0.01,
+          events_per_millisecond: 0.00001,
           millis_per_event: 2,
           percent_of_total_processor_duration: 0.75
         });
@@ -74,7 +74,7 @@ describe('get_pipeline', () => {
           events_in: 10000,
           events_out: 9000,
           duration_in_millis: 18000,
-          events_per_millisecond: 0.01,
+          events_per_millisecond: 0.00001,
           millis_per_event: 2,
           percent_of_total_processor_duration: 0.75
         });
@@ -92,7 +92,7 @@ describe('get_pipeline', () => {
           events_out: null,
           events_in: 10000,
           duration_in_millis: 18000,
-          events_per_millisecond: 0.011111111111111112,
+          events_per_millisecond: 0.000011111111111111112,
           millis_per_event: 1.8,
           queue_push_duration_in_millis: 100000,
           queue_push_duration_in_millis_per_event: 10
@@ -104,7 +104,8 @@ describe('get_pipeline', () => {
   describe('_enrichStateWithStatsAggregation function', () => {
     let stateDocument;
     let statsAggregation;
-    let timeboundsInMillis;
+    let version;
+    let timeseriesInterval;
 
     beforeEach(() => {
       stateDocument = {
@@ -169,65 +170,83 @@ describe('get_pipeline', () => {
       };
 
       statsAggregation = {
-        aggregations: {
-          pipelines: {
-            doc_count: 14,
-            scoped: {
-              doc_count: 14,
-              events_duration: {
-                count: 14,
-                min: 3549,
-                max: 15372,
-                avg: 9820,
-                sum: 137480
-              },
-              timebounds: {
-                doc_count: 633,
-                first_seen: {
-                  value: 1511275538320,
-                  value_as_string: '2017-11-21T14:45:38.320Z'
-                },
-                last_seen: {
-                  value: 1511286565801,
-                  value_as_string: '2017-11-21T17:49:25.801Z'
-                }
-              },
-              vertices: {
-                doc_count: 98,
-                vertex_id: {
-                  doc_count_error_upper_bound: 0,
-                  sum_other_doc_count: 0,
-                  buckets: [
-                    {
-                      key: 'mystdin',
-                      events_in_total: { value: 29 },
-                      events_out_total: { value: 28 },
-                      duration_in_millis_total: { value: 7000 },
-                      queue_push_duration_in_millis_total: { value: 600 }
-                    },                    {
-                      key: 'mystdout',
-                      doc_count: 14,
-                      events_in_total: { value: 28 },
-                      events_out_total: { value: 27 },
-                      duration_in_millis_total: { value: 6500 },
-                      queue_push_duration_in_millis_total: { value: null }
-                    },
-                  ]
+        timeseriesStats: [
+          {
+            key: { time_bucket: 1516131120000 },
+            pipelines: {
+              scoped: {
+                vertices: {
+                  vertex_id: {
+                    buckets: [
+                      {
+                        key: 'mystdout',
+                        events_in_total: { value: 1000 },
+                        events_out_total: { value: 1000 },
+                        duration_in_millis_total: { value: 15 },
+                        queue_push_duration_in_millis_total: { value: 0 }
+                      },
+                      {
+                        key: 'mystdin',
+                        events_in_total: { value: 0 },
+                        events_out_total: { value: 1000 },
+                        duration_in_millis_total: { value: 0 },
+                        queue_push_duration_in_millis_total: { value: 13547 }
+                      }
+                    ]
+                  }
                 }
               }
             }
           },
-          nodes_count: { value: 1 },
-          in_total: { value: 2900 },
-          out_total: { value: 2801 }
+          {
+            key: { time_bucket: 1516131180000 },
+            pipelines: {
+              scoped: {
+                vertices: {
+                  vertex_id: {
+                    buckets: [
+                      {
+                        key: 'mystdout',
+                        events_in_total: { value: 2000 },
+                        events_out_total: { value: 2000 },
+                        duration_in_millis_total: { value: 20 },
+                        queue_push_duration_in_millis_total: { value: 0 }
+                      },
+                      {
+                        key: 'mystdin',
+                        events_in_total: { value: 0 },
+                        events_out_total: { value: 2000 },
+                        duration_in_millis_total: { value: 0 },
+                        queue_push_duration_in_millis_total: { value: 25073 }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ],
+        durationStats: {
+          count: 276,
+          min: 0,
+          max: 15903756,
+          avg: 6591773.384057971,
+          sum: 1819329454
         }
       };
 
-      timeboundsInMillis = 11027481; // last_seen - first_seen in aggs response
+      version = {
+        hash: 'eada8baceee81726f6be9d0a071beefad3d9a2fd1b5f5d916011dca9fa66d081',
+        firstSeen: 1516131138639,
+        lastSeen: 1516135440463
+      };
+
+
+      timeseriesInterval = 30;
     });
 
     it('enriches the state document correctly with stats', () => {
-      const enrichedStateDocument = _enrichStateWithStatsAggregation(stateDocument, statsAggregation, timeboundsInMillis);
+      const enrichedStateDocument = _enrichStateWithStatsAggregation(stateDocument, statsAggregation, version, timeseriesInterval);
       expect(enrichedStateDocument).to.eql({
         pipeline: {
           batch_size: 125,
@@ -246,13 +265,76 @@ describe('get_pipeline', () => {
                   type: 'plugin',
                   plugin_type: 'input',
                   stats: {
-                    duration_in_millis: 7000,
-                    events_in: 29,
-                    events_out: 28,
-                    events_per_millisecond: 0.0000025391111533087203,
-                    millis_per_event: 250,
-                    queue_push_duration_in_millis: 600,
-                    queue_push_duration_in_millis_per_event: 21.428571428571427
+                    duration_in_millis: {
+                      data: [
+                        [ 1516131120000, 0 ],
+                        [ 1516131180000, 0 ]
+                      ],
+                      timeRange: {
+                        min: 1516131138639,
+                        max: 1516135440463
+                      }
+                    },
+                    events_in: {
+                      data: [
+                        [ 1516131120000, 0 ],
+                        [ 1516131180000, 0 ]
+                      ],
+                      timeRange: {
+                        min: 1516131138639,
+                        max: 1516135440463
+                      }
+                    },
+                    events_out: {
+                      data: [
+                        [ 1516131120000, 1000 ],
+                        [ 1516131180000, 2000 ]
+                      ],
+                      timeRange: {
+                        min: 1516131138639,
+                        max: 1516135440463
+                      }
+                    },
+                    events_per_millisecond: {
+                      data: [
+                        [ 1516131120000, 0.03333333333333333 ],
+                        [ 1516131180000, 0.06666666666666667 ]
+                      ],
+                      timeRange: {
+                        min: 1516131138639,
+                        max: 1516135440463
+                      }
+                    },
+                    millis_per_event: {
+                      data: [
+                        [ 1516131120000, 0 ],
+                        [ 1516131180000, 0 ]
+                      ],
+                      timeRange: {
+                        min: 1516131138639,
+                        max: 1516135440463
+                      }
+                    },
+                    queue_push_duration_in_millis: {
+                      data: [
+                        [ 1516131120000, 13547 ],
+                        [ 1516131180000, 25073 ]
+                      ],
+                      timeRange: {
+                        min: 1516131138639,
+                        max: 1516135440463
+                      }
+                    },
+                    queue_push_duration_in_millis_per_event: {
+                      data: [
+                        [ 1516131120000, 13.547 ],
+                        [ 1516131180000, 12.5365 ]
+                      ],
+                      timeRange: {
+                        min: 1516131138639,
+                        max: 1516135440463
+                      }
+                    }
                   }
                 },
                 {
@@ -261,12 +343,66 @@ describe('get_pipeline', () => {
                   type: 'plugin',
                   plugin_type: 'output',
                   stats: {
-                    duration_in_millis: 6500,
-                    events_in: 28,
-                    events_out: 27,
-                    events_per_millisecond: 0.000002448428612119123,
-                    millis_per_event: 240.74074074074073,
-                    percent_of_total_processor_duration: 0.5497758606106741
+                    duration_in_millis: {
+                      data: [
+                        [ 1516131120000, 15 ],
+                        [ 1516131180000, 20 ]
+                      ],
+                      timeRange: {
+                        min: 1516131138639,
+                        max: 1516135440463
+                      }
+                    },
+                    events_in: {
+                      data: [
+                        [ 1516131120000, 1000 ],
+                        [ 1516131180000, 2000 ]
+                      ],
+                      timeRange: {
+                        min: 1516131138639,
+                        max: 1516135440463
+                      }
+                    },
+                    events_out: {
+                      data: [
+                        [ 1516131120000, 1000 ],
+                        [ 1516131180000, 2000 ]
+                      ],
+                      timeRange: {
+                        min: 1516131138639,
+                        max: 1516135440463
+                      }
+                    },
+                    events_per_millisecond: {
+                      data: [
+                        [ 1516131120000, 0.03333333333333333 ],
+                        [ 1516131180000, 0.06666666666666667 ]
+                      ],
+                      timeRange: {
+                        min: 1516131138639,
+                        max: 1516135440463
+                      }
+                    },
+                    millis_per_event: {
+                      data: [
+                        [ 1516131120000, 0.015 ],
+                        [ 1516131180000, 0.01 ]
+                      ],
+                      timeRange: {
+                        min: 1516131138639,
+                        max: 1516135440463
+                      }
+                    },
+                    percent_of_total_processor_duration: {
+                      data: [
+                        [ 1516131120000, 0.0000009431734239383451 ],
+                        [ 1516131180000, 0.0000012575645652511268 ]
+                      ],
+                      timeRange: {
+                        min: 1516131138639,
+                        max: 1516135440463
+                      }
+                    }
                   }
                 }
               ],

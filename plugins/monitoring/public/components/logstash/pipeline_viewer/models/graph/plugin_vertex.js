@@ -1,3 +1,4 @@
+import { last, get, omit } from 'lodash';
 import { Vertex } from './vertex';
 import inputIcon from 'plugins/monitoring/icons/logstash/input.svg';
 import filterIcon from 'plugins/monitoring/icons/logstash/filter.svg';
@@ -31,16 +32,26 @@ export class PluginVertex extends Vertex {
     return (this.pluginType === 'filter' || this.pluginType === 'output');
   }
 
-  get millisPerEvent() {
-    return this.stats.millis_per_event;
+  get latestMillisPerEvent() {
+    const latestMillisPerEventBucket = last(get(this.stats, 'millis_per_event.data', [])) || [];
+    return latestMillisPerEventBucket[1];
   }
 
   get percentOfTotalProcessorTime() {
-    return this.stats.percent_of_total_processor_duration;
+    const latestPercentOfTotalProcessorDurationBucket = last(get(this.stats, 'percent_of_total_processor_duration.data', [])) || [];
+    return latestPercentOfTotalProcessorDurationBucket[1];
   }
 
   get eventsPerSecond() {
-    return this.stats.events_per_millisecond * 1000;
+    const eventsPerMillisecond = this.stats.events_per_millisecond;
+    return {
+      ...omit(eventsPerMillisecond, 'data'),
+      data: get(eventsPerMillisecond, 'data', []).map(([x, y]) => [x, y * 1000])
+    };
+  }
+
+  get latestEventsPerSecond() {
+    return last(get(this.eventsPerSecond, 'data', []))[1];
   }
 
   isTimeConsuming() {
@@ -61,11 +72,11 @@ export class PluginVertex extends Vertex {
     }
 
     const meanmillisPerEvent = this.graph.processorVertices.reduce((acc, v) => {
-      return acc + v.millisPerEvent || 0;
+      return acc + v.latestMillisPerEvent || 0;
     }, 0) / totalProcessorVertices;
 
     const variance = this.graph.processorVertices.reduce((acc, v) => {
-      const difference = (v.millisPerEvent || 0) - meanmillisPerEvent;
+      const difference = (v.latestMillisPerEvent || 0) - meanmillisPerEvent;
       const square = difference * difference;
       return acc + square;
     }, 0) / totalProcessorVertices;
@@ -73,7 +84,7 @@ export class PluginVertex extends Vertex {
     const stdDeviation = Math.sqrt(variance);
 
     // Std deviations above the mean
-    const slowness = (this.millisPerEvent - meanmillisPerEvent) / stdDeviation;
+    const slowness = (this.latestMillisPerEvent - meanmillisPerEvent) / stdDeviation;
 
     return slowness > SLOWNESS_STANDARD_DEVIATIONS_ABOVE_THE_MEAN;
   }

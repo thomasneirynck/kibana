@@ -1,4 +1,5 @@
 import React from 'react';
+import { last } from 'lodash';
 import {
   EuiTitle,
   EuiText,
@@ -15,6 +16,7 @@ import {
   EuiButtonIcon,
   EuiSpacer
 } from '@elastic/eui';
+import { Sparkline } from '../../../sparkline';
 import { formatMetric } from '../../../../lib/format_number';
 import { LOGSTASH } from 'monitoring-constants';
 
@@ -29,36 +31,114 @@ function renderIcon(vertex) {
   );
 }
 
-function renderPluginBasicStats(vertex) {
+function renderPluginBasicStats(vertex, timeseriesTooltipXValueFormatter) {
+
+  const eventsLatencyValueFormatter = (value) => formatMetric(value, '0.[00]a', 'ms/e');
+  const latestEventsLatency =
+    Array.isArray(vertex.stats.millis_per_event.data) && vertex.stats.millis_per_event.data.length > 0
+      ? last(vertex.stats.millis_per_event.data)[1]
+      : null;
   const eventsLatencyRow = vertex.pluginType === 'input'
     ? null
     : (
       <EuiTableRow key="events_latency">
         <EuiTableRowCell>Events Latency</EuiTableRowCell>
-        <EuiTableRowCell>{ formatMetric(vertex.stats.millis_per_event, '0.[00]a', 'ms/e') }</EuiTableRowCell>
+        <EuiTableRowCell>
+          <div className="lspvDetailDrawerSparklineContainer">
+            <Sparkline
+              series={vertex.stats.millis_per_event.data}
+              options={{ xaxis: vertex.stats.millis_per_event.timeRange }}
+              tooltip={{
+                enabled: true,
+                xValueFormatter: timeseriesTooltipXValueFormatter,
+                yValueFormatter: eventsLatencyValueFormatter
+              }}
+            />
+          </div>
+        </EuiTableRowCell>
+        <EuiTableRowCell>
+          { eventsLatencyValueFormatter(latestEventsLatency) }
+        </EuiTableRowCell>
       </EuiTableRow>
     );
 
+  const eventsOutRateValueFormatter = (value) => formatMetric(value, '0.[0]a', 'e/s');
   const eventsOutRateRow = (
     <EuiTableRow key="events_out_rate">
       <EuiTableRowCell>Events Emitted Rate</EuiTableRowCell>
-      <EuiTableRowCell>{ formatMetric(vertex.eventsPerSecond, '0.[00]a', 'e/s') }</EuiTableRowCell>
+      <EuiTableRowCell>
+        <div className="lspvDetailDrawerSparklineContainer">
+          <Sparkline
+            series={vertex.eventsPerSecond.data}
+            options={{ xaxis: vertex.eventsPerSecond.timeRange }}
+            tooltip={{
+              enabled: true,
+              xValueFormatter: timeseriesTooltipXValueFormatter,
+              yValueFormatter: eventsOutRateValueFormatter
+            }}
+          />
+        </div>
+      </EuiTableRowCell>
+      <EuiTableRowCell>
+        { eventsOutRateValueFormatter(vertex.latestEventsPerSecond) }
+      </EuiTableRowCell>
     </EuiTableRow>
   );
+
+  const eventsInValueFormatter = (value) => formatMetric(value, '0a', 'events');
+  const latestEventsIn =
+    Array.isArray(vertex.stats.events_in.data) && vertex.stats.events_in.data.length > 0
+      ? last(vertex.stats.events_in.data)[1]
+      : null;
 
   const eventsInRow = vertex.pluginType === 'input'
     ? null
     : (
       <EuiTableRow key="events_in">
         <EuiTableRowCell>Events Received</EuiTableRowCell>
-        <EuiTableRowCell>{ formatMetric(vertex.stats.events_in, '0.[0]a', 'events') }</EuiTableRowCell>
+        <EuiTableRowCell>
+          <div className="lspvDetailDrawerSparklineContainer">
+            <Sparkline
+              series={vertex.stats.events_in.data}
+              options={{ xaxis: vertex.stats.events_in.timeRange }}
+              tooltip={{
+                enabled: true,
+                xValueFormatter: timeseriesTooltipXValueFormatter,
+                yValueFormatter: eventsInValueFormatter
+              }}
+            />
+          </div>
+        </EuiTableRowCell>
+        <EuiTableRowCell>
+          { eventsInValueFormatter(latestEventsIn) }
+        </EuiTableRowCell>
       </EuiTableRow>
     );
 
+  const eventsOutValueFormatter = eventsInValueFormatter;
+  const latestEventsOut =
+    Array.isArray(vertex.stats.events_out.data) && vertex.stats.events_out.data.length > 0
+      ? last(vertex.stats.events_out.data)[1]
+      : null;
   const eventsOutRow = (
     <EuiTableRow key="events_out">
       <EuiTableRowCell>Events Emitted</EuiTableRowCell>
-      <EuiTableRowCell>{ formatMetric(vertex.stats.events_out, '0.[0]a', 'events') }</EuiTableRowCell>
+      <EuiTableRowCell>
+        <div className="lspvDetailDrawerSparklineContainer">
+          <Sparkline
+            series={vertex.stats.events_out.data}
+            options={{ xaxis: vertex.stats.events_out.timeRange }}
+            tooltip={{
+              enabled: true,
+              xValueFormatter: timeseriesTooltipXValueFormatter,
+              yValueFormatter: eventsOutValueFormatter
+            }}
+          />
+        </div>
+      </EuiTableRowCell>
+      <EuiTableRowCell>
+        { eventsOutValueFormatter(latestEventsOut) }
+      </EuiTableRowCell>
     </EuiTableRow>
   );
 
@@ -86,16 +166,16 @@ function renderQueueBasicStats(_vertex) {
   );
 }
 
-function renderBasicStats(vertex) {
+function renderBasicStats(vertex, timeseriesTooltipXValueFormatter) {
   switch (vertex.typeString) {
     case 'plugin':
-      return renderPluginBasicStats(vertex);
+      return renderPluginBasicStats(vertex, timeseriesTooltipXValueFormatter);
       break;
     case 'if':
-      return renderIfBasicStats(vertex);
+      return renderIfBasicStats(vertex, timeseriesTooltipXValueFormatter);
       break;
     case 'queue':
-      return renderQueueBasicStats(vertex);
+      return renderQueueBasicStats(vertex, timeseriesTooltipXValueFormatter);
       break;
   }
 }
@@ -174,7 +254,7 @@ function renderTitle(vertex) {
   }
 }
 
-export function DetailDrawer({ vertex, onHide }) {
+export function DetailDrawer({ vertex, onHide, timeseriesTooltipXValueFormatter }) {
   return (
     <EuiFlyout
       size="s"
@@ -201,7 +281,7 @@ export function DetailDrawer({ vertex, onHide }) {
       <EuiFlyoutBody>
         <EuiText>
           { renderBasicInfo(vertex) }
-          { renderBasicStats(vertex) }
+          { renderBasicStats(vertex, timeseriesTooltipXValueFormatter) }
         </EuiText>
       </EuiFlyoutBody>
     </EuiFlyout>

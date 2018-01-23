@@ -3,10 +3,10 @@ import { ElasticsearchMetric } from '../metrics';
 import { get } from 'lodash';
 
 export async function getPipelineStateDocument(callWithRequest, req, logstashIndexPattern,
-  { clusterUuid, pipelineId, pipelineHash }) {
+  { clusterUuid, pipelineId, version }) {
   const filters = [
     { term: { 'logstash_state.pipeline.id': pipelineId } },
-    { term: { 'logstash_state.pipeline.hash': pipelineHash } }
+    { term: { 'logstash_state.pipeline.hash': version.hash } }
   ];
 
   const query = createQuery({

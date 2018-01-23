@@ -1,3 +1,4 @@
+import { get, last } from 'lodash';
 import { createQuery } from '../create_query';
 import { ElasticsearchMetric } from '../metrics';
 
@@ -15,18 +16,15 @@ function scalarCounterAggregation(field, fieldPath, ephemeralIdField, maxBucketS
       size: maxBucketSize,
     },
     aggs: {
-      max_value: {
-        max: { field: fullPath }
-      },
-      min_value: {
-        min: { field: fullPath }
+      stats: {
+        stats: { field: fullPath }
       },
       difference: {
         bucket_script: {
           script: 'params.max - params.min',
           buckets_path: {
-            min: 'min_value',
-            max: 'max_value'
+            min: 'stats.min',
+            max: 'stats.max'
           }
         }
       }
@@ -65,31 +63,7 @@ function nestedVertices(maxBucketSize) {
   };
 }
 
-function outerAggs(pipelineId, pipelineHash, maxBucketSize) {
-  const filteredAggs = {
-    events_duration: {
-      stats: {
-        field: 'logstash_stats.pipelines.events.duration_in_millis'
-      }
-    },
-    timebounds: {
-      reverse_nested: {},
-      aggs: {
-        first_seen: {
-          min: {
-            field: 'logstash_stats.timestamp'
-          }
-        },
-        last_seen: {
-          max: {
-            field: 'logstash_stats.timestamp'
-          }
-        }
-      }
-    },
-    vertices: nestedVertices(maxBucketSize)
-  };
-
+function createScopedAgg(pipelineId, pipelineHash, agg) {
   return {
     pipelines: {
       nested: { path: 'logstash_stats.pipelines' },
@@ -103,15 +77,88 @@ function outerAggs(pipelineId, pipelineHash, maxBucketSize) {
               ]
             }
           },
-          aggs: filteredAggs
+          aggs: agg
         }
       }
     }
   };
 }
 
-export async function getPipelineStatsAggregation(callWithRequest, req, logstashIndexPattern,
-  { clusterUuid, start, end, pipelineId, pipelineHash }) {
+function createTimeseriesAggs(pipelineId, pipelineHash, maxBucketSize, timeseriesInterval, lastTimeBucket) {
+  return {
+    by_time: {
+      composite: {
+        sources: [
+          {
+            time_bucket: {
+              date_histogram: {
+                field: 'logstash_stats.timestamp',
+                interval: timeseriesInterval + 's'
+              }
+            }
+          }
+        ],
+        after: {
+          time_bucket: lastTimeBucket
+        }
+      },
+      aggs: createScopedAgg(pipelineId, pipelineHash, {
+        vertices: nestedVertices(maxBucketSize)
+      })
+    }
+  };
+}
+
+function createDurationAggs(pipelineId, pipelineHash) {
+  return createScopedAgg(pipelineId, pipelineHash, {
+    events_duration: {
+      stats: {
+        field: 'logstash_stats.pipelines.events.duration_in_millis'
+      }
+    }
+  });
+}
+
+function fetchPipelineTimeseriesStats(query, logstashIndexPattern, pipelineId, version,
+  maxBucketSize, timeseriesInterval, callWithRequest, req, lastTimeBucket = 0) {
+  const params = {
+    index: logstashIndexPattern,
+    size: 0,
+    filterPath: [
+      'aggregations.by_time.buckets.key.time_bucket',
+      'aggregations.by_time.buckets.pipelines.scoped.vertices.vertex_id.buckets.key',
+      'aggregations.by_time.buckets.pipelines.scoped.vertices.vertex_id.buckets.events_in_total',
+      'aggregations.by_time.buckets.pipelines.scoped.vertices.vertex_id.buckets.events_out_total',
+      'aggregations.by_time.buckets.pipelines.scoped.vertices.vertex_id.buckets.duration_in_millis_total',
+      'aggregations.by_time.buckets.pipelines.scoped.vertices.vertex_id.buckets.queue_push_duration_in_millis_total'
+    ],
+    body: {
+      query: query,
+      aggs: createTimeseriesAggs(pipelineId, version.hash, maxBucketSize, timeseriesInterval, lastTimeBucket)
+    }
+  };
+
+  return callWithRequest(req, 'search', params);
+}
+
+function fetchPipelineDurationStats(query, logstashIndexPattern, pipelineId, version, callWithRequest, req) {
+  const params = {
+    index: logstashIndexPattern,
+    size: 0,
+    filterPath: [
+      'aggregations.pipelines.scoped.events_duration'
+    ],
+    body: {
+      query: query,
+      aggs: createDurationAggs(pipelineId, version.hash)
+    }
+  };
+
+  return callWithRequest(req, 'search', params);
+}
+
+export async function getPipelineStatsAggregation(callWithRequest, req, logstashIndexPattern, timeseriesInterval,
+  { clusterUuid, start, end, pipelineId, version }) {
   const filters = [
     {
       nested: {
@@ -119,7 +166,7 @@ export async function getPipelineStatsAggregation(callWithRequest, req, logstash
         query: {
           bool: {
             must: [
-              { term: { 'logstash_stats.pipelines.hash': pipelineHash } },
+              { term: { 'logstash_stats.pipelines.hash': version.hash } },
               { term: { 'logstash_stats.pipelines.id': pipelineId } },
             ]
           }
@@ -139,17 +186,27 @@ export async function getPipelineStatsAggregation(callWithRequest, req, logstash
 
   const config = req.server.config();
 
-  const params = {
-    index: logstashIndexPattern,
-    size: 0,
-    body: {
-      query: query,
-      aggs: outerAggs(pipelineId, pipelineHash, config.get('xpack.monitoring.max_bucket_size'))
-    }
+  const timeBuckets = [];
+  let paginatedTimeBuckets;
+  do {
+    const lastTimeBucket = get(last(paginatedTimeBuckets), 'key.time_bucket', 0);
+    const paginatedResponse = await fetchPipelineTimeseriesStats(query, logstashIndexPattern, pipelineId, version,
+      config.get('xpack.monitoring.max_bucket_size'), timeseriesInterval, callWithRequest, req, lastTimeBucket);
+
+    paginatedTimeBuckets = get(paginatedResponse, 'aggregations.by_time.buckets', []);
+    timeBuckets.push(...paginatedTimeBuckets);
+  } while (paginatedTimeBuckets.length > 0);
+
+  // Drop the last bucket if it is partial (spoiler alert: this will be the case most of the time)
+  const lastTimeBucket = last(timeBuckets);
+  if (version.lastSeen - lastTimeBucket.key.time_bucket < timeseriesInterval * 1000) {
+    timeBuckets.pop();
+  }
+
+  const durationStats = await fetchPipelineDurationStats(query, logstashIndexPattern, pipelineId, version, callWithRequest, req);
+
+  return {
+    timeseriesStats: timeBuckets,
+    durationStats: get(durationStats, 'aggregations.pipelines.scoped.events_duration')
   };
-
-  const resp = await callWithRequest(req, 'search', params);
-
-  // Return null if doc not found
-  return resp;
 }

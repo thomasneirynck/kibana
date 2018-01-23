@@ -4,8 +4,11 @@ import { shallow } from 'enzyme';
 
 describe('DetailDrawer component', () => {
   let onHide;
+  let timeseriesTooltipXValueFormatter;
+
   beforeEach(() => {
     onHide = jest.fn();
+    timeseriesTooltipXValueFormatter = jest.fn();
   });
 
   test('shows vertex title', () => {
@@ -49,17 +52,54 @@ describe('DetailDrawer component', () => {
           hasExplicitId: true,
           id: 'parse_apache_logline',
           stats: {
-            events_in: 200,
-            events_out: 200,
-            millis_per_event: 0.21
+            events_in: {
+              data: [
+                [ 1516131120000, 200 ],
+                [ 1516131180000, 203 ]
+              ],
+              timeRange: {
+                min: 1516131138639,
+                max: 1516135440463
+              }
+            },
+            events_out: {
+              data: [
+                [ 1516131120000, 199 ],
+                [ 1516131180000, 200 ]
+              ],
+              timeRange: {
+                min: 1516131138639,
+                max: 1516135440463
+              }
+            },
+            millis_per_event: {
+              data: [
+                [ 1516131120000, 0.21 ],
+                [ 1516131180000, 0.23 ]
+              ],
+              timeRange: {
+                min: 1516131138639,
+                max: 1516135440463
+              }
+            }
           },
-          eventsPerSecond: 32
+          eventsPerSecond: {
+            data: [
+              [ 1516131120000, 32 ],
+              [ 1516131180000, 36 ]
+            ],
+            timeRange: {
+              min: 1516131138639,
+              max: 1516135440463
+            }
+          }
         };
 
         const component = (
           <DetailDrawer
             vertex={vertex}
             onHide={onHide}
+            timeseriesTooltipXValueFormatter={timeseriesTooltipXValueFormatter}
           />
         );
         const renderedComponent = shallow(component);
@@ -76,17 +116,54 @@ describe('DetailDrawer component', () => {
           hasExplicitId: false,
           id: 'foobarbazqux',
           stats: {
-            events_in: 200,
-            events_out: 200,
-            millis_per_event: 0.21
+            events_in: {
+              data: [
+                [ 1516131120000, 200 ],
+                [ 1516131180000, 203 ]
+              ],
+              timeRange: {
+                min: 1516131138639,
+                max: 1516135440463
+              }
+            },
+            events_out: {
+              data: [
+                [ 1516131120000, 199 ],
+                [ 1516131180000, 200 ]
+              ],
+              timeRange: {
+                min: 1516131138639,
+                max: 1516135440463
+              }
+            },
+            millis_per_event: {
+              data: [
+                [ 1516131120000, 0.21 ],
+                [ 1516131180000, 0.23 ]
+              ],
+              timeRange: {
+                min: 1516131138639,
+                max: 1516135440463
+              }
+            }
           },
-          eventsPerSecond: 32
+          eventsPerSecond: {
+            data: [
+              [ 1516131120000, 32 ],
+              [ 1516131180000, 36 ]
+            ],
+            timeRange: {
+              min: 1516131138639,
+              max: 1516135440463
+            }
+          }
         };
 
         const component = (
           <DetailDrawer
             vertex={vertex}
             onHide={onHide}
+            timeseriesTooltipXValueFormatter={timeseriesTooltipXValueFormatter}
           />
         );
         const renderedComponent = shallow(component);
@@ -109,6 +186,7 @@ describe('DetailDrawer component', () => {
         <DetailDrawer
           vertex={vertex}
           onHide={onHide}
+          timeseriesTooltipXValueFormatter={timeseriesTooltipXValueFormatter}
         />
       );
       const renderedComponent = shallow(component);
@@ -127,6 +205,7 @@ describe('DetailDrawer component', () => {
         <DetailDrawer
           vertex={vertex}
           onHide={onHide}
+          timeseriesTooltipXValueFormatter={timeseriesTooltipXValueFormatter}
         />
       );
       const renderedComponent = shallow(component);

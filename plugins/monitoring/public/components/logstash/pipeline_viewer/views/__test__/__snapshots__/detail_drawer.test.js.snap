@@ -142,7 +142,45 @@ exports[`DetailDrawer component Plugin vertices Plugin does not have explicit ID
               align="left"
               textOnly={true}
             >
-              0.21 ms/e
+              <div
+                className="lspvDetailDrawerSparklineContainer"
+              >
+                <Sparkline
+                  options={
+                    Object {
+                      "xaxis": Object {
+                        "max": 1516135440463,
+                        "min": 1516131138639,
+                      },
+                    }
+                  }
+                  series={
+                    Array [
+                      Array [
+                        1516131120000,
+                        0.21,
+                      ],
+                      Array [
+                        1516131180000,
+                        0.23,
+                      ],
+                    ]
+                  }
+                  tooltip={
+                    Object {
+                      "enabled": true,
+                      "xValueFormatter": [MockFunction],
+                      "yValueFormatter": [Function],
+                    }
+                  }
+                />
+              </div>
+            </EuiTableRowCell>
+            <EuiTableRowCell
+              align="left"
+              textOnly={true}
+            >
+              0.23 ms/e
             </EuiTableRowCell>
           </EuiTableRow>
           <EuiTableRow
@@ -158,7 +196,45 @@ exports[`DetailDrawer component Plugin vertices Plugin does not have explicit ID
               align="left"
               textOnly={true}
             >
-              32 e/s
+              <div
+                className="lspvDetailDrawerSparklineContainer"
+              >
+                <Sparkline
+                  options={
+                    Object {
+                      "xaxis": Object {
+                        "max": 1516135440463,
+                        "min": 1516131138639,
+                      },
+                    }
+                  }
+                  series={
+                    Array [
+                      Array [
+                        1516131120000,
+                        32,
+                      ],
+                      Array [
+                        1516131180000,
+                        36,
+                      ],
+                    ]
+                  }
+                  tooltip={
+                    Object {
+                      "enabled": true,
+                      "xValueFormatter": [MockFunction],
+                      "yValueFormatter": [Function],
+                    }
+                  }
+                />
+              </div>
+            </EuiTableRowCell>
+            <EuiTableRowCell
+              align="left"
+              textOnly={true}
+            >
+              N/A
             </EuiTableRowCell>
           </EuiTableRow>
           <EuiTableRow
@@ -174,7 +250,45 @@ exports[`DetailDrawer component Plugin vertices Plugin does not have explicit ID
               align="left"
               textOnly={true}
             >
-              200 events
+              <div
+                className="lspvDetailDrawerSparklineContainer"
+              >
+                <Sparkline
+                  options={
+                    Object {
+                      "xaxis": Object {
+                        "max": 1516135440463,
+                        "min": 1516131138639,
+                      },
+                    }
+                  }
+                  series={
+                    Array [
+                      Array [
+                        1516131120000,
+                        200,
+                      ],
+                      Array [
+                        1516131180000,
+                        203,
+                      ],
+                    ]
+                  }
+                  tooltip={
+                    Object {
+                      "enabled": true,
+                      "xValueFormatter": [MockFunction],
+                      "yValueFormatter": [Function],
+                    }
+                  }
+                />
+              </div>
+            </EuiTableRowCell>
+            <EuiTableRowCell
+              align="left"
+              textOnly={true}
+            >
+              203 events
             </EuiTableRowCell>
           </EuiTableRow>
           <EuiTableRow
@@ -185,6 +299,44 @@ exports[`DetailDrawer component Plugin vertices Plugin does not have explicit ID
               textOnly={true}
             >
               Events Emitted
+            </EuiTableRowCell>
+            <EuiTableRowCell
+              align="left"
+              textOnly={true}
+            >
+              <div
+                className="lspvDetailDrawerSparklineContainer"
+              >
+                <Sparkline
+                  options={
+                    Object {
+                      "xaxis": Object {
+                        "max": 1516135440463,
+                        "min": 1516131138639,
+                      },
+                    }
+                  }
+                  series={
+                    Array [
+                      Array [
+                        1516131120000,
+                        199,
+                      ],
+                      Array [
+                        1516131180000,
+                        200,
+                      ],
+                    ]
+                  }
+                  tooltip={
+                    Object {
+                      "enabled": true,
+                      "xValueFormatter": [MockFunction],
+                      "yValueFormatter": [Function],
+                    }
+                  }
+                />
+              </div>
             </EuiTableRowCell>
             <EuiTableRowCell
               align="left"
@@ -269,7 +421,45 @@ exports[`DetailDrawer component Plugin vertices Plugin has explicit ID shows bas
               align="left"
               textOnly={true}
             >
-              0.21 ms/e
+              <div
+                className="lspvDetailDrawerSparklineContainer"
+              >
+                <Sparkline
+                  options={
+                    Object {
+                      "xaxis": Object {
+                        "max": 1516135440463,
+                        "min": 1516131138639,
+                      },
+                    }
+                  }
+                  series={
+                    Array [
+                      Array [
+                        1516131120000,
+                        0.21,
+                      ],
+                      Array [
+                        1516131180000,
+                        0.23,
+                      ],
+                    ]
+                  }
+                  tooltip={
+                    Object {
+                      "enabled": true,
+                      "xValueFormatter": [MockFunction],
+                      "yValueFormatter": [Function],
+                    }
+                  }
+                />
+              </div>
+            </EuiTableRowCell>
+            <EuiTableRowCell
+              align="left"
+              textOnly={true}
+            >
+              0.23 ms/e
             </EuiTableRowCell>
           </EuiTableRow>
           <EuiTableRow
@@ -285,7 +475,45 @@ exports[`DetailDrawer component Plugin vertices Plugin has explicit ID shows bas
               align="left"
               textOnly={true}
             >
-              32 e/s
+              <div
+                className="lspvDetailDrawerSparklineContainer"
+              >
+                <Sparkline
+                  options={
+                    Object {
+                      "xaxis": Object {
+                        "max": 1516135440463,
+                        "min": 1516131138639,
+                      },
+                    }
+                  }
+                  series={
+                    Array [
+                      Array [
+                        1516131120000,
+                        32,
+                      ],
+                      Array [
+                        1516131180000,
+                        36,
+                      ],
+                    ]
+                  }
+                  tooltip={
+                    Object {
+                      "enabled": true,
+                      "xValueFormatter": [MockFunction],
+                      "yValueFormatter": [Function],
+                    }
+                  }
+                />
+              </div>
+            </EuiTableRowCell>
+            <EuiTableRowCell
+              align="left"
+              textOnly={true}
+            >
+              N/A
             </EuiTableRowCell>
           </EuiTableRow>
           <EuiTableRow
@@ -301,7 +529,45 @@ exports[`DetailDrawer component Plugin vertices Plugin has explicit ID shows bas
               align="left"
               textOnly={true}
             >
-              200 events
+              <div
+                className="lspvDetailDrawerSparklineContainer"
+              >
+                <Sparkline
+                  options={
+                    Object {
+                      "xaxis": Object {
+                        "max": 1516135440463,
+                        "min": 1516131138639,
+                      },
+                    }
+                  }
+                  series={
+                    Array [
+                      Array [
+                        1516131120000,
+                        200,
+                      ],
+                      Array [
+                        1516131180000,
+                        203,
+                      ],
+                    ]
+                  }
+                  tooltip={
+                    Object {
+                      "enabled": true,
+                      "xValueFormatter": [MockFunction],
+                      "yValueFormatter": [Function],
+                    }
+                  }
+                />
+              </div>
+            </EuiTableRowCell>
+            <EuiTableRowCell
+              align="left"
+              textOnly={true}
+            >
+              203 events
             </EuiTableRowCell>
           </EuiTableRow>
           <EuiTableRow
@@ -312,6 +578,44 @@ exports[`DetailDrawer component Plugin vertices Plugin has explicit ID shows bas
               textOnly={true}
             >
               Events Emitted
+            </EuiTableRowCell>
+            <EuiTableRowCell
+              align="left"
+              textOnly={true}
+            >
+              <div
+                className="lspvDetailDrawerSparklineContainer"
+              >
+                <Sparkline
+                  options={
+                    Object {
+                      "xaxis": Object {
+                        "max": 1516135440463,
+                        "min": 1516131138639,
+                      },
+                    }
+                  }
+                  series={
+                    Array [
+                      Array [
+                        1516131120000,
+                        199,
+                      ],
+                      Array [
+                        1516131180000,
+                        200,
+                      ],
+                    ]
+                  }
+                  tooltip={
+                    Object {
+                      "enabled": true,
+                      "xValueFormatter": [MockFunction],
+                      "yValueFormatter": [Function],
+                    }
+                  }
+                />
+              </div>
             </EuiTableRowCell>
             <EuiTableRowCell
               align="left"

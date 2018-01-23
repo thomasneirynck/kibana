@@ -170,7 +170,7 @@ export function enterQueueVertex(queueVertex) {
 
 export function updateInputVertex(inputs) {
   inputs.selectAll('[data-lspv-events-per-second]')
-    .text(d => formatMetric(d.vertex.eventsPerSecond, '0.[00]a', 'e/s'));
+    .text(d => formatMetric(d.vertex.latestEventsPerSecond, '0.[00]a', 'e/s'));
 }
 
 export function updateProcessorVertex(processors) {
@@ -186,7 +186,7 @@ export function updateProcessorVertex(processors) {
     });
 
   processors.selectAll('[data-lspv-per-event-duration-in-millis]')
-    .text(d => formatMetric(d.vertex.millisPerEvent, '0.[00]a', 'ms/e'));
+    .text(d => formatMetric(d.vertex.latestMillisPerEvent, '0.[00]a', 'ms/e'));
 
   processors.selectAll('[data-lspv-per-event-duration-in-millis-bg]')
     .attr('fill', d => {
@@ -194,5 +194,5 @@ export function updateProcessorVertex(processors) {
     });
 
   processors.selectAll('[data-lspv-events-per-second]')
-    .text(d => formatMetric(d.vertex.eventsPerSecond, '0.[00]a', 'e/s'));
+    .text(d => formatMetric(d.vertex.latestEventsPerSecond, '0.[00]a', 'e/s'));
 }

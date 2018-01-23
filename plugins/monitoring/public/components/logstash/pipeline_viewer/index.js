@@ -37,6 +37,7 @@ export class PipelineViewer extends React.Component {
       <DetailDrawer
         vertex={this.state.detailDrawer.vertex}
         onHide={this.onHideVertexDetails}
+        timeseriesTooltipXValueFormatter={this.props.timeseriesTooltipXValueFormatter}
       />
     );
   }
