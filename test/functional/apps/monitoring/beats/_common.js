@@ -1,3 +1,7 @@
+/*
+ * TODO extract this helper so it can be used for all Monitoring test
+ * https://github.com/elastic/x-pack-kibana/pull/4247
+ */
 export const getLifecycleMethods = (getService, getPageObjects) => ({
 
   async setup()  {
@@ -9,7 +13,10 @@ export const getLifecycleMethods = (getService, getPageObjects) => ({
     remote.setWindowSize(1600, 1000);
 
     await esArchiver.load('monitoring/beats');
-    await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
+    await kibanaServer.uiSettings.replace({
+      'dateFormat:tz': 'UTC',
+      'xPackMonitoring:showBanner': false // provide extra height for the page, avoid flaky link clicking
+    });
 
     await PageObjects.monitoring.navigateTo();
     await PageObjects.monitoring.getNoDataMessage();
