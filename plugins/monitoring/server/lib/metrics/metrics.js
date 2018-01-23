@@ -458,7 +458,7 @@ const metricInstances = {
     description: 'Percentage of CPU usage for the Elasticsearch process.',
     type: 'node',
     format: LARGE_FLOAT,
-    metricAgg: 'avg',
+    metricAgg: 'max',
     units: '%'
   }),
   'node_segment_count': new ElasticsearchMetric({
@@ -1085,7 +1085,7 @@ const metricInstances = {
     label: 'CPU Utilization',
     description: 'Percentage of CPU usage reported by the OS (100% is the max).',
     format: LARGE_FLOAT,
-    metricAgg: 'avg',
+    metricAgg: 'max',
     units: '%'
   }),
   'logstash_node_cgroup_periods': new LogstashMetric({
@@ -1161,7 +1161,7 @@ const metricInstances = {
   'logstash_queue_events_count': new LogstashMetric({
     field: 'logstash_stats.queue.events_count',
     label: 'Events Queued',
-    description: 'Number of events in the persisted queue waiting to be processed by the filter and output stages.',
+    description: 'Average number of events in the persistent queue waiting to be processed by the filter and output stages.',
     format: LARGE_FLOAT,
     metricAgg: 'avg',
     units: ''
