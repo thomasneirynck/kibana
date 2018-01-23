@@ -263,7 +263,8 @@ module
 
         const prefix = $scope.formConfig.jobLabel;
         const indexPatternName = $scope.formConfig.indexPattern.title;
-        ml.setupDataRecognizerConfig({ moduleId, prefix, indexPatternName })
+        const groups = $scope.formConfig.jobGroups;
+        ml.setupDataRecognizerConfig({ moduleId, prefix, groups, indexPatternName })
           .then((resp) => {
             if (resp.jobs) {
               $scope.formConfig.jobs.forEach((job) => {

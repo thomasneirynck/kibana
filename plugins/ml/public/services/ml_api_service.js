@@ -236,6 +236,7 @@ module.service('ml', function (prlHttpService) {
   this.setupDataRecognizerConfig = function (obj) {
     const data = pick(obj, [
       'prefix',
+      'groups',
       'indexPatternName'
     ]);
 
