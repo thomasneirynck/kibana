@@ -112,14 +112,8 @@ checkout_sibling "x-pack-elasticsearch" "${PARENT_DIR}/elasticsearch-extra/x-pac
 # back to base directory
 cd "$BASE_DIR"
 
-# run kibana's ci setup script in kibana repo
 export CACHE_DIR="${PARENT_DIR}/.cache"
 source "${KIBANA_DIR}/src/dev/ci_setup/setup.sh"
-
-cd "$KIBANA_DIR"
-# install kibana deps
-yarn --frozen-lockfile
-cd -
 
 # output the commands
 set -xuf

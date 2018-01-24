@@ -6,7 +6,7 @@ An awesome Kibana reporting plugin
 
 Assuming you've checked out x-plugins next to kibana...
 
-- Run `yarn`
+- Run `yarn kbn bootstrap`
 - Run `yarn start` to watch for and sync files on change
 - Open a new terminal to run Kibana - use `yarn start` to launch it in dev mode
   - Kibana will automatically restart as files are synced

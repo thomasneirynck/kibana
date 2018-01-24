@@ -74,11 +74,14 @@ in the same folder, e.g.:
 
 Install the latest version of [yarn](https://yarnpkg.com/en/docs/install).
 
-Install dependencies:
+Bootstrap and install dependencies:
 
 ```sh
-yarn
+yarn kbn bootstrap
 ```
+
+You can also run `yarn kbn` to see the other available commands. For more info
+about this tool, see https://github.com/elastic/kibana/tree/master/packages/kbn-build.
 
 #### Running in development
 
@@ -239,7 +242,7 @@ That's thanks to the binary Phantom downloads that have to happen, and Bitbucket
 
 ## Building and Packaging
 
-Make sure you have the dependencies installed by running `yarn`.
+Make sure you have the dependencies installed by running `yarn kbn bootstrap`.
 
 Once complete, use `yarn build`. Output will be placed in the `build` path (it will be created).
 
@@ -249,7 +252,7 @@ If you'd like to get a zip package and a sha1 checksum file, use `yarn package`.
 
 ## Releasing
 
-Make sure you have the dependencies installed by running `yarn`.
+Make sure you have the dependencies installed by running `yarn kbn bootstrap`.
 
 Once complete, use `yarn release`. Build and package output will be placed in the `build` and `target` paths respectively (they will be created).
 

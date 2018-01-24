@@ -3,6 +3,7 @@
   "version": "7.0.0-alpha1",
   "author": "Elastic",
   "scripts": {
+    "kbn": "node ../../kibana/scripts/kbn",
     "start": "gulp dev",
     "build": "gulp build",
     "lint": "gulp lint",
@@ -15,9 +16,9 @@
     "precommit": "gulp lint-staged"
   },
   "devDependencies": {
-    "@elastic/eslint-config-kibana": "0.15.0",
+    "@elastic/eslint-config-kibana": "link:../../kibana/packages/eslint-config-kibana",
     "@elastic/eslint-import-resolver-kibana": "2.0.0",
-    "@elastic/eslint-plugin-kibana-custom": "1.1.0",
+    "@elastic/eslint-plugin-kibana-custom": "link:../../kibana/packages/eslint-plugin-kibana-custom",
     "@elastic/eui": "0.0.13",
     "@elastic/numeral": "2.2.1",
     "@elastic/plugin-helpers": "9.0.0",
