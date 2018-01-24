@@ -1,9 +1,8 @@
 import { get, partialRight } from 'lodash';
 import moment from 'moment';
 import { checkParam } from '../error_missing_required';
-import { metrics } from '../metrics';
+import { metrics, serializeMetric } from '../metrics';
 import { createQuery } from '../create_query.js';
-import { pickMetricFields } from '../pick_metric_fields';
 import { formatTimestampToDuration } from '../../../common';
 import { CALCULATE_DURATION_UNTIL } from '../../../common/constants';
 
@@ -185,7 +184,7 @@ function handleSeries(metric, min, max, bucketSizeInSeconds, response) {
   return {
     bucket_size: formatBucketSize(bucketSizeInSeconds),
     timeRange: { min, max },
-    metric: pickMetricFields(metric),
+    metric: serializeMetric(metric),
     data
   };
 }

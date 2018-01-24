@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import { filterPartialBuckets } from '../filter_partial_buckets';
-import { pickMetricFields } from '../pick_metric_fields';
-import { metrics } from '../metrics';
+import { metrics, serializeMetric } from '../metrics';
 
 /*
  * The X/Y data are useful for calculating the slope
@@ -90,7 +89,7 @@ function reduceMetrics(options) {
       const buckets = item[metricName].buckets;
       const { minVal, maxVal, slope, lastVal } = metricCalculator(buckets, metric);
       return {
-        metric: pickMetricFields(metric),
+        metric: serializeMetric(metric),
         min: minVal,
         max: maxVal,
         slope: slope,

@@ -73,6 +73,9 @@ describe('getMetrics and getSeries', () => {
             field: 'node_stats.process.cpu.percent',
             label: 'CPU Utilization',
             format: '0,0.[00]',
+            hasCalculation: false,
+            isDerivative: false,
+            metricAgg: 'max',
             units: '%'
           },
           data: nonDerivMetricsResults
@@ -100,6 +103,9 @@ describe('getMetrics and getSeries', () => {
             label: 'Total Shards',
             title: 'Search Rate',
             format: '0,0.[00]',
+            hasCalculation: false,
+            isDerivative: true,
+            metricAgg: 'max',
             units: '/s'
           },
           data: derivMetricsResults
@@ -126,6 +132,9 @@ describe('getMetrics and getSeries', () => {
             field: 'indices_stats._all.primaries.indexing.index_total',
             label: 'Indexing Latency',
             format: '0,0.[00]',
+            hasCalculation: true,
+            isDerivative: false,
+            metricAgg: 'sum',
             units: 'ms'
           },
           data: aggMetricsResults
@@ -161,6 +170,9 @@ describe('getMetrics and getSeries', () => {
             label: 'Lucene Total',
             title: 'Index Memory - Lucene 1',
             format: '0.0 b',
+            hasCalculation: false,
+            isDerivative: false,
+            metricAgg: 'max',
             units: 'B'
           },
           data: nonDerivMetricsResults
@@ -176,6 +188,9 @@ describe('getMetrics and getSeries', () => {
             label: 'Stored Fields',
             title: 'Index Memory',
             format: '0.0 b',
+            hasCalculation: false,
+            isDerivative: false,
+            metricAgg: 'max',
             units: 'B'
           },
           data: nonDerivMetricsResults
@@ -191,6 +206,9 @@ describe('getMetrics and getSeries', () => {
             label: 'Doc Values',
             title: 'Index Memory',
             format: '0.0 b',
+            hasCalculation: false,
+            isDerivative: false,
+            metricAgg: 'max',
             units: 'B'
           },
           data: nonDerivMetricsResults
@@ -206,6 +224,9 @@ describe('getMetrics and getSeries', () => {
             label: 'Norms',
             title: 'Index Memory',
             format: '0.0 b',
+            hasCalculation: false,
+            isDerivative: false,
+            metricAgg: 'max',
             units: 'B'
           },
           data: nonDerivMetricsResults
@@ -231,6 +252,9 @@ describe('getMetrics and getSeries', () => {
             label: 'Max',
             title: 'Client Response Time',
             format: '0.[00]',
+            hasCalculation: false,
+            isDerivative: false,
+            metricAgg: 'max',
             units: 'ms'
           },
           data: nonDerivMetricsResults
