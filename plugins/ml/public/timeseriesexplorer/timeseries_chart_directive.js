@@ -26,7 +26,7 @@ import moment from 'moment';
 import numeral from 'numeral';
 import 'ui/timefilter';
 
-import { ResizeCheckerProvider } from 'ui/resize_checker';
+import { ResizeChecker } from 'ui/resize_checker';
 
 import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
 import {
@@ -116,7 +116,6 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
     });
 
     // Redraw the charts when the container is resize.
-    const ResizeChecker = Private(ResizeCheckerProvider);
     const resizeChecker = new ResizeChecker(angular.element('.ml-timeseries-chart'));
     resizeChecker.on('resize', () => {
       render();
