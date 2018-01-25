@@ -96,7 +96,7 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
 
     function cellClick(cellsToSelect, { laneLabels, bucketScore, times }) {
       if (cellsToSelect.length > 1 || bucketScore > 0) {
-        selectCell(cellsToSelect, laneLabels, times, bucketScore);
+        selectCell(cellsToSelect, laneLabels, times, bucketScore, true);
       } else {
         clearSelection();
       }
@@ -347,7 +347,7 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
 
     }
 
-    function selectCell(cellsToSelect, laneLabels, times, bucketScore) {
+    function selectCell(cellsToSelect, laneLabels, times, bucketScore, checkEqualSelection = false) {
       $('.lane-label', '.ml-explorer-swimlane').addClass('lane-label-masked');
       $('.sl-cell-inner,.sl-cell-inner-dragselect', '.ml-explorer-swimlane').addClass('sl-cell-inner-masked');
       $('.sl-cell-inner.sl-cell-inner-selected,.sl-cell-inner-dragselect.sl-cell-inner-selected',
@@ -375,7 +375,7 @@ module.directive('mlExplorerSwimlane', function ($compile, Private, mlExplorerDa
       // comparison because we cannot simply compare to "scope.appState.mlExplorerSwimlane"
       // since it also includes the "viewBy" attribute which might differ depending
       // on whether the overall or viewby swimlane was selected.
-      if (_.isEqual(
+      if (checkEqualSelection && _.isEqual(
         {
           selectedType: scope.appState.mlExplorerSwimlane.selectedType,
           selectedLanes: scope.appState.mlExplorerSwimlane.selectedLanes,
