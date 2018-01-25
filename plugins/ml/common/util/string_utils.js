@@ -13,14 +13,13 @@
  * strictly prohibited.
  */
 
-import './styles/main.less';
-import './jobs_list_controller';
-import './edit_job_modal';
-import './job_timepicker_modal';
-import './delete_job_modal';
-import './create_watch_modal';
-import './validate_job_modal';
-import './expanded_row';
-import 'ui/directives/confirm_click';
-import 'plugins/ml/components/paginated_table';
-import 'plugins/ml/services/notification_service';
+
+// A simple template renderer, it replaces mustache/angular style {{...}} tags with
+// the values provided via the data object
+export function renderTemplate(str, data) {
+  str.match(/{{(.*?)}}/g).forEach(v => {
+    str = str.replace(v, data[v.replace(/{{|}}/g, '')]);
+  });
+  return str;
+}
+

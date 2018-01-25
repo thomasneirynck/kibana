@@ -595,6 +595,25 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       });
   };
 
+  this.validateJob = function (job) {
+    // return the promise chain
+    return ml.validateJob(job)
+      .then((messages) => {
+        console.log('validate job', messages);
+        return { success: true, messages };
+      }).catch((err) => {
+        msgs.error('Could not validate job');
+        console.log('validate job', err);
+        return {
+          success: false,
+          messages: [{
+            status: 'error',
+            text: err.message
+          }]
+        };
+      });
+  };
+
   // find a job based on the id
   this.getJob = function (jobId) {
     const job = _.find(jobs, (j) => {

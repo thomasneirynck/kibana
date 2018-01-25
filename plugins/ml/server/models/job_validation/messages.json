@@ -1,0 +1,9 @@
+{
+  "over_field_low_cardinality": {
+    "text": "Cardinality of over_field \"{{fieldName}}\" is low and therefore less suitable for population analysis.",
+    "url": "https://www.elastic.co/blog/sizing-machine-learning-with-elasticsearch"
+  },
+  "over_field_not_aggregatable": {
+    "text": "over_field \"{{fieldName}}\" is not an aggregatable field."
+  }
+}

@@ -33,7 +33,8 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
     scope: {
       currentTab: '=',
       jobAudit: '=',
-      closeJob: '='
+      closeJob: '=',
+      validateJob: '='
     },
     template,
     link: function ($scope, $element) {

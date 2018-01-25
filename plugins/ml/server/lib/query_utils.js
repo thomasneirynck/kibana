@@ -20,15 +20,18 @@
 // Builds the base filter criteria used in queries,
 // adding criteria for the time range and an optional query.
 export function buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query) {
-  const filterCriteria = [{
-    range: {
-      [timeFieldName]: {
-        gte: earliestMs,
-        lte: latestMs,
-        format: 'epoch_millis'
+  const filterCriteria = [];
+  if (timeFieldName && earliestMs && latestMs) {
+    filterCriteria.push({
+      range: {
+        [timeFieldName]: {
+          gte: earliestMs,
+          lte: latestMs,
+          format: 'epoch_millis'
+        }
       }
-    }
-  }];
+    });
+  }
 
   if (query) {
     filterCriteria.push(query);

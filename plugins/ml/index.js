@@ -20,6 +20,7 @@ import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 import { jobRoutes } from './server/routes/anomaly_detectors';
 import { dataFeedRoutes } from './server/routes/datafeeds';
 import { indicesRoutes } from './server/routes/indices';
+import { jobValidationRoutes } from './server/routes/job_validation';
 import { notificationRoutes } from './server/routes/notification_settings';
 import { systemRoutes } from './server/routes/system';
 import { dataRecognizer } from './server/routes/modules';
@@ -85,6 +86,7 @@ export const ml = (kibana) => {
       jobRoutes(server, commonRouteConfig);
       dataFeedRoutes(server, commonRouteConfig);
       indicesRoutes(server, commonRouteConfig);
+      jobValidationRoutes(server, commonRouteConfig);
       notificationRoutes(server, commonRouteConfig);
       systemRoutes(server, commonRouteConfig);
       dataRecognizer(server, commonRouteConfig);

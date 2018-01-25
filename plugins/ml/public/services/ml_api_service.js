@@ -89,6 +89,14 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
+  this.validateJob = function (obj) {
+    return http.request({
+      url: `${basePath}/validate/job`,
+      method: 'POST',
+      data: obj
+    });
+  };
+
   this.datafeeds = function (obj) {
     const datafeedId = (obj && obj.datafeedId) ? `/${obj.datafeedId}` : '';
     return http.request({

@@ -32,6 +32,7 @@ import template from './jobs_list.html';
 import deleteJobTemplate from 'plugins/ml/jobs/jobs_list/delete_job_modal/delete_job_modal.html';
 import editJobTemplate from 'plugins/ml/jobs/jobs_list/edit_job_modal/edit_job_modal.html';
 import createWatchTemplate from 'plugins/ml/jobs/jobs_list/create_watch_modal/create_watch_modal.html';
+import validateJobTemplate from 'plugins/ml/jobs/jobs_list/validate_job_modal/validate_job_modal.html';
 
 uiRoutes
   .when('/jobs/?', {
@@ -153,6 +154,11 @@ module.controller('MlJobsList',
         });
     };
 
+    $scope.validateJob = function (job) {
+      mlJobService.validateJob(job).then((resp) => {
+        openValidateJobWindow({ job, resp });
+      });
+    };
 
     $scope.copyToClipboard = function (job) {
       const success = mlClipboardService.copy(angular.toJson(job));
@@ -251,7 +257,12 @@ module.controller('MlJobsList',
         // function called when row is opened for the first time
           if (rowScope.$expandElement &&
            rowScope.$expandElement.children().length === 0) {
-            const $el = $('<ml-job-list-expanded-row>', { 'current-tab': 'currentTab', 'job-audit': 'jobAudit', 'close-job': 'closeJob'  });
+            const $el = $('<ml-job-list-expanded-row>', {
+              'current-tab': 'currentTab',
+              'job-audit': 'jobAudit',
+              'close-job': 'closeJob',
+              'validate-job': 'validateJob'
+            });
             $el.appendTo(this.$expandElement);
             $compile($el)(this);
           }
@@ -531,6 +542,24 @@ module.controller('MlJobsList',
         });
     }
 
+
+    // create modal dialog for job validation messages
+    function openValidateJobWindow({ job, resp }) {
+      $modal.open({
+        template: validateJobTemplate,
+        controller: 'MlValidateJobModal',
+        backdrop: 'static',
+        keyboard: false,
+        resolve: {
+          params: function () {
+            return {
+              job,
+              resp
+            };
+          }
+        }
+      });
+    }
 
     // create modal dialog for editing job descriptions
     function openEditJobWindow(job) {

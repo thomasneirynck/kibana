@@ -38,14 +38,22 @@
            ng-attr-tooltip="{{ui.getCloseJobTooltip()}}"
            data-toggle="tooltip"
           >
+            <button
+              ng-click="closeJob(job)"
+              ng-disabled="ui.closeJobDisabled()===true"
+              class="kuiButton kuiButton--primary"
+              aria-label="Close job">
+              Close Job
+            </button>
+          </span>
+          <!--
           <button
-            ng-click="closeJob(job)"
-            ng-disabled="ui.closeJobDisabled()===true"
+            ng-click="validateJob(job)"
             class="kuiButton kuiButton--primary"
-            aria-label="Close job">
-            Close Job
+            aria-label="Validate job">
+            Validate Job
           </button>
-        </span>
+          //-->
         </div>
       </div>
 
