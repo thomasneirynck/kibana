@@ -24,7 +24,6 @@ import _ from 'lodash';
 import d3 from 'd3';
 import angular from 'angular';
 import moment from 'moment';
-import numeral from 'numeral';
 
 import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
 import { drawLineChartDots, numTicksForDateFormat } from 'plugins/ml/util/chart_utils';
@@ -39,7 +38,8 @@ module.directive('mlExplorerChart', function (
   Private,
   formatValueFilter,
   mlChartTooltipService,
-  mlSelectSeverityService) {
+  mlSelectSeverityService,
+  mlFieldFormatService) {
 
   function link(scope, element) {
     console.log('ml-explorer-chart directive link series config:', scope.seriesConfig);
@@ -48,6 +48,7 @@ module.directive('mlExplorerChart', function (
       return;
     }
     const config = scope.seriesConfig;
+    const fieldFormat = mlFieldFormatService.getFieldFormat(config.jobId, config.detectorIndex);
 
     let vizWidth = 0;
     const chartHeight = 170;
@@ -115,7 +116,13 @@ module.directive('mlExplorerChart', function (
       tempLabelText.selectAll('text.temp.axis').data(lineChartYScale.ticks())
         .enter()
         .append('text')
-        .text(d => lineChartYScale.tickFormat()(d))
+        .text((d) => {
+          if (fieldFormat !== undefined) {
+            return fieldFormat.convert(d, 'text');
+          } else {
+            return lineChartYScale.tickFormat()(d);
+          }
+        })
         .each(function () {
           maxYAxisLabelWidth = Math.max(this.getBBox().width + yAxis.tickPadding(), maxYAxisLabelWidth);
         })
@@ -182,6 +189,11 @@ module.directive('mlExplorerChart', function (
         .innerTickSize(0)
         .outerTickSize(0)
         .tickPadding(10);
+
+      if (fieldFormat !== undefined) {
+        yAxis.tickFormat(d => fieldFormat.convert(d, 'text'));
+      }
+
       const axes = lineChartGroup.append('g');
 
       axes.append('g')
@@ -274,7 +286,6 @@ module.directive('mlExplorerChart', function (
       const formattedDate = moment(marker.date).format('MMMM Do YYYY, HH:mm');
       let contents = formattedDate + '<br/><hr/>';
 
-      // TODO - need better formatting for small decimals.
       if (_.has(marker, 'anomalyScore')) {
         const score = parseInt(marker.anomalyScore);
         const displayScore = (score > 0 ? score : '< 1');
@@ -282,10 +293,10 @@ module.directive('mlExplorerChart', function (
         if (_.has(marker, 'actual')) {
           // Display the record actual in preference to the chart value, which may be
           // different depending on the aggregation interval of the chart.
-          contents += ('<br/>actual: ' + formatValueFilter(marker.actual, config.functionDescription));
-          contents += ('<br/>typical: ' + formatValueFilter(marker.typical, config.functionDescription));
+          contents += (`<br/>actual: ${formatValueFilter(marker.actual, config.functionDescription, fieldFormat)}`);
+          contents += (`<br/>typical: ${formatValueFilter(marker.typical, config.functionDescription, fieldFormat)}`);
         } else {
-          contents += ('<br/>value: ' + numeral(marker.value).format('0,0.[00]'));
+          contents += (`<br/>value: ${formatValueFilter(marker.value, config.functionDescription, fieldFormat)}`);
           if (_.has(marker, 'byFieldName') && _.has(marker, 'numberOfCauses')) {
             const numberOfCauses = marker.numberOfCauses;
             const byFieldName = marker.byFieldName;
@@ -299,7 +310,7 @@ module.directive('mlExplorerChart', function (
           }
         }
       } else {
-        contents += ('value: ' + numeral(marker.value).format('0,0.[00]'));
+        contents += `value: ${formatValueFilter(marker.value, config.functionDescription, fieldFormat)}`;
       }
 
       if (_.has(marker, 'scheduledEvents')) {

@@ -23,7 +23,6 @@ import $ from 'jquery';
 import angular from 'angular';
 import d3 from 'd3';
 import moment from 'moment';
-import numeral from 'numeral';
 import 'ui/timefilter';
 
 import { ResizeChecker } from 'ui/resize_checker';
@@ -41,8 +40,15 @@ import 'plugins/ml/filters/format_value';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, timefilter,
-  mlAnomaliesTableService, formatValueFilter, mlChartTooltipService) {
+module.directive('mlTimeseriesChart', function (
+  $compile,
+  $timeout,
+  Private,
+  timefilter,
+  mlAnomaliesTableService,
+  mlFieldFormatService,
+  formatValueFilter,
+  mlChartTooltipService) {
 
   function link(scope, element) {
 
@@ -103,10 +109,13 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
 
     const TimeBuckets = Private(TimeBucketsProvider);
 
+    let fieldFormat = undefined;
+
     const brush = d3.svg.brush();
     let mask;
 
     scope.$on('render', () => {
+      fieldFormat = mlFieldFormatService.getFieldFormat(scope.selectedJob.job_id, scope.detectorIndex);
       render();
       drawContextChartSelection();
     });
@@ -189,8 +198,12 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       tempLabelText.selectAll('text.temp.axis').data(focusYScale.ticks())
         .enter()
         .append('text')
-        .text(function (d) {
-          return focusYScale.tickFormat()(d);
+        .text((d) => {
+          if (fieldFormat !== undefined) {
+            return fieldFormat.convert(d, 'text');
+          } else {
+            return focusYScale.tickFormat()(d);
+          }
         })
         .each(function () {
           maxYAxisLabelWidth = Math.max(this.getBBox().width + focusYAxis.tickPadding(), maxYAxisLabelWidth);
@@ -372,8 +385,12 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       // Calculate the y-axis domain.
       if (scope.focusChartData.length > 0 ||
         (scope.focusForecastData !== undefined && scope.focusForecastData.length > 0)) {
-        // Use default tick formatter.
-        focusYAxis.tickFormat(null);
+        if (fieldFormat !== undefined) {
+          focusYAxis.tickFormat(d => fieldFormat.convert(d, 'text'));
+        } else {
+          // Use default tick formatter.
+          focusYAxis.tickFormat(null);
+        }
 
         // Calculate the min/max of the metric data and the forecast data.
         let yMin = 0;
@@ -945,10 +962,10 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
           if (_.has(marker, 'actual')) {
             // Display the record actual in preference to the chart value, which may be
             // different depending on the aggregation interval of the chart.
-            contents += `actual: ${formatValueFilter(marker.actual, marker.function)}`;
-            contents += `<br/>typical: ${formatValueFilter(marker.typical, marker.function)}`;
+            contents += `actual: ${formatValueFilter(marker.actual, marker.function, fieldFormat)}`;
+            contents += `<br/>typical: ${formatValueFilter(marker.typical, marker.function, fieldFormat)}`;
           } else {
-            contents += `value: ${numeral(marker.value).format('0,0.[00]')}`;
+            contents += `value: ${formatValueFilter(marker.value, marker.function, fieldFormat)}`;
             if (_.has(marker, 'byFieldName') && _.has(marker, 'numberOfCauses')) {
               const numberOfCauses = marker.numberOfCauses;
               const byFieldName = marker.byFieldName;
@@ -962,21 +979,21 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
             }
           }
         } else {
-          contents += `value: ${numeral(marker.value).format('0,0.[00]')}`;
-          contents += `<br/>upper bounds: ${numeral(marker.upper).format('0,0.[00]')}`;
-          contents += `<br/>lower bounds: ${numeral(marker.lower).format('0,0.[00]')}`;
+          contents += `value: ${formatValueFilter(marker.value, marker.function, fieldFormat)}`;
+          contents += `<br/>upper bounds: ${formatValueFilter(marker.upper, marker.function, fieldFormat)}`;
+          contents += `<br/>lower bounds: ${formatValueFilter(marker.lower, marker.function, fieldFormat)}`;
         }
       } else {
         // TODO - need better formatting for small decimals.
         if (_.get(marker, 'isForecast', false) === true) {
-          contents += `prediction: ${numeral(marker.value).format('0,0.[00]')}`;
+          contents += `prediction: ${formatValueFilter(marker.value, marker.function, fieldFormat)}`;
         } else {
-          contents += `value: ${numeral(marker.value).format('0,0.[00]')}`;
+          contents += `value: ${formatValueFilter(marker.value, marker.function, fieldFormat)}`;
         }
 
         if (scope.modelPlotEnabled === true) {
-          contents += `<br/>upper bounds: ${numeral(marker.upper).format('0,0.[00]')}`;
-          contents += `<br/>lower bounds: ${numeral(marker.lower).format('0,0.[00]')}`;
+          contents += `<br/>upper bounds: ${formatValueFilter(marker.upper, marker.function, fieldFormat)}`;
+          contents += `<br/>lower bounds: ${formatValueFilter(marker.lower, marker.function, fieldFormat)}`;
         }
       }
 
@@ -1055,6 +1072,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
   return {
     scope: {
       selectedJob: '=',
+      detectorIndex: '=',
       modelPlotEnabled: '=',
       contextChartData: '=',
       contextForecastData: '=',

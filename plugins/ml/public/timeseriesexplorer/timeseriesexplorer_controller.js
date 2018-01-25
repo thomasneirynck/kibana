@@ -23,6 +23,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import 'plugins/ml/components/anomalies_table';
+import 'plugins/ml/services/field_format_service';
 import 'plugins/ml/services/forecast_service';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/results_service';
@@ -81,7 +82,8 @@ module.controller('MlTimeSeriesExplorerController', function (
   mlJobSelectService,
   mlTimeSeriesSearchService,
   mlForecastService,
-  mlAnomaliesTableService) {
+  mlAnomaliesTableService,
+  mlFieldFormatService) {
 
   $scope.timeFieldName = 'timestamp';
   timefilter.enableTimeRangeSelector();
@@ -745,7 +747,13 @@ module.controller('MlTimeSeriesExplorerController', function (
       $scope.forecastingDisabledMessage = '';
     }
 
-    $scope.refresh();
+    // Populate the map of jobs / detectors / field formatters for the selected IDs and refresh.
+    mlFieldFormatService.populateFormats([jobId], $route.current.locals.indexPatterns)
+      .finally(() => {
+        // Load the data - if the FieldFormats failed to populate
+        // the default formatting will be used for metric values.
+        $scope.refresh();
+      });
   }
 
   function calculateInitialFocusRange() {

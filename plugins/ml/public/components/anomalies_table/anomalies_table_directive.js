@@ -58,6 +58,7 @@ module.directive('mlAnomaliesTable', function (
   mlAnomaliesTableService,
   mlSelectIntervalService,
   mlSelectSeverityService,
+  mlFieldFormatService,
   formatValueFilter) {
 
   return {
@@ -761,6 +762,7 @@ module.directive('mlAnomaliesTable', function (
         const addDescription = _.findWhere(scope.table.columns, { 'title': 'description' });
         const addExamples = _.findWhere(scope.table.columns, { 'title': 'category examples' });
         const addLinks = _.findWhere(scope.table.columns, { 'title': 'links' });
+        const fieldFormat = mlFieldFormatService.getFieldFormat(record.jobId, record.source.detector_index);
 
         const tableRow = [
           {
@@ -841,25 +843,34 @@ module.directive('mlAnomaliesTable', function (
 
         if (addActual !== undefined) {
           if (_.has(record, 'actual')) {
-            const actualVal = formatValueFilter(record.actual, record.source.function);
-            tableRow.push({ markup: actualVal, value: actualVal, scope: rowScope });
+            tableRow.push({
+              markup: formatValueFilter(record.actual, record.source.function, fieldFormat),
+              // Store the unformatted value as a number so that sorting works correctly.
+              value: Number(record.actual),
+              scope: rowScope });
           } else {
             tableRow.push({ markup: '', value: '' });
           }
         }
         if (addTypical !== undefined) {
           if (_.has(record, 'typical')) {
-            const typicalVal = formatValueFilter(record.typical, record.source.function);
-            tableRow.push({ markup: typicalVal, value: typicalVal, scope: rowScope });
+            const typicalVal = Number(record.typical);
+            tableRow.push({
+              markup: formatValueFilter(record.typical, record.source.function, fieldFormat),
+              value: typicalVal,
+              scope: rowScope });
+
             if (addDescription !== undefined) {
               // Assume there is an actual value if there is a typical,
               // and add a description cell if not time_of_week/day.
               const detectorFunc = record.source.function;
               if (detectorFunc !== 'time_of_week' && detectorFunc !== 'time_of_day') {
-                const actualVal = formatValueFilter(record.actual, record.source.function);
+                const actualVal = Number(record.actual);
                 const factor = (actualVal > typicalVal) ? actualVal / typicalVal : typicalVal / actualVal;
-                tableRow.push({ markup: '<span ng-bind-html="' + actualVal + ' | metricChangeDescription:' + typicalVal + '"></span>',
-                  value: Math.abs(factor), scope: rowScope });
+                tableRow.push({
+                  markup: `<span ng-bind-html="${actualVal} | metricChangeDescription:${typicalVal}"></span>`,
+                  value: Math.abs(factor),
+                  scope: rowScope });
               } else {
                 tableRow.push({ markup: '', value: '' });
               }

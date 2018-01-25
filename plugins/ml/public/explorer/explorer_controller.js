@@ -27,6 +27,7 @@ import moment from 'moment';
 import 'plugins/ml/components/anomalies_table';
 import 'plugins/ml/components/influencers_list';
 import 'plugins/ml/components/job_select_list';
+import 'plugins/ml/services/field_format_service';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/results_service';
 
@@ -56,11 +57,13 @@ const module = uiModules.get('apps/ml');
 
 module.controller('MlExplorerController', function (
   $scope,
+  $route,
   $timeout,
   AppState,
   Private,
   timefilter,
   mlCheckboxShowChartsService,
+  mlFieldFormatService,
   mlJobService,
   mlResultsService,
   mlJobSelectService,
@@ -216,8 +219,14 @@ module.controller('MlExplorerController', function (
     }
     $scope.appState.save();
 
-    clearSelectedAnomalies();
-    loadOverallData();
+    // Populate the map of jobs / detectors / field formatters for the selected IDs.
+    mlFieldFormatService.populateFormats(selectedIds, $route.current.locals.indexPatterns)
+      .finally(() => {
+        // Load the data - if the FieldFormats failed to populate
+        // the default formatting will be used for metric values.
+        clearSelectedAnomalies();
+        loadOverallData();
+      });
   };
 
   $scope.setSwimlaneSelectActive = function (active) {
