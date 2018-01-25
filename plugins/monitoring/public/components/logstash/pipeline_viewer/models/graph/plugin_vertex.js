@@ -51,7 +51,8 @@ export class PluginVertex extends Vertex {
   }
 
   get latestEventsPerSecond() {
-    return last(get(this.eventsPerSecond, 'data', []))[1];
+    const latestBucket = last(get(this.eventsPerSecond, 'data', [])) || [];
+    return latestBucket[1];
   }
 
   isTimeConsuming() {
