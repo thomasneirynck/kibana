@@ -67,7 +67,9 @@ export class CalendarManager {
     delete calendar.events;
     try {
       await this.callWithRequest('ml.addCalendar', { calendarId, body: calendar });
-      await this.eventManager.addEvents(calendarId, events);
+      if (events.length) {
+        await this.eventManager.addEvents(calendarId, events);
+      }
 
       // return the newly created calendar
       return await this.getCalendar(calendarId);
