@@ -2,6 +2,9 @@
 [[configuring-reporting]]
 == Configuring Reporting
 
+NOTE: If you use a reverse-proxy (NGINX, Apache, etc.) to access Kibana, you need
+to configure the <<reporting-kibana-server-settings, Kibana server settings>>
+
 By default, a new encryption key is generated for {reporting} each time
 you start Kibana. This means any pending reports will fail if you
 restart Kibana.
