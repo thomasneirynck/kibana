@@ -5,16 +5,14 @@
 <titleabbrev>Viewing Monitoring Data</titleabbrev>
 ++++
 
-Monitoring is automatically enabled when you
-{xpack-ref}/installing-xpack.html[install {xpack}] into {es}, Logstash, and
-{kib}. By default, the monitoring agents on {es} index data within the same
+Monitoring is automatically enabled when you install {xpack} into {es}, Logstash,
+and {kib}. By default, the monitoring agents on {es} index data within the same
 cluster.
 
-TIP: If you have a
-{xpack-ref}/monitoring-cluster.html[dedicated monitoring cluster],
-the information is accessible even if the {es} cluster you're monitoring
-is not. You can send data from multiple clusters to the same monitoring cluster
-and view them all through the same instance of {kib}.
+TIP: If you have a dedicated monitoring cluster, the information is accessible
+even if the {es} cluster you're monitoring is not. You can send data from
+multiple clusters to the same monitoring cluster and view them all through the
+same instance of {kib}. For  more information, see
 
 To view and analyze the health and performance of {es}, Logstash, and {kib}:
 
