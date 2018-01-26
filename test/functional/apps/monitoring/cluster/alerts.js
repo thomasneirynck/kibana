@@ -1,41 +1,32 @@
 import expect from 'expect.js';
+import { getLifecycleMethods } from '../_get_lifecycle_methods';
 
 const HIGH_ALERT_MESSAGE = 'High severity alert';
 const MEDIUM_ALERT_MESSAGE = 'Medium severity alert';
 const LOW_ALERT_MESSAGE = 'Low severity alert';
 
 export default function ({ getService, getPageObjects }) {
-  const esArchiver = getService('esArchiver');
-  const kibanaServer = getService('kibanaServer');
-  const remote = getService('remote');
   const PageObjects = getPageObjects(['monitoring', 'header']);
   const overview = getService('monitoringClusterOverview');
   const alerts = getService('monitoringClusterAlerts');
   const indices = getService('monitoringElasticsearchIndices');
 
   describe('monitoring/cluster-alerts', () => {
-    before(() => {
-      remote.setWindowSize(1600, 1000);
-    });
-
     describe('cluster has single alert', () => {
+      const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
+
       before(async () => {
-        await esArchiver.load('monitoring/singlecluster-yellow-platinum');
-        await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
-
-        await PageObjects.monitoring.navigateTo();
-        await PageObjects.monitoring.getNoDataMessage();
-
-        const fromTime = '2017-08-29 17:23:47.528';
-        const toTime = '2017-08-29 17:25:50.701';
-        await PageObjects.header.setAbsoluteRange(fromTime, toTime);
+        await setup('monitoring/singlecluster-yellow-platinum', {
+          from: '2017-08-29 17:23:47.528',
+          to: '2017-08-29 17:25:50.701',
+        });
 
         // ensure cluster alerts are shown on overview
         expect(await overview.doesClusterAlertsExist()).to.be(true);
       });
 
       after(async () => {
-        await esArchiver.unload('monitoring/singlecluster-yellow-platinum');
+        await tearDown();
       });
 
       it('in alerts panel, a single medium alert is shown', async () => {
@@ -49,23 +40,20 @@ export default function ({ getService, getPageObjects }) {
     });
 
     describe('cluster has 10 alerts', () => {
+      const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
+
       before(async () => {
-        await esArchiver.load('monitoring/singlecluster-yellow-platinum--with-10-alerts');
-        await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
-
-        await PageObjects.monitoring.navigateTo();
-        await PageObjects.monitoring.getNoDataMessage();
-
-        const fromTime = '2017-08-29 17:23:47.528';
-        const toTime = '2017-08-29 17:25:50.701';
-        await PageObjects.header.setAbsoluteRange(fromTime, toTime);
+        await setup('monitoring/singlecluster-yellow-platinum--with-10-alerts', {
+          from: '2017-08-29 17:23:47.528',
+          to: '2017-08-29 17:25:50.701',
+        });
 
         // ensure cluster alerts are shown on overview
         expect(await overview.doesClusterAlertsExist()).to.be(true);
       });
 
       after(async () => {
-        await esArchiver.unload('monitoring/singlecluster-yellow-platinum--with-10-alerts');
+        await tearDown();
       });
 
       it('in alerts panel, top 3 alerts are shown', async () => {
@@ -164,23 +152,20 @@ export default function ({ getService, getPageObjects }) {
     });
 
     describe('alert actions take you to the elasticsearch indices listing', async () => {
+      const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
+
       before(async () => {
-        await esArchiver.load('monitoring/singlecluster-yellow-platinum');
-        await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
-
-        await PageObjects.monitoring.navigateTo();
-        await PageObjects.monitoring.getNoDataMessage();
-
-        const fromTime = '2017-08-29 17:23:47.528';
-        const toTime = '2017-08-29 17:25:50.701';
-        await PageObjects.header.setAbsoluteRange(fromTime, toTime);
+        await setup('monitoring/singlecluster-yellow-platinum', {
+          from: '2017-08-29 17:23:47.528',
+          to: '2017-08-29 17:25:50.701',
+        });
 
         // ensure cluster alerts are shown on overview
         expect(await overview.doesClusterAlertsExist()).to.be(true);
       });
 
       after(async () => {
-        await esArchiver.unload('monitoring/singlecluster-yellow-platinum');
+        await tearDown();
       });
 
       it('with alert on overview', async () => {

@@ -1,27 +1,19 @@
 import expect from 'expect.js';
+import { getLifecycleMethods } from '../_get_lifecycle_methods';
 
 export default function ({ getService, getPageObjects }) {
-  const esArchiver = getService('esArchiver');
-  const kibanaServer = getService('kibanaServer');
-  const remote = getService('remote');
-  const PageObjects = getPageObjects(['monitoring', 'header']);
   const overview = getService('monitoringClusterOverview');
   const indicesList = getService('monitoringElasticsearchIndices');
   const esClusterSummaryStatus = getService('monitoringElasticsearchSummaryStatus');
 
   describe('monitoring/elasticsearch-indices', () => {
+    const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
+
     before(async () => {
-      await remote.setWindowSize(1600, 1000);
-
-      await esArchiver.load('monitoring/singlecluster-red-platinum');
-      const fromTime = '2017-10-06 19:53:06.748';
-      const toTime = '2017-10-06 20:15:30.212';
-      await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
-
-      await PageObjects.monitoring.navigateTo();
-      await PageObjects.monitoring.getNoDataMessage();
-
-      await PageObjects.header.setAbsoluteRange(fromTime, toTime);
+      await setup('monitoring/singlecluster-red-platinum', {
+        from: '2017-10-06 19:53:06.748',
+        to: '2017-10-06 20:15:30.212',
+      });
 
       // go to indices listing
       await overview.clickEsIndices();
@@ -29,7 +21,7 @@ export default function ({ getService, getPageObjects }) {
     });
 
     after(async () => {
-      await esArchiver.unload('monitoring/singlecluster-red-platinum');
+      await tearDown();
     });
 
     it('Elasticsearch Cluster Summary Status shows correct info', async () => {

@@ -1,15 +1,17 @@
 import expect from 'expect.js';
-import { getLifecycleMethods } from './_common';
+import { getLifecycleMethods } from '../_get_lifecycle_methods';
 
 export default function ({ getService, getPageObjects }) {
-  const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
-
   const overview = getService('monitoringClusterOverview');
 
   describe('monitoring/beats-cluster', () => {
+    const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
 
     before(async () => {
-      await setup();
+      await setup('monitoring/beats', {
+        from: '2017-12-19 17:15:09.302',
+        to: '2017-12-19 18:15:09.302',
+      });
     });
 
     after(async () => {

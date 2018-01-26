@@ -1,45 +1,29 @@
 import expect from 'expect.js';
+import { getLifecycleMethods } from '../_get_lifecycle_methods';
 
 export default function ({ getService, getPageObjects }) {
-  const esArchiver = getService('esArchiver');
-  const kibanaServer = getService('kibanaServer');
-  const remote = getService('remote');
   const PageObjects = getPageObjects(['monitoring', 'header']);
   const overview = getService('monitoringClusterOverview');
   const nodesList = getService('monitoringElasticsearchNodes');
   const nodeDetail = getService('monitoringElasticsearchNodeDetail');
 
-  const setup = async (archive, { from, to }) => {
-    await remote.setWindowSize(1600, 1000);
-
-    await esArchiver.load(archive);
-    await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
-
-    await PageObjects.monitoring.navigateTo();
-    await PageObjects.monitoring.getNoDataMessage();
-
-    await PageObjects.header.setAbsoluteRange(from, to);
-
-    // go to nodes listing
-    await overview.clickEsNodes();
-    expect(await nodesList.isOnListing()).to.be(true);
-  };
-  const tearDown = async archive => {
-    await esArchiver.unload(archive);
-  };
-
   describe('monitoring/elasticsearch-node-detail', () => {
-
     describe('Active Nodes', () => {
-      const archive = 'monitoring/singlecluster-three-nodes-shard-relocation';
-      const timeRange = { from: '2017-10-05 20:31:48.354', to: '2017-10-05 20:35:12.176' };
+      const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
 
       before(async () => {
-        await setup(archive, timeRange);
+        await setup('monitoring/singlecluster-three-nodes-shard-relocation', {
+          from: '2017-10-05 20:31:48.354',
+          to: '2017-10-05 20:35:12.176'
+        });
+
+        // go to nodes listing
+        await overview.clickEsNodes();
+        expect(await nodesList.isOnListing()).to.be(true);
       });
 
       after(async () => {
-        await tearDown(archive);
+        await tearDown();
       });
 
       afterEach(async () => {
@@ -80,15 +64,21 @@ export default function ({ getService, getPageObjects }) {
     });
 
     describe('Offline Node', () => {
-      const archive = 'monitoring/singlecluster-red-platinum';
-      const timeRange = { from: '2017-10-06 19:53:06.748', to: '2017-10-06 20:15:30.212' };
+      const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
 
       before(async () => {
-        await setup(archive, timeRange);
+        await setup('monitoring/singlecluster-red-platinum', {
+          from: '2017-10-06 19:53:06.748',
+          to: '2017-10-06 20:15:30.212'
+        });
+
+        // go to nodes listing
+        await overview.clickEsNodes();
+        expect(await nodesList.isOnListing()).to.be(true);
       });
 
       after(async () => {
-        await tearDown(archive);
+        await tearDown();
       });
 
       it('shows N/A', async () => {

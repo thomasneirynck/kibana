@@ -1,34 +1,28 @@
 import expect from 'expect.js';
+import { getLifecycleMethods } from '../_get_lifecycle_methods';
 
 export default function ({ getService, getPageObjects }) {
-  const esArchiver = getService('esArchiver');
-  const kibanaServer = getService('kibanaServer');
-  const remote = getService('remote');
   const clusterList = getService('monitoringClusterList');
   const clusterOverview = getService('monitoringClusterOverview');
   const PageObjects = getPageObjects(['monitoring', 'header']);
 
   describe('monitoring/cluster-list', () => {
     describe('with trial license clusters', () => {
+      const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
+
       const UNSUPPORTED_CLUSTER_UUID = '6d-9tDFTRe-qT5GoBytdlQ';
 
       before(async () => {
-        await esArchiver.load('monitoring/multicluster');
-        await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
-        remote.setWindowSize(1600, 1000);
-
-        await PageObjects.monitoring.navigateTo();
-        await PageObjects.monitoring.getNoDataMessage();
-
-        const fromTime = '2017-08-15 21:00:00';
-        const toTime = '2017-08-16 00:00:00';
-        await PageObjects.header.setAbsoluteRange(fromTime, toTime);
+        await setup('monitoring/multicluster', {
+          from: '2017-08-15 21:00:00',
+          to: '2017-08-16 00:00:00',
+        });
 
         await clusterList.assertDefaults();
       });
 
       after(async () => {
-        await esArchiver.unload('monitoring/multicluster');
+        await tearDown();
       });
 
       afterEach(async () => {
@@ -75,26 +69,22 @@ Need to monitor multiple clusters? Get a license with full functionality to enjo
     });
 
     describe('with all basic license clusters', () => {
+      const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
+
       const UNSUPPORTED_CLUSTER_UUID = 'kH7C358oRzK6bmNzTeLEug';
       const SUPPORTED_CLUSTER_UUID = 'NDKg6VXAT6-TaGzEK2Zy7g';
 
       before(async () => {
-        await esArchiver.load('monitoring/multi-basic');
-        await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
-        remote.setWindowSize(1600, 1000);
-
-        await PageObjects.monitoring.navigateTo();
-        await PageObjects.monitoring.getNoDataMessage();
-
-        const fromTime = '2017-09-07 20:12:04.011';
-        const toTime = '2017-09-07 20:18:55.733';
-        await PageObjects.header.setAbsoluteRange(fromTime, toTime);
+        await setup('monitoring/multi-basic', {
+          from: '2017-09-07 20:12:04.011',
+          to: '2017-09-07 20:18:55.733',
+        });
 
         await clusterList.assertDefaults();
       });
 
       after(async () => {
-        await esArchiver.unload('monitoring/multi-basic');
+        await tearDown();
       });
 
       describe('cluster row content', () => {

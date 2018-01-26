@@ -1,29 +1,19 @@
 import expect from 'expect.js';
+import { getLifecycleMethods } from '../_get_lifecycle_methods';
 
 export default function ({ getService, getPageObjects }) {
-  const esArchiver = getService('esArchiver');
-  const kibanaServer = getService('kibanaServer');
-  const remote = getService('remote');
-  const PageObjects = getPageObjects(['monitoring', 'header']);
   const overview = getService('monitoringClusterOverview');
   const pipelinesList = getService('monitoringLogstashPipelines');
   const lsClusterSummaryStatus = getService('monitoringLogstashSummaryStatus');
 
-  const archiveId = 'monitoring/logstash-pipelines';
-
   describe('monitoring/logstash-pipelines', () => {
+    const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
+
     before(async () => {
-      await remote.setWindowSize(1600, 1000);
-
-      await esArchiver.load(archiveId);
-      const fromTime = '2018-01-22 9:10:00.000';
-      const toTime = '2018-01-22 9:41:00.000';
-      await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
-
-      await PageObjects.monitoring.navigateTo();
-      await PageObjects.monitoring.getNoDataMessage();
-
-      await PageObjects.header.setAbsoluteRange(fromTime, toTime);
+      await setup('monitoring/logstash-pipelines', {
+        from: '2018-01-22 9:10:00.000',
+        to: '2018-01-22 9:41:00.000',
+      });
 
       // go to pipelines listing
       await overview.clickLsPipelines();
@@ -31,7 +21,7 @@ export default function ({ getService, getPageObjects }) {
     });
 
     after(async () => {
-      await esArchiver.unload(archiveId);
+      await tearDown();
     });
 
     it('Logstash Cluster Summary Status shows correct info', async () => {

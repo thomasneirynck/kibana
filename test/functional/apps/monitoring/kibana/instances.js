@@ -1,17 +1,19 @@
 import expect from 'expect.js';
-import { getLifecycleMethods } from './_common';
+import { getLifecycleMethods } from '../_get_lifecycle_methods';
 
 export default function ({ getService, getPageObjects }) {
-  const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
-
   const clusterOverview = getService('monitoringClusterOverview');
   const instances = getService('monitoringKibanaInstances');
   const kibanaClusterSummaryStatus = getService('monitoringKibanaSummaryStatus');
 
   describe('monitoring/kibana-instances', () => {
+    const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
 
     before(async () => {
-      await setup();
+      await setup('monitoring/singlecluster-yellow-platinum', {
+        from: '2017-08-29 17:24:14.254',
+        to: '2017-08-29 17:25:44.142',
+      });
 
       // go to kibana instances
       await clusterOverview.clickKibanaInstances();

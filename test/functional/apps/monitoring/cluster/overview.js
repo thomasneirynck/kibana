@@ -1,32 +1,22 @@
 import expect from 'expect.js';
+import { getLifecycleMethods } from '../_get_lifecycle_methods';
 
 export default function ({ getService, getPageObjects }) {
-  const esArchiver = getService('esArchiver');
-  const kibanaServer = getService('kibanaServer');
-  const remote = getService('remote');
-  const PageObjects = getPageObjects(['monitoring', 'header']);
   const overview = getService('monitoringClusterOverview');
 
   describe('monitoring/cluster-overview', () => {
-    before(() => {
-      remote.setWindowSize(1600, 1000);
-    });
-
     describe('for Green cluster with Gold license', () => {
+      const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
+
       before(async () => {
-        await esArchiver.load('monitoring/singlecluster-green-gold');
-        await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
-
-        await PageObjects.monitoring.navigateTo();
-        await PageObjects.monitoring.getNoDataMessage();
-
-        const fromTime = '2017-08-23 21:29:35.267';
-        const toTime = '2017-08-23 21:47:25.556';
-        await PageObjects.header.setAbsoluteRange(fromTime, toTime);
+        await setup('monitoring/singlecluster-green-gold', {
+          from: '2017-08-23 21:29:35.267',
+          to: '2017-08-23 21:47:25.556',
+        });
       });
 
       after(async () => {
-        await esArchiver.unload('monitoring/singlecluster-green-gold');
+        await tearDown();
       });
 
       it('shows alerts panel, because there are resolved alerts in the time range', async () => {
@@ -71,20 +61,17 @@ export default function ({ getService, getPageObjects }) {
     });
 
     describe('for Yellow cluster with Platinum license', () => {
+      const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
+
       before(async () => {
-        await esArchiver.load('monitoring/singlecluster-yellow-platinum');
-        await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
-
-        await PageObjects.monitoring.navigateTo();
-        await PageObjects.monitoring.getNoDataMessage();
-
-        const fromTime = '2017-08-29 17:23:47.528';
-        const toTime = '2017-08-29 17:25:50.701';
-        await PageObjects.header.setAbsoluteRange(fromTime, toTime);
+        await setup('monitoring/singlecluster-yellow-platinum', {
+          from: '2017-08-29 17:23:47.528',
+          to: '2017-08-29 17:25:50.701',
+        });
       });
 
       after(async () => {
-        await esArchiver.unload('monitoring/singlecluster-yellow-platinum');
+        await tearDown();
       });
 
       it('shows alerts panel, because cluster status is Yellow', async () => {
@@ -124,20 +111,17 @@ export default function ({ getService, getPageObjects }) {
     });
 
     describe('for Yellow cluster with Basic license and no Kibana / Logstash', () => {
+      const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
+
       before(async () => {
-        await esArchiver.load('monitoring/singlecluster-yellow-basic');
-        await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
-
-        await PageObjects.monitoring.navigateTo();
-        await PageObjects.monitoring.getNoDataMessage();
-
-        const fromTime = '2017-08-29 17:55:43.879';
-        const toTime = '2017-08-29 18:01:34.958';
-        await PageObjects.header.setAbsoluteRange(fromTime, toTime);
+        await setup('monitoring/singlecluster-yellow-basic', {
+          from: '2017-08-29 17:55:43.879',
+          to: '2017-08-29 18:01:34.958',
+        });
       });
 
       after(async () => {
-        await esArchiver.unload('monitoring/singlecluster-yellow-basic');
+        await tearDown();
       });
 
       it('does not show alerts panel, because license is Basic', async () => {

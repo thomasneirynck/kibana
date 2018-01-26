@@ -1,9 +1,7 @@
 import expect from 'expect.js';
+import { getLifecycleMethods } from '../_get_lifecycle_methods';
 
 export default function ({ getService, getPageObjects }) {
-  const esArchiver = getService('esArchiver');
-  const kibanaServer = getService('kibanaServer');
-  const remote = getService('remote');
   const PageObjects = getPageObjects(['monitoring', 'header']);
   const overview = getService('monitoringClusterOverview');
   const indicesList = getService('monitoringElasticsearchIndices');
@@ -11,21 +9,17 @@ export default function ({ getService, getPageObjects }) {
   const shards = getService('monitoringElasticsearchShards');
 
   describe('monitoring/elasticsearch-shards', () => {
+    const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
 
     before(async () => {
-      await remote.setWindowSize(1800, 1300);
-
-      await esArchiver.load('monitoring/singlecluster-three-nodes-shard-relocation');
-      await kibanaServer.uiSettings.replace({ 'dateFormat:tz': 'UTC' });
-
-      await PageObjects.monitoring.navigateTo();
-      await PageObjects.monitoring.getNoDataMessage();
-
-      await PageObjects.header.setAbsoluteRange('2017-10-05 20:31:48.354', '2017-10-05 20:35:12.176');
+      await setup('monitoring/singlecluster-three-nodes-shard-relocation', {
+        from: '2017-10-05 20:31:48.354',
+        to: '2017-10-05 20:35:12.176',
+      });
     });
 
     after(async () => {
-      await esArchiver.unload('monitoring/singlecluster-three-nodes-shard-relocation');
+      await tearDown();
     });
 
     describe('Shard Allocation Per Node', () => {

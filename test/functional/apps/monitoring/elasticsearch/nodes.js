@@ -1,23 +1,19 @@
 import expect from 'expect.js';
-import { getLifecycleMethods } from './_common';
+import { getLifecycleMethods } from '../_get_lifecycle_methods';
 
 export default function ({ getService, getPageObjects }) {
-  const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
-
   const overview = getService('monitoringClusterOverview');
   const nodesList = getService('monitoringElasticsearchNodes');
   const esClusterSummaryStatus = getService('monitoringElasticsearchSummaryStatus');
 
   describe('monitoring/elasticsearch-nodes', () => {
-
-    const archive = 'monitoring/singlecluster-three-nodes-shard-relocation';
-    const timeRange = {
-      from: '2017-10-05 20:31:48.354',
-      to: '2017-10-05 20:35:12.176',
-    };
+    const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
 
     before(async () => {
-      await setup(archive, timeRange);
+      await setup('monitoring/singlecluster-three-nodes-shard-relocation', {
+        from: '2017-10-05 20:31:48.354',
+        to: '2017-10-05 20:35:12.176',
+      });
 
       // go to nodes listing
       await overview.clickEsNodes();
@@ -25,7 +21,7 @@ export default function ({ getService, getPageObjects }) {
     });
 
     after(async () => {
-      await tearDown(archive);
+      await tearDown();
     });
 
     it('Elasticsearch Cluster Summary Status shows correct info', async () => {
