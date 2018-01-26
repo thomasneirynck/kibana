@@ -11,5 +11,13 @@ They are enabled by default.
 [float]
 [[grok-settings]]
 ==== Grok Debugger Settings
+
 `xpack.grokdebugger.enabled`::
 Set to `true` (default) to enable the <<xpack-grokdebugger,Grok Debugger>>.
+
+[float]
+[[profiler-settings]]
+==== Search Profiler Settings
+
+`xpack.searchprofiler.enabled`::
+Set to `true` (default) to enable the <<xpack-profiler,Search Profiler>>.
