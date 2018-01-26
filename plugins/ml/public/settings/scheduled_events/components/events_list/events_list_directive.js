@@ -36,6 +36,7 @@ module.directive('mlEventsList', function (
     scope: {
       events: '=',
       showControls: '=',
+      lockControls: '=',
       asteriskText: '='
     },
     controller: function ($scope) {

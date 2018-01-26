@@ -71,6 +71,7 @@ module.controller('MlCreateCalendar',
     $scope.allGroups = [];
     $scope.updateJobsList = {};
     $scope.updateGroupsList = {};
+    $scope.saveLock = false;
     $scope.validation = {
       checks: {
         calendarId: { valid: true },
@@ -122,13 +123,16 @@ module.controller('MlCreateCalendar',
       };
 
       if (validateCalendarId(calendar.calendarId, $scope.validation.checks)) {
+        $scope.saveLock = true;
         const saveFunc = $scope.isNewCalendar ? ml.addCalendar : ml.updateCalendar;
         saveFunc(calendar)
           .then(() => {
             $location.path('settings/calendars_list');
+            $scope.saveLock = false;
           })
           .catch((error) => {
             msgs.error('Save calendar failed: ', error);
+            $scope.saveLock = false;
           });
       }
     };
@@ -138,7 +142,7 @@ module.controller('MlCreateCalendar',
     };
 
     $scope.saveEnabled = function () {
-      return ($scope.calendarId !== '' && $scope.calendarId !== undefined);
+      return ($scope.calendarId !== '' && $scope.calendarId !== undefined && $scope.saveLock === false);
     };
 
   });

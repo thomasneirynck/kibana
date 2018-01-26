@@ -17,6 +17,7 @@
               <button
                 class="kuiButton kuiButton--basic"
                 ng-click="cancel()"
+                ng-disabled="saveLock === true"
                 data-test-subj="btnCancel">
                 Cancel
               </button>
@@ -89,6 +90,7 @@
         <ml-events-list
           events='events'
           show-controls='true'
+          lock-controls='saveLock'
         />
       </div>
 

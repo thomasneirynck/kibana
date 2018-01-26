@@ -5,27 +5,29 @@
     <div ng-if="showControls" class="kuiToolBar">
 
       <div class="kuiToolBarSection">
-        <a
+        <button
           class="kuiButton kuiButton--primary"
           href=""
           aria-label="Create new event"
           tooltip="Create new event"
           tooltip-append-to-body="true"
+          ng-disabled="lockControls === true"
           ng-click="clickNewEvent()">
           <span aria-hidden="true" class="kuiButton__icon kuiIcon fa-plus"></span>
           New event
-        </a>
+        </button>
 
-        <a
+        <button
           class="kuiButton kuiButton--primary"
           href=""
           aria-label="Import events"
           tooltip="Import events"
           tooltip-append-to-body="true"
+          ng-disabled="lockControls === true"
           ng-click="clickImportEvents()">
           <span aria-hidden="true" class="kuiButton__icon kuiIcon fa-upload"></span>
           Import events
-        </a>
+        </button>
       </div>
 
       <div class="kuiToolBarSection">
@@ -98,11 +100,15 @@
           <td class="kuiTableRowCell">
             <div class="kuiTableRowCell__liner">
               <div class="kuiMenuButtonGroup kuiMenuButtonGroup--alignRight">
-                <a class="kuiMenuButton kuiMenuButton--danger kuiMenuButton--iconText" title="Edit" ng-click="deleteEvent(event)"
+                <button
+                  class="kuiMenuButton kuiMenuButton--danger kuiMenuButton--iconText"
+                  title="Edit"
+                  ng-disabled="lockControls === true"
+                  ng-click="deleteEvent(event)"
                   href="">
                   <span class="kuiMenuButton__icon kuiIcon fa-trash"></span>
                   <span>Delete</span>
-                </a>
+                </button>
               </div>
             </div>
           </td>
