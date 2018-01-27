@@ -1,7 +1,7 @@
 import 'angular-paging';
 import 'plugins/reporting/services/job_queue';
 import 'plugins/reporting/less/main.less';
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier } from 'ui/notify';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 
 import routes from 'ui/routes';

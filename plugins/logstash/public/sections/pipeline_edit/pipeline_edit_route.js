@@ -1,5 +1,5 @@
 import routes from 'ui/routes';
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier } from 'ui/notify';
 import template from './pipeline_edit_route.html';
 import 'plugins/logstash/services/pipeline';
 import 'plugins/logstash/services/license';

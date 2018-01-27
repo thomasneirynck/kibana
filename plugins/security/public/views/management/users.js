@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import routes from 'ui/routes';
+import { toastNotifications } from 'ui/notify';
 import { toggle, toggleSort } from 'plugins/security/lib/util';
 import template from 'plugins/security/views/management/users.html';
 import 'plugins/security/services/shield_user';
@@ -27,7 +28,7 @@ routes.when(USERS_PATH, {
     }
   },
 
-  controller($scope, $route, $q, Notifier, confirmModal) {
+  controller($scope, $route, $q, confirmModal) {
     $scope.users = $route.current.locals.users;
     $scope.forbidden = !_.isArray($scope.users);
     $scope.selectedUsers = [];
@@ -36,12 +37,10 @@ routes.when(USERS_PATH, {
     $scope.getEditUrlHref = (user) => `#${EDIT_USERS_PATH}/${user}`;
     $scope.getEditRoleHref = (role) => `#${EDIT_ROLES_PATH}/${role}`;
 
-    const notifier = new Notifier();
-
     $scope.deleteUsers = () => {
       const doDelete = () => {
         $q.all($scope.selectedUsers.map((user) => user.$delete()))
-          .then(() => notifier.info('The user(s) have been deleted.'))
+          .then(() => toastNotifications.addSuccess(`Deleted ${$scope.selectedUsers.length > 1 ? 'users' : 'user'}`))
           .then(() => {
             $scope.selectedUsers.map((user) => {
               const i = $scope.users.indexOf(user);

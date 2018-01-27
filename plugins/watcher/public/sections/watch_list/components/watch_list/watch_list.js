@@ -1,7 +1,7 @@
 import pluralize from 'pluralize';
 import { uiModules } from 'ui/modules';
 import { InitAfterBindingsWorkaround } from 'ui/compat';
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier, toastNotifications } from 'ui/notify';
 import template from './watch_list.html';
 import '../watch_table';
 import { PAGINATION, REFRESH_INTERVALS } from 'plugins/watcher/../common/constants';
@@ -152,11 +152,11 @@ app.directive('watchList', function ($injector) {
             const numTotal = numWatchesToDelete;
 
             if (numSuccesses > 0) {
-              this.notifier.info(`Deleted ${numSuccesses} out of ${numTotal} selected ${watchesStr}`);
+              toastNotifications.addSuccess(`Deleted ${numSuccesses} out of ${numTotal} selected ${watchesStr}`);
             }
 
             if (numErrors > 0) {
-              this.notifier.error(`Could not delete ${numErrors} out of ${numTotal} selected ${watchesStr}`);
+              toastNotifications.addError(`Couldn't delete ${numErrors} out of ${numTotal} selected ${watchesStr}`);
             }
 
             this.loadWatches();

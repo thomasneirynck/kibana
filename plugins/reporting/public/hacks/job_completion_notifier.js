@@ -1,4 +1,5 @@
-import { notify } from 'ui/notify';
+import React from 'react';
+import { toastNotifications } from 'ui/notify';
 import chrome from 'ui/chrome';
 import { uiModules } from 'ui/modules';
 import { addSystemApiHeader } from 'ui/system_api';
@@ -11,6 +12,9 @@ import 'plugins/reporting/services/job_completion_notifications';
 import { PathProvider } from 'plugins/xpack_main/services/path';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import { Poller } from '../../../../common/poller';
+import {
+  EuiButton,
+} from '@elastic/eui';
 
 uiModules.get('kibana')
   .run(($http, reportingJobQueue, Private, reportingPollConfig, reportingJobCompletionNotifications, $rootScope) => {
@@ -23,51 +27,72 @@ uiModules.get('kibana')
     async function showCompletionNotification(job) {
       const reportObjectTitle = job._source.payload.title;
       const reportObjectType = job._source.payload.type;
-      let notificationMessage;
-      let notificationType;
-
-      // Define actions for notification
-      const actions = [
-        {
-          text: 'OK',
-          dataTestSubj: 'reportCompleteOkToastButton'
-        }
-      ];
 
       const isJobSuccessful = get(job, '_source.status') === 'completed';
-      const maxSizeReached = get(job, '_source.output.max_size_reached');
-      if (isJobSuccessful) {
-        actions.push({
-          text: 'Download',
-          dataTestSubj: 'downloadCompletedReportButton',
-          callback: downloadReport(job._id)
-        });
 
-        if (maxSizeReached) {
-          notificationType = 'warning';
-          notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready;` +
-          `however, it reached the max size and contains partial data.`;
-        } else {
-          notificationType = 'info';
-          notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready!`;
-        }
-        if (chrome.navLinkExists('kibana:management')) {
-          const managementUrl = chrome.getNavLinkById('kibana:management').url;
-          const reportingSectionUrl = `${managementUrl}/kibana/reporting`;
-          notificationMessage += ` Pick it up from [Management > Kibana > Reporting](${reportingSectionUrl})`;
-        }
-      } else {
+      if (!isJobSuccessful) {
         const errorDoc = await reportingJobQueue.getContent(job._id);
-        const error = errorDoc.content;
-        notificationMessage = `There was an error generating your report for the "${reportObjectTitle}" ${reportObjectType}: ${error}`;
-        notificationType = 'error';
+        const text = errorDoc.content;
+        return $rootScope.$apply(() => {
+          toastNotifications.addDanger({
+            title: `Couldn't create report for ${reportObjectType} '${reportObjectTitle}'`,
+            text,
+          });
+        });
       }
 
-      $rootScope.$evalAsync(function () {
-        notify.custom(notificationMessage, {
-          type: notificationType,
-          lifetime: 0,
-          actions
+      let seeReportLink;
+
+      // In-case the license expired/changed between the time they queued the job and the time that
+      // the job completes, that way we don't give the user a toast to download their report if they can't.
+      if (chrome.navLinkExists('kibana:management')) {
+        const managementUrl = chrome.getNavLinkById('kibana:management').url;
+        const reportingSectionUrl = `${managementUrl}/kibana/reporting`;
+        seeReportLink = (
+          <p>
+            Pick it up from <a href={reportingSectionUrl}>Management &gt; Kibana &gt; Reporting</a>.
+          </p>
+        );
+      }
+
+      const downloadReportButton = (
+        <EuiButton
+          size="s"
+          data-test-subj="downloadCompletedReportButton"
+          onClick={() => { downloadReport(job._id); }}
+        >
+          Download report
+        </EuiButton>
+      );
+
+      const maxSizeReached = get(job, '_source.output.max_size_reached');
+
+      if (maxSizeReached) {
+        return $rootScope.$apply(() => {
+          toastNotifications.addWarning({
+            title: `Created partial report for ${reportObjectType} '${reportObjectTitle}'`,
+            text: (
+              <div>
+                <p>The report reached the max size and contains partial data.</p>
+                {seeReportLink}
+                {downloadReportButton}
+              </div>
+            ),
+            'data-test-subj': 'completeReportSuccess',
+          });
+        });
+      }
+
+      $rootScope.$apply(() => {
+        toastNotifications.addSuccess({
+          title: `Created report for ${reportObjectType} '${reportObjectTitle}'`,
+          text: (
+            <div>
+              {seeReportLink}
+              {downloadReportButton}
+            </div>
+          ),
+          'data-test-subj': 'completeReportSuccess',
         });
       });
     }
@@ -115,6 +140,6 @@ async function getJobs($http, jobs) {
 function downloadReport(jobId) {
   const apiBaseUrl = chrome.addBasePath(API_BASE_URL);
   const downloadLink = `${apiBaseUrl}/jobs/download/${jobId}`;
-  return () => window.open(downloadLink);
+  window.open(downloadLink);
 }
 

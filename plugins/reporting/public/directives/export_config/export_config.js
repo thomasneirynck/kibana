@@ -4,7 +4,7 @@ import 'plugins/reporting/services/document_control';
 import 'plugins/reporting/services/export_types';
 import './export_config.less';
 import template from 'plugins/reporting/directives/export_config/export_config.html';
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier, toastNotifications } from 'ui/notify';
 import { uiModules } from 'ui/modules';
 import { stateMonitorFactory } from 'ui/state_management/state_monitor_factory';
 import url from 'url';
@@ -86,11 +86,18 @@ module.directive('exportConfig', ($rootScope, reportingDocumentControl, reportin
             return reportingDocumentControl.create(relativePath);
           })
           .then(() => {
-            reportingNotifier.info(`${this.objectType} generation has been queued. You can track its progress under Management.`);
+            toastNotifications.addSuccess({
+              title: `Queued report for ${this.objectType}`,
+              text: 'Track its progress in Management',
+              'data-test-subj': 'queueReportSuccess',
+            });
           })
           .catch((err) => {
             if (err.message === 'not exportable') {
-              return reportingNotifier.warning('Only saved dashboards can be exported. Please save your work first.');
+              return toastNotifications.addWarning({
+                title: 'Only saved dashboards can be exported',
+                text: 'Please save your work first',
+              });
             }
 
             reportingNotifier.error(err);
@@ -111,12 +118,12 @@ module.directive('exportConfig', ($rootScope, reportingDocumentControl, reportin
               try {
                 const isCopied = document.execCommand('copy');
                 if (isCopied) {
-                  reportingNotifier.info('URL copied to clipboard.');
+                  toastNotifications.add('URL copied to clipboard');
                 } else {
-                  reportingNotifier.info('URL selected. Press Ctrl+C to copy.');
+                  toastNotifications.add('Press Ctrl+C to copy URL');
                 }
               } catch (err) {
-                reportingNotifier.info('URL selected. Press Ctrl+C to copy.');
+                toastNotifications.add('Press Ctrl+C to copy URL');
               }
             });
           });

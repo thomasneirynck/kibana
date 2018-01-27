@@ -1,6 +1,6 @@
 import ngMock from 'ng_mock';
 import sinon from 'sinon';
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier } from 'ui/notify';
 
 const XPACK_INFO_SIG_KEY = 'xpackMain.infoSignature';
 const XPACK_INFO_KEY = 'xpackMain.info';

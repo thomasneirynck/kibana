@@ -50,7 +50,6 @@ export default function ({ getService, getPageObjects }) {
           await testSubjects.setValue('userFormEmailInput', 'my@email.com');
 
           await PageObjects.security.clickSaveEditUser();
-          await PageObjects.header.clickToastOK();
 
           const currentUrl = await remote.getCurrentUrl();
           expect(currentUrl).to.contain(USERS_PATH);
@@ -92,7 +91,6 @@ export default function ({ getService, getPageObjects }) {
           await testSubjects.setValue('roleFormNameInput', 'my-new-role');
 
           await PageObjects.security.clickSaveEditRole();
-          await PageObjects.header.clickToastOK();
 
           const currentUrl = await remote.getCurrentUrl();
           expect(currentUrl).to.contain(ROLES_PATH);

@@ -1,6 +1,6 @@
 import routes from 'ui/routes';
 import { management } from 'ui/management';
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier } from 'ui/notify';
 import template from './watch_list_route.html';
 import './components/watch_list';
 import 'plugins/watcher/services/license';

@@ -14,8 +14,7 @@
  */
 
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
-import { Notifier } from 'ui/notify/notifier';
-import { notify } from 'ui/notify';
+import { notify, Notifier } from 'ui/notify';
 import _ from 'lodash';
 
 import chrome from 'ui/chrome';
@@ -45,7 +44,7 @@ export function checkLicense(Private, Promise, kbnBaseUrl) {
     const exists = _.find(notify._notifs, (item) => item.content === message);
     if (!exists) {
       // Only show the banner once with no countdown
-      notify.info(message, { lifetime: 0 });
+      notify.warning(message, { lifetime: 0 });
     }
   }
 

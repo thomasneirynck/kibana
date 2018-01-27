@@ -7,7 +7,7 @@ import 'ui/directives/saved_object_finder';
 import chrome from 'ui/chrome';
 import { uiModules } from 'ui/modules';
 import uiRoutes from 'ui/routes';
-import { notify, Notifier } from 'ui/notify';
+import { notify, Notifier, fatalError, toastNotifications } from 'ui/notify';
 import { IndexPatternsProvider } from 'ui/index_patterns/index_patterns';
 import { SavedObjectsClientProvider } from 'ui/saved_objects';
 import { KibanaParsedUrl } from 'ui/url/kibana_parsed_url';
@@ -754,7 +754,8 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
         function doDelete() {
           $route.current.locals.SavedWorkspacesProvider.delete($route.current.locals.savedWorkspace.id);
           kbnUrl.change('/home', {});
-          notify.info('Deleted ' + title);
+
+          toastNotifications.addSuccess(`Deleted '${title}'`);
         }
         const confirmModalOptions = {
           onConfirm: doDelete,
@@ -1018,15 +1019,20 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       $scope.kbnTopNav.close('save');
       $scope.userHasConfirmedSaveWorkspaceData = false; //reset flag
       if (id) {
-        let message = 'Saved Workspace "' + $scope.savedWorkspace.title + '"';
+        const title = `Saved "${$scope.savedWorkspace.title}"`;
+        let text;
         if (!canSaveData && $scope.workspace.nodes.length > 0) {
-          message += ' (the workspace configuration but not the data was saved)';
+          text = 'The configuration was saved, but the data was not saved';
         }
-        notify.info(message);
+
+        toastNotifications.addSuccess({
+          title,
+          text,
+        });
         if ($scope.savedWorkspace.id === $route.current.params.id) return;
         $scope.openSavedWorkspace($scope.savedWorkspace);
       }
-    }, notify.fatal);
+    }, fatalError);
 
   };
 

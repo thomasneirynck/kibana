@@ -1,6 +1,6 @@
 import chrome from 'ui/chrome';
 import { PLUGIN, ROUTES } from '../../../common/constants';
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier } from 'ui/notify';
 
 export class LicenseService {
   constructor(xpackInfoService, kbnUrlService, $timeout, $http) {

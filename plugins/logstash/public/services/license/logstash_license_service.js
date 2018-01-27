@@ -1,5 +1,5 @@
 import { PLUGIN } from '../../../common/constants';
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier } from 'ui/notify';
 
 export class LogstashLicenseService {
   constructor(xpackInfoService, kbnUrlService, $timeout) {

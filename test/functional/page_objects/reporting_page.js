@@ -152,35 +152,9 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
       await retry.try(() => testSubjects.click('generateReportButton'));
     }
 
-    async clickReportCompleteOkToastButton() {
-      await retry.try(() => testSubjects.click('reportCompleteOkToastButton'));
-    }
-
     async checkForReportingToasts() {
       log.debug('Reporting:checkForReportingToasts');
-
-      // Message varies slightly for each app type, so we'll only check the common suffix.
-      const reportQueuedMessageSuffix = 'generation has been queued. You can track its progress under Management.';
-      const reportReadyMessageSuffix = 'Pick it up from Management > Kibana > Reporting';
-
-      const reportQueuedMessage = await PageObjects.header.getToastMessage();
-      await PageObjects.header.clickToastOK();
-
-      // Unlikely for the second toast show up before this removes the 'report queued' toast, but I've seen it happen,
-      // so account for the possibility.
-      if (reportQueuedMessage.endsWith(reportReadyMessageSuffix)) {
-        // Make sure both toasts get hidden.
-        await PageObjects.header.clickToastOK();
-        return true;
-      }
-
-      // Wait up to a minute for the 'report is ready message
-      const reportReadyMessage = await PageObjects.header.getToastMessage(60000);
-      log.debug('Reporting:checkForReportingToasts: recieved second toast message: ' + reportReadyMessage);
-      await this.clickReportCompleteOkToastButton();
-
-      return reportReadyMessage.endsWith(reportReadyMessageSuffix) &&
-        reportQueuedMessage.endsWith(reportQueuedMessageSuffix);
+      return await testSubjects.exists('completeReportSuccess', 60000);
     }
 
     async setTimepickerInDataRange() {

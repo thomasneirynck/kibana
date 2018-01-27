@@ -17,7 +17,7 @@ import 'plugins/watcher/services/interval';
 import 'plugins/watcher/services/action_defaults';
 
 import dateMath from '@elastic/datemath';
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier, toastNotifications } from 'ui/notify';
 import { VisualizeOptions } from 'plugins/watcher/models/visualize_options';
 import { REFRESH_INTERVALS } from 'plugins/watcher/../common/constants';
 
@@ -136,7 +136,7 @@ app.directive('thresholdWatchEdit', function ($injector) {
               const message = actionStatus.lastExecutionReason || action.simulateFailMessage;
               this.notifier.error(message);
             } else {
-              this.notifier.info(action.simulateMessage);
+              toastNotifications.addSuccess(action.simulateMessage);
             }
           })
           .catch(err => {
@@ -286,7 +286,7 @@ app.directive('thresholdWatchEdit', function ($injector) {
         return watchService.saveWatch(this.watch)
           .then(() => {
             this.watch.isNew = false; // without this, the message displays 'New Watch'
-            this.notifier.info(`Saved Watch "${this.watch.displayName}"`);
+            toastNotifications.addSuccess(`Saved '${this.watch.displayName}'`);
             this.onClose();
           })
           .catch(err => {

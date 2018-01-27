@@ -69,7 +69,6 @@ export default function ({ getService, getPageObjects }) {
 
         it('becomes available when saved', async () => {
           await PageObjects.dashboard.saveDashboard('mydash');
-          await PageObjects.header.clickToastOK();
           await expectEnabledGenerateReportButton();
         });
       });
@@ -92,7 +91,6 @@ export default function ({ getService, getPageObjects }) {
           await PageObjects.dashboard.addVisualizations(visualizations);
 
           await PageObjects.dashboard.saveDashboard('report test');
-          await PageObjects.header.clickToastOK();
 
           await PageObjects.reporting.openReportingPanel();
           await PageObjects.reporting.clickGenerateReportButton();
@@ -121,7 +119,6 @@ export default function ({ getService, getPageObjects }) {
           await PageObjects.dashboard.clickEdit();
           await PageObjects.dashboard.useMargins(true);
           await PageObjects.dashboard.saveDashboard('report test');
-          await PageObjects.header.clickToastOK();
           await PageObjects.reporting.openReportingPanel();
           await PageObjects.reporting.clickGenerateReportButton();
           await PageObjects.reporting.clickDownloadReportButton(60000);
@@ -185,7 +182,6 @@ export default function ({ getService, getPageObjects }) {
 
         it('becomes available when saved', async () => {
           await PageObjects.discover.saveSearch('my search');
-          await PageObjects.header.clickToastOK();
           await expectEnabledGenerateReportButton();
         });
 
@@ -214,7 +210,6 @@ export default function ({ getService, getPageObjects }) {
 
         it('becomes available when saved', async () => {
           await PageObjects.visualize.saveVisualization('my viz');
-          await PageObjects.header.clickToastOK();
           await expectEnabledGenerateReportButton();
         });
 

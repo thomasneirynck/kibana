@@ -1,7 +1,7 @@
 import { uiModules } from 'ui/modules';
 import { InitAfterBindingsWorkaround } from 'ui/compat';
 import moment from 'moment-timezone';
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier, toastNotifications } from 'ui/notify';
 import 'ui/config';
 import 'ui/url';
 import 'ui/table_info';
@@ -158,7 +158,7 @@ app.directive('watchDetail', function ($injector) {
       deleteWatch = () => {
         return watchService.deleteWatch(this.watch.id)
           .then(() => {
-            this.notifier.info(`Deleted Watch "${this.watch.displayName}"`);
+            toastNotifications.addSuccess(`Deleted '${this.watch.displayName}'`);
             this.close();
           })
           .catch(err => {

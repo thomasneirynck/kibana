@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash';
 import { uiModules } from 'ui/modules';
 import { InitAfterBindingsWorkaround } from 'ui/compat';
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier, toastNotifications } from 'ui/notify';
 import template from './pipeline_edit.html';
 import 'plugins/logstash/services/license';
 import 'plugins/logstash/services/security';
@@ -46,7 +46,7 @@ app.directive('pipelineEdit', function ($injector) {
           editor.$blockScrolling = Infinity;
         };
         if (this.isReadOnly) {
-          this.notifier.info(licenseService.message);
+          toastNotifications.addWarning(licenseService.message);
         }
       }
 
@@ -54,7 +54,7 @@ app.directive('pipelineEdit', function ($injector) {
         this.pipeline.username = username;
         return pipelineService.savePipeline(this.pipeline)
           .then(() => {
-            this.notifier.info(`Saved pipeline "${this.pipeline.id}"`);
+            toastNotifications.addSuccess(`Saved '${this.pipeline.id}'`);
             this.close();
           })
           .catch(err => {
@@ -79,7 +79,7 @@ app.directive('pipelineEdit', function ($injector) {
       deletePipeline = () => {
         return pipelineService.deletePipeline(this.pipeline.id)
           .then(() => {
-            this.notifier.info(`Deleted pipeline "${this.pipeline.id}"`);
+            toastNotifications.addSuccess(`Deleted '${this.pipeline.id}'`);
             this.close();
           })
           .catch(err => {

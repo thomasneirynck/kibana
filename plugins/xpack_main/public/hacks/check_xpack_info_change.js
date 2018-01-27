@@ -1,7 +1,7 @@
 import { identity } from 'lodash';
 import { uiModules } from 'ui/modules';
 import chrome from 'ui/chrome';
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier } from 'ui/notify';
 import { DebounceProvider } from 'ui/debounce';
 import { PathProvider } from 'plugins/xpack_main/services/path';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
@@ -26,7 +26,7 @@ module.factory('checkXPackInfoChange', ($q, Private) => {
     notify.directive({
       template: `
         <p>
-          Your ${license.type} license is currently expired. Please contact your administrator or 
+          Your ${license.type} license is currently expired. Please contact your administrator or
           <a href="${uploadLicensePath}">update your license</a> directly.
         </p>
       `

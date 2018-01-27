@@ -15,7 +15,7 @@ import 'ui/agg_types';
 import 'ui/timepicker';
 import 'leaflet';
 
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier } from 'ui/notify';
 import { DashboardConstants } from 'plugins/kibana/dashboard/dashboard_constants';
 import { KibanaRootController } from 'plugins/kibana/kibana_root_controller';
 

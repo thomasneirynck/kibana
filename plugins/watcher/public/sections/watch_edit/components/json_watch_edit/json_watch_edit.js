@@ -1,6 +1,6 @@
 import { uiModules } from 'ui/modules';
 import { InitAfterBindingsWorkaround } from 'ui/compat';
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier, toastNotifications } from 'ui/notify';
 import 'plugins/watcher/services/dirty_prompt';
 import template from './json_watch_edit.html';
 import 'plugins/watcher/components/kbn_tabs';
@@ -137,7 +137,7 @@ app.directive('jsonWatchEdit', function ($injector) {
         return watchService.saveWatch(this.watch)
           .then(() => {
             this.watch.isNew = false; // without this, the message displays 'New Watch'
-            this.notifier.info(`Saved Watch "${this.watch.displayName}"`);
+            toastNotifications.addSuccess(`Saved '${this.watch.displayName}'`);
             this.onClose();
           })
           .catch(err => {
@@ -158,7 +158,7 @@ app.directive('jsonWatchEdit', function ($injector) {
       deleteWatch = () => {
         return watchService.deleteWatch(this.watch.id)
           .then(() => {
-            this.notifier.info(`Deleted Watch "${this.watch.displayName}"`);
+            toastNotifications.addSuccess(`Deleted '${this.watch.displayName}'`);
             this.onClose();
           })
           .catch(err => {

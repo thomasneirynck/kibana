@@ -10,7 +10,7 @@ import {
   KuiTableRow
 } from 'ui_framework/components';
 import { EuiHealth } from '@elastic/eui';
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier } from 'ui/notify';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { Tooltip } from 'plugins/monitoring/components/tooltip';
 import { AlertsIndicator } from 'plugins/monitoring/components/cluster/listing/alerts_indicator';

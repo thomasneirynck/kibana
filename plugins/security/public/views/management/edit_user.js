@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import routes from 'ui/routes';
+import { fatalError, toastNotifications } from 'ui/notify';
 import template from 'plugins/security/views/management/edit_user.html';
 import 'angular-resource';
 import 'angular-ui-select';
@@ -26,8 +27,11 @@ routes.when(`${EDIT_USERS_PATH}/:username?`, {
       if (username != null) {
         return ShieldUser.get({ username }).$promise
           .catch((response) => {
+            if (response.status !== 404) {
+              return fatalError(response);
+            }
+
             const notifier = new Notifier();
-            if (response.status !== 404) return notifier.fatal(response);
             notifier.error(`No "${username}" user found.`);
             kbnUrl.redirect(USERS_PATH);
             return Promise.halt();
@@ -57,7 +61,7 @@ routes.when(`${EDIT_USERS_PATH}/:username?`, {
     $scope.deleteUser = (user) => {
       const doDelete = () => {
         user.$delete()
-          .then(() => notifier.info('The user has been deleted.'))
+          .then(() => toastNotifications.addSuccess('Deleted user'))
           .then($scope.goToUserList)
           .catch(error => notifier.error(_.get(error, 'data.message')));
       };
@@ -72,7 +76,7 @@ routes.when(`${EDIT_USERS_PATH}/:username?`, {
       // newPassword is unexepcted by the API.
       delete user.newPassword;
       user.$save()
-        .then(() => notifier.info('The user has been updated.'))
+        .then(() => toastNotifications.addSuccess('User updated'))
         .then($scope.goToUserList)
         .catch(error => notifier.error(_.get(error, 'data.message')));
     };
@@ -89,7 +93,7 @@ routes.when(`${EDIT_USERS_PATH}/:username?`, {
       }
 
       $scope.user.$changePassword()
-        .then(() => notifier.info('The password has been changed.'))
+        .then(() => toastNotifications.addSuccess('Password updated'))
         .then(onSuccess)
         .catch(error => {
           if (error.status === 401) {

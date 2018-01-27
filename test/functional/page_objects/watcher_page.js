@@ -23,7 +23,6 @@ export function WatcherPageProvider({ getPageObjects, getService }) {
       await remote.findById('name').type(name);
       await testSubjects.click('btnSaveWatch');
       await PageObjects.header.waitUntilLoadingHasFinished();
-
     }
 
     async getWatch(watchID) {

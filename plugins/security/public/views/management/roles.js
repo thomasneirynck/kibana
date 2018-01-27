@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import routes from 'ui/routes';
+import { toastNotifications } from 'ui/notify';
 import { toggle, toggleSort } from 'plugins/security/lib/util';
 import { isRoleEnabled } from 'plugins/security/lib/role';
 import template from 'plugins/security/views/management/roles.html';
@@ -23,7 +24,7 @@ routes.when(ROLES_PATH, {
         .catch(_.identity); // Return the error if there is one
     }
   },
-  controller($scope, $route, $q, Notifier, confirmModal) {
+  controller($scope, $route, $q, confirmModal) {
     $scope.roles = $route.current.locals.roles;
     $scope.forbidden = !_.isArray($scope.roles);
     $scope.selectedRoles = [];
@@ -31,12 +32,10 @@ routes.when(ROLES_PATH, {
     $scope.editRolesHref = `#${EDIT_ROLES_PATH}`;
     $scope.getEditRoleHref = (role) => `#${EDIT_ROLES_PATH}/${role}`;
 
-    const notifier = new Notifier();
-
     $scope.deleteRoles = () => {
       const doDelete = () => {
         $q.all($scope.selectedRoles.map((role) => role.$delete()))
-          .then(() => notifier.info('The role(s) have been deleted.'))
+          .then(() => toastNotifications.addSuccess(`Deleted ${$scope.selectedRoles.length > 1 ? 'roles' : 'role'}`))
           .then(() => {
             $scope.selectedRoles.map((role) => {
               const i = $scope.roles.indexOf(role);

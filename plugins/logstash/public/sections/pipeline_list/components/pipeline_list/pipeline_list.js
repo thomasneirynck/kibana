@@ -1,6 +1,6 @@
 import pluralize from 'pluralize';
 import { uiModules } from 'ui/modules';
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier, toastNotifications } from 'ui/notify';
 import template from './pipeline_list.html';
 import '../pipeline_table';
 import { PAGINATION } from 'plugins/logstash/../common/constants';
@@ -49,7 +49,7 @@ app.directive('pipelineList', function ($injector) {
           // notify the users if the UI is read-only only after we
           // successfully loaded pipelines
             if (this.isReadOnly) {
-              this.notifier.info(licenseService.message);
+              toastNotifications.addWarning(licenseService.message);
             }
           });
 
@@ -150,11 +150,17 @@ app.directive('pipelineList', function ($injector) {
             const numTotal = this.selectedPipelines.length;
 
             if (numSuccesses > 0) {
-              this.notifier.info(`Deleted ${numSuccesses} out of ${numTotal} selected ${pipelinesStr}`);
-            }
+              let text;
+              if (numErrors > 0) {
+                text = `But ${numErrors} ${pipelinesStr} couldn't be deleted`;
+              }
 
-            if (numErrors > 0) {
-              this.notifier.error(`Could not delete ${numErrors} out of ${numTotal} selected ${pipelinesStr}`);
+              toastNotifications.addSuccess({
+                title: `Deleted ${numSuccesses} out of ${numTotal} selected ${pipelinesStr}`,
+                text,
+              });
+            } else if (numErrors > 0) {
+              toastNotifications.addError(`Couldn't delete any of the ${numTotal} selected ${pipelinesStr}`);
             }
 
             this.loadPipelines();

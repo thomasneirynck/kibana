@@ -1,6 +1,6 @@
 import { uiModules } from 'ui/modules';
 import template from './grokdebugger.html';
-import { Notifier } from 'ui/notify/notifier';
+import { Notifier } from 'ui/notify';
 import { GrokdebuggerRequest } from 'plugins/grokdebugger/models/grokdebugger_request';
 import 'plugins/grokdebugger/services/grokdebugger';
 import './grokdebugger.less';

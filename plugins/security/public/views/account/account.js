@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { toastNotifications } from 'ui/notify';
 import routes from 'ui/routes';
 import template from './account.html';
 import './account.less';
@@ -31,7 +32,7 @@ routes.when('/account', {
       }
 
       $scope.user.$changePassword()
-        .then(() => notifier.info('The password has been changed.'))
+        .then(() => toastNotifications.addSuccess('Updated password'))
         .then(onSuccess)
         .catch(error => {
           if (error.status === 401) {

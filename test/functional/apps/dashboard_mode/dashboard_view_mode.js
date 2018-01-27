@@ -32,7 +32,6 @@ export default function ({ getService, getPageObjects }) {
       await PageObjects.dashboard.clickNewDashboard();
       await PageObjects.dashboard.addVisualizations(PageObjects.dashboard.getTestVisualizationNames());
       await PageObjects.dashboard.saveDashboard(dashboardName);
-      await PageObjects.header.clickToastOK();
     });
 
     describe('Dashboard viewer', () => {

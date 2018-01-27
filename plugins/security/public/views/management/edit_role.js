@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import routes from 'ui/routes';
+import { fatalError, toastNotifications } from 'ui/notify';
 import { toggle } from 'plugins/security/lib/util';
 import { isRoleEnabled } from 'plugins/security/lib/role';
 import template from 'plugins/security/views/management/edit_role.html';
@@ -28,8 +29,12 @@ routes.when(`${EDIT_ROLES_PATH}/:name?`, {
       if (name != null) {
         return ShieldRole.get({ name }).$promise
           .catch((response) => {
+
+            if (response.status !== 404) {
+              return fatalError(response);
+            }
+
             const notifier = new Notifier();
-            if (response.status !== 404) return notifier.fatal(response);
             notifier.error(`No "${name}" role found.`);
             kbnUrl.redirect(ROLES_PATH);
             return Promise.halt();
@@ -76,7 +81,7 @@ routes.when(`${EDIT_ROLES_PATH}/:name?`, {
     $scope.deleteRole = (role) => {
       const doDelete = () => {
         role.$delete()
-          .then(() => notifier.info('The role has been deleted.'))
+          .then(() => toastNotifications.addSuccess('Deleted role'))
           .then($scope.goToRoleList)
           .catch(error => notifier.error(_.get(error, 'data.message')));
       };
@@ -91,7 +96,7 @@ routes.when(`${EDIT_ROLES_PATH}/:name?`, {
       role.indices = role.indices.filter((index) => index.names.length);
       role.indices.forEach((index) => index.query || delete index.query);
       return role.$save()
-        .then(() => notifier.info('The role has been updated.'))
+        .then(() => toastNotifications.addSuccess('Updated role'))
         .then($scope.goToRoleList)
         .catch(error => notifier.error(_.get(error, 'data.message')));
     };
