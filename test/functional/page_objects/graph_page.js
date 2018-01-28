@@ -85,7 +85,6 @@ export function GraphPageProvider({ getService, getPageObjects }) {
       }
     }
 
-
     async saveGraph(name) {
       await remote.setFindTimeout(defaultFindTimeout)
         .findByCssSelector('[aria-label="Save Workspace"]').click();
@@ -93,7 +92,9 @@ export function GraphPageProvider({ getService, getPageObjects }) {
         .findById('workspaceTitle').type(name);
       await remote.setFindTimeout(defaultFindTimeout)
         .findByCssSelector('button[aria-label="Save workspace"]').click();
-      return PageObjects.header.getToastMessage();
+
+      // Confirm that the Graph has been saved.
+      return await testSubjects.exists('saveGraphSuccess');
     }
 
     async openGraph(name) {

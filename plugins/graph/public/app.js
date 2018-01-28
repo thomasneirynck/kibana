@@ -1028,6 +1028,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
         toastNotifications.addSuccess({
           title,
           text,
+          'data-test-subj': 'saveGraphSuccess',
         });
         if ($scope.savedWorkspace.id === $route.current.params.id) return;
         $scope.openSavedWorkspace($scope.savedWorkspace);

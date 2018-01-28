@@ -99,10 +99,8 @@ export default function ({ getService, getPageObjects }) {
     });
 
     it('should save Graph workspace', async function () {
-      const toastMessage = await PageObjects.graph.saveGraph(graphName);
-      log.debug('toastMessage = ' + toastMessage);
-      expect(toastMessage).to.equal('Saved Workspace "' + graphName + '"');
-      await PageObjects.header.waitForToastMessageGone();
+      const graphExists = await PageObjects.graph.saveGraph(graphName);
+      expect(graphExists).to.eql(true);
     });
 
     // open the same graph workspace again and make sure the results are the same
