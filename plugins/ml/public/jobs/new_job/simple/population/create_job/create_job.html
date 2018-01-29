@@ -181,7 +181,7 @@
 
                 <div ng-show="chartStates.eventRate === CHART_STATE.NOT_STARTED || chartStates.eventRate === CHART_STATE.LOADING || chartStates.eventRate === CHART_STATE.NO_RESULTS"
                   class='chart-loader event-rate-chart-loader'
-                  style='height: {{ui.eventRateChartHeight}}px; margin-top: -{{ui.eventRateChartHeight + 25}}px;'>
+                  style='height: {{ui.eventRateChartHeight}}px; margin-top: -{{ui.eventRateChartHeight + 30}}px;'>
                     <div class='status-label' ng-if="chartStates.eventRate === CHART_STATE.NOT_STARTED"></div>
                     <div class='status-label' ng-if="chartStates.eventRate === CHART_STATE.LOADING">
                       <h2 class="euiTitle euiTitle"><i class='fa fa-spinner fa-spin'></i></h2>
@@ -250,7 +250,7 @@
 
                       <div ng-show="chartStates.fields[id] === CHART_STATE.NOT_STARTED || chartStates.fields[id] === CHART_STATE.LOADING || chartStates.fields[id] === CHART_STATE.NO_RESULTS"
                         class='chart-loader fields-chart-loader'
-                        style='height: {{ui.chartHeight}}px; margin-top: -{{ui.chartHeight + 25}}px; margin-left: {{chartData.chartTicksMargin.width - 1}}px;'>
+                        style='height: {{ui.chartHeight}}px; margin-top: -{{ui.chartHeight + 30}}px; margin-left: {{chartData.chartTicksMargin.width - 1}}px;'>
                           <div class='status-label' ng-show="chartStates.fields[id] === CHART_STATE.NOT_STARTED"></div>
                           <div class='status-label' ng-show="chartStates.fields[id] === CHART_STATE.LOADING">
                             <h2 class="euiTitle euiTitle"><i class='fa fa-spinner fa-spin'></i></h2>

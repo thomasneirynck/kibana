@@ -96,7 +96,7 @@ module.directive('mlMultiMetricJobChart', function (Private) {
 
       if (chartElement.select('.progress-bar')[0][0] === null) {
         const style = `width: ${(+vizWidth + 2)}px;
-          margin-bottom: -${(+lineChartHeight - 12)}px;
+          margin-bottom: -${(+lineChartHeight - 15)}px;
           margin-left: ${(+margin.left - 1)}px;'`;
 
         chartElement.append('div')

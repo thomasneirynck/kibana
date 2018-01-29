@@ -91,8 +91,9 @@ module.directive('mlEventRateChart', function (Private) {
       chartElement.select('.progress').remove();
 
       if (chartElement.select('.progress-bar')[0][0] === null) {
-        let style = 'width:' + (+vizWidth + 2) + 'px; margin-bottom: -' + (+barChartHeight - 12) + 'px; ';
-        style += 'margin-left: ' + (+margin.left - 1) + 'px;';
+        const style = `width: ${(+vizWidth + 2)}px;
+          margin-bottom: -${(+barChartHeight - 15)}px;
+          margin-left: ${(+margin.left - 1)}px;'`;
 
         chartElement.append('div')
           .attr('class', 'progress')

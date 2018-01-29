@@ -89,7 +89,7 @@ module.directive('mlPopulationJobChart', function (Private, mlChartTooltipServic
 
       if (chartElement.select('.progress-bar')[0][0] === null) {
         const style = `width: ${(+vizWidth + 2)}px;
-          margin-bottom: -${(+chartHeight - 12)}px;
+          margin-bottom: -${(+chartHeight - 15)}px;
           margin-left: ${(+margin.left - 1)}px;'`;
 
         chartElement.append('div')
