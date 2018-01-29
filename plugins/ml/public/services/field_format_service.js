@@ -80,6 +80,21 @@ module.service('mlFieldFormatService', function (
     return _.get(formatsByJob, [jobId, detectorIndex]);
   };
 
+
+  // Utility for returning the FieldFormat from a full populated Kibana index pattern object
+  // containing the list of fields by name with their formats.
+  this.getFieldFormatFromIndexPattern = function (fullIndexPattern, fieldName, esAggName) {
+    // Don't use the field formatter for distinct count detectors as
+    // e.g. distinct_count(clientip) should be formatted as a count, not as an IP address.
+    let fieldFormat = undefined;
+    if (esAggName !== 'cardinality') {
+      const indexPatternFields = _.get(fullIndexPattern, 'fields.byName', []);
+      fieldFormat = _.get(indexPatternFields, [fieldName, 'format']);
+    }
+
+    return fieldFormat;
+  };
+
   function getFormatsForJob(jobId) {
     const deferred = $q.defer();
 

@@ -27,6 +27,7 @@ module.service('mlMultiMetricJobService', function (
   es,
   timefilter,
   Private,
+  mlFieldFormatService,
   mlJobService) {
 
   this.chartData = {
@@ -40,7 +41,6 @@ module.service('mlMultiMetricJobService', function (
     percentComplete: 0,
     loadingDifference: 0,
     lastLoadTimestamp: null,
-    highestValue: 0,
     eventRateHighestValue: 0,
     chartTicksMargin: { width: 30 },
     totalResults: 0
@@ -54,7 +54,6 @@ module.service('mlMultiMetricJobService', function (
     this.chartData.detectors = {};
     this.chartData.percentComplete = 0;
     this.chartData.loadingDifference = 0;
-    this.chartData.highestValue = 0;
     this.chartData.eventRateHighestValue = 0;
     this.chartData.totalResults = 0;
 
@@ -78,7 +77,8 @@ module.service('mlMultiMetricJobService', function (
     _.each(fieldIds, (fieldId) => {
       this.chartData.detectors[fieldId] = {
         line: [],
-        swimlane: []
+        swimlane: [],
+        highestValue: 0
       };
     });
 
@@ -91,14 +91,24 @@ module.service('mlMultiMetricJobService', function (
           _.each(fieldIds, (fieldId) => {
             this.chartData.detectors[fieldId] = {
               line: [],
-              swimlane: []
+              swimlane: [],
+              highestValue: 0
             };
+
+            if (fieldId !== EVENT_RATE_COUNT_FIELD) {
+              const field = formConfig.fields[fieldId];
+              const aggType = field.agg.type.dslName;
+              this.chartData.detectors[fieldId].fieldFormat = mlFieldFormatService.getFieldFormatFromIndexPattern(
+                formConfig.indexPattern,
+                fieldId,
+                aggType);
+            }
+
           });
         } else {
           deferred.resolve(this.chartData);
         }
         const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
-        let highestValue = Math.max(this.chartData.eventRateHighestValue, this.chartData.highestValue);
 
         _.each(aggregationsByTime, (dataForTime) => {
           const time = +dataForTime.key;
@@ -135,10 +145,6 @@ module.service('mlMultiMetricJobService', function (
               value = null;
             }
 
-            if (value > highestValue) {
-              highestValue = value;
-            }
-
             if (this.chartData.detectors[fieldId]) {
               this.chartData.detectors[fieldId].line.push({
                 date,
@@ -154,11 +160,15 @@ module.service('mlMultiMetricJobService', function (
                 color: '',
                 percentComplete: 0
               });
+
+              if (value !== null) {
+                this.chartData.detectors[fieldId].highestValue =
+                  Math.ceil(Math.max(this.chartData.detectors[fieldId].highestValue, Math.abs(value)));
+              }
+
             }
           });
         });
-
-        this.chartData.highestValue = Math.ceil(highestValue);
 
         deferred.resolve(this.chartData);
       })

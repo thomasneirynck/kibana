@@ -17,6 +17,7 @@ import './styles/main.less';
 import './create_job_controller';
 import './create_job_service';
 import './create_job_chart_directive';
+import 'plugins/ml/services/field_format_service';
 import 'plugins/ml/services/mapping_service';
 import 'plugins/ml/jobs/new_job/simple/components/utils/search_service';
 import 'plugins/ml/jobs/new_job/simple/components/post_save_options';

@@ -30,6 +30,7 @@ module.service('mlSingleMetricJobService', function (
   es,
   timefilter,
   Private,
+  mlFieldFormatService,
   mlJobService,
   mlResultsService) {
 
@@ -56,6 +57,16 @@ module.service('mlSingleMetricJobService', function (
     this.chartData.loadingDifference = 0;
     this.chartData.eventRateHighestValue = 0;
     this.chartData.totalResults = 0;
+
+    const aggType = formConfig.agg.type.dslName;
+    if (formConfig.field && formConfig.field.id) {
+      this.chartData.fieldFormat = mlFieldFormatService.getFieldFormatFromIndexPattern(
+        formConfig.indexPattern,
+        formConfig.field.id,
+        aggType);
+    } else {
+      delete this.chartData.fieldFormat;
+    }
 
     const obj = {
       success: true,
@@ -98,7 +109,12 @@ module.service('mlSingleMetricJobService', function (
 
         this.chartData.highestValue = Math.ceil(highestValue);
         // Append extra 10px to width of tick label for highest axis value to allow for tick padding.
-        this.chartData.chartTicksMargin.width = calculateTextWidth(this.chartData.highestValue, true) + 10;
+        if (this.chartData.fieldFormat !== undefined) {
+          const highValueFormatted = this.chartData.fieldFormat.convert(this.chartData.highestValue, 'text');
+          this.chartData.chartTicksMargin.width = calculateTextWidth(highValueFormatted, false) + 10;
+        } else {
+          this.chartData.chartTicksMargin.width = calculateTextWidth(this.chartData.highestValue, true) + 10;
+        }
 
         deferred.resolve(this.chartData);
       })

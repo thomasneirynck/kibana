@@ -170,6 +170,10 @@ module.directive('mlSingleMetricJobChart', function (Private) {
       const yAxis = d3.svg.axis().scale(lineChartYScale).orient('left')
         .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
 
+      if (scope.chartData.fieldFormat !== undefined) {
+        yAxis.tickFormat(d => scope.chartData.fieldFormat.convert(d, 'text'));
+      }
+
       // Add border round plot area.
       lineChartGroup.append('rect')
         .attr('x', 0)

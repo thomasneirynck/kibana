@@ -43,7 +43,7 @@ export function ChartDataUtilsProvider($q, Private, timefilter, mlSimpleJobSearc
         end,
         (interval + 'ms'))
         .then((resp) => {
-          let highestValue = Math.max(chartData.eventRateHighestValue, chartData.highestValue);
+          let highestValue = 0;
           chartData.job.bars = [];
 
           _.each(resp.results, (value, t) => {
@@ -171,8 +171,30 @@ export function ChartDataUtilsProvider($q, Private, timefilter, mlSimpleJobSearc
   }
 
   function updateChartMargin(chartData) {
+    // Find the formatted value with the longest width across charts.
+    let longestTextWidth = calculateTextWidth(chartData.eventRateHighestValue, true);
+
+    // For fields with formatters, check the width for the value, plus a secondary check
+    // on the highest value multiplied by an irrational number, to minimize the chances
+    // of the highestValue not corresponding to the full quota of decimal places
+    // when formatted e.g. 12.340KB would be formatted to only 2 decimal places 12.34KB
+    const textCheckMultipler = 1 + (Math.sqrt(2) / 100);
+    _.each(chartData.detectors, (detector) => {
+      let longestWidthForDetector = 0;
+      if (detector.fieldFormat !== undefined) {
+        const longestTextForDetector = detector.fieldFormat.convert(detector.highestValue, 'text');
+        longestWidthForDetector = calculateTextWidth(longestTextForDetector, false);
+        const longestTextCheck = detector.fieldFormat.convert(detector.highestValue * textCheckMultipler, 'text');
+        const longestWidthCheck = calculateTextWidth(longestTextCheck, false);
+        longestWidthForDetector = Math.max(longestWidthForDetector, longestWidthCheck);
+      } else {
+        longestWidthForDetector = calculateTextWidth(detector.highestValue, true);
+      }
+      longestTextWidth = Math.max(longestTextWidth, longestWidthForDetector);
+    });
+
     // Append extra 10px to width of tick label for highest axis value to allow for tick padding.
-    chartData.chartTicksMargin.width = calculateTextWidth(chartData.eventRateHighestValue, true) + 10;
+    chartData.chartTicksMargin.width = longestTextWidth + 10;
   }
 
   return {

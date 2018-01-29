@@ -168,6 +168,9 @@ module.directive('mlMultiMetricJobChart', function (Private) {
         .outerTickSize(0)
         .tickPadding(10);
 
+      if (scope.chartData.fieldFormat !== undefined) {
+        yAxis.tickFormat(d => scope.chartData.fieldFormat.convert(d, 'text'));
+      }
 
       // add a white background to the chart
       swimlaneGroup.append('rect')

@@ -176,6 +176,9 @@ module.directive('mlPopulationJobChart', function (Private, mlChartTooltipServic
         .outerTickSize(0)
         .tickPadding(10);
 
+      if (scope.chartData.fieldFormat !== undefined) {
+        yAxis.tickFormat(d => scope.chartData.fieldFormat.convert(d, 'text'));
+      }
 
       // add a white background to the chart
       swimlaneGroup.append('rect')
@@ -235,7 +238,11 @@ module.directive('mlPopulationJobChart', function (Private, mlChartTooltipServic
       const formattedDate = moment(data.date).format('MMMM Do YYYY, HH:mm');
       contents += `${formattedDate}<br/><hr/>`;
       contents += `${scope.overFieldName}: ${data.label}<br/>`;
-      contents += `Value: ${parseInt(data.value)}`;
+      if (scope.chartData.fieldFormat !== undefined) {
+        contents += `Value: ${scope.chartData.fieldFormat.convert(data.value, 'text')}`;
+      } else {
+        contents += `Value: ${parseInt(data.value)}`;
+      }
 
       mlChartTooltipService.show(contents, el, {
         x: 5,
