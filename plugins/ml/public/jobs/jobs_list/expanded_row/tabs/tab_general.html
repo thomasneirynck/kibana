@@ -32,27 +32,24 @@
     <div class="col-md-6">
       <div>
         <div class="ml_sub_heading">Actions</div>
-        <div class='ml_job_section_container'>
-          <span
-           ng-class="(job.datafeed_config && job.datafeed_config.state===DATAFEED_STATE.STOPPED && job.state===JOB_STATE.OPENED)?'button':['button-wrapper', 'disabled']"
-           ng-attr-tooltip="{{ui.getCloseJobTooltip()}}"
-           data-toggle="tooltip"
-          >
-            <button
-              ng-click="closeJob(job)"
-              ng-disabled="ui.closeJobDisabled()===true"
-              class="kuiButton kuiButton--primary"
-              aria-label="Close job">
-              Close Job
-            </button>
-          </span>
+        <div class="ml_job_section_container euiFlexGroup euiFlexGroup--gutterSmall">
+          <div class="euiFlexItem euiFlexItem--flexGrowZero">
+            <div class="euiFormRow">
+              <span ng-class="(job.datafeed_config && job.datafeed_config.state===DATAFEED_STATE.STOPPED && job.state===JOB_STATE.OPENED)?'button':['button-wrapper', 'disabled']"
+                ng-attr-tooltip="{{ui.getCloseJobTooltip()}}" data-toggle="tooltip">
+                <button ng-click="closeJob(job)" ng-disabled="ui.closeJobDisabled()===true" class="euiButton euiButton--primary euiButton--small euiButton--fill"
+                  type="button" aria-label="Close job">
+                  <span class="euiButton__content">
+                    <span>Close Job</span>
+                  </span>
+                </button>
+              </span>
+            </div>
+          </div>
           <!--
-          <button
-            ng-click="validateJob(job)"
-            class="kuiButton kuiButton--primary"
-            aria-label="Validate job">
-            Validate Job
-          </button>
+          <div class="euiFlexItem euiFlexItem--flexGrowZero">
+            <ml-validate-job class="euiFormRow" job="job" />
+          </div>
           //-->
         </div>
       </div>

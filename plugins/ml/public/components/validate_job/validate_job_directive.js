@@ -13,14 +13,21 @@
  * strictly prohibited.
  */
 
-import './styles/main.less';
-import './jobs_list_controller';
-import './edit_job_modal';
-import './job_timepicker_modal';
-import './delete_job_modal';
-import './create_watch_modal';
-import './expanded_row';
-import 'ui/directives/confirm_click';
-import 'plugins/ml/components/paginated_table';
-import 'plugins/ml/components/validate_job';
-import 'plugins/ml/services/notification_service';
+
+import 'ngreact';
+
+import { uiModules } from 'ui/modules';
+const module = uiModules.get('apps/ml', ['react']);
+
+import { validateJobProvider } from './validate_job_view';
+
+module.directive('mlValidateJob', function ($injector) {
+  const Private = $injector.get('Private');
+  const reactDirective = $injector.get('reactDirective');
+
+  return reactDirective(
+    Private(validateJobProvider),
+    undefined,
+    { restrict: 'E' }
+  );
+});

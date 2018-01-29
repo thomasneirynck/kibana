@@ -13,5 +13,4 @@
  * strictly prohibited.
  */
 
-import './styles/main.less';
-import './validate_job_modal_controller';
+import './validate_job_directive';
