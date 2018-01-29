@@ -1,1 +1,1 @@
-export { SupertestWithoutAuthProvider } from './supertest-without-auth';
+export { SupertestWithoutAuthProvider } from './supertest_without_auth';

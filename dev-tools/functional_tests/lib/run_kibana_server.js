@@ -8,7 +8,12 @@ import {
   OPTIMIZE_BUNDLE_DIR
 } from './paths';
 
-export async function runKibanaServer({ procs, ftrConfig, devMode = false, enableUI = true }) {
+export async function runKibanaServer({ procs, ftrConfig, devMode = false, enableUI = true, useSAML = false }) {
+  const samlArgs = useSAML ? [
+    '--server.xsrf.whitelist=[\"/api/security/v1/saml\"]',
+    '--xpack.security.authProviders=[\"saml\"]',
+  ] : [];
+
   // start the kibana server and wait for it to log "Server running" before resolving
   await procs.run('kibana', {
     cmd: KIBANA_EXEC,
@@ -29,6 +34,7 @@ export async function runKibanaServer({ procs, ftrConfig, devMode = false, enabl
       `--elasticsearch.username=${ftrConfig.get('servers.elasticsearch.username')}`,
       `--elasticsearch.password=${ftrConfig.get('servers.elasticsearch.password')}`,
       '--xpack.monitoring.kibana.collection.enabled=false',
+      ...samlArgs,
     ],
     env: {
       FORCE_COLOR: 1,

@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { resolve } from 'path';
 import { platform as getPlatform } from 'os';
 
@@ -12,12 +13,11 @@ import {
   RELATIVE_GRADLE_BIN,
   XPACK_ES_REPO_ROOT,
   ES_ARCHIVE_PATTERN,
-  XPACK_ES_ARCHIVE_PATTERN
+  XPACK_ES_ARCHIVE_PATTERN,
+  XPACK_KIBANA_ROOT,
 } from './paths';
 
-export async function runEsWithXpack({ tmpDir, procs, ftrConfig }) {
-  const esExtractPath = resolve(tmpDir, 'es');
-
+async function setupEsWithXpack({ esExtractPath, procs }) {
   await procs.run('buildEsAndXpack', {
     cmd: RELATIVE_GRADLE_BIN,
     args: [':distribution:tar:assemble', ':x-pack-elasticsearch:plugin:assemble'],
@@ -57,12 +57,43 @@ export async function runEsWithXpack({ tmpDir, procs, ftrConfig }) {
     cwd: esExtractPath,
     wait: true,
   });
+}
+
+export async function runEsWithXpack({ tmpDir, procs, ftrConfig, useSAML = false }) {
+  const esExtractPath = resolve(tmpDir, 'es');
+  if (!fs.existsSync(esExtractPath)) {
+    await setupEsWithXpack({ esExtractPath, procs });
+  }
+
+  const samlArgs = [];
+  if (useSAML) {
+    fs.createReadStream(
+      resolve(XPACK_KIBANA_ROOT, 'test/saml_api_integration/fixtures/idp_metadata.xml')
+    ).pipe(
+      fs.createWriteStream(resolve(esExtractPath, 'config', 'idp_metadata.xml'))
+    );
+
+    const kibanaPort = ftrConfig.get('servers.kibana.port');
+    samlArgs.push(
+      '-E', 'xpack.security.authc.token.enabled=true',
+      '-E', 'xpack.security.authc.token.timeout=15s',
+      '-E', 'xpack.security.authc.realms.saml1.type=saml',
+      '-E', 'xpack.security.authc.realms.saml1.order=0',
+      '-E', 'xpack.security.authc.realms.saml1.idp.metadata.path=idp_metadata.xml',
+      '-E', 'xpack.security.authc.realms.saml1.idp.entity_id=http://www.elastic.co',
+      '-E', `xpack.security.authc.realms.saml1.sp.entity_id=http://localhost:${kibanaPort}`,
+      '-E', `xpack.security.authc.realms.saml1.sp.logout=http://localhost:${kibanaPort}/logout`,
+      '-E', `xpack.security.authc.realms.saml1.sp.acs=http://localhost:${kibanaPort}/api/security/v1/saml`,
+      '-E', 'xpack.security.authc.realms.saml1.attributes.principal=urn:oid:0.0.7',
+    );
+  }
 
   await procs.run('es', {
     cmd: RELATIVE_ES_BIN,
     args: [
       '-E', `http.port=${ftrConfig.get('servers.elasticsearch.port')}`,
-      '-E', `xpack.monitoring.enabled=false` // disable monitoring in order to drive the UI just with archived data
+      '-E', `xpack.monitoring.enabled=false`, // disable monitoring in order to drive the UI just with archived data
+      ...samlArgs,
     ],
     cwd: esExtractPath,
     wait: /^\[.+?\]\[.+?\]\[.+?\] \[.+?\] started$/

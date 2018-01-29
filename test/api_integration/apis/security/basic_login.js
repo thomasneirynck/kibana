@@ -9,7 +9,7 @@ export default function ({ getService }) {
   const validUsername = kibanaServerConfig.username;
   const validPassword = kibanaServerConfig.password;
 
-  describe('Basic authentication', function getLanguages() {
+  describe('Basic authentication', () => {
     it('should redirect non-AJAX requests to the login page if not authenticated', async () => {
       const response = await supertest.get('/abc/xyz')
         .expect(302);
@@ -136,6 +136,54 @@ export default function ({ getService }) {
         expect(apiResponse.body.username).to.be(validUsername);
       });
 
+      it('should extend cookie on every successful non-system API call', async () => {
+        const apiResponseOne = await supertest
+          .get('/api/security/v1/me')
+          .set('kbn-xsrf', 'xxx')
+          .set('Cookie', sessionCookie.cookieString())
+          .expect(200);
+
+        expect(apiResponseOne.headers['set-cookie']).to.not.be(undefined);
+        const sessionCookieOne = request.cookie(apiResponseOne.headers['set-cookie'][0]);
+
+        expect(sessionCookieOne.value).to.not.be.empty();
+        expect(sessionCookieOne.value).to.not.equal(sessionCookie.value);
+
+        const apiResponseTwo = await supertest
+          .get('/api/security/v1/me')
+          .set('kbn-xsrf', 'xxx')
+          .set('Cookie', sessionCookie.cookieString())
+          .expect(200);
+
+        expect(apiResponseTwo.headers['set-cookie']).to.not.be(undefined);
+        const sessionCookieTwo = request.cookie(apiResponseTwo.headers['set-cookie'][0]);
+
+        expect(sessionCookieTwo.value).to.not.be.empty();
+        expect(sessionCookieTwo.value).to.not.equal(sessionCookieOne.value);
+      });
+
+      it('should not extend cookie for system API calls', async () => {
+        const systemAPIResponse = await supertest
+          .get('/api/security/v1/me')
+          .set('kbn-xsrf', 'xxx')
+          .set('kbn-system-api', 'true')
+          .set('Cookie', sessionCookie.cookieString())
+          .expect(200);
+
+        expect(systemAPIResponse.headers['set-cookie']).to.be(undefined);
+      });
+
+      it('should fail and preserve session cookie if unsupported authentication schema is used', async () => {
+        const apiResponse = await supertest
+          .get('/api/security/v1/me')
+          .set('kbn-xsrf', 'xxx')
+          .set('Authorization', 'Bearer AbCdEf')
+          .set('Cookie', sessionCookie.cookieString())
+          .expect(400);
+
+        expect(apiResponse.headers['set-cookie']).to.be(undefined);
+      });
+
       it('should clear cookie on logout and redirect to login', async ()=> {
         const logoutResponse = await supertest.get('/api/security/v1/logout?next=%2Fabc%2Fxyz&msg=test')
           .set('Cookie', sessionCookie.cookieString())
@@ -154,7 +202,7 @@ export default function ({ getService }) {
         expect(logoutResponse.headers.location).to.be('/login?next=%2Fabc%2Fxyz&msg=test');
       });
 
-      it('should not render login page nd redirect to `next` URL', async () => {
+      it('should not render login page and redirect to `next` URL', async () => {
         const loginViewResponse = await supertest
           .get('/login?next=%2Fapp%2Fml%3Fone%3Dtwo')
           .set('Cookie', sessionCookie.cookieString())
@@ -191,6 +239,14 @@ export default function ({ getService }) {
 
           expect(loginViewResponse.headers.location).to.be('/');
         });
+
+      it('should redirect to home page if cookie is not provided', async ()=> {
+        const logoutResponse = await supertest.get('/api/security/v1/logout')
+          .expect(302);
+
+        expect(logoutResponse.headers['set-cookie']).to.be(undefined);
+        expect(logoutResponse.headers.location).to.be('/');
+      });
     });
   });
 }

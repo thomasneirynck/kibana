@@ -1,5 +1,6 @@
 import { relative } from 'path';
 import Rx from 'rxjs/Rx';
+import { Command } from 'commander';
 
 import {
   withTmpDir,
@@ -46,41 +47,64 @@ export function runFunctionTests() {
     .catch(fatalErrorHandler);
 }
 
-export function runApiTests() {
-  withTmpDir(async tmpDir => {
-    await withProcRunner(async procs => {
-      const ftrConfig = await getFtrConfig();
+export async function runApiTests() {
+  try {
+    await withTmpDir(async tmpDir => {
+      await withProcRunner(async procs => {
+        const ftrConfig = await getFtrConfig();
 
-      await runEsWithXpack({ tmpDir, procs, ftrConfig });
-      await runXpackKibanaGulpPrepare({ procs });
-      await runKibanaServer({ procs, ftrConfig, enableUI: false });
-      await runFtr({ procs, configPath: require.resolve('../../test/api_integration/config.js') });
+        await runEsWithXpack({ tmpDir, procs, ftrConfig });
+        // This task will download browsers, including `Phantom` that is required by reporting.
+        await runXpackKibanaGulpPrepare({ procs });
+        await runKibanaServer({ procs, ftrConfig, enableUI: false });
+        await runFtr({ procs, configPath: require.resolve('../../test/api_integration/config.js') });
 
-      await procs.stop('kibana');
-      await procs.stop('es');
+        await procs.stop('kibana');
+        await procs.stop('es');
+
+        // Run SAML specific API integration tests.
+        await runEsWithXpack({ tmpDir, procs, ftrConfig, useSAML: true });
+        await runKibanaServer({ procs, ftrConfig, enableUI: false, useSAML: true });
+        await runFtr({ procs, configPath: require.resolve('../../test/saml_api_integration/config.js') });
+
+        await procs.stop('kibana');
+        await procs.stop('es');
+      });
     });
-  })
-    .catch(fatalErrorHandler);
+  } catch(err) {
+    fatalErrorHandler(err);
+  }
 }
 
-export function runFunctionalTestsServer() {
-  withTmpDir(async tmpDir => {
-    await withProcRunner(async procs => {
-      const ftrConfig = await getFtrConfig();
-      await runEsWithXpack({ tmpDir, procs, ftrConfig });
-      await runXpackKibanaGulpPrepare({ procs });
-      await runKibanaServer({ devMode: true, procs, ftrConfig });
+export async function runFunctionalTestsServer() {
+  const cmd = new Command('node scripts/functional_test_server');
 
-      // wait for 5 seconds of silence before logging the success message
-      // so that it doesn't get burried
-      await Rx.Observable.fromEvent(log, 'data')
-        .switchMap(() => Rx.Observable.timer(5000))
-        .first()
-        .toPromise();
+  cmd
+    .option('--saml', 'Run Elasticsearch and Kibana with configured SAML security realm', false)
+    .parse(process.argv);
 
-      log.info(SUCCESS_MESSAGE);
-      await procs.waitForAllToStop();
+  const useSAML = cmd.saml;
+
+  try {
+    await withTmpDir(async tmpDir => {
+      await withProcRunner(async procs => {
+        const ftrConfig = await getFtrConfig();
+        await runEsWithXpack({ tmpDir, procs, ftrConfig, useSAML });
+        await runXpackKibanaGulpPrepare({ procs });
+        await runKibanaServer({ devMode: true, procs, ftrConfig, useSAML });
+
+        // wait for 5 seconds of silence before logging the success message
+        // so that it doesn't get burried
+        await Rx.Observable.fromEvent(log, 'data')
+          .switchMap(() => Rx.Observable.timer(5000))
+          .first()
+          .toPromise();
+
+        log.info(SUCCESS_MESSAGE);
+        await procs.waitForAllToStop();
+      });
     });
-  })
-    .catch(fatalErrorHandler);
+  } catch(err) {
+    fatalErrorHandler(err);
+  }
 }

@@ -94,6 +94,7 @@ gulp.task('lint-staged', () => {
         '\.eslintignore',
         'yarn\.lock',
         'dev-tools/ci',
+        '\.xml',
       ];
 
       // build's a regex like: /(\.js|\.html|\.less|\.css)$/

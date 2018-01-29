@@ -8,13 +8,11 @@ export default async function ({ readConfigFile }) {
   const xPackFunctionalTestsConfig = await readConfigFile(require.resolve('../functional/config.js'));
 
   return {
-    testFiles: [
-      require.resolve('./apis/index'),
-    ],
+    testFiles: [require.resolve('./apis')],
     servers: xPackFunctionalTestsConfig.get('servers'),
     services: {
       supertest: kibanaAPITestsConfig.get('services.supertest'),
-      supertestWithoutAuth: SupertestWithoutAuthProvider
+      supertestWithoutAuth: SupertestWithoutAuthProvider,
     },
     junit: {
       reportName: 'X-Pack API Integration Tests',

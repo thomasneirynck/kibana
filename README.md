@@ -222,7 +222,25 @@ Once Kibana and Elasticsearch are up and running open a new terminal and run thi
 cd x-pack-kibana
 
 # this command accepts a bunch of arguments to tweak the run, try sending --help to learn more
-node ../kibana/scripts/functional_test_runner --config test/api_integration/config.js
+node ../../kibana/scripts/functional_test_runner --config test/api_integration/config.js
+```
+
+You can also run API integration tests with SAML support. The `--saml` option configures both Kibana and Elasticsearch 
+with the SAML security realm, as required by the SAML security API.
+
+Start the functional test server with SAML support:
+
+```sh
+node scripts/functional_tests_server --saml
+```
+
+Then run the tests with:
+```sh
+# make sure you are in the x-pack-kibana project
+cd x-pack-kibana
+
+# use a different config for SAML
+node ../../kibana/scripts/functional_test_runner --config test/saml_api_integration/config.js
 ```
 
 ### Issues starting dev more of creating builds
