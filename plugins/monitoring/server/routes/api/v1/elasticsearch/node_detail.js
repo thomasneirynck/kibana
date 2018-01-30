@@ -26,7 +26,7 @@ export function nodeRoutes(server) {
             max: Joi.date().required()
           }).required(),
           metrics: Joi.array().required(),
-          shards: Joi.boolean().default(true)
+          is_advanced: Joi.boolean().required()
         })
       }
     },
@@ -41,7 +41,7 @@ export function nodeRoutes(server) {
         const end = req.payload.timeRange.max;
         const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
         const metricSet = req.payload.metrics;
-        const collectShards = req.payload.shards;
+        const isAdvanced = req.payload.is_advanced;
 
         const cluster = await getClusterStats(req, esIndexPattern, clusterUuid);
         const nodeResolver = config.get('xpack.monitoring.node_resolver');
@@ -52,7 +52,7 @@ export function nodeRoutes(server) {
         const metrics = await getMetrics(req, esIndexPattern, metricSet, [{ term: { [`source_node.${nodeResolver}`]: resolver } }]);
 
         let shardAllocation;
-        if (collectShards) {
+        if (!isAdvanced) {
           // TODO: Why so many fields needed for a single component (shard legend)?
           const shardFilter = { term: { [`source_node.${nodeResolver}`]: resolver } };
           const stateUuid = get(cluster, 'cluster_state.state_uuid');

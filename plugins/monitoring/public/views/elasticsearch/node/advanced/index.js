@@ -21,7 +21,7 @@ function getPageData($injector) {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
     },
-    shards: false,
+    is_advanced: true,
     metrics: [
       {
         name: 'node_jvm_mem',

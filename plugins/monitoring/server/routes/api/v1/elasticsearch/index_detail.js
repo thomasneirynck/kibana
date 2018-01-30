@@ -25,7 +25,7 @@ export function indexRoutes(server) {
             max: Joi.date().required()
           }).required(),
           metrics: Joi.array().required(),
-          shards: Joi.boolean().default(true) // false for Advanced view
+          is_advanced: Joi.boolean().required()
         })
       }
     },
@@ -38,7 +38,7 @@ export function indexRoutes(server) {
         const start = req.payload.timeRange.min;
         const end = req.payload.timeRange.max;
         const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
-        const collectShards = req.payload.shards; // for advanced view
+        const isAdvanced = req.payload.is_advanced;
         const metricSet = req.payload.metrics;
 
         const cluster = await getClusterStats(req, esIndexPattern, clusterUuid);
@@ -49,7 +49,7 @@ export function indexRoutes(server) {
         const metrics = await getMetrics(req, esIndexPattern, metricSet, [{ term: { 'index_stats.index': indexUuid } }]);
 
         let shardAllocation;
-        if (collectShards) {
+        if (!isAdvanced) {
           // TODO: Why so many fields needed for a single component (shard legend)?
           const shardFilter = { term: { 'shard.index': indexUuid } };
           const stateUuid = get(cluster, 'cluster_state.state_uuid');

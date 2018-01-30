@@ -18,6 +18,7 @@ export function getPageData($injector) {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
     },
+    is_advanced: false,
     metrics: [
       {
         name: 'node_latency',

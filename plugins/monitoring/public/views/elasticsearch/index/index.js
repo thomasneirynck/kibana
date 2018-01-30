@@ -21,6 +21,7 @@ function getPageData($injector) {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
     },
+    is_advanced: false,
     metrics: [
       'index_search_request_rate',
       {
