@@ -1,27 +1,257 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DetailView should render empty state 1`] = `
-"
-null
-"
-`;
+exports[`DetailView should render empty state 1`] = `""`;
 
 exports[`DetailView should render with data 1`] = `
-"
-<div class=\\"sc-cMljjf jKUSgI\\">
-  <div class=\\"sc-jAaTju fOBily\\">
-    <h2 class=\\"sc-jDwBTQ fDFNcU sc-dnqmqq dCozlM\\">
+.c0 {
+  position: relative;
+  border: 1px solid #d9d9d9;
+  border-radius: 5px;
+  margin-top: 24px;
+}
+
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 24px 24px 0;
+}
+
+.c2 {
+  margin-top: -4px;
+}
+
+.c3 {
+  margin: 24px 0;
+  font-size: 20px;
+}
+
+.c4 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 0 24px;
+  width: 100%;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.c5 {
+  width: 33%;
+  margin-bottom: 16px;
+}
+
+.c6 {
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #999999;
+}
+
+.c6 span {
+  cursor: help;
+}
+
+.c7 {
+  display: inline-block;
+  line-height: 16px;
+}
+
+.c8 {
+  color: #999999;
+}
+
+.c9 {
+  width: 33%;
+  margin-bottom: 16px;
+  width: 66%;
+}
+
+.c10 {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 16px;
+}
+
+.c11 {
+  padding: 0 24px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.c12 {
+  display: inline-block;
+  font-size: 16px;
+  padding: 16px 20px;
+  text-align: center;
+  cursor: pointer;
+  border-bottom: 2px solid #006E8A;
+}
+
+.c13 {
+  display: inline-block;
+  font-size: 16px;
+  padding: 16px 20px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.c14 {
+  padding: 24px 24px 0;
+}
+
+.c15 {
+  margin: 0 0 24px 0;
+  position: relative;
+  font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
+  border: 1px solid #d9d9d9;
+  border-radius: 5px;
+  background: #f5f5f5;
+}
+
+.c15 .c17 {
+  color: #000000;
+}
+
+.c16 {
+  color: #999999;
+  padding: 8px;
+  border-bottom: 1px solid #d9d9d9;
+  border-radius: 5px 5px 0 0;
+}
+
+.c18 {
+  font-weight: bold;
+}
+
+.c19 {
+  position: relative;
+  border-radius: 0 0 5px 5px;
+}
+
+.c20 {
+  position: absolute;
+  width: 100%;
+  height: 18px;
+  top: 126px;
+  pointer-events: none;
+  background-color: #FCF2E6;
+}
+
+.c21 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 0 0 0 5px;
+  background: #f5f5f5;
+}
+
+.c22 {
+  position: relative;
+  min-width: 42px;
+  padding-left: 8px;
+  padding-right: 4px;
+  color: #999999;
+  line-height: 18px;
+  text-align: right;
+  border-right: 1px solid #d9d9d9;
+}
+
+.c22:last-of-type {
+  border-radius: 0 0 0 5px;
+}
+
+.c23 {
+  position: relative;
+  min-width: 42px;
+  padding-left: 8px;
+  padding-right: 4px;
+  color: #999999;
+  line-height: 18px;
+  text-align: right;
+  border-right: 1px solid #d9d9d9;
+  background-color: #FCF2E6;
+}
+
+.c23:last-of-type {
+  border-radius: 0 0 0 5px;
+}
+
+.c24 {
+  overflow: auto;
+  margin: 0 0 0 42px;
+  padding: 0;
+  background-color: #ffffff;
+}
+
+.c24:last-of-type {
+  border-radius: 0 0 5px 0;
+}
+
+.c25 {
+  margin: 0;
+  color: inherit;
+  background: inherit;
+  border: 0;
+  border-radius: 0;
+  overflow: initial;
+  padding: 0 18px;
+  line-height: 18px;
+}
+
+.c26 {
+  position: relative;
+  padding: 0;
+  margin: 0;
+  white-space: pre;
+  z-index: 2;
+}
+
+.c27 {
+  margin: 0 0 24px 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+<div
+  className="c0"
+>
+  <div
+    className="c1"
+  >
+    <h2
+      className="c2 c3"
+    >
       Error occurrence
     </h2>
-    <a href=\\"/app/kibana#/discover?_g=&amp;_a=(interval:auto,query:(language:lucene,query:'context.service.name:opbeans-node AND error.grouping_key:c00e245c2fbebaf178fc31eeb2bb0250'),sort:('@timestamp':desc))\\"
-       class=\\"kuiLink \\"
+    <a
+      className="kuiLink "
+      href="/app/kibana#/discover?_g=&_a=(interval:auto,query:(language:lucene,query:'context.service.name:opbeans-node AND error.grouping_key:c00e245c2fbebaf178fc31eeb2bb0250'),sort:('@timestamp':desc))"
     >
-      <button class=\\"kuiButton kuiButton--secondary kuiButton--iconText\\">
-        <span class=\\"kuiButton__inner\\">
-          <span aria-hidden=\\"true\\"
-                class=\\"kuiButton__icon kuiIcon fa-compass\\"
-          >
-          </span>
+      <button
+        className="kuiButton kuiButton--secondary kuiButton--iconText"
+      >
+        <span
+          className="kuiButton__inner"
+        >
+          <span
+            aria-hidden="true"
+            className="kuiButton__icon kuiIcon fa-compass"
+          />
           <span>
             View 18 occurences in Discover
           </span>
@@ -29,338 +259,799 @@ exports[`DetailView should render with data 1`] = `
       </button>
     </a>
   </div>
-  <div class=\\"sc-bwzfXH huQaMK\\">
-    <div class=\\"sc-htpNat fEjTrY\\">
-      <div class=\\"sc-ifAKCX doXeXX\\">
-        <span aria-describedby=\\"overlay1\\">
+  <div
+    className="c4"
+  >
+    <div
+      className="c5"
+    >
+      <div
+        className="c6"
+      >
+        <span
+          aria-describedby="overlay1"
+          onMouseOut={[Function]}
+          onMouseOver={[Function]}
+        >
           Timestamp
         </span>
       </div>
-      <div class=\\"sc-EHOje bZJVsZ\\">
+      <div
+        className="c7"
+      >
         1515508740
-        <span class=\\"sc-bZQynM bHRdln\\">
-          (1515508740)
+         
+        <span
+          className="c8"
+        >
+          (
+          1515508740
+          )
         </span>
       </div>
     </div>
-    <div class=\\"sc-bxivhb qVVbB\\">
-      <div class=\\"sc-ifAKCX doXeXX\\">
-        <span aria-describedby=\\"overlay2\\">
+    <div
+      className="c9"
+    >
+      <div
+        className="c6"
+      >
+        <span
+          aria-describedby="overlay2"
+          onMouseOut={[Function]}
+          onMouseOver={[Function]}
+        >
           URL
         </span>
       </div>
-      <span class=\\"sc-gzVnrw bEfNkT\\"
-            aria-describedby=\\"overlay3\\"
+      <span
+        aria-describedby="overlay3"
+        className="c10"
+        onMouseOut={[Function]}
+        onMouseOver={[Function]}
       >
         N/A
       </span>
     </div>
-    <div class=\\"sc-htpNat fEjTrY\\">
-      <div class=\\"sc-ifAKCX doXeXX\\">
-        <span aria-describedby=\\"overlay4\\">
+    <div
+      className="c5"
+    >
+      <div
+        className="c6"
+      >
+        <span
+          aria-describedby="overlay4"
+          onMouseOut={[Function]}
+          onMouseOver={[Function]}
+        >
           Request method
         </span>
       </div>
-      <div class=\\"sc-EHOje bZJVsZ\\">
+      <div
+        className="c7"
+      >
         GET
       </div>
     </div>
-    <div class=\\"sc-htpNat fEjTrY\\">
-      <div class=\\"sc-ifAKCX doXeXX\\">
-        <span aria-describedby=\\"overlay5\\">
+    <div
+      className="c5"
+    >
+      <div
+        className="c6"
+      >
+        <span
+          aria-describedby="overlay5"
+          onMouseOut={[Function]}
+          onMouseOver={[Function]}
+        >
           Handled
         </span>
       </div>
-      <div class=\\"sc-EHOje bZJVsZ\\">
+      <div
+        className="c7"
+      >
         N/A
       </div>
     </div>
-    <div class=\\"sc-htpNat fEjTrY\\">
-      <div class=\\"sc-ifAKCX doXeXX\\">
-        <span aria-describedby=\\"overlay6\\">
+    <div
+      className="c5"
+    >
+      <div
+        className="c6"
+      >
+        <span
+          aria-describedby="overlay6"
+          onMouseOut={[Function]}
+          onMouseOver={[Function]}
+        >
           User ID
         </span>
       </div>
-      <div class=\\"sc-EHOje bZJVsZ\\">
+      <div
+        className="c7"
+      >
         N/A
       </div>
     </div>
   </div>
-  <div class=\\"sc-gPEVay eyWItc\\">
-    <div class=\\"sc-gZMcBi gMIJRx\\">
+  <div
+    className="c11"
+  >
+    <div
+      className="c12"
+      onClick={[Function]}
+      selected={true}
+    >
       Exception stacktrace
     </div>
-    <div class=\\"sc-gZMcBi PApba\\">
+    <div
+      className="c13"
+      onClick={[Function]}
+      selected={false}
+    >
       Request
     </div>
-    <div class=\\"sc-gZMcBi PApba\\">
+    <div
+      className="c13"
+      onClick={[Function]}
+      selected={false}
+    >
       Response
     </div>
-    <div class=\\"sc-gZMcBi PApba\\">
+    <div
+      className="c13"
+      onClick={[Function]}
+      selected={false}
+    >
       System
     </div>
-    <div class=\\"sc-gZMcBi PApba\\">
+    <div
+      className="c13"
+      onClick={[Function]}
+      selected={false}
+    >
       Service
     </div>
-    <div class=\\"sc-gZMcBi PApba\\">
+    <div
+      className="c13"
+      onClick={[Function]}
+      selected={false}
+    >
       Process
     </div>
-    <div class=\\"sc-gZMcBi PApba\\">
+    <div
+      className="c13"
+      onClick={[Function]}
+      selected={false}
+    >
       User
     </div>
-    <div class=\\"sc-gZMcBi PApba\\">
+    <div
+      className="c13"
+      onClick={[Function]}
+      selected={false}
+    >
       Tags
     </div>
-    <div class=\\"sc-gZMcBi PApba\\">
+    <div
+      className="c13"
+      onClick={[Function]}
+      selected={false}
+    >
       Custom
     </div>
   </div>
-  <div class=\\"sc-iRbamj hxkDjE\\">
+  <div
+    className="c14"
+  >
     <div>
-      <div class=\\"sc-kGXeez fmQQCp\\">
-        <div class=\\"sc-chPdSV lfyfwB\\">
-          <span class=\\"sc-kgoBCf jjTEJo\\">
+      <div
+        className="c15"
+      >
+        <div
+          className="c16"
+        >
+          <span
+            className="c17 c18"
+          >
             server/coffee.js
           </span>
-          in
-          <span class=\\"sc-kgoBCf jjTEJo\\">
+           in
+           
+          <span
+            className="c17 c18"
+          >
             &lt;anonymous&gt;
           </span>
-          at
-          <span class=\\"sc-kgoBCf jjTEJo\\">
-            line 9
+           at
+           
+          <span
+            className="c17 c18"
+          >
+            line 
+            9
           </span>
         </div>
-        <div class=\\"sc-kpOJdX eQIJtO\\">
-          <div class=\\"sc-dxgOiQ jxqHTp\\">
-          </div>
-          <div class=\\"sc-ckVGcZ cBIBBB\\">
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              2.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              3.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              4.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              5.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              6.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              7.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              8.
-            </div>
-            <div class=\\"sc-jKJlTe cJZviG\\">
-              9.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              10.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              11.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              12.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              13.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              14.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              15.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              16.
-            </div>
-          </div>
-          <div class=\\"sc-eNQAEJ cmtSsR\\">
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+        <div
+          className="c19"
+        >
+          <div
+            className="c20"
+          />
+          <div
+            className="c21"
+          >
+            <div
+              className="c22"
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+              2
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              3
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              4
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              5
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              6
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              7
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              8
+              .
+            </div>
+            <div
+              className="c23"
+            >
+              9
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              10
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              11
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              12
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              13
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              14
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              15
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              16
+              .
+            </div>
+          </div>
+          <div
+            className="c24"
+          >
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
+            >
+              <code
+                className="c26"
+              >
+                
+
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
-                <span style=\\"color: rgb(170, 13, 145);\\">
+              <code
+                className="c26"
+              >
+                <span
+                  style={
+                    Object {
+                      "color": "#aa0d91",
+                    }
+                  }
+                >
                   var
                 </span>
-                express =
-                <span style=\\"color: rgb(92, 38, 153);\\">
+                 express = 
+                <span
+                  style={
+                    Object {
+                      "color": "#5c2699",
+                    }
+                  }
+                >
                   require
                 </span>
                 (
-                <span style=\\"color: rgb(196, 26, 22);\\">
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   'express'
                 </span>
                 )
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
-                <span style=\\"color: rgb(170, 13, 145);\\">
+              <code
+                className="c26"
+              >
+                <span
+                  style={
+                    Object {
+                      "color": "#aa0d91",
+                    }
+                  }
+                >
                   var
                 </span>
-                apm =
-                <span style=\\"color: rgb(92, 38, 153);\\">
+                 apm = 
+                <span
+                  style={
+                    Object {
+                      "color": "#5c2699",
+                    }
+                  }
+                >
                   require
                 </span>
                 (
-                <span style=\\"color: rgb(196, 26, 22);\\">
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   'elastic-apm-node'
                 </span>
                 )
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+              <code
+                className="c26"
+              >
+                
+
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
-                <span style=\\"color: rgb(170, 13, 145);\\">
+              <code
+                className="c26"
+              >
+                <span
+                  style={
+                    Object {
+                      "color": "#aa0d91",
+                    }
+                  }
+                >
                   var
                 </span>
-                app =
-                <span style=\\"color: rgb(92, 38, 153);\\">
+                 app = 
+                <span
+                  style={
+                    Object {
+                      "color": "#5c2699",
+                    }
+                  }
+                >
                   module
                 </span>
-                .exports =
-                <span style=\\"color: rgb(170, 13, 145);\\">
+                .exports = 
+                <span
+                  style={
+                    Object {
+                      "color": "#aa0d91",
+                    }
+                  }
+                >
                   new
                 </span>
-                express.Router()
+                 express.Router()
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+              <code
+                className="c26"
+              >
+                
+
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+              <code
+                className="c26"
+              >
                 app.get(
-                <span style=\\"color: rgb(196, 26, 22);\\">
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   '/is-it-coffee-time'
                 </span>
-                ,
-                <span>
-                  <span style=\\"color: rgb(170, 13, 145);\\">
+                , 
+                <span
+                  style={Object {}}
+                >
+                  <span
+                    style={
+                      Object {
+                        "color": "#aa0d91",
+                      }
+                    }
+                  >
                     function
                   </span>
-                  (
-                  <span style=\\"color: rgb(92, 38, 153);\\">
+                   (
+                  <span
+                    style={
+                      Object {
+                        "color": "#5c2699",
+                      }
+                    }
+                  >
                     req, res
                   </span>
-                  )
+                  ) 
                 </span>
                 {
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
-                <span style=\\"color: rgb(170, 13, 145);\\">
+              <code
+                className="c26"
+              >
+                  
+                <span
+                  style={
+                    Object {
+                      "color": "#aa0d91",
+                    }
+                  }
+                >
                   if
                 </span>
-                (req.paarms.level ===
-                <span style=\\"color: rgb(28, 0, 207);\\">
+                 (req.paarms.level === 
+                <span
+                  style={
+                    Object {
+                      "color": "#1c00cf",
+                    }
+                  }
+                >
                   11
                 </span>
                 ) {
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
-                res.send(
-                <span style=\\"color: rgb(196, 26, 22);\\">
+              <code
+                className="c26"
+              >
+                    res.send(
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   'Of course!'
                 </span>
                 )
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
-            >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
                 }
-                <span style=\\"color: rgb(170, 13, 145);\\">
+              }
+            >
+              <code
+                className="c26"
+              >
+                  } 
+                <span
+                  style={
+                    Object {
+                      "color": "#aa0d91",
+                    }
+                  }
+                >
                   else
                 </span>
-                {
+                 {
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
-                res.send(
-                <span style=\\"color: rgb(196, 26, 22);\\">
-                  'You can\\\\'t have any!'
+              <code
+                className="c26"
+              >
+                    res.send(
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
+                  'You can\\'t have any!'
                 </span>
                 )
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
-            >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
                 }
+              }
+            >
+              <code
+                className="c26"
+              >
+                  }
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+              <code
+                className="c26"
+              >
                 })
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+              <code
+                className="c26"
+              >
+                
+
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+              <code
+                className="c26"
+              >
                 app.get(
-                <span style=\\"color: rgb(196, 26, 22);\\">
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   '/log-error'
                 </span>
-                ,
-                <span>
-                  <span style=\\"color: rgb(170, 13, 145);\\">
+                , 
+                <span
+                  style={Object {}}
+                >
+                  <span
+                    style={
+                      Object {
+                        "color": "#aa0d91",
+                      }
+                    }
+                  >
                     function
                   </span>
-                  (
-                  <span style=\\"color: rgb(92, 38, 153);\\">
+                   (
+                  <span
+                    style={
+                      Object {
+                        "color": "#5c2699",
+                      }
+                    }
+                  >
                     req, res
                   </span>
-                  )
+                  ) 
                 </span>
                 {
               </code>
@@ -369,282 +1060,674 @@ exports[`DetailView should render with data 1`] = `
         </div>
       </div>
       <div>
-        <div class=\\"sc-jWBwVP jQhdZO\\">
-          <a style=\\"cursor: pointer;\\">
-            <i class=\\"fa fa-ellipsis-v undefined\\"
-               style=\\"margin-right: 8px;\\"
-            >
-            </i>
-            14 library frames
+        <div
+          className="c27"
+        >
+          <a
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+          >
+            <i
+              className="fa fa-ellipsis-v undefined"
+              style={
+                Object {
+                  "marginRight": 8,
+                  "transform": "rotate(0deg)",
+                  "transition": "transform 0.1s",
+                }
+              }
+            />
+             
+            14
+             library frames
           </a>
         </div>
-        <div class=\\"sc-brqgnP SqPLV\\">
-        </div>
+        <div
+          className=""
+        />
       </div>
-      <div class=\\"sc-kGXeez fmQQCp\\">
-        <div class=\\"sc-chPdSV lfyfwB\\">
-          <span class=\\"sc-kgoBCf jjTEJo\\">
+      <div
+        className="c15"
+      >
+        <div
+          className="c16"
+        >
+          <span
+            className="c17 c18"
+          >
             server.js
           </span>
-          in
-          <span class=\\"sc-kgoBCf jjTEJo\\">
+           in
+           
+          <span
+            className="c17 c18"
+          >
             &lt;anonymous&gt;
           </span>
-          at
-          <span class=\\"sc-kgoBCf jjTEJo\\">
-            line 27
+           at
+           
+          <span
+            className="c17 c18"
+          >
+            line 
+            27
           </span>
         </div>
-        <div class=\\"sc-kpOJdX eQIJtO\\">
-          <div class=\\"sc-dxgOiQ jxqHTp\\">
-          </div>
-          <div class=\\"sc-ckVGcZ cBIBBB\\">
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              20.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              21.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              22.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              23.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              24.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              25.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              26.
-            </div>
-            <div class=\\"sc-jKJlTe cJZviG\\">
-              27.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              28.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              29.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              30.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              31.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              32.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              33.
-            </div>
-            <div class=\\"sc-jKJlTe iZdTZe\\">
-              34.
-            </div>
-          </div>
-          <div class=\\"sc-eNQAEJ cmtSsR\\">
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+        <div
+          className="c19"
+        >
+          <div
+            className="c20"
+          />
+          <div
+            className="c21"
+          >
+            <div
+              className="c22"
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+              20
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              21
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              22
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              23
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              24
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              25
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              26
+              .
+            </div>
+            <div
+              className="c23"
+            >
+              27
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              28
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              29
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              30
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              31
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              32
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              33
+              .
+            </div>
+            <div
+              className="c22"
+            >
+              34
+              .
+            </div>
+          </div>
+          <div
+            className="c24"
+          >
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
+            >
+              <code
+                className="c26"
+              >
                 app.use(
-                <span style=\\"color: rgb(92, 38, 153);\\">
+                <span
+                  style={
+                    Object {
+                      "color": "#5c2699",
+                    }
+                  }
+                >
                   require
                 </span>
                 (
-                <span style=\\"color: rgb(196, 26, 22);\\">
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   'body-parser'
                 </span>
                 ).json())
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+              <code
+                className="c26"
+              >
                 app.use(express.static(
-                <span style=\\"color: rgb(196, 26, 22);\\">
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   'client/build'
                 </span>
                 ))
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+              <code
+                className="c26"
+              >
                 app.use(
-                <span>
-                  <span style=\\"color: rgb(170, 13, 145);\\">
+                <span
+                  style={Object {}}
+                >
+                  <span
+                    style={
+                      Object {
+                        "color": "#aa0d91",
+                      }
+                    }
+                  >
                     function
                   </span>
-                  (
-                  <span style=\\"color: rgb(92, 38, 153);\\">
+                   (
+                  <span
+                    style={
+                      Object {
+                        "color": "#5c2699",
+                      }
+                    }
+                  >
                     req, res, next
                   </span>
-                  )
+                  ) 
                 </span>
                 {
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
-                apm.setTag(
-                <span style=\\"color: rgb(196, 26, 22);\\">
+              <code
+                className="c26"
+              >
+                  apm.setTag(
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   'foo'
                 </span>
-                ,
-                <span style=\\"color: rgb(196, 26, 22);\\">
+                , 
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   'bar'
                 </span>
                 )
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
-                apm.setTag(
-                <span style=\\"color: rgb(196, 26, 22);\\">
+              <code
+                className="c26"
+              >
+                  apm.setTag(
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   'lorem'
                 </span>
-                ,
-                <span style=\\"color: rgb(196, 26, 22);\\">
+                , 
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   'ipsum dolor sit amet, consectetur adipiscing elit. Nulla finibus, ipsum id scelerisque consequat, enim leo vulputate massa, vel ultricies ante neque ac risus. Curabitur tincidunt vitae sapien id pulvinar. Mauris eu vestibulum tortor. Integer sit amet lorem fringilla, egestas tellus vitae, vulputate purus. Nulla feugiat blandit nunc et semper. Morbi purus libero, mattis sed mauris non, euismod iaculis lacus. Curabitur eleifend ante eros, non faucibus velit lacinia id. Duis posuere libero augue, at dignissim urna consectetur eget. Praesent eu congue est, iaculis finibus augue.'
                 </span>
                 )
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
-                apm.setTag(
-                <span style=\\"color: rgb(196, 26, 22);\\">
+              <code
+                className="c26"
+              >
+                  apm.setTag(
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   'this-is-a-very-long-tag-name-without-any-spaces'
                 </span>
-                ,
-                <span style=\\"color: rgb(196, 26, 22);\\">
+                , 
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   'test'
                 </span>
                 )
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
-                apm.setTag(
-                <span style=\\"color: rgb(196, 26, 22);\\">
+              <code
+                className="c26"
+              >
+                  apm.setTag(
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   'multi-line'
                 </span>
-                ,
-                <span style=\\"color: rgb(196, 26, 22);\\">
-                  'foo\\\\nbar\\\\nbaz'
+                , 
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
+                  'foo\\nbar\\nbaz'
                 </span>
                 )
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
-                next()
+              <code
+                className="c26"
+              >
+                  next()
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+              <code
+                className="c26"
+              >
                 })
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+              <code
+                className="c26"
+              >
+                
+
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+              <code
+                className="c26"
+              >
                 app.use(
-                <span style=\\"color: rgb(92, 38, 153);\\">
+                <span
+                  style={
+                    Object {
+                      "color": "#5c2699",
+                    }
+                  }
+                >
                   require
                 </span>
                 (
-                <span style=\\"color: rgb(196, 26, 22);\\">
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   './server/coffee'
                 </span>
                 ))
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+              <code
+                className="c26"
+              >
                 app.use(
-                <span style=\\"color: rgb(196, 26, 22);\\">
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   '/api'
                 </span>
-                ,
-                <span style=\\"color: rgb(92, 38, 153);\\">
+                , 
+                <span
+                  style={
+                    Object {
+                      "color": "#5c2699",
+                    }
+                  }
+                >
                   require
                 </span>
                 (
-                <span style=\\"color: rgb(196, 26, 22);\\">
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   './server/routes'
                 </span>
                 ))
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+              <code
+                className="c26"
+              >
                 app.get(
-                <span style=\\"color: rgb(196, 26, 22);\\">
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   '*'
                 </span>
-                ,
-                <span>
-                  <span style=\\"color: rgb(170, 13, 145);\\">
+                , 
+                <span
+                  style={Object {}}
+                >
+                  <span
+                    style={
+                      Object {
+                        "color": "#aa0d91",
+                      }
+                    }
+                  >
                     function
                   </span>
-                  (
-                  <span style=\\"color: rgb(92, 38, 153);\\">
+                   (
+                  <span
+                    style={
+                      Object {
+                        "color": "#5c2699",
+                      }
+                    }
+                  >
                     req, res
                   </span>
-                  )
+                  ) 
                 </span>
                 {
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
-                res.sendFile(path.resolve(__dirname,
-                <span style=\\"color: rgb(196, 26, 22);\\">
+              <code
+                className="c26"
+              >
+                  res.sendFile(path.resolve(__dirname, 
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   'client/build'
                 </span>
-                ,
-                <span style=\\"color: rgb(196, 26, 22);\\">
+                , 
+                <span
+                  style={
+                    Object {
+                      "color": "#c41a16",
+                    }
+                  }
+                >
                   'index.html'
                 </span>
                 ))
               </code>
             </pre>
-            <pre class=\\"sc-hMqMXs bHaJXc\\"
-                 style=\\"display: block; background: rgb(255, 255, 255); color: black;\\"
+            <pre
+              className="c25"
+              style={
+                Object {
+                  "background": "#fff",
+                  "color": "black",
+                  "display": "block",
+                  "overflowX": null,
+                  "padding": null,
+                }
+              }
             >
-              <code class=\\"sc-kEYyzF fLxpgb\\">
+              <code
+                className="c26"
+              >
                 })
               </code>
             </pre>
@@ -652,20 +1735,37 @@ exports[`DetailView should render with data 1`] = `
         </div>
       </div>
       <div>
-        <div class=\\"sc-jWBwVP jQhdZO\\">
-          <a style=\\"cursor: pointer;\\">
-            <i class=\\"fa fa-ellipsis-v undefined\\"
-               style=\\"margin-right: 8px;\\"
-            >
-            </i>
-            15 library frames
+        <div
+          className="c27"
+        >
+          <a
+            onClick={[Function]}
+            style={
+              Object {
+                "cursor": "pointer",
+              }
+            }
+          >
+            <i
+              className="fa fa-ellipsis-v undefined"
+              style={
+                Object {
+                  "marginRight": 8,
+                  "transform": "rotate(0deg)",
+                  "transition": "transform 0.1s",
+                }
+              }
+            />
+             
+            15
+             library frames
           </a>
         </div>
-        <div class=\\"sc-brqgnP SqPLV\\">
-        </div>
+        <div
+          className=""
+        />
       </div>
     </div>
   </div>
 </div>
-"
 `;

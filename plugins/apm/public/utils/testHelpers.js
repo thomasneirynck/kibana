@@ -5,6 +5,15 @@ import moment from 'moment';
 import { createMockStore } from 'redux-test-utils';
 import createHistory from 'history/createHashHistory';
 import PropTypes from 'prop-types';
+import enzymeToJson from 'enzyme-to-json';
+import 'jest-styled-components';
+
+export function toJson(wrapper) {
+  return enzymeToJson(wrapper, {
+    noKey: true,
+    mode: 'deep'
+  });
+}
 
 export function mountWithRouterAndStore(Component, storeState = {}) {
   const store = createMockStore(storeState);

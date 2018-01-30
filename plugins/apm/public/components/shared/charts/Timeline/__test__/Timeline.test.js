@@ -1,11 +1,10 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import toDiffableHtml from 'diffable-html';
 import { StickyContainer } from 'react-sticky';
 
 import Timeline from '../index';
 import props from './props.json';
-import { mockMoment } from '../../../../../utils/testHelpers';
+import { mockMoment, toJson } from '../../../../../utils/testHelpers';
 
 describe('Timline', () => {
   beforeAll(() => {
@@ -19,6 +18,6 @@ describe('Timline', () => {
       </StickyContainer>
     );
 
-    expect(toDiffableHtml(wrapper.html())).toMatchSnapshot();
+    expect(toJson(wrapper)).toMatchSnapshot();
   });
 });

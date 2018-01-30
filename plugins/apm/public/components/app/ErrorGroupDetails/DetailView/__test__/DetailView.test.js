@@ -1,10 +1,11 @@
 import React from 'react';
-import toDiffableHtml from 'diffable-html';
 import DetailView from '../index';
 import props from './props.json';
+
 import {
   mountWithRouterAndStore,
-  mockMoment
+  mockMoment,
+  toJson
 } from '../../../../../utils/testHelpers';
 
 describe('DetailView', () => {
@@ -24,7 +25,7 @@ describe('DetailView', () => {
       storeState
     );
 
-    expect(toDiffableHtml(wrapper.html())).toMatchSnapshot();
+    expect(toJson(wrapper)).toMatchSnapshot();
   });
 
   it('should render with data', () => {
@@ -33,6 +34,6 @@ describe('DetailView', () => {
       storeState
     );
 
-    expect(toDiffableHtml(wrapper.html())).toMatchSnapshot();
+    expect(toJson(wrapper)).toMatchSnapshot();
   });
 });

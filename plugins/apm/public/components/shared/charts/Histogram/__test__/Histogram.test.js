@@ -1,6 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import toDiffableHtml from 'diffable-html';
+
 import d3 from 'd3';
 import { HistogramInner } from '../index';
 import response from './response.json';
@@ -9,6 +9,7 @@ import {
   asDecimal,
   timeUnit
 } from '../../../../../utils/formatters';
+import { toJson } from '../../../../../utils/testHelpers';
 import { getFormattedBuckets } from '../../../../app/TransactionDetails/Distribution/view';
 
 describe('Histogram', () => {
@@ -46,7 +47,7 @@ describe('Histogram', () => {
     });
 
     it('should have default markup', () => {
-      expect(toDiffableHtml(wrapper.html())).toMatchSnapshot();
+      expect(toJson(wrapper)).toMatchSnapshot();
     });
 
     it('should not show tooltip', () => {
@@ -100,7 +101,7 @@ describe('Histogram', () => {
 
     it('should have correct markup for tooltip', () => {
       const tooltips = wrapper.find('Tooltip');
-      expect(toDiffableHtml(tooltips.html())).toMatchSnapshot();
+      expect(toJson(tooltips)).toMatchSnapshot();
     });
   });
 

@@ -1,8 +1,8 @@
 import { mount } from 'enzyme';
 import moment from 'moment';
 import React from 'react';
-import toDiffableHtml from 'diffable-html';
 
+import { toJson } from '../../../../../utils/testHelpers';
 import { InnerCustomPlot } from '../index';
 import responseWithData from './responseWithData.json';
 import responseWithoutData from './responseWithoutData.json';
@@ -68,7 +68,7 @@ describe('when response has data', () => {
     });
 
     it('should have correct markup', () => {
-      expect(toDiffableHtml(wrapper.html())).toMatchSnapshot();
+      expect(toJson(wrapper)).toMatchSnapshot();
     });
   });
 
@@ -193,7 +193,7 @@ describe('when response has data', () => {
     });
 
     it('should match snapshots', () => {
-      expect(toDiffableHtml(wrapper.html())).toMatchSnapshot();
+      expect(toJson(wrapper)).toMatchSnapshot();
       expect(wrapper.state()).toMatchSnapshot();
     });
   });
@@ -212,9 +212,7 @@ describe('when response has data', () => {
     });
 
     it('should display SelectionMarker', () => {
-      expect(
-        toDiffableHtml(wrapper.find('SelectionMarker').html())
-      ).toMatchSnapshot();
+      expect(toJson(wrapper.find('SelectionMarker'))).toMatchSnapshot();
     });
 
     it('should not call onSelectionEnd', () => {
@@ -320,7 +318,7 @@ describe('when response has no data', () => {
     });
 
     it('should have correct markup', () => {
-      expect(toDiffableHtml(wrapper.html())).toMatchSnapshot();
+      expect(toJson(wrapper)).toMatchSnapshot();
     });
 
     it('should have a single series', () => {

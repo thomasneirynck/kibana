@@ -1,12 +1,13 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import toDiffableHtml from 'diffable-html';
+
 import { MemoryRouter } from 'react-router-dom';
 import List from '../index';
 import props from './props.json';
 import {
   mountWithRouterAndStore,
-  mockMoment
+  mockMoment,
+  toJson
 } from '../../../../../utils/testHelpers';
 
 describe('ErrorGroupOverview -> List', () => {
@@ -23,13 +24,13 @@ describe('ErrorGroupOverview -> List', () => {
       storeState
     );
 
-    expect(toDiffableHtml(wrapper.html())).toMatchSnapshot();
+    expect(toJson(wrapper)).toMatchSnapshot();
   });
 
   it('should render with data', () => {
     const storeState = { location: {} };
     const wrapper = mountWithRouterAndStore(<List {...props} />, storeState);
 
-    expect(toDiffableHtml(wrapper.html())).toMatchSnapshot();
+    expect(toJson(wrapper)).toMatchSnapshot();
   });
 });

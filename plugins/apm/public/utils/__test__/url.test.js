@@ -1,13 +1,14 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 import { mount } from 'enzyme';
-import toDiffableHtml from 'diffable-html';
+
 import {
   toQuery,
   fromQuery,
   KibanaLinkComponent,
   RelativeLinkComponent
 } from '../url';
+import { toJson } from '../testHelpers';
 
 describe('toQuery', () => {
   it('should parse string to object', () => {
@@ -68,7 +69,7 @@ describe('RelativeLinkComponent', () => {
   });
 
   it('should render correct markup', () => {
-    expect(toDiffableHtml(wrapper.html())).toMatchSnapshot();
+    expect(toJson(wrapper)).toMatchSnapshot();
   });
 });
 
@@ -106,6 +107,6 @@ describe('KibanaLinkComponent', () => {
   });
 
   it('should render correct markup', () => {
-    expect(toDiffableHtml(wrapper.html())).toMatchSnapshot();
+    expect(toJson(wrapper)).toMatchSnapshot();
   });
 });
