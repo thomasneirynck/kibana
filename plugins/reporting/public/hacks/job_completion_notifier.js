@@ -17,7 +17,7 @@ import {
 } from '@elastic/eui';
 
 uiModules.get('kibana')
-  .run(($http, reportingJobQueue, Private, reportingPollConfig, reportingJobCompletionNotifications, $rootScope) => {
+  .run(($http, reportingJobQueue, Private, reportingPollConfig, reportingJobCompletionNotifications) => {
     const { jobCompletionNotifier } = reportingPollConfig;
 
     const xpackInfo = Private(XPackInfoProvider);
@@ -33,11 +33,9 @@ uiModules.get('kibana')
       if (!isJobSuccessful) {
         const errorDoc = await reportingJobQueue.getContent(job._id);
         const text = errorDoc.content;
-        return $rootScope.$apply(() => {
-          toastNotifications.addDanger({
-            title: `Couldn't create report for ${reportObjectType} '${reportObjectTitle}'`,
-            text,
-          });
+        toastNotifications.addDanger({
+          title: `Couldn't create report for ${reportObjectType} '${reportObjectTitle}'`,
+          text,
         });
       }
 
@@ -68,32 +66,28 @@ uiModules.get('kibana')
       const maxSizeReached = get(job, '_source.output.max_size_reached');
 
       if (maxSizeReached) {
-        return $rootScope.$apply(() => {
-          toastNotifications.addWarning({
-            title: `Created partial report for ${reportObjectType} '${reportObjectTitle}'`,
-            text: (
-              <div>
-                <p>The report reached the max size and contains partial data.</p>
-                {seeReportLink}
-                {downloadReportButton}
-              </div>
-            ),
-            'data-test-subj': 'completeReportSuccess',
-          });
-        });
-      }
-
-      $rootScope.$apply(() => {
-        toastNotifications.addSuccess({
-          title: `Created report for ${reportObjectType} '${reportObjectTitle}'`,
+        toastNotifications.addWarning({
+          title: `Created partial report for ${reportObjectType} '${reportObjectTitle}'`,
           text: (
             <div>
+              <p>The report reached the max size and contains partial data.</p>
               {seeReportLink}
               {downloadReportButton}
             </div>
           ),
           'data-test-subj': 'completeReportSuccess',
         });
+      }
+
+      toastNotifications.addSuccess({
+        title: `Created report for ${reportObjectType} '${reportObjectTitle}'`,
+        text: (
+          <div>
+            {seeReportLink}
+            {downloadReportButton}
+          </div>
+        ),
+        'data-test-subj': 'completeReportSuccess',
       });
     }
 
