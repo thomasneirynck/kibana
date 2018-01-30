@@ -28,16 +28,28 @@ const getYScale = (yMin, yMax) => {
     .nice();
 };
 
-export function getPlotValues(series, width) {
-  const allCoordinates = _.flatten(series.map(serie => serie.data));
-  if (_.isEmpty(allCoordinates)) {
+function getFlattenedCoordiantes(visibleSeries, enabledSeries) {
+  const enabledCoordinates = _.flatten(enabledSeries.map(serie => serie.data));
+  if (!_.isEmpty(enabledCoordinates)) {
+    return enabledCoordinates;
+  }
+
+  return _.flatten(visibleSeries.map(serie => serie.data));
+}
+
+export function getPlotValues(visibleSeries, enabledSeries, width) {
+  const flattenedCoordinates = getFlattenedCoordiantes(
+    visibleSeries,
+    enabledSeries
+  );
+  if (_.isEmpty(flattenedCoordinates)) {
     return null;
   }
 
-  const xMin = d3.min(allCoordinates, d => d.x);
-  const xMax = d3.max(allCoordinates, d => d.x);
+  const xMin = d3.min(flattenedCoordinates, d => d.x);
+  const xMax = d3.max(flattenedCoordinates, d => d.x);
   const yMin = 0;
-  const yMax = d3.max(allCoordinates, d => d.y) || 1;
+  const yMax = d3.max(flattenedCoordinates, d => d.y) || 1;
   const xScale = getXScale(xMin, xMax, width);
   const yScale = getYScale(yMin, yMax);
 

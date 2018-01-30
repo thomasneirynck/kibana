@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {
   XAxis,
   YAxis,
@@ -46,13 +45,8 @@ class StaticPlot extends PureComponent {
   }
 
   render() {
-    const { series, tickFormatX, tickFormatY, plotValues } = this.props;
+    const { series, tickFormatX, tickFormatY, plotValues, noHits } = this.props;
     const { yTickValues } = plotValues;
-
-    const filteredSeries = series
-      .filter(serie => !serie.isEmpty)
-      .reverse()
-      .map(this.getSerie);
 
     return (
       <SharedPlot plotValues={plotValues}>
@@ -60,10 +54,13 @@ class StaticPlot extends PureComponent {
         <XAxis tickSize={0} tickTotal={X_TICK_TOTAL} tickFormat={tickFormatX} />
         <YAxis tickSize={0} tickValues={yTickValues} tickFormat={tickFormatY} />
 
-        {_.isEmpty(filteredSeries) ? (
+        {noHits ? (
           <StatusText text="No data within this time range." />
         ) : (
-          filteredSeries
+          series
+            .slice()
+            .reverse()
+            .map(this.getSerie)
         )}
       </SharedPlot>
     );
@@ -73,6 +70,7 @@ class StaticPlot extends PureComponent {
 export default StaticPlot;
 
 StaticPlot.propTypes = {
+  noHits: PropTypes.bool.isRequired,
   series: PropTypes.array.isRequired,
   plotValues: PropTypes.object.isRequired,
   tickFormatX: PropTypes.func,

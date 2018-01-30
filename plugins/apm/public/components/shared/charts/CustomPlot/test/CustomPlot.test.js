@@ -17,14 +17,17 @@ describe('when response has data', () => {
   let onSelectionEnd;
 
   beforeEach(() => {
+    const series = getResponseTimeSeriesOrEmpty({
+      chartsData: responseWithData
+    });
+
     onHover = jest.fn();
     onMouseLeave = jest.fn();
     onSelectionEnd = jest.fn();
     wrapper = mount(
       <InnerCustomPlot
-        series={getResponseTimeSeriesOrEmpty({
-          chartsData: responseWithData
-        })}
+        noHits={false}
+        series={series}
         onHover={onHover}
         onMouseLeave={onMouseLeave}
         onSelectionEnd={onSelectionEnd}
@@ -284,6 +287,7 @@ describe('when response has no data', () => {
 
     wrapper = mount(
       <InnerCustomPlot
+        noHits={true}
         series={series}
         onHover={onHover}
         onMouseLeave={onMouseLeave}
@@ -326,7 +330,6 @@ describe('when response has no data', () => {
     });
 
     it('The series is empty and every y-value is 1', () => {
-      expect(wrapper.prop('series')[0].isEmpty).toBe(true);
       expect(wrapper.prop('series')[0].data.every(d => d.y === 1)).toEqual(
         true
       );

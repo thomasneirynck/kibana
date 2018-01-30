@@ -7,11 +7,10 @@ import { SharedPlot } from './plotUtils';
 
 class VoronoiPlot extends PureComponent {
   render() {
-    const { series, plotValues } = this.props;
+    const { series, plotValues, noHits } = this.props;
     const { XY_MARGIN, XY_HEIGHT, XY_WIDTH, x } = plotValues;
-    const defaultSerie = _.get(series, '[0]');
-    const defaultSerieData = _.get(defaultSerie, 'data');
-    if (!defaultSerieData || defaultSerie.isEmpty) {
+    const defaultSerieData = _.get(series, '[0].data');
+    if (!defaultSerieData || noHits) {
       return null;
     }
 
@@ -37,6 +36,7 @@ class VoronoiPlot extends PureComponent {
 export default VoronoiPlot;
 
 VoronoiPlot.propTypes = {
+  noHits: PropTypes.bool.isRequired,
   onHover: PropTypes.func.isRequired,
   onMouseDown: PropTypes.func.isRequired,
   onMouseLeave: PropTypes.func.isRequired,

@@ -49,22 +49,22 @@ export class Charts extends Component {
   };
 
   getResponseTimeFormatter = t => {
-    return this.props.isEmpty ? '- ms' : asMillis(t);
+    return this.props.noHits ? '- ms' : asMillis(t);
   };
 
   getRequestPerMinuteFormatter = t => {
     const unit = tpmUnit(this.props.urlParams.transactionType);
-    return this.props.isEmpty ? `- ${unit}` : `${asDecimal(t)} ${unit}`;
+    return this.props.noHits ? `- ${unit}` : `${asDecimal(t)} ${unit}`;
   };
 
   render() {
-    const { isEmpty, responseTimeSeries, rpmSeries, urlParams } = this.props;
+    const { noHits, responseTimeSeries, rpmSeries, urlParams } = this.props;
 
     return (
       <ChartsWrapper>
         <Chart>
           <CustomPlot
-            isEmpty={isEmpty}
+            noHits={noHits}
             chartTitle="Response times"
             series={responseTimeSeries}
             onHover={this.onHover}
@@ -77,7 +77,7 @@ export class Charts extends Component {
 
         <Chart>
           <CustomPlot
-            isEmpty={isEmpty}
+            noHits={noHits}
             chartTitle={tpmLabel(urlParams.transactionType)}
             series={rpmSeries}
             onHover={this.onHover}

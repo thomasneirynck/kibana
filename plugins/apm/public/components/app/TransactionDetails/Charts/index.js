@@ -38,7 +38,7 @@ function mapStateToProps(state = {}) {
       chartsData: charts.data,
       transactionType
     }),
-    isEmpty: charts.data.totalHits === 0
+    noHits: charts.data.totalHits === 0
   };
 }
 

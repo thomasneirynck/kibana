@@ -77,11 +77,6 @@ exports[`when response has data Initially should have correct markup 1`] = `
   border-radius: 100%;
 }
 
-.c0 {
-  font-size: 16px;
-  margin-bottom: 8px;
-}
-
 .c1 {
   display: -webkit-box;
   display: -webkit-flex;
@@ -112,70 +107,73 @@ exports[`when response has data Initially should have correct markup 1`] = `
   display: inline-block;
 }
 
+.c0 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
 <div>
-  <div>
+  <div
+    className="c0"
+  />
+  <div
+    className="c1"
+  >
     <div
-      className="c0"
-    />
-    <div
-      className="c1"
+      className="c2"
+      disabled={false}
+      fontSize="12px"
+      onClick={[Function]}
     >
-      <div
-        className="c2"
-        disabled={false}
-        fontSize="12px"
-        onClick={[Function]}
+      <span
+        className="c3"
+        color="#3185fc"
+        radius={11}
+      />
+      <span
+        className="c4"
       >
+        Avg.
         <span
-          className="c3"
-          color="#3185fc"
-          radius={11}
-        />
-        <span
-          className="c4"
+          className="c5"
         >
-          Avg.
-          <span
-            className="c5"
-          >
-            468 ms
-          </span>
+          468 ms
         </span>
-      </div>
-      <div
-        className="c2"
-        disabled={false}
-        fontSize="12px"
-        onClick={[Function]}
+      </span>
+    </div>
+    <div
+      className="c2"
+      disabled={false}
+      fontSize="12px"
+      onClick={[Function]}
+    >
+      <span
+        className="c6"
+        color="#ecae23"
+        radius={11}
+      />
+      <span
+        className="c4"
       >
-        <span
-          className="c6"
-          color="#ecae23"
-          radius={11}
-        />
-        <span
-          className="c4"
-        >
-          95th percentile
-        </span>
-      </div>
-      <div
-        className="c2"
-        disabled={false}
-        fontSize="12px"
-        onClick={[Function]}
+        95th percentile
+      </span>
+    </div>
+    <div
+      className="c2"
+      disabled={false}
+      fontSize="12px"
+      onClick={[Function]}
+    >
+      <span
+        className="c7"
+        color="#f98510"
+        radius={11}
+      />
+      <span
+        className="c4"
       >
-        <span
-          className="c7"
-          color="#f98510"
-          radius={11}
-        />
-        <span
-          className="c4"
-        >
-          99th percentile
-        </span>
-      </div>
+        99th percentile
+      </span>
     </div>
   </div>
   <div
@@ -1186,11 +1184,6 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
   border-radius: 100%;
 }
 
-.c0 {
-  font-size: 16px;
-  margin-bottom: 8px;
-}
-
 .c1 {
   display: -webkit-box;
   display: -webkit-flex;
@@ -1278,70 +1271,73 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
   font-size: 14px;
 }
 
+.c0 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
 <div>
-  <div>
+  <div
+    className="c0"
+  />
+  <div
+    className="c1"
+  >
     <div
-      className="c0"
-    />
-    <div
-      className="c1"
+      className="c2"
+      disabled={false}
+      fontSize="12px"
+      onClick={[Function]}
     >
-      <div
-        className="c2"
-        disabled={false}
-        fontSize="12px"
-        onClick={[Function]}
+      <span
+        className="c3"
+        color="#3185fc"
+        radius={11}
+      />
+      <span
+        className="c4"
       >
+        Avg.
         <span
-          className="c3"
-          color="#3185fc"
-          radius={11}
-        />
-        <span
-          className="c4"
+          className="c5"
         >
-          Avg.
-          <span
-            className="c5"
-          >
-            468 ms
-          </span>
+          468 ms
         </span>
-      </div>
-      <div
-        className="c2"
-        disabled={false}
-        fontSize="12px"
-        onClick={[Function]}
+      </span>
+    </div>
+    <div
+      className="c2"
+      disabled={false}
+      fontSize="12px"
+      onClick={[Function]}
+    >
+      <span
+        className="c6"
+        color="#ecae23"
+        radius={11}
+      />
+      <span
+        className="c4"
       >
-        <span
-          className="c6"
-          color="#ecae23"
-          radius={11}
-        />
-        <span
-          className="c4"
-        >
-          95th percentile
-        </span>
-      </div>
-      <div
-        className="c2"
-        disabled={false}
-        fontSize="12px"
-        onClick={[Function]}
+        95th percentile
+      </span>
+    </div>
+    <div
+      className="c2"
+      disabled={false}
+      fontSize="12px"
+      onClick={[Function]}
+    >
+      <span
+        className="c7"
+        color="#f98510"
+        radius={11}
+      />
+      <span
+        className="c4"
       >
-        <span
-          className="c7"
-          color="#f98510"
-          radius={11}
-        />
-        <span
-          className="c4"
-        >
-          99th percentile
-        </span>
-      </div>
+        99th percentile
+      </span>
     </div>
   </div>
   <div
@@ -2417,30 +2413,10 @@ exports[`when response has no data Initially should have correct markup 1`] = `
   margin-bottom: 8px;
 }
 
-.c1 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: end;
-  -webkit-justify-content: flex-end;
-  -ms-flex-pack: end;
-  justify-content: flex-end;
-}
-
 <div>
-  <div>
-    <div
-      className="c0"
-    />
-    <div
-      className="c1"
-    />
-  </div>
+  <div
+    className="c0"
+  />
   <div
     style={
       Object {

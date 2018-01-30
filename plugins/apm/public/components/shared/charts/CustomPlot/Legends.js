@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
-
 import Legend from '../Legend';
 import {
   units,
@@ -10,11 +9,6 @@ import {
   colors,
   truncate
 } from '../../../../style/variables';
-
-const Title = styled.div`
-  font-size: ${fontSizes.large};
-  margin-bottom: ${px(units.half)};
-`;
 
 const Container = styled.div`
   display: flex;
@@ -53,45 +47,44 @@ function MoreSeries({ hiddenSeriesCount }) {
 }
 
 export default function Legends({
-  chartTitle,
+  noHits,
   clickLegend,
   hiddenSeriesCount,
   series,
   seriesEnabledState,
   truncateLegends
 }) {
+  if (noHits) {
+    return null;
+  }
+
   return (
-    <div>
-      <Title>{chartTitle}</Title>
-      <Container>
-        {series.filter(serie => !serie.isEmpty).map((serie, i) => {
-          const text = (
-            <LegendContent>
-              {truncateLegends ? (
-                <TruncatedLabel title={serie.title}>
-                  {serie.title}
-                </TruncatedLabel>
-              ) : (
-                serie.title
-              )}
-              {serie.legendValue && (
-                <SeriesValue>{serie.legendValue}</SeriesValue>
-              )}
-            </LegendContent>
-          );
-          return (
-            <Legend
-              key={i}
-              onClick={() => clickLegend(i)}
-              disabled={seriesEnabledState[i]}
-              text={text}
-              color={serie.color}
-            />
-          );
-        })}
-        <MoreSeries hiddenSeriesCount={hiddenSeriesCount} />
-      </Container>
-    </div>
+    <Container>
+      {series.map((serie, i) => {
+        const text = (
+          <LegendContent>
+            {truncateLegends ? (
+              <TruncatedLabel title={serie.title}>{serie.title}</TruncatedLabel>
+            ) : (
+              serie.title
+            )}
+            {serie.legendValue && (
+              <SeriesValue>{serie.legendValue}</SeriesValue>
+            )}
+          </LegendContent>
+        );
+        return (
+          <Legend
+            key={i}
+            onClick={() => clickLegend(i)}
+            disabled={seriesEnabledState[i]}
+            text={text}
+            color={serie.color}
+          />
+        );
+      })}
+      <MoreSeries hiddenSeriesCount={hiddenSeriesCount} />
+    </Container>
   );
 }
 
@@ -99,6 +92,7 @@ Legends.propTypes = {
   chartTitle: PropTypes.string,
   clickLegend: PropTypes.func.isRequired,
   hiddenSeriesCount: PropTypes.number.isRequired,
+  noHits: PropTypes.bool.isRequired,
   series: PropTypes.array.isRequired,
   seriesEnabledState: PropTypes.array.isRequired,
   truncateLegends: PropTypes.bool.isRequired

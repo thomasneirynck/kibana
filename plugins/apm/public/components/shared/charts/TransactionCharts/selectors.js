@@ -17,7 +17,6 @@ const getEmptySerie = memoize(
 
     return [
       {
-        isEmpty: true,
         data: dates.map(x => ({
           x: x.getTime(),
           y: 1
