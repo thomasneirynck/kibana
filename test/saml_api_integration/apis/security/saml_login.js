@@ -61,7 +61,7 @@ export default function ({ getService }) {
     });
   }
 
-  describe('SAML authentication', () => {
+  describe.skip('SAML authentication', () => {
     it('should reject API requests if client is not authenticated', async () => {
       await supertest
         .get('/api/security/v1/me')
