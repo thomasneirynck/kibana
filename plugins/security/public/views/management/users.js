@@ -5,7 +5,6 @@ import { toggle, toggleSort } from 'plugins/security/lib/util';
 import template from 'plugins/security/views/management/users.html';
 import 'plugins/security/services/shield_user';
 import { checkLicenseError } from 'plugins/security/lib/check_license_error';
-import { GateKeeperProvider } from 'plugins/xpack_main/services/gate_keeper';
 import { SECURITY_PATH, USERS_PATH, EDIT_USERS_PATH, EDIT_ROLES_PATH } from './management_urls';
 
 routes.when(SECURITY_PATH, {
@@ -15,11 +14,6 @@ routes.when(SECURITY_PATH, {
 routes.when(USERS_PATH, {
   template,
   resolve: {
-    tribeRedirect(Private) {
-      const gateKeeper = Private(GateKeeperProvider);
-      gateKeeper.redirectAndNotifyIfTribe();
-    },
-
     users(ShieldUser, kbnUrl, Promise, Private) {
       // $promise is used here because the result is an ngResource, not a promise itself
       return ShieldUser.query().$promise

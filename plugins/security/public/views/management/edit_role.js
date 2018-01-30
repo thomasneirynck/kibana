@@ -13,17 +13,11 @@ import 'plugins/security/services/shield_indices';
 import { IndexPatternsProvider } from 'ui/index_patterns/index_patterns';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import { checkLicenseError } from 'plugins/security/lib/check_license_error';
-import { GateKeeperProvider } from 'plugins/xpack_main/services/gate_keeper';
 import { EDIT_ROLES_PATH, ROLES_PATH } from './management_urls';
 
 routes.when(`${EDIT_ROLES_PATH}/:name?`, {
   template,
   resolve: {
-    tribeRedirect(Private) {
-      const gateKeeper = Private(GateKeeperProvider);
-      gateKeeper.redirectAndNotifyIfTribe();
-    },
-
     role($route, ShieldRole, kbnUrl, Promise, Notifier) {
       const name = $route.current.params.name;
       if (name != null) {

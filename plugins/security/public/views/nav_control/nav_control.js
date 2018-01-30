@@ -14,16 +14,15 @@ chromeNavControlsRegistry.register(constant({
 }));
 
 const module = uiModules.get('security', ['kibana']);
-module.controller('securityNavController', ($scope, ShieldUser, globalNavState, kbnBaseUrl, Private, esDataIsTribe) => {
+module.controller('securityNavController', ($scope, ShieldUser, globalNavState, kbnBaseUrl, Private) => {
   const xpackInfo = Private(XPackInfoProvider);
   const showSecurityLinks = xpackInfo.get('features.security.showLinks');
   if (Private(PathProvider).isLoginOrLogout() || !showSecurityLinks) return;
 
   $scope.user = ShieldUser.getCurrent();
   $scope.route = `${kbnBaseUrl}#/account`;
-  $scope.accountDisabled = esDataIsTribe;
 
-  $scope.formatTooltip = (tooltip) => {
+  $scope.accountTooltip = (tooltip) => {
     // If the sidebar is open and there's no disabled message,
     // then we don't need to show the tooltip.
     if (globalNavState.isOpen()) {
@@ -31,19 +30,4 @@ module.controller('securityNavController', ($scope, ShieldUser, globalNavState, 
     }
     return tooltip;
   };
-
-  $scope.accountTooltip = (name) => {
-    if (esDataIsTribe) {
-      const tribeTooltip = 'Not available when using a tribe node.';
-      return globalNavState.isOpen() ? tribeTooltip : name + ' - ' + tribeTooltip;
-    }
-    return $scope.formatTooltip(name);
-  };
-
-  $scope.onClick = function (event, disabled) {
-    if (disabled) {
-      event.preventDefault();
-    }
-  };
-
 });

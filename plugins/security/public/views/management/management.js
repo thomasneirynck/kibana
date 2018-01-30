@@ -15,10 +15,9 @@ import { management } from 'ui/management';
 
 routes.defaults(/\/management/, {
   resolve: {
-    securityManagementSection: function (ShieldUser, Private, esDataIsTribe) {
+    securityManagementSection: function (ShieldUser, Private) {
       const xpackInfo = Private(XPackInfoProvider);
       const showSecurityLinks = xpackInfo.get('features.security.showLinks');
-      const tribeTooltip = 'Not available when using a tribe node.';
 
       function deregisterSecurity() {
         management.deregister('security');
@@ -38,8 +37,7 @@ routes.defaults(/\/management/, {
             name: 'securityUsersLink',
             order: 10,
             display: 'Users',
-            url: esDataIsTribe ? undefined : `#${USERS_PATH}`,
-            tooltip: esDataIsTribe ? tribeTooltip : undefined
+            url: `#${USERS_PATH}`,
           });
         }
 
@@ -48,8 +46,7 @@ routes.defaults(/\/management/, {
             name: 'securityRolesLink',
             order: 20,
             display: 'Roles',
-            url: esDataIsTribe ? undefined : `#${ROLES_PATH}`,
-            tooltip: esDataIsTribe ? tribeTooltip : undefined
+            url: `#${ROLES_PATH}`,
           });
         }
       }

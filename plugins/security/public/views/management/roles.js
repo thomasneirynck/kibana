@@ -6,17 +6,11 @@ import { isRoleEnabled } from 'plugins/security/lib/role';
 import template from 'plugins/security/views/management/roles.html';
 import 'plugins/security/services/shield_role';
 import { checkLicenseError } from 'plugins/security/lib/check_license_error';
-import { GateKeeperProvider } from 'plugins/xpack_main/services/gate_keeper';
 import { ROLES_PATH, EDIT_ROLES_PATH } from './management_urls';
 
 routes.when(ROLES_PATH, {
   template,
   resolve: {
-    tribeRedirect(Private) {
-      const gateKeeper = Private(GateKeeperProvider);
-      gateKeeper.redirectAndNotifyIfTribe();
-    },
-
     roles(ShieldRole, kbnUrl, Promise, Private) {
       // $promise is used here because the result is an ngResource, not a promise itself
       return ShieldRole.query().$promise

@@ -7,17 +7,11 @@ import 'angular-ui-select';
 import 'plugins/security/services/shield_user';
 import 'plugins/security/services/shield_role';
 import { checkLicenseError } from 'plugins/security/lib/check_license_error';
-import { GateKeeperProvider } from 'plugins/xpack_main/services/gate_keeper';
 import { EDIT_USERS_PATH, USERS_PATH } from './management_urls';
 
 routes.when(`${EDIT_USERS_PATH}/:username?`, {
   template,
   resolve: {
-    tribeRedirect(Private) {
-      const gateKeeper = Private(GateKeeperProvider);
-      gateKeeper.redirectAndNotifyIfTribe();
-    },
-
     me(ShieldUser) {
       return ShieldUser.getCurrent();
     },
