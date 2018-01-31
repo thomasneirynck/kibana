@@ -104,7 +104,7 @@ export default function ({ getService, getPageObjects }) {
     });
 
     // open the same graph workspace again and make sure the results are the same
-    it('should open Graph workspace', async function () {
+    it.skip('should open Graph workspace', async function () {
       await PageObjects.graph.openGraph(graphName);
       const circlesText = await PageObjects.graph.getGraphCircleText();
       log.debug('circle count = ' + circlesText.length);
@@ -112,7 +112,7 @@ export default function ({ getService, getPageObjects }) {
       expect(circlesText.length).to.equal(expectedText.length);
     });
 
-    it('should delete graph', async function () {
+    it.skip('should delete graph', async function () {
       const alertText = await PageObjects.graph.deleteGraph(graphName);
       log.debug('alertText = ' + alertText);
     });
