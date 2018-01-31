@@ -27,32 +27,22 @@
 
   <!-- Username -->
   <div class="kuiFormSection kuiVerticalRhythm">
-    <label for="username" class="kuiFormLabel">
+    <label class="kuiFormLabel">
       Username
     </label>
-    <input
-      type="text"
-      class="kuiStaticInput"
-      id="username"
-      name="username"
-      readonly
-      ng-model="user.username"
-    />
+    <div class="euiText">
+      <p ng-bind="::user.username"></p>
+    </div>
   </div>
 
   <!-- Email -->
   <div class="kuiFormSection">
-    <label for="email" class="kuiFormLabel">
+    <label class="kuiFormLabel">
       Email
     </label>
-    <input
-      type="text"
-      class="kuiStaticInput"
-      id="email"
-      name="email"
-      readonly
-      ng-value="accountController.getEmail()"
-    />
+    <div class="euiText">
+      <p ng-bind="::accountController.getEmail()"></p>
+    </div>
   </div>
 
   <!-- Change password -->
