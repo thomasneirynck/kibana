@@ -52,7 +52,11 @@ module.service('mlFieldFormatService', function (
           return index.get('title') === datafeedIndex;
         });
       });
-      indexPatternIdsByJob[jobId] = indexPattern.id;
+
+      // Check if index pattern has been configured to match the index in datafeed.
+      if (indexPattern !== undefined) {
+        indexPatternIdsByJob[jobId] = indexPattern.id;
+      }
     });
 
     const promises = jobIds.map(jobId => $q.all([
