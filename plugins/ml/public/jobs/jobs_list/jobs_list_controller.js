@@ -231,7 +231,7 @@ module.controller('MlJobsList',
       let rows = jobs.map((job) => {
         const rowScope = $scope.$new();
         const calendars = jobCalendars[job.job_id];
-        if (calendars.length) {
+        if (calendars && calendars.length) {
           job.calendars = calendars;
         }
         rowScope.job = job;
