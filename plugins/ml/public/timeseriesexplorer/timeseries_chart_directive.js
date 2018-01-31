@@ -127,9 +127,13 @@ module.directive('mlTimeseriesChart', function (
     // Redraw the charts when the container is resize.
     const resizeChecker = new ResizeChecker(angular.element('.ml-timeseries-chart'));
     resizeChecker.on('resize', () => {
-      render();
-      drawContextChartSelection();
-      renderFocusChart();
+      scope.$evalAsync(() => {
+        // Wait a digest cycle before rendering to prevent
+        // the underlying ResizeObserver going into an infinite loop.
+        render();
+        drawContextChartSelection();
+        renderFocusChart();
+      });
     });
 
     // Listeners for mouseenter/leave events for rows in the table
