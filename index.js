@@ -13,6 +13,7 @@ import { logstash } from './plugins/logstash';
 import { apm } from './plugins/apm';
 import { licenseManagement } from './plugins/license_management';
 import { cloud } from './plugins/cloud';
+import { indexManagement } from './plugins/index_management';
 
 module.exports = function (kibana) {
   return [
@@ -31,5 +32,6 @@ module.exports = function (kibana) {
     apm(kibana),
     licenseManagement(kibana),
     cloud(kibana),
+    indexManagement(kibana)
   ];
 };

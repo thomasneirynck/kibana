@@ -1,0 +1,33 @@
+import { sortBy } from 'lodash';
+
+const stringSort = (fieldName) => (item) => item[fieldName];
+const numericSort = (fieldName) => (item) => +item[fieldName];
+const unitMagnitude = {
+  kb: 1,
+  mb: 2,
+  gb: 3,
+  tb: 4,
+  pb: 5
+};
+const byteSort = (fieldName) => (item) => {
+  const rawValue = item[fieldName];
+  const [ , number, unit] = rawValue.match(/(.*)([kmgtp]b)/);
+  return +number * Math.pow(1024, unitMagnitude[unit]);
+};
+
+const sorters = {
+  name: stringSort('name'),
+  status: stringSort('status'),
+  health: stringSort('health'),
+  primary: numericSort('primary'),
+  replica: numericSort('replica'),
+  documents: numericSort('documents'),
+  size: byteSort('size'),
+  primary_size: byteSort('primary_size'),
+};
+export const sortTable = (array = [], sortField, isSortAscending) => {
+  const sorted = sortBy(array, sorters[sortField]);
+  return isSortAscending
+    ? sorted
+    : sorted.reverse();
+};

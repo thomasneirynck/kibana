@@ -1,0 +1,1 @@
+export { indexManagementStore } from './store';

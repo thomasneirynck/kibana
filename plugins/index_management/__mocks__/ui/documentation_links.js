@@ -1,0 +1,1 @@
+export const settingsDocumentationLink = "https://stuff.com/docs";

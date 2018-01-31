@@ -1,0 +1,1 @@
+export { registerMappingRoute } from './register_mapping_route';
