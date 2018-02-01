@@ -176,10 +176,11 @@ module.directive('mlAnomaliesTable', function (
           }
         });
 
+        // Need to encode the _a parameter in case any entities contain unsafe characters such as '+'.
         let path = chrome.getBasePath();
         path += '/app/ml#/timeseriesexplorer';
         path += '?_g=' + _g;
-        path += '&_a=' + _a;
+        path += '&_a=' + encodeURIComponent(_a);
         $window.open(path, '_blank');
       };
 
