@@ -1,6 +1,6 @@
 import { last, isFunction, debounce } from 'lodash';
 import $ from 'jquery-flot'; // webpackShim
-import { DEBOUNCE_FAST_MS } from 'monitoring-constants';
+import { DEBOUNCE_FAST_MS } from '../../../common/constants';
 
 /**
  * Helper class for operations done by Sparkline component on its flot chart

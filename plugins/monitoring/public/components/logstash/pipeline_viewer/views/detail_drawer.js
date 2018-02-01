@@ -18,7 +18,7 @@ import {
 } from '@elastic/eui';
 import { Sparkline } from '../../../sparkline';
 import { formatMetric } from '../../../../lib/format_number';
-import { LOGSTASH } from 'monitoring-constants';
+import { LOGSTASH } from '../../../../../common/constants';
 
 function renderIcon(vertex) {
   return (

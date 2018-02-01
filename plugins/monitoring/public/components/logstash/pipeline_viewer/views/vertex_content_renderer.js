@@ -6,7 +6,7 @@ import queueIcon from 'plugins/monitoring/icons/logstash/queue.svg';
 import ifIcon from 'plugins/monitoring/icons/logstash/if.svg';
 import { PluginVertex } from '../models/graph/plugin_vertex';
 import { IfVertex } from '../models/graph/if_vertex';
-import { LOGSTASH } from 'monitoring-constants';
+import { LOGSTASH } from '../../../../../common/constants';
 import { formatMetric } from '../../../../lib/format_number';
 
 // Each vertex consists of two lines (rows) of text
