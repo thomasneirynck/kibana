@@ -24,9 +24,14 @@ export function ChartDataUtilsProvider($q, Private, timefilter, mlSimpleJobSearc
 
   function loadDocCountData(formConfig, chartData) {
     return $q((resolve, reject) => {
+      // set doc count chart to be 10x less than detector charts
+      const BAR_TARGET = Math.ceil(formConfig.chartInterval.barTarget / 10);
+      const MAX_BARS = BAR_TARGET + (BAR_TARGET / 100) * 100; // 100% larger that bar target
       const query = formConfig.combinedQuery;
       const bounds = timefilter.getActiveBounds();
       const buckets = new TimeBuckets();
+      buckets.setBarTarget(BAR_TARGET);
+      buckets.setMaxBars(MAX_BARS);
       buckets.setInterval('auto');
       buckets.setBounds(bounds);
 

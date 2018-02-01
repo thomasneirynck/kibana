@@ -119,7 +119,7 @@ module.directive('mlEventRateChart', function (Private) {
     function drawBarChart() {
       const data = scope.chartData.bars;
 
-      // The swimlane and x-axis lables should be aligned with the other line charts
+      // The swimlane and x-axis labels should be aligned with the other line charts
       // however, when this chart is first drawn, this data is not available.
       // on first display use the bar data for the scale
       let finerData = scope.chartData.bars;
@@ -133,7 +133,7 @@ module.directive('mlEventRateChart', function (Private) {
         .domain(d3.extent(data, d => d.date));
 
       chartLimits.max = d3.max(data, (d) => d.value);
-      chartLimits.min = d3.min(data, (d) => d.value);
+      chartLimits.min = 0;
 
       // add padding of 10% of the difference between max and min
       // to the upper and lower ends of the y-axis
