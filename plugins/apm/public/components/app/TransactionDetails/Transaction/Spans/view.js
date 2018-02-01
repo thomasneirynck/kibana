@@ -14,6 +14,8 @@ import {
 import { StickyContainer } from 'react-sticky';
 import Timeline from '../../../../shared/charts/Timeline';
 import EmptyMessage from '../../../../shared/EmptyMessage';
+import { getFeatureDocs } from '../../../../../utils/documentation';
+import { ExternalLink } from '../../../../../utils/url';
 
 const Container = styled.div`
   transition: 0.1s padding ease;
@@ -114,7 +116,7 @@ class Spans extends PureComponent {
           <DroppedSpansContainer>
             {this.props.droppedSpans} spans dropped due to limit of{' '}
             {spans.data.spans.length}.{' '}
-            <DocumentationLink agentName={agentName} />
+            <DroppedSpansDocsLink agentName={agentName} />
           </DroppedSpansContainer>
         )}
       </div>
@@ -122,36 +124,25 @@ class Spans extends PureComponent {
   }
 }
 
-function DocumentationLink({ agentName }) {
-  let url;
-
-  switch (agentName) {
-    case 'nodejs':
-      url =
-        'https://www.elastic.co/guide/en/apm/agent/nodejs/1.x/agent-api.html#transaction-max-spans';
-      break;
-
-    case 'python':
-      url =
-        'https://www.elastic.co/guide/en/apm/agent/python/2.x/configuration.html#config-transaction-max-spans';
-      break;
-
-    default:
-      return null;
-  }
-
-  return (
-    <a href={url} target="_blank">
-      Learn more in the documentation.
-    </a>
-  );
-}
-
 function loadSpans(props) {
   const { serviceName, start, end, transactionId } = props.urlParams;
   if (serviceName && start && end && transactionId && !props.spansNext.status) {
     props.loadSpans({ serviceName, start, end, transactionId });
   }
+}
+
+function DroppedSpansDocsLink({ agentName }) {
+  const docs = getFeatureDocs('dropped-spans', agentName);
+
+  if (!docs || !docs.url) {
+    return null;
+  }
+
+  return (
+    <ExternalLink href={docs.url}>
+      Learn more in the documentation.
+    </ExternalLink>
+  );
 }
 
 export default Spans;

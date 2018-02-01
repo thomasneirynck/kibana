@@ -1,3 +1,7 @@
+import { APM_SERVER_DOCS, APM_AGENT_DOCS } from '../../../utils/documentation';
+
+const apmServerConfiguring = APM_SERVER_DOCS.configuring.url;
+
 export const serverInstructions = [
   {
     id: 'deb',
@@ -13,8 +17,7 @@ export const serverInstructions = [
         title: 'Import dashboards (optional)',
         textPre: 'APM Server ships with pre-configured dashboards.',
         code: './apm-server setup',
-        textPost:
-          "If you're using an X-Pack secured version of Elastic Stack, you need to specify credentials in the `apm-server.yml` config file. [Documentation](https://www.elastic.co/guide/en/apm/server/6.2/configuring.html)."
+        textPost: `If you're using an X-Pack secured version of Elastic Stack, you need to specify credentials in the \`apm-server.yml\` config file. [Documentation](${apmServerConfiguring}).`
       },
       {
         indicatorNumber: 3,
@@ -46,8 +49,7 @@ export const serverInstructions = [
         title: 'Import dashboards (optional)',
         textPre: 'APM Server ships with pre-configured dashboards.',
         code: './apm-server setup',
-        textPost:
-          "If you're using an X-Pack secured version of Elastic Stack, you need to specify credentials in the `apm-server.yml` config file. [Documentation](https://www.elastic.co/guide/en/apm/server/6.2/configuring.html)."
+        textPost: `If you're using an X-Pack secured version of Elastic Stack, you need to specify credentials in the \`apm-server.yml\` config file. [Documentation](${apmServerConfiguring}).`
       },
       {
         indicatorNumber: 3,
@@ -79,8 +81,7 @@ export const serverInstructions = [
         title: 'Import dashboards (optional)',
         textPre: 'APM Server ships with pre-configured dashboards.',
         code: './apm-server setup',
-        textPost:
-          "If you're using an X-Pack secured version of Elastic Stack, you need to specify credentials in the `apm-server.yml` config file. [Documentation](https://www.elastic.co/guide/en/apm/server/6.2/configuring.html)."
+        textPost: `If you're using an X-Pack secured version of Elastic Stack, you need to specify credentials in the \`apm-server.yml\` config file. [Documentation](${apmServerConfiguring}).`
       },
       {
         indicatorNumber: 3,
@@ -112,8 +113,7 @@ export const serverInstructions = [
         title: 'Import dashboards (optional)',
         textPre: 'APM Server ships with pre-configured dashboards.',
         code: './apm-server setup',
-        textPost:
-          "If you're using an X-Pack secured version of Elastic Stack, you need to specify credentials in the `apm-server.yml` config file. [Documentation](https://www.elastic.co/guide/en/apm/server/6.2/configuring.html)."
+        textPost: `If you're using an X-Pack secured version of Elastic Stack, you need to specify credentials in the \`apm-server.yml\` config file. [Documentation](${apmServerConfiguring}).`
       },
       {
         indicatorNumber: 3,
@@ -145,8 +145,7 @@ export const serverInstructions = [
         title: 'Import dashboards (optional)',
         textPre: 'APM Server ships with pre-configured dashboards.',
         code: 'apm-server.exe setup',
-        textPost:
-          "If you're using an X-Pack secured version of Elastic Stack, you need to specify credentials in the `apm-server.yml` config file. [Documentation](https://www.elastic.co/guide/en/apm/server/6.2/configuring.html)."
+        textPost: `If you're using an X-Pack secured version of Elastic Stack, you need to specify credentials in the \`apm-server.yml\` config file. [Documentation](${apmServerConfiguring}).`
       },
       {
         indicatorNumber: 3,
@@ -173,7 +172,9 @@ export const serverInstructions = [
         title: 'Run APM Server in Docker',
         textPre: 'Start APM Server image in Docker.',
         code: `docker run -p 8200:8200 docker.elastic.co/apm/apm-server:6.2.0 apm-server -e`,
-        textPost: `To configure APM Server in Docker, please see [the documentation](https://www.elastic.co/guide/en/apm/server/6.2/running-on-docker.html#running-on-docker).`
+        textPost: `To configure APM Server in Docker, please see [the documentation](${
+          APM_SERVER_DOCS['running-on-docker'].url
+        }).`
       },
       {
         indicatorNumber: 2,
@@ -213,8 +214,11 @@ var apm = require('elastic-apm-node').start({
     // Set custom APM Server URL (default: http://localhost:8200)
     serverUrl: ''
 })`,
-        textPost:
-          'See [the documentation](https://www.elastic.co/guide/en/apm/agent/nodejs/1.x/index.html) for advanced usage, including how to use with [Babel/ES Modules](https://www.elastic.co/guide/en/apm/agent/nodejs/1.x/advanced-setup.html#es-modules).'
+        textPost: `See [the documentation](${
+          APM_AGENT_DOCS.home.nodejs.url
+        }) for advanced usage, including how to use with [Babel/ES Modules](${
+          APM_AGENT_DOCS['nodejs-only']['babel-es-modules'].url
+        }).`
       },
       {
         indicatorNumber: 3,
@@ -260,8 +264,9 @@ MIDDLEWARE = (
     #...
 )
 `,
-        textPost:
-          'See the [documentation](https://www.elastic.co/guide/en/apm/agent/python/2.x/django-support.html) for advanced usage.'
+        textPost: `See the [documentation](${
+          APM_AGENT_DOCS['python-only'].django.url
+        }) for advanced usage.`
       },
       {
         indicatorNumber: 3,
@@ -302,8 +307,9 @@ app.config['ELASTIC_APM'] = {
 }
 apm = ElasticAPM(app)
 `,
-        textPost:
-          'See [the documentation](https://www.elastic.co/guide/en/apm/agent/python/2.x/flask-support.html) for advanced usage.'
+        textPost: `See [the documentation](${
+          APM_AGENT_DOCS['python-only'].flask.url
+        }) for advanced usage.`
       },
       {
         indicatorNumber: 3,
@@ -332,8 +338,9 @@ apm = ElasticAPM(app)
         codeLanguage: 'ruby',
         code: `# config/elastic_apm.yml
         server_url: 'http://localhost:8200'`,
-        textPost:
-          'See [the documentation](https://www.elastic.co/guide/en/apm/agent/ruby/1.x/index.html) for configuration options and advanced usage.'
+        textPost: `See [the documentation](${
+          APM_AGENT_DOCS.home.ruby.url
+        }) for configuration options and advanced usage.`
       },
       {
         indicatorNumber: 3,
@@ -380,8 +387,9 @@ ElasticAPM.start(
 run MySinatraApp
 
 at_exit { ElasticAPM.stop }`,
-        textPost:
-          'See [the documentation](https://www.elastic.co/guide/en/apm/agent/ruby/1.x/index.html) for configuration options and advanced usage.'
+        textPost: `See [the documentation](${
+          APM_AGENT_DOCS.home.ruby.url
+        }) for configuration options and advanced usage.`
       },
       {
         indicatorNumber: 3,
@@ -401,8 +409,9 @@ at_exit { ElasticAPM.stop }`,
       {
         indicatorNumber: 1,
         title: 'Enable experimental frontend support in the APM server',
-        textPre:
-          'Please refer to [the documentation](https://www.elastic.co/guide/en/apm/server/6.2/frontend.html).'
+        textPre: `Please refer to [the documentation](${
+          APM_SERVER_DOCS.frontend.url
+        }).`
       },
       {
         indicatorNumber: 2,
@@ -428,8 +437,9 @@ var apm = initApm({
   // Set service version (required for sourcemap feature)
   serviceVersion: 'service-version'
 })`,
-        textPost:
-          'See [the documentation](https://www.elastic.co/guide/en/apm/agent/js-base/0.x/index.html) for advanced usage.'
+        textPost: `See [the documentation](${
+          APM_AGENT_DOCS.home.javascript.url
+        }) for advanced usage.`
       },
       {
         indicatorNumber: 4,

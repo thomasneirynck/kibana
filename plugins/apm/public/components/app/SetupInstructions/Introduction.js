@@ -1,7 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { px, unit, units, colors, fontSizes } from '../../../style/variables';
+import { get } from 'lodash';
 
+import { APM_DOCS } from '../../../utils/documentation';
+import { ExternalLink } from '../../../utils/url';
 import { EuiText } from '@elastic/eui';
 
 const Title = styled.h1`
@@ -70,9 +73,9 @@ function Introduction() {
             </li>
           </ul>
           For more information,{' '}
-          <a href="https://www.elastic.co/guide/en/apm/get-started/6.2/index.html">
+          <ExternalLink href={get(APM_DOCS, 'get-started.url')}>
             please see our documentation.
-          </a>{' '}
+          </ExternalLink>{' '}
           To get started, follow the steps below.
         </Description>
       </EuiText>

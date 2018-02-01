@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import qs from 'querystring';
 import url from 'url';
@@ -106,3 +107,11 @@ export function legacyDecodeURIComponent(url) {
     url && decodeURIComponent(url.replace(/~2F/g, '/').replace(/~20/g, ' '))
   );
 }
+
+export function ExternalLink(props) {
+  return <a target="_blank" rel="noopener noreferrer" {...props} />;
+}
+
+ExternalLink.propTypes = {
+  href: PropTypes.string.isRequired
+};

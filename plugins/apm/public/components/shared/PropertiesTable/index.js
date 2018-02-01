@@ -11,6 +11,9 @@ import {
 } from '../../../style/variables';
 import TipMessage from '../TipMessage';
 
+import { getFeatureDocs } from '../../../utils/documentation';
+import { ExternalLink } from '../../../utils/url';
+
 const TableContainer = styled.div`
   padding-bottom: ${px(units.double)};
 `;
@@ -96,129 +99,7 @@ function getLevelTwoProps(dynamicProps, currentKey) {
   }));
 }
 
-function getTipText(propertyKey, agentName) {
-  const notAvailableText =
-    'This feature is not available in the current version';
-  const userText =
-    'You can configure your agent to add contextual information about your users';
-  const customText =
-    'You can configure your agent to add custom contextual information on transactions';
-  const tagsText =
-    'You can configure your agent to add filterable tags on transactions';
-
-  switch (agentName) {
-    case 'nodejs':
-      switch (propertyKey) {
-        case 'user':
-          return {
-            text: userText,
-            url:
-              'https://www.elastic.co/guide/en/apm/agent/nodejs/1.x/agent-api.html#apm-set-user-context'
-          };
-
-        case 'tags':
-          return {
-            text: tagsText,
-            url:
-              'https://www.elastic.co/guide/en/apm/agent/nodejs/1.x/agent-api.html#apm-set-tag'
-          };
-
-        case 'custom':
-          return {
-            text: customText,
-            url:
-              'https://www.elastic.co/guide/en/apm/agent/nodejs/1.x/agent-api.html#apm-set-custom-context'
-          };
-
-        default:
-          return null;
-      }
-
-    case 'python':
-      switch (propertyKey) {
-        case 'user':
-          return {
-            text: userText,
-            url:
-              'https://www.elastic.co/guide/en/apm/agent/python/2.x/api.html#api-set-user-context'
-          };
-
-        case 'tags':
-          return {
-            text: tagsText,
-            url:
-              'https://www.elastic.co/guide/en/apm/agent/python/2.x/api.html#api-tag'
-          };
-
-        case 'custom':
-          return {
-            text: customText,
-            url:
-              'https://www.elastic.co/guide/en/apm/agent/python/2.x/api.html#api-set-custom-context'
-          };
-
-        default:
-          return null;
-      }
-
-    case 'ruby':
-      switch (propertyKey) {
-        case 'user':
-          return {
-            text: userText,
-            url:
-              'https://www.elastic.co/guide/en/apm/agent/ruby/1.x/advanced.html#_providing_info_about_the_user'
-          };
-
-        case 'tags':
-          return {
-            text: tagsText,
-            url:
-              'https://www.elastic.co/guide/en/apm/agent/ruby/1.x/advanced.html#_adding_tags'
-          };
-
-        case 'custom':
-          return {
-            text: customText,
-            url:
-              'https://www.elastic.co/guide/en/apm/agent/ruby/1.x/advanced.html#_adding_custom_context'
-          };
-
-        default:
-          return null;
-      }
-
-    case 'js-react':
-    case 'js-base':
-      switch (propertyKey) {
-        case 'user':
-          return {
-            text: userText,
-            url:
-              'https://www.elastic.co/guide/en/apm/agent/js-base/0.x/api.html#apm-set-user-context'
-          };
-
-        case 'tags':
-          return {
-            text: notAvailableText
-          };
-
-        case 'custom':
-          return {
-            text: customText,
-            url:
-              'https://www.elastic.co/guide/en/apm/agent/js-base/0.x/api.html#apm-set-custom-context'
-          };
-
-        default:
-          return null;
-      }
-  }
-}
-
 function recursiveSort(propData, levelTwoKey, level, agentName) {
-  const tipText = getTipText(levelTwoKey, agentName);
-
   return (
     <div>
       <Table>
@@ -240,20 +121,30 @@ function recursiveSort(propData, levelTwoKey, level, agentName) {
         </tbody>
       </Table>
 
-      {tipText && (
-        <TipMessage>
-          {tipText.text}
-          {tipText.url && (
-            <span>
-              -{' '}
-              <a href={tipText.url} target="_blank">
-                Learn more in the documentation
-              </a>
-            </span>
-          )}
-        </TipMessage>
-      )}
+      <AgentFeatureTipMessage
+        featureName={`context-${levelTwoKey}`}
+        agentName={agentName}
+      />
     </div>
+  );
+}
+
+function AgentFeatureTipMessage({ featureName, agentName }) {
+  const docs = getFeatureDocs(featureName, agentName);
+
+  if (!docs) {
+    return null;
+  }
+
+  return (
+    <TipMessage>
+      {docs.text}{' '}
+      {docs.url && (
+        <ExternalLink href={docs.url}>
+          Learn more in the documentation.
+        </ExternalLink>
+      )}
+    </TipMessage>
   );
 }
 
