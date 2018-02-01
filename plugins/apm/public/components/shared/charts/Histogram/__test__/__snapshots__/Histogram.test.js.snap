@@ -359,7 +359,7 @@ exports[`Histogram Initially should have default markup 1`] = `
               textAnchor="end"
               transform="translate(-8, 0)"
             >
-              0.0
+              0.0 occ.
             </text>
           </g>
           <g
@@ -382,7 +382,7 @@ exports[`Histogram Initially should have default markup 1`] = `
               textAnchor="end"
               transform="translate(-8, 0)"
             >
-              27.5
+              27.5 occ.
             </text>
           </g>
           <g
@@ -405,7 +405,7 @@ exports[`Histogram Initially should have default markup 1`] = `
               textAnchor="end"
               transform="translate(-8, 0)"
             >
-              55.0
+              55.0 occ.
             </text>
           </g>
         </g>
@@ -1445,7 +1445,7 @@ exports[`Histogram when hovering over a non-empty bucket should have correct mar
       <div
         className="c3"
       >
-        49.0
+        49.0 occurrences
       </div>
     </div>
     <div

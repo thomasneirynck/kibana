@@ -61,7 +61,8 @@ class Distribution extends Component {
           xType="time"
           buckets={buckets}
           bucketSize={distribution.data.bucketSize}
-          formatYValue={value => `${value} occ.`}
+          formatYShort={value => `${value} occ.`}
+          formatYLong={value => `${value} occurrences`}
         />
       </div>
     );

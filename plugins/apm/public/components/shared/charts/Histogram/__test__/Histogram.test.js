@@ -28,8 +28,9 @@ describe('Histogram', () => {
         bucketSize={response.bucketSize}
         transactionId="myTransactionId"
         onClick={onClick}
-        formatXValue={timeFormatter}
-        formatYValue={asDecimal}
+        formatX={timeFormatter}
+        formatYShort={t => `${asDecimal(t)} occ.`}
+        formatYLong={t => `${asDecimal(t)} occurrences`}
         tooltipHeader={bucket =>
           `${timeFormatter(bucket.x0, false)} - ${timeFormatter(
             bucket.x,
@@ -81,7 +82,9 @@ describe('Histogram', () => {
 
       expect(tooltips.length).toBe(1);
       expect(tooltips.prop('header')).toBe('811 - 869 ms');
-      expect(tooltips.prop('tooltipPoints')).toEqual([{ value: '49.0' }]);
+      expect(tooltips.prop('tooltipPoints')).toEqual([
+        { value: '49.0 occurrences' }
+      ]);
       expect(tooltips.prop('x')).toEqual(869010);
       expect(tooltips.prop('y')).toEqual(27.5);
     });

@@ -53,8 +53,12 @@ class Distribution extends Component {
     loadTransactionDistribution(nextProps);
   }
 
-  formatYValue = t => {
-    return `${t} ${distributionUnit(this.props.urlParams.transactionType)}`;
+  formatYShort = t => {
+    return `${t} ${unitShort(this.props.urlParams.transactionType)}`;
+  };
+
+  formatYLong = t => {
+    return `${t} ${unitLong(this.props.urlParams.transactionType, t)}`;
   };
 
   render() {
@@ -75,6 +79,10 @@ class Distribution extends Component {
       );
     }
 
+    const bucketIndex = buckets.findIndex(
+      bucket => bucket.transactionId === this.props.urlParams.transactionId
+    );
+
     return (
       <div>
         <GraphHeader>
@@ -83,7 +91,7 @@ class Distribution extends Component {
         <Histogram
           buckets={buckets}
           bucketSize={distribution.data.bucketSize}
-          transactionId={this.props.urlParams.transactionId}
+          bucketIndex={bucketIndex}
           onClick={bucket => {
             if (bucket.sampled && bucket.y > 0) {
               history.replace({
@@ -95,8 +103,9 @@ class Distribution extends Component {
               });
             }
           }}
-          formatXValue={timeFormatter}
-          formatYValue={this.formatYValue}
+          formatX={timeFormatter}
+          formatYShort={this.formatYShort}
+          formatYLong={this.formatYLong}
           verticalLineHover={bucket => bucket.y > 0 && !bucket.sampled}
           backgroundHover={bucket => bucket.y > 0 && bucket.sampled}
           tooltipHeader={bucket =>
@@ -114,8 +123,14 @@ class Distribution extends Component {
   }
 }
 
-function distributionUnit(type) {
+function unitShort(type) {
   return type === 'request' ? 'req.' : 'trans.';
+}
+
+function unitLong(type, count) {
+  const suffix = count > 1 ? 's' : '';
+
+  return type === 'request' ? `request${suffix}` : `transaction${suffix}`;
 }
 
 export default withRouter(Distribution);

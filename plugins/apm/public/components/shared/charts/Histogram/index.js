@@ -62,7 +62,7 @@ export class HistogramInner extends PureComponent {
       const padding = (item.x - item.x0) / 20;
       return {
         ...item,
-        color: item === selectedItem ? colors.blue2 : undefined,
+        color: item === selectedItem ? colors.blue2 : colors.apmLightBlue,
         x0: item.x0 + padding,
         x: item.x - padding,
         y: item.y > 0 ? Math.max(item.y, MINIMUM_BUCKET_SIZE) : 0
@@ -72,30 +72,28 @@ export class HistogramInner extends PureComponent {
 
   render() {
     const {
+      backgroundHover,
+      bucketIndex,
       buckets,
-      transactionId,
       bucketSize,
-      width: XY_WIDTH,
-      formatXValue,
-      formatYValue,
-      tooltipHeader,
+      formatX,
+      formatYShort,
+      formatYLong,
       tooltipFooter,
+      tooltipHeader,
       verticalLineHover,
-      backgroundHover
+      width: XY_WIDTH
     } = this.props;
     const { hoveredBucket } = this.state;
     if (_.isEmpty(buckets) || XY_WIDTH === 0) {
       return null;
     }
 
-    const selectedBucket =
-      transactionId &&
-      buckets.find(bucket => bucket.transactionId === transactionId);
-
     const xMin = d3.min(buckets, d => d.x0);
     const xMax = d3.max(buckets, d => d.x);
     const yMin = 0;
     const yMax = d3.max(buckets, d => d.y);
+    const selectedBucket = buckets[bucketIndex];
     const chartData = this.getChartData(buckets, selectedBucket);
 
     const x = scaleLinear()
@@ -133,13 +131,13 @@ export class HistogramInner extends PureComponent {
             tickSizeOuter={10}
             tickSizeInner={0}
             tickTotal={X_TICK_TOTAL}
-            tickFormat={formatXValue}
+            tickFormat={formatX}
           />
           <YAxis
             tickSize={0}
             hideLine
             tickValues={yTickValues}
-            tickFormat={formatYValue}
+            tickFormat={formatYShort}
           />
 
           {showBackgroundHover && (
@@ -160,7 +158,7 @@ export class HistogramInner extends PureComponent {
               }}
               header={tooltipHeader(hoveredBucket)}
               footer={tooltipFooter(hoveredBucket)}
-              tooltipPoints={[{ value: formatYValue(hoveredBucket.y, false) }]}
+              tooltipPoints={[{ value: formatYLong(hoveredBucket.y) }]}
               x={hoveredBucket.x}
               y={yDomain[1] / 2}
             />
@@ -214,26 +212,28 @@ export class HistogramInner extends PureComponent {
 }
 
 HistogramInner.propTypes = {
-  width: PropTypes.number.isRequired,
-  transactionId: PropTypes.string,
-  bucketSize: PropTypes.number.isRequired,
-  onClick: PropTypes.func,
+  backgroundHover: PropTypes.func,
+  bucketIndex: PropTypes.number,
   buckets: PropTypes.array.isRequired,
-  xType: PropTypes.string,
-  formatXValue: PropTypes.func,
-  formatYValue: PropTypes.func,
-  tooltipHeader: PropTypes.func,
+  bucketSize: PropTypes.number.isRequired,
+  formatX: PropTypes.func,
+  formatYLong: PropTypes.func,
+  formatYShort: PropTypes.func,
+  onClick: PropTypes.func,
   tooltipFooter: PropTypes.func,
+  tooltipHeader: PropTypes.func,
   verticalLineHover: PropTypes.func,
-  backgroundHover: PropTypes.func
+  width: PropTypes.number.isRequired,
+  xType: PropTypes.string
 };
 
 HistogramInner.defaultProps = {
-  tooltipHeader: () => null,
-  tooltipFooter: () => null,
-  verticalLineHover: () => null,
   backgroundHover: () => null,
-  formatYValue: value => value,
+  formatYLong: value => value,
+  formatYShort: value => value,
+  tooltipFooter: () => null,
+  tooltipHeader: () => null,
+  verticalLineHover: () => null,
   xType: 'linear'
 };
 
