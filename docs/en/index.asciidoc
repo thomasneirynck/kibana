@@ -1,11 +1,3 @@
-[[kibana-guide]]
-= Kibana User Guide
-
-:include-xpack:  true
-:lang:           en
-:kib-repo-dir:   {docdir}/../../../../kibana/docs
-:xes-repo-dir:   {docdir}/../../../../elasticsearch-extra/x-pack-elasticsearch/docs/{lang}
-:xkb-repo-dir:   {docdir}
 :blog-ref:       https://www.elastic.co/blog/
 :wikipedia:      https://en.wikipedia.org/wiki
 
