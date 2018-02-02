@@ -11,7 +11,7 @@ import {
   truncate
 } from '../../style/variables';
 
-import LabelTooltip, { fieldNameHelper } from '../shared/LabelTooltip';
+import TooltipOverlay, { fieldNameHelper } from '../shared/TooltipOverlay';
 
 const PropertiesContainer = styled.div`
   display: flex;
@@ -66,9 +66,9 @@ export function ContextProperties({ timestamp, url, stickyProperties }) {
     <PropertiesContainer>
       <Property>
         <PropertyLabel>
-          <LabelTooltip text={fieldNameHelper('@timestamp')}>
+          <TooltipOverlay content={fieldNameHelper('@timestamp')}>
             <span>Timestamp</span>
-          </LabelTooltip>
+          </TooltipOverlay>
         </PropertyLabel>
         <PropertyValue>
           {timeAgo}{' '}
@@ -77,25 +77,25 @@ export function ContextProperties({ timestamp, url, stickyProperties }) {
       </Property>
       <PropertyWide>
         <PropertyLabel>
-          <LabelTooltip text={fieldNameHelper('context.request.url.full')}>
+          <TooltipOverlay content={fieldNameHelper('context.request.url.full')}>
             <span>URL</span>
-          </LabelTooltip>
+          </TooltipOverlay>
         </PropertyLabel>
-        <LabelTooltip text={url}>
+        <TooltipOverlay content={url}>
           <PropertyUrl>{url}</PropertyUrl>
-        </LabelTooltip>
+        </TooltipOverlay>
       </PropertyWide>
       {stickyProperties &&
-        stickyProperties.map(({ name, val, fieldName }, i) => (
+        stickyProperties.map(({ label, val, fieldName }, i) => (
           <Property key={i}>
             {fieldName ? (
               <PropertyLabel>
-                <LabelTooltip text={fieldNameHelper(fieldName)}>
-                  <span>{name}</span>
-                </LabelTooltip>
+                <TooltipOverlay content={fieldNameHelper(fieldName)}>
+                  <span>{label}</span>
+                </TooltipOverlay>
               </PropertyLabel>
             ) : (
-              <PropertyLabel>{name}</PropertyLabel>
+              <PropertyLabel>{label}</PropertyLabel>
             )}
             <PropertyValue>{String(val)}</PropertyValue>
           </Property>

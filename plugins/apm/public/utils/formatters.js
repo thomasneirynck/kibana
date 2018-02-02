@@ -1,7 +1,5 @@
-import { memoize, first, zipObject, difference } from 'lodash';
+import { memoize } from 'lodash';
 import numeral from '@elastic/numeral';
-
-import { colors } from '../style/variables';
 
 const UNIT_CUT_OFF = 10 * 1000000;
 
@@ -44,44 +42,4 @@ export function asInteger(value) {
 
 export function tpmUnit(type) {
   return type === 'request' ? 'rpm' : 'tpm';
-}
-
-export function getColorByType(types) {
-  const assignedColors = {
-    app: colors.apmBlue,
-    cache: colors.apmGreen,
-    components: colors.apmGreen,
-    ext: colors.apmPurple,
-    xhr: colors.apmPurple,
-    template: colors.apmRed2,
-    resource: colors.apmRed2,
-    custom: colors.apmTan,
-    db: colors.apmOrange,
-    'hard-navigation': colors.apmYellow
-  };
-
-  const unknownTypes = difference(types, Object.keys(assignedColors));
-  const unassignedColors = zipObject(unknownTypes, [
-    colors.apmYellow,
-    colors.apmRed,
-    colors.apmBrown,
-    colors.apmPink
-  ]);
-
-  return type => assignedColors[type] || unassignedColors[type];
-}
-
-export function getSpanLabel(type) {
-  switch (type) {
-    case 'db':
-      return 'DB';
-    case 'hard-navigation':
-      return 'Navigation timing';
-    default:
-      return type;
-  }
-}
-
-export function getPrimaryType(type) {
-  return first(type.split('.'));
 }

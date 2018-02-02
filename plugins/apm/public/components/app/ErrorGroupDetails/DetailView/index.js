@@ -80,17 +80,17 @@ function DetailView({ errorGroup, urlParams, history, location }) {
 
   const stickyProperties = [
     {
-      name: 'Request method',
+      label: 'Request method',
       fieldName: 'context.request.method',
       val: get(errorGroup.data, 'error.context.request.method', 'N/A')
     },
     {
-      name: 'Handled',
+      label: 'Handled',
       fieldName: 'error.exception.handled',
       val: get(errorGroup.data, 'error.error.exception.handled', 'N/A')
     },
     {
-      name: 'User ID',
+      label: 'User ID',
       fieldName: 'context.user.id',
       val: get(errorGroup.data, 'error.context.user.id', 'N/A')
     }
@@ -104,7 +104,7 @@ function DetailView({ errorGroup, urlParams, history, location }) {
 
   const codeLanguage = get(errorGroup.data.error, SERVICE_LANGUAGE_NAME);
 
-  const context = get(errorGroup.data.error, 'context', []);
+  const context = get(errorGroup.data.error, 'context', {});
 
   const tabs = getTabs(context, logStackframes);
 
@@ -164,35 +164,45 @@ function DetailView({ errorGroup, urlParams, history, location }) {
       </TabContainer>
 
       <TabContentContainer>
-        {(() => {
-          switch (currentTab) {
-            case LOG_STACKTRACE_TAB:
-              return (
-                <Stacktrace
-                  stackframes={logStackframes}
-                  codeLanguage={codeLanguage}
-                />
-              );
-            case EXC_STACKTRACE_TAB:
-              return (
-                <Stacktrace
-                  stackframes={excStackframes}
-                  codeLanguage={codeLanguage}
-                />
-              );
-            default:
-              return (
-                <PropertiesTable
-                  propData={errorGroup.data.error.context[currentTab]}
-                  propKey={currentTab}
-                  agentName={agentName}
-                />
-              );
-          }
-        })()}
+        <TabContent
+          currentTab={currentTab}
+          logStackframes={logStackframes}
+          excStackframes={excStackframes}
+          codeLanguage={codeLanguage}
+          errorGroup={errorGroup}
+          agentName={agentName}
+        />
       </TabContentContainer>
     </Container>
   );
+}
+
+function TabContent({
+  currentTab,
+  logStackframes,
+  excStackframes,
+  codeLanguage,
+  errorGroup,
+  agentName
+}) {
+  switch (currentTab) {
+    case LOG_STACKTRACE_TAB:
+      return (
+        <Stacktrace stackframes={logStackframes} codeLanguage={codeLanguage} />
+      );
+    case EXC_STACKTRACE_TAB:
+      return (
+        <Stacktrace stackframes={excStackframes} codeLanguage={codeLanguage} />
+      );
+    default:
+      return (
+        <PropertiesTable
+          propData={errorGroup.data.error.context[currentTab]}
+          propKey={currentTab}
+          agentName={agentName}
+        />
+      );
+  }
 }
 
 export default withRouter(DetailView);

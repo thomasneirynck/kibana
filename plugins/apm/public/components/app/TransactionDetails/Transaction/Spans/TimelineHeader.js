@@ -10,7 +10,7 @@ import {
   truncate
 } from '../../../../../style/variables';
 
-import LabelTooltip from '../../../../shared/LabelTooltip';
+import TooltipOverlay from '../../../../shared/TooltipOverlay';
 
 const TimelineHeaderContainer = styled.div`
   display: flex;
@@ -32,9 +32,9 @@ const Legends = styled.div`
 export default function TimelineHeader({ legends, transactionName }) {
   return (
     <TimelineHeaderContainer>
-      <LabelTooltip text={transactionName || 'N/A'}>
+      <TooltipOverlay content={transactionName || 'N/A'}>
         <Heading>{transactionName || 'N/A'}</Heading>
-      </LabelTooltip>
+      </TooltipOverlay>
       <Legends>
         {legends.map(({ color, label }) => (
           <Legend clickable={false} key={color} color={color} text={label} />

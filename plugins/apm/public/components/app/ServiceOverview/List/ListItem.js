@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { RelativeLink } from '../../../../utils/url';
 import { KuiTableRow, KuiTableRowCell } from 'ui_framework/components';
 import { fontSizes, truncate } from '../../../../style/variables';
-import LabelTooltip from '../../../shared/LabelTooltip';
+import TooltipOverlay from '../../../shared/TooltipOverlay';
 import { RIGHT_ALIGNMENT } from '@elastic/eui';
 import { asMillisWithDefault } from '../../../../utils/formatters';
 import numeral from '@elastic/numeral';
@@ -45,11 +45,11 @@ function ListItem({ service }) {
   return (
     <KuiTableRow>
       <ServiceNameCell>
-        <LabelTooltip text={formatString(serviceName)}>
+        <TooltipOverlay content={formatString(serviceName)}>
           <AppLink path={`${serviceName}/transactions`}>
             {formatString(serviceName)}
           </AppLink>
-        </LabelTooltip>
+        </TooltipOverlay>
       </ServiceNameCell>
       <ServiceCell>{formatString(agentName)}</ServiceCell>
       <ServiceCell align={RIGHT_ALIGNMENT}>

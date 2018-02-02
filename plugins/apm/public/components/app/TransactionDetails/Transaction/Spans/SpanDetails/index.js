@@ -1,16 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import numeral from 'numeral';
-import { get, uniq } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import Stacktrace from '../../../../../shared/Stacktrace';
 import DiscoverButton from '../../../../../shared/DiscoverButton';
-import {
-  asMillis,
-  getColorByType,
-  getPrimaryType,
-  getSpanLabel
-} from '../../../../../../utils/formatters';
+import { asMillis } from '../../../../../../utils/formatters';
 import { Indicator } from '../../../../../shared/charts/Legend';
 import {
   SPAN_DURATION,
@@ -29,9 +24,9 @@ import {
   fontSizes,
   truncate
 } from '../../../../../../style/variables';
-import LabelTooltip, {
+import TooltipOverlay, {
   fieldNameHelper
-} from '../../../../../shared/LabelTooltip';
+} from '../../../../../shared/TooltipOverlay';
 
 import SyntaxHighlighter, {
   registerLanguage
@@ -91,18 +86,19 @@ const DatabaseStatement = styled.div`
   font-family: ${fontFamilyCode};
 `;
 
-function SpanDetails({ span, spanTypes, totalDuration, transactionId }) {
+function SpanDetails({
+  span,
+  spanTypeLabel,
+  spanTypeColor,
+  totalDuration,
+  transactionId
+}) {
   const spanDuration = get({ span }, SPAN_DURATION);
   const relativeDuration = spanDuration / totalDuration;
   const spanName = get({ span }, SPAN_NAME);
   const stackframes = span.stacktrace;
   const codeLanguage = get(span, SERVICE_LANGUAGE_NAME);
   const dbContext = get(span, 'context.db');
-
-  const allSpanTypes = uniq(spanTypes.map(({ type }) => getPrimaryType(type)));
-  const getSpanColor = getColorByType(allSpanTypes);
-  const spanLabel = getSpanLabel(getPrimaryType(span.type));
-  const spanColor = getSpanColor(getPrimaryType(span.type));
 
   const discoverQuery = {
     _a: {
@@ -120,32 +116,32 @@ function SpanDetails({ span, spanTypes, totalDuration, transactionId }) {
       <DetailsWrapper>
         <DetailsElement>
           <DetailsHeader>
-            <LabelTooltip text={fieldNameHelper('span.name')}>
+            <TooltipOverlay content={fieldNameHelper('span.name')}>
               <span>Name</span>
-            </LabelTooltip>
+            </TooltipOverlay>
           </DetailsHeader>
           <DetailsText>
-            <LabelTooltip text={`${spanName || 'N/A'}`}>
+            <TooltipOverlay content={`${spanName || 'N/A'}`}>
               <SpanName>{spanName || 'N/A'}</SpanName>
-            </LabelTooltip>
+            </TooltipOverlay>
           </DetailsText>
         </DetailsElement>
         <DetailsElement>
           <DetailsHeader>
-            <LabelTooltip text={fieldNameHelper('span.type')}>
+            <TooltipOverlay content={fieldNameHelper('span.type')}>
               <span>Type</span>
-            </LabelTooltip>
+            </TooltipOverlay>
           </DetailsHeader>
           <DetailsText>
-            <LegendIndicator radius={units.minus - 1} color={spanColor} />
-            {spanLabel}
+            <LegendIndicator radius={units.minus - 1} color={spanTypeColor} />
+            {spanTypeLabel}
           </DetailsText>
         </DetailsElement>
         <DetailsElement>
           <DetailsHeader>
-            <LabelTooltip text={fieldNameHelper('span.duration.us')}>
+            <TooltipOverlay content={fieldNameHelper('span.duration.us')}>
               <span>Duration</span>
-            </LabelTooltip>
+            </TooltipOverlay>
           </DetailsHeader>
           <DetailsText>{asMillis(spanDuration)}</DetailsText>
         </DetailsElement>
@@ -170,34 +166,32 @@ function SpanDetails({ span, spanTypes, totalDuration, transactionId }) {
 }
 
 function DatabaseContext({ dbContext }) {
-  if (!dbContext) {
+  if (!dbContext || !dbContext.statement) {
     return null;
   }
 
-  if (dbContext.type && dbContext.type === 'sql') {
-    return (
-      <DatabaseStatement>
-        <SyntaxHighlighter
-          language={'sql'}
-          style={xcode}
-          customStyle={{
-            color: null,
-            background: null,
-            padding: null,
-            lineHeight: px(unit * 1.5),
-            whiteSpace: 'pre-wrap',
-            overflowX: 'scroll'
-          }}
-        >
-          {dbContext.statement || 'N/A'}
-        </SyntaxHighlighter>
-      </DatabaseStatement>
-    );
-  } else {
-    return (
-      <DatabaseStatement>{dbContext.statement || 'N/A'}</DatabaseStatement>
-    );
+  if (dbContext.type !== 'sql') {
+    return <DatabaseStatement>{dbContext.statement}</DatabaseStatement>;
   }
+
+  return (
+    <DatabaseStatement>
+      <SyntaxHighlighter
+        language={'sql'}
+        style={xcode}
+        customStyle={{
+          color: null,
+          background: null,
+          padding: null,
+          lineHeight: px(unit * 1.5),
+          whiteSpace: 'pre-wrap',
+          overflowX: 'scroll'
+        }}
+      >
+        {dbContext.statement}
+      </SyntaxHighlighter>
+    </DatabaseStatement>
+  );
 }
 
 SpanDetails.propTypes = {

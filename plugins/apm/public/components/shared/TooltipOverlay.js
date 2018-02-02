@@ -8,13 +8,13 @@ const TooltipFieldName = styled.span`
   font-family: ${fontFamilyCode};
 `;
 
-function LabelTooltip({ children, text }) {
+function TooltipOverlay({ children, content, delay = 1000 }) {
   return (
     <OverlayTrigger
       placement="top"
       trigger="hover"
-      delay={1000}
-      overlay={<Tooltip>{text}</Tooltip>}
+      delay={delay}
+      overlay={<Tooltip>{content}</Tooltip>}
     >
       {children}
     </OverlayTrigger>
@@ -30,4 +30,4 @@ export function fieldNameHelper(name) {
   );
 }
 
-export default LabelTooltip;
+export default TooltipOverlay;

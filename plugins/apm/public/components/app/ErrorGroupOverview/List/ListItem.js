@@ -10,7 +10,7 @@ import {
 import { RelativeLink } from '../../../../utils/url';
 import { KuiTableRow, KuiTableRowCell } from 'ui_framework/components';
 import { RIGHT_ALIGNMENT, EuiBadge } from '@elastic/eui';
-import LabelTooltip from '../../../shared/LabelTooltip';
+import TooltipOverlay from '../../../shared/TooltipOverlay';
 import numeral from '@elastic/numeral';
 import moment from 'moment';
 
@@ -72,14 +72,14 @@ function ListItem({ error, serviceName }) {
         </GroupIdLink>
       </GroupIdCell>
       <MessageAndCulpritCell>
-        <LabelTooltip text={message || 'N/A'}>
+        <TooltipOverlay content={message || 'N/A'}>
           <MessageLink path={`${serviceName}/errors/${groupId}`}>
             {message || 'N/A'}
           </MessageLink>
-        </LabelTooltip>
-        <LabelTooltip text={culprit || 'N/A'}>
+        </TooltipOverlay>
+        <TooltipOverlay content={culprit || 'N/A'}>
           <Culprit>{culprit || 'N/A'}</Culprit>
-        </LabelTooltip>
+        </TooltipOverlay>
       </MessageAndCulpritCell>
       <UnhandledCell align={RIGHT_ALIGNMENT}>
         {isUnhandled && <EuiBadge color="warning">Unhandled</EuiBadge>}

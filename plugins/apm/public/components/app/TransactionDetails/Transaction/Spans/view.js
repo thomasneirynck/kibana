@@ -1,16 +1,11 @@
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
-import { get, uniq } from 'lodash';
+import { get, uniq, first, zipObject, difference } from 'lodash';
 import Span from './Span';
 import TimelineHeader from './TimelineHeader';
 import { SPAN_ID } from '../../../../../../common/constants';
 import { STATUS } from '../../../../../constants';
 import { colors } from '../../../../../style/variables';
-import {
-  getPrimaryType,
-  getSpanLabel,
-  getColorByType
-} from '../../../../../utils/formatters';
 import { StickyContainer } from 'react-sticky';
 import Timeline from '../../../../shared/charts/Timeline';
 import EmptyMessage from '../../../../shared/EmptyMessage';
@@ -103,7 +98,7 @@ class Spans extends PureComponent {
                   key={get({ span }, SPAN_ID)}
                   color={getSpanColor(getPrimaryType(span.type))}
                   span={span}
-                  spanTypes={spans.data.spanTypes}
+                  spanTypeLabel={getSpanLabel(getPrimaryType(span.type))}
                   totalDuration={totalDuration}
                   isSelected={get({ span }, SPAN_ID) === urlParams.spanId}
                 />
@@ -143,6 +138,46 @@ function DroppedSpansDocsLink({ agentName }) {
       Learn more in the documentation.
     </ExternalLink>
   );
+}
+
+function getColorByType(types) {
+  const assignedColors = {
+    app: colors.apmBlue,
+    cache: colors.apmGreen,
+    components: colors.apmGreen,
+    ext: colors.apmPurple,
+    xhr: colors.apmPurple,
+    template: colors.apmRed2,
+    resource: colors.apmRed2,
+    custom: colors.apmTan,
+    db: colors.apmOrange,
+    'hard-navigation': colors.apmYellow
+  };
+
+  const unknownTypes = difference(types, Object.keys(assignedColors));
+  const unassignedColors = zipObject(unknownTypes, [
+    colors.apmYellow,
+    colors.apmRed,
+    colors.apmBrown,
+    colors.apmPink
+  ]);
+
+  return type => assignedColors[type] || unassignedColors[type];
+}
+
+function getSpanLabel(type) {
+  switch (type) {
+    case 'db':
+      return 'DB';
+    case 'hard-navigation':
+      return 'Navigation timing';
+    default:
+      return type;
+  }
+}
+
+function getPrimaryType(type) {
+  return first(type.split('.'));
 }
 
 export default Spans;

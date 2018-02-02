@@ -12,7 +12,7 @@ import {
 } from '../../../../style/variables';
 import { RIGHT_ALIGNMENT } from '@elastic/eui';
 import { RelativeLink, legacyEncodeURIComponent } from '../../../../utils/url';
-import LabelTooltip from '../../../shared/LabelTooltip';
+import TooltipOverlay from '../../../shared/TooltipOverlay';
 
 import { get } from 'lodash';
 import { TRANSACTION_NAME } from '../../../../../common/constants';
@@ -79,11 +79,11 @@ function TransactionListItem({ serviceName, transaction, type, impact }) {
   return (
     <KuiTableRow>
       <TransactionNameCell>
-        <LabelTooltip text={transactionName || 'N/A'}>
+        <TooltipOverlay content={transactionName || 'N/A'}>
           <TransactionNameLink path={transactionUrl}>
             {transactionName || 'N/A'}
           </TransactionNameLink>
-        </LabelTooltip>
+        </TooltipOverlay>
       </TransactionNameCell>
       <TransactionKPICell align={RIGHT_ALIGNMENT}>
         {asMillisWithDefault(transaction.avg)}

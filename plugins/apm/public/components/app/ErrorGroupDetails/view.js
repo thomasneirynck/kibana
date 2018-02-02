@@ -93,7 +93,7 @@ class ErrorGroupDetails extends Component {
               {logMessage && (
                 <Fragment>
                   <Label>Log message</Label>
-                  <Message>{logMessage || 'N/A'}</Message>
+                  <Message>{logMessage}</Message>
                 </Fragment>
               )}
               <Label>Exception message</Label>

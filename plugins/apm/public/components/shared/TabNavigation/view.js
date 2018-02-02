@@ -12,7 +12,7 @@ import {
 } from '../../../style/variables';
 import { isEmpty } from 'lodash';
 
-import LabelTooltip from '../../shared/LabelTooltip';
+import TooltipOverlay from '../../shared/TooltipOverlay';
 
 const Container = styled.div`
   display: flex;
@@ -54,8 +54,8 @@ function TabNavigation({ urlParams, location, service }) {
       {types.map(type => {
         const label = transactionTypeLabel(type);
         return (
-          <LabelTooltip
-            text={
+          <TooltipOverlay
+            content={
               <span>
                 Transaction type:<br />
                 {label}
@@ -69,7 +69,7 @@ function TabNavigation({ urlParams, location, service }) {
             >
               {label}
             </NavLink>
-          </LabelTooltip>
+          </TooltipOverlay>
         );
       })}
       {isEmpty(types) && <EmptyMessage>No transactions available</EmptyMessage>}

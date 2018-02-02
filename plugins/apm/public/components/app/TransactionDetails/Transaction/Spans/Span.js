@@ -90,7 +90,7 @@ class Span extends React.Component {
       timelineMargins,
       totalDuration,
       span,
-      spanTypes,
+      spanTypeLabel,
       color,
       isSelected,
       transactionId,
@@ -137,7 +137,8 @@ class Span extends React.Component {
         >
           <SpanDetails
             span={span}
-            spanTypes={spanTypes}
+            spanTypeLabel={spanTypeLabel}
+            spanTypeColor={color}
             totalDuration={totalDuration}
             transactionId={transactionId}
           />

@@ -2,8 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { units, px } from '../../../../style/variables';
 import { KuiInfoButton } from 'ui_framework/components';
-import { Tooltip } from 'pivotal-ui/react/tooltip';
-import { OverlayTrigger } from 'pivotal-ui/react/overlay-trigger';
+import TooltipOverlay from '../../../shared/TooltipOverlay';
 
 const TooltipWrapper = styled.div`
   position: relative;
@@ -15,13 +14,12 @@ const TooltipWrapper = styled.div`
 
 const ImpactTooltip = () => (
   <TooltipWrapper>
-    <OverlayTrigger
-      placement="top"
-      trigger="hover"
-      overlay={
-        <Tooltip>
+    <TooltipOverlay
+      delay={0}
+      content={
+        <span>
           Impact shows the most used and<br />slowest endpoints in your service.
-        </Tooltip>
+        </span>
       }
     >
       <KuiInfoButton
@@ -31,7 +29,7 @@ const ImpactTooltip = () => (
           return false;
         }}
       />
-    </OverlayTrigger>
+    </TooltipOverlay>
   </TooltipWrapper>
 );
 
