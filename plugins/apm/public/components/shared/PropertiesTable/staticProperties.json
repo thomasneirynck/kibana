@@ -7,17 +7,17 @@
   {
     "key": "response",
     "required": false,
-    "children": ["status", "headers", "headers_sent", "finished"]
+    "children": ["status_code", "headers", "headers_sent", "finished"]
   },
   {
     "key": "system",
     "required": false,
-    "children": ["hostname", "loadavg", "architecture", "platform"]
+    "children": ["hostname", "architecture", "platform"]
   },
   {
     "key": "service",
     "required": false,
-    "children": ["runtime", "framework", "agent", "version", "git_ref"]
+    "children": ["runtime", "framework", "agent", "version"]
   },
   {
     "key": "process",
