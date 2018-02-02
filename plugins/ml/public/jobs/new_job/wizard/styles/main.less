@@ -3,66 +3,62 @@
 
 .job-type-gallery {
   width: 100%;
-  margin-right: auto;
-  margin-left: auto;
+  padding-right: 10px;
+  padding-left: 10px;
   background-color: @globalColorLightestGray;
   -webkit-box-flex: 1;
   -webkit-flex: 1 0 auto;
   -ms-flex: 1 0 auto;
   flex: 1 0 auto;
 
-  .recognizer-result {
-    width: 280px;
-  }
-
-  .options-panel {
-    padding: 24px 20px;
-    background-color: @white;
-    min-width: 280px;
-    min-height: 150px;
-  }
-
-  .top-features {
-    margin-top: 10px;
+  .job-types-content {
+    max-width: 1200px;
+    margin-right: auto;
+    margin-left: auto;
   }
 
   .synopsis {
-    margin-left: 10px !important;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-flex: 1;
+    -webkit-flex-grow: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+
+    .synopsisTitle {
+      font-size: 16px;
+      font-weight: normal;
+      color: #0079a5;
+    }
+
+    .synopsisIcon {
+      padding-top: 8px;
+    }
   }
 
-  .synopsisTitle {
-    font-size: 16px;
-    font-weight: normal;
+  .synopsis:hover {
+    text-decoration: none;
+
+    .synopsisTitle {
+      text-decoration: underline;
+    }
   }
 
-  .synopsisIcon {
-    padding-top: 8px;
-    color: #00a9e4;
-    font-size: 24px;
-  }
-
-  .kuiSubTitle {
-    padding-bottom: 5px;
-  }
-
-  .kuiSubText {
-    font-size: 13px;
-  }
-
-  .disabled {
+  .euiFlexItem.disabled {
     cursor: not-allowed;
+  }
+
+  .synopsis.disabled {
     pointer-events: none;
-    color: grey;
+
+    .synopsisTitle {
+      color: grey;
+    }
   }
 
   .index-warning {
-    width: 100%;
-    min-width: 100%;
-
-    .warning-icon {
-      color: #F39C12;
-      font-size: 40px;
-      margin-right: 10px;
-    }
+    border: 1px solid #d9d9d9;
   }
 }

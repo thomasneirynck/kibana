@@ -31,20 +31,26 @@ export const RecognizedResult = ({
   }
 
   return (
-    <div className="euiFlexItem euiFlexItem--flexGrowZero euiPanel euiPanel--paddingMedium recognizer-result">
-      <div className="euiFlexGroup euiFlexGroup--gutterLarge">
-        <div className="euiFlexItem euiFlexItem--flexGrowZero ml-data-recognizer-logo">
-          {logo}
+    <div className="euiFlexItem">
+      <a href={href} className="euiLink synopsis">
+        <div className="euiPanel euiPanel--paddingMedium synopsisPanel">
+          <div className="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--responsive">
+            <div className="euiFlexItem euiFlexItem--flexGrowZero ml-data-recognizer-logo">
+              {logo}
+            </div>
+            <div className="euiFlexItem synopsisContent">
+              <h4 className="euiTitle euiTitle--small synopsisTitle">{config.title}</h4>
+              <div className="euiText synopsisBody">
+                <p>
+                  <span className="euiTextColor euiTextColor--subdued">
+                    {config.description}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="euiFlexItem euiText">
-          <h4>
-            <a href={href} className="euiLink">{config.title}</a>
-          </h4>
-          <p className="euiTextColor euiTextColor--subdued">
-            {config.description}
-          </p>
-        </div>
-      </div>
+      </a>
     </div>
   );
 };

@@ -17,18 +17,25 @@
       Use the Advanced job wizard to create a job to find anomalies in this data:
     </p>
 
-    <div class="euiPanel euiPanel--paddingMedium advanced-job-button">
-      <div class="euiFlexGroup euiFlexGroup--gutterLarge">
-        <div class="euiFlexItem euiFlexItem--flexGrowZero">
-          <i aria-hidden="true" class="synopsisIcon fa fa-cog"></i>
-        </div>
-        <div class="euiFlexItem euiText">
-          <h4>
-            <a href="" ng-click="createJob()" ng-class="{disabled: isTimeBasedIndex===false}" class="euiLink">Advanced</a>
-          </h4>
-          <p class="euiTextColor euiTextColor--subdued">Use the full range of options to create a job for more advanced use cases.</p>
+    <a ng-click="createJob()" ng-class='{disabled: isTimeBasedIndex===false}' class="euiLink synopsis">
+      <div class="euiPanel euiPanel--paddingMedium synopsisPanel">
+        <div class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--responsive">
+          <div class="euiFlexItem euiFlexItem--flexGrowZero">
+            <img class="synopsisIcon" src="{{urlBasePath}}/plugins/ml/assets/ml_create_advanced_job.svg" alt="Advanced job">
+          </div>
+          <div class="euiFlexItem synopsisContent">
+            <h4 class="euiTitle euiTitle--small synopsisTitle">Advanced</h4>
+            <div class="euiText synopsisBody">
+              <p>
+                <span class="euiTextColor euiTextColor--subdued">
+                Use the full range of options to create a job for more advanced use cases
+                </span>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </a>
+
   </div>
 </div>
