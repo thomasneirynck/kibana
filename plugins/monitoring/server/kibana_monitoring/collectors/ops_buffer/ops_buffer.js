@@ -1,5 +1,5 @@
 import { LOGGING_TAG, KIBANA_MONITORING_LOGGING_TAG } from '../../../../common/constants';
-import { rollupEvent } from './rollup_event';
+import { EventRoller } from './event_roller';
 import { CloudDetector } from '../../../cloud';
 
 /**
@@ -8,35 +8,27 @@ import { CloudDetector } from '../../../cloud';
  * @return {Object} the revealed `push` and `flush` modules
  */
 export function opsBuffer(server) {
-  const cloudDetector = new CloudDetector();
+  let host = null;
+
   // determine the cloud service in the background
+  const cloudDetector = new CloudDetector();
   cloudDetector.detectCloudService();
 
-  let lastOp = null;
-
-  const getKibanaStatsData = () => {
-    if (!lastOp) { return; }
-
-    const rollup = lastOp.rollup;
-
-    return {
-      cloud: cloudDetector.getCloudDetails(),
-      host: lastOp.host,
-      ...rollup
-    };
-  };
+  const eventRoller = new EventRoller();
 
   return {
     push(event) {
-      lastOp = {
-        host: event.host,
-        rollup: rollupEvent(event, lastOp)
-      };
+      host = event.host;
+      eventRoller.addEvent(event);
       server.log(['debug', LOGGING_TAG, KIBANA_MONITORING_LOGGING_TAG], 'Received Kibana Ops event data');
     },
+
     flush() {
-      return getKibanaStatsData();
+      return {
+        host,
+        cloud: cloudDetector.getCloudDetails(),
+        ...eventRoller.flush()
+      };
     }
   };
 }
-
