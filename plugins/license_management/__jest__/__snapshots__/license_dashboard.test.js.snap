@@ -63,6 +63,7 @@ exports[`LicenseDashboard should display all panels for a trial license 1`] = `
           <a
             className="kuiButton kuiButton--secondary"
             href="https://register.elastic.co/xpack_register"
+            rel="noopener noreferrer"
             target="_blank"
           >
             Get Basic
@@ -178,6 +179,7 @@ exports[`should display basic registration pitch for license expiring in 25 days
           <a
             className="kuiButton kuiButton--secondary"
             href="https://register.elastic.co/xpack_register"
+            rel="noopener noreferrer"
             target="_blank"
           >
             Get Basic
@@ -253,6 +255,7 @@ exports[`should display expiration notice for expired license 1`] = `
           <a
             className="kuiButton kuiButton--secondary"
             href="https://register.elastic.co/xpack_register"
+            rel="noopener noreferrer"
             target="_blank"
           >
             Get Basic

@@ -10,7 +10,13 @@ export function FormattedMessage({ prefix, suffix, message, metadata, changeUrl 
     if (metadata && metadata.link) {
       if (metadata.link.startsWith('https')) {
         return (
-          <a className="kuiLink" href={metadata.link} target="_blank" data-test-subj="alertAction">
+          <a
+            className="kuiLink"
+            href={metadata.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-test-subj="alertAction"
+          >
             { message }
           </a>
         );

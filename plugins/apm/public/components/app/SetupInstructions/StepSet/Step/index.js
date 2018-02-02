@@ -96,6 +96,7 @@ function Step({ step, stepSetId, isLastStep, checkStatus, result, type }) {
           <a
             href="https://www.elastic.co/downloads/apm/apm-server"
             target="_blank"
+            rel="noopener noreferrer"
           >
             <DownloadButton
               buttonType="secondary"

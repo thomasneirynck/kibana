@@ -21,6 +21,7 @@ export class BasicLicenseRegistration extends React.PureComponent {
             className="kuiButton kuiButton--secondary"
             href="https://register.elastic.co/xpack_register"
             target="_blank"
+            rel="noopener noreferrer"
           >
             Get Basic
           </a>
