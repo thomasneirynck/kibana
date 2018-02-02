@@ -12,7 +12,7 @@ import { NodeStatusIcon } from 'plugins/monitoring/components/elasticsearch/node
 import { Tooltip } from 'plugins/monitoring/components/tooltip';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { extractIp } from 'plugins/monitoring/lib/extract_ip';
-import { SORT_ASCENDING } from 'monitoring-constants';
+import { SORT_ASCENDING } from '../../../../common/constants';
 
 const filterFields = [ 'nodeName', 'status', 'type', 'transport_address' ];
 const getColumns = showCgroupMetricsElasticsearch => {

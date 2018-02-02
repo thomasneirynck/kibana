@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import { uiModules } from 'ui/modules';
 import template from './index.html';
-import { shortenPipelineHash } from 'monitoring-formatting';
+import { shortenPipelineHash } from '../../../common/formatting';
 
 /*
  * Manage data and provide helper methods for the "main" directive's template

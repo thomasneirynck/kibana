@@ -7,7 +7,7 @@ import {
   SORT_ASCENDING,
   SORT_DESCENDING,
   TABLE_ACTION_UPDATE_FILTER,
-} from 'monitoring-constants';
+} from '../../../../common/constants';
 import {
   KuiKeyboardAccessible,
   KuiTableRowCell,

@@ -1,5 +1,5 @@
 import { get, set } from 'lodash';
-import { STORAGE_KEY } from 'monitoring-constants';
+import { STORAGE_KEY } from '../../../common/constants';
 
 export const tableStorageGetter = keyPrefix => {
   return storage => {

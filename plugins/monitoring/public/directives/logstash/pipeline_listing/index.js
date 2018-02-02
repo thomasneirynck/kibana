@@ -13,7 +13,7 @@ import {
 } from 'ui_framework/components';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { Sparkline } from 'plugins/monitoring/components/sparkline';
-import { SORT_ASCENDING } from 'monitoring-constants';
+import { SORT_ASCENDING } from '../../../../common/constants';
 import { formatMetric } from '../../../lib/format_number';
 
 const filterFields = [ 'id' ];

@@ -2,7 +2,7 @@ import chrome from 'ui/chrome';
 import { Notifier } from 'ui/notify';
 import { uiModules } from 'ui/modules';
 import { PathProvider } from 'plugins/xpack_main/services/path';
-import { CONFIG_SHOW_BANNER, CONFIG_ALLOW_REPORT } from 'monitoring-constants';
+import { CONFIG_SHOW_BANNER, CONFIG_ALLOW_REPORT } from '../../common/constants';
 
 function renderBanner($injector) {
   const config = $injector.get('config');

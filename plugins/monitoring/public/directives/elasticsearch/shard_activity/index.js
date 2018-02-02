@@ -1,5 +1,5 @@
 import { filter } from 'lodash';
-import { formatDateTimeLocal } from 'monitoring-formatting';
+import { formatDateTimeLocal } from '../../../../common/formatting';
 import { formatNumber } from 'plugins/monitoring/lib/format_number';
 import { uiModules } from 'ui/modules';
 import 'ui/tooltip';

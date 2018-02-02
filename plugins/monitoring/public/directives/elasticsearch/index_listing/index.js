@@ -1,8 +1,8 @@
 import { capitalize, get } from 'lodash';
 import React from 'react';
 import { render } from 'react-dom';
-import { SORT_ASCENDING, SORT_DESCENDING } from 'monitoring-constants';
-import { LARGE_FLOAT, LARGE_BYTES, LARGE_ABBREVIATED } from 'monitoring-formatting';
+import { SORT_ASCENDING, SORT_DESCENDING } from '../../../../common/constants';
+import { LARGE_FLOAT, LARGE_BYTES, LARGE_ABBREVIATED } from '../../../../common/formatting';
 import { uiModules } from 'ui/modules';
 import {
   KuiKeyboardAccessible,

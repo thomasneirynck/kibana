@@ -9,7 +9,7 @@ import {
 } from 'ui_framework/components';
 import { KibanaStatusIcon } from 'plugins/monitoring/components/kibana/status_icon';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
-import { SORT_ASCENDING } from 'monitoring-constants';
+import { SORT_ASCENDING } from '../../../../common/constants';
 import { formatNumber } from '../../../lib/format_number';
 
 const filterFields = [ 'kibana.name', 'kibana.host', 'kibana.status', 'kibana.transport_address' ];

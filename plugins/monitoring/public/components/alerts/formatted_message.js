@@ -2,8 +2,8 @@ import moment from 'moment-timezone';
 import 'moment-duration-format';
 import React from 'react';
 import { KuiKeyboardAccessible } from 'ui_framework/components';
-import { formatTimestampToDuration } from 'monitoring-common';
-import { CALCULATE_DURATION_UNTIL } from 'monitoring-constants';
+import { formatTimestampToDuration } from '../../../common/format_timestamp_to_duration';
+import { CALCULATE_DURATION_UNTIL } from '../../../common/constants';
 
 export function FormattedMessage({ prefix, suffix, message, metadata, changeUrl }) {
   const formattedMessage = (() => {

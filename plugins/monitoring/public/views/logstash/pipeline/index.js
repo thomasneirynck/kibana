@@ -5,8 +5,8 @@ import { find } from 'lodash';
 import uiRoutes from'ui/routes';
 import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
 import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
-import { CALCULATE_DURATION_SINCE } from 'monitoring-constants';
-import { formatTimestampToDuration } from 'monitoring-common';
+import { CALCULATE_DURATION_SINCE } from '../../../../common/constants';
+import { formatTimestampToDuration } from '../../../../common/format_timestamp_to_duration';
 import template from './index.html';
 
 function getPageData($injector) {

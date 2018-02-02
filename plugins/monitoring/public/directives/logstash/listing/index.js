@@ -8,7 +8,7 @@ import {
   KuiTableRow
 } from 'ui_framework/components';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
-import { SORT_ASCENDING } from 'monitoring-constants';
+import { SORT_ASCENDING } from '../../../../common/constants';
 import {
   formatNumber,
   formatPercentageUsage

@@ -5,7 +5,7 @@ import {
   DEFAULT_NO_DATA_MESSAGE_WITH_FILTER,
   TABLE_ACTION_UPDATE_FILTER,
   TABLE_ACTION_RESET_PAGING,
-} from 'monitoring-constants';
+} from '../../../common/constants';
 import {
   KuiControlledTable,
   KuiPagerButtonGroup,

@@ -1,6 +1,6 @@
 import moment from 'moment';
 import Promise from 'bluebird';
-import { CONFIG_ALLOW_REPORT, REPORT_INTERVAL_MS } from 'monitoring-constants';
+import { CONFIG_ALLOW_REPORT, REPORT_INTERVAL_MS } from '../../common/constants';
 
 const STORAGE_KEY = 'xpack.monitoring.data';
 

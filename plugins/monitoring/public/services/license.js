@@ -1,6 +1,6 @@
 import { contains } from 'lodash';
 import { uiModules } from 'ui/modules';
-import { ML_SUPPORTED_LICENSES } from 'monitoring-constants';
+import { ML_SUPPORTED_LICENSES } from '../../common/constants';
 
 const uiModule = uiModules.get('monitoring/license', []);
 uiModule.service('license', () => {

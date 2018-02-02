@@ -10,7 +10,7 @@ import {
 } from 'ui_framework/components';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { MachineLearningJobStatusIcon } from 'plugins/monitoring/components/elasticsearch/ml_job_listing/status_icon';
-import { SORT_ASCENDING } from 'monitoring-constants';
+import { SORT_ASCENDING } from '../../../../common/constants';
 import { LARGE_ABBREVIATED, LARGE_BYTES } from '../../../../common/formatting';
 
 const filterFields = [ 'job_id', 'state', 'node.name' ];

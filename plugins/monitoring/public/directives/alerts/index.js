@@ -5,12 +5,12 @@ import { EuiIcon, EuiHealth } from '@elastic/eui';
 import { uiModules } from 'ui/modules';
 import { KuiTableRowCell, KuiTableRow } from 'ui_framework/components';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
-import { CALCULATE_DURATION_SINCE, SORT_DESCENDING } from 'monitoring-constants';
+import { CALCULATE_DURATION_SINCE, SORT_DESCENDING } from '../../../common/constants';
 import { Tooltip } from 'plugins/monitoring/components/tooltip';
 import { FormattedMessage } from 'plugins/monitoring/components/alerts/formatted_message';
 import { mapSeverity } from 'plugins/monitoring/components/alerts/map_severity';
-import { formatTimestampToDuration } from 'monitoring-common';
-import { formatDateTimeLocal } from 'monitoring-formatting';
+import { formatTimestampToDuration } from '../../../common/format_timestamp_to_duration';
+import { formatDateTimeLocal } from '../../../common/formatting';
 
 const linkToCategories = {
   'elasticsearch/nodes': 'Elasticsearch Nodes',

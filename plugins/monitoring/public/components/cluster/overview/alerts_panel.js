@@ -1,9 +1,9 @@
 import React from 'react';
 import { FormattedMessage } from 'plugins/monitoring/components/alerts/formatted_message';
 import { mapSeverity } from 'plugins/monitoring/components/alerts/map_severity';
-import { formatTimestampToDuration } from 'monitoring-common';
-import { CALCULATE_DURATION_SINCE } from 'monitoring-constants';
-import { formatDateTimeLocal } from 'monitoring-formatting';
+import { formatTimestampToDuration } from '../../../../common/format_timestamp_to_duration';
+import { CALCULATE_DURATION_SINCE } from '../../../../common/constants';
+import { formatDateTimeLocal } from '../../../../common/formatting';
 
 import {
   EuiFlexGroup,

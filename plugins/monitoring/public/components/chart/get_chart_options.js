@@ -1,5 +1,5 @@
 import { merge } from 'lodash';
-import { CHART_LINE_COLOR, CHART_TEXT_COLOR } from 'monitoring-constants';
+import { CHART_LINE_COLOR, CHART_TEXT_COLOR } from '../../../common/constants';
 
 export function getChartOptions(axisOptions) {
   const opts = {

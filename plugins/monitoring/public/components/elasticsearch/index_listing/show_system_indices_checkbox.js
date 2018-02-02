@@ -3,7 +3,7 @@ import {
   KuiToolBarSection,
   KuiToolBarText,
 } from 'ui_framework/components';
-import { TABLE_ACTION_RESET_PAGING } from 'monitoring-constants';
+import { TABLE_ACTION_RESET_PAGING } from '../../../../common/constants';
 
 export class ShowSytemIndicesCheckbox extends React.Component {
   constructor(props) {

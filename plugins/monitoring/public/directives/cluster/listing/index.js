@@ -14,7 +14,7 @@ import { Notifier } from 'ui/notify';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { Tooltip } from 'plugins/monitoring/components/tooltip';
 import { AlertsIndicator } from 'plugins/monitoring/components/cluster/listing/alerts_indicator';
-import { SORT_ASCENDING } from 'monitoring-constants';
+import { SORT_ASCENDING } from '../../../../common/constants';
 
 const filterFields = [ 'cluster_name', 'status', 'license.type' ];
 const columns = [
