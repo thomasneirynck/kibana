@@ -87,9 +87,9 @@
   version "0.0.0"
   uid ""
 
-"@elastic/eui@0.0.13":
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/@elastic/eui/-/eui-0.0.13.tgz#aa3a71c6bfc41978366c29a4254b3a8d1953108f"
+"@elastic/eui@0.0.18":
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/@elastic/eui/-/eui-0.0.18.tgz#eeae6e93ead3bd014f401f577f06af75fff60898"
   dependencies:
     brace "^0.10.0"
     classnames "^2.2.5"
@@ -99,9 +99,11 @@
     html "^1.0.0"
     jquery "^3.2.1"
     keymirror "^0.1.1"
-    lodash "^4.17.4"
+    lodash "^3.10.1"
+    numeral "^2.0.6"
     prop-types "^15.6.0"
     react-ace "^5.5.0"
+    react-color "^2.13.8"
     serve "^6.3.1"
     tabbable "^1.1.0"
     uuid "^3.1.0"
@@ -5839,7 +5841,7 @@ lodash@2.4.2, lodash@^2.4.1:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-2.4.2.tgz#fadd834b9683073da179b3eae6d9c0d15053f73e"
 
-lodash@3.10.1, lodash@^3.10.0:
+lodash@3.10.1, lodash@^3.10.0, lodash@^3.10.1:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
@@ -5847,7 +5849,7 @@ lodash@3.6.*:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.6.0.tgz#5266a8f49dd989be4f9f681b6f2a0c55285d0d9a"
 
-lodash@^4.0.0, lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.2.1, lodash@^4.3.0:
+lodash@^4.0.0, lodash@^4.0.1, lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.2.1, lodash@^4.3.0:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
@@ -5934,6 +5936,10 @@ map-visit@^1.0.0:
   resolved "https://registry.yarnpkg.com/map-visit/-/map-visit-1.0.0.tgz#ecdca8f13144e660f1b5bd41f12f3479d98dfb8f"
   dependencies:
     object-visit "^1.0.0"
+
+material-colors@^1.2.1:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/material-colors/-/material-colors-1.2.5.tgz#5292593e6754cb1bcc2b98030e4e0d6a3afc9ea1"
 
 md5.js@^1.3.4:
   version "1.3.4"
@@ -6434,6 +6440,10 @@ nth-check@~1.0.1:
 number-is-nan@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
+
+numeral@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/numeral/-/numeral-2.0.6.tgz#4ad080936d443c2561aed9f2197efffe25f4e506"
 
 nwmatcher@^1.4.3:
   version "1.4.3"
@@ -7276,6 +7286,16 @@ react-clipboard.js@^1.1.2:
     clipboard "^1.6.1"
     prop-types "^15.5.0"
 
+react-color@^2.13.8:
+  version "2.13.8"
+  resolved "https://registry.yarnpkg.com/react-color/-/react-color-2.13.8.tgz#bcc58f79a722b9bfc37c402e68cd18f26970aee4"
+  dependencies:
+    lodash "^4.0.1"
+    material-colors "^1.2.1"
+    prop-types "^15.5.10"
+    reactcss "^1.2.0"
+    tinycolor2 "^1.4.1"
+
 react-dom@^16.0.0, react-dom@^16.2.0:
   version "16.2.0"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.2.0.tgz#69003178601c0ca19b709b33a83369fe6124c044"
@@ -7402,6 +7422,12 @@ react@>=0.13.3, react@^16.2.0:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.0"
+
+reactcss@^1.2.0:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/reactcss/-/reactcss-1.2.3.tgz#c00013875e557b1cf0dfd9a368a1c3dab3b548dd"
+  dependencies:
+    lodash "^4.0.1"
 
 read-pkg-up@^1.0.1:
   version "1.0.1"
@@ -8710,6 +8736,10 @@ tiny-inflate@^1.0.0, tiny-inflate@^1.0.2:
 tinycolor2@1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.3.0.tgz#3f38e6424de4566122d550eb1acc80cad37a7184"
+
+tinycolor2@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.1.tgz#f4fad333447bc0b07d4dc8e9209d8f39a8ac77e8"
 
 tmp@0.0.31:
   version "0.0.31"
