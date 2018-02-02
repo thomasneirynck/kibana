@@ -294,39 +294,16 @@ See [the AWS docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-config
 
 # Building documentation
 
-This repo is used to build the Kibana User Guide. In particular, it builds a
-version of the guide that includes X-Pack-specific information in 5.5 and later.
+This repo contains X-Pack information that is used in the Kibana User Guide in 5.5 and later.
 
 To build the Kibana User Guide on your local machine, ensure you have the following folders:
 
 ```
 $ ls $PATH_TO_REPOS
  ├── kibana
- ├─- kibana-extra/x-pack-kibana
- ├── elasticsearch (optional)
- └── elasticsearch-extra/x-pack-elasticsearch (optional)
-
+ └── kibana-extra/x-pack-kibana
+ 
 ```
 
-- Use the `index.asciidoc` file in the docs/en folder.
-- Specify the location of the `kibana/docs/` directory with the `--resource` option when you run `build_docs.pl`.
+To build the Kibana User Guide, use the docbldkb or docbldkbx build commands defined in https://github.com/elastic/docs/blob/master/doc_build_aliases.sh
 
-For example:
-
-```
-docs/build_docs.pl --doc kibana-extra/x-pack-kibana/docs/en/index.asciidoc --resource=kibana/docs/ --chunk 1
-```
-
-To build a release notes page for the pull requests in this repository:
-
-- Use the dev-tools/xkb-release-notes.pl script.
-- Specify the version label for which you want the release notes.
-- Redirect the output to a new local file.
-
-Note: You must have a personal access token called ~/.github_auth with "repo" scope.
-
-For example:
-
-```
-./dev-tools/xkb_release_notes.pl v5.5.2 > ~/tmp/5.5.2.asciidoc
-```
