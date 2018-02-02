@@ -89,7 +89,7 @@ cluster. Defaults to `true`.
 Specifies the number of term buckets to return out of the overall terms list when
 performing terms aggregations to retrieve index and node metrics. For more
 information about the `size` parameter, see
-{ref}/search-aggregations-bucket-terms-aggregation.html#_size[Terms Aggregation].
+{ref}/search-aggregations-bucket-terms-aggregation.html#search-aggregations-bucket-terms-aggregation-size[Terms Aggregation].
 Defaults to `10000`.
 
 `xpack.monitoring.min_interval_seconds`::
