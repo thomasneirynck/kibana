@@ -1,35 +1,62 @@
+import React from 'react';
 import { contains } from 'lodash';
+import { toastNotifications } from 'ui/notify';
+import { formatMsg } from 'ui/notify/lib';
+import {
+  EuiButton,
+  EuiSpacer,
+  EuiText,
+} from '@elastic/eui';
+
+export function formatMonitoringError(err) {
+  // TODO: We should stop using Boom for errors and instead write a custom handler to return richer error objects
+  // then we can do better messages, such as highlighting the Cluster UUID instead of requiring it be part of the message
+  if (err.status && err.status !== -1 && err.data) {
+    return (
+      <EuiText>
+        <p>
+          { err.data.message }
+        </p>
+        <EuiText size="xs">
+          HTTP { err.status }
+        </EuiText>
+      </EuiText>
+    );
+  }
+
+  return formatMsg(err);
+}
 
 export function ajaxErrorHandlersProvider($injector) {
   const kbnUrl = $injector.get('kbnUrl');
-  const Notifier = $injector.get('Notifier');
   const $window = $injector.get('$window');
-
-  const notif = new Notifier({ location: 'Monitoring' });
 
   return (err) => {
     if (err.status === 403) {
       // redirect to error message view
       kbnUrl.redirect('access-denied');
     } else if (err.status === 404 && !contains($window.location.hash, 'no-data')) { // pass through if this is a 404 and we're already on the no-data page
-      const config = {
-        type: 'error',
-        actions: [
-          {
-            text: 'Retry',
-            callback() {
-              $window.location.reload(); // do fullpage reload to let routeInit take over
-            }
-          },
-          {
-            text: 'Dismiss',
-            callback() {} // close the notif
-          }
-        ]
-      };
-      notif.custom(err, config);
+      toastNotifications.addDanger({
+        title: 'Monitoring Request Failed',
+        text: (
+          <div>
+            { formatMonitoringError(err) }
+            <EuiSpacer />
+            <EuiButton
+              size="s"
+              color="danger"
+              onClick={() => $window.location.reload()}
+            >
+              Retry
+            </EuiButton>
+          </div>
+        )
+      });
     } else {
-      notif.error(err);
+      toastNotifications.addDanger({
+        title: 'Monitoring Request Error',
+        text: formatMonitoringError(err)
+      });
     }
 
     return Promise.reject(err);

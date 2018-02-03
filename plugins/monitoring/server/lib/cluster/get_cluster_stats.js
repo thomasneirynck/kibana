@@ -18,7 +18,7 @@ export function getClusterStats(req, esIndexPattern, clusterUuid) {
   return getClustersStats(req, esIndexPattern, clusterUuid)
     .then(clusters => {
       if (!clusters || clusters.length === 0) {
-        throw notFound(`The cluster [${clusterUuid}] was not found within the selected time range.`);
+        throw notFound(`Unable to find the cluster in the selected time range. UUID: ${clusterUuid}`);
       }
 
       return clusters[0];
