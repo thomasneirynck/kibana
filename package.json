@@ -16,6 +16,7 @@
     "precommit": "gulp lint-staged"
   },
   "devDependencies": {
+    "@kbn/babel-preset": "link:../../kibana/packages/kbn-babel-preset",
     "@elastic/eslint-config-kibana": "link:../../kibana/packages/eslint-config-kibana",
     "@elastic/eslint-import-resolver-kibana": "2.0.0",
     "@elastic/eslint-plugin-kibana-custom": "link:../../kibana/packages/eslint-plugin-kibana-custom",

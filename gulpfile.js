@@ -182,7 +182,7 @@ gulp.task('pre-test', () => {
       includeUntested: true,
       babel: {
         presets: [
-          require(pluginHelpers.resolveKibanaPath('src/babel-preset/node'))
+          require('@kbn/babel-preset/node')
         ]
       },
     }))
