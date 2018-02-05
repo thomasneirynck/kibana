@@ -42,6 +42,8 @@ module.directive('mlAnomaliesTableExpandedRow', function () {
     scope.filter = scope.$parent.filter;
     scope.filteringEnabled = scope.$parent.filteringEnabled;
     scope.isShowingAggregatedData = scope.$parent.isShowingAggregatedData;
+    scope.influencersLimit = scope.$parent.influencersLimit;
+    scope.influencersNumToDislay = scope.influencersLimit;
 
     const timeFieldName = 'timestamp';
     const momentTime = moment(scope.record.source[timeFieldName]);
@@ -50,11 +52,23 @@ module.directive('mlAnomaliesTableExpandedRow', function () {
       scope.anomalyEndTime = momentTime.add(scope.record.source.bucket_span, 's').format('MMMM Do YYYY, HH:mm:ss');
     }
 
-    scope.$on('initRow', function () {
+    scope.$on('initRow', () => {
       // Only build the description and details on metric values,
       // causes and influencers when the row is first expanded.
       buildContent();
     });
+
+    scope.toggleAllInfluencers = function () {
+      if (_.has(scope.record, 'influencers')) {
+        const recordInfluencers = scope.record.influencers;
+        if (scope.influencers.length === recordInfluencers.length) {
+          scope.influencersNumToDislay = scope.influencersLimit;
+        } else {
+          scope.influencersNumToDislay = recordInfluencers.length;
+        }
+        buildInfluencers();
+      }
+    };
 
     if (scope.$parent.open === true) {
       // Build the content if the row was already open before re-render (e.g. when sorting),
@@ -64,7 +78,7 @@ module.directive('mlAnomaliesTableExpandedRow', function () {
     if (_.has(scope.record, 'entityValue') && scope.record.entityName === 'mlcategory') {
       // For categorization results, controller will obtain the definition when the
       // row is first expanded and place the categoryDefinition in the row scope.
-      const unbindWatch = scope.$parent.$watch('categoryDefinition', function (categoryDefinition) {
+      const unbindWatch = scope.$parent.$watch('categoryDefinition', (categoryDefinition) => {
         if (categoryDefinition !== undefined) {
           scope.examples = categoryDefinition.examples;
           unbindWatch();
@@ -160,7 +174,7 @@ module.directive('mlAnomaliesTableExpandedRow', function () {
             scope.singleCauseByFieldValue = cause.by_field_value;
           }
         } else {
-          scope.causes = _.map(causes, function (cause) {
+          scope.causes = _.map(causes, (cause) => {
             const simplified = _.pick(cause, 'typical', 'actual', 'probability');
             // Get the 'entity field name/value' to display in the cause -
             // For by and over, use by_field_name/Value (over_field_name/Value are in the toplevel fields)
@@ -176,13 +190,25 @@ module.directive('mlAnomaliesTableExpandedRow', function () {
 
     function buildInfluencers() {
       if (_.has(scope.record, 'influencers')) {
+        const recordInfluencers = scope.record.influencers;
+        scope.influencersNumToDislay = Math.min(scope.influencersNumToDislay, recordInfluencers.length);
+        let othersCount = Math.max(recordInfluencers.length - scope.influencersNumToDislay, 0);
+
+        if (othersCount === 1) {
+          // Display the 1 extra influencer as displaying "and 1 more" would also take up a line.
+          scope.influencersNumToDislay++;
+          othersCount = 0;
+        }
+
         const influencers = [];
-        _.each(scope.record.influencers, function (influencer) {
-          _.each(influencer, function (influencerFieldValue, influencerFieldName) {
+        for (let i = 0; i < scope.influencersNumToDislay; i++) {
+          _.each(recordInfluencers[i], (influencerFieldValue, influencerFieldName) => {
             influencers.push({ 'name': influencerFieldName, 'value': influencerFieldValue });
           });
-        });
+        }
+
         scope.influencers = influencers;
+        scope.otherInfluencersCount = othersCount;
       }
     }
   }

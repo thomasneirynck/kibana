@@ -41,6 +41,7 @@ import 'plugins/ml/filters/metric_change_description';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/mapping_service';
 import './expanded_row/expanded_row_directive';
+import './influencers_cell/influencers_cell_directive';
 
 import linkControlsHtml from './anomalies_table_links.html';
 import chrome from 'ui/chrome';
@@ -89,6 +90,8 @@ module.directive('mlAnomaliesTable', function (
       scope.table.columns = [];
       scope.table.rows = [];
       scope.rowScopes = [];
+
+      scope.influencersLimit = 5;
 
       scope.categoryExamplesByJob = {};
       const MAX_NUMBER_CATEGORY_EXAMPLES = 10;  // Max number of examples to show in table cell or expanded row (engine default is to store 4).
@@ -824,15 +827,12 @@ module.directive('mlAnomaliesTable', function (
 
         if (addInfluencers !== undefined) {
           if (_.has(record, 'influencers')) {
-            let cellMarkup = '';
-            _.each(record.influencers, (influencer) => {
-              _.each(influencer, (influencerFieldValue, influencerFieldName) => {
-                cellMarkup += (influencerFieldName + ': ' + influencerFieldValue + '<br>');
-              });
-            });
+            const cellMarkup = `<ml-influencers-cell influencers="record.influencers" ` +
+              `limit="${scope.influencersLimit}"></ml-influencers-cell>`;
             tableRow.push({
               markup: cellMarkup,
-              value: cellMarkup
+              value: cellMarkup,
+              scope: rowScope
             });
           } else {
             tableRow.push({

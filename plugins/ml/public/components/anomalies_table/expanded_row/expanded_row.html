@@ -93,6 +93,16 @@
       <td>{{influencer.name}}</td>
       <td>{{influencer.value}}</td>
     </tr>
+    <tr ng-if="otherInfluencersCount > 0">
+      <td colspan="2">
+        <button class="euiLink euiLink--primary" type="button" ng-click="toggleAllInfluencers()">and {{otherInfluencersCount}} more</button>
+      </td>
+    </tr>
+    <tr ng-if="influencersNumToDislay > (influencersLimit + 1)">
+      <td colspan="2">
+        <button class="euiLink euiLink--primary" type="button" ng-click="toggleAllInfluencers()">show less</button>
+      </td>
+    </tr>
   </table>
 
 </div>
