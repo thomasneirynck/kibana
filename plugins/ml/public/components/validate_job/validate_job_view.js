@@ -1,7 +1,23 @@
+/*
+ * ELASTICSEARCH CONFIDENTIAL
+ *
+ * Copyright (c) 2017 Elasticsearch BV. All Rights Reserved.
+ *
+ * Notice: this software, and all information contained
+ * therein, is the exclusive property of Elasticsearch BV
+ * and its licensors, if any, and is protected under applicable
+ * domestic and foreign law, and international treaties.
+ *
+ * Reproduction, republication or distribution without the
+ * express written consent of Elasticsearch BV is
+ * strictly prohibited.
+ */
+
+
 import PropTypes from 'prop-types';
 
 import React, {
-  Component,
+  Component
 } from 'react';
 
 import {
@@ -23,7 +39,9 @@ import {
   EuiTableRowCell
 } from '@elastic/eui';
 
-import { VALIDATION_STATUS } from 'plugins/ml/../common/constants/validation';
+// don't use something like plugins/ml/../common
+// because it won't work with the jest tests
+import { VALIDATION_STATUS } from '../../../common/constants/validation';
 
 const getDefaultState = () => ({
   ui: {
@@ -35,134 +53,142 @@ const getDefaultState = () => ({
   }
 });
 
-export function validateJobProvider($injector) {
-  const mlJobService = $injector.get('mlJobService');
+const statusToEuiColor = (status) => {
+  if (status === VALIDATION_STATUS.ERROR) {
+    return 'danger';
+  }
+  return status;
+};
 
-  class ValidateJob extends Component {
-    constructor(props) {
-      super(props);
+const link = (url) => {
+  if (!url) {
+    return null;
+  }
+  return <EuiLink href={url} target="BLANK">More Information</EuiLink>;
+};
 
-      this.state = getDefaultState();
+const messageRow = (message) => (
+  <EuiTableRow key={message.id}>
+    <EuiTableRowCell className="mlHealthColumn" align="right">
+      <EuiHealth color={statusToEuiColor(message.status)} />
+    </EuiTableRowCell>
+    <EuiTableRowCell>{message.text}</EuiTableRowCell>
+    <EuiTableRowCell>{link(message.url)}</EuiTableRowCell>
+  </EuiTableRow>
+);
 
-      this.closeModal = this.closeModal.bind(this);
-      this.openModal = this.openModal.bind(this);
-    }
+const messageRows = (data) => {
+  if (data.success && data.messages.length > 0) {
+    return (
+      <div>
+        <p>The following issues have been identified with this job configuration:</p>
+        <EuiTable compressed>
+          <EuiTableHeader>
+            <EuiTableHeaderCell width="20" />
+            <EuiTableHeaderCell />
+            <EuiTableHeaderCell width="120" />
+          </EuiTableHeader>
+          <EuiTableBody>
+            {data.messages.map(messageRow)}
+          </EuiTableBody>
+        </EuiTable>
+      </div>
+    );
+  } else {
+    return (
+      <EuiCallOut
+        size="s"
+        title="Job validation was successful and didn't return any warnings or errors."
+        iconType="pin"
+      />
+    );
+  }
+};
 
+const modal = ({ isVisible, closeModal, jobId, data }) => {
+  if (!isVisible) {
+    return null;
+  }
 
-    closeModal() {
-      this.setState(getDefaultState());
-    }
+  return (
+    <EuiOverlayMask>
+      <EuiModal
+        onClose={closeModal}
+        style={{ width: '800px' }}
+      >
+        <EuiModalHeader>
+          <EuiModalHeaderTitle >
+            Validate job {jobId}
+          </EuiModalHeaderTitle>
+        </EuiModalHeader>
 
-    openModal() {
-      mlJobService.validateJob(this.props.job).then((data) => {
-        this.setState({
-          ui: { isModalVisible: true },
-          data
-        });
-      });
-    }
+        <EuiModalBody>
+          {messageRows(data)}
+        </EuiModalBody>
 
-    renderRows() {
-      return this.state.data.messages.map((message) => {
-        message.health = message.status;
-        if (message.health === VALIDATION_STATUS.ERROR) {
-          message.health = 'danger';
-        }
-
-        let url;
-        if (message.url) {
-          url = <EuiLink href={message.url} target="BLANK">More Information</EuiLink>;
-        }
-        return (
-          <EuiTableRow key={message.id}>
-            <EuiTableRowCell className="mlHealthColumn" align="right"><EuiHealth color={message.health} /></EuiTableRowCell>
-            <EuiTableRowCell>{message.text}</EuiTableRowCell>
-            <EuiTableRowCell>{url}</EuiTableRowCell>
-          </EuiTableRow>
-        );
-      });
-    }
-
-    render() {
-      let messages;
-      let modal;
-
-      if (this.state.ui.isModalVisible) {
-        if (this.state.data.success && this.state.data.messages.length > 0) {
-          messages = (
-            <div>
-              <p>The following issues have been identified with this job configuration:</p>
-              <EuiTable compressed>
-                <EuiTableHeader>
-                  <EuiTableHeaderCell width="20"/>
-                  <EuiTableHeaderCell />
-                  <EuiTableHeaderCell width="120"/>
-                </EuiTableHeader>
-                <EuiTableBody>
-                  {this.renderRows()}
-                </EuiTableBody>
-              </EuiTable>
-            </div>
-          );
-        } else {
-          messages = (
-            <EuiCallOut
-              size="s"
-              title="Job validation was successful and didn't return any warnings or errors."
-              iconType="pin"
-            />
-          );
-        }
-
-        modal = (
-          <EuiOverlayMask>
-            <EuiModal
-              onClose={this.closeModal}
-              style={{ width: '800px' }}
-            >
-              <EuiModalHeader>
-                <EuiModalHeaderTitle >
-                  Validate job {this.props.job.job_id}
-                </EuiModalHeaderTitle>
-              </EuiModalHeader>
-
-              <EuiModalBody>
-                {messages}
-              </EuiModalBody>
-
-              <EuiModalFooter>
-                <EuiButton
-                  onClick={this.closeModal}
-                  size="s"
-                  fill
-                >
-                  Close
-                </EuiButton>
-              </EuiModalFooter>
-            </EuiModal>
-          </EuiOverlayMask>
-        );
-      }
-
-      return (
-        <div>
+        <EuiModalFooter>
           <EuiButton
-            onClick={this.openModal}
+            onClick={closeModal}
             size="s"
             fill
           >
-            Validate Job
+            Close
           </EuiButton>
+        </EuiModalFooter>
+      </EuiModal>
+    </EuiOverlayMask>
+  );
+};
 
-          {modal}
-        </div>
-      );
-    }
+class ValidateJob extends Component {
+  constructor(props) {
+    super(props);
+    this.state = getDefaultState();
   }
 
-  ValidateJob.propTypes = {
-    job: PropTypes.object
+  closeModal = () => {
+    this.setState(getDefaultState());
   };
 
-  return ValidateJob;
+  openModal = () => {
+    this.props.mlJobService.validateJob(this.props.job).then((data) => {
+      console.log('resolving the promise', data);
+      this.setState({
+        ui: { isModalVisible: true },
+        data
+      });
+    });
+  };
+
+  render() {
+    const job = this.props.job;
+    if (typeof job === 'undefined' || typeof job.job_id === 'undefined') {
+      return null;
+    }
+
+    return (
+      <div>
+        <EuiButton
+          onClick={this.openModal}
+          size="s"
+          fill
+        >
+          Validate Job
+        </EuiButton>
+
+        {modal({
+          closeModal: this.closeModal,
+          isVisible: this.state.ui.isModalVisible,
+          jobId: job.job_id,
+          data: this.state.data
+        })}
+      </div>
+    );
+  }
 }
+
+ValidateJob.propTypes = {
+  job: PropTypes.object
+};
+
+export { ValidateJob };
