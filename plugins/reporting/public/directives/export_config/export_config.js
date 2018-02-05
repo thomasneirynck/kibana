@@ -4,7 +4,7 @@ import 'plugins/reporting/services/document_control';
 import 'plugins/reporting/services/export_types';
 import './export_config.less';
 import template from 'plugins/reporting/directives/export_config/export_config.html';
-import { Notifier, toastNotifications } from 'ui/notify';
+import { toastNotifications } from 'ui/notify';
 import { uiModules } from 'ui/modules';
 import { stateMonitorFactory } from 'ui/state_management/state_monitor_factory';
 import url from 'url';
@@ -12,8 +12,6 @@ import url from 'url';
 const module = uiModules.get('xpack/reporting');
 
 module.directive('exportConfig', ($rootScope, reportingDocumentControl, reportingExportTypes, $location, $compile) => {
-  const reportingNotifier = new Notifier({ location: 'Reporting' });
-
   const createAbsoluteUrl = relativePath => {
     return url.resolve($location.absUrl(), relativePath);
   };
@@ -100,7 +98,11 @@ module.directive('exportConfig', ($rootScope, reportingDocumentControl, reportin
               });
             }
 
-            reportingNotifier.error(err);
+            toastNotifications.addDanger({
+              title: 'Reporting error',
+              text: err.message || `Can't reach the server. Please try again.`,
+              'data-test-subj': 'queueReportError',
+            });
           });
       };
 

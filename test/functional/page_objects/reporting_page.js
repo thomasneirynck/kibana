@@ -140,6 +140,10 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
       return await testSubjects.exists('generateReportButton');
     }
 
+    async getQueueReportError() {
+      return await testSubjects.exists('queueReportError');
+    }
+
     async getGenerateReportButton() {
       return await retry.try(() => testSubjects.find('generateReportButton'));
     }

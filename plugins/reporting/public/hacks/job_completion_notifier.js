@@ -16,13 +16,20 @@ import {
   EuiButton,
 } from '@elastic/eui';
 
+/**
+ * Poll for changes to reports. Inform the user of changes when the license is active.
+ */
 uiModules.get('kibana')
   .run(($http, reportingJobQueue, Private, reportingPollConfig, reportingJobCompletionNotifications) => {
-    const { jobCompletionNotifier } = reportingPollConfig;
+    // Don't show users any reporting toasts until they're logged in.
+    if (Private(PathProvider).isLoginOrLogout()) {
+      return;
+    }
 
+    // We assume that all license types offer Reporting, and that we only need to check if the
+    // license is active or expired.
     const xpackInfo = Private(XPackInfoProvider);
-    const showLinks = xpackInfo.get('features.reporting.management.showLinks');
-    if (Private(PathProvider).isLoginOrLogout() || !showLinks) return;
+    const isLicenseActive = xpackInfo.getLicense().isActive;
 
     async function showCompletionNotification(job) {
       const reportObjectTitle = job._source.payload.title;
@@ -91,12 +98,19 @@ uiModules.get('kibana')
       });
     }
 
+    const { jobCompletionNotifier } = reportingPollConfig;
+
     const poller = new Poller({
       functionToPoll: async () => {
+        if (!isLicenseActive) {
+          return;
+        }
+
         const jobIds = reportingJobCompletionNotifications.getAll();
         if (!jobIds.length) {
           return;
         }
+
         const jobs = await getJobs($http, jobIds);
         jobIds.forEach(async jobId => {
           const job = jobs.find(j => j._id === jobId);

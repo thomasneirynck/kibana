@@ -67,16 +67,13 @@ export default function ({ getService, getPageObjects }) {
     });
 
     it('Kibana User navigating to Discover and trying to generate CSV gets - Authorization Error ', async function () {
-      const expectedMessage =
-        `Reporting: Error 403 Forbidden: Sorry, you don't have access to Reporting`;
       await PageObjects.common.navigateToApp('discover');
       await PageObjects.discover.loadSavedSearch('A Saved Search');
       log.debug('click Reporting button');
       await PageObjects.reporting.openReportingPanel();
       await PageObjects.reporting.clickGenerateReportButton();
-      const actualMessage = await PageObjects.header.getToastMessage();
-      expect(actualMessage).to.be(expectedMessage);
-      await PageObjects.header.clickToastOK();
+      const queueReportError = await PageObjects.reporting.getQueueReportError();
+      expect(queueReportError).to.be(true);
     });
 
     after(async function () {

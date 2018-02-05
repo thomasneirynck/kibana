@@ -8,53 +8,62 @@ const XPACK_INFO_KEY = 'xpackMain.info';
 export function XPackInfoProvider($window, $injector, Private) {
   const xpackInfoSignature = Private(XPackInfoSignatureProvider);
 
-  let inProgressRefreshPromise = null;
+  class XPackInfo {
+    constructor(initialInfo = {}) {
+      this.inProgressRefreshPromise = null;
+      this.setAll(initialInfo);
+    }
 
-  const xpackInfo = {
-    get(path, defaultValue) {
+    get = (path, defaultValue = undefined) => {
       const xpackInfoValuesJson = $window.sessionStorage.getItem(XPACK_INFO_KEY);
       const xpackInfoValues = xpackInfoValuesJson ? JSON.parse(xpackInfoValuesJson) : {};
       return get(xpackInfoValues, path, defaultValue);
-    },
+    };
 
-    setAll(updatedXPackInfo) {
+    setAll = (updatedXPackInfo) => {
       $window.sessionStorage.setItem(XPACK_INFO_KEY, JSON.stringify(updatedXPackInfo));
-    },
+    };
 
-    clear() {
+    clear = () => {
       $window.sessionStorage.removeItem(XPACK_INFO_KEY);
-    },
+    };
 
-    refresh() {
-      if (inProgressRefreshPromise) {
-        return inProgressRefreshPromise;
+    refresh = () => {
+      if (this.inProgressRefreshPromise) {
+        return this.inProgressRefreshPromise;
       }
 
       // store the promise in a shared location so that calls to
       // refresh() before this is complete will get the same promise
       const $http = $injector.get('$http');
-      inProgressRefreshPromise = (
+      this.inProgressRefreshPromise = (
         $http.get(chrome.addBasePath('/api/xpack/v1/info'))
           .catch((err) => {
           // if we are unable to fetch the updated info, we should
           // prevent reusing stale info
-            xpackInfo.clear();
+            this.clear();
             xpackInfoSignature.clear();
             throw err;
           })
           .then((xpackInfoResponse) => {
-            xpackInfo.setAll(convertKeysToCamelCaseDeep(xpackInfoResponse.data));
+            this.setAll(convertKeysToCamelCaseDeep(xpackInfoResponse.data));
             xpackInfoSignature.set(xpackInfoResponse.headers('kbn-xpack-sig'));
           })
           .finally(() => {
-            inProgressRefreshPromise = null;
+            this.inProgressRefreshPromise = null;
           })
       );
-      return inProgressRefreshPromise;
-    }
-  };
+      return this.inProgressRefreshPromise;
+    };
 
-  xpackInfo.setAll(chrome.getInjected('xpackInitialInfo') || {});
+    getLicense = () => {
+      return this.get('license', {
+        isActive: false,
+        type: undefined,
+        expiryDateInMillis: undefined,
+      });
+    };
+  }
 
-  return xpackInfo;
+  return new XPackInfo(chrome.getInjected('xpackInitialInfo'));
 }
