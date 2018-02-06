@@ -1,0 +1,34 @@
+import expect from 'expect.js';
+import multiclusterFixture from './fixtures/multicluster';
+
+export default function ({ getService }) {
+  const supertest = getService('supertest');
+  const esArchiver = getService('esArchiver');
+
+  describe('list', () => {
+    describe('with trial license clusters', () => {
+      const archive = 'monitoring/multicluster';
+      const timeRange = {
+        min: '2017-08-15T21:00:00Z',
+        max: '2017-08-16T00:00:00Z'
+      };
+
+      before('load clusters archive', () => {
+        return esArchiver.load(archive);
+      });
+
+      after('unload clusters archive', () => {
+        return esArchiver.unload(archive);
+      });
+
+      it('should load multiple clusters', async () => {
+        const { body } = await supertest
+          .post('/api/monitoring/v1/clusters')
+          .set('kbn-xsrf', 'xxx')
+          .send({ timeRange })
+          .expect(200);
+        expect(body).to.eql(multiclusterFixture);
+      });
+    });
+  });
+}
