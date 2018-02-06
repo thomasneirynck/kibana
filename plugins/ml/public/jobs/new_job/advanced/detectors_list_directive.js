@@ -34,7 +34,7 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
     scope: {
       detectors: '=mlDetectors',
       indices: '=mlIndices',
-      properties: '=mlProperties',
+      fields: '=mlFields',
       catFieldNameSelected: '=mlCatFieldNameSelected',
       editMode: '=mlEditMode',
     },
@@ -136,7 +136,7 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
           resolve: {
             params: function () {
               return {
-                properties: $scope.properties,
+                fields: $scope.fields,
                 validate: validateDetector,
                 detector: dtr,
                 index: index,
@@ -163,7 +163,7 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
           resolve: {
             params: function () {
               return {
-                properties: $scope.properties,
+                fields: $scope.fields,
                 validate: validateDetector,
                 detector: dtr,
                 filter: filter,

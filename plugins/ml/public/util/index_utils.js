@@ -25,11 +25,21 @@ export function getIndexPatterns(Private) {
   }).then(response => response.savedObjects);
 }
 
-export function getIndexPattern(courier, $route) {
-  return courier.indexPatterns.get($route.current.params.index);
+export function getIndexPattern(courier, indexPatternId) {
+  return courier.indexPatterns.get(indexPatternId);
 }
 
-export function getSavedSearch(courier, $route, savedSearches) {
+export function getIndexPatternWithRoute(courier, $route) {
+  return getIndexPattern(courier, $route.current.params.index);
+}
+
+export function getIndexPatternProvider(courier) {
+  return function (indexPatternId) {
+    return getIndexPattern(courier, indexPatternId);
+  };
+}
+
+export function getSavedSearchWithRoute(courier, $route, savedSearches) {
   return savedSearches.get($route.current.params.savedSearchId);
 }
 

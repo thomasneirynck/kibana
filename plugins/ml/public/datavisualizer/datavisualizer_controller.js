@@ -36,7 +36,7 @@ import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { checkLicenseExpired } from 'plugins/ml/license/check_license';
 import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
-import { getIndexPattern, getSavedSearch, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
+import { getIndexPatternWithRoute, getSavedSearchWithRoute, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
 import template from './datavisualizer.html';
 
 uiRoutes
@@ -44,8 +44,8 @@ uiRoutes
     template,
     resolve: {
       CheckLicense: checkLicenseExpired,
-      indexPattern: getIndexPattern,
-      savedSearch: getSavedSearch
+      indexPattern: getIndexPatternWithRoute,
+      savedSearch: getSavedSearchWithRoute
     }
   });
 

@@ -32,4 +32,19 @@ export function indicesRoutes(server, commonRouteConfig) {
       ...commonRouteConfig
     }
   });
+
+  server.route({
+    method: 'POST',
+    path: '/api/ml/field_caps',
+    handler(request, reply) {
+      const callWithRequest = callWithRequestFactory(server, request);
+      const index = request.payload.index;
+      return callWithRequest('fieldCaps', { index, fields: '*' })
+        .then(resp => reply(resp))
+        .catch(resp => reply(wrapError(resp)));
+    },
+    config: {
+      ...commonRouteConfig
+    }
+  });
 }

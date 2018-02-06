@@ -35,7 +35,7 @@ import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/compone
 import { getIndexedFields } from 'plugins/ml/jobs/new_job/simple/components/utils/create_fields';
 import { changeJobIDCase } from 'plugins/ml/jobs/new_job/simple/components/general_job_details/change_job_id_case';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
-import { getIndexPattern, getSavedSearch, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
+import { getIndexPatternWithRoute, getSavedSearchWithRoute, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
 import template from './create_job.html';
 
 uiRoutes
@@ -44,8 +44,8 @@ uiRoutes
     resolve: {
       CheckLicense: checkLicenseExpired,
       privileges: checkCreateJobsPrivilege,
-      indexPattern: getIndexPattern,
-      savedSearch: getSavedSearch
+      indexPattern: getIndexPatternWithRoute,
+      savedSearch: getSavedSearchWithRoute
     }
   });
 

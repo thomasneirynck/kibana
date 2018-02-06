@@ -24,7 +24,7 @@ import 'plugins/kibana/visualize/styles/main.less';
 import uiRoutes from 'ui/routes';
 import { checkLicenseExpired } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
-import { getIndexPattern, getSavedSearch } from 'plugins/ml/util/index_utils';
+import { getIndexPatternWithRoute, getSavedSearchWithRoute } from 'plugins/ml/util/index_utils';
 import template from './create_job.html';
 
 uiRoutes
@@ -33,8 +33,8 @@ uiRoutes
     resolve: {
       CheckLicense: checkLicenseExpired,
       privileges: checkCreateJobsPrivilege,
-      indexPattern: getIndexPattern,
-      savedSearch: getSavedSearch
+      indexPattern: getIndexPatternWithRoute,
+      savedSearch: getSavedSearchWithRoute
     }
   });
 

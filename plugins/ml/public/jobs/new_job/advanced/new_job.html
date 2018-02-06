@@ -2,64 +2,7 @@
 <ml-new-job>
   <ml-message-bar></ml-message-bar>
   <div ng-controller="MlNewJob" class="container">
-    <!-- first view of wizard -->
-    <div ng-show="ui.wizard.step === 0" class="wizard-step-0">
-      <div>
-        <label class="kuiFormLabel">Choose a data source</label>
-
-        <label class="data-location" ng-mouseenter="ui.wizard.stepHovering=1" ng-mouseleave="ui.wizard.stepHovering=0" ng-click="ui.wizard.setDataLocation('ES')" >
-          <div class="ml-round-number" ng-class="{'ml-round-number-pop':ui.wizard.stepHovering===1}">
-            <i aria-hidden="true" class="fa fa-database" />
-          </div>
-          <div>
-            <div>Elasticsearch server</div>
-            <div>Specify the address of an Elasticsearch server.</div>
-          </div>
-        </label>
-
-        <label class="data-location" ng-mouseenter="ui.wizard.stepHovering=3" ng-mouseleave="ui.wizard.stepHovering=0" ng-click="ui.wizard.setDataLocation('NONE')">
-          <div class="ml-round-number" ng-class="{'ml-round-number-pop':ui.wizard.stepHovering===3}">
-            <i aria-hidden="true" class="fa fa-upload" />
-          </div>
-          <div>
-            <div>Other data source</div>
-            <div>Create a job without reference to source data. Specify fields manually and upload data later using the API.</div>
-          </div>
-        </label>
-      </div>
-    </div>
-
-    <!-- second view of wizard -->
-    <div ng-show="ui.wizard.step === 1" class="wizard-step-1">
-      <!-- Elasticsearch server configuration -->
-      <div ng-show="ui.wizard.dataLocation === 'ES'">
-
-        <ml-elastic-data-description
-          ml-ui="ui"
-          ml-properties="properties"
-          ml-date-properties="dateProperties"
-          ml-cat-properties="catProperties"
-          ml-indices="indices"
-          ml-types="types"
-          ml-data-description="job.data_description"
-          ml-exposed-functions="mlElasticDataDescriptionExposedFunctions"
-          ml-elastic-server-info="elasticServerInfo"
-
-        ></ml-elastic-data-description >
-
-      </div>
-
-      <button
-        ng-click="ui.wizard.forward();"
-        class="kuiButton kuiButton--primary"
-        ng-disabled="(ui.esServerOk !== 1 || !indexSelected() || !timeFieldSelected() ) && ui.wizard.dataReady === false"
-        aria-label="Next">
-        Next
-      </button>
-    </div>
-
-    <!-- third view of wizard -->
-    <div ng-show="ui.wizard.step === 2"  class="wizard-step-2">
+    <div>
       <h3 class="euiTitle euiTitle--large">{{ui.pageTitle}}</h3>
       <div class="euiSpacer euiSpacer--s"></div>
         <ul class="nav nav-tabs">
@@ -218,7 +161,7 @@
                 on-change='setAnalysisConfigProperty'
                 value='job.analysis_config.summary_count_field_name'
                 field='"summary_count_field_name"'
-                options='properties'>
+                options='fields'>
               </field-select>
             </div>
             <div class="form-group">
@@ -228,7 +171,7 @@
                 on-change='setAnalysisConfigProperty'
                 value='job.analysis_config.categorization_field_name'
                 field='"categorization_field_name"'
-                options='catProperties'>
+                options='catFields'>
               </field-select>
             </div>
 
@@ -287,7 +230,7 @@
             <div ml-job-detectors-list
               ml-detectors="job.analysis_config.detectors"
               ml-indices="indices"
-              ml-properties="properties"
+              ml-fields="fields"
               ml-cat-field-name-selected="(job.analysis_config.categorization_field_name?true:false)"
               ml-edit-mode="'NEW'"
               ></div>
@@ -423,9 +366,6 @@
               </span>
             </label>
             <div class="euiSpacer euiSpacer--s"></div>
-            <div ng-hide="ui.validation.tabs[3].checks.isDatafeed.valid" class="validation-error">
-              {{ ( ui.validation.tabs[3].checks.isDatafeed.message ) }}
-            </div>
             <div class="form-group help-pane" ng-show="job.data_description.format!=='json' && job.data_description.format!==undefined">
               <small class="info">Data format must be set to 'JSON' to enable the datafeed.</small>
             </div>
@@ -476,22 +416,41 @@
 
               </div>
               <div class="form-group" >
-                <ml-elastic-data-description
-                  ml-ui="ui"
-                  ml-properties="properties"
-                  ml-date-properties="dateProperties"
-                  ml-cat-properties="catProperties"
-                  ml-indices="indices"
-                  ml-types="types"
-                  ml-data-description="job.data_description"
-                  ml-mode= "mode"
-                  ml-datafeed-config="job.datafeed_config"
-                  ml-data-loaded-callback="cloneJobDataDescriptionCallback"
-                  ml-exposed-functions="mlElasticDataDescriptionExposedFunctions"
-                  ml-elastic-server-info="elasticServerInfo"
+                <div class="form-group">
+                  <label class="kuiFormLabel">Index</label>
+                  <div class="input-group">
+                  <input
+                    ng-model="ui.datafeed.indicesText"
+                    placeholder=""
+                    class="form-control"
+                    aria-describedby="index-text-status"
+                    ng-change="indexChanged()"
+                    list='index_datalist' />
+                    <span class="input-group-addon" id="index-text-status">
+                      <i ng-show="ui.indexTextOk === true && ui.fieldsUpToDate === true" aria-hidden="true" style='color:green;' class="fa fa-check"></i>
+                      <i ng-show="ui.indexTextOk === false || ui.fieldsUpToDate === false" aria-hidden="true" style='color:red;' class="fa fa-remove"></i>
+                    </span>
+                  </div>
+                  <div ng-hide="ui.validation.tabs[3].checks.hasAccessToIndex.valid"  class="validation-error">{{ ( ui.validation.tabs[3].checks.hasAccessToIndex.message) }}</div>
+                </div>
+                <div class="form-group" ng-show="ui.fieldsUpToData === false || ui.fieldsUpToDate === false">
+                  <button
+                    ng-click="loadFields()"
+                    type="button"
+                    class="kuiButton kuiButton--primary kuiButton--small">
+                    <i aria-hidden="true" class="fa fa-refresh"></i>
+                    <span>Reload index</span>
+                  </button>
+                </div>
 
-                ></ml-elastic-data-description >
-                <div ng-hide="ui.validation.tabs[3].checks.hasAccessToIndex.valid" class="validation-error">{{ ( ui.validation.tabs[3].checks.hasAccessToIndex.message) }}</div>
+                <div ng-show="ui.indexTextOk && ui.fieldsUpToDate === true" class="form-group">
+                  <label class="kuiFormLabel">Time-field name</label>
+                  <select
+                    ng-model="job.data_description.time_field"
+                    class="form-control">
+                    <option ng-repeat="(key, value) in dateFields">{{key}}</option>
+                  </select>
+                </div>
 
                 <div class="clearfix"></div>
 
@@ -519,14 +478,14 @@
             <ml-form-label label-id="new_job_data_preview">Data preview</ml-form-label>
             <ml-loading-indicator
               label="Loading data preview"
-              is-loading="(ui.wizard.dataPreview === '')"
+              is-loading="(ui.dataPreview === '')"
             />
-            <div ng-hide="(ui.wizard.dataPreview === '')">
+            <div ng-hide="(ui.dataPreview === '')">
               <textarea
                 aria-labelledby="ml_aria_label_new_job_data_preview"
                 aria-describedby="ml_aria_description_new_job_data_preview"
                 readonly
-                class="form-control ml-pre json-textarea">{{ui.wizard.dataPreview}}</textarea>
+                class="form-control ml-pre json-textarea">{{ui.dataPreview}}</textarea>
             </div>
           </div>
         </ml-job-tab-5>

@@ -33,7 +33,7 @@ import { createSearchItems, createResultsUrl } from 'plugins/ml/jobs/new_job/uti
 import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/components/utils/app_state_settings';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
 import { createFields } from 'plugins/ml/jobs/new_job/simple/components/utils/create_fields';
-import { getIndexPattern, getSavedSearch, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
+import { getIndexPatternWithRoute, getSavedSearchWithRoute, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
 import { ChartDataUtilsProvider } from 'plugins/ml/jobs/new_job/simple/components/utils/chart_data_utils.js';
 import template from './create_job.html';
 
@@ -43,8 +43,8 @@ uiRoutes
     resolve: {
       CheckLicense: checkLicenseExpired,
       privileges: checkCreateJobsPrivilege,
-      indexPattern: getIndexPattern,
-      savedSearch: getSavedSearch
+      indexPattern: getIndexPatternWithRoute,
+      savedSearch: getSavedSearchWithRoute
     }
   });
 
@@ -130,15 +130,6 @@ module
       splitFields: [],
       timeFields: [],
       splitText: '',
-      wizard: {
-        step: 0,
-        forward: function () {
-          wizardStep(1);
-        },
-        back: function () {
-          wizardStep(-1);
-        },
-      },
       intervals: [{
         title: 'Auto',
         value: 'auto',
@@ -262,10 +253,6 @@ module
     $scope.splitReset = function (fieldIndex) {
       $scope.splitChange(fieldIndex, undefined);
     };
-
-    function wizardStep(step) {
-      $scope.ui.wizard.step += step;
-    }
 
     function setTime() {
       $scope.ui.bucketSpanValid = true;

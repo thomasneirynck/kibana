@@ -72,14 +72,14 @@ module.controller('MlDetectorModal', function ($scope, $modalInstance, params, m
     $scope.functionIds[f.id] = '';
   });
 
-  $scope.properties = params.properties;
+  $scope.fields = params.fields;
 
-  // properties list for by_field_name field only
-  $scope.properties_byFieldName = angular.copy($scope.properties);
+  // fields list for by_field_name field only
+  $scope.fields_byFieldName = angular.copy($scope.fields);
   // if data has been added to the categorizationFieldName,
   // add the option mlcategory to the by_field_name datalist
   if (params.catFieldNameSelected) {
-    $scope.properties_byFieldName.mlcategory = 'mlcategory';
+    $scope.fields_byFieldName.mlcategory = 'mlcategory';
   }
 
   const validate = params.validate;

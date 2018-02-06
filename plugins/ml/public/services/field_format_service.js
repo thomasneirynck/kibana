@@ -17,6 +17,7 @@ import _ from 'lodash';
 
 import 'ui/courier';
 import { mlFunctionToESAggregation } from 'plugins/ml/../common/util/job_utils';
+import { getIndexPatternProvider } from 'plugins/ml/util/index_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -26,10 +27,13 @@ const module = uiModules.get('apps/ml');
 module.service('mlFieldFormatService', function (
   $q,
   courier,
+  Private,
   mlJobService) {
 
   const indexPatternIdsByJob = {};
   const formatsByJob = {};
+
+  const getIndexPattern = Private(getIndexPatternProvider);
 
   // Populate the service with the FieldFormats for the list of jobs with the
   // specified IDs. List of Kibana index patterns is passed, with a title
@@ -109,7 +113,7 @@ module.service('mlFieldFormatService', function (
     const indexPatternId = indexPatternIdsByJob[jobId];
     if (indexPatternId !== undefined) {
       // Load the full index pattern configuration to obtain the formats of each field.
-      courier.indexPatterns.get(indexPatternId)
+      getIndexPattern(indexPatternId)
         .then((indexPatternData) => {
           // Store the FieldFormat for each job by detector_index.
           const fieldsByName = _.get(indexPatternData, 'fields.byName', []);

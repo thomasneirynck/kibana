@@ -27,9 +27,8 @@ import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import template from './new_job.html';
 import saveStatusTemplate from 'plugins/ml/jobs/new_job/advanced/save_status_modal/save_status_modal.html';
 import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
-import { getIndexPattern, getSavedSearch, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
-
-
+import { getIndexPatterns, getIndexPatternWithRoute, getSavedSearchWithRoute, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
+import { ML_JOB_FIELD_TYPES, ES_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
 
 uiRoutes
   .when('/jobs/new_job/advanced', {
@@ -37,8 +36,9 @@ uiRoutes
     resolve: {
       CheckLicense: checkLicense,
       privileges: checkCreateJobsPrivilege,
-      indexPattern: getIndexPattern,
-      savedSearch: getSavedSearch
+      indexPattern: getIndexPatternWithRoute,
+      indexPatterns: getIndexPatterns,
+      savedSearch: getSavedSearchWithRoute
     }
   })
   .when('/jobs/new_job/advanced/:jobId', {
@@ -46,12 +46,12 @@ uiRoutes
     resolve: {
       CheckLicense: checkLicense,
       privileges: checkCreateJobsPrivilege,
-      indexPattern: getIndexPattern,
-      savedSearch: getSavedSearch
+      indexPattern: getIndexPatternWithRoute,
+      indexPatterns: getIndexPatterns,
+      savedSearch: getSavedSearchWithRoute
     }
   });
 
-import { sortByKey } from 'plugins/ml/util/string_utils';
 import {
   isJobIdValid,
   calculateDatafeedFrequencyDefaultSeconds as juCalculateDatafeedFrequencyDefaultSeconds,
@@ -67,9 +67,11 @@ module.controller('MlNewJob',
     $route,
     $location,
     $modal,
+    $q,
     $timeout,
     courier,
     es,
+    ml,
     Private,
     timefilter,
     esServerUrl,
@@ -91,6 +93,27 @@ module.controller('MlNewJob',
       TEXT: 'TEXT',
       LIST: 'LIST'
     };
+    $scope.INDEX_INPUT_TYPE = INDEX_INPUT_TYPE;
+
+    const fieldsToIgnore = [
+      '_id',
+      '_field_names',
+      '_index',
+      '_parent',
+      '_routing',
+      '_seq_no',
+      '_source',
+      '_type',
+      '_uid',
+      '_version',
+    ];
+
+    const allowedInfluencerTypes = [
+      ES_FIELD_TYPES.TEXT,
+      ES_FIELD_TYPES.KEYWORD,
+      ES_FIELD_TYPES.IP
+    ];
+
     // ui model, used to store and control job data that wont be posted to the server.
     const msgs = mlMessageBarService;
     const mlConfirm = mlConfirmModalService;
@@ -101,9 +124,9 @@ module.controller('MlNewJob',
     $scope.saveLock = false;
     $scope.indices = {};
     $scope.types = {};
-    $scope.properties = {};
-    $scope.dateProperties = {};
-    $scope.catProperties = {};
+    $scope.fields = {};
+    $scope.dateFields = {};
+    $scope.catFields = {};
     $scope.maximumFileSize;
     $scope.mlElasticDataDescriptionExposedFunctions = {};
     $scope.elasticServerInfo = {};
@@ -111,30 +134,13 @@ module.controller('MlNewJob',
 
     $scope.ui = {
       pageTitle: 'Create a new job',
-      wizard: {
-        step: 1,
-        stepHovering: 0,
-        CHAR_LIMIT: 500,
-        dataLocation: 'ES',
-        indexInputType: INDEX_INPUT_TYPE.LIST,
-        dataPreview: '',
-        dataReady: false,
-        setDataLocation(loc) {
-          $scope.ui.wizard.dataLocation = loc;
-          wizardStep(1);
-        },
-        forward() {
-          wizardStep(1);
-        },
-        back() {
-          wizardStep(-1);
-        },
-      },
+      dataLocation: 'ES',
+      dataPreview: '',
       currentTab: 0,
       tabs: [
         { index: 0, title: 'Job Details' },
         { index: 1, title: 'Analysis Configuration' },
-        { index: 2, title: 'Data Description' },
+        { index: 2, title: 'Data Description', hidden: true  },
         { index: 3, title: 'Datafeed' },
         { index: 4, title: 'Edit JSON' },
         { index: 5, title: 'Data Preview', hidden: true },
@@ -175,9 +181,10 @@ module.controller('MlNewJob',
       customFieldDelimiter: '',
       esServerOk: 0,
       indexTextOk: false,
+      fieldsUpToDate: false,
       indices: {},
       types: {},
-      isDatafeed: false,
+      isDatafeed: true,
       useDedicatedIndex: false,
       modelMemoryLimit: '',
       modelMemoryLimitDefault: '1024MB',
@@ -195,8 +202,7 @@ module.controller('MlNewJob',
       },
       saveStatus: {
         job: 0,
-      },
-      sortByKey: sortByKey,
+      }
     };
 
     function init() {
@@ -219,17 +225,15 @@ module.controller('MlNewJob',
           $scope.ui.pageTitle = 'Editing Job ' + $scope.job.job_id;
         } else {
           $scope.mode = MODE.CLONE;
-          $scope.ui.wizard.step = 2;
           console.log('Cloning job', mlJobService.currentJob);
           $scope.ui.pageTitle = 'Clone Job from ' + $scope.job.job_id;
           $scope.job.job_id = '';
           setDatafeedUIText();
           setFieldDelimiterControlsFromText();
-          $scope.ui.wizard.indexInputType = INDEX_INPUT_TYPE.TEXT;
 
           // if the datafeedConfig doesn't exist, assume we're cloning from a job with no datafeed
           if (!$scope.job.datafeed_config) {
-            $scope.ui.wizard.dataLocation = 'NONE';
+            $scope.ui.dataLocation = 'NONE';
 
             $scope.ui.influencers = angular.copy($scope.job.analysis_config.influencers);
           }
@@ -253,12 +257,21 @@ module.controller('MlNewJob',
         $scope.mode = MODE.NEW;
         console.log('Creating new job');
         $scope.job = mlJobService.getBlankJob();
+        $scope.job.data_description.format = 'json';
+        delete $scope.job.data_description.time_format;
+        delete $scope.job.data_description.format;
 
         populateFormFromUrl();
       }
 
-      calculateDatafeedFrequencyDefaultSeconds();
-      showDataPreviewTab();
+      loadFields()
+        .then(() => {
+          calculateDatafeedFrequencyDefaultSeconds();
+          showDataPreviewTab();
+        })
+        .catch(() => {
+          calculateDatafeedFrequencyDefaultSeconds();
+        });
     }
 
     function changeTab(tab) {
@@ -266,40 +279,101 @@ module.controller('MlNewJob',
       if (tab.index === 4) {
         createJSONText();
       } else if (tab.index === 5) {
-        if ($scope.ui.wizard.dataLocation === 'ES') {
+        if ($scope.ui.dataLocation === 'ES') {
           loadDataPreview();
         }
       }
     }
 
-    function wizardStep(step) {
-      $scope.ui.wizard.step += step;
-      if ($scope.ui.wizard.step === 1) {
-        if ($scope.ui.wizard.dataLocation === 'NONE') {
-        // no data option was selected. jump to wizard step 2
-          $scope.ui.wizard.forward();
-          return;
+    $scope.indexChanged = function () {
+      $scope.ui.fieldsUpToDate = false;
+    };
+
+    $scope.loadFields = function () {
+      loadFields()
+        .catch(() => {
+          // No need to do anything here as loadFields handles the displaying of any errors.
+        });
+    };
+
+    function loadFields() {
+      return $q((resolve, reject) => {
+        clear($scope.fields);
+        clear($scope.dateFields);
+        clear($scope.catFields);
+        clear($scope.ui.influencers);
+
+        const index = $scope.ui.datafeed.indicesText;
+        if (index !== '') {
+          ml.getFieldCaps({ index })
+            .then((resp) => {
+              console.log(resp);
+              $scope.ui.fieldsUpToDate = true;
+              _.each(resp, (fieldList) => {
+                _.each(fieldList, (field, fieldName) => {
+                  _.each(field, (type) => {
+                    if (fieldsToIgnore.indexOf(fieldName) === -1) {
+
+                      let addField = true;
+                      if (fieldName.match(/\.keyword$/)) {
+                        // if this is a keyword version of a field, check to see whether a non-keyword
+                        // version has already been added. if so, delete it.
+                        const keywordLess = fieldName.replace('.keyword');
+                        if ($scope.fields[keywordLess] !== undefined) {
+                          delete $scope.fields[keywordLess];
+                        }
+                      } else if ($scope.fields[`${fieldName}.keyword`] !== undefined) {
+                        // if this is not a keyword version of a field, but a keyword version has already been
+                        // added, don't add this field.
+                        addField = false;
+                      }
+
+                      if (addField) {
+                        $scope.fields[fieldName] = type;
+
+                        if (type.type === ML_JOB_FIELD_TYPES.DATE) {
+                          $scope.dateFields[fieldName] = type;
+                        }
+                        if (type.type === ML_JOB_FIELD_TYPES.TEXT || type.type === ML_JOB_FIELD_TYPES.KEYWORD) {
+                          $scope.catFields[fieldName] = type;
+                        }
+                        if (allowedInfluencerTypes.indexOf(type.type) !== -1) {
+                          $scope.ui.influencers.push(fieldName);
+                        }
+                      }
+                    }
+                  });
+                });
+              });
+
+              if (Object.keys($scope.fields).length) {
+                $scope.ui.indexTextOk = true;
+              }
+              validateIndex($scope.ui.validation.tabs);
+              guessTimeField();
+              resolve();
+            })
+            .catch((error) => {
+              $scope.ui.indexTextOk = false;
+              validateIndex($scope.ui.validation.tabs);
+              reject(error);
+            });
+        } else {
+          reject();
         }
-      } else if ($scope.ui.wizard.step === 2) {
-        if ($scope.ui.wizard.dataLocation === 'ES') {
-          $scope.ui.isDatafeed = true;
-          $scope.ui.tabs[2].hidden = true;
+      });
+    }
 
-          $scope.job.data_description.format = 'json';
-
-          delete $scope.job.data_description.time_format;
-          delete $scope.job.data_description.format;
-
-          if ($scope.timeFieldSelected()) {
-            const time = $scope.job.data_description.time_field;
-            if (time && $scope.dateProperties[time]) {
-              $scope.job.data_description.time_field = time;
-            }
-          }
-        }
+    function guessTimeField() {
+      let currentTimeField = $scope.job.data_description.time_field;
+      if ($scope.dateFields[currentTimeField] === undefined) {
+        currentTimeField = '';
+        $scope.job.data_description.time_field = '';
       }
-
-      showDataPreviewTab();
+      if (currentTimeField === '' && Object.keys($scope.dateFields).length) {
+        $scope.job.data_description.time_field = Object.keys($scope.dateFields)[0];
+        console.log('guessTimeField: guessed time fields: ', $scope.job.data_description.time_field);
+      }
     }
 
     $scope.save = function () {
@@ -464,16 +538,6 @@ module.controller('MlNewJob',
       extractCustomInfluencers();
     };
 
-    $scope.indexSelected = function () {
-      if ($scope.ui.wizard.indexInputType === INDEX_INPUT_TYPE.TEXT) {
-      // if the user is entering index text manually, check that the text isn't blank
-      // and a match to an index has been made resulting in some fields.
-        return ($scope.ui.datafeed.indicesText.length && Object.keys($scope.properties).length) ? true : false;
-      } else {
-        return Object.keys($scope.indices).length ? true : false;
-      }
-    };
-
     // if an index pattern or saved search has been added to the url
     // populate those items in the form and datafeed config
     function populateFormFromUrl() {
@@ -484,8 +548,6 @@ module.controller('MlNewJob',
 
       if (indexPattern.id !== undefined) {
         timeBasedIndexCheck(indexPattern, true);
-
-        $scope.ui.wizard.indexInputType = INDEX_INPUT_TYPE.TEXT;
         $scope.ui.datafeed.indicesText = indexPattern.title;
 
         if (savedSearch.id !== undefined) {
@@ -590,7 +652,7 @@ module.controller('MlNewJob',
 
         $scope.ui.isDatafeed = true;
         $scope.ui.tabs[2].hidden = true;
-        $scope.ui.wizard.dataLocation = 'ES';
+        $scope.ui.dataLocation = 'ES';
         showDataPreviewTab();
 
         const queryDelayDefault = $scope.ui.datafeed.queryDelayDefault;
@@ -621,6 +683,9 @@ module.controller('MlNewJob',
           $scope.indices[index] = $scope.ui.indices[index];
         });
 
+        const indicesText = datafeedConfig.indices.join(',');
+        $scope.ui.fieldsUpToDate = (indicesText === $scope.ui.datafeed.indicesText);
+
         $scope.ui.datafeed = {
           queryText: angular.toJson(datafeedConfig.query, true),
           queryDelayText: queryDelay,
@@ -629,16 +694,12 @@ module.controller('MlNewJob',
           frequencyDefault: frequencyDefault,
           scrollSizeText: scrollSize,
           scrollSizeDefault: scrollSizeDefault,
-          indicesText: datafeedConfig.indices.join(','),
+          indicesText,
           typesText: datafeedConfig.types.join(','),
         };
 
-        // load the mappings from the configured server
-        // via the functions exposed in the elastic data controller
-        if (typeof $scope.mlElasticDataDescriptionExposedFunctions.extractFields === 'function') {
-          $scope.mlElasticDataDescriptionExposedFunctions.getMappings().then(() => {
-            $scope.mlElasticDataDescriptionExposedFunctions.extractFields({ types: $scope.types });
-          });
+        if ($scope.ui.fieldsUpToDate === false) {
+          $scope.loadFields();
         }
 
       } else {
@@ -905,7 +966,7 @@ module.controller('MlNewJob',
     // function used to check that all required fields are filled in
     function validateJob() {
       let valid = true;
-      let message = 'Fill in all required fields';
+      const message = 'Fill in all required fields';
 
       const tabs = $scope.ui.validation.tabs;
       // reset validations
@@ -995,14 +1056,7 @@ module.controller('MlNewJob',
         }
 
         // tab 3 - Datafeed
-        if (job.datafeed_config && job.datafeed_config.types.length > 0) {
-          const loadedTypes = Object.keys($scope.ui.types);
-          if (loadedTypes.length === 0) {
-            message = 'Could not find index. You may not have the correct permissions';
-            tabs[3].checks.hasAccessToIndex.valid = false;
-            tabs[3].checks.hasAccessToIndex.message = message;
-          }
-        }
+        validateIndex(tabs);
 
       } else {
         valid = false;
@@ -1024,6 +1078,19 @@ module.controller('MlNewJob',
         valid,
         message
       };
+    }
+
+    function validateIndex(tabs) {
+      const loadedFields = Object.keys($scope.fields);
+      if (loadedFields.length === 0) {
+        const msg = 'Could not load fields from index';
+        tabs[3].checks.hasAccessToIndex.valid = false;
+        tabs[3].checks.hasAccessToIndex.message = msg;
+        tabs[3].valid = false;
+      } else {
+        tabs[3].checks.hasAccessToIndex.valid = true;
+        tabs[3].valid = true;
+      }
     }
 
     function openSaveStatusWindow() {
@@ -1050,7 +1117,7 @@ module.controller('MlNewJob',
     // on the ES server and display the results in the Data preview tab
     function loadDataPreview() {
       createJSONText();
-      $scope.ui.wizard.dataPreview = '';
+      $scope.ui.dataPreview = '';
 
       const job = $scope.job;
 
@@ -1065,13 +1132,13 @@ module.controller('MlNewJob',
               data = resp.hits.hits;
             }
 
-            $scope.ui.wizard.dataPreview = angular.toJson(data, true);
+            $scope.ui.dataPreview = angular.toJson(data, true);
           })
           .catch(function (resp) {
-            $scope.ui.wizard.dataPreview = angular.toJson(resp, true);
+            $scope.ui.dataPreview = angular.toJson(resp, true);
           });
       } else {
-        $scope.ui.wizard.dataPreview = 'Datafeed does not exist';
+        $scope.ui.dataPreview = 'Datafeed does not exist';
       }
     }
 
@@ -1083,7 +1150,7 @@ module.controller('MlNewJob',
       }
 
       // however, if cloning a datafeedless, don't display the preview tab
-      if ($scope.ui.wizard.dataLocation === 'NONE' && $scope.mode === MODE.CLONE) {
+      if ($scope.ui.dataLocation === 'NONE' && $scope.mode === MODE.CLONE) {
         hidden = true;
       }
 

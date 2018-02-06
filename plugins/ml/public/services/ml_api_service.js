@@ -227,6 +227,18 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
+  this.getFieldCaps = function (obj) {
+    const data = {};
+    if(obj.index !== undefined) {
+      data.index = obj.index;
+    }
+    return http.request({
+      url: `${basePath}/field_caps`,
+      method: 'POST',
+      data
+    });
+  };
+
   this.recognizeIndex = function (obj) {
     return http.request({
       url: `${basePath}/modules/recognize/${obj.indexPatternTitle}`,
