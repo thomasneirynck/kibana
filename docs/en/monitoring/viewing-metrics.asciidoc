@@ -6,15 +6,16 @@
 ++++
 
 Monitoring is automatically enabled when you install {xpack} into {es}, Logstash,
-and {kib}. By default, the monitoring agents on {es} index data within the same
-cluster.
+and {kib}. You can also enable monitoring in Beats. By default, the monitoring
+agents on {es} index data within the same cluster.
 
 TIP: If you have a dedicated monitoring cluster, the information is accessible
 even if the {es} cluster you're monitoring is not. You can send data from
 multiple clusters to the same monitoring cluster and view them all through the
 same instance of {kib}. For  more information, see
 
-To view and analyze the health and performance of {es}, Logstash, and {kib}:
+To view and analyze the health and performance of {es}, Logstash, {kib}, and
+Beats:
 
 . {ref}/installing-xpack-es.html[Install {xpack} in {es}]. If you want to use a
 separate monitoring cluster, see
@@ -26,6 +27,9 @@ separate monitoring cluster, see
 . {logstash-ref}/installing-xpack-log.html[Install {xpack} in Logstash] and
 {logstash-ref}/configuring-logstash.html[configure monitoring].
 
+. Configure monitoring in Auditbeat, Filebeat, Heartbeat, Metricbeat, Packetbeat,
+and Winlogbeat.
+
 . Open {kib} in your web browser and log in. If you are running {kib}
 locally, go to `http://localhost:5601/`. To access {kib} and view the
 monitoring dashboards, you must log in as a user who has the `kibana_user`
@@ -33,12 +37,13 @@ and `monitoring_user` roles.
 
 . Click **Monitoring** in the side navigation. This displays any cluster alerts
 that require your attention and a summary of the available monitoring metrics
-for {es}, Logstash, and {kib}. To view additional information, click the
+for {es}, Logstash, {kib}, and Beats. To view additional information, click the
 Overview, Nodes, Indices, or Instances links.
 
 image::monitoring/images/monitoring.jpg["Monitoring Dashboards",link="images/monitoring.jpg"]
 
 include::cluster-alerts-license.asciidoc[]
+include::beats-details.asciidoc[]
 include::cluster-alerts.asciidoc[]
 include::elasticsearch-details.asciidoc[]
 include::kibana-details.asciidoc[]
