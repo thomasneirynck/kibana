@@ -73,7 +73,7 @@ export async function loadServiceList({ start, end, query }) {
   });
 }
 
-export async function loadApp({ start, end, serviceName }) {
+export async function loadService({ start, end, serviceName }) {
   return callApi({
     pathname: `../api/apm/services/${serviceName}`,
     query: {

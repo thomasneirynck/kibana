@@ -1,15 +1,32 @@
-import { connect } from 'react-redux';
-import Main from './view';
-import { loadLicense } from '../../../store/license';
+import React from 'react';
+import styled from 'styled-components';
+import { Route, Switch } from 'react-router-dom';
+import { routes } from './routeConfig';
+import LicenseChecker from './LicenseChecker';
+import ScrollToTopOnPathChange from './ScrollToTopOnPathChange';
+import { px, units, unit } from '../../../style/variables';
+import ConnectRouterToRedux from '../../shared/ConnectRouterToRedux';
 
-function mapStateToProps(state = {}) {
-  return {
-    license: state.license,
-    location: state.location // Must be passed for the component and router to update correctly. See: https://reacttraining.com/react-router/web/guides/dealing-with-update-blocking
-  };
+const MainContainer = styled.div`
+  min-width: ${px(unit * 50)};
+  padding: ${px(units.plus)};
+`;
+
+export default function Main() {
+  return (
+    <MainContainer>
+      <LicenseChecker />
+      <Route component={ConnectRouterToRedux} />
+      <Route component={ScrollToTopOnPathChange} />
+      {routes.map((route, i) => {
+        return route.switch ? (
+          <Switch key={i}>
+            {route.routes.map((route, i) => <Route key={i} {...route} />)}
+          </Switch>
+        ) : (
+          <Route key={i} {...route} />
+        );
+      })}
+    </MainContainer>
+  );
 }
-
-const mapDispatchToProps = {
-  loadLicense
-};
-export default connect(mapStateToProps, mapDispatchToProps)(Main);

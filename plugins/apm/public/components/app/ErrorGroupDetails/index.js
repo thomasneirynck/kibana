@@ -6,7 +6,8 @@ import { getErrorGroup, loadErrorGroup } from '../../../store/errorGroups';
 function mapStateToProps(state = {}) {
   return {
     urlParams: getUrlParams(state),
-    errorGroup: getErrorGroup(state)
+    errorGroup: getErrorGroup(state),
+    location: state.location
   };
 }
 

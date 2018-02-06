@@ -72,7 +72,7 @@ function ImpactSparkline({ impact }) {
 
 function TransactionListItem({ serviceName, transaction, type, impact }) {
   const transactionName = get({ transaction }, TRANSACTION_NAME);
-  const transactionUrl = `${serviceName}/transactions/${encodeURIComponent(
+  const transactionUrl = `${serviceName}/transactions/${legacyEncodeURIComponent(
     type
   )}/${legacyEncodeURIComponent(transactionName)}`;
 

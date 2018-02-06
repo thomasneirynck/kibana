@@ -21,7 +21,7 @@ describe('DetailView', () => {
 
   it('should render empty state', () => {
     const wrapper = mountWithRouterAndStore(
-      <DetailView errorGroup={[]} urlParams={props.urlParams} />,
+      <DetailView errorGroup={[]} urlParams={props.urlParams} location={{}} />,
       storeState
     );
 
@@ -30,7 +30,11 @@ describe('DetailView', () => {
 
   it('should render with data', () => {
     const wrapper = mountWithRouterAndStore(
-      <DetailView errorGroup={props.errorGroup} urlParams={props.urlParams} />,
+      <DetailView
+        errorGroup={props.errorGroup}
+        urlParams={props.urlParams}
+        location={{}}
+      />,
       storeState
     );
 

@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
 import withErrorHandler from '../../shared/withErrorHandler';
 import { STATUS } from '../../../constants';
 import { isEmpty } from 'lodash';
 import { loadAgentStatus } from '../../../services/rest';
-import { RelativeLink } from '../../../utils/url';
+import { RelativeLink, history } from '../../../utils/url';
 
 import styled from 'styled-components';
 import { px, units } from '../../../style/variables';
@@ -19,7 +18,7 @@ function fetchData(props) {
   }
 }
 
-function redirectIfNoData({ serviceList, history }) {
+function redirectIfNoData({ serviceList }) {
   if (serviceList.status === STATUS.SUCCESS && isEmpty(serviceList.data)) {
     loadAgentStatus().then(result => {
       if (!result.dataFound) {
@@ -73,4 +72,4 @@ class ServiceOverview extends Component {
   }
 }
 
-export default withErrorHandler(withRouter(ServiceOverview), ['serviceList']);
+export default withErrorHandler(ServiceOverview, ['serviceList']);

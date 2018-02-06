@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
 
-function loadApp(props) {
+function maybeLoadService(props) {
   const { serviceName, start, end } = props.urlParams;
   if (serviceName && start && end && !props.service.status) {
-    props.loadApp({ serviceName, start, end });
+    props.loadService({ serviceName, start, end });
   }
 }
 
-function getComponentWithApp(WrappedComponent) {
+function getComponentWithService(WrappedComponent) {
   return class extends Component {
     componentDidMount() {
-      loadApp(this.props);
+      maybeLoadService(this.props);
     }
 
     componentWillReceiveProps(nextProps) {
-      loadApp(nextProps);
+      maybeLoadService(nextProps);
     }
 
     render() {
@@ -28,4 +28,4 @@ function getComponentWithApp(WrappedComponent) {
   };
 }
 
-export default getComponentWithApp;
+export default getComponentWithService;

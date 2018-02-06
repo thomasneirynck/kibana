@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { getUrlParams } from '../../../store/urlParams';
-import { loadApp, getService } from '../../../store/services';
-import getComponentWithApp from './view';
+import { loadService, getService } from '../../../store/services';
+import getComponentWithService from './view';
 import { getDisplayName } from '../HOCUtils';
 
 function withService(WrappedComponent) {
@@ -14,11 +14,11 @@ function withService(WrappedComponent) {
   }
 
   const mapDispatchToProps = {
-    loadApp
+    loadService
   };
 
-  const HOC = getComponentWithApp(WrappedComponent);
-  HOC.displayName = `WithApp(${getDisplayName(WrappedComponent)})`;
+  const HOC = getComponentWithService(WrappedComponent);
+  HOC.displayName = `WithService(${getDisplayName(WrappedComponent)})`;
 
   return connect(mapStateToProps, mapDispatchToProps)(HOC);
 }

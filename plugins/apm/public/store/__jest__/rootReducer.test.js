@@ -9,8 +9,16 @@ describe('root reducer', () => {
       errorDistributions: {},
       errorGroupLists: {},
       errorGroups: {},
-      license: {},
-      location: {},
+      license: {
+        data: {
+          isActive: false
+        }
+      },
+      location: {
+        pathname: '',
+        search: '',
+        hash: ''
+      },
       sorting: {
         transaction: {
           key: 'impact',

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import { toQuery, fromQuery } from '../../../../utils/url';
+import { toQuery, fromQuery, history } from '../../../../utils/url';
 import { debounce } from 'lodash';
 import APMTable, {
   AlignmentKuiTableHeaderCell
@@ -10,7 +9,7 @@ import ListItem from './ListItem';
 const ITEMS_PER_PAGE = 20;
 class List extends Component {
   updateQuery = getNextQuery => {
-    const { location, history } = this.props;
+    const { location } = this.props;
     const prevQuery = toQuery(location.search);
 
     history.push({
@@ -130,4 +129,4 @@ class List extends Component {
   }
 }
 
-export default withRouter(List);
+export default List;

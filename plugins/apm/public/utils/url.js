@@ -6,6 +6,7 @@ import url from 'url';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import rison from 'rison-node';
+import createHistory from 'history/createHashHistory';
 
 export function toQuery(search) {
   return qs.parse(search.slice(1));
@@ -115,3 +116,9 @@ export function ExternalLink(props) {
 ExternalLink.propTypes = {
   href: PropTypes.string.isRequired
 };
+
+// Make history singleton available across APM project.
+// This is not great. Other options are to use context or withRouter helper
+// React Context API is unstable and will change soon-ish (probably 16.3)
+// withRouter helper from react-router overrides several props (eg. `location`) which makes it less desireable
+export const history = createHistory();

@@ -1,5 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import withErrorHandler from '../../shared/withErrorHandler';
 import { PageHeader } from '../../shared/UIComponents';
@@ -56,6 +57,14 @@ function loadErrorGroup(props) {
   }
 }
 
+function getShortGroupId(errorGroupId) {
+  if (!errorGroupId) {
+    return 'N/A';
+  }
+
+  return errorGroupId.slice(0, 5);
+}
+
 class ErrorGroupDetails extends Component {
   componentDidMount() {
     loadErrorGroup(this.props);
@@ -66,23 +75,19 @@ class ErrorGroupDetails extends Component {
   }
 
   render() {
-    const { errorGroupId } = this.props.urlParams;
-    const { errorGroup } = this.props;
+    const { errorGroup, urlParams, location } = this.props;
 
     // If there are 0 occurrences, show only distribution chart w. empty message
     const showDetails = errorGroup.data.occurrencesCount !== 0;
-
     const logMessage = get(errorGroup.data.error, ERROR_LOG_MESSAGE);
     const excMessage = get(errorGroup.data.error, ERROR_EXC_MESSAGE);
-
     const culprit = get(errorGroup.data.error, ERROR_CULPRIT);
-
     const isUnhandled = get(errorGroup.data.error, ERROR_EXC_HANDLED) === false;
 
     return (
       <div>
         <PageHeader>
-          Error group {errorGroupId.slice(0, 5) || 'N/A'}
+          Error group {getShortGroupId(urlParams.errorGroupId)}
           {isUnhandled && (
             <UnhandledBadge color="warning">Unhandled</UnhandledBadge>
           )}
@@ -107,12 +112,17 @@ class ErrorGroupDetails extends Component {
         {showDetails && (
           <DetailView
             errorGroup={errorGroup}
-            urlParams={this.props.urlParams}
+            urlParams={urlParams}
+            location={location}
           />
         )}
       </div>
     );
   }
 }
+
+ErrorGroupDetails.propTypes = {
+  location: PropTypes.object.isRequired
+};
 
 export default withErrorHandler(ErrorGroupDetails, ['errorGroup']);

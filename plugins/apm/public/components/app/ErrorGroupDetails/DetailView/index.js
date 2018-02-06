@@ -1,8 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { units, px, colors, borderRadius } from '../../../../style/variables';
 import { get, capitalize, isEmpty } from 'lodash';
-import { withRouter } from 'react-router-dom';
 import { STATUS } from '../../../../constants';
 
 import { ContextProperties } from '../../../shared/ContextProperties';
@@ -19,7 +19,7 @@ import {
   SERVICE_AGENT_NAME,
   SERVICE_LANGUAGE_NAME
 } from '../../../../../common/constants';
-import { fromQuery, toQuery } from '../../../../utils/url';
+import { fromQuery, toQuery, history } from '../../../../utils/url';
 
 const Container = styled.div`
   position: relative;
@@ -64,7 +64,7 @@ function getTabs(context, logStackframes) {
   ];
 }
 
-function DetailView({ errorGroup, urlParams, history, location }) {
+function DetailView({ errorGroup, urlParams, location }) {
   if (errorGroup.status !== STATUS.SUCCESS) {
     return null;
   }
@@ -205,4 +205,8 @@ function TabContent({
   }
 }
 
-export default withRouter(DetailView);
+DetailView.propTypes = {
+  location: PropTypes.object.isRequired
+};
+
+export default DetailView;

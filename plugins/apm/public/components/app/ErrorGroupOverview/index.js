@@ -15,7 +15,8 @@ function mapStateToProps(state = {}) {
   return {
     listArgs,
     urlParams: getUrlParams(state),
-    errorGroupList: getErrorGroupList(state, key)
+    errorGroupList: getErrorGroupList(state, key),
+    location: state.location
   };
 }
 

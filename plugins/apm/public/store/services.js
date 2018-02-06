@@ -7,7 +7,7 @@ import {
   createReducer
 } from './apiHelpers';
 
-const actionTypes = createActionTypes('APP');
+const actionTypes = createActionTypes('SERVICE');
 export const [SERVICE_LOADING, SERVICE_SUCCESS, SERVICE_FAILURE] = actionTypes;
 
 const INITIAL_STATE = {
@@ -28,7 +28,7 @@ const services = (state = {}, action) => {
   };
 };
 
-export const loadApp = createAction(actionTypes, rest.loadApp);
+export const loadService = createAction(actionTypes, rest.loadService);
 
 export function getService(state) {
   const { serviceName, start, end } = state.urlParams;

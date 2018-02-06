@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import withErrorHandler from '../../shared/withErrorHandler';
 import { PageHeader } from '../../shared/UIComponents';
 import TabNavigation from '../../shared/TabNavigation';
@@ -22,7 +23,7 @@ class ErrorGroupOverview extends Component {
   }
 
   render() {
-    const { serviceName } = this.props.urlParams;
+    const { serviceName, location } = this.props.urlParams;
 
     return (
       <div>
@@ -32,10 +33,15 @@ class ErrorGroupOverview extends Component {
         <List
           urlParams={this.props.urlParams}
           items={this.props.errorGroupList.data}
+          location={location}
         />
       </div>
     );
   }
 }
+
+ErrorGroupOverview.propTypes = {
+  location: PropTypes.object.isRequired
+};
 
 export default withErrorHandler(ErrorGroupOverview, ['errorGroupList']);

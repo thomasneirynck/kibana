@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { TabLink } from '../UIComponents';
 import styled from 'styled-components';
 import withService from '../withService';
@@ -80,5 +81,9 @@ function TabNavigation({ urlParams, location, service }) {
     </Container>
   );
 }
+
+TabNavigation.propTypes = {
+  location: PropTypes.object.isRequired
+};
 
 export default withService(TabNavigation);

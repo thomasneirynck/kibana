@@ -15,7 +15,16 @@ export function toJson(wrapper) {
   });
 }
 
-export function mountWithRouterAndStore(Component, storeState = {}) {
+const defaultRoute = {
+  match: { path: '/', url: '/', params: {}, isExact: true },
+  location: { pathname: '/', search: '', hash: '', key: '4yyjf5' }
+};
+
+export function mountWithRouterAndStore(
+  Component,
+  storeState = {},
+  route = defaultRoute
+) {
   const store = createMockStore(storeState);
   const history = createHistory();
 
@@ -24,10 +33,7 @@ export function mountWithRouterAndStore(Component, storeState = {}) {
       store,
       router: {
         history,
-        route: {
-          match: { path: '/', url: '/', params: {}, isExact: true },
-          location: { pathname: '/', search: '', hash: '', key: '4yyjf5' }
-        }
+        route
       }
     },
     childContextTypes: {

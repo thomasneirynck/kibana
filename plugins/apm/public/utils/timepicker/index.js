@@ -3,28 +3,7 @@ import { uiModules } from 'ui/modules';
 import 'ui/chrome';
 import 'ui/autoload/all';
 import { set } from 'lodash';
-import { setupRoutes } from '../../services/breadcrumbs';
-import { legacyDecodeURIComponent, toQuery } from '../../utils/url';
 import { updateTimePicker } from '../../store/urlParams';
-
-const routes = {
-  '/': 'APM',
-  '/setup-instructions': 'Setup Instructions',
-  '/:serviceName': {
-    url: params => `/${params.serviceName}/transactions`,
-    label: params => params.serviceName
-  },
-  '/:serviceName/errors': 'Errors',
-  '/:serviceName/errors/:groupId': params => params.groupId,
-  '/:serviceName/transactions': {
-    skip: true
-  },
-  '/:serviceName/transactions/:transactionType': params =>
-    params.transactionType,
-  '/:serviceName/transactions/:transactionType/:transactionName': params =>
-    legacyDecodeURIComponent(params.transactionName)
-};
-const getBreadcrumbs = setupRoutes(routes);
 
 let globalTimefilter;
 let currentInterval;
@@ -44,9 +23,6 @@ export function initTimepicker(history, dispatch, callback) {
   uiModules
     .get('app/apm', [])
     .controller('TimePickerController', ($scope, timefilter, globalState) => {
-      $scope.breadcrumbs = getBreadcrumbs(history.location.pathname);
-      $scope.searchQueryTime = toQuery(history.location.search)._g;
-
       // Add APM feedback menu
       // TODO: move this somewhere else
       $scope.topNavMenu = [];
@@ -57,13 +33,8 @@ export function initTimepicker(history, dispatch, callback) {
         template: require('../../templates/feedback_menu.html')
       });
 
-      history.listen(location => {
+      history.listen(() => {
         updateRefreshRate(dispatch, timefilter);
-
-        $scope.$apply(() => {
-          $scope.breadcrumbs = getBreadcrumbs(location.pathname);
-          $scope.searchQueryTime = toQuery(location.search)._g;
-        });
         globalState.fetch();
       });
       timefilter.setTime = (from, to) => {
@@ -81,7 +52,15 @@ export function initTimepicker(history, dispatch, callback) {
 
       // hack to access timefilter outside Angular
       globalTimefilter = timefilter;
-      callback();
+
+      // hack to wait for angular template to be ready
+      const waitForAngularReadyInterval = setInterval(() => {
+        const hasElm = !!document.querySelector('#react-apm-breadcrumbs');
+        if (hasElm) {
+          callback();
+          clearInterval(waitForAngularReadyInterval);
+        }
+      }, 10);
     });
 }
 

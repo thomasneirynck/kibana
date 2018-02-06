@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import d3 from 'd3';
 import Histogram from '../../../shared/charts/Histogram';
-import { toQuery, fromQuery } from '../../../../utils/url';
-import { withRouter } from 'react-router-dom';
+import { toQuery, fromQuery, history } from '../../../../utils/url';
 import { GraphHeader } from '../../../shared/UIComponents';
 import EmptyMessage from '../../../shared/EmptyMessage';
 import { getTimeFormatter, timeUnit } from '../../../../utils/formatters';
@@ -62,7 +62,8 @@ class Distribution extends Component {
   };
 
   render() {
-    const { history, location, distribution } = this.props;
+    const { location, distribution } = this.props;
+
     const buckets = getFormattedBuckets(
       distribution.data.buckets,
       distribution.data.bucketSize
@@ -133,4 +134,8 @@ function unitLong(type, count) {
   return type === 'request' ? `request${suffix}` : `transaction${suffix}`;
 }
 
-export default withRouter(Distribution);
+Distribution.propTypes = {
+  location: PropTypes.object.isRequired
+};
+
+export default Distribution;

@@ -9,11 +9,13 @@ import {
 function mapStateToProps(state = {}) {
   return {
     urlParams: getUrlParams(state),
-    distribution: getTransactionDistribution(state)
+    distribution: getTransactionDistribution(state),
+    location: state.location
   };
 }
 
 const mapDispatchToProps = {
   loadTransactionDistribution
 };
+
 export default connect(mapStateToProps, mapDispatchToProps)(Distribution);

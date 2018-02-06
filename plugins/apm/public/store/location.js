@@ -1,6 +1,6 @@
 export const LOCATION_UPDATE = 'LOCATION_UPDATE';
 
-function location(state = {}, action) {
+function location(state = { pathname: '', search: '', hash: '' }, action) {
   switch (action.type) {
     case LOCATION_UPDATE:
       return action.location;
@@ -10,7 +10,10 @@ function location(state = {}, action) {
 }
 
 export function updateLocation(nextLocation) {
-  return { type: LOCATION_UPDATE, location: nextLocation };
+  return {
+    type: LOCATION_UPDATE,
+    location: nextLocation
+  };
 }
 
 export default location;

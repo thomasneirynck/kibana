@@ -17,8 +17,7 @@ import {
   PROCESSOR_EVENT,
   SERVICE_AGENT_NAME
 } from '../../../../../common/constants';
-import { fromQuery, toQuery } from '../../../../utils/url';
-import { withRouter } from 'react-router-dom';
+import { fromQuery, toQuery, history } from '../../../../utils/url';
 import { asTime } from '../../../../utils/formatters';
 import EmptyMessage from '../../../shared/EmptyMessage';
 
@@ -87,7 +86,7 @@ class Transaction extends Component {
   }
 
   render() {
-    const { transaction, history, location } = this.props;
+    const { transaction, location } = this.props;
     const { transactionId } = this.props.urlParams;
 
     if (transaction.status !== STATUS.SUCCESS) {
@@ -123,7 +122,6 @@ class Transaction extends Component {
     ];
 
     const agentName = get(transaction.data, SERVICE_AGENT_NAME);
-
     const tabs = getTabs(transaction.data);
     const currentTab = getCurrentTab(tabs, this.props.urlParams.detailTab);
 
@@ -200,4 +198,4 @@ class Transaction extends Component {
   }
 }
 
-export default withRouter(Transaction);
+export default Transaction;

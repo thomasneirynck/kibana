@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { KuiTableInfo } from 'ui_framework/components';
 import _ from 'lodash';
 import STATIC_PROPS from './staticProperties.json';
 import {
@@ -7,9 +8,11 @@ import {
   colors,
   px,
   fontFamilyCode,
-  fontSizes
+  fontSizes,
+  unit,
+  fontSize
 } from '../../../style/variables';
-import TipMessage from '../TipMessage';
+import { Info } from '../Icons';
 
 import { getFeatureDocs } from '../../../utils/documentation';
 import { ExternalLink } from '../../../utils/url';
@@ -47,6 +50,12 @@ const Cell = styled.td`
     width: 300px;
     font-weight: bold;
   }
+`;
+
+const TableInfo = styled(KuiTableInfo)`
+  padding: ${px(unit)} 0 0;
+  text-align: center;
+  font-size: ${fontSize};
 `;
 
 const EmptyValue = styled.span`
@@ -99,33 +108,24 @@ function getLevelTwoProps(dynamicProps, currentKey) {
   }));
 }
 
-function recursiveSort(propData, levelTwoKey, level, agentName) {
+function recursiveSort(propData, levelTwoKey, level) {
   return (
-    <div>
-      <Table>
-        <tbody>
-          {getSortedProps(propData, levelTwoKey, level).map(
-            ({ key, value }) => {
-              return (
-                <Row key={key}>
-                  <Cell>{formatKey(key, value)}</Cell>
-                  <Cell>
-                    {level < 3 && _.isObject(value)
-                      ? recursiveSort(value, levelTwoKey, level + 1, agentName)
-                      : formatValue(value)}
-                  </Cell>
-                </Row>
-              );
-            }
-          )}
-        </tbody>
-      </Table>
-
-      <AgentFeatureTipMessage
-        featureName={`context-${levelTwoKey}`}
-        agentName={agentName}
-      />
-    </div>
+    <Table>
+      <tbody>
+        {getSortedProps(propData, levelTwoKey, level).map(({ key, value }) => {
+          return (
+            <Row key={key}>
+              <Cell>{formatKey(key, value)}</Cell>
+              <Cell>
+                {level < 3 && _.isObject(value)
+                  ? recursiveSort(value, levelTwoKey, level + 1)
+                  : formatValue(value)}
+              </Cell>
+            </Row>
+          );
+        })}
+      </tbody>
+    </Table>
   );
 }
 
@@ -137,14 +137,15 @@ function AgentFeatureTipMessage({ featureName, agentName }) {
   }
 
   return (
-    <TipMessage>
+    <TableInfo>
+      <Info />
       {docs.text}{' '}
       {docs.url && (
         <ExternalLink href={docs.url}>
           Learn more in the documentation.
         </ExternalLink>
       )}
-    </TipMessage>
+    </TableInfo>
   );
 }
 
@@ -152,7 +153,9 @@ export function PropertiesTable({ propData = {}, propKey, agentName }) {
   if (!propData) {
     return (
       <TableContainer>
-        <TipMessage>No data available</TipMessage>
+        <TableInfo>
+          <Info /> No data available
+        </TableInfo>
       </TableContainer>
     );
   }
@@ -160,6 +163,10 @@ export function PropertiesTable({ propData = {}, propKey, agentName }) {
   return (
     <TableContainer>
       {recursiveSort(propData, propKey, 2, agentName)}
+      <AgentFeatureTipMessage
+        featureName={`context-${propKey}`}
+        agentName={agentName}
+      />
     </TableContainer>
   );
 }

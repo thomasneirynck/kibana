@@ -50,7 +50,7 @@ function urlParams(state = {}, action) {
 
         // path params
         serviceName,
-        transactionType,
+        transactionType: legacyDecodeURIComponent(transactionType),
         transactionName: legacyDecodeURIComponent(transactionName),
         errorGroupId
       };

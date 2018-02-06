@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { units, px } from '../../../../style/variables';
-import { KuiInfoButton } from 'ui_framework/components';
+import { units, px, colors } from '../../../../style/variables';
+import { Info } from '../../../shared/Icons';
 import TooltipOverlay from '../../../shared/TooltipOverlay';
 
 const TooltipWrapper = styled.div`
@@ -22,7 +22,8 @@ const ImpactTooltip = () => (
         </span>
       }
     >
-      <KuiInfoButton
+      <Info
+        style={{ color: colors.blue2 }}
         onClick={e => {
           // TODO: Remove this handler once issue with pivotal-ui/react/overlay-trigger has been resolved
           e.stopPropagation();

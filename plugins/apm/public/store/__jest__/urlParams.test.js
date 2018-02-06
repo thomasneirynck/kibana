@@ -1,15 +1,18 @@
 import reducer, { updateTimePicker } from '../urlParams';
-import { updateLocation } from '../location';
+import { LOCATION_UPDATE } from '../location';
 
 describe('urlParams', () => {
   it('should handle LOCATION_UPDATE for transactions section', () => {
     const state = reducer(
       {},
-      updateLocation({
-        pathname:
-          'myServiceName/transactions/myTransactionType/myTransactionName/b/c',
-        search: '?transactionId=myTransactionId&detailTab=request&spanId=10'
-      })
+      {
+        type: LOCATION_UPDATE,
+        location: {
+          pathname:
+            'myServiceName/transactions/myTransactionType/myTransactionName/b/c',
+          search: '?transactionId=myTransactionId&detailTab=request&spanId=10'
+        }
+      }
     );
 
     expect(state).toEqual({
@@ -26,10 +29,13 @@ describe('urlParams', () => {
   it('should handle LOCATION_UPDATE for error section', () => {
     const state = reducer(
       {},
-      updateLocation({
-        pathname: 'myServiceName/errors/myErrorGroupId',
-        search: '?detailTab=request&transactionId=myTransactionId'
-      })
+      {
+        type: LOCATION_UPDATE,
+        location: {
+          pathname: 'myServiceName/errors/myErrorGroupId',
+          search: '?detailTab=request&transactionId=myTransactionId'
+        }
+      }
     );
 
     expect(state).toEqual(

@@ -30,7 +30,12 @@ export class TransactionOverview extends Component {
 
   render() {
     const { serviceName, transactionType } = this.props.urlParams;
-    const { changeTransactionSorting, transactionSorting } = this.props;
+    const {
+      changeTransactionSorting,
+      transactionSorting,
+      transactionList
+    } = this.props;
+
     return (
       <div>
         <PageHeader>{serviceName}</PageHeader>
@@ -40,7 +45,7 @@ export class TransactionOverview extends Component {
         <List
           serviceName={serviceName}
           type={transactionType}
-          items={this.props.transactionList.data}
+          items={transactionList.data}
           changeTransactionSorting={changeTransactionSorting}
           transactionSorting={transactionSorting}
         />

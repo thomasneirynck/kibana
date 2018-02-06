@@ -7,7 +7,8 @@ function mapStateToProps(state = {}) {
   return {
     urlParams: getUrlParams(state),
     spansNext: getSpansNext(state),
-    spans: getSpans(state)
+    spans: getSpans(state),
+    location: state.location
   };
 }
 

@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { get, uniq, first, zipObject, difference } from 'lodash';
 import Span from './Span';
@@ -44,7 +45,7 @@ class Spans extends PureComponent {
   }
 
   render() {
-    const { spans, agentName, urlParams } = this.props;
+    const { spans, agentName, urlParams, location } = this.props;
     if (spans.status !== STATUS.SUCCESS) {
       return null;
     }
@@ -93,6 +94,7 @@ class Spans extends PureComponent {
             >
               {spans.data.spans.map(span => (
                 <Span
+                  location={location}
                   transactionId={urlParams.transactionId}
                   timelineMargins={TIMELINE_MARGINS}
                   key={get({ span }, SPAN_ID)}
@@ -179,5 +181,9 @@ function getSpanLabel(type) {
 function getPrimaryType(type) {
   return first(type.split('.'));
 }
+
+Spans.propTypes = {
+  location: PropTypes.object.isRequired
+};
 
 export default Spans;

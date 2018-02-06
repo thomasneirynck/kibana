@@ -15,7 +15,7 @@ export function apm(kibana) {
       app: {
         title: 'APM',
         description: 'APM for the Elastic Stack',
-        main: 'plugins/apm/app',
+        main: 'plugins/apm/index',
         icon: 'plugins/apm/icon.svg'
       },
       home: ['plugins/apm/register_feature'],

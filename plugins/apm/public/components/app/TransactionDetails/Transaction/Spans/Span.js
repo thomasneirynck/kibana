@@ -1,9 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { withRouter } from 'react-router-dom';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import { toQuery, fromQuery } from '../../../../../utils/url';
+import { toQuery, fromQuery, history } from '../../../../../utils/url';
 import SpanDetails from './SpanDetails';
 import Modal from '../../../../shared/Modal';
 
@@ -50,37 +49,39 @@ const Container = styled.div`
   }
 `;
 
+function getLocationPath(location) {
+  return location.href.split('?')[0];
+}
+
 class Span extends React.Component {
+  componentDidMount() {
+    this.locationPath = getLocationPath(window.location);
+  }
+
   onClose = () => {
-    const { location, history, match } = this.props;
-    const { spanId, ...currentQuery } = toQuery(location.search);
-
-    // TODO: This is a temporary bandaid to avoid replacing the url, after the page has changed
-    // Backstory: if the modal is open, and the user clicks the back button, the modal will be destroyed,
-    // and the onClose handler will fire, causing it to change the url again. This is what we want to avoid.
-    const shouldReplace = window.location.href.includes(
-      match.params.transactionName
-    );
-
-    if (shouldReplace) {
-      history.replace({
-        ...location,
-        search: fromQuery({
-          ...currentQuery,
-          spanId: null
-        })
-      });
+    // Hack: If the modal is open, and the user clicks the back button, the url changes, the modal will be destroyed,
+    // and the onClose handler will fire, causing it to change the url again. We want to avoid the url changing the second time.
+    // Therefore we
+    const currentLocationPath = getLocationPath(window.location);
+    const didNavigate = this.locationPath !== currentLocationPath;
+    if (!didNavigate) {
+      this.resetSpanId();
     }
   };
 
-  updateSpanId = nextSpanId => {
-    const { location, history } = this.props;
+  resetSpanId = () => {
+    const { location } = this.props;
     const { spanId, ...currentQuery } = toQuery(location.search);
+
+    if (spanId === 'null') {
+      return;
+    }
+
     history.replace({
       ...location,
       search: fromQuery({
         ...currentQuery,
-        spanId: nextSpanId
+        spanId: null
       })
     });
   };
@@ -94,8 +95,7 @@ class Span extends React.Component {
       color,
       isSelected,
       transactionId,
-      location,
-      history
+      location
     } = this.props;
 
     const width = get({ span }, SPAN_DURATION) / totalDuration * 100;
@@ -148,8 +148,9 @@ class Span extends React.Component {
   }
 }
 
-SpanDetails.propTypes = {
+Span.propTypes = {
+  location: PropTypes.object.isRequired,
   totalDuration: PropTypes.number.isRequired
 };
 
-export default withRouter(Span);
+export default Span;

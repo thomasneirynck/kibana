@@ -11,7 +11,8 @@ function mapStateToProps(state = {}) {
   return {
     urlParams: getUrlParams(state),
     transactionNext: getTransactionNext(state),
-    transaction: getTransaction(state)
+    transaction: getTransaction(state),
+    location: state.location
   };
 }
 
