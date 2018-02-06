@@ -21,8 +21,17 @@ beforeEach(() => {
   mockServer.connection({ port: 8080 });
   mockServer.config = memoize(() => ({ get: jest.fn() }));
   const exportTypesRegistry = new ExportTypesRegistry();
-  exportTypesRegistry.register({ id: 'unencoded', jobType: 'unencodedJobType' });
-  exportTypesRegistry.register({ id: 'base64Encoded', jobType: 'base64EncodedJobType', jobContentEncoding: 'base64' });
+  exportTypesRegistry.register({
+    id: 'unencoded',
+    jobType: 'unencodedJobType',
+    jobContentExtension: 'csv'
+  });
+  exportTypesRegistry.register({
+    id: 'base64Encoded',
+    jobType: 'base64EncodedJobType',
+    jobContentEncoding: 'base64',
+    jobContentExtension: 'pdf'
+  });
   mockServer.plugins = {
     elasticsearch: {
       getCluster: memoize(() => ({ callWithInternalUser: jest.fn() })),
@@ -145,16 +154,21 @@ describe(`when job is failed`, () => {
 });
 
 describe(`when job is completed`, () => {
+
   const getCompletedResponse = async ({
     jobType = 'unencodedJobType',
     outputContent = 'job output content',
-    outputContentType = 'application/pdf'
+    outputContentType = 'application/pdf',
+    title = ''
   } = {}) => {
 
     const hits = getHits({
       jobtype: jobType,
       status: 'completed',
-      output: { content: outputContent, content_type: outputContentType }
+      output: { content: outputContent, content_type: outputContentType },
+      payload: {
+        title
+      }
     });
     mockServer.plugins.elasticsearch.getCluster('admin').callWithInternalUser.mockReturnValue(Promise.resolve(hits));
 
@@ -186,6 +200,21 @@ describe(`when job is completed`, () => {
   test(`specifies text/csv; charset=utf-8 contentType header from the job output`, async () => {
     const { headers } = await getCompletedResponse({ outputContentType: 'text/csv' });
     expect(headers['content-type']).toBe('text/csv; charset=utf-8');
+  });
+
+  test(`specifies default filename in content-disposition header if no title`, async () => {
+    const { headers } = await getCompletedResponse({ });
+    expect(headers['content-disposition']).toBe('attachment; filename="report.csv"');
+  });
+
+  test(`specifies payload title in content-disposition header`, async () => {
+    const { headers } = await getCompletedResponse({ title: 'something' });
+    expect(headers['content-disposition']).toBe('attachment; filename="something.csv"');
+  });
+
+  test(`specifies jobContentExtension in content-disposition header`, async () => {
+    const { headers } = await getCompletedResponse({ jobType: 'base64EncodedJobType' });
+    expect(headers['content-disposition']).toBe('attachment; filename="report.pdf"');
   });
 
   test(`specifies application/pdf contentType header from the job output`, async () => {

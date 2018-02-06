@@ -8,6 +8,7 @@ export function register(registry) {
     ...metadata,
     jobType: 'printable_pdf',
     jobContentEncoding: 'base64',
+    jobContentExtension: 'pdf',
     createJobFactory,
     executeJobFactory,
     initFactory,

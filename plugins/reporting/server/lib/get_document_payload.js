@@ -3,12 +3,7 @@ import { oncePerServer } from './once_per_server';
 function getDocumentPayloadFn(server) {
   const exportTypesRegistry = server.plugins.reporting.exportTypesRegistry;
 
-  function encodeContent(content, jobType) {
-    if (!jobType) {
-      return content;
-    }
-
-    const exportType = exportTypesRegistry.get(item => item.jobType === jobType);
+  function encodeContent(content, exportType) {
     switch (exportType.jobContentEncoding) {
       case 'base64':
         return new Buffer(content, 'base64');
@@ -17,11 +12,15 @@ function getDocumentPayloadFn(server) {
     }
   }
 
-  function getCompleted(output, jobType) {
+  function getCompleted(output, jobType, title) {
+    const exportType = exportTypesRegistry.get(item => item.jobType === jobType);
     return {
       statusCode: 200,
-      content: encodeContent(output.content, jobType),
-      contentType: output.content_type
+      content: encodeContent(output.content, exportType),
+      contentType: output.content_type,
+      headers: {
+        'Content-Disposition': `attachment; filename="${title || 'report'}.${exportType.jobContentExtension}"`
+      }
     };
   }
 
@@ -48,10 +47,10 @@ function getDocumentPayloadFn(server) {
   }
 
   return function getDocumentPayload(doc) {
-    const { status, output, jobtype: jobType } = doc._source;
+    const { status, output, jobtype: jobType, payload: { title } = {} } = doc._source;
 
     if (status === 'completed') {
-      return getCompleted(output, jobType);
+      return getCompleted(output, jobType, title);
     }
 
     if (status === 'failed') {

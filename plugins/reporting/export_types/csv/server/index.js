@@ -6,6 +6,7 @@ export function register(registry) {
   registry.register({
     ...metadata,
     jobType: 'csv',
+    jobContentExtension: 'csv',
     createJobFactory,
     executeJobFactory,
     validLicenses: ['trial', 'basic', 'standard', 'gold', 'platinum'],
