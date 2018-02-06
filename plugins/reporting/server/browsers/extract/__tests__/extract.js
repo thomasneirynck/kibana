@@ -2,7 +2,8 @@ import fs from 'fs';
 import crypto from 'crypto';
 import expect from 'expect.js';
 
-import { extract, ExtractError } from '../extract';
+import { extract } from '../extract';
+import { ExtractError } from '../extract_error';
 import { promisify } from 'bluebird';
 
 const FIXTURES_FOLDER = `${__dirname}/__fixtures__`;

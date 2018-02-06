@@ -13,7 +13,6 @@ const argv = require('yargs').argv;
 
 const logger = require('./gulp_helpers/logger');
 const buildVersion = require('./gulp_helpers/build_version')();
-const downloadBrowsers = require('./gulp_helpers/download_browsers');
 const gitInfo = require('./gulp_helpers/git_info');
 const stagedFiles = require('./gulp_helpers/staged_files.js');
 const fileGlobs = require('./gulp_helpers/globs');
@@ -21,7 +20,7 @@ const { getEnabledPlugins } = require('./gulp_helpers/get_plugins');
 const getFlags = require('./gulp_helpers/get_flags');
 
 const pkg = require('./package.json');
-const browsers = require('./plugins/reporting/export_types/printable_pdf/server/lib/browsers').browsers;
+const { ensureAllBrowsersDownloaded } = require('./plugins/reporting/server/browsers');
 const { createAutoJunitReporter } = require(pluginHelpers.resolveKibanaPath('src/dev'));
 
 const buildDir = path.resolve(__dirname, 'build');
@@ -63,7 +62,7 @@ function lintFiles(filePaths) {
     .pipe(g.eslint.failAfterError());
 }
 
-gulp.task('prepare', () => downloadBrowsers(browsers));
+gulp.task('prepare', () => ensureAllBrowsersDownloaded());
 
 gulp.task('dev', ['prepare'], () => pluginHelpers.run('start', { flags: getFlags() }));
 
@@ -80,6 +79,8 @@ gulp.task('lint-staged', () => {
         '\.css',
         '\.gradle',
         '\.gz',
+        '\.bz2',
+        '\.zip',
         '\.html',
         '\.jpg',
         '\.js',
@@ -92,6 +93,7 @@ gulp.task('lint-staged', () => {
         '\.yml', // rename .yaml to .yml if you run into this; don't add .yaml
         '\.prettierrc',
         '\.eslintignore',
+        '\.gitignore',
         'yarn\.lock',
         'dev-tools/ci',
         '\.xml',

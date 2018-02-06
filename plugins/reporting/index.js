@@ -9,6 +9,7 @@ import { config as appConfig } from './server/config/config';
 import { checkLicenseFactory } from './server/lib/check_license';
 import { validateConfig } from './server/lib/validate_config';
 import { exportTypesRegistryFactory } from './server/lib/export_types_registry';
+import { createBrowserDriverFactory } from './server/browsers';
 
 export { getReportingUsage } from './server/usage';
 
@@ -79,6 +80,11 @@ export const reporting = (kibana) => {
           concurrency: Joi.number().integer().default(appConfig.concurrency), //deprecated
           browser: Joi.object({
             type: Joi.any().valid('phantom', 'chromium').default('phantom'),
+            autoDownload: Joi.boolean().when('$dev', {
+              is: true,
+              then: Joi.default(true),
+              otherwise: Joi.default(false),
+            }),
             chromium: Joi.object({
               disableSandbox: Joi.boolean().default(false),
               proxy: Joi.object({
@@ -138,16 +144,7 @@ export const reporting = (kibana) => {
         xpackMainPlugin.info.feature(this.id).registerLicenseCheckResultsGenerator(checkLicense);
       });
 
-
-      for(const exportType of exportTypesRegistry.getAll()) {
-        if (exportType.initFactory) {
-          const result = await exportType.initFactory(server)();
-          if (!result.success) {
-            this.status.red(result.message);
-          }
-        }
-      }
-
+      server.expose('browserDriverFactory', await createBrowserDriverFactory(server));
       server.expose('queue', createQueueFactory(server));
 
       // Reporting routes

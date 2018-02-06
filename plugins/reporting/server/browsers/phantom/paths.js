@@ -1,7 +1,7 @@
 import path from 'path';
 
 export const paths = {
-  archivesPath: path.join(__dirname, '..', '..', '', '..', '..', '..', '..', '.phantom'),
+  archivesPath: path.resolve(__dirname, '../../../.phantom'),
   baseUrl: 'https://github.com/Medium/phantomjs/releases/download/v2.1.1/',
   packages: [{
     platforms: ['darwin', 'freebsd', 'openbsd'],

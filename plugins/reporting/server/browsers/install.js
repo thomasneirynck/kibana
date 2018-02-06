@@ -1,22 +1,23 @@
 import fs from 'fs';
 import path from 'path';
 import { promisify } from 'bluebird';
-import { extract } from '../extract';
-import * as chromium from './chromium';
-import * as phantom from './phantom';
-
-export const browsers = {
-  chromium,
-  phantom
-};
+import { extract } from './extract';
+import { BROWSERS_BY_TYPE } from './browsers';
 
 const fsp = {
   access: promisify(fs.access, fs),
   chmod: promisify(fs.chmod, fs),
 };
 
+/**
+ * "install" a browser by type into installs path by extracting the downloaded
+ * archive. If there is an error extracting the archive an `ExtractError` is thrown
+ * @param  {String} browserType
+ * @param  {String} installsPath
+ * @return {Promise<undefined>}
+ */
 export async function installBrowser(browserType, installsPath) {
-  const browser = browsers[browserType];
+  const browser = BROWSERS_BY_TYPE[browserType];
   const pkg = browser.paths.packages.find(p => p.platforms.includes(process.platform));
   if (!pkg) {
     throw new Error('Unsupported platform: platform');

@@ -1,6 +1,5 @@
 import { createJobFactory } from './create_job';
 import { executeJobFactory } from './execute_job';
-import { initFactory } from './init';
 import { metadata } from '../metadata';
 
 export function register(registry) {
@@ -11,7 +10,6 @@ export function register(registry) {
     jobContentExtension: 'pdf',
     createJobFactory,
     executeJobFactory,
-    initFactory,
     validLicenses: ['trial', 'standard', 'gold', 'platinum'],
   });
 }

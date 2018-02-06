@@ -7,7 +7,6 @@ import {
   withProcRunner,
   getFtrConfig,
   runKibanaServer,
-  runXpackKibanaGulpPrepare,
   runEsWithXpack,
   runFtr,
   log,
@@ -36,7 +35,6 @@ export function runFunctionTests() {
       const ftrConfig = await getFtrConfig();
 
       await runEsWithXpack({ tmpDir, procs, ftrConfig });
-      await runXpackKibanaGulpPrepare({ procs });
       await runKibanaServer({ procs, ftrConfig });
       await runFtr({ procs });
 
@@ -54,8 +52,6 @@ export async function runApiTests() {
         const ftrConfig = await getFtrConfig();
 
         await runEsWithXpack({ tmpDir, procs, ftrConfig });
-        // This task will download browsers, including `Phantom` that is required by reporting.
-        await runXpackKibanaGulpPrepare({ procs });
         await runKibanaServer({ procs, ftrConfig, enableUI: false });
         await runFtr({ procs, configPath: require.resolve('../../test/api_integration/config.js') });
 
@@ -90,7 +86,6 @@ export async function runFunctionalTestsServer() {
       await withProcRunner(async procs => {
         const ftrConfig = await getFtrConfig();
         await runEsWithXpack({ tmpDir, procs, ftrConfig, useSAML });
-        await runXpackKibanaGulpPrepare({ procs });
         await runKibanaServer({ devMode: true, procs, ftrConfig, useSAML });
 
         // wait for 5 seconds of silence before logging the success message
