@@ -7,7 +7,7 @@ import { getShardAllocation, getShardStats } from '../../../../lib/elasticsearch
 import { handleError } from '../../../../lib/errors/handle_error';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
-export function indexRoutes(server) {
+export function esIndexRoute(server) {
 
   server.route({
     method: 'POST',

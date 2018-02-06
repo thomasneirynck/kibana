@@ -7,7 +7,7 @@ import { getShardStats, getUnassignedShards } from '../../../../lib/elasticsearc
 import { handleError } from '../../../../lib/errors/handle_error';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
-export function indicesRoutes(server) {
+export function esIndicesRoute(server) {
   server.route({
     method: 'POST',
     path: '/api/monitoring/v1/clusters/{clusterUuid}/elasticsearch/indices',

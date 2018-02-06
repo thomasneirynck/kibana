@@ -7,7 +7,7 @@ import { getMetrics } from '../../../../lib/details/get_metrics';
 import { handleError } from '../../../../lib/errors/handle_error';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
-export function nodeRoutes(server) {
+export function esNodeRoute(server) {
 
   server.route({
     method: 'POST',

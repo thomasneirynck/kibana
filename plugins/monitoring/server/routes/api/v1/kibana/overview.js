@@ -1,17 +1,10 @@
 import Joi from 'joi';
-import { get } from 'lodash';
-import { getKibanasForClusters } from '../../../../lib/kibana/get_kibanas_for_clusters';
+import { prefixIndexPattern } from '../../../../lib/ccs_utils';
+import { getKibanaClusterStatus } from './_get_kibana_cluster_status';
 import { handleError } from '../../../../lib/errors';
 import { getMetrics } from '../../../../lib/details/get_metrics';
-import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
-const getKibanaClusterStatus = function (req, kbnIndexPattern, { clusterUuid }) {
-  const clusters = [{ cluster_uuid: clusterUuid }];
-  return getKibanasForClusters(req, kbnIndexPattern, clusters)
-    .then(kibanas => get(kibanas, '[0].stats'));
-};
-
-export function kibanaInstancesRoutes(server) {
+export function kibanaOverviewRoute(server) {
   /**
    * Kibana overview (metrics)
    */

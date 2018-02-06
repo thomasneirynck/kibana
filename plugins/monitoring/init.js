@@ -1,9 +1,7 @@
-import Promise from 'bluebird';
-import { join } from 'path';
-import { requireAllAndApply } from '../../server/lib/require_all_and_apply';
+import { requireUIRoutes, requireTelemetryRoutes } from './server/routes';
 import { instantiateClient } from './server/es_client/instantiate_client';
-import { initKibanaMonitoring } from './server/kibana_monitoring';
 import { initMonitoringXpackInfo } from './server/init_monitoring_xpack_info';
+import { initKibanaMonitoring } from './server/kibana_monitoring';
 
 /**
  * Initialize the Kibana Monitoring plugin by starting up asynchronous server
@@ -36,12 +34,12 @@ export const init = (monitoringPlugin, server) => {
           await initMonitoringXpackInfo(server);
         });
 
-        // Require all routes needed for UI
-        features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server));
-      } else {
-        // Require only routes needed for telemetry
-        features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', 'telemetry.js'), server));
+        // Require only routes needed for ui app
+        features.push(requireUIRoutes(server));
       }
+
+      // Require only routes needed for telemetry
+      features.push(requireTelemetryRoutes(server));
     }
 
     // Send Kibana usage / server ops to the monitoring bulk api

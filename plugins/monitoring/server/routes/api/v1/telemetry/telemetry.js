@@ -2,7 +2,7 @@ import Joi from 'joi';
 import { getAllStats } from '../../../../lib/telemetry';
 import { handleError } from '../../../../lib/errors';
 
-export function telemetryRoutes(server) {
+export function telemetryRoute(server) {
   /**
    * Telemetry Data
    *

@@ -10,7 +10,7 @@ import { prefixIndexPattern } from '../../../../lib/ccs_utils';
  * - Kibana Instance Summary (Status)
  * - Metrics
  */
-export function kibanaInstanceRoutes(server) {
+export function kibanaInstanceRoute(server) {
   server.route({
     method: 'POST',
     path: '/api/monitoring/v1/clusters/{clusterUuid}/kibana/{kibanaUuid}',

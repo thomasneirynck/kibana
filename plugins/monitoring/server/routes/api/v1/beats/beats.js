@@ -3,7 +3,7 @@ import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 import { getStats, getBeats } from '../../../../lib/beats';
 import { handleError } from '../../../../lib/errors';
 
-export function beatsOverviewRoute(server) {
+export function beatsListingRoute(server) {
   server.route({
     method: 'POST',
     path: '/api/monitoring/v1/clusters/{clusterUuid}/beats/beats',

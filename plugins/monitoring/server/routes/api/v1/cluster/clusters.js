@@ -4,7 +4,7 @@ import { verifyMonitoringAuth } from '../../../../lib/elasticsearch/verify_monit
 import { handleError } from '../../../../lib/errors';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
-export function clustersRoutes(server) {
+export function clustersRoute(server) {
   /*
    * Monitoring Home
    * Route Init (for checking license and compatibility for multi-cluster monitoring

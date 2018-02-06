@@ -3,7 +3,7 @@ import { getClustersFromRequest } from '../../../../lib/cluster/get_clusters_fro
 import { handleError } from '../../../../lib/errors';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
-export function clusterRoutes(server) {
+export function clusterRoute(server) {
   /*
    * Cluster Overview
    */

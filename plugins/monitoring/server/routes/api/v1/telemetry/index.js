@@ -1,0 +1,1 @@
+export { telemetryRoute } from './telemetry';
