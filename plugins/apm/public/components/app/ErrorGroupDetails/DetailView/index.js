@@ -1,7 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { units, px, colors, borderRadius } from '../../../../style/variables';
+import {
+  unit,
+  units,
+  px,
+  colors,
+  borderRadius
+} from '../../../../style/variables';
 import { get, capitalize, isEmpty } from 'lodash';
 import { STATUS } from '../../../../constants';
 
@@ -32,10 +38,12 @@ const Header = styled.div`
   display: flex;
   justify-content: space-between;
   padding: ${px(units.plus)} ${px(units.plus)} 0;
+  margin-bottom: ${px(unit)};
 `;
 
 const Title = styled(SectionHeader)`
   margin-top: -${px(units.quarter)};
+  margin-bottom: 0;
 `;
 
 const TabContainer = styled.div`

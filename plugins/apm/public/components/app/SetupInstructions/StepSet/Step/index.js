@@ -12,6 +12,9 @@ import {
   fontFamilyCode,
   colors
 } from '../../../../../style/variables';
+import { get } from 'lodash';
+import { ExternalLink } from '../../../../../utils/url';
+import { APM_SERVER_DOCS } from '../../../../../utils/documentation';
 
 import Indicator from './Indicator';
 import StatusCheckText from './StatusCheckText';
@@ -93,18 +96,14 @@ function Step({ step, stepSetId, isLastStep, checkStatus, result, type }) {
           </Description>
         )}
         {step.downloadButton && (
-          <a
-            href="https://www.elastic.co/downloads/apm/apm-server"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <ExternalLink href={get(APM_SERVER_DOCS, 'download.url')}>
             <DownloadButton
               buttonType="secondary"
               icon={<KuiButtonIcon className="fa-external-link" />}
             >
               Download APM Server on Elastic.co
             </DownloadButton>
-          </a>
+          </ExternalLink>
         )}
 
         {step.code && (

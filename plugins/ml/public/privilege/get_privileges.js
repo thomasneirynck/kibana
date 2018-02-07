@@ -13,7 +13,6 @@
  * strictly prohibited.
  */
 
-import _ from 'lodash';
 export function privilegesProvider(Promise, ml) {
 
   function getPrivileges() {
@@ -21,11 +20,15 @@ export function privilegesProvider(Promise, ml) {
       canGetJobs: false,
       canCreateJob: false,
       canDeleteJob: false,
+      canOpenJob: false,
+      canCloseJob: false,
       canForecastJob: false,
       canGetDatafeeds: false,
       canStartStopDatafeed: false,
       canUpdateJob: false,
-      canUpdateDatafeed: false
+      canUpdateDatafeed: false,
+      canCreateCalendar: false,
+      canDeleteCalendar: false,
     };
 
     return new Promise((resolve, reject) => {
@@ -45,7 +48,12 @@ export function privilegesProvider(Promise, ml) {
           'cluster:admin/xpack/ml/datafeeds/delete',
           'cluster:admin/xpack/ml/datafeeds/start',
           'cluster:admin/xpack/ml/datafeeds/stop',
-          'cluster:admin/xpack/ml/datafeeds/update'
+          'cluster:admin/xpack/ml/datafeeds/update',
+          'cluster:admin/xpack/ml/calendars/put',
+          'cluster:admin/xpack/ml/calendars/delete',
+          'cluster:admin/xpack/ml/calendars/jobs/update',
+          'cluster:admin/xpack/ml/calendars/events/post',
+          'cluster:admin/xpack/ml/calendars/events/delete',
         ]
       };
 
@@ -55,9 +63,7 @@ export function privilegesProvider(Promise, ml) {
         // if security has been disabled, securityDisabled is returned from the endpoint
         // therefore set all privileges to true
           if (resp.securityDisabled) {
-            _.each(privileges, (p, k) => {
-              privileges[k] = true;
-            });
+            Object.keys(privileges).forEach(k => privileges[k] = true);
           } else {
             if (resp.cluster['cluster:monitor/xpack/ml/job/get'] &&
               resp.cluster['cluster:monitor/xpack/ml/job/stats/get']) {
@@ -79,6 +85,14 @@ export function privilegesProvider(Promise, ml) {
               privileges.canUpdateJob = true;
             }
 
+            if (resp.cluster['cluster:admin/xpack/ml/job/open']) {
+              privileges.canOpenJob = true;
+            }
+
+            if (resp.cluster['cluster:admin/xpack/ml/job/close']) {
+              privileges.canCloseJob = true;
+            }
+
             if (resp.cluster['cluster:admin/xpack/ml/job/forecast']) {
               privileges.canForecastJob = true;
             }
@@ -98,12 +112,22 @@ export function privilegesProvider(Promise, ml) {
               privileges.canUpdateDatafeed = true;
             }
 
+            if (resp.cluster['cluster:admin/xpack/ml/calendars/put'] &&
+              resp.cluster['cluster:admin/xpack/ml/calendars/jobs/update'] &&
+              resp.cluster['cluster:admin/xpack/ml/calendars/events/post']) {
+              privileges.canCreateCalendar = true;
+            }
+
+            if (resp.cluster['cluster:admin/xpack/ml/calendars/delete'] &&
+              resp.cluster['cluster:admin/xpack/ml/calendars/events/delete']) {
+              privileges.canDeleteCalendar = true;
+            }
           }
 
-          return resolve(privileges);
+          resolve(privileges);
         })
         .catch(() => {
-          return reject(privileges);
+          reject(privileges);
         });
     });
   }

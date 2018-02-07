@@ -26,7 +26,7 @@ import { toLocaleString, mlEscape } from 'plugins/ml/util/string_utils';
 
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
-import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
+import { checkGetJobsPrivilege, permissionCheckProvider } from 'plugins/ml/privilege/check_privilege';
 
 import template from './jobs_list.html';
 import deleteJobTemplate from 'plugins/ml/jobs/jobs_list/delete_job_modal/delete_job_modal.html';
@@ -81,8 +81,17 @@ module.controller('MlJobsList',
     let jobFilterTimeout;
 
     $scope.kbnUrl = kbnUrl;
-    $scope.privileges = $route.current.locals.privileges;
-    $scope.licenseDetails = $route.current.locals.CheckLicense;
+
+    const { checkPermission, createPermissionFailureMessage } = Private(permissionCheckProvider);
+    $scope.permissions = {
+      canCreateJob: checkPermission('canCreateJob'),
+      canUpdateJob: checkPermission('canUpdateJob'),
+      canDeleteJob: checkPermission('canDeleteJob'),
+      canCloseJob: checkPermission('canCloseJob'),
+      canUpdateDatafeed: checkPermission('canUpdateDatafeed'),
+      canStartStopDatafeed: checkPermission('canStartStopDatafeed'),
+    };
+    $scope.createPermissionFailureMessage = createPermissionFailureMessage;
 
     $scope.jobStats = mlJobService.jobStats;
 
@@ -236,6 +245,7 @@ module.controller('MlJobsList',
         }
         rowScope.job = job;
         rowScope.closeJob = $scope.closeJob;
+        rowScope.canCloseJob = $scope.permissions.canCloseJob;
         rowScope.currentTab = { index: 0 };
         rowScope.jobAudit = {
           messages: '',
@@ -253,7 +263,8 @@ module.controller('MlJobsList',
             const $el = $('<ml-job-list-expanded-row>', {
               'current-tab': 'currentTab',
               'job-audit': 'jobAudit',
-              'close-job': 'closeJob'
+              'close-job': 'closeJob',
+              'can-close-job': 'canCloseJob',
             });
             $el.appendTo(this.$expandElement);
             $compile($el)(this);
@@ -650,26 +661,6 @@ module.controller('MlJobsList',
     $scope.$on('jobsUpdated', () => {
       refreshJobs();
     });
-
-    // create the text for the button's tooltips if the user's license has
-    // expired or if they don't have the privilege to press that button
-    $scope.createPermissionFailureMessage = function (privilegeType) {
-      let message = '';
-      if ($scope.licenseDetails.hasExpired) {
-        message = 'Your license has expired.';
-      } else if (privilegeType === 'canCreateJob') {
-        message = 'You do not have permission to create Machine Learning jobs.';
-      } else if (privilegeType === 'canStartStopDatafeed') {
-        message = 'You do not have permission to start or stop datafeeds.';
-      } else if (privilegeType === 'canUpdateJob') {
-        message = 'You do not have permission to edit jobs.';
-      } else if (privilegeType === 'canDeleteJob') {
-        message = 'You do not have permission to delete jobs.';
-      }
-
-      return `${message} Please contact your administrator.`;
-    };
-
 
     // create watch modal is triggered after the start datafeed modal,
     // and so needs to be called via a broadcast.

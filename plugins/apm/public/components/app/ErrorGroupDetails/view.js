@@ -86,12 +86,17 @@ class ErrorGroupDetails extends Component {
 
     return (
       <div>
-        <PageHeader>
-          Error group {getShortGroupId(urlParams.errorGroupId)}
-          {isUnhandled && (
-            <UnhandledBadge color="warning">Unhandled</UnhandledBadge>
-          )}
-        </PageHeader>
+        <PageHeader
+          title={
+            <Fragment>
+              Error group {getShortGroupId(urlParams.errorGroupId)}
+              {isUnhandled && (
+                <UnhandledBadge color="warning">Unhandled</UnhandledBadge>
+              )}
+            </Fragment>
+          }
+        />
+
         {showDetails && (
           <Titles>
             <EuiText>

@@ -130,3 +130,15 @@
   border-width: 0 5px 5px;
   border-bottom-color: #424242
 }
+
+.button-wrapper {
+  display: inline;
+}
+
+.button-wrapper.disabled .kuiButton[disabled] {
+  pointer-events: none;
+}
+
+.button-wrapper.disabled {
+  cursor: not-allowed;
+}

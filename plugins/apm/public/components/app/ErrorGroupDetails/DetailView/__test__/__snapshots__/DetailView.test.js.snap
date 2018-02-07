@@ -20,10 +20,12 @@ exports[`DetailView should render with data 1`] = `
   -ms-flex-pack: justify;
   justify-content: space-between;
   padding: 24px 24px 0;
+  margin-bottom: 16px;
 }
 
 .c2 {
   margin-top: -4px;
+  margin-bottom: 0;
 }
 
 .c3 {
@@ -247,7 +249,7 @@ exports[`DetailView should render with data 1`] = `
       Error occurrence
     </h2>
     <a
-      className="kuiLink "
+      className="euiLink euiLink--primary"
       href="/app/kibana#/discover?_g=&_a=(interval:auto,query:(language:lucene,query:'context.service.name:opbeans-node AND error.grouping_key:c00e245c2fbebaf178fc31eeb2bb0250'),sort:('@timestamp':desc))"
     >
       <button
@@ -1071,13 +1073,10 @@ exports[`DetailView should render with data 1`] = `
         <div
           className="c27"
         >
-          <a
+          <button
+            className="euiLink euiLink--primary"
             onClick={[Function]}
-            style={
-              Object {
-                "cursor": "pointer",
-              }
-            }
+            type="button"
           >
             <i
               className="fa fa-ellipsis-v undefined"
@@ -1092,7 +1091,7 @@ exports[`DetailView should render with data 1`] = `
              
             14
              library frames
-          </a>
+          </button>
         </div>
         <div
           className=""
@@ -1746,13 +1745,10 @@ exports[`DetailView should render with data 1`] = `
         <div
           className="c27"
         >
-          <a
+          <button
+            className="euiLink euiLink--primary"
             onClick={[Function]}
-            style={
-              Object {
-                "cursor": "pointer",
-              }
-            }
+            type="button"
           >
             <i
               className="fa fa-ellipsis-v undefined"
@@ -1767,7 +1763,7 @@ exports[`DetailView should render with data 1`] = `
              
             15
              library frames
-          </a>
+          </button>
         </div>
         <div
           className=""

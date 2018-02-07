@@ -60,7 +60,8 @@ module.controller('MlForecastingModal', function (
   $scope.isForecastRunning = false;
   $scope.showFrom = params.earliest;
   $scope.previousForecasts = [];
-  $scope.privileges = params.pscope.privileges;
+  $scope.permissions = params.pscope.permissions;
+  $scope.createPermissionFailureMessage = params.pscope.createPermissionFailureMessage;
   $scope.partitionsWarningNumber = WARN_NUM_PARTITIONS;
   $scope.showNumPartitionsWarning = false;
   $scope.runStatus = {

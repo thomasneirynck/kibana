@@ -5,6 +5,7 @@ import CodePreview from '../../shared/CodePreview';
 import { Ellipsis } from '../../shared/Icons';
 import { units, px } from '../../../style/variables';
 import EmptyMessage from '../../shared/EmptyMessage';
+import { EuiLink } from '@elastic/eui';
 
 const LibraryFrameToggle = styled.div`
   margin: 0 0 ${px(units.plus)} 0;
@@ -97,10 +98,10 @@ function Libraryframes({ visible, stackframes, codeLanguage, onClick }) {
   return (
     <div>
       <LibraryFrameToggle>
-        <a style={{ cursor: 'pointer' }} onClick={onClick}>
+        <EuiLink onClick={onClick}>
           <Ellipsis horizontal={visible} style={{ marginRight: units.half }} />{' '}
           {stackframes.length} library frames
-        </a>
+        </EuiLink>
       </LibraryFrameToggle>
 
       <LibraryFrames>
