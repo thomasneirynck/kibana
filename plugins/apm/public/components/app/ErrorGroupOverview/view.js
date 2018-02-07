@@ -27,7 +27,7 @@ class ErrorGroupOverview extends Component {
 
     return (
       <div>
-        <PageHeader>{serviceName}</PageHeader>
+        <PageHeader title={serviceName || ''} />
         <TabNavigation />
 
         <List

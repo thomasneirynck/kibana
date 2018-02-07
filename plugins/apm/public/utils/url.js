@@ -6,6 +6,7 @@ import url from 'url';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import rison from 'rison-node';
+import { EuiLink } from '@elastic/eui';
 import createHistory from 'history/createHashHistory';
 
 export function toQuery(search) {
@@ -40,9 +41,7 @@ export function RelativeLinkComponent({
   ...props
 }) {
   if (disabled) {
-    return (
-      <a aria-disabled="true" {...props} className={props.className || ''} />
-    );
+    return <EuiLink aria-disabled="true" {...props} />;
   }
 
   // Shorthand for pathname
@@ -62,7 +61,7 @@ export function RelativeLinkComponent({
     <Link
       {...props}
       to={{ ...location, ...props.to, pathname, search }}
-      className={`kuiLink ${props.className || ''}`}
+      className={`euiLink euiLink--primary ${props.className || ''}`}
     />
   );
 }
@@ -85,9 +84,7 @@ export function KibanaLinkComponent({
     hash: `${hash}?${search}`
   });
 
-  return (
-    <a {...props} href={href} className={`kuiLink ${props.className || ''}`} />
-  );
+  return <EuiLink {...props} href={href} />;
 }
 
 const withLocation = connect(({ location }) => ({ location }), {});
@@ -110,7 +107,7 @@ export function legacyDecodeURIComponent(url) {
 }
 
 export function ExternalLink(props) {
-  return <a target="_blank" rel="noopener noreferrer" {...props} />;
+  return <EuiLink target="_blank" rel="noopener noreferrer" {...props} />;
 }
 
 ExternalLink.propTypes = {

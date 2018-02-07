@@ -1,7 +1,13 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { STATUS } from '../../../../constants';
-import { units, colors, px, borderRadius } from '../../../../style/variables';
+import {
+  unit,
+  units,
+  colors,
+  px,
+  borderRadius
+} from '../../../../style/variables';
 import { Tab, SectionHeader } from '../../../shared/UIComponents';
 import { isEmpty, capitalize, get } from 'lodash';
 
@@ -54,10 +60,12 @@ const Header = styled.div`
   display: flex;
   justify-content: space-between;
   padding: ${px(units.plus)} ${px(units.plus)} 0;
+  margin-bottom: ${px(unit)};
 `;
 
 const Title = styled(SectionHeader)`
   margin-top: ${px(units.quarter)};
+  margin-bottom: 0;
 `;
 
 const PropertiesTableContainer = styled.div`

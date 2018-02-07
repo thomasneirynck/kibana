@@ -7,7 +7,7 @@ import Charts from './Charts';
 function TransactionDetails({ urlParams }) {
   return (
     <div>
-      <PageHeader>{urlParams.transactionName}</PageHeader>
+      <PageHeader title={urlParams.transactionName || ''} />
       <Charts />
       <Distribution />
       <Transaction />

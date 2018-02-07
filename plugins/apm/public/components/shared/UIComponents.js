@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import {
   unit,
@@ -9,13 +11,39 @@ import {
 } from '../../style/variables';
 import { RelativeLink } from '../../utils/url';
 
-export const PageHeader = styled.h1`
+const PagerHeaderWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: ${px(units.plus)};
+
+  > *:not(h1) {
+    position: relative;
+    top: ${px(units.minus)};
+    margin-left: ${px(unit)};
+  }
+`;
+
+const PageHeading = styled.h1`
   font-size: ${fontSizes.xxlarge};
-  margin: 0 0 ${px(units.plus)} 0;
+  margin: 0;
   height: ${px(unit * 2.5)};
   line-height: ${px(unit * 2.5)};
   ${truncate('100%')};
+  flex-grow: 1;
 `;
+
+export function PageHeader({ title, children }) {
+  return (
+    <PagerHeaderWrapper>
+      <PageHeading>{title}</PageHeading>
+      {children}
+    </PagerHeaderWrapper>
+  );
+}
+
+PageHeader.propTypes = {
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired
+};
 
 export const SectionHeader = styled.h2`
   margin: ${px(units.plus)} 0;

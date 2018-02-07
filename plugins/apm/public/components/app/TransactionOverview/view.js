@@ -38,7 +38,7 @@ export class TransactionOverview extends Component {
 
     return (
       <div>
-        <PageHeader>{serviceName}</PageHeader>
+        <PageHeader title={serviceName || ''} />
         <TabNavigation />
         <Charts />
         <SectionHeader>{transactionTypeLabel(transactionType)}</SectionHeader>

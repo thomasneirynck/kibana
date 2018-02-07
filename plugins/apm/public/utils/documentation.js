@@ -16,6 +16,9 @@ export const APM_DOCS = {
 // APM Server docs
 //
 export const APM_SERVER_DOCS = {
+  download: {
+    url: 'https://www.elastic.co/downloads/apm/apm-server'
+  },
   configuring: {
     url: `${DOCS_ROOT}/server/${STACK_VERSION}/configuring.html`
   },

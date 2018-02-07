@@ -5,8 +5,6 @@ import { isEmpty } from 'lodash';
 import { loadAgentStatus } from '../../../services/rest';
 import { RelativeLink, history } from '../../../utils/url';
 
-import styled from 'styled-components';
-import { px, units } from '../../../style/variables';
 import { KuiButton } from 'ui_framework/components';
 import List from './List';
 import { PageHeader } from '../../shared/UIComponents';
@@ -30,15 +28,6 @@ function redirectIfNoData({ serviceList }) {
   }
 }
 
-const HeaderWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const SetupInstructionsLink = styled(RelativeLink)`
-  margin-top: ${px(units.minus)};
-`;
-
 class ServiceOverview extends Component {
   componentDidMount() {
     fetchData(this.props);
@@ -55,12 +44,11 @@ class ServiceOverview extends Component {
 
     return (
       <div>
-        <HeaderWrapper>
-          <PageHeader>Services</PageHeader>
-          <SetupInstructionsLink path="/setup-instructions">
+        <PageHeader title="Services">
+          <RelativeLink path="/setup-instructions">
             <KuiButton buttonType="secondary">Setup Instructions</KuiButton>
-          </SetupInstructionsLink>
-        </HeaderWrapper>
+          </RelativeLink>
+        </PageHeader>
 
         <List
           items={serviceList.data}
