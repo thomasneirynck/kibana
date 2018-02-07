@@ -253,7 +253,7 @@ function _injectPromise(page) {
     .then(hasPromise => {
       if (hasPromise) return;
 
-      const nodeModules = path.resolve(__dirname, '..', '..', '..', '..', '..', '..', '..', '..', '..', 'node_modules');
+      const nodeModules = path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'node_modules');
       const promisePath = path.join(nodeModules, 'bluebird', 'js', 'browser', 'bluebird.js');
       return fromCallback(cb => page.injectJs(promisePath, cb))
         .then(status => {
