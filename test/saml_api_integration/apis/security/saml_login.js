@@ -1,13 +1,9 @@
-import { resolveKibanaPath } from '@elastic/plugin-helpers';
+import querystring from 'querystring';
 import url from 'url';
-import fs from 'fs';
-import samlp from 'samlp';
-import { delay, promisify } from 'bluebird';
+import { delay } from 'bluebird';
+import { getLogoutRequest, getSAMLRequestId, getSAMLResponse } from '../../fixtures/saml_tools';
 import expect from 'expect.js';
 import request from 'request';
-
-const parseSAMLRequestAsync = promisify(samlp.parseRequest);
-const getSAMLResponseAsync = promisify(samlp.getSamlResponse);
 
 export default function ({ getService }) {
   const chance = getService('chance');
@@ -16,52 +12,22 @@ export default function ({ getService }) {
 
   const kibanaServerConfig = config.get('servers.kibana');
 
-  function createSAMLResponse(samlRequest, overrides) {
-    return getSAMLResponseAsync({
-      key: fs.readFileSync(resolveKibanaPath('test/dev_certs/server.key')),
-      cert: fs.readFileSync(resolveKibanaPath('test/dev_certs/server.crt')),
+  function createSAMLResponse(options = {}) {
+    return getSAMLResponse({
       destination: `http://localhost:${kibanaServerConfig.port}/api/security/v1/saml`,
-      recipient: `http://localhost:${kibanaServerConfig.port}/api/security/v1/saml`,
-      inResponseTo: samlRequest ? samlRequest.id : undefined,
-      issuer: 'http://www.elastic.co',
       sessionIndex: chance.natural(),
-      profileMapper: () => ({
-        getClaims: () => ({ 'urn:oid:0.0.7': 'a@b.c' }),
-        getNameIdentifier: () => ({ nameIdentifier: 'a@b.c' })
-      }),
-      ...overrides
-    }, {});
-  }
-
-  function createLogoutRequestURL(sessionIndex) {
-    const logoutRequestMiddleware = promisify(samlp.logout({
-      key: fs.readFileSync(resolveKibanaPath('test/dev_certs/server.key')),
-      cert: fs.readFileSync(resolveKibanaPath('test/dev_certs/server.crt')),
-      issuer: 'http://www.elastic.co',
-      deflate: true,
-      protocolBinding: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-      sessionParticipants: {
-        hasElements: () => true,
-        getFirst: (callback) => callback(null, {
-          sessionIndex,
-          nameId: 'a@b.c',
-          nameIdFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified',
-          serviceProviderLogoutURL: `http://localhost:${kibanaServerConfig.port}/logout`,
-        })
-      },
-
-      store: { save: (request, logoutRequestState, callback) => callback() }
-    }));
-
-    return new Promise((resolve) => {
-      logoutRequestMiddleware(
-        { query: {}, body: {} },
-        { redirect: (redirectURL) => resolve(url.parse(redirectURL)), set: () => {} }
-      );
+      ...options,
     });
   }
 
-  describe.skip('SAML authentication', () => {
+  function createLogoutRequest(options = {}) {
+    return getLogoutRequest({
+      destination: `http://localhost:${kibanaServerConfig.port}/logout`,
+      ...options,
+    });
+  }
+
+  describe('SAML authentication', () => {
     it('should reject API requests if client is not authenticated', async () => {
       await supertest
         .get('/api/security/v1/me')
@@ -110,23 +76,21 @@ export default function ({ getService }) {
     });
 
     describe('finishing handshake', () => {
-      let samlRequest;
       let handshakeCookie;
+      let samlRequestId;
 
       beforeEach(async () => {
         const handshakeResponse = await supertest.get('/abc/xyz/handshake?one=two three')
           .expect(302);
 
         handshakeCookie = request.cookie(handshakeResponse.headers['set-cookie'][0]);
-        samlRequest = await parseSAMLRequestAsync(
-          url.parse(handshakeResponse.headers.location, true /* parseQueryString */)
-        );
+        samlRequestId = await getSAMLRequestId(handshakeResponse.headers.location);
       });
 
       it('should fail if SAML response is not complemented with handshake cookie', async () => {
         await supertest.post('/api/security/v1/saml')
           .set('kbn-xsrf', 'xxx')
-          .send({ SAMLResponse: new Buffer(await createSAMLResponse(samlRequest)).toString('base64') }, {})
+          .send({ SAMLResponse: await createSAMLResponse({ inResponseTo: samlRequestId }) }, {})
           .expect(401);
       });
 
@@ -134,7 +98,7 @@ export default function ({ getService }) {
         const samlAuthenticationResponse = await supertest.post('/api/security/v1/saml')
           .set('kbn-xsrf', 'xxx')
           .set('Cookie', handshakeCookie.cookieString())
-          .send({ SAMLResponse: new Buffer(await createSAMLResponse(samlRequest)).toString('base64') }, {})
+          .send({ SAMLResponse: await createSAMLResponse({ inResponseTo: samlRequestId }) }, {})
           .expect(302);
 
         // User should be redirected to the URL that initiated handshake.
@@ -173,7 +137,7 @@ export default function ({ getService }) {
         // to simulate IdP initiated login.
         const samlAuthenticationResponse = await supertest.post('/api/security/v1/saml')
           .set('kbn-xsrf', 'xxx')
-          .send({ SAMLResponse: new Buffer(await createSAMLResponse()).toString('base64') }, {})
+          .send({ SAMLResponse: await createSAMLResponse() }, {})
           .expect(302);
 
         // User should be redirected to the URL that initiated handshake.
@@ -211,7 +175,7 @@ export default function ({ getService }) {
         const samlAuthenticationResponse = await supertest.post('/api/security/v1/saml')
           .set('kbn-xsrf', 'xxx')
           .set('Cookie', handshakeCookie.cookieString())
-          .send({ SAMLResponse: new Buffer(await createSAMLResponse(samlRequest)).toString('base64') }, {})
+          .send({ SAMLResponse: await createSAMLResponse({ inResponseTo: samlRequestId }) }, {})
           .expect(302);
 
         const sessionCookie = request.cookie(samlAuthenticationResponse.headers['set-cookie'][0]);
@@ -219,26 +183,22 @@ export default function ({ getService }) {
         const secondSAMLAuthenticationResponse = await supertest.post('/api/security/v1/saml')
           .set('kbn-xsrf', 'xxx')
           .set('Cookie', sessionCookie.cookieString())
-          .send({ SAMLResponse: new Buffer(await createSAMLResponse()).toString('base64') }, {})
+          .send({ SAMLResponse: await createSAMLResponse() }, {})
           .expect(403);
 
         expect(secondSAMLAuthenticationResponse.body).to.eql({
           error: 'Forbidden',
           message: 'Sorry, you already have an active Kibana session. ' +
-                   'If you want to start a new one, please logout from the existing session first.',
+          'If you want to start a new one, please logout from the existing session first.',
           statusCode: 403
         });
       });
 
       it('should fail if SAML response is not valid', async () => {
-        const outdatedSAMLResponse = new Buffer(
-          await createSAMLResponse(samlRequest, { inResponseTo: 'some-invalid-request-id' })
-        ).toString('base64');
-
         await supertest.post('/api/security/v1/saml')
           .set('kbn-xsrf', 'xxx')
           .set('Cookie', handshakeCookie.cookieString())
-          .send({ SAMLResponse: outdatedSAMLResponse }, {})
+          .send({ SAMLResponse: await createSAMLResponse({ inResponseTo: 'some-invalid-request-id' }) }, {})
           .expect(401);
       });
     });
@@ -251,14 +211,12 @@ export default function ({ getService }) {
           .expect(302);
 
         const handshakeCookie = request.cookie(handshakeResponse.headers['set-cookie'][0]);
-        const samlRequest = await parseSAMLRequestAsync(
-          url.parse(handshakeResponse.headers.location, true /* parseQueryString */)
-        );
+        const samlRequestId = await getSAMLRequestId(handshakeResponse.headers.location);
 
         const samlAuthenticationResponse = await supertest.post('/api/security/v1/saml')
           .set('kbn-xsrf', 'xxx')
           .set('Cookie', handshakeCookie.cookieString())
-          .send({ SAMLResponse: new Buffer(await createSAMLResponse(samlRequest)).toString('base64') }, {})
+          .send({ SAMLResponse: await createSAMLResponse({ inResponseTo: samlRequestId }) }, {})
           .expect(302);
 
         sessionCookie = request.cookie(samlAuthenticationResponse.headers['set-cookie'][0]);
@@ -322,16 +280,15 @@ export default function ({ getService }) {
           .expect(302);
 
         const handshakeCookie = request.cookie(handshakeResponse.headers['set-cookie'][0]);
-        const samlRequest = await parseSAMLRequestAsync(
-          url.parse(handshakeResponse.headers.location, true /* parseQueryString */)
-        );
+        const samlRequestId = await getSAMLRequestId(handshakeResponse.headers.location);
 
         idpSessionIndex = chance.natural();
-        const samlResponse = await createSAMLResponse(samlRequest, { sessionIndex: idpSessionIndex });
         const samlAuthenticationResponse = await supertest.post('/api/security/v1/saml')
           .set('kbn-xsrf', 'xxx')
           .set('Cookie', handshakeCookie.cookieString())
-          .send({ SAMLResponse: new Buffer(samlResponse).toString('base64') }, {})
+          .send({
+            SAMLResponse: await createSAMLResponse({ inResponseTo: samlRequestId, sessionIndex: idpSessionIndex })
+          }, {})
           .expect(302);
 
         sessionCookie = request.cookie(samlAuthenticationResponse.headers['set-cookie'][0]);
@@ -394,9 +351,9 @@ export default function ({ getService }) {
       });
 
       it('should invalidate access token on IdP initiated logout', async () => {
-        const logoutResponse = await supertest.get('/api/security/v1/logout')
+        const logoutRequest = await createLogoutRequest({ sessionIndex: idpSessionIndex });
+        const logoutResponse = await supertest.get(`/api/security/v1/logout?${querystring.stringify(logoutRequest)}`)
           .set('Cookie', sessionCookie.cookieString())
-          .send({ SAMLRequest: await createLogoutRequestURL(idpSessionIndex) }, {})
           .expect(302);
 
         const cookies = logoutResponse.headers['set-cookie'];
@@ -411,7 +368,7 @@ export default function ({ getService }) {
 
         const redirectURL = url.parse(logoutResponse.headers.location, true /* parseQueryString */);
         expect(redirectURL.href.startsWith(`https://elastic.co/slo/saml`)).to.be(true);
-        expect(redirectURL.query.SAMLRequest).to.not.be.empty();
+        expect(redirectURL.query.SAMLResponse).to.not.be.empty();
 
         // Tokens that were stored in the previous cookie should be invalidated as well and old session
         // cookie should not allow API access.
@@ -429,8 +386,8 @@ export default function ({ getService }) {
       });
 
       it('should invalidate access token on IdP initiated logout even if there is no Kibana session', async () => {
-        const logoutRequestURL = await createLogoutRequestURL(idpSessionIndex);
-        const logoutResponse = await supertest.get(`/api/security/v1/logout?${logoutRequestURL.query}`)
+        const logoutRequest = await createLogoutRequest({ sessionIndex: idpSessionIndex });
+        const logoutResponse = await supertest.get(`/api/security/v1/logout?${querystring.stringify(logoutRequest)}`)
           .expect(302);
 
         expect(logoutResponse.headers['set-cookie']).to.be(undefined);
@@ -464,14 +421,12 @@ export default function ({ getService }) {
           .expect(302);
 
         const handshakeCookie = request.cookie(handshakeResponse.headers['set-cookie'][0]);
-        const samlRequest = await parseSAMLRequestAsync(
-          url.parse(handshakeResponse.headers.location, true /* parseQueryString */)
-        );
+        const samlRequestId = await getSAMLRequestId(handshakeResponse.headers.location);
 
         const samlAuthenticationResponse = await supertest.post('/api/security/v1/saml')
           .set('kbn-xsrf', 'xxx')
           .set('Cookie', handshakeCookie.cookieString())
-          .send({ SAMLResponse: new Buffer(await createSAMLResponse(samlRequest)).toString('base64') }, {})
+          .send({ SAMLResponse: await createSAMLResponse({ inResponseTo: samlRequestId }) }, {})
           .expect(302);
 
         sessionCookie = request.cookie(samlAuthenticationResponse.headers['set-cookie'][0]);
