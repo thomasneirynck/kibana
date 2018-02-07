@@ -27,8 +27,12 @@ separate monitoring cluster, see
 . {logstash-ref}/installing-xpack-log.html[Install {xpack} in Logstash] and
 {logstash-ref}/configuring-logstash.html[configure monitoring].
 
-. Configure monitoring in Auditbeat, Filebeat, Heartbeat, Metricbeat, Packetbeat,
-and Winlogbeat.
+. Configure monitoring in {auditbeat-ref}/monitoring.html[Auditbeat],
+{filebeat-ref}/monitoring.html[Filebeat],
+{heartbeat-ref}/monitoring.html[Heartbeat],
+{metricbeat-ref}/monitoring.html[Metricbeat],
+{packetbeat-ref}/monitoring.html[Packetbeat], and
+{winlogbeat-ref}/monitoring.html[Winlogbeat]. 
 
 . Open {kib} in your web browser and log in. If you are running {kib}
 locally, go to `http://localhost:5601/`. To access {kib} and view the
