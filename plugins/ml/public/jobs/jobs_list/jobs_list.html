@@ -12,12 +12,12 @@
       <header>
         <div class="row" >
         <div class="col-xs-6 col-md-9">
-          <div ng-class="(privileges.canCreateJob===false || licenseDetails.hasExpired===true) ? ['button-wrapper', 'disabled'] : 'button-wrapper'" data-placement="right" data-toggle="tooltip"
-            ng-attr-tooltip="{{(privileges.canCreateJob===false || licenseDetails.hasExpired===true) ? createPermissionFailureMessage('canCreateJob') : undefined}}">
+          <div ng-class="permissions.canCreateJob ? 'button-wrapper' : ['button-wrapper', 'disabled'] " data-placement="right" data-toggle="tooltip"
+            ng-attr-tooltip="{{permissions.canCreateJob ? undefined : createPermissionFailureMessage('canCreateJob')}}">
             <button
               ng-click='newJob()'
               class="kuiButton kuiButton--primary"
-              ng-disabled='(privileges.canCreateJob===false || licenseDetails.hasExpired===true)'
+              ng-disabled='permissions.canCreateJob===false'
               aria-label="Create new job">
               <i aria-hidden="true" class="fa fa-plus"></i>
               Create new job

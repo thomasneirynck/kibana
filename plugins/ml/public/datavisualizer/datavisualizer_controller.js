@@ -35,6 +35,7 @@ import { ML_JOB_FIELD_TYPES, KBN_FIELD_TYPES } from 'plugins/ml/../common/consta
 import { kbnTypeToMLJobType } from 'plugins/ml/util/field_types_utils';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { checkLicenseExpired } from 'plugins/ml/license/check_license';
+import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { getIndexPatternWithRoute, getSavedSearchWithRoute, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
 import template from './datavisualizer.html';
@@ -44,6 +45,7 @@ uiRoutes
     template,
     resolve: {
       CheckLicense: checkLicenseExpired,
+      privileges: checkGetJobsPrivilege,
       indexPattern: getIndexPatternWithRoute,
       savedSearch: getSavedSearchWithRoute
     }

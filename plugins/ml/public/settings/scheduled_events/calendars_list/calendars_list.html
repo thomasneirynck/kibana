@@ -16,15 +16,21 @@
             </div>
 
             <div class="kuiToolBarSection">
-              <a class="kuiButton kuiButton--primary"
-                href="ml#/settings/calendars_list/new_calendar"
-                aria-label="Create new dashboard"
-                data-test-subj="newDashboardLink"
-                tooltip="Create new calendar"
-                tooltip-append-to-body="true">
-                <span aria-hidden="true" class="kuiButton__icon kuiIcon fa-plus"></span>
-                New calendar
-              </a>
+              <div
+                ng-class="permissions.canCreateCalendar ? 'button-wrapper' : ['button-wrapper', 'disabled']"
+                ng-attr-tooltip="{{permissions.canCreateCalendar ? undefined : createPermissionFailureMessage('canCreateCalendar')}}"
+              >
+                <button class="kuiButton kuiButton--primary"
+                  ng-click="newCalendarClick()"
+                  aria-label="Create new dashboard"
+                  data-test-subj="newDashboardLink"
+                  tooltip="Create new calendar"
+                  ng-disabled='permissions.canCreateCalendar===false'
+                  tooltip-append-to-body="true">
+                  <span aria-hidden="true" class="kuiButton__icon kuiIcon fa-plus"></span>
+                  New calendar
+                </button>
+              </div>
             </div>
 
             <div class="kuiToolBarSection">
@@ -92,21 +98,31 @@
                 <td class="kuiTableRowCell">
                   <div class="kuiTableRowCell__liner">
                     <div class="kuiMenuButtonGroup kuiMenuButtonGroup--alignRight">
-                      <a
-                        class="kuiMenuButton kuiMenuButton--basic kuiMenuButton--iconText"
-                        title="Edit"
-                        ng-href="ml#/settings/calendars_list/edit_calendar/{{calendar.calendar_id}}">
-                        <span class="kuiMenuButton__icon kuiIcon fa-pencil"></span>
-                        <span>Edit</span>
-                      </a>
-                      <a
-                        class="kuiMenuButton kuiMenuButton--danger kuiMenuButton--iconText"
-                        title="Edit"
-                        ng-click="deleteCalendar(calendar.calendar_id)"
-                        href="" >
-                        <span class="kuiMenuButton__icon kuiIcon fa-trash"></span>
-                        <span>Delete</span>
-                      </a>
+                      <div
+                        ng-class="permissions.canCreateCalendar ? 'button-wrapper' : ['button-wrapper', 'disabled'] "
+                        ng-attr-tooltip="{{permissions.canCreateCalendar ? undefined : createPermissionFailureMessage('canCreateCalendar')}}">
+                        <button
+                          class="kuiMenuButton kuiMenuButton--basic kuiMenuButton--iconText"
+                          title="Edit"
+                          ng-disabled='permissions.canCreateCalendar===false'
+                          ng-click="editCalendarClick(calendar.calendar_id)">
+                          <span class="kuiMenuButton__icon kuiIcon fa-pencil"></span>
+                          <span>Edit</span>
+                        </button>
+                      </div>
+                      <div
+                        ng-class="permissions.canDeleteCalendar ? 'button-wrapper' : ['button-wrapper', 'disabled'] "
+                        ng-attr-tooltip="{{permissions.canDeleteCalendar ? undefined : createPermissionFailureMessage('canDeleteCalendar')}}">
+                        <button
+                          class="kuiMenuButton kuiMenuButton--danger kuiMenuButton--iconText"
+                          title="Edit"
+                          ng-disabled='permissions.canDeleteCalendar===false'
+                          ng-click="deleteCalendarClick(calendar.calendar_id)"
+                          href="" >
+                          <span class="kuiMenuButton__icon kuiIcon fa-trash"></span>
+                          <span>Delete</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </td>

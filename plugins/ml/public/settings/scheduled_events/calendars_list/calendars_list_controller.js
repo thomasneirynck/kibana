@@ -21,7 +21,7 @@ import 'ui/sortable_column';
 
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
-import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
+import { checkGetJobsPrivilege, permissionCheckProvider } from 'plugins/ml/privilege/check_privilege';
 
 import template from './calendars_list.html';
 
@@ -41,10 +41,20 @@ module.controller('MlCalendarsList',
   function (
     $scope,
     $filter,
+    $route,
+    $location,
     pagerFactory,
+    Private,
     ml,
     timefilter,
     mlConfirmModalService) {
+
+    const { checkPermission, createPermissionFailureMessage } = Private(permissionCheckProvider);
+    $scope.permissions = {
+      canCreateCalendar: checkPermission('canCreateCalendar'),
+      canDeleteCalendar: checkPermission('canDeleteCalendar'),
+    };
+    $scope.createPermissionFailureMessage = createPermissionFailureMessage;
 
     timefilter.disableTimeRangeSelector(); // remove time picker from top of page
     timefilter.disableAutoRefreshSelector(); // remove time picker from top of page
@@ -97,7 +107,15 @@ module.controller('MlCalendarsList',
       'pager.currentPage'
     ], applyTableSettings);
 
-    $scope.deleteCalendar = function (calendarId) {
+    $scope.newCalendarClick = function () {
+      $location.path('settings/calendars_list/new_calendar');
+    };
+
+    $scope.editCalendarClick = function (id) {
+      $location.path(`settings/calendars_list/edit_calendar/${id}`);
+    };
+
+    $scope.deleteCalendarClick = function (calendarId) {
       mlConfirm.open({
         message: `Confirm deletion of ${calendarId}?`,
         title: `Delete calendar`

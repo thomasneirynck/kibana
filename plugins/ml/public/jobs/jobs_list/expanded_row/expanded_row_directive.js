@@ -34,6 +34,7 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
       currentTab: '=',
       jobAudit: '=',
       closeJob: '=',
+      canCloseJob: '=',
       validateJob: '='
     },
     template,
@@ -98,7 +99,10 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
             }
           },
           closeJobDisabled() {
-            if ($scope.job.datafeed_config &&
+            if ($scope.canCloseJob === false) {
+              return true;
+            }
+            else if ($scope.job.datafeed_config &&
               $scope.job.datafeed_config.state === DATAFEED_STATE.STOPPED &&
               $scope.job.state === JOB_STATE.OPENED) {
               return false;
