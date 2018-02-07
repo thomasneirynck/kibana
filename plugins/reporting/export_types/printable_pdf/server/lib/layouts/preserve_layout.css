@@ -102,6 +102,11 @@ visualize visualize-legend .legend-value-title {
   font-size: 1.2em;
 }
 
+/* Ensure the min-height of the small breakpoint isn't used */
+.vis-editor visualization {
+  min-height: 0 !important;
+}
+
 /**
 *  Dashboard tweaks
 */
