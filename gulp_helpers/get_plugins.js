@@ -1,7 +1,7 @@
 const path = require('path');
 const yargs = require('yargs');
 const glob = require('glob');
-const { resolveKibanaPath } = require('@elastic/plugin-helpers');
+const { resolveKibanaPath } = require('@kbn/plugin-helpers');
 const { findPluginSpecs } = require(resolveKibanaPath('src/plugin_discovery'));
 
 /*

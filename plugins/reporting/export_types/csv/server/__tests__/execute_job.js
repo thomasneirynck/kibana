@@ -3,7 +3,7 @@ import Puid from 'puid';
 import sinon from 'sinon';
 import 'sinon-as-promised';
 import nodeCrypto from '@elastic/node-crypto';
-import { resolveKibanaPath } from '@elastic/plugin-helpers';
+import { resolveKibanaPath } from '@kbn/plugin-helpers';
 import { executeJobFactory } from '../execute_job';
 import { CancellationToken } from '../../../../server/lib/esqueue/helpers/cancellation_token';
 const { SavedObjectsClient } = require(resolveKibanaPath('src/server/saved_objects/client/saved_objects_client.js'));

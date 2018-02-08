@@ -1,4 +1,4 @@
-require('@elastic/plugin-helpers').babelRegister();
+require('@kbn/plugin-helpers').babelRegister();
 require('dotenv').config({ silent: true });
 
 const gulp = require('gulp');
@@ -8,7 +8,7 @@ const path = require('path');
 const del = require('del');
 const isparta = require('isparta');
 const runSequence = require('run-sequence');
-const pluginHelpers = require('@elastic/plugin-helpers');
+const pluginHelpers = require('@kbn/plugin-helpers');
 const argv = require('yargs').argv;
 
 const logger = require('./gulp_helpers/logger');

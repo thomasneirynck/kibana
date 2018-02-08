@@ -1,4 +1,4 @@
-import { resolveKibanaPath } from '@elastic/plugin-helpers';
+import { resolveKibanaPath } from '@kbn/plugin-helpers';
 import { SupertestWithoutAuthProvider } from './services';
 
 export default async function ({ readConfigFile }) {

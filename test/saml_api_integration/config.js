@@ -1,4 +1,4 @@
-import { resolveKibanaPath } from '@elastic/plugin-helpers/lib/index';
+import { resolveKibanaPath } from '@kbn/plugin-helpers/lib/index';
 
 export default async function ({ readConfigFile }) {
   // Read the Kibana API integration tests config file so that we can utilize its services.

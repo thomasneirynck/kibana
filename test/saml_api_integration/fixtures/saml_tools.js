@@ -6,7 +6,7 @@ import zlib from 'zlib';
 import { promisify } from 'bluebird';
 import { parseString } from 'xml2js';
 import { SignedXml } from 'xml-crypto';
-import { resolveKibanaPath } from '@elastic/plugin-helpers';
+import { resolveKibanaPath } from '@kbn/plugin-helpers';
 
 /**
  * @file Defines a set of tools that allow us to parse and generate various SAML XML messages.
@@ -36,7 +36,7 @@ export async function getSAMLResponse({ destination, inResponseTo, sessionIndex 
   const notOnOrAfter = (new Date(Date.now() + 3600 * 1000)).toISOString();
 
   const samlAssertionTemplateXML = `
-    <saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" Version="2.0" 
+    <saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" Version="2.0"
                     ID="_RPs1WfOkul8lZ72DtJtes0BKyPgaCamg" IssueInstant="${issueInstant}">
       <saml:Issuer>http://www.elastic.co</saml:Issuer>
       <saml:Subject>
@@ -80,7 +80,7 @@ export async function getSAMLResponse({ destination, inResponseTo, sessionIndex 
   return new Buffer(`
     <samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" ID="_bdf1d51245ed0f71aa23"
                   ${inResponseTo ? `InResponseTo="${inResponseTo}"` : ''} Version="2.0"
-                  IssueInstant="${issueInstant}" 
+                  IssueInstant="${issueInstant}"
                   Destination="${destination}">
       <saml:Issuer xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">http://www.elastic.co</saml:Issuer>
       <samlp:Status>
@@ -98,7 +98,7 @@ export async function getLogoutRequest({ destination, sessionIndex }) {
                          Consent="urn:oasis:names:tc:SAML:2.0:consent:unspecified"
                          xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">
       <Issuer xmlns="urn:oasis:names:tc:SAML:2.0:assertion">http://www.elastic.co</Issuer>
-      <NameID xmlns="urn:oasis:names:tc:SAML:2.0:assertion" 
+      <NameID xmlns="urn:oasis:names:tc:SAML:2.0:assertion"
               Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">a@b.c</NameID>
       <samlp:SessionIndex>${sessionIndex}</samlp:SessionIndex>
     </samlp:LogoutRequest>

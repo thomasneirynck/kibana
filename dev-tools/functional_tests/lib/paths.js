@@ -1,7 +1,7 @@
 import { resolve, relative } from 'path';
 import { platform as getPlatform } from 'os';
 
-import { resolveKibanaPath } from '@elastic/plugin-helpers';
+import { resolveKibanaPath } from '@kbn/plugin-helpers';
 
 // resolve() treat relative paths as relative to process.cwd(), so to
 // return a relative path we use relative()

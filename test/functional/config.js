@@ -1,7 +1,7 @@
 /* eslint-disable kibana-custom/no-default-export */
 
 import { resolve } from 'path';
-import { resolveKibanaPath } from '@elastic/plugin-helpers';
+import { resolveKibanaPath } from '@kbn/plugin-helpers';
 
 import {
   SecurityPageProvider,

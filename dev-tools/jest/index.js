@@ -1,6 +1,6 @@
 import jest from 'jest';
 import { resolve } from 'path';
-import { resolveKibanaPath } from '@elastic/plugin-helpers';
+import { resolveKibanaPath } from '@kbn/plugin-helpers';
 
 import { createJestConfig } from './create_jest_config';
 

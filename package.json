@@ -17,13 +17,13 @@
     "precommit": "gulp lint-staged"
   },
   "devDependencies": {
-    "@kbn/babel-preset": "link:../../kibana/packages/kbn-babel-preset",
     "@elastic/eslint-config-kibana": "link:../../kibana/packages/eslint-config-kibana",
     "@elastic/eslint-import-resolver-kibana": "2.0.0",
     "@elastic/eslint-plugin-kibana-custom": "link:../../kibana/packages/eslint-plugin-kibana-custom",
     "@elastic/eui": "0.0.18",
     "@elastic/numeral": "2.2.1",
-    "@elastic/plugin-helpers": "9.0.0",
+    "@kbn/babel-preset": "link:../../kibana/packages/kbn-babel-preset",
+    "@kbn/plugin-helpers": "link:../../kibana/packages/kbn-plugin-helpers",
     "@types/jest": "21.1.8",
     "ansicolors": "0.3.2",
     "aws-sdk": "2.2.33",

@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 import { fieldFormatMapFactory } from '../field_format_map';
-import { resolveKibanaPath } from '@elastic/plugin-helpers';
+import { resolveKibanaPath } from '@kbn/plugin-helpers';
 const { FieldFormat } = require(resolveKibanaPath('src/ui/field_formats/field_format.js'));
 const { FieldFormatsService } = require(resolveKibanaPath('src/ui/field_formats/field_formats_service.js'));
 const { createBytesFormat } = require(resolveKibanaPath('src/core_plugins/kibana/common/field_formats/types/bytes.js'));
