@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { getUrlParams } from '../../../store/urlParams';
-import { loadService, getService } from '../../../store/services';
+import { loadService, getService } from '../../../store/service';
 import getComponentWithService from './view';
 import { getDisplayName } from '../HOCUtils';
 

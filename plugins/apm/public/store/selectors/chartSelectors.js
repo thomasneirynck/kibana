@@ -1,14 +1,13 @@
 import d3 from 'd3';
 import { zipObject, difference, memoize } from 'lodash';
-import { createSelector } from 'reselect';
-import { colors } from '../../../../style/variables';
+import { colors } from '../../style/variables';
 import {
   asMillisWithDefault,
   asDecimal,
   tpmUnit
-} from '../../../../utils/formatters';
+} from '../../utils/formatters';
 
-const getEmptySerie = memoize(
+export const getEmptySerie = memoize(
   (start = Date.now() - 3600000, end = Date.now()) => {
     const dates = d3.time
       .scale()
@@ -27,29 +26,32 @@ const getEmptySerie = memoize(
   (...args) => args.join('_')
 );
 
-const getResponseTimeSeriesSelector = createSelector(
-  data => data.dates,
-  data => data.responseTimes.avg,
-  data => data.responseTimes.p95,
-  data => data.responseTimes.p99,
-  data => data.weightedAverage,
-  _getResponseTimeSeries
-);
-
-const getRpmSeriesSelector = createSelector(
-  chartData => chartData.dates,
-  chartData => chartData.tpmBuckets,
-  (chartData, props) => props.transactionType,
-  _getRpmSeries
-);
-
-export function getResponseTimeSeriesOrEmpty({ start, end, chartsData }) {
-  return chartsData.totalHits === 0
+export function getCharts(urlParams, charts) {
+  const { start, end, transactionType } = urlParams;
+  const chartsData = charts.data;
+  const noHits = chartsData.totalHits === 0;
+  const rpmSeries = noHits
     ? getEmptySerie(start, end)
-    : getResponseTimeSeriesSelector(chartsData);
+    : getRpmSeries(chartsData, transactionType);
+
+  const responseTimeSeries = noHits
+    ? getEmptySerie(start, end)
+    : getResponseTimeSeries(chartsData);
+
+  return {
+    ...charts,
+    data: {
+      noHits,
+      rpmSeries,
+      responseTimeSeries
+    }
+  };
 }
 
-function _getResponseTimeSeries(dates, avg, p95, p99, weightedAverage) {
+export function getResponseTimeSeries(chartsData) {
+  const { dates, weightedAverage } = chartsData;
+  const { avg, p95, p99 } = chartsData.responseTimes;
+
   return [
     {
       title: 'Avg.',
@@ -78,18 +80,8 @@ function _getResponseTimeSeries(dates, avg, p95, p99, weightedAverage) {
   ];
 }
 
-export function getRpmSeriesOrEmpty({
-  start,
-  end,
-  chartsData,
-  transactionType
-}) {
-  return chartsData.totalHits === 0
-    ? getEmptySerie(start, end)
-    : getRpmSeriesSelector(chartsData, { transactionType });
-}
-
-function _getRpmSeries(dates, tpmBuckets, transactionType) {
+export function getRpmSeries(chartsData, transactionType) {
+  const { dates, tpmBuckets } = chartsData;
   const getColor = getColorByKey(tpmBuckets.map(({ key }) => key));
 
   return tpmBuckets.map(bucket => {

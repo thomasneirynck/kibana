@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
+import { getKey } from '../../../store/apiHelpers';
 
 function maybeLoadService(props) {
   const { serviceName, start, end } = props.urlParams;
-  if (serviceName && start && end && !props.service.status) {
+  const key = getKey({ serviceName, start, end });
+
+  if (key && props.service.key !== key) {
     props.loadService({ serviceName, start, end });
   }
 }

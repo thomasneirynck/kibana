@@ -22,6 +22,7 @@ import {
   ERROR_EXC_MESSAGE,
   ERROR_EXC_HANDLED
 } from '../../../../common/constants';
+import { getKey } from '../../../store/apiHelpers';
 
 const Titles = styled.div`
   margin-bottom: ${px(units.plus)};
@@ -51,8 +52,8 @@ const Culprit = styled.div`
 
 function loadErrorGroup(props) {
   const { serviceName, errorGroupId, start, end } = props.urlParams;
-
-  if (serviceName && errorGroupId && start && end && !props.errorGroup.status) {
+  const key = getKey({ serviceName, errorGroupId, start, end });
+  if (key && props.errorGroup.key !== key) {
     props.loadErrorGroup({ serviceName, errorGroupId, start, end });
   }
 }

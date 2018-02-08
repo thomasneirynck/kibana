@@ -3,19 +3,13 @@ import ErrorGroupOverview from './view';
 import { getUrlParams } from '../../../store/urlParams';
 import {
   getErrorGroupList,
-  loadErrorGroupList,
-  getErrorGroupListArgs
-} from '../../../store/errorGroupLists';
-import { getKey } from '../../../store/apiHelpers';
+  loadErrorGroupList
+} from '../../../store/errorGroupList';
 
 function mapStateToProps(state = {}) {
-  const listArgs = getErrorGroupListArgs(state);
-  const key = getKey(listArgs);
-
   return {
-    listArgs,
     urlParams: getUrlParams(state),
-    errorGroupList: getErrorGroupList(state, key),
+    errorGroupList: getErrorGroupList(state),
     location: state.location
   };
 }

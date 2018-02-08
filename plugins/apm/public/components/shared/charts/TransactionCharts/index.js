@@ -49,16 +49,18 @@ export class Charts extends Component {
   };
 
   getResponseTimeFormatter = t => {
-    return this.props.noHits ? '- ms' : asMillis(t);
+    return this.props.charts.data.noHits ? '- ms' : asMillis(t);
   };
 
   getRequestPerMinuteFormatter = t => {
-    const unit = tpmUnit(this.props.urlParams.transactionType);
-    return this.props.noHits ? `- ${unit}` : `${asDecimal(t)} ${unit}`;
+    const { urlParams, charts } = this.props;
+    const unit = tpmUnit(urlParams.transactionType);
+    return charts.data.noHits ? `- ${unit}` : `${asDecimal(t)} ${unit}`;
   };
 
   render() {
-    const { noHits, responseTimeSeries, rpmSeries, urlParams } = this.props;
+    const { charts, urlParams } = this.props;
+    const { noHits, responseTimeSeries, rpmSeries } = charts.data;
 
     return (
       <ChartsWrapper>

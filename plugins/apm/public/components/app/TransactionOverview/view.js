@@ -4,17 +4,13 @@ import { PageHeader, SectionHeader } from '../../shared/UIComponents';
 import TabNavigation from '../../shared/TabNavigation';
 import Charts from './Charts';
 import List from './List';
+import { getKey } from '../../../store/apiHelpers';
 
 function loadTransactionList(props) {
   const { serviceName, start, end, transactionType } = props.urlParams;
+  const key = getKey({ serviceName, start, end, transactionType });
 
-  if (
-    serviceName &&
-    start &&
-    end &&
-    transactionType &&
-    !props.transactionList.status
-  ) {
+  if (key && props.transactionList.key !== key) {
     props.loadTransactionList({ serviceName, start, end, transactionType });
   }
 }

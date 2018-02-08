@@ -1,17 +1,17 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { get, uniq, first, zipObject, difference } from 'lodash';
+import { get, uniq, first, zipObject, difference, isEmpty } from 'lodash';
 import Span from './Span';
 import TimelineHeader from './TimelineHeader';
 import { SPAN_ID } from '../../../../../../common/constants';
-import { STATUS } from '../../../../../constants';
 import { colors } from '../../../../../style/variables';
 import { StickyContainer } from 'react-sticky';
 import Timeline from '../../../../shared/charts/Timeline';
 import EmptyMessage from '../../../../shared/EmptyMessage';
 import { getFeatureDocs } from '../../../../../utils/documentation';
 import { ExternalLink } from '../../../../../utils/url';
+import { getKey } from '../../../../../store/apiHelpers';
 
 const Container = styled.div`
   transition: 0.1s padding ease;
@@ -46,11 +46,7 @@ class Spans extends PureComponent {
 
   render() {
     const { spans, agentName, urlParams, location } = this.props;
-    if (spans.status !== STATUS.SUCCESS) {
-      return null;
-    }
-
-    if (spans.data.spans.length <= 0) {
+    if (isEmpty(spans.data.spans)) {
       return (
         <EmptyMessage
           heading="No spans available for this transaction."
@@ -123,7 +119,8 @@ class Spans extends PureComponent {
 
 function loadSpans(props) {
   const { serviceName, start, end, transactionId } = props.urlParams;
-  if (serviceName && start && end && transactionId && !props.spansNext.status) {
+  const key = getKey({ serviceName, start, end, transactionId });
+  if (key && props.spans.key !== key) {
     props.loadSpans({ serviceName, start, end, transactionId });
   }
 }

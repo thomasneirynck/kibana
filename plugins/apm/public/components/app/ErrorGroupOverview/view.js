@@ -4,12 +4,15 @@ import withErrorHandler from '../../shared/withErrorHandler';
 import { PageHeader } from '../../shared/UIComponents';
 import TabNavigation from '../../shared/TabNavigation';
 import List from './List';
+import { getKey } from '../../../store/apiHelpers';
 
 function maybeLoadList(props) {
-  const { serviceName, start, end } = props.listArgs;
+  const { serviceName, start, end } = props.urlParams;
+  const keyArgs = { serviceName, start, end };
+  const key = getKey(keyArgs);
 
-  if (serviceName && start && end && !props.errorGroupList.status) {
-    props.loadErrorGroupList(props.listArgs);
+  if (key && props.errorGroupList.key !== key) {
+    props.loadErrorGroupList(keyArgs);
   }
 }
 

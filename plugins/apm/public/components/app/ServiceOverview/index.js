@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import ServiceOverview from './view';
-import { loadServiceList, getServiceList } from '../../../store/serviceLists';
+import { loadServiceList, getServiceList } from '../../../store/serviceList';
 import { getUrlParams } from '../../../store/urlParams';
 import sorting, { changeServiceSorting } from '../../../store/sorting';
 

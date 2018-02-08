@@ -3,37 +3,50 @@ import reducer from '../rootReducer';
 describe('root reducer', () => {
   it('should return the initial state', () => {
     expect(reducer(undefined, {})).toEqual({
-      serviceLists: {},
-      services: {},
-      charts: {},
-      errorDistributions: {},
-      errorGroupLists: {},
-      errorGroups: {},
-      license: {
+      detailsCharts: {
         data: {
-          isActive: false
+          dates: [],
+          responseTimes: {},
+          totalHits: 0,
+          tpmBuckets: [],
+          weightedAverage: null
         }
       },
-      location: {
-        pathname: '',
-        search: '',
-        hash: ''
+      overviewCharts: {
+        data: {
+          dates: [],
+          responseTimes: {},
+          totalHits: 0,
+          tpmBuckets: [],
+          weightedAverage: null
+        }
       },
+      errorDistribution: { data: { buckets: [], totalHits: 0 } },
+      errorGroup: { data: {} },
+      errorGroupList: { data: [] },
+      license: { data: { isActive: false } },
+      location: { hash: '', pathname: '', search: '' },
+      service: { data: { types: [] } },
+      serviceList: { data: [] },
       sorting: {
-        transaction: {
-          key: 'impact',
-          descending: true
-        },
-        service: {
-          key: 'serviceName',
-          descending: false
-        }
+        service: { descending: false, key: 'serviceName' },
+        transaction: { descending: true, key: 'impact' }
       },
-      spans: {},
-      transactionDistributions: {},
-      transactionLists: {},
-      transactions: {},
+      spans: { data: {} },
+      transaction: { data: {} },
+      transactionDistribution: { data: { buckets: [], totalHits: 0 } },
+      transactionList: { data: [] },
       urlParams: {}
     });
+  });
+
+  it('should return incoming data as state', () => {
+    expect(
+      reducer({ errorGroupList: { data: ['a', 'b'] } }, {}).errorGroupList
+    ).toMatchSnapshot();
+  });
+
+  it('should return default data as state', () => {
+    expect(reducer(undefined, {}).errorGroupList).toMatchSnapshot();
   });
 });

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Histogram from '../../../shared/charts/Histogram';
 import EmptyMessage from '../../../shared/EmptyMessage';
 import { GraphHeader } from '../../../shared/UIComponents';
+import { getKey } from '../../../../store/apiHelpers';
 
 export function getFormattedBuckets(buckets, bucketSize) {
   if (!buckets) {
@@ -17,27 +18,24 @@ export function getFormattedBuckets(buckets, bucketSize) {
   });
 }
 
-function loadErrorDistribution(props) {
+function maybeLoadErrorDistribution(props) {
   const { serviceName, start, end, errorGroupId } = props.urlParams;
+  const keyArgs = { serviceName, start, end, errorGroupId };
+  const key = getKey(keyArgs);
 
-  if (
-    serviceName &&
-    start &&
-    end &&
-    errorGroupId &&
-    !props.distribution.status
-  ) {
-    props.loadErrorDistribution({ serviceName, start, end, errorGroupId });
+  //TODO what about load status? `props.distribution.status`
+  if (key && props.distribution.key !== key) {
+    props.loadErrorDistribution(keyArgs);
   }
 }
 
 class Distribution extends Component {
   componentDidMount() {
-    loadErrorDistribution(this.props);
+    maybeLoadErrorDistribution(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
-    loadErrorDistribution(nextProps);
+    maybeLoadErrorDistribution(nextProps);
   }
 
   render() {

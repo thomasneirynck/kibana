@@ -1,3 +1,4 @@
+import { createStore } from 'redux';
 import { STATUS } from '../../constants';
 import {
   createActionTypes,
@@ -7,6 +8,43 @@ import {
 } from '../apiHelpers';
 
 describe('apiHelpers', () => {
+  describe('Reducers should not be prone to race conditions', () => {
+    it('should return the response for the action that was initiated (started loading) last', () => {
+      const actionTypes = createActionTypes('MY_ACTION');
+      const [ACTION_LOADING, ACTION_SUCCESS] = actionTypes;
+      const reducer = createReducer(actionTypes, {});
+      const store = createStore(reducer);
+
+      store.dispatch({
+        key: 'first',
+        type: ACTION_LOADING
+      });
+
+      store.dispatch({
+        key: 'second',
+        type: ACTION_LOADING
+      });
+
+      store.dispatch({
+        key: 'second',
+        response: 'response from second',
+        type: ACTION_SUCCESS
+      });
+
+      store.dispatch({
+        key: 'first',
+        response: 'response from first',
+        type: ACTION_SUCCESS
+      });
+
+      expect(store.getState()).toEqual({
+        data: 'response from second',
+        key: 'second',
+        status: 'SUCCESS'
+      });
+    });
+  });
+
   describe('createActionTypes', () => {
     it('should return 3 action types', () => {
       expect(createActionTypes('MY_ACTION')).toEqual([
@@ -25,22 +63,36 @@ describe('apiHelpers', () => {
       MY_ACTION_TYPE_FAILURE
     ] = actionTypes;
 
-    const initialState = { foo: 'bar' };
+    const initialData = { foo: 'intitial data' };
 
-    it('should return loading state', () => {
+    it('should return loading state with initial data', () => {
       expect(
-        createReducer(actionTypes, initialState)(undefined, {
+        createReducer(actionTypes, initialData)(undefined, {
           type: MY_ACTION_TYPE_LOADING
         })
       ).toEqual({
-        foo: 'bar',
+        status: STATUS.LOADING,
+        data: { foo: 'intitial data' }
+      });
+    });
+
+    it('should return loading state with store data', () => {
+      expect(
+        createReducer(actionTypes, initialData)(
+          { data: 'previous data' },
+          {
+            type: MY_ACTION_TYPE_LOADING
+          }
+        )
+      ).toEqual({
+        data: 'previous data',
         status: STATUS.LOADING
       });
     });
 
     it('should return success state', () => {
       expect(
-        createReducer(actionTypes, initialState)(undefined, {
+        createReducer(actionTypes, initialData)(undefined, {
           response: { user: 1337 },
           type: MY_ACTION_TYPE_SUCCESS
         })
@@ -54,14 +106,26 @@ describe('apiHelpers', () => {
       console.error = jest.fn();
 
       expect(
-        createReducer(actionTypes, initialState)(undefined, {
-          error: { msg: 'Something failed :(' },
+        createReducer(actionTypes, initialData)(undefined, {
+          errorResponse: { msg: 'Something failed :(' },
           type: MY_ACTION_TYPE_FAILURE
         })
       ).toEqual({
         error: { msg: 'Something failed :(' },
-        foo: 'bar',
+        data: { foo: 'intitial data' },
         status: STATUS.FAILURE
+      });
+    });
+
+    it('should return default state', () => {
+      console.error = jest.fn();
+
+      expect(
+        createReducer(actionTypes, initialData)(undefined, {
+          type: 'NON_MATCHING_TYPE'
+        })
+      ).toEqual({
+        data: { foo: 'intitial data' }
       });
     });
   });
@@ -78,30 +142,30 @@ describe('apiHelpers', () => {
       let key;
       let dispatchMock;
       let apiMock;
-      let args;
+      let keyArgs;
       beforeEach(async () => {
         dispatchMock = jest.fn();
         apiMock = jest.fn(() => Promise.resolve('foo'));
-        args = { a: 'aa', b: 'bb' };
-        key = getKey(args);
-        await createAction(actionTypes, apiMock)(args)(dispatchMock);
+        keyArgs = { a: 'aa', b: 'bb' };
+        key = getKey(keyArgs);
+        await createAction(actionTypes, apiMock)(keyArgs)(dispatchMock);
       });
 
       it('should dispatch loading action', () => {
         expect(dispatchMock).toHaveBeenCalledWith({
-          args,
+          keyArgs,
           key,
           type: MY_ACTION_TYPE_LOADING
         });
       });
 
-      it('should call apiMock with args', () => {
-        expect(apiMock).toHaveBeenCalledWith(args);
+      it('should call apiMock with keyArgs', () => {
+        expect(apiMock).toHaveBeenCalledWith(keyArgs);
       });
 
       it('should dispatch success action', () => {
         expect(dispatchMock).toHaveBeenCalledWith({
-          args,
+          keyArgs,
           key,
           response: 'foo',
           type: MY_ACTION_TYPE_SUCCESS
@@ -115,14 +179,14 @@ describe('apiHelpers', () => {
         const apiMock = jest.fn(() =>
           Promise.reject(new Error('an error occured :('))
         );
-        const args = { a: 'aa', b: 'bb' };
-        const key = getKey(args);
-        await createAction(actionTypes, apiMock)(args)(dispatchMock);
+        const keyArgs = { a: 'aa', b: 'bb' };
+        const key = getKey(keyArgs);
+        await createAction(actionTypes, apiMock)(keyArgs)(dispatchMock);
 
         expect(dispatchMock).toHaveBeenCalledWith({
-          args,
+          keyArgs,
           key,
-          error: expect.any(Error),
+          errorResponse: expect.any(Error),
           type: MY_ACTION_TYPE_FAILURE
         });
       });
@@ -132,12 +196,12 @@ describe('apiHelpers', () => {
       it('should dispatch success action', async () => {
         const dispatchMock = jest.fn();
         const apiMock = jest.fn(() => Promise.resolve('foobar'));
-        const args = undefined;
-        const key = getKey(args);
-        await createAction(actionTypes, apiMock)(args)(dispatchMock);
+        const keyArgs = undefined;
+        const key = getKey(keyArgs);
+        await createAction(actionTypes, apiMock)(keyArgs)(dispatchMock);
 
         expect(dispatchMock).toHaveBeenCalledWith({
-          args: {},
+          keyArgs: {},
           key,
           response: 'foobar',
           type: MY_ACTION_TYPE_SUCCESS

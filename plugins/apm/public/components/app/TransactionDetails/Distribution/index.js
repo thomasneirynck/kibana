@@ -4,7 +4,7 @@ import { getUrlParams } from '../../../../store/urlParams';
 import {
   loadTransactionDistribution,
   getTransactionDistribution
-} from '../../../../store/transactionDistributions';
+} from '../../../../store/transactionDistribution';
 
 function mapStateToProps(state = {}) {
   return {

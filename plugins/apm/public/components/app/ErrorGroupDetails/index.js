@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import ErrorGroupDetails from './view';
 import { getUrlParams } from '../../../store/urlParams';
-import { getErrorGroup, loadErrorGroup } from '../../../store/errorGroups';
+import { getErrorGroup, loadErrorGroup } from '../../../store/errorGroup';
 
 function mapStateToProps(state = {}) {
   return {

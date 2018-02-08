@@ -18,7 +18,6 @@ class StaticPlot extends PureComponent {
       case 'line':
         return (
           <LineSeries
-            animation
             key={serie.title}
             xType="time"
             curve={'curveMonotoneX'}
@@ -29,7 +28,6 @@ class StaticPlot extends PureComponent {
       case 'area':
         return (
           <AreaSeries
-            animation
             key={serie.title}
             xType="time"
             curve={'curveMonotoneX'}

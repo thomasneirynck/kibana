@@ -5,10 +5,12 @@ import React from 'react';
 import { toJson } from '../../../../../utils/testHelpers';
 import { InnerCustomPlot } from '../index';
 import responseWithData from './responseWithData.json';
-import responseWithoutData from './responseWithoutData.json';
-import { getResponseTimeSeriesOrEmpty } from '../../TransactionCharts/selectors';
 import VoronoiPlot from '../VoronoiPlot';
 import InteractivePlot from '../InteractivePlot';
+import {
+  getResponseTimeSeries,
+  getEmptySerie
+} from '../../../../../store/selectors/chartSelectors';
 
 describe('when response has data', () => {
   let wrapper;
@@ -17,9 +19,7 @@ describe('when response has data', () => {
   let onSelectionEnd;
 
   beforeEach(() => {
-    const series = getResponseTimeSeriesOrEmpty({
-      chartsData: responseWithData
-    });
+    const series = getResponseTimeSeries(responseWithData);
 
     onHover = jest.fn();
     onMouseLeave = jest.fn();
@@ -43,7 +43,7 @@ describe('when response has data', () => {
 
   describe('Initially', () => {
     it('should have 3 enabled series', () => {
-      expect(wrapper.find('AreaSeries Animation').length).toBe(3);
+      expect(wrapper.find('AreaSeries').length).toBe(3);
     });
 
     it('should have 3 legends ', () => {
@@ -90,7 +90,7 @@ describe('when response has data', () => {
       });
 
       it('should have 2 enabled series', () => {
-        expect(wrapper.find('AreaSeries Animation').length).toBe(2);
+        expect(wrapper.find('AreaSeries').length).toBe(2);
       });
 
       it('should add disabled prop to Legends', () => {
@@ -279,11 +279,7 @@ describe('when response has no data', () => {
   const onSelectionEnd = jest.fn();
   let wrapper;
   beforeEach(() => {
-    const series = getResponseTimeSeriesOrEmpty({
-      start: 1451606400000,
-      end: 1451610000000,
-      chartsData: responseWithoutData
-    });
+    const series = getEmptySerie(1451606400000, 1451610000000);
 
     wrapper = mount(
       <InnerCustomPlot

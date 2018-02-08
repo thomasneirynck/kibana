@@ -1,6 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import { TransactionOverview } from '../view';
+import { getKey } from '../../../../store/apiHelpers';
 jest.mock('../../../../utils/timepicker', () => {});
 
 const setup = () => {
@@ -59,6 +60,12 @@ describe('TransactionOverview', () => {
         transactionType: 'myTransactionType'
       },
       transactionList: {
+        key: getKey({
+          serviceName: 'myServiceName',
+          start: 'myStart',
+          end: 'myEnd',
+          transactionType: 'myTransactionType'
+        }),
         data: [],
         status: 'LOADING'
       }

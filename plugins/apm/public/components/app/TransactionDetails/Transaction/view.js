@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { STATUS } from '../../../../constants';
 import {
   unit,
   units,
@@ -26,16 +25,13 @@ import {
 import { fromQuery, toQuery, history } from '../../../../utils/url';
 import { asTime } from '../../../../utils/formatters';
 import EmptyMessage from '../../../shared/EmptyMessage';
+import { getKey } from '../../../../store/apiHelpers';
 
 function loadTransaction(props) {
   const { serviceName, start, end, transactionId } = props.urlParams;
-  if (
-    serviceName &&
-    start &&
-    end &&
-    transactionId &&
-    !props.transactionNext.status
-  ) {
+  const key = getKey({ serviceName, start, end, transactionId });
+
+  if (key && props.transaction.key !== key) {
     props.loadTransaction({ serviceName, start, end, transactionId });
   }
 }
@@ -97,25 +93,18 @@ class Transaction extends Component {
     const { transaction, location } = this.props;
     const { transactionId } = this.props.urlParams;
 
-    if (transaction.status !== STATUS.SUCCESS) {
-      return null;
-    }
-
     if (isEmpty(transaction.data)) {
       return <EmptyMessage heading="No transaction sample." />;
     }
 
     const timestamp = get(transaction, 'data.@timestamp');
     const url = get(transaction.data, 'context.request.url.full', 'N/A');
-
+    const duration = get(transaction.data, 'transaction.duration.us');
     const stickyProperties = [
       {
         label: 'Duration',
         fieldName: 'transaction.duration.us',
-        val: (() => {
-          const duration = get(transaction.data, 'transaction.duration.us');
-          return duration ? asTime(duration) : 'N/A';
-        })()
+        val: duration ? asTime(duration) : 'N/A'
       },
       {
         label: 'Result',

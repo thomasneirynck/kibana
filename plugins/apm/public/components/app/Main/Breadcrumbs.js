@@ -2,11 +2,7 @@ import React from 'react';
 import { withBreadcrumbs } from 'react-router-breadcrumbs-hoc';
 import { toQuery } from '../../../utils/url';
 import { routes } from './routeConfig';
-import { flatten } from 'lodash';
-
-function capitalize(str = '') {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
+import { flatten, capitalize } from 'lodash';
 
 class Breadcrumbs extends React.Component {
   componentWillUpdate() {}

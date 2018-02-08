@@ -7,6 +7,7 @@ import { GraphHeader } from '../../../shared/UIComponents';
 import EmptyMessage from '../../../shared/EmptyMessage';
 import { getTimeFormatter, timeUnit } from '../../../../utils/formatters';
 import SamplingTooltip from './SamplingTooltip';
+import { getKey } from '../../../../store/apiHelpers';
 
 export function getFormattedBuckets(buckets, bucketSize) {
   if (!buckets) {
@@ -27,14 +28,9 @@ export function getFormattedBuckets(buckets, bucketSize) {
 
 function loadTransactionDistribution(props) {
   const { serviceName, start, end, transactionName } = props.urlParams;
+  const key = getKey({ serviceName, start, end, transactionName });
 
-  if (
-    serviceName &&
-    start &&
-    end &&
-    transactionName &&
-    !props.distribution.status
-  ) {
+  if (key && props.distribution.key !== key) {
     props.loadTransactionDistribution({
       serviceName,
       start,

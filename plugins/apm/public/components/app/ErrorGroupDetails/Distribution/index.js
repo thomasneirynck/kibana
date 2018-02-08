@@ -4,7 +4,7 @@ import { getUrlParams } from '../../../../store/urlParams';
 import {
   loadErrorDistribution,
   getErrorDistribution
-} from '../../../../store/errorDistributions';
+} from '../../../../store/errorDistribution';
 
 function mapStateToProps(state = {}) {
   return {

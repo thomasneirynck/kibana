@@ -1,43 +1,28 @@
 import { connect } from 'react-redux';
-import {
-  getResponseTimeSeriesOrEmpty,
-  getRpmSeriesOrEmpty
-} from '../../../shared/charts/TransactionCharts/selectors';
 import Charts from '../../../shared/charts/TransactionCharts';
 import { getUrlParams } from '../../../../store/urlParams';
-import { getCharts, loadCharts } from '../../../../store/charts';
+import {
+  getOverviewCharts,
+  loadOverviewCharts
+} from '../../../../store/overviewCharts';
+import { getKey } from '../../../../store/apiHelpers';
 
 function mapStateToProps(state = {}) {
-  const urlParams = getUrlParams(state);
-  const { serviceName, start, end, transactionType } = urlParams;
-  const charts = getCharts(state, { serviceName, start, end, transactionType });
-
   return {
-    urlParams,
-    status: charts.status,
-    responseTimeSeries: getResponseTimeSeriesOrEmpty({
-      start,
-      end,
-      chartsData: charts.data
-    }),
-    rpmSeries: getRpmSeriesOrEmpty({
-      start,
-      end,
-      chartsData: charts.data,
-      transactionType
-    }),
-    noHits: charts.data.totalHits === 0
+    urlParams: getUrlParams(state),
+    charts: getOverviewCharts(state)
   };
 }
 
 const mapDispatchToProps = dispatch => ({
   loadCharts: props => {
     const { serviceName, start, end, transactionType } = props.urlParams;
-    const shouldLoad =
-      serviceName && start && end && transactionType && !props.status;
+    const key = getKey({ serviceName, start, end, transactionType });
 
-    if (shouldLoad) {
-      dispatch(loadCharts({ serviceName, start, end, transactionType }));
+    if (key && props.charts.key !== key) {
+      dispatch(
+        loadOverviewCharts({ serviceName, start, end, transactionType })
+      );
     }
   }
 });

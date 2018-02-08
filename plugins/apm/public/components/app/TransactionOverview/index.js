@@ -5,7 +5,7 @@ import sorting, { changeTransactionSorting } from '../../../store/sorting';
 import {
   getTransactionList,
   loadTransactionList
-} from '../../../store/transactionLists';
+} from '../../../store/transactionList';
 
 function mapStateToProps(state = {}) {
   return {

@@ -2,8 +2,8 @@ import _ from 'lodash';
 import { createSelector } from 'reselect';
 import { LOCATION_UPDATE } from './location';
 import { toQuery, legacyDecodeURIComponent } from '../utils/url';
-import { getDefaultTransactionId } from './transactionDistributions';
-import { getDefaultTransactionType } from './services';
+import { getDefaultTransactionId } from './transactionDistribution';
+import { getDefaultTransactionType } from './service';
 
 // ACTION TYPES
 export const TIMEPICKER_UPDATE = 'TIMEPICKER_UPDATE';

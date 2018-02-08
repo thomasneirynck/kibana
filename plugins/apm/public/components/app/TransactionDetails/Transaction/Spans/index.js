@@ -1,12 +1,11 @@
 import { connect } from 'react-redux';
 import Spans from './view';
 import { getUrlParams } from '../../../../../store/urlParams';
-import { loadSpans, getSpans, getSpansNext } from '../../../../../store/spans';
+import { loadSpans, getSpans } from '../../../../../store/spans';
 
 function mapStateToProps(state = {}) {
   return {
     urlParams: getUrlParams(state),
-    spansNext: getSpansNext(state),
     spans: getSpans(state),
     location: state.location
   };

@@ -8,10 +8,13 @@ import { RelativeLink, history } from '../../../utils/url';
 import { KuiButton } from 'ui_framework/components';
 import List from './List';
 import { PageHeader } from '../../shared/UIComponents';
+import { getKey } from '../../../store/apiHelpers';
 
 function fetchData(props) {
   const { start, end } = props.urlParams;
-  if (start && end && !props.serviceList.status) {
+  const key = getKey({ start, end });
+
+  if (key && props.serviceList.key !== key) {
     props.loadServiceList({ start, end });
   }
 }

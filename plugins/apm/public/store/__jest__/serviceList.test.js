@@ -2,7 +2,7 @@ import {
   loadServiceList,
   SERVICE_LIST_LOADING,
   SERVICE_LIST_SUCCESS
-} from '../serviceLists';
+} from '../serviceList';
 import { getKey } from '../apiHelpers';
 import fetchMock from 'fetch-mock';
 import response from './services-response.json';
@@ -32,7 +32,7 @@ describe('loadServiceList', () => {
 
   it('should dispatch SERVICE_LIST_LOADING', () => {
     expect(dispatch).toHaveBeenCalledWith({
-      args: { start: 'myStart', end: 'myEnd' },
+      keyArgs: { start: 'myStart', end: 'myEnd' },
       type: SERVICE_LIST_LOADING,
       key
     });
@@ -40,7 +40,7 @@ describe('loadServiceList', () => {
 
   it('should dispatch SERVICE_LIST_SUCCESS with http response', () => {
     expect(dispatch).toHaveBeenCalledWith({
-      args: { start: 'myStart', end: 'myEnd' },
+      keyArgs: { start: 'myStart', end: 'myEnd' },
       response,
       type: SERVICE_LIST_SUCCESS,
       key
