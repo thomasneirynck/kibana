@@ -348,7 +348,7 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
   ml.calendars = ca({
     urls: [
       {
-        fmt: '_xpack/ml/calendars/<%=calendarId%>',
+        fmt: '/_xpack/ml/calendars/<%=calendarId%>',
         req: {
           calendarId: {
             type: 'string'
@@ -356,7 +356,7 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
         }
       },
       {
-        fmt: '_xpack/ml/calendars/',
+        fmt: '/_xpack/ml/calendars/',
       }
     ],
     method: 'GET'
@@ -364,7 +364,7 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
 
   ml.deleteCalendar = ca({
     url: {
-      fmt: '_xpack/ml/calendars/<%=calendarId%>',
+      fmt: '/_xpack/ml/calendars/<%=calendarId%>',
       req: {
         calendarId: {
           type: 'string'
@@ -376,7 +376,7 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
 
   ml.addCalendar = ca({
     url: {
-      fmt: '_xpack/ml/calendars/<%=calendarId%>',
+      fmt: '/_xpack/ml/calendars/<%=calendarId%>',
       req: {
         calendarId: {
           type: 'string'
@@ -389,7 +389,7 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
 
   ml.addJobToCalendar = ca({
     url: {
-      fmt: '_xpack/ml/calendars/<%=calendarId%>/jobs/<%=jobId%>',
+      fmt: '/_xpack/ml/calendars/<%=calendarId%>/jobs/<%=jobId%>',
       req: {
         calendarId: {
           type: 'string'
@@ -404,7 +404,7 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
 
   ml.removeJobFromCalendar = ca({
     url: {
-      fmt: '_xpack/ml/calendars/<%=calendarId%>/jobs/<%=jobId%>',
+      fmt: '/_xpack/ml/calendars/<%=calendarId%>/jobs/<%=jobId%>',
       req: {
         calendarId: {
           type: 'string'
@@ -420,7 +420,7 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
   ml.events = ca({
     urls: [
       {
-        fmt: '_xpack/ml/calendars/<%=calendarId%>/events',
+        fmt: '/_xpack/ml/calendars/<%=calendarId%>/events',
         req: {
           calendarId: {
             type: 'string'
@@ -428,7 +428,7 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
         }
       },
       {
-        fmt: '_xpack/ml/calendars/<%=calendarId%>/events?&job_id=<%=jobId%>',
+        fmt: '/_xpack/ml/calendars/<%=calendarId%>/events?&job_id=<%=jobId%>',
         req: {
           calendarId: {
             type: 'string'
@@ -439,7 +439,7 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
         }
       },
       {
-        fmt: '_xpack/ml/calendars/<%=calendarId%>/events?&after=<%=start%>&before=<%=end%>',
+        fmt: '/_xpack/ml/calendars/<%=calendarId%>/events?&after=<%=start%>&before=<%=end%>',
         req: {
           calendarId: {
             type: 'string'
@@ -453,7 +453,7 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
         }
       },
       {
-        fmt: '_xpack/ml/calendars/<%=calendarId%>/events?&after=<%=start%>&before=<%=end%>&job_id=<%=jobId%>',
+        fmt: '/_xpack/ml/calendars/<%=calendarId%>/events?&after=<%=start%>&before=<%=end%>&job_id=<%=jobId%>',
         req: {
           calendarId: {
             type: 'string'
@@ -475,7 +475,7 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
 
   ml.addEvent = ca({
     url: {
-      fmt: '_xpack/ml/calendars/<%=calendarId%>/events',
+      fmt: '/_xpack/ml/calendars/<%=calendarId%>/events',
       req: {
         calendarId: {
           type: 'string'
@@ -488,7 +488,7 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
 
   ml.deleteEvent = ca({
     url: {
-      fmt: '_xpack/ml/calendars/<%=calendarId%>/events/<%=eventId%>',
+      fmt: '/_xpack/ml/calendars/<%=calendarId%>/events/<%=eventId%>',
       req: {
         calendarId: {
           type: 'string'
