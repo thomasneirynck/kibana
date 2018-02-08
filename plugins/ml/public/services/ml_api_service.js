@@ -220,17 +220,13 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
-  this.getIndices = function () {
-    return http.request({
-      url: `${basePath}/indices`,
-      method: 'GET'
-    });
-  };
-
   this.getFieldCaps = function (obj) {
     const data = {};
     if(obj.index !== undefined) {
       data.index = obj.index;
+    }
+    if(obj.fields !== undefined) {
+      data.fields = obj.fields;
     }
     return http.request({
       url: `${basePath}/field_caps`,

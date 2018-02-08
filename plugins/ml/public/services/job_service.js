@@ -926,53 +926,6 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     return deferred.promise;
   };
 
-  // call the _mappings endpoint for a given ES server
-  // returns an object of indices and their types
-  this.getESMappings = function () {
-    const deferred = $q.defer();
-    let mappings = {};
-
-    // load mappings and aliases
-    ml.getIndices()
-      .then((resp) => {
-        _.each(resp, (index, indexName) => {
-          // switch the 'mappings' for 'types' for consistency.
-          if (index.mappings !== index.types) {
-            Object.defineProperty(index, 'types',
-              Object.getOwnPropertyDescriptor(index, 'mappings'));
-            delete index.mappings;
-          }
-          // if an index has any aliases, create a copy of the index and give it the name
-          // of the alias
-          if (index.aliases && Object.keys(index.aliases).length) {
-            _.each(index.aliases, (alias, aliasName) => {
-              const indexCopy = angular.copy(resp[indexName]);
-              indexCopy.isAlias = true;
-              indexCopy.aliases = {};
-              resp[aliasName] = indexCopy;
-            });
-          }
-        });
-        mappings = resp;
-
-        // remove the * mapping type
-        _.each(mappings, (m) => {
-          _.each(m.types, (t, i) => {
-            if(i === '*') {
-              delete m.types[i];
-            }
-          });
-        });
-
-        deferred.resolve(mappings);
-      })
-      .catch((resp) => {
-        deferred.reject(resp);
-      });
-
-    return deferred.promise;
-  };
-
   this.validateDetector = function (detector) {
     const deferred = $q.defer();
     if (detector) {

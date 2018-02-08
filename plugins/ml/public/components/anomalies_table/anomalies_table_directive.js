@@ -192,37 +192,46 @@ module.directive('mlAnomaliesTable', function (
         const job = mlJobService.getJob(record.job_id);
         const categorizationFieldName = job.analysis_config.categorization_field_name;
         const datafeedIndices = job.datafeed_config.indices;
-        const datafeedTypes = job.datafeed_config.types;
-
-        // Find the mapping type of the categorization field i.e. text (preferred) or keyword.
+        // Find the type of the categorization field i.e. text (preferred) or keyword.
         // Uses the first matching field found in the list of indices in the datafeed_config.
-        let categorizationFieldType = undefined;
-        let index = undefined;
-        const typeFound = datafeedIndices.some((datafeedIndex) => {
-          categorizationFieldType = mlESMappingService.getFieldTypeFromMapping(
-            datafeedIndex,
-            categorizationFieldName,
-            datafeedTypes);
-          if (categorizationFieldType !== undefined) {
-            index = datafeedIndex;
-          }
-          return (categorizationFieldType !== undefined);
-        });
+        // attempt to load the field type using each index. we have to do it this way as _field_caps
+        // doesn't specify which index a field came from unless there is a clash.
+        let i = 0;
+        findFieldType(datafeedIndices[i]);
 
-        // Find the ID of the index pattern with a title attribute which matches the
-        // index configured in the datafeed. If a Kibana index pattern has not been created
-        // for this index, then the user will see a warning message on the Discover tab advising
-        // them that no matching index pattern has been configured.
-        const indexPatterns = $route.current.locals.indexPatterns;
-        let indexPatternId = index;
-        for (let i = 0; i < indexPatterns.length; i++) {
-          if (indexPatterns[i].get('title') === index) {
-            indexPatternId = indexPatterns[i].id;
-            break;
-          }
+        function findFieldType(index) {
+          mlESMappingService.getFieldTypeFromMapping(index, categorizationFieldName)
+            .then((resp) => {
+              if (resp !== '') {
+                createAndOpenUrl(index, resp);
+              } else {
+                i++;
+                if (i < datafeedIndices.length) {
+                  findFieldType(datafeedIndices[i]);
+                } else {
+                  error();
+                }
+              }
+            })
+            .catch(() => {
+              error();
+            });
         }
 
-        if (typeFound === true) {
+        function createAndOpenUrl(index, categorizationFieldType) {
+          // Find the ID of the index pattern with a title attribute which matches the
+          // index configured in the datafeed. If a Kibana index pattern has not been created
+          // for this index, then the user will see a warning message on the Discover tab advising
+          // them that no matching index pattern has been configured.
+          const indexPatterns = $route.current.locals.indexPatterns;
+          let indexPatternId = index;
+          for (let j = 0; j < indexPatterns.length; j++) {
+            if (indexPatterns[j].get('title') === index) {
+              indexPatternId = indexPatterns[j].id;
+              break;
+            }
+          }
+
           // Get the definition of the category and use the terms or regex to view the
           // matching events in the Kibana Discover tab depending on whether the
           // categorization field is of mapping type text (preferred) or keyword.
@@ -284,11 +293,14 @@ module.directive('mlAnomaliesTable', function (
             }).catch((resp) => {
               console.log('viewExamples(): error loading categoryDefinition:', resp);
             });
-        } else {
+
+        }
+
+        function error() {
           console.log(`viewExamples(): error finding type of field ${categorizationFieldName} in indices:`,
             datafeedIndices);
           notify.error(`Unable to view examples of documents with mlcategory ${categoryId} ` +
-            `as no mapping could be found for the categorization field ${categorizationFieldName}`,
+          `as no mapping could be found for the categorization field ${categorizationFieldName}`,
           { lifetime: 30000 });
         }
       };
@@ -458,11 +470,6 @@ module.directive('mlAnomaliesTable', function (
 
         const showExamples = _.some(summaryRecords, { 'entityName': 'mlcategory' });
         if (showExamples) {
-          // Populate the mappings in the mappings service.
-          if (_.keys(mlESMappingService.indices).length === 0) {
-            mlESMappingService.getMappings();
-          }
-
           // Obtain the list of categoryIds by jobId for which we need to obtain the examples.
           // Note category examples will not be displayed if mlcategory is used just an
           // influencer or as a partition field in a config with other by/over fields.

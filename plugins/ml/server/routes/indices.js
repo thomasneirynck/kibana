@@ -19,27 +19,17 @@ import { wrapError } from '../errors';
 export function indicesRoutes(server, commonRouteConfig) {
 
   server.route({
-    method: 'GET',
-    path: '/api/ml/indices',
-    handler(request, reply) {
-      const callWithRequest = callWithRequestFactory(server, request);
-      const params = { index: '*', filterPath: '*.mappings,*.aliases' };
-      return callWithRequest('indices.get', params)
-        .then(resp => reply(resp))
-        .catch(resp => reply(wrapError(resp)));
-    },
-    config: {
-      ...commonRouteConfig
-    }
-  });
-
-  server.route({
     method: 'POST',
     path: '/api/ml/field_caps',
     handler(request, reply) {
       const callWithRequest = callWithRequestFactory(server, request);
       const index = request.payload.index;
-      return callWithRequest('fieldCaps', { index, fields: '*' })
+      let fields = '*';
+      if (request.payload.fields !== undefined && Array.isArray(request.payload.fields)) {
+        fields = request.payload.fields.join(',');
+      }
+
+      return callWithRequest('fieldCaps', { index, fields })
         .then(resp => reply(resp))
         .catch(resp => reply(wrapError(resp)));
     },

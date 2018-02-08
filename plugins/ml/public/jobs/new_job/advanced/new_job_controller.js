@@ -307,7 +307,6 @@ module.controller('MlNewJob',
         if (index !== '') {
           ml.getFieldCaps({ index })
             .then((resp) => {
-              console.log(resp);
               $scope.ui.fieldsUpToDate = true;
               _.each(resp, (fieldList) => {
                 _.each(fieldList, (field, fieldName) => {
