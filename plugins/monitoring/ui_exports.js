@@ -1,7 +1,4 @@
-import {
-  CONFIG_SHOW_BANNER,
-  CONFIG_ALLOW_REPORT
-} from './common/constants';
+import { CONFIG_TELEMETRY } from './common/constants';
 
 /**
  * Configuration of dependency objects for the UI, which are needed for the
@@ -32,13 +29,9 @@ export const uiExports = {
     },
   },
   uiSettingDefaults: {
-    [CONFIG_SHOW_BANNER]: {
-      description: 'Should we show the "Welcome to X-Pack!" Banner on every page?',
-      value: true
-    },
-    [CONFIG_ALLOW_REPORT]: {
-      description: 'Can we share cluster statistics that help Elastic improve? The data is never shared with anyone.',
-      value: true
+    [CONFIG_TELEMETRY]: {
+      description: 'Help us improve Kibana and Elasticsearch?',
+      value: false
     }
   },
   injectDefaultVars(server) {
@@ -50,7 +43,7 @@ export const uiExports = {
     };
   },
   hacks: [
-    'plugins/monitoring/hacks/welcome_banner',
+    'plugins/monitoring/hacks/telemetry_opt_in',
     'plugins/monitoring/hacks/telemetry_trigger',
     'plugins/monitoring/hacks/toggle_app_link_in_nav'
   ],

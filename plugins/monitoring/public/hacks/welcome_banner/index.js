@@ -1,0 +1,1 @@
+export { injectBanner } from './inject_banner';

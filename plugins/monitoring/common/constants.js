@@ -61,11 +61,10 @@ export const SORT_ASCENDING = 1;
 export const SORT_DESCENDING = -1;
 
 /*
- * config options for welcome banner / allow telemetry
+ * config options opt into telemetry
  * @type {string}
  */
-export const CONFIG_SHOW_BANNER = 'xPackMonitoring:showBanner';
-export const CONFIG_ALLOW_REPORT = 'xPackMonitoring:allowReport';
+export const CONFIG_TELEMETRY = 'telemetry:optIn';
 
 /*
  * Chart colors

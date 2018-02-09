@@ -1,6 +1,6 @@
 import moment from 'moment';
 import Promise from 'bluebird';
-import { CONFIG_ALLOW_REPORT, REPORT_INTERVAL_MS } from '../../common/constants';
+import { CONFIG_TELEMETRY, REPORT_INTERVAL_MS } from '../../common/constants';
 
 const STORAGE_KEY = 'xpack.monitoring.data';
 
@@ -37,16 +37,14 @@ export class Telemetry {
    * Check time interval passage
    */
   _checkReportStatus() {
-
-    // check if opt-in for telemetry is enabled in config (reportStats) and
-    // browser setting (config) "true"
-    if (this._reportStats && this._config.get(CONFIG_ALLOW_REPORT, true)) {
-      // If the last report is empty it means we've never sent an report and
+    // check if opt-in for telemetry is enabled in config
+    if (this._reportStats && this._config.get(CONFIG_TELEMETRY, false)) {
+      // If the last report is empty it means we've never sent telemetry and
       // now is the time to send it.
       if (!this._get('lastReport')) {
         return true;
       }
-      // If it's been a day since we last sent an report, send one.
+      // If it's been a day since we last sent telemetry
       if (Date.now() - parseInt(this._get('lastReport'), 10) > REPORT_INTERVAL_MS) {
         return true;
       }
