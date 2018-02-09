@@ -40,7 +40,7 @@ uiModules.get('kibana')
       if (!isJobSuccessful) {
         const errorDoc = await reportingJobQueue.getContent(job._id);
         const text = errorDoc.content;
-        toastNotifications.addDanger({
+        return toastNotifications.addDanger({
           title: `Couldn't create report for ${reportObjectType} '${reportObjectTitle}'`,
           text,
         });
@@ -73,7 +73,7 @@ uiModules.get('kibana')
       const maxSizeReached = get(job, '_source.output.max_size_reached');
 
       if (maxSizeReached) {
-        toastNotifications.addWarning({
+        return toastNotifications.addWarning({
           title: `Created partial report for ${reportObjectType} '${reportObjectTitle}'`,
           text: (
             <div>

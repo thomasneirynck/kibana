@@ -158,7 +158,10 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
 
     async checkForReportingToasts() {
       log.debug('Reporting:checkForReportingToasts');
-      return await testSubjects.exists('completeReportSuccess', 60000);
+      const isToastPresent = await testSubjects.exists('completeReportSuccess', 60000);
+      // Close toast so it doens't obscure the UI.
+      await testSubjects.click('completeReportSuccess toastCloseButton');
+      return isToastPresent;
     }
 
     async setTimepickerInDataRange() {
