@@ -6,13 +6,13 @@ export default function ({ getService, getPageObjects }) {
   const listing = getService('monitoringBeatsListing');
   const beatsSummaryStatus = getService('monitoringBeatsSummaryStatus');
 
-  describe.skip('monitoring/beats-listing', () => {
+  describe('monitoring/beats-listing', () => {
     const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
 
     before(async () => {
       await setup('monitoring/beats', {
-        from: '2017-12-19 17:15:09.302',
-        to: '2017-12-19 18:15:09.302',
+        from: '2017-12-19 17:14:09',
+        to: '2017-12-19 18:15:09',
       });
 
       // go to beats listing

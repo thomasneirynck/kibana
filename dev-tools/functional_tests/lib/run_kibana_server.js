@@ -34,6 +34,7 @@ export async function runKibanaServer({ procs, ftrConfig, devMode = false, enabl
       `--elasticsearch.username=${ftrConfig.get('servers.elasticsearch.username')}`,
       `--elasticsearch.password=${ftrConfig.get('servers.elasticsearch.password')}`,
       '--xpack.monitoring.kibana.collection.enabled=false',
+      '--xpack.monitoring.report_stats=false',
       ...samlArgs,
     ],
     env: {
