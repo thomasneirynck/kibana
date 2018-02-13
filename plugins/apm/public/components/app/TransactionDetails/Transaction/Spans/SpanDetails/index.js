@@ -10,9 +10,7 @@ import { Indicator } from '../../../../../shared/charts/Legend';
 import {
   SPAN_DURATION,
   SPAN_NAME,
-  TRANSACTION_ID,
-  SERVICE_LANGUAGE_NAME,
-  PROCESSOR_EVENT
+  SERVICE_LANGUAGE_NAME
 } from '../../../../../../../common/constants';
 import {
   unit,
@@ -86,13 +84,8 @@ const DatabaseStatement = styled.div`
   font-family: ${fontFamilyCode};
 `;
 
-function SpanDetails({
-  span,
-  spanTypeLabel,
-  spanTypeColor,
-  totalDuration,
-  transactionId
-}) {
+function SpanDetails({ span, spanTypeLabel, spanTypeColor, totalDuration }) {
+  const spanDocId = get(span, 'docId');
   const spanDuration = get({ span }, SPAN_DURATION);
   const relativeDuration = spanDuration / totalDuration;
   const spanName = get({ span }, SPAN_NAME);
@@ -105,7 +98,7 @@ function SpanDetails({
       interval: 'auto',
       query: {
         language: 'lucene',
-        query: `${PROCESSOR_EVENT}:span AND ${TRANSACTION_ID}:${transactionId}`
+        query: `_id:${spanDocId}`
       },
       sort: { '@timestamp': 'desc' }
     }
@@ -151,7 +144,7 @@ function SpanDetails({
         </DetailsElement>
         <DetailsElement>
           <DiscoverButton query={discoverQuery}>
-            {`View spans in Discover`}
+            {`View span in Discover`}
           </DiscoverButton>
         </DetailsElement>
       </DetailsWrapper>

@@ -48,6 +48,7 @@ async function getSpans({ transactionId, setup }) {
       count: bucket.doc_count
     })),
     spans: resp.hits.hits.map((doc, i) => ({
+      doc_id: doc._id,
       id: i,
       ...doc._source.span,
       context: doc._source.context

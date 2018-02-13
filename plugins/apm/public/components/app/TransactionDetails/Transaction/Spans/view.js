@@ -91,7 +91,6 @@ class Spans extends PureComponent {
               {spans.data.spans.map(span => (
                 <Span
                   location={location}
-                  transactionId={urlParams.transactionId}
                   timelineMargins={TIMELINE_MARGINS}
                   key={get({ span }, SPAN_ID)}
                   color={getSpanColor(getPrimaryType(span.type))}
