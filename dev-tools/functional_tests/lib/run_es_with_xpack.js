@@ -93,6 +93,7 @@ export async function runEsWithXpack({ tmpDir, procs, ftrConfig, useSAML = false
     args: [
       '-E', `http.port=${ftrConfig.get('servers.elasticsearch.port')}`,
       '-E', `xpack.monitoring.enabled=false`, // disable monitoring in order to drive the UI just with archived data
+      '-E', 'xpack.license.self_generated.type=trial',
       ...samlArgs,
     ],
     cwd: esExtractPath,
