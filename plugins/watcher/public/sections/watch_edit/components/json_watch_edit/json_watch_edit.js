@@ -1,7 +1,7 @@
 import { uiModules } from 'ui/modules';
 import { InitAfterBindingsWorkaround } from 'ui/compat';
 import { Notifier, toastNotifications } from 'ui/notify';
-import 'plugins/watcher/services/dirty_prompt';
+import 'ui/dirty_prompt';
 import template from './json_watch_edit.html';
 import 'plugins/watcher/components/kbn_tabs';
 import 'plugins/watcher/components/watch_history_item_detail';
@@ -20,7 +20,7 @@ app.directive('jsonWatchEdit', function ($injector) {
   const licenseService = $injector.get('xpackWatcherLicenseService');
   const kbnUrl = $injector.get('kbnUrl');
   const confirmModal = $injector.get('confirmModal');
-  const dirtyPrompt = $injector.get('xpackWatcherDirtyPrompt');
+  const dirtyPrompt = $injector.get('dirtyPrompt');
 
   return {
     restrict: 'E',

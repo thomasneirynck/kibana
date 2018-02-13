@@ -1,6 +1,7 @@
 import { debounce, isEqual } from 'lodash';
 import { uiModules } from 'ui/modules';
 import { InitAfterBindingsWorkaround } from 'ui/compat';
+import 'ui/dirty_prompt';
 import template from './threshold_watch_edit.html';
 import './threshold_watch_edit.less';
 import '../watch_edit_title_panel';
@@ -32,7 +33,7 @@ app.directive('thresholdWatchEdit', function ($injector) {
   const actionDefaultsService = $injector.get('xpackWatcherActionDefaultsService');
   const kbnUrl = $injector.get('kbnUrl');
   const confirmModal = $injector.get('confirmModal');
-  const dirtyPrompt = $injector.get('xpackWatcherDirtyPrompt');
+  const dirtyPrompt = $injector.get('dirtyPrompt');
   const $interval = $injector.get('$interval');
 
   return {
