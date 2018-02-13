@@ -1,5 +1,6 @@
 export function MonitoringClusterOverviewProvider({ getService }) {
   const testSubjects = getService('testSubjects');
+  const retry = getService('retry');
 
   const SUBJ_CLUSTER_ALERTS   = `clusterAlertsContainer`;
   const SUBJ_CLUSTER_OVERVIEW = 'clusterOverviewContainer';
@@ -47,7 +48,7 @@ export function MonitoringClusterOverviewProvider({ getService }) {
   return new class ClusterOverview {
 
     isOnClusterOverview() {
-      return testSubjects.exists(SUBJ_CLUSTER_OVERVIEW);
+      return retry.try(() => testSubjects.exists(SUBJ_CLUSTER_OVERVIEW));
     }
     getClusterName() {
       return testSubjects.getVisibleText(SUBJ_CLUSTER_NAME);

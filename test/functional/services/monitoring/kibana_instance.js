@@ -1,5 +1,6 @@
 export function MonitoringKibanaInstanceProvider({ getService }) {
   const testSubjects = getService('testSubjects');
+  const retry = getService('retry');
 
   const SUBJ_INSTANCE_PAGE = 'kibanaInstancePage';
 
@@ -13,7 +14,7 @@ export function MonitoringKibanaInstanceProvider({ getService }) {
   return new class KibanaInstance {
 
     isOnInstance() {
-      return testSubjects.exists(SUBJ_INSTANCE_PAGE);
+      return retry.try(() => testSubjects.exists(SUBJ_INSTANCE_PAGE));
     }
 
     async getSummary() {

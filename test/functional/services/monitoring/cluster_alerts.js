@@ -85,7 +85,7 @@ export function MonitoringClusterAlertsProvider({ getService, getPageObjects }) 
      */
 
     isOnListingPage() {
-      return testSubjects.exists(SUBJ_LISTING_PAGE);
+      return retry.try(() => testSubjects.exists(SUBJ_LISTING_PAGE));
     }
 
     getTableAlerts() {

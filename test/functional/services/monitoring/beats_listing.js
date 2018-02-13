@@ -1,5 +1,6 @@
 export function MonitoringBeatsListingProvider({ getService, getPageObjects }) {
   const testSubjects = getService('testSubjects');
+  const retry = getService('retry');
   const PageObjects = getPageObjects(['monitoring']);
 
   const SUBJ_LISTING_PAGE = 'beatsListingPage';
@@ -14,7 +15,7 @@ export function MonitoringBeatsListingProvider({ getService, getPageObjects }) {
   return new class BeatsListing {
 
     isOnListing() {
-      return testSubjects.exists(SUBJ_LISTING_PAGE);
+      return retry.try(() => testSubjects.exists(SUBJ_LISTING_PAGE));
     }
 
     noRecentActivityMessageIsShowing() {

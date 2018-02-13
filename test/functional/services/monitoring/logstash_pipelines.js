@@ -2,6 +2,7 @@ import { range } from 'lodash';
 
 export function MonitoringLogstashPipelinesProvider({ getService, getPageObjects }) {
   const testSubjects = getService('testSubjects');
+  const retry = getService('retry');
   const PageObjects = getPageObjects(['monitoring']);
 
   const SUBJ_LISTING_PAGE = 'logstashPipelinesListing';
@@ -19,7 +20,7 @@ export function MonitoringLogstashPipelinesProvider({ getService, getPageObjects
 
   return new class LogstashPipelines {
     isOnListing() {
-      return testSubjects.exists(SUBJ_LISTING_PAGE);
+      return retry.try(() => testSubjects.exists(SUBJ_LISTING_PAGE));
     }
 
     getRows() {

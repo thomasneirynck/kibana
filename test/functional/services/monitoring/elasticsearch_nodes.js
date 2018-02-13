@@ -1,5 +1,6 @@
 export function MonitoringElasticsearchNodesProvider({ getService/*, getPageObjects */ }) {
   const testSubjects = getService('testSubjects');
+  const retry = getService('retry');
 
   const SUBJ_LISTING_PAGE = 'elasticsearchNodesListingPage';
   const SUBJ_TABLE_BODY = 'nodesTableBody';
@@ -7,7 +8,7 @@ export function MonitoringElasticsearchNodesProvider({ getService/*, getPageObje
 
   return new class ElasticsearchIndices {
     isOnListing() {
-      return testSubjects.exists(SUBJ_LISTING_PAGE);
+      return retry.try(() => testSubjects.exists(SUBJ_LISTING_PAGE));
     }
 
     clickRowByResolver(nodeResolver) {

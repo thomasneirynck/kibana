@@ -1,5 +1,6 @@
 export function MonitoringBeatsOverviewProvider({ getService }) {
   const testSubjects = getService('testSubjects');
+  const retry = getService('retry');
 
   const SUBJ_OVERVIEW_PAGE = 'beatsOverviewPage';
 
@@ -8,7 +9,7 @@ export function MonitoringBeatsOverviewProvider({ getService }) {
   return new class BeatsOverview {
 
     isOnOverview() {
-      return testSubjects.exists(SUBJ_OVERVIEW_PAGE);
+      return retry.try(() => testSubjects.exists(SUBJ_OVERVIEW_PAGE));
     }
 
     noRecentActivityMessageIsShowing() {

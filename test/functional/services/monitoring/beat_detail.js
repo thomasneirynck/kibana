@@ -1,5 +1,6 @@
 export function MonitoringBeatDetailProvider({ getService }) {
   const testSubjects = getService('testSubjects');
+  const retry = getService('retry');
 
   const SUBJ_DETAIL_PAGE = 'beatDetailPage';
   const SUBJ_SUMMARY_01 = 'beatSummaryStatus01';
@@ -20,7 +21,7 @@ export function MonitoringBeatDetailProvider({ getService }) {
   return new class BeatDetail {
 
     isOnDetail() {
-      return testSubjects.exists(SUBJ_DETAIL_PAGE);
+      return retry.try(() => testSubjects.exists(SUBJ_DETAIL_PAGE));
     }
 
     async getSummary() {

@@ -1,5 +1,6 @@
 export function MonitoringKibanaInstancesProvider({ getService }) {
   const testSubjects = getService('testSubjects');
+  const retry = getService('retry');
 
   const SUBJ_INSTANCES_PAGE = 'kibanaInstancesPage';
 
@@ -9,7 +10,7 @@ export function MonitoringKibanaInstancesProvider({ getService }) {
   return new class KibanaInstances {
 
     isOnInstances() {
-      return testSubjects.exists(SUBJ_INSTANCES_PAGE);
+      return retry.try(() => testSubjects.exists(SUBJ_INSTANCES_PAGE));
     }
 
     clickRowByName(instanceName) {
