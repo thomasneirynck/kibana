@@ -103,7 +103,7 @@ exports[`ErrorGroupOverview -> List should render empty state 1`] = `
     <div
       className="kuiTableInfo c0"
     >
-      No services with data in the selected time range.
+      No data found.
       <div
         className="c1"
       >

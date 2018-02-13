@@ -1,6 +1,5 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import SetupInstructions from '../SetupInstructions';
 import ServiceOverview from '../ServiceOverview';
 import ErrorGroupDetails from '../ErrorGroupDetails';
 import ErrorGroupOverview from '../ErrorGroupOverview';
@@ -35,12 +34,6 @@ export const routes = [
         path: '/invalid-license',
         breadcrumb: 'Invalid License',
         render: () => <div>Invalid license</div>
-      },
-      {
-        exact: true,
-        path: '/setup-instructions',
-        component: SetupInstructions,
-        breadcrumb: 'Setup Instructions'
       },
       {
         exact: true,

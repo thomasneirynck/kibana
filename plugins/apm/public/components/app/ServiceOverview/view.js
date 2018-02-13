@@ -3,9 +3,8 @@ import withErrorHandler from '../../shared/withErrorHandler';
 import { STATUS } from '../../../constants';
 import { isEmpty } from 'lodash';
 import { loadAgentStatus } from '../../../services/rest';
-import { RelativeLink, history } from '../../../utils/url';
-
-import { KuiButton } from 'ui_framework/components';
+import { KibanaLink } from '../../../utils/url';
+import { EuiButton } from '@elastic/eui';
 import List from './List';
 import { PageHeader } from '../../shared/UIComponents';
 import { getKey } from '../../../store/apiHelpers';
@@ -19,48 +18,69 @@ function fetchData(props) {
   }
 }
 
-function redirectIfNoData({ serviceList }) {
-  if (serviceList.status === STATUS.SUCCESS && isEmpty(serviceList.data)) {
-    loadAgentStatus().then(result => {
-      if (!result.dataFound) {
-        history.push({
-          pathname: '/setup-instructions'
-        });
-      }
-    });
-  }
-}
-
 class ServiceOverview extends Component {
+  state = {
+    noHistoricalDataFound: false
+  };
+
+  checkForHistoricalData({ serviceList }) {
+    if (serviceList.status === STATUS.SUCCESS && isEmpty(serviceList.data)) {
+      loadAgentStatus().then(result => {
+        if (!result.dataFound) {
+          this.setState({ noHistoricalDataFound: true });
+        }
+      });
+    }
+  }
+
   componentDidMount() {
     fetchData(this.props);
-    redirectIfNoData(this.props);
+    this.checkForHistoricalData(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
     fetchData(nextProps);
-    redirectIfNoData(nextProps);
+    this.checkForHistoricalData(nextProps);
   }
 
   render() {
     const { serviceList, changeServiceSorting, serviceSorting } = this.props;
+    const { noHistoricalDataFound } = this.state;
+
+    const emptyMessageHeading = noHistoricalDataFound
+      ? "Looks like you don't have any services with APM installed. Let's add some!"
+      : 'No services with data in the selected time range.';
+
+    const emptyMessageSubHeading = noHistoricalDataFound ? (
+      <SetupInstructionsLink buttonFill={true} />
+    ) : null;
 
     return (
       <div>
         <PageHeader title="Services">
-          <RelativeLink path="/setup-instructions">
-            <KuiButton buttonType="secondary">Setup Instructions</KuiButton>
-          </RelativeLink>
+          <SetupInstructionsLink />
         </PageHeader>
 
         <List
           items={serviceList.data}
           changeServiceSorting={changeServiceSorting}
           serviceSorting={serviceSorting}
+          emptyMessageHeading={emptyMessageHeading}
+          emptyMessageSubHeading={emptyMessageSubHeading}
         />
       </div>
     );
   }
+}
+
+function SetupInstructionsLink({ buttonFill }) {
+  return (
+    <KibanaLink pathname={'/app/kibana'} hash={'/home/tutorial/apm'} query={{}}>
+      <EuiButton size="s" color="primary" fill={buttonFill || false}>
+        Setup Instructions
+      </EuiButton>
+    </KibanaLink>
+  );
 }
 
 export default withErrorHandler(ServiceOverview, ['serviceList']);

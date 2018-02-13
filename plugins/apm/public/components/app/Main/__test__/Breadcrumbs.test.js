@@ -30,10 +30,6 @@ describe('Breadcrumbs', () => {
     expectBreadcrumbToMatchSnapshot('/opbeans-node/errors');
   });
 
-  it('/setup-instructions', () => {
-    expectBreadcrumbToMatchSnapshot('/setup-instructions');
-  });
-
   it('/:serviceName', () => {
     expectBreadcrumbToMatchSnapshot('/opbeans-node');
   });

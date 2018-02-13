@@ -123,19 +123,6 @@ Array [
 ]
 `;
 
-exports[`Breadcrumbs /setup-instructions 1`] = `
-Array [
-  <a
-    href="#/?_g="
-  >
-    APM
-  </a>,
-  <span>
-    Setup Instructions
-  </span>,
-]
-`;
-
 exports[`Breadcrumbs Homepage 1`] = `
 <span>
   APM

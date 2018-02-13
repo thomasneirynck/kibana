@@ -7,7 +7,13 @@ import ListItem from './ListItem';
 
 class List extends Component {
   render() {
-    const { items, changeServiceSorting, serviceSorting } = this.props;
+    const {
+      items,
+      changeServiceSorting,
+      serviceSorting,
+      emptyMessageHeading,
+      emptyMessageSubHeading
+    } = this.props;
 
     const renderHead = () => {
       const cells = [
@@ -53,7 +59,8 @@ class List extends Component {
       <FilterableAPMTable
         searchableFields={['serviceName', 'agentName']}
         items={items}
-        emptyMessageHeading="No services with data in the selected time range."
+        emptyMessageHeading={emptyMessageHeading}
+        emptyMessageSubHeading={emptyMessageSubHeading}
         renderHead={renderHead}
         renderBody={renderBody}
         renderFooterText={renderFooterText}

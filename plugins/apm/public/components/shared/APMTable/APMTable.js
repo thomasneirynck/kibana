@@ -36,6 +36,7 @@ export const AlignmentKuiTableHeaderCell = styled(KuiTableHeaderCell)`
 function APMTable({
   defaultSearchQuery,
   emptyMessageHeading,
+  emptyMessageSubHeading,
   items,
   itemsPerPage,
   onClickNext,
@@ -79,7 +80,10 @@ function APMTable({
 
       {items.length === 0 && (
         <KuiEmptyTablePromptPanel>
-          <EmptyMessage heading={emptyMessageHeading} />
+          <EmptyMessage
+            heading={emptyMessageHeading}
+            subheading={emptyMessageSubHeading}
+          />
         </KuiEmptyTablePromptPanel>
       )}
 

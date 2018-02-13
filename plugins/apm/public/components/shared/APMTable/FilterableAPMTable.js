@@ -25,6 +25,7 @@ class FilterableAPMTable extends Component {
   render() {
     const {
       emptyMessageHeading,
+      emptyMessageSubHeading,
       items,
       renderBody,
       renderFooterText,
@@ -52,6 +53,7 @@ class FilterableAPMTable extends Component {
     return (
       <APMTable
         emptyMessageHeading={emptyMessageHeading}
+        emptyMessageSubHeading={emptyMessageSubHeading}
         items={currentPageItems}
         itemsPerPage={ITEMS_PER_PAGE}
         onClickNext={this.onClickNext}

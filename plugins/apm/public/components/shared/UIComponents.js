@@ -18,7 +18,7 @@ const PagerHeaderWrapper = styled.div`
 
   > *:not(h1) {
     position: relative;
-    top: ${px(units.minus)};
+    top: ${px(units.half + 1)};
     margin-left: ${px(unit)};
   }
 `;
