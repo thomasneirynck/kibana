@@ -602,7 +602,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
         console.log('validate job', messages);
         return { success: true, messages };
       }).catch((err) => {
-        msgs.error('Could not validate job');
+        msgs.error('Job Validation Error: ' + err.message);
         console.log('validate job', err);
         return {
           success: false,

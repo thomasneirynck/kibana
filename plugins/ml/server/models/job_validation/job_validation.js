@@ -18,12 +18,12 @@ import Boom from 'boom';
 import { renderTemplate } from '../../../common/util/string_utils';
 import messages from './messages.json';
 
-import { validatePopulationAnalysis } from './validate_population_analysis';
+import { validateCardinality } from './validate_cardinality';
 
 export async function validateJob(callWithRequest, job) {
   try {
     const validationMessages = [
-      ...await validatePopulationAnalysis(callWithRequest, job)
+      ...await validateCardinality(callWithRequest, job)
     ];
 
     return validationMessages.map(message => {

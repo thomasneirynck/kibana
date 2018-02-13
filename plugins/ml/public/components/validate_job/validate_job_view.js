@@ -64,7 +64,7 @@ const link = (url) => {
   if (!url) {
     return null;
   }
-  return <EuiLink href={url} target="BLANK">More Information</EuiLink>;
+  return <EuiLink href={url} target="BLANK">Learn More</EuiLink>;
 };
 
 const messageRow = (message) => (
@@ -94,7 +94,7 @@ const messageRows = (data) => {
         </EuiTable>
       </div>
     );
-  } else {
+  } else if (data.success && data.messages.length === 0) {
     return (
       <EuiCallOut
         size="s"
@@ -103,10 +103,13 @@ const messageRows = (data) => {
       />
     );
   }
+  return null;
 };
 
 const modal = ({ isVisible, closeModal, jobId, data }) => {
-  if (!isVisible) {
+  // data.success === false means the API error will be displayed in a Message Bar
+  // so we want to avoid displaying the Modal
+  if (!isVisible || data.success === false) {
     return null;
   }
 
