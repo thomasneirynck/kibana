@@ -1,14 +1,29 @@
 import Rx from 'rxjs/Rx';
-import { some } from 'lodash';
+import moment from 'moment';
 import { pdf } from './pdf';
+import { groupBy } from 'lodash';
 import { oncePerServer } from '../../../../server/lib/once_per_server';
 import { screenshotsObservableFactory } from './screenshots';
 import { getLayoutFactory } from './layouts';
 
+const getTimeRange = (urlScreenshots) => {
+  const grouped = groupBy(urlScreenshots.map(u => u.timeRange));
+  const values = Object.values(grouped);
+  if (values.length === 1) {
+    return values[0][0];
+  }
+
+  return null;
+};
+
+const formatDate = (date, timezone) => {
+  return moment.tz(date, timezone).format('llll');
+};
+
+
 function generatePdfObservableFn(server) {
   const screenshotsObservable = screenshotsObservableFactory(server);
-  const config = server.config();
-  const captureConcurrency = config.get('xpack.reporting.capture.concurrency');
+  const captureConcurrency = 1;
   const getLayout = getLayoutFactory(server);
 
   const urlScreenshotsObservable = (urls, headers, layout) => {
@@ -21,12 +36,12 @@ function generatePdfObservableFn(server) {
   };
 
 
-  const createPdfWithScreenshots = async ({ title, timeRange, urlScreenshots, layout, logo }) => {
+  const createPdfWithScreenshots = async ({ title, browserTimezone, urlScreenshots, layout, logo }) => {
     const pdfOutput = pdf.create(layout, logo);
 
     if (title) {
-      const titleTimeRange = some(urlScreenshots, { isTimepickerEnabled: true }) ? timeRange : null;
-      title += (titleTimeRange) ? ` — ${titleTimeRange.from} to ${titleTimeRange.to}` : '';
+      const timeRange = getTimeRange(urlScreenshots);
+      title += (timeRange) ? ` — ${formatDate(timeRange.from, browserTimezone)} to ${formatDate(timeRange.to, browserTimezone)}` : '';
       pdfOutput.setTitle(title);
     }
 
@@ -45,13 +60,13 @@ function generatePdfObservableFn(server) {
   };
 
 
-  return function generatePdfObservable(title, urls, timeRange, headers, layoutParams, logo) {
+  return function generatePdfObservable(title, urls, browserTimezone, headers, layoutParams, logo) {
     const layout = getLayout(layoutParams);
     const screenshots$ = urlScreenshotsObservable(urls, headers, layout);
 
     return screenshots$
       .toArray()
-      .mergeMap(urlScreenshots => createPdfWithScreenshots({ title, timeRange, urlScreenshots, layout, logo }));
+      .mergeMap(urlScreenshots => createPdfWithScreenshots({ title, browserTimezone, urlScreenshots, layout, logo }));
   };
 }
 

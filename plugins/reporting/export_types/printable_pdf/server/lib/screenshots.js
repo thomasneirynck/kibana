@@ -148,14 +148,28 @@ export function screenshotsObservableFactory(server) {
     });
   };
 
-  const getIsTimepickerEnabled = async (browser, layout) => {
-    const isTimepickerEnabled = await browser.evaluate({
-      fn: function (selector) {
-        return document.querySelector(selector) !== null;
+  const getTimeRange = async (browser, layout) => {
+    const timeRange = await browser.evaluate({
+      fn: function (fromAttribute, toAttribute) {
+        const fromElement = document.querySelector(`[${fromAttribute}]`);
+        const toElement = document.querySelector(`[${toAttribute}]`);
+
+        if (!fromElement || !toElement) {
+          return null;
+        }
+
+        const from = fromElement.getAttribute(fromAttribute);
+        const to = toElement.getAttribute(toAttribute);
+        if (!to || !from) {
+          return null;
+        }
+
+        return { from, to };
       },
-      args: [layout.selectors.isTimepickerEnabled]
+      args: [layout.selectors.timefilterFromAttribute, layout.selectors.timefilterToAttribute],
+      returnByValue: true,
     });
-    return isTimepickerEnabled;
+    return timeRange;
   };
 
   const getElementPositionAndAttributes = async (browser, layout) => {
@@ -284,20 +298,20 @@ export function screenshotsObservableFactory(server) {
           )
           .do(() => logger.debug('rendering is complete'))
           .mergeMap(
-            browser => getIsTimepickerEnabled(browser, layout),
-            (browser, isTimepickerEnabled) => ({ browser, isTimepickerEnabled })
+            browser => getTimeRange(browser, layout),
+            (browser, timeRange) => ({ browser, timeRange })
           )
-          .do(({ isTimepickerEnabled }) => logger.debug(`the time picker ${isTimepickerEnabled ? 'is' : `isn't`} enabled`))
+          .do(({ timeRange }) => logger.debug(timeRange ? `timeRange from ${timeRange.from} to ${timeRange.to}` : 'no timeRange'))
           .mergeMap(
             ({ browser }) => getElementPositionAndAttributes(browser, layout),
-            ({ browser, isTimepickerEnabled }, elementsPositionAndAttributes) => {
-              return { browser, isTimepickerEnabled, elementsPositionAndAttributes };
+            ({ browser, timeRange }, elementsPositionAndAttributes) => {
+              return { browser, timeRange, elementsPositionAndAttributes };
             }
           )
           .do(() => logger.debug(`taking screenshots`))
           .mergeMap(
             ({ browser, elementsPositionAndAttributes }) => getScreenshots({ browser, elementsPositionAndAttributes }),
-            ({ isTimepickerEnabled }, screenshots) => ({ isTimepickerEnabled, screenshots })
+            ({ timeRange }, screenshots) => ({ timeRange, screenshots })
           );
 
         return Rx.Observable.race(screenshot$, exit$);

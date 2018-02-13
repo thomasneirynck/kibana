@@ -50,11 +50,14 @@ export function preserveLayoutFactory(server, { dimensions: { height, width }, z
       };
     },
 
+    groupCount: 1,
+
     selectors: {
       screenshot: '[data-shared-items-container]',
       renderComplete: '[data-shared-item]',
       itemsCountAttribute: 'data-shared-items-count',
-      isTimepickerEnabled: '[data-shared-timefilter=true]'
+      timefilterFromAttribute: 'data-shared-timefilter-from',
+      timefilterToAttribute: 'data-shared-timefilter-to',
     }
   };
 }

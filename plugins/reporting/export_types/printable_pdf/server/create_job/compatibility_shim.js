@@ -47,11 +47,24 @@ export function compatibilityShimFactory(server) {
   };
 
   return function compatibilityShimFactory(createJob) {
-    return async function ({ objectType, savedObjectId, title, relativeUrl, queryString, browserTimezone, layout }, headers, request) {
+    return async function ({
+      objectType,
+      savedObjectId,
+      title,
+      relativeUrls,
+      queryString,
+      browserTimezone,
+      layout
+    }, headers, request) {
+
+      if (objectType && savedObjectId && relativeUrls) {
+        throw new Error('objectType and savedObjectId should not be provided in addition to the relativeUrls');
+      }
+
       const transformedJobParams = {
         objectType,
         title: title || await getSavedObjectTitle(objectType, savedObjectId, request.getSavedObjectsClient()),
-        relativeUrl: relativeUrl  || getSavedObjectRelativeUrl(objectType, savedObjectId, queryString),
+        relativeUrls: objectType && savedObjectId ? [ getSavedObjectRelativeUrl(objectType, savedObjectId, queryString) ] : relativeUrls,
         browserTimezone,
         layout
       };

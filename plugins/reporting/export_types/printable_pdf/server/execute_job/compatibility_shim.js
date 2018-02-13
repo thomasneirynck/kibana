@@ -1,6 +1,5 @@
 import url from 'url';
 import { getAbsoluteUrlFactory } from './get_absolute_url';
-import { getTimeFilterRange } from '../lib/get_time_filter_range';
 
 export function compatibilityShimFactory(server) {
   const getAbsoluteUrl = getAbsoluteUrlFactory(server);
@@ -25,9 +24,8 @@ export function compatibilityShimFactory(server) {
   return function (executeJob) {
     return async function (job, cancellationToken) {
       const urls = job.objects.map(getSavedObjectAbsoluteUrl);
-      const timeRange = job.timeRange || getTimeFilterRange(job.browserTimezone, job.query);
 
-      return await executeJob({ ...job, urls, timeRange }, cancellationToken);
+      return await executeJob({ ...job, urls }, cancellationToken);
     };
   };
 }

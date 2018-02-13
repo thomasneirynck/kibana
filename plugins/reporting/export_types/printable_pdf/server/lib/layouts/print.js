@@ -8,7 +8,8 @@ export function printLayoutFactory(server) {
     screenshot: '[data-shared-item]',
     renderComplete: '[data-shared-item]',
     itemsCountAttribute: 'data-shared-items-count',
-    isTimepickerEnabled: '[data-shared-timefilter=true]'
+    timefilterFromAttribute: 'data-shared-timefilter-from',
+    timefilterToAttribute: 'data-shared-timefilter-to',
   };
 
   return {
@@ -73,6 +74,8 @@ export function printLayoutFactory(server) {
     getPdfPageSize() {
       return 'A4';
     },
+
+    groupCount: 2,
 
     selectors
 

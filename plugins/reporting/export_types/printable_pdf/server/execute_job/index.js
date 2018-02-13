@@ -1,3 +1,4 @@
+import url from 'url';
 import Rx from 'rxjs/Rx';
 import { omit } from 'lodash';
 import { UI_SETTINGS_CUSTOM_PDF_LOGO } from '../../../../common/constants';
@@ -49,14 +50,40 @@ function executeJobFn(server) {
     return { job, filteredHeaders, logo };
   };
 
+  const addForceNowQuerystring = async ({ job, filteredHeaders, logo }) => {
+    const urls = job.urls.map(jobUrl => {
+      if (!job.forceNow) {
+        return jobUrl;
+      }
+
+      const parsed = url.parse(jobUrl, true);
+      const hash = url.parse(parsed.hash.replace(/^#/, ''), true);
+
+      const transformedHash = url.format({
+        pathname: hash.pathname,
+        query: {
+          ...hash.query,
+          forceNow: job.forceNow
+        }
+      });
+
+      return url.format({
+        ...parsed,
+        hash: transformedHash
+      });
+    });
+    return { job, filteredHeaders, logo, urls };
+  };
+
   return compatibilityShim(function executeJob(jobToExecute, cancellationToken) {
     const process$ = Rx.Observable.of(jobToExecute)
       .mergeMap(decryptJobHeaders)
       .catch(() => Rx.Observable.throw('Failed to decrypt report job data. Please re-generate this report.'))
       .map(omitBlacklistedHeaders)
       .mergeMap(getCustomLogo)
-      .mergeMap(({ job, filteredHeaders, logo }) => {
-        return generatePdfObservable(job.title, job.urls, job.timeRange, filteredHeaders, job.layout, logo);
+      .mergeMap(addForceNowQuerystring)
+      .mergeMap(({ job, filteredHeaders, logo, urls }) => {
+        return generatePdfObservable(job.title, urls, job.browserTimezone, filteredHeaders, job.layout, logo);
       })
       .map(buffer => ({
         content_type: 'application/pdf',

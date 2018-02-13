@@ -28,7 +28,7 @@ export function JobParamsProvider(Private, config) {
       title: controller.getSharingTitle(),
       objectType: controller.getSharingType(),
       browserTimezone: browserTimezone,
-      relativeUrl: relativeUrl,
+      relativeUrls: [ relativeUrl ],
       layout: layout.getJobParams(),
     };
   };

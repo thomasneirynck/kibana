@@ -68,37 +68,12 @@ test(`it generates the absolute url if a relativeUrl with querystring is provide
   expect(mockCreateJob.mock.calls[0][0].urls[0]).toBe('http://localhost:5601/app/kibana?_t=123456789#/visualize?_g=()');
 });
 
-test(`it passes the provided timeRange through`, async () => {
+test(`it passes the provided browserTimezone through`, async () => {
   const mockCreateJob = jest.fn();
   const compatibilityShim = compatibilityShimFactory(createMockServer());
 
-  const timeRange = {};
-  await compatibilityShim(mockCreateJob)({ timeRange, objects: [] });
+  const browserTimezone = 'UTC';
+  await compatibilityShim(mockCreateJob)({ browserTimezone, objects: [] });
   expect(mockCreateJob.mock.calls.length).toBe(1);
-  expect(mockCreateJob.mock.calls[0][0].timeRange).toEqual(timeRange);
-});
-
-test(`it passes the provided timeRange through`, async () => {
-  const mockCreateJob = jest.fn();
-  const compatibilityShim = compatibilityShimFactory(createMockServer());
-
-  const timeRange = {};
-  await compatibilityShim(mockCreateJob)({ timeRange, objects: [] });
-  expect(mockCreateJob.mock.calls.length).toBe(1);
-  expect(mockCreateJob.mock.calls[0][0].timeRange).toEqual(timeRange);
-});
-
-test(`it calculates the timeRange using the query`, async () => {
-  const mockCreateJob = jest.fn();
-  const compatibilityShim = compatibilityShimFactory(createMockServer());
-
-  const query = {
-    _g: `(time:(from:'1999-01-01T00:00:00.000Z',mode:absolute,to:'2000-01-01T00:00:00.000Z'))`
-  };
-  await compatibilityShim(mockCreateJob)({ query, objects: [], browserTimezone: 'America/New_York' });
-  expect(mockCreateJob.mock.calls.length).toBe(1);
-  expect(mockCreateJob.mock.calls[0][0].timeRange).toEqual({
-    from: 'Thu, Dec 31, 1998 7:00 PM',
-    to: 'Fri, Dec 31, 1999 7:00 PM'
-  });
+  expect(mockCreateJob.mock.calls[0][0].browserTimezone).toEqual(browserTimezone);
 });

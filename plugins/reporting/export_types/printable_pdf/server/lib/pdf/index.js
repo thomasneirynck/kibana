@@ -51,7 +51,7 @@ class PdfMaker {
     const groupCount = this._content.length;
 
     // inject a page break for every 2 groups on the page
-    if (groupCount > 0 && groupCount % 2 === 0) {
+    if (groupCount > 0 && groupCount % this._layout.groupCount === 0) {
       contents = [{
         text: '',
         pageBreak: 'after',
