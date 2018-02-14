@@ -23,7 +23,7 @@ export const FTR_CONFIG_PATH = resolve(PROJECT_ROOT, 'test/functional/config');
 export const OPTIMIZE_BUNDLE_DIR = resolve(KIBANA_ROOT, 'optimize/xpackTestUiServer');
 export const ES_REPO_ROOT = resolve(PROJECT_ROOT, '../../elasticsearch');
 export const XPACK_ES_REPO_ROOT = resolve(ES_REPO_ROOT, '../elasticsearch-extra/x-pack-elasticsearch');
-export const ES_ARCHIVE_PATTERN = resolve(ES_REPO_ROOT, 'distribution/tar/build/distributions/elasticsearch-*.tar.gz');
+export const ES_ARCHIVE_PATTERN = resolve(ES_REPO_ROOT, 'distribution/archives/tar/build/distributions/elasticsearch-*.tar.gz');
 export const XPACK_ES_ARCHIVE_PATTERN = resolve(XPACK_ES_REPO_ROOT, 'plugin/build/distributions/x-pack-*.zip');
 
 export const RELATIVE_GRADLE_BIN = resolveRelative(useBat('gradle'));

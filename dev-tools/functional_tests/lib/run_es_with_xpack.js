@@ -20,7 +20,7 @@ import {
 async function setupEsWithXpack({ esExtractPath, procs }) {
   await procs.run('buildEsAndXpack', {
     cmd: RELATIVE_GRADLE_BIN,
-    args: [':distribution:tar:assemble', ':x-pack-elasticsearch:plugin:assemble'],
+    args: [':distribution:archives:tar:assemble', ':x-pack-elasticsearch:plugin:assemble'],
     cwd: XPACK_ES_REPO_ROOT,
     wait: true,
   });
