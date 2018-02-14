@@ -79,18 +79,14 @@ elasticsearch.password: "s0m3th1ngs3cr3t"
 --
 
 [[kibana-roles]]
-. Assign the `kibana_user` role to any user to grant them the privileges they
-need to use {kib}.
+. Configure {kib} authentication to grant them the privileges they need to use {kib}.
 +
 --
 You can manage roles on the *Management / Security / Roles* page in {kib}.
 
-If you're using the `native` realm, you can also assign roles by using the User
-Management API. For more information, see
-{xpack-ref}/native-realm.html#managing-native-users[Native User Authentication].
-For example, the following creates a user named `jacknich` and assigns it the
-`kibana_user` role:
-
+If you're using the native realm with Basic Authentication, you can assign roles using the 
+*Management / Security / Users* page in {kib}, or the User Management API. For example, the following creates a user 
+named `jacknich` and assigns it the `kibana_user` role:
 
 [source,js]
 --------------------------------------------------------------------------------
@@ -100,6 +96,8 @@ POST /_xpack/security/user/jacknich
   "roles" : [ "kibana_user" ]
 }
 --------------------------------------------------------------------------------
+
+For more information on Basic Authentication and additional methods of authenticating Kibana users, see <<kibana-authentication>>.
 // CONSOLE
 
 ////
