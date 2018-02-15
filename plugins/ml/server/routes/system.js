@@ -13,8 +13,8 @@
  * strictly prohibited.
  */
 
-import { callWithRequestFactory } from '../get_client_ml';
-import { wrapError } from '../errors';
+import { callWithRequestFactory } from '../client/get_client_ml';
+import { wrapError } from '../client/errors';
 
 export function systemRoutes(server, commonRouteConfig) {
 
