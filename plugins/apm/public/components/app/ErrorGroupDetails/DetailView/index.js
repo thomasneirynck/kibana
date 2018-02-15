@@ -128,7 +128,7 @@ function DetailView({ errorGroup, urlParams, location }) {
       interval: 'auto',
       query: {
         language: 'lucene',
-        query: `${SERVICE_NAME}:${serviceName} AND ${ERROR_GROUP_ID}:${groupId}`
+        query: `${SERVICE_NAME}:"${serviceName}" AND ${ERROR_GROUP_ID}:${groupId}`
       },
       sort: { '@timestamp': 'desc' }
     }
