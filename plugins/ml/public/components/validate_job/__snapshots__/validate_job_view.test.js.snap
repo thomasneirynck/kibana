@@ -30,7 +30,7 @@ exports[`ValidateJob renders button and modal with a messsage 1`] = `
       <EuiModalBody>
         <div>
           <p>
-            The following issues have been identified with this job configuration:
+            Job validation retrieved the following messages:
           </p>
           <EuiTable
             compressed={true}

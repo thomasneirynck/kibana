@@ -17,9 +17,14 @@
 // A simple template renderer, it replaces mustache/angular style {{...}} tags with
 // the values provided via the data object
 export function renderTemplate(str, data) {
-  str.match(/{{(.*?)}}/g).forEach(v => {
-    str = str.replace(v, data[v.replace(/{{|}}/g, '')]);
-  });
+  const matches = str.match(/{{(.*?)}}/g);
+
+  if (Array.isArray(matches)) {
+    matches.forEach(v => {
+      str = str.replace(v, data[v.replace(/{{|}}/g, '')]);
+    });
+  }
+
   return str;
 }
 

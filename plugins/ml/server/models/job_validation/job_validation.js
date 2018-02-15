@@ -18,12 +18,15 @@ import Boom from 'boom';
 import { renderTemplate } from '../../../common/util/string_utils';
 import messages from './messages.json';
 
+import { validateBucketSpan } from './validate_bucket_span';
 import { validateCardinality } from './validate_cardinality';
+
 
 export async function validateJob(callWithRequest, job) {
   try {
     const validationMessages = [
-      ...await validateCardinality(callWithRequest, job)
+      ...await validateCardinality(callWithRequest, job),
+      ...validateBucketSpan(callWithRequest, job)
     ];
 
     return validationMessages.map(message => {
@@ -42,6 +45,8 @@ export async function validateJob(callWithRequest, job) {
       return message;
     });
   } catch (error) {
+    console.error(error);
+    console.trace();
     throw Boom.badRequest(error);
   }
 }

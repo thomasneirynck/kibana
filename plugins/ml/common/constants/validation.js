@@ -16,5 +16,6 @@
 
 export const VALIDATION_STATUS = {
   ERROR: 'error',
+  INFO: 'info',
   WARNING: 'warning'
 };

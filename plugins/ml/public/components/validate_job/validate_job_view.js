@@ -54,10 +54,16 @@ const getDefaultState = () => ({
 });
 
 const statusToEuiColor = (status) => {
-  if (status === VALIDATION_STATUS.ERROR) {
-    return 'danger';
+  switch (status) {
+    case VALIDATION_STATUS.INFO:
+      return 'primary';
+      break;
+    case VALIDATION_STATUS.ERROR:
+      return 'danger';
+      break;
+    default:
+      return status;
   }
-  return status;
 };
 
 const link = (url) => {
@@ -81,7 +87,7 @@ const messageRows = (data) => {
   if (data.success && data.messages.length > 0) {
     return (
       <div>
-        <p>The following issues have been identified with this job configuration:</p>
+        <p>Job validation retrieved the following messages:</p>
         <EuiTable compressed>
           <EuiTableHeader>
             <EuiTableHeaderCell width="20" />
