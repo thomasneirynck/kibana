@@ -89,6 +89,14 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
+  this.estimateBucketSpan = function (obj) {
+    return http.request({
+      url: `${basePath}/validate/estimate_bucket_span`,
+      method: 'POST',
+      data: obj
+    });
+  };
+
   this.validateJob = function (obj) {
     return http.request({
       url: `${basePath}/validate/job`,

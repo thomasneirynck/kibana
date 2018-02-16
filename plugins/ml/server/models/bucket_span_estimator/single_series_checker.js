@@ -22,9 +22,7 @@
 
 import { INTERVALS, LONG_INTERVALS } from './intervals';
 
-export function SingleSeriesCheckerProvider($injector) {
-  const es = $injector.get('es');
-
+export function singleSeriesCheckerFactory(callWithRequest) {
   const REF_DATA_INTERVAL = { name: '1h',  ms: 3600000 };
 
   class SingleSeriesChecker {
@@ -129,7 +127,7 @@ export function SingleSeriesCheckerProvider($injector) {
                 }
 
                 // test that the full buckets contain at least 5 documents
-                if (this.aggType.name === 'sum' || this.aggType.name === 'count') {
+                if (this.aggType === 'sum' || this.aggType === 'count') {
                   if (pass && this.testSumCountBuckets(fullBuckets) === false) {
                     pass = false;
                   }
@@ -184,7 +182,7 @@ export function SingleSeriesCheckerProvider($injector) {
       if (this.field !== null) {
         search.aggs.non_empty_buckets.aggs = {
           fieldValue: {
-            [this.aggType.name]: {
+            [this.aggType]: {
               field: this.field
             }
           }
@@ -196,7 +194,7 @@ export function SingleSeriesCheckerProvider($injector) {
     performSearch(intervalMs) {
       const body = this.createSearch(intervalMs);
 
-      return es.search({
+      return callWithRequest('search', {
         index: this.index,
         size: 0,
         body

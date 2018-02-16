@@ -16,17 +16,15 @@
 import _ from 'lodash';
 
 import { INTERVALS } from './intervals';
-import { SingleSeriesCheckerProvider } from './single_series_checker';
-import { PolledDataCheckerProvider } from './polled_data_checker';
+import { singleSeriesCheckerFactory } from './single_series_checker';
+import { polledDataCheckerFactory } from './polled_data_checker';
 
-export function BucketSpanEstimatorProvider($injector) {
-  const Private = $injector.get('Private');
-
-  const PolledDataChecker = Private(PolledDataCheckerProvider);
-  const SingleSeriesChecker = Private(SingleSeriesCheckerProvider);
+export function estimateBucketSpanFactory(callWithRequest) {
+  const PolledDataChecker = polledDataCheckerFactory(callWithRequest);
+  const SingleSeriesChecker = singleSeriesCheckerFactory(callWithRequest);
 
   class BucketSpanEstimator {
-    constructor(index, timeField, aggTypes, fields, duration, query, splitField, splitFieldValues) {
+    constructor({ index, timeField, aggTypes, fields, duration, query, splitField }, splitFieldValues) {
       this.index = index;
       this.timeField = timeField;
       this.aggTypes = aggTypes;
@@ -228,5 +226,132 @@ export function BucketSpanEstimatorProvider($injector) {
       return median;
     }
   }
-  return BucketSpanEstimator;
+
+  const getFieldCardinality = function (index, field) {
+    return new Promise((resolve, reject) => {
+      callWithRequest('search', {
+        index,
+        size: 0,
+        body: {
+          aggs: {
+            field_count: {
+              cardinality: {
+                field,
+              }
+            }
+          }
+        }
+      })
+        .then((resp) => {
+          const value = _.get(resp, ['aggregations', 'field_count', 'value'], 0);
+          resolve(value);
+        })
+        .catch((resp) => {
+          reject(resp);
+        });
+    });
+  };
+
+  const getRandomFieldValues = function (index, field, query) {
+    let fieldValues = [];
+    return new Promise((resolve, reject) => {
+      const NUM_PARTITIONS = 10;
+      // use a partitioned search to load 10 random fields
+      // load ten fields, to test that there are at least 10.
+      getFieldCardinality(index, field)
+        .then((value) => {
+          const numPartitions = (Math.floor(value / NUM_PARTITIONS)) || 1;
+          callWithRequest('search', {
+            index,
+            size: 0,
+            body: {
+              query,
+              aggs: {
+                fields_bucket_counts: {
+                  terms: {
+                    field,
+                    include: {
+                      partition: 0,
+                      num_partitions: numPartitions
+                    }
+                  }
+                }
+              }
+            }
+          })
+            .then((partitionResp) => {
+              if (_.has(partitionResp, 'aggregations.fields_bucket_counts.buckets')) {
+                const buckets = partitionResp.aggregations.fields_bucket_counts.buckets;
+                fieldValues = _.map(buckets, b => b.key);
+              }
+              resolve(fieldValues);
+            })
+            .catch((resp) => {
+              reject(resp);
+            });
+        })
+        .catch((resp) => {
+          reject(resp);
+        });
+    });
+  };
+
+  return function (formConfig) {
+    if (typeof formConfig !== 'object' || formConfig === null) {
+      throw new Error('Invalid formConfig: formConfig needs to be an object.');
+    }
+
+    if (typeof formConfig.index !== 'string') {
+      throw new Error('Invalid formConfig: formConfig.index needs to be a string.');
+    }
+
+    if (typeof formConfig.duration !== 'object') {
+      throw new Error('Invalid formConfig: formConfig.duration needs to be an object.');
+    }
+
+    if (typeof formConfig.fields === 'undefined') {
+      throw new Error('Invalid formConfig: Missing fields.');
+    }
+
+    if (typeof formConfig.filters === 'undefined') {
+      throw new Error('Invalid formConfig: Missing filters.');
+    }
+
+    if (typeof formConfig.query === 'undefined') {
+      throw new Error('Invalid formConfig: Missing query.');
+    }
+
+    return new Promise((resolve, reject) => {
+      const runEstimator = (splitFieldValues = []) => {
+        const bucketSpanEstimator = new BucketSpanEstimator(
+          formConfig,
+          splitFieldValues
+        );
+
+        bucketSpanEstimator.run()
+          .then((resp) => {
+            resolve(resp);
+          })
+          .catch((resp) => {
+            reject(resp);
+          });
+      };
+
+      // a partition has been selected, so we need to load some field values to use in the
+      // bucket span tests.
+      if (formConfig.splitField !== undefined) {
+        getRandomFieldValues(formConfig.index, formConfig.splitField, formConfig.query)
+          .then((splitFieldValues) => {
+            runEstimator(splitFieldValues);
+          })
+          .catch((resp) => {
+            reject(resp);
+          });
+      } else {
+        // no partition field selected or we're in the single metric config
+        runEstimator();
+      }
+
+    });
+  };
 }

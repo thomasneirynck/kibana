@@ -45,8 +45,6 @@ export async function validateJob(callWithRequest, job) {
       return message;
     });
   } catch (error) {
-    console.error(error);
-    console.trace();
     throw Boom.badRequest(error);
   }
 }

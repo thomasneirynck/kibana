@@ -22,9 +22,7 @@
 
 import _ from 'lodash';
 
-export function PolledDataCheckerProvider($injector) {
-  const es = $injector.get('es');
-
+export function polledDataCheckerFactory(callWithRequest) {
   class PolledDataChecker {
     constructor(index, timeField, duration, query) {
       this.index = index;
@@ -81,7 +79,7 @@ export function PolledDataCheckerProvider($injector) {
     performSearch(intervalMs) {
       const body = this.createSearch(intervalMs);
 
-      return es.search({
+      return callWithRequest('search', {
         index: this.index,
         size: 0,
         body
