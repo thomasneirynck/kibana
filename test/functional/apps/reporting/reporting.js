@@ -73,7 +73,7 @@ export default function ({ getService, getPageObjects }) {
         });
       });
 
-      describe.skip('Print Layout', () => { // eslint-disable-line jest/no-disabled-tests
+      describe('Print Layout', () => {
         it('matches baseline report', async function () {
           // Generating and then comparing reports can take longer than the default 60s timeout because the comparePngs
           // function is taking about 15 seconds per comparison in jenkins.
@@ -140,7 +140,7 @@ export default function ({ getService, getPageObjects }) {
         });
       });
 
-      describe.skip('Preserve Layout', () => { // eslint-disable-line jest/no-disabled-tests
+      describe('Preserve Layout', () => {
         it('matches baseline report', async function () {
 
           // Generating and then comparing reports can take longer than the default 60s timeout because the comparePngs
@@ -166,8 +166,8 @@ export default function ({ getService, getPageObjects }) {
             config.get('screenshots.directory'),
             log
           );
-          // After expected OS differences, the diff count came to be around 200k
-          expect(diffCount).to.be.lessThan(220000);
+          // After expected OS differences, the diff count came to be around 250k
+          expect(diffCount).to.be.lessThan(250000);
 
         });
       });

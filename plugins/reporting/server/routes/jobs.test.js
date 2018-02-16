@@ -204,17 +204,17 @@ describe(`when job is completed`, () => {
 
   test(`specifies default filename in content-disposition header if no title`, async () => {
     const { headers } = await getCompletedResponse({ });
-    expect(headers['content-disposition']).toBe('attachment; filename="report.csv"');
+    expect(headers['content-disposition']).toBe('inline; filename="report.csv"');
   });
 
   test(`specifies payload title in content-disposition header`, async () => {
     const { headers } = await getCompletedResponse({ title: 'something' });
-    expect(headers['content-disposition']).toBe('attachment; filename="something.csv"');
+    expect(headers['content-disposition']).toBe('inline; filename="something.csv"');
   });
 
   test(`specifies jobContentExtension in content-disposition header`, async () => {
     const { headers } = await getCompletedResponse({ jobType: 'base64EncodedJobType' });
-    expect(headers['content-disposition']).toBe('attachment; filename="report.pdf"');
+    expect(headers['content-disposition']).toBe('inline; filename="report.pdf"');
   });
 
   test(`specifies application/pdf contentType header from the job output`, async () => {

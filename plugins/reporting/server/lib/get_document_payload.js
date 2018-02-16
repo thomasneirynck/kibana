@@ -19,7 +19,7 @@ function getDocumentPayloadFn(server) {
       content: encodeContent(output.content, exportType),
       contentType: output.content_type,
       headers: {
-        'Content-Disposition': `attachment; filename="${title || 'report'}.${exportType.jobContentExtension}"`
+        'Content-Disposition': `inline; filename="${title || 'report'}.${exportType.jobContentExtension}"`
       }
     };
   }
