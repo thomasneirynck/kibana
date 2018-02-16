@@ -4,7 +4,6 @@ import React from 'react';
 import { render } from 'react-dom';
 import { uiModules } from 'ui/modules';
 import {
-  KuiKeyboardAccessible,
   KuiTableRowCell,
   KuiTableRow
 } from 'ui_framework/components';
@@ -12,6 +11,9 @@ import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { MachineLearningJobStatusIcon } from 'plugins/monitoring/components/elasticsearch/ml_job_listing/status_icon';
 import { SORT_ASCENDING } from '../../../../common/constants';
 import { LARGE_ABBREVIATED, LARGE_BYTES } from '../../../../common/formatting';
+import {
+  EuiLink,
+} from '@elastic/eui';
 
 const filterFields = [ 'job_id', 'state', 'node.name' ];
 const columns = [
@@ -28,11 +30,11 @@ const jobRowFactory = (scope, kbnUrl) => {
   const getNode = node => {
     if (node) {
       return (
-        <KuiKeyboardAccessible>
-          <a className="kuiLink" onClick={goToNode.bind(null, node.id)}>
-            { node.name }
-          </a>
-        </KuiKeyboardAccessible>
+        <EuiLink
+          onClick={goToNode.bind(null, node.id)}
+        >
+          { node.name }
+        </EuiLink>
       );
     }
     return 'N/A';

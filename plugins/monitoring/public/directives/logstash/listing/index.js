@@ -3,10 +3,12 @@ import React from 'react';
 import { render } from 'react-dom';
 import { uiModules } from 'ui/modules';
 import {
-  KuiKeyboardAccessible,
   KuiTableRowCell,
   KuiTableRow
 } from 'ui_framework/components';
+import {
+  EuiLink,
+} from '@elastic/eui';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { SORT_ASCENDING } from '../../../../common/constants';
 import {
@@ -36,11 +38,11 @@ const nodeRowFactory = (scope, kbnUrl) => {
       <KuiTableRow>
         <KuiTableRowCell>
           <div className="monitoringTableCell__name">
-            <KuiKeyboardAccessible>
-              <a className="kuiLink" onClick={goToNode.bind(null, get(props, 'logstash.uuid'))}>
-                { get(props, 'logstash.name') }
-              </a>
-            </KuiKeyboardAccessible>
+            <EuiLink
+              onClick={goToNode.bind(null, get(props, 'logstash.uuid'))}
+            >
+              { get(props, 'logstash.name') }
+            </EuiLink>
           </div>
           <div className="monitoringTableCell__transportAddress">{ get(props, 'logstash.http_address') }</div>
         </KuiTableRowCell>

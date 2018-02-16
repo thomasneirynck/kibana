@@ -3,7 +3,6 @@ import React from 'react';
 import { render } from 'react-dom';
 import { uiModules } from 'ui/modules';
 import {
-  KuiKeyboardAccessible,
   KuiTableRowCell,
   KuiTableRow
 } from 'ui_framework/components';
@@ -13,6 +12,9 @@ import { Tooltip } from 'plugins/monitoring/components/tooltip';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { extractIp } from 'plugins/monitoring/lib/extract_ip';
 import { SORT_ASCENDING } from '../../../../common/constants';
+import {
+  EuiLink,
+} from '@elastic/eui';
 
 const filterFields = [ 'nodeName', 'status', 'type', 'transport_address' ];
 const getColumns = showCgroupMetricsElasticsearch => {
@@ -80,15 +82,12 @@ const nodeRowFactory = (scope, kbnUrl, showCgroupMetricsElasticsearch) => {
                 <span className={`fa ${this.props.node.nodeTypeClass}`} />
               </Tooltip>
               &nbsp;
-              <KuiKeyboardAccessible>
-                <a
-                  className="kuiLink"
-                  onClick={this.goToNode}
-                  data-test-subj={`nodeLink-${this.props.resolver}`}
-                >
-                  {this.props.node.name}
-                </a>
-              </KuiKeyboardAccessible>
+              <EuiLink
+                onClick={this.goToNode}
+                data-test-subj={`nodeLink-${this.props.resolver}`}
+              >
+                {this.props.node.name}
+              </EuiLink>
             </div>
             <div className="monitoringTableCell__transportAddress">{extractIp(this.props.node.transport_address)}</div>
           </KuiTableRowCell>

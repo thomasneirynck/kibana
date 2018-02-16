@@ -20,7 +20,9 @@ import React from 'react';
 import { Shard } from './shard';
 import { calculateClass } from '../lib/calculateClass';
 import { generateQueryAndLink } from '../lib/generateQueryAndLink';
-import { KuiKeyboardAccessible } from 'ui_framework/components';
+import {
+  EuiKeyboardAccessible,
+} from '@elastic/eui';
 
 function sortByName(item) {
   if (item.type === 'node') {
@@ -51,13 +53,13 @@ export class Assigned extends React.Component {
     };
 
     // TODO: redesign for shard allocation, possibly giving shard display the
-    // ability to use the kuiLink CSS class (blue link text instead of white link text)
+    // ability to use the euiLink CSS class (blue link text instead of white link text)
     const name = (
-      <KuiKeyboardAccessible>
+      <EuiKeyboardAccessible>
         <a onClick={changeUrl}>
           <span>{data.name}</span>
         </a>
-      </KuiKeyboardAccessible>
+      </EuiKeyboardAccessible>
     );
     const master = (data.node_type === 'master') ? <span className="fa fa-star" /> : null;
     const shards = sortBy(data.children, 'shard').map(this.createShard);

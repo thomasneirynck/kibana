@@ -1,6 +1,8 @@
 import React from 'react';
 import { includes, isFunction } from 'lodash';
-import { KuiKeyboardAccessible } from 'ui_framework/components';
+import {
+  EuiKeyboardAccessible,
+} from '@elastic/eui';
 
 export class HorizontalLegend extends React.Component {
   constructor() {
@@ -42,7 +44,7 @@ export class HorizontalLegend extends React.Component {
     }
 
     return (
-      <KuiKeyboardAccessible key={rowIdx}>
+      <EuiKeyboardAccessible key={rowIdx}>
         <div
           className={classes.join(' ')}
           onClick={event => this.props.onToggle(event, row.id)}
@@ -59,7 +61,7 @@ export class HorizontalLegend extends React.Component {
             { ' ' + value }
           </span>
         </div>
-      </KuiKeyboardAccessible>
+      </EuiKeyboardAccessible>
     );
   }
 

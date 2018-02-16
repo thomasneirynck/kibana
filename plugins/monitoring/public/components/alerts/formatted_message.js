@@ -1,35 +1,36 @@
 import moment from 'moment-timezone';
 import 'moment-duration-format';
 import React from 'react';
-import { KuiKeyboardAccessible } from 'ui_framework/components';
 import { formatTimestampToDuration } from '../../../common/format_timestamp_to_duration';
 import { CALCULATE_DURATION_UNTIL } from '../../../common/constants';
+import {
+  EuiLink,
+} from '@elastic/eui';
 
 export function FormattedMessage({ prefix, suffix, message, metadata, changeUrl }) {
   const formattedMessage = (() => {
     if (metadata && metadata.link) {
       if (metadata.link.startsWith('https')) {
         return (
-          <a
-            className="kuiLink"
+          <EuiLink
             href={metadata.link}
             target="_blank"
-            rel="noopener noreferrer"
             data-test-subj="alertAction"
           >
             { message }
-          </a>
+          </EuiLink>
         );
       }
 
       const goToLink = () => changeUrl(`/${metadata.link}`);
 
       return (
-        <KuiKeyboardAccessible>
-          <a className="kuiLink" onClick={goToLink} data-test-subj="alertAction">
-            { message }
-          </a>
-        </KuiKeyboardAccessible>
+        <EuiLink
+          onClick={goToLink}
+          data-test-subj="alertAction"
+        >
+          { message }
+        </EuiLink>
       );
     }
 

@@ -5,11 +5,13 @@ import moment from 'moment';
 import numeral from 'numeral';
 import { uiModules } from 'ui/modules';
 import {
-  KuiKeyboardAccessible,
   KuiTableRowCell,
   KuiTableRow
 } from 'ui_framework/components';
-import { EuiHealth } from '@elastic/eui';
+import {
+  EuiHealth,
+  EuiLink,
+} from '@elastic/eui';
 import { Notifier } from 'ui/notify';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { Tooltip } from 'plugins/monitoring/components/tooltip';
@@ -75,36 +77,35 @@ to enjoy multi-cluster monitoring.`
     getClusterAction() {
       if (this.props.isSupported) {
         return (
-          <a
-            className="kuiLink"
+          <EuiLink
             onClick={this.changeCluster.bind(this)}
             data-test-subj="clusterLink"
           >
             { this.props.cluster_name }
-          </a>
+          </EuiLink>
         );
       }
 
       // not supported because license is basic/not compatible with multi-cluster
       if (this.props.license) {
         return (
-          <a
+          <EuiLink
             onClick={this.handleClickIncompatibleLicense.bind(this)}
             data-test-subj="clusterLink"
           >
             { this.props.cluster_name }
-          </a>
+          </EuiLink>
         );
       }
 
       // not supported because license is invalid
       return (
-        <a
+        <EuiLink
           onClick={this.handleClickInvalidLicense.bind(this)}
           data-test-subj="clusterLink"
         >
           { this.props.cluster_name }
-        </a>
+        </EuiLink>
       );
     }
 
@@ -142,13 +143,13 @@ to enjoy multi-cluster monitoring.`
 
       // there is no license!
       return (
-        <KuiKeyboardAccessible>
-          <div className="kuiLink" onClick={this.handleClickInvalidLicense.bind(this)}>
-            <EuiHealth color="subdued" data-test-subj="alertIcon">
-              N/A
-            </EuiHealth>
-          </div>
-        </KuiKeyboardAccessible>
+        <EuiLink
+          onClick={this.handleClickInvalidLicense.bind(this)}
+        >
+          <EuiHealth color="subdued" data-test-subj="alertIcon">
+            N/A
+          </EuiHealth>
+        </EuiLink>
       );
     }
 
@@ -201,9 +202,7 @@ to enjoy multi-cluster monitoring.`
         <KuiTableRow data-test-subj={`clusterRow_${this.props.cluster_uuid}`}>
           <KuiTableRowCell>
             <span className="monitoringTableCell__name">
-              <KuiKeyboardAccessible>
-                { this.getClusterAction() }
-              </KuiKeyboardAccessible>
+              { this.getClusterAction() }
             </span>
           </KuiTableRowCell>
           <KuiTableRowCell data-test-subj="alertsStatus">

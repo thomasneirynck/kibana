@@ -9,11 +9,14 @@ import {
   TABLE_ACTION_UPDATE_FILTER,
 } from '../../../../common/constants';
 import {
-  KuiKeyboardAccessible,
   KuiTableRowCell,
   KuiTableRow
 } from 'ui_framework/components';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
+
+import {
+  EuiLink,
+} from '@elastic/eui';
 
 const filterFields = [ 'name', 'type', 'version', 'output' ];
 const columns = [
@@ -41,26 +44,20 @@ const beatRowFactory = (scope, kbnUrl) => {
       <KuiTableRow>
         <KuiTableRowCell>
           <div className="monitoringTableCell__name">
-            <KuiKeyboardAccessible>
-              <a
-                className="kuiLink"
-                onClick={goToBeat(props.uuid)}
-                data-test-subj={`beatLink-${props.name}`}
-              >
-                {props.name}
-              </a>
-            </KuiKeyboardAccessible>
+            <EuiLink
+              onClick={goToBeat(props.uuid)}
+              data-test-subj={`beatLink-${props.name}`}
+            >
+              {props.name}
+            </EuiLink>
           </div>
         </KuiTableRowCell>
         <KuiTableRowCell>
-          <KuiKeyboardAccessible>
-            <a
-              className="kuiLink"
-              onClick={applyFiltering(props.type)}
-            >
-              {props.type}
-            </a>
-          </KuiKeyboardAccessible>
+          <EuiLink
+            onClick={applyFiltering(props.type)}
+          >
+            {props.type}
+          </EuiLink>
         </KuiTableRowCell>
         <KuiTableRowCell>
           {props.output}
@@ -78,14 +75,11 @@ const beatRowFactory = (scope, kbnUrl) => {
           {formatMetric(props.memory, 'byte')}
         </KuiTableRowCell>
         <KuiTableRowCell>
-          <KuiKeyboardAccessible>
-            <a
-              className="kuiLink"
-              onClick={applyFiltering(props.version)}
-            >
-              {props.version}
-            </a>
-          </KuiKeyboardAccessible>
+          <EuiLink
+            onClick={applyFiltering(props.version)}
+          >
+            {props.version}
+          </EuiLink>
         </KuiTableRowCell>
       </KuiTableRow>
     );

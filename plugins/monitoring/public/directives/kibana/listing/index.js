@@ -3,7 +3,6 @@ import React from 'react';
 import { render } from 'react-dom';
 import { uiModules } from 'ui/modules';
 import {
-  KuiKeyboardAccessible,
   KuiTableRowCell,
   KuiTableRow
 } from 'ui_framework/components';
@@ -11,6 +10,9 @@ import { KibanaStatusIcon } from 'plugins/monitoring/components/kibana/status_ic
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { SORT_ASCENDING } from '../../../../common/constants';
 import { formatNumber } from '../../../lib/format_number';
+import {
+  EuiLink,
+} from '@elastic/eui';
 
 const filterFields = [ 'kibana.name', 'kibana.host', 'kibana.status', 'kibana.transport_address' ];
 const columns = [
@@ -33,15 +35,12 @@ const instanceRowFactory = (scope, kbnUrl) => {
       <KuiTableRow>
         <KuiTableRowCell>
           <div className="monitoringTableCell__name">
-            <KuiKeyboardAccessible>
-              <a
-                className="kuiLink"
-                onClick={goToInstance.bind(null, get(props, 'kibana.uuid'))}
-                data-test-subj={`kibanaLink-${props.kibana.name}`}
-              >
-                { props.kibana.name }
-              </a>
-            </KuiKeyboardAccessible>
+            <EuiLink
+              onClick={goToInstance.bind(null, get(props, 'kibana.uuid'))}
+              data-test-subj={`kibanaLink-${props.kibana.name}`}
+            >
+              { props.kibana.name }
+            </EuiLink>
           </div>
           <div className="monitoringTableCell__transportAddress">{ get(props, 'kibana.transport_address') }</div>
         </KuiTableRowCell>

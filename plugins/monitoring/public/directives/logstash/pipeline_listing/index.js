@@ -4,13 +4,15 @@ import moment from 'moment';
 import { partialRight } from 'lodash';
 import { uiModules } from 'ui/modules';
 import {
-  KuiKeyboardAccessible,
   KuiTableRowCell,
   KuiTableRow,
   KuiFlexGroup,
   KuiFlexItem,
   KuiEmptyTablePrompt
 } from 'ui_framework/components';
+import {
+  EuiLink,
+} from '@elastic/eui';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { Sparkline } from 'plugins/monitoring/components/sparkline';
 import { SORT_ASCENDING } from '../../../../common/constants';
@@ -33,15 +35,12 @@ const pipelineRowFactory = (onPipelineClick, onBrush, tooltipXValueFormatter, to
       <KuiTableRow>
         <KuiTableRowCell>
           <div className="monitoringTableCell__name">
-            <KuiKeyboardAccessible>
-              <a
-                className="kuiLink"
-                onClick={onPipelineClick.bind(null, id)}
-                data-test-subj="id"
-              >
-                { id }
-              </a>
-            </KuiKeyboardAccessible>
+            <EuiLink
+              onClick={onPipelineClick.bind(null, id)}
+              data-test-subj="id"
+            >
+              { id }
+            </EuiLink>
           </div>
         </KuiTableRowCell>
         <KuiTableRowCell>

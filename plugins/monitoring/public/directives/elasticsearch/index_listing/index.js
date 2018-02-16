@@ -5,7 +5,6 @@ import { SORT_ASCENDING, SORT_DESCENDING } from '../../../../common/constants';
 import { LARGE_FLOAT, LARGE_BYTES, LARGE_ABBREVIATED } from '../../../../common/formatting';
 import { uiModules } from 'ui/modules';
 import {
-  KuiKeyboardAccessible,
   KuiTableRowCell,
   KuiTableRow,
 } from 'ui_framework/components';
@@ -13,6 +12,9 @@ import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { ShowSytemIndicesCheckbox } from 'plugins/monitoring/components/elasticsearch/index_listing';
 import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';
 import { formatMetric } from '../../../lib/format_number';
+import {
+  EuiLink,
+} from '@elastic/eui';
 
 const filterFields = ['name', 'status'];
 const cols = [
@@ -41,15 +43,12 @@ const indexRowFactory = (scope, kbnUrl) => {
       return (
         <KuiTableRow>
           <KuiTableRowCell data-test-subj="name">
-            <KuiKeyboardAccessible>
-              <a
-                className="kuiLink"
-                onClick={this.changePath}
-                data-test-subj={`indexLink-${this.props.name}`}
-              >
-                {this.props.name}
-              </a>
-            </KuiKeyboardAccessible>
+            <EuiLink
+              onClick={this.changePath}
+              data-test-subj={`indexLink-${this.props.name}`}
+            >
+              {this.props.name}
+            </EuiLink>
           </KuiTableRowCell>
           <KuiTableRowCell>
             <div title={`Index status: ${status}`}>
