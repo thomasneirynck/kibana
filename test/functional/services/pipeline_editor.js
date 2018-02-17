@@ -14,6 +14,8 @@ export function PipelineEditorProvider({ getService }) {
   const SUBJ_BTN_SAVE = 'pipelineEdit btnSavePipeline';
   const SUBJ_BTN_CANCEL = 'pipelineEdit btnCancel';
   const SUBJ_BTN_DELETE = 'pipelineEdit btnDeletePipeline';
+  const SUBJ_LNK_BREADCRUMB_MANAGEMENT = 'breadcrumbs lnkBreadcrumb0';
+  const SUBJ_CONFIRM_MODAL_TEXT = 'confirmModalBodyText';
 
   const DEFAULT_INPUT_VALUES = {
     id: '',
@@ -37,6 +39,9 @@ export function PipelineEditorProvider({ getService }) {
     }
     async clickDelete() {
       await testSubjects.click(SUBJ_BTN_DELETE);
+    }
+    async clickManagementBreadcrumb() {
+      await testSubjects.click(SUBJ_LNK_BREADCRUMB_MANAGEMENT);
     }
 
     async setId(value) {
@@ -99,6 +104,10 @@ export function PipelineEditorProvider({ getService }) {
       if (await testSubjects.exists(SUBJ_BTN_DELETE)) {
         throw new Error('Expected there to be no delete button');
       }
+    }
+
+    assertUnsavedChangesModal() {
+      return testSubjects.exists(SUBJ_CONFIRM_MODAL_TEXT);
     }
   };
 }

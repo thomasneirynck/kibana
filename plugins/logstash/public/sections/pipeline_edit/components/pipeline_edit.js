@@ -2,6 +2,7 @@ import { isEmpty } from 'lodash';
 import { uiModules } from 'ui/modules';
 import { InitAfterBindingsWorkaround } from 'ui/compat';
 import { Notifier, toastNotifications } from 'ui/notify';
+import 'ui/dirty_prompt';
 import template from './pipeline_edit.html';
 import 'plugins/logstash/services/license';
 import 'plugins/logstash/services/security';
@@ -16,6 +17,7 @@ app.directive('pipelineEdit', function ($injector) {
   const securityService = $injector.get('logstashSecurityService');
   const kbnUrl = $injector.get('kbnUrl');
   const confirmModal = $injector.get('confirmModal');
+  const dirtyPrompt = $injector.get('dirtyPrompt');
 
   return {
     restrict: 'E',
@@ -27,6 +29,7 @@ app.directive('pipelineEdit', function ($injector) {
     controllerAs: 'pipelineEdit',
     controller: class PipelineEditController extends InitAfterBindingsWorkaround {
       initAfterBindings($scope) {
+        this.originalPipeline = { ...this.pipeline };
         this.notifier = new Notifier({ location: 'Logstash' });
         this.isNewPipeline = isEmpty(this.pipeline.id);
         // only if security is enabled and available, we tack on the username.
@@ -48,6 +51,9 @@ app.directive('pipelineEdit', function ($injector) {
         if (this.isReadOnly) {
           toastNotifications.addWarning(licenseService.message);
         }
+
+        dirtyPrompt.register(() => !this.pipeline.isEqualTo(this.originalPipeline));
+        $scope.$on('$destroy', dirtyPrompt.deregister);
       }
 
       onPipelineSave = (username) => {
@@ -73,7 +79,7 @@ app.directive('pipelineEdit', function ($injector) {
       }
 
       onClose = () => {
-        kbnUrl.change('/management/logstash/pipelines', {});
+        this.close();
       }
 
       deletePipeline = () => {
@@ -89,6 +95,7 @@ app.directive('pipelineEdit', function ($injector) {
       }
 
       close = () => {
+        dirtyPrompt.deregister();
         kbnUrl.change('/management/logstash/pipelines', {});
       }
 

@@ -7,6 +7,7 @@ export default function ({ getService, getPageObjects }) {
   const pipelineList = getService('pipelineList');
   const pipelineEditor = getService('pipelineEditor');
   const PageObjects = getPageObjects(['logstash']);
+  const testSubjects = getService('testSubjects');
 
   describe('pipeline create new', () => {
     let originalWindowSize;
@@ -71,6 +72,19 @@ export default function ({ getService, getPageObjects }) {
       it('is not visible', async () => {
         await PageObjects.logstash.gotoNewPipelineEditor();
         await pipelineEditor.assertNoDeleteButton();
+      });
+    });
+
+    describe('breadcrumbs navigation', () => {
+      it('prompts the user about unsaved changes', async () => {
+        await PageObjects.logstash.gotoNewPipelineEditor();
+
+        const description = random.text();
+        await pipelineEditor.setDescription(description);
+
+        await pipelineEditor.clickManagementBreadcrumb();
+        await pipelineEditor.assertUnsavedChangesModal();
+        await testSubjects.click('confirmModalConfirmButton');
       });
     });
   });

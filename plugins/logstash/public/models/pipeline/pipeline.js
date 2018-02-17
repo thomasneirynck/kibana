@@ -1,4 +1,4 @@
-import { get, pick, omit } from 'lodash';
+import { get, pick, omit, isEqual } from 'lodash';
 
 // This config template is presented to the user for the 'new pipeline' workflow
 const emptyPipeline = 'input {\n' +
@@ -36,5 +36,18 @@ export class Pipeline {
 
   static fromUpstreamJSON(pipeline) {
     return new Pipeline(pipeline);
+  }
+
+  isEqualTo = (otherPipeline) => {
+    // We need to create a POJO copies because isEqual would return false
+    // because of property getters
+    const cleanPipeline = {
+      ...this
+    };
+    const cleanOtherPipeline = {
+      ...otherPipeline
+    };
+
+    return isEqual(cleanPipeline, cleanOtherPipeline);
   }
 }
