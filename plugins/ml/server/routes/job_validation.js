@@ -29,13 +29,13 @@ export function jobValidationRoutes(server, commonRouteConfig) {
       const callWithRequest = callWithRequestFactory(server, request);
       try {
         return estimateBucketSpanFactory(callWithRequest)(request.payload)
-          .then(resp => reply(resp))
+          .then(reply)
           // this catch gets triggered when the estimation code runs without error
           // but isn't able to come up with a bucket span estimation.
           // this doesn't return a HTTP error but an object with an error message
           // which the client is then handling. triggering a HTTP error would be
           // too severe for this case.
-          .catch(resp => {
+          .catch((resp) => {
             reply({
               error: true,
               message: resp
@@ -58,8 +58,10 @@ export function jobValidationRoutes(server, commonRouteConfig) {
     handler(request, reply) {
       const callWithRequest = callWithRequestFactory(server, request);
       return validateJob(callWithRequest, request.payload)
-        .then(resp => reply(resp))
-        .catch(resp => reply(wrapError(resp)));
+        .then(reply)
+        .catch((resp) => {
+          reply(wrapError(resp));
+        });
     },
     config: {
       ...commonRouteConfig

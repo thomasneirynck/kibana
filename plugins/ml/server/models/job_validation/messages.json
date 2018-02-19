@@ -10,7 +10,11 @@
     "text": "Cardinality of partition_field \"{{fieldName}}\" is above 100 and might result in high memory usage. Consider using an over_field.",
     "url": "https://www.elastic.co/blog/sizing-machine-learning-with-elasticsearch"
   },
-  "high_bucket_span": {
+  "bucket_span_estimation_mismatch": {
+    "text": "Current bucket span is \"{{currentBucketSpan}}\", but bucket span estimation returned \"{{estimateBucketSpan}}\".",
+    "url": "https://www.elastic.co/blog/explaining-the-bucket-span-in-machine-learning-for-elasticsearch"
+  },
+  "bucket_span_high": {
     "text": "Bucket span is 1 day or more. Be aware that days are considered as UTC days, not local days.",
     "url": "https://www.elastic.co/blog/explaining-the-bucket-span-in-machine-learning-for-elasticsearch"
   }

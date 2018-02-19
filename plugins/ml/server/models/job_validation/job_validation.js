@@ -26,7 +26,7 @@ export async function validateJob(callWithRequest, job) {
   try {
     const validationMessages = [
       ...await validateCardinality(callWithRequest, job),
-      ...validateBucketSpan(callWithRequest, job)
+      ...await validateBucketSpan(callWithRequest, job)
     ];
 
     return validationMessages.map(message => {
