@@ -7,15 +7,26 @@ import { getDiffCalculation } from './_beats_stats';
 
 export function handleResponse(response, start, end) {
   const hits = get(response, 'hits.hits', []);
-  return hits.map(hit => {
+  const initial = { ids: new Set(), beats: [] };
+  const { beats } = hits.reduceRight((accum, hit) => {
     const stats = get(hit, '_source.beats_stats');
+    const uuid = get(stats, 'beat.uuid');
+
+    // skip this duplicated beat, newer one was already added
+    if (accum.ids.has(uuid)) {
+      return accum;
+    }
+
+    // add another beat summary
+    accum.ids.add(uuid);
     const earliestStats = get(hit, 'inner_hits.earliest.hits.hits[0]._source.beats_stats');
 
+    //  add the beat
     const rateOptions = {
       hitTimestamp: get(stats, 'timestamp'),
       earliestHitTimestamp: get(earliestStats, 'timestamp'),
       timeWindowMin: start,
-      timeWindowMax: end,
+      timeWindowMax: end
     };
 
     const { rate: bytesSentRate } = calculateRate({
@@ -39,7 +50,7 @@ export function handleResponse(response, start, end) {
       errorsWrittenEarliest + errorsReadEarliest
     );
 
-    return {
+    accum.beats.push({
       uuid: get(stats, 'beat.uuid'),
       name: get(stats, 'beat.name'),
       type: capitalize(get(stats, 'beat.type')),
@@ -48,9 +59,13 @@ export function handleResponse(response, start, end) {
       bytes_sent_rate: bytesSentRate,
       errors,
       memory: get(stats, 'metrics.beat.memstats.memory_alloc'),
-      version: get(stats, 'beat.version'),
-    };
-  });
+      version: get(stats, 'beat.version')
+    });
+
+    return accum;
+  }, initial);
+
+  return beats;
 }
 
 export async function getBeats(req, beatsIndexPattern, clusterUuid) {
@@ -87,23 +102,26 @@ export async function getBeats(req, beatsIndexPattern, clusterUuid) {
 
       // earliest hits for calculating diffs
       'hits.hits.inner_hits.earliest.hits.hits._source.beats_stats.metrics.libbeat.output.read.errors',
-      'hits.hits.inner_hits.earliest.hits.hits._source.beats_stats.metrics.libbeat.output.write.errors',
+      'hits.hits.inner_hits.earliest.hits.hits._source.beats_stats.metrics.libbeat.output.write.errors'
     ],
     body: {
       query: createBeatsQuery({
         start,
         end,
-        uuid: clusterUuid,
+        uuid: clusterUuid
       }),
       collapse: {
         field: 'beats_stats.metrics.beat.info.ephemeral_id', // collapse on ephemeral_id to handle restarts
         inner_hits: {
           name: 'earliest',
           size: 1,
-          sort: [ { 'beats_stats.timestamp': 'asc' } ]
+          sort: [{ 'beats_stats.timestamp': 'asc' }]
         }
       },
-      sort: [ { timestamp: { order: 'desc' } } ]
+      sort: [
+        { 'beats_stats.beat.uuid': { order: 'asc' } }, // need to keep duplicate uuids grouped
+        { timestamp: { order: 'desc' } } // need oldest timestamp to come first for rate calcs to work
+      ]
     }
   };
 
