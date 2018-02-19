@@ -3,15 +3,17 @@ import {
   KuiToolBarSection,
   KuiToolBarText,
 } from 'ui_framework/components';
+import {
+  EuiSwitch,
+} from '@elastic/eui';
 import { TABLE_ACTION_RESET_PAGING } from '../../../../common/constants';
 
 export class ShowSytemIndicesCheckbox extends React.Component {
   constructor(props) {
-    super();
+    super(props);
     this.state = { showSystemIndices: props.showSystemIndices };
     this.toggleShowSystemIndices = this.toggleShowSystemIndices.bind(this);
   }
-  // See also directives/shard_allocation/components/tableHead
   toggleShowSystemIndices(e) {
     const isChecked = Boolean(e.target.checked);
     this.setState({ showSystemIndices: isChecked });
@@ -22,15 +24,11 @@ export class ShowSytemIndicesCheckbox extends React.Component {
     return (
       <KuiToolBarSection>
         <KuiToolBarText>
-          <label className="kuiCheckBoxLabel">
-            <input
-              className="kuiCheckBox"
-              type="checkbox"
-              onChange={this.toggleShowSystemIndices}
-              checked={this.state.showSystemIndices}
-            />
-            <span className="kuiCheckBoxLabel__text">Show system indices</span>
-          </label>
+          <EuiSwitch
+            label="System indices"
+            onChange={this.toggleShowSystemIndices}
+            checked={this.state.showSystemIndices}
+          />
         </KuiToolBarText>
       </KuiToolBarSection>
     );

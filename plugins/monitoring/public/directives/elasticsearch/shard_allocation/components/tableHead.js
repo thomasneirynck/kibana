@@ -16,6 +16,11 @@
  */
 
 import React from 'react';
+import {
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiSwitch,
+} from '@elastic/eui';
 
 class IndexLabel extends React.Component {
 
@@ -38,22 +43,21 @@ class IndexLabel extends React.Component {
 
   render() {
     return (
-      <div className="pull-left filter-member">
-        Indices
-
-        <label className="kuiCheckBoxLabel">
-          <input
+      <EuiFlexGroup>
+        <EuiFlexItem
+          grow={false}
+        >
+          Indices
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiSwitch
+            label="System indices"
             onChange={this.toggleShowSystemIndicesState}
             checked={this.state.showSystemIndices}
-            className="kuiCheckBox"
             data-test-subj="shardShowSystemIndices"
-            type="checkbox"
           />
-          <span className="kuiCheckBoxLabel__text">
-            Show system indices
-          </span>
-        </label>
-      </div>
+        </EuiFlexItem>
+      </EuiFlexGroup>
     );
   }
 
