@@ -6,7 +6,7 @@ export default function ({ getService, getPageObjects }) {
   const listing = getService('monitoringBeatsListing');
   const beatsSummaryStatus = getService('monitoringBeatsSummaryStatus');
 
-  describe('monitoring/beats-listing', () => {
+  describe.skip('monitoring/beats-listing', () => {
     const { setup, tearDown } = getLifecycleMethods(getService, getPageObjects);
 
     before(async () => {
