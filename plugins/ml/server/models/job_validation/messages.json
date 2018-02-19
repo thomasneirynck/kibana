@@ -17,5 +17,14 @@
   "bucket_span_high": {
     "text": "Bucket span is 1 day or more. Be aware that days are considered as UTC days, not local days.",
     "url": "https://www.elastic.co/blog/explaining-the-bucket-span-in-machine-learning-for-elasticsearch"
+  },
+  "influencer_high": {
+    "text": "The job configuration includes more than 3 influencers. Consider using fewer influencers or creating multiple jobs."
+  },
+  "influencer_low_suggestion": {
+    "text": "The job configuration includes a partition or over field but no influencers are configured. Consider using {{influencerSuggestion}} as an influencer."
+  },
+  "influencer_low_suggestions": {
+    "text": "The job configuration includes partition or over fields but no influencers are configured. Consider using one of {{influencerSuggestion}} as an influencer."
   }
 }

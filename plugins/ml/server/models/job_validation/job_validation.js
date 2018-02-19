@@ -20,13 +20,15 @@ import messages from './messages.json';
 
 import { validateBucketSpan } from './validate_bucket_span';
 import { validateCardinality } from './validate_cardinality';
+import { validateInfluencer } from './validate_influencer';
 
 
 export async function validateJob(callWithRequest, job) {
   try {
     const validationMessages = [
       ...await validateCardinality(callWithRequest, job),
-      ...await validateBucketSpan(callWithRequest, job)
+      ...await validateBucketSpan(callWithRequest, job),
+      ...await validateInfluencer(callWithRequest, job)
     ];
 
     return validationMessages.map(message => {
