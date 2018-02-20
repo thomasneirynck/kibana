@@ -25,7 +25,7 @@ export const RecognizedResult = ({
   // if a logo is available, use that, otherwise display the id
   // the logo should be a base64 encoded image
   if (config.logo && config.logo.src) {
-    logo = <div><img src={config.logo.src}/></div>;
+    logo = <div><img className="synopsisIcon" src={config.logo.src}/></div>;
   } else {
     logo = <h3 className="euiTitle euiTitle--small">{config.id}</h3>;
   }
