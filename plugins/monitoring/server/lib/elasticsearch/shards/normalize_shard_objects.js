@@ -1,5 +1,5 @@
 import { get, partition } from 'lodash';
-import { calculateNodeType, getLatestAggKey } from '../nodes';
+import { calculateNodeType } from '../nodes';
 
 /*
  * Reducer function for a set of nodes to key the array by nodeId, summarize
@@ -15,12 +15,13 @@ export function normalizeNodeShards(masterNode) {
         ...node,
         node_ids: nodeIds
       };
+
       return {
         ...nodes,
         [node.key]: {
           shardCount: node.doc_count,
           indexCount: get(node, 'index_count.value'),
-          name: getLatestAggKey(get(node, 'node_names.buckets')),
+          name: get(node, 'node_names.buckets[0].key'),
           node_ids: nodeIds,
           type: calculateNodeType(_node, masterNode) // put the "star" icon on the node link in the shard allocator
         }

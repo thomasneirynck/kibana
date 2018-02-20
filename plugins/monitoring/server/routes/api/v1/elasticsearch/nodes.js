@@ -1,13 +1,7 @@
-import { get, isUndefined } from 'lodash';
 import Joi from 'joi';
 import { getClusterStats } from '../../../../lib/cluster/get_cluster_stats';
 import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
-import {
-  getNodes,
-  calculateNodeType,
-  getNodeTypeClassLabel,
-  getDefaultNodeFromId
-} from '../../../../lib/elasticsearch/nodes';
+import { getNodes } from '../../../../lib/elasticsearch/nodes';
 import { getShardStats } from '../../../../lib/elasticsearch/shards';
 import { handleError } from '../../../../lib/errors/handle_error';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
@@ -26,8 +20,7 @@ export function esNodesRoute(server) {
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
-          }).required(),
-          listingMetrics: Joi.array().required()
+          }).required()
         })
       }
     },
@@ -40,42 +33,10 @@ export function esNodesRoute(server) {
       try {
         const clusterStats = await getClusterStats(req, esIndexPattern, clusterUuid);
         const shardStats = await getShardStats(req, esIndexPattern, clusterStats, { includeNodes: true });
-        const { nodes, rows } = await getNodes(req, esIndexPattern);
+        const clusterStatus = getClusterStatus(clusterStats, shardStats);
+        const nodes = await getNodes(req, esIndexPattern, clusterStats, shardStats);
 
-        const clusterState = get(clusterStats, 'cluster_state', { nodes: {} });
-
-        const mappedRows = rows.map(({ name, metrics }) => {
-          const node = nodes[name] || getDefaultNodeFromId(name);
-          const calculatedNodeType = calculateNodeType(node, get(clusterState, 'master_node'));
-          const { nodeType, nodeTypeLabel, nodeTypeClass } = getNodeTypeClassLabel(node, calculatedNodeType);
-          const isOnline = !isUndefined(clusterState.nodes[name]);
-
-          const getMetrics = () => {
-            return {
-              ...metrics,
-              shard_count: get(shardStats, `nodes[${name}].shardCount`, 0)
-            };
-          };
-          const _metrics = isOnline ? getMetrics() : undefined;
-
-          return {
-            resolver: name,
-            online: isOnline,
-            metrics: _metrics,
-            node: {
-              ...node,
-              type: nodeType,
-              nodeTypeLabel: nodeTypeLabel,
-              nodeTypeClass: nodeTypeClass
-            }
-          };
-        });
-
-        reply({
-          clusterStatus: getClusterStatus(clusterStats, shardStats),
-          rows: mappedRows,
-          nodes,
-        });
+        reply({ clusterStatus, nodes, });
       } catch(err) {
         reply(handleError(err, req));
       }

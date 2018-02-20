@@ -16,21 +16,21 @@ import {
   EuiLink,
 } from '@elastic/eui';
 
-const filterFields = [ 'nodeName', 'status', 'type', 'transport_address' ];
+const filterFields = [ 'node.name', 'status', 'type', 'transport_address' ];
 const getColumns = showCgroupMetricsElasticsearch => {
   const cols = [];
-  cols.push({ title: 'Name', sortKey: 'nodeName', sortOrder: SORT_ASCENDING });
+  cols.push({ title: 'Name', sortKey: 'node.name', sortOrder: SORT_ASCENDING });
   cols.push({ title: 'Status', sortKey: 'online' });
   if (showCgroupMetricsElasticsearch) {
-    cols.push({ title: 'CPU Usage', sortKey: 'metrics.node_cgroup_quota.last' });
-    cols.push({ title: 'CPU Throttling', sortKey: 'metrics.node_cgroup_throttled.last' });
+    cols.push({ title: 'CPU Usage', sortKey: 'node_cgroup_quota.lastVal' });
+    cols.push({ title: 'CPU Throttling', sortKey: 'node_cgroup_throttled.lastVal' });
   } else {
-    cols.push({ title: 'CPU Usage', sortKey: 'metrics.node_cpu_utilization.last' });
-    cols.push({ title: 'Load Average', sortKey: 'metrics.node_load_average.last' });
+    cols.push({ title: 'CPU Usage', sortKey: 'node_cpu_utilization.lastVal' });
+    cols.push({ title: 'Load Average', sortKey: 'node_load_average.lastVal' });
   }
-  cols.push({ title: 'JVM Memory', sortKey: 'metrics.node_jvm_mem_percent.last' });
-  cols.push({ title: 'Disk Free Space', sortKey: 'metrics.node_free_space.last' });
-  cols.push({ title: 'Shards', sortKey: 'metrics.shard_count' });
+  cols.push({ title: 'JVM Memory', sortKey: 'node_jvm_mem_percent.lastVal' });
+  cols.push({ title: 'Disk Free Space', sortKey: 'node_free_space.lastVal' });
+  cols.push({ title: 'Shards', sortKey: 'shardCount' });
   return cols;
 };
 const nodeRowFactory = (scope, kbnUrl, showCgroupMetricsElasticsearch) => {
@@ -51,13 +51,13 @@ const nodeRowFactory = (scope, kbnUrl, showCgroupMetricsElasticsearch) => {
       const isOnline = this.isOnline();
       if (showCgroupMetricsElasticsearch) {
         return [
-          <MetricCell key="cpuCol1" isOnline={isOnline} metric={get(this.props, 'metrics.node_cgroup_quota')} />,
-          <MetricCell key="cpuCol2" isOnline={isOnline} metric={get(this.props, 'metrics.node_cgroup_throttled')} />,
+          <MetricCell key="cpuCol1" isOnline={isOnline} metric={get(this.props, 'node_cgroup_quota')} />,
+          <MetricCell key="cpuCol2" isOnline={isOnline} metric={get(this.props, 'node_cgroup_throttled')} />,
         ];
       }
       return [
-        <MetricCell key="cpuCol1" isOnline={isOnline} metric={get(this.props, 'metrics.node_cpu_utilization')} />,
-        <MetricCell key="cpuCol2" isOnline={isOnline} metric={get(this.props, 'metrics.node_load_average')} />,
+        <MetricCell key="cpuCol1" isOnline={isOnline} metric={get(this.props, 'node_cpu_utilization')} />,
+        <MetricCell key="cpuCol2" isOnline={isOnline} metric={get(this.props, 'node_load_average')} />,
       ];
     }
     getShardCount() {
@@ -65,7 +65,7 @@ const nodeRowFactory = (scope, kbnUrl, showCgroupMetricsElasticsearch) => {
         return (
           <KuiTableRowCell>
             <div className="monitoringTableCell__number">
-              {get(this.props, 'metrics.shard_count')}
+              {get(this.props, 'shardCount')}
             </div>
           </KuiTableRowCell>
         );
@@ -78,18 +78,18 @@ const nodeRowFactory = (scope, kbnUrl, showCgroupMetricsElasticsearch) => {
         <KuiTableRow>
           <KuiTableRowCell>
             <div className="monitoringTableCell__name">
-              <Tooltip text={this.props.node.nodeTypeLabel} trigger="hover" placement="bottom">
-                <span className={`fa ${this.props.node.nodeTypeClass}`} />
+              <Tooltip text={this.props.nodeTypeLabel} trigger="hover" placement="bottom">
+                <span className={`fa ${this.props.nodeTypeClass}`} />
               </Tooltip>
               &nbsp;
               <EuiLink
                 onClick={this.goToNode}
                 data-test-subj={`nodeLink-${this.props.resolver}`}
               >
-                {this.props.node.name}
+                {this.props.name}
               </EuiLink>
             </div>
-            <div className="monitoringTableCell__transportAddress">{extractIp(this.props.node.transport_address)}</div>
+            <div className="monitoringTableCell__transportAddress">{extractIp(this.props.transport_address)}</div>
           </KuiTableRowCell>
           <KuiTableRowCell>
             <div title={`Node status: ${this.props.status}`} className="monitoringTableCell__status">
@@ -98,8 +98,8 @@ const nodeRowFactory = (scope, kbnUrl, showCgroupMetricsElasticsearch) => {
             </div>
           </KuiTableRowCell>
           {this.getCpuComponents()}
-          <MetricCell isOnline={isOnline} metric={get(this.props, 'metrics.node_jvm_mem_percent')} />
-          <MetricCell isOnline={isOnline} metric={get(this.props, 'metrics.node_free_space')} />
+          <MetricCell isOnline={isOnline} metric={get(this.props, 'node_jvm_mem_percent')} />
+          <MetricCell isOnline={isOnline} metric={get(this.props, 'node_free_space')} />
           {this.getShardCount()}
         </KuiTableRow>
       );

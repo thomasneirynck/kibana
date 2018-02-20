@@ -1,6 +1,6 @@
-import { get } from 'lodash';
 import React from 'react';
-import { formatNumber } from '../../../lib/format_number';
+import { get } from 'lodash';
+import { formatMetric } from '../../../lib/format_number';
 import { KuiTableRowCell } from 'ui_framework/components';
 
 function OfflineCell() {
@@ -13,41 +13,29 @@ function OfflineCell() {
   );
 }
 
-function formatMetric(metric, key) {
-  const meta = metric.metric;
-  const value = get(metric, key);
-  if (!meta.format) { return value; }
-
-  if (Boolean(value) || value === 0) {
-    return formatNumber(value, meta.format) + ' ' + meta.units;
+const getSlopeArrow = (slope) => {
+  if (slope || slope === 0) {
+    return slope > 0 ? 'up' : 'down';
   }
+  return null;
+};
 
-  // N/A would show if the API returned no data at all, since the API filters out null from the data
-  return 'N/A';
-
-}
-
-function slopeArrow(metric) {
-  if (metric.slope > 0) {
-    return 'up';
-  }
-  return 'down';
-}
-
-function MetricCell(props) {
-  if (props.isOnline) {
+function MetricCell({ isOnline, metric = {} }) {
+  const { lastVal, maxVal, minVal, slope } = get(metric, 'summary', {});
+  const format = get(metric, 'metric.format');
+  if (isOnline) {
     return (
       <KuiTableRowCell>
         <div className="monitoringTableCell__MetricCell__metric">
-          { formatMetric(props.metric, 'last') }
+          { formatMetric(lastVal, format, '%') }
         </div>
-        <span className={`monitoringTableCell__MetricCell__slopeArrow fa fa-long-arrow-${slopeArrow(props.metric)}`} />
+        <span className={`monitoringTableCell__MetricCell__slopeArrow fa fa-long-arrow-${getSlopeArrow(slope)}`} />
         <div className="monitoringTableCell__MetricCell__minMax">
           <div>
-            { formatMetric(props.metric, 'max') } max
+            { formatMetric(maxVal, format, '% max') }
           </div>
           <div>
-            { formatMetric(props.metric, 'min') } min
+            { formatMetric(minVal, format, '% min') }
           </div>
         </div>
       </KuiTableRowCell>

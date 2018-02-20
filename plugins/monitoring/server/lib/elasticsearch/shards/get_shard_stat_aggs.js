@@ -26,10 +26,11 @@ export function getShardAggs(config, includeNodes, nodeResolver) {
     aggs: {
       index_count: { cardinality: { field: 'shard.index' } },
       node_names: {
-        terms: { field: 'source_node.name', size: aggSize },
-        aggs: { max_timestamp: { max: { field: 'timestamp' } } }
+        terms: { field: 'source_node.name', size: aggSize }
       },
-      node_ids: { terms: { field: 'source_node.uuid', size: aggSize } } // for doing a join on the cluster state to determine if node is current master
+      node_ids: {
+        terms: { field: 'source_node.uuid', size: 1 } // node can only have 1 id
+      }
     }
   };
 
