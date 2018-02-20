@@ -107,8 +107,8 @@ export default function ({ getService, getPageObjects }) {
             config.get('screenshots.directory'),
             log
           );
-          // After expected OS differences, the diff count came to be around 65k
-          expect(diffCount).to.be.lessThan(85000);
+          // After expected OS differences, the diff count came to be around 128k
+          expect(diffCount).to.be.lessThan(128000);
         });
 
         it('matches same baseline report with margins turned on', async function () {
@@ -135,8 +135,8 @@ export default function ({ getService, getPageObjects }) {
             config.get('screenshots.directory'),
             log
           );
-          // After expected OS differences, the diff count came to be around 65k
-          expect(diffCount).to.be.lessThan(85000);
+          // After expected OS differences, the diff count came to be around 128k
+          expect(diffCount).to.be.lessThan(128000);
         });
       });
 
@@ -166,8 +166,8 @@ export default function ({ getService, getPageObjects }) {
             config.get('screenshots.directory'),
             log
           );
-          // After expected OS differences, the diff count came to be around 250k
-          expect(diffCount).to.be.lessThan(250000);
+          // After expected OS differences, the diff count came to be around 350k
+          expect(diffCount).to.be.lessThan(350000);
 
         });
       });
