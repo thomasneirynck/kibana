@@ -475,6 +475,42 @@ export class LogstashEventsRateClusterMetric extends LogstashClusterMetric {
 
 }
 
+export class LogstashPipelineQueueSizeMetric extends LogstashMetric {
+  constructor(opts) {
+    super({ ...opts });
+
+    this.dateHistogramSubAggs = {
+      pipelines: {
+        nested: {
+          path: 'logstash_stats.pipelines'
+        },
+        aggs: {
+          pipeline_by_id: {
+            terms: {
+              field: 'logstash_stats.pipelines.id',
+              size: 1000
+            },
+            aggs: {
+              queue_size_field: {
+                max: {
+                  field: this.field
+                }
+              }
+            }
+          },
+          total_queue_size_for_node: {
+            sum_bucket: {
+              buckets_path: 'pipeline_by_id>queue_size_field'
+            }
+          }
+        }
+      }
+    };
+
+    this.calculation = bucket => _.get(bucket, 'pipelines.total_queue_size_for_node.value');
+  }
+}
+
 export class LogstashPipelineThroughputMetric extends LogstashMetric {
   constructor(opts) {
     super({

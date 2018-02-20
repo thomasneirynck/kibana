@@ -13,6 +13,7 @@ import {
   LogstashEventsRateClusterMetric,
   LogstashEventsRateMetric,
   LogstashMetric,
+  LogstashPipelineQueueSizeMetric,
   LogstashPipelineThroughputMetric,
   LogstashPipelineNodeCountMetric,
   NodeIndexMemoryMetric,
@@ -1165,6 +1166,20 @@ const metricInstances = {
     format: LARGE_FLOAT,
     metricAgg: 'avg',
     units: ''
+  }),
+  'logstash_pipeline_queue_size': new LogstashPipelineQueueSizeMetric({
+    field: 'logstash_stats.pipelines.queue.queue_size_in_bytes',
+    label: 'Queue Size',
+    description: 'Current size of all queues in the Logstash pipelines on this node.',
+    format: LARGE_BYTES,
+    units: 'B'
+  }),
+  'logstash_pipeline_max_queue_size': new LogstashPipelineQueueSizeMetric({
+    field: 'logstash_stats.pipelines.queue.max_queue_size_in_bytes',
+    label: 'Max Queue Size',
+    description: 'Maximum size set for the queues on this node.',
+    format: LARGE_BYTES,
+    units: 'B'
   }),
   'logstash_cluster_pipeline_throughput': new LogstashPipelineThroughputMetric({
     field: 'logstash_stats.pipelines.events.out',

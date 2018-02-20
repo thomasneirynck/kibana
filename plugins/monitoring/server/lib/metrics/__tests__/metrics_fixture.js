@@ -2360,6 +2360,84 @@ export const expected = {
     'timestampField': 'logstash_stats.timestamp',
     'derivative': false
   },
+  'logstash_pipeline_queue_size': {
+    'field': 'logstash_stats.pipelines.queue.queue_size_in_bytes',
+    'label': 'Queue Size',
+    'description': 'Current size of all queues in the Logstash pipelines on this node.',
+    'format': '0,0.0 b',
+    'units': 'B',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': false,
+    'calculation': new Function(),
+    'dateHistogramSubAggs': {
+      'pipelines': {
+        'nested': {
+          'path': 'logstash_stats.pipelines'
+        },
+        'aggs': {
+          'pipeline_by_id': {
+            'terms': {
+              'field': 'logstash_stats.pipelines.id',
+              'size': 1000
+            },
+            'aggs': {
+              'queue_size_field': {
+                'max': {
+                  'field': 'logstash_stats.pipelines.queue.queue_size_in_bytes'
+                }
+              }
+            }
+          },
+          'total_queue_size_for_node': {
+            'sum_bucket': {
+              'buckets_path': 'pipeline_by_id>queue_size_field'
+            }
+          }
+        }
+      }
+    }
+  },
+  'logstash_pipeline_max_queue_size': {
+    'field': 'logstash_stats.pipelines.queue.max_queue_size_in_bytes',
+    'label': 'Max Queue Size',
+    'description': 'Maximum size set for the queues on this node.',
+    'format': '0,0.0 b',
+    'units': 'B',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': false,
+    'calculation': new Function(),
+    'dateHistogramSubAggs': {
+      'pipelines': {
+        'nested': {
+          'path': 'logstash_stats.pipelines'
+        },
+        'aggs': {
+          'pipeline_by_id': {
+            'terms': {
+              'field': 'logstash_stats.pipelines.id',
+              'size': 1000
+            },
+            'aggs': {
+              'queue_size_field': {
+                'max': {
+                  'field': 'logstash_stats.pipelines.queue.max_queue_size_in_bytes'
+                }
+              }
+            }
+          },
+          'total_queue_size_for_node': {
+            'sum_bucket': {
+              'buckets_path': 'pipeline_by_id>queue_size_field'
+            }
+          }
+        }
+      }
+    }
+  },
   'logstash_cluster_pipeline_throughput': {
     'field': 'logstash_stats.pipelines.events.out',
     'label': 'Pipeline Throughput',
