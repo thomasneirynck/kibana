@@ -1,6 +1,7 @@
 import { resolve } from 'path';
 import { registerLogstashPipelinesRoutes } from './server/routes/api/pipelines';
 import { registerLogstashPipelineRoutes } from './server/routes/api/pipeline';
+import { registerLogstashUpgradeRoutes } from './server/routes/api/upgrade';
 import { registerLicenseChecker } from './server/lib/register_license_checker';
 import { PLUGIN } from './common/constants';
 
@@ -24,5 +25,6 @@ export const logstash = (kibana) => new kibana.Plugin({
     registerLicenseChecker(server);
     registerLogstashPipelinesRoutes(server);
     registerLogstashPipelineRoutes(server);
+    registerLogstashUpgradeRoutes(server);
   }
 });
