@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import CustomPlot from '../CustomPlot';
 import { getTimefilter } from '../../../../utils/timepicker';
 import { asMillis, asDecimal, tpmUnit } from '../../../../utils/formatters';
@@ -60,14 +61,14 @@ export class Charts extends Component {
 
   render() {
     const { charts, urlParams } = this.props;
-    const { noHits, responseTimeSeries, rpmSeries } = charts.data;
+    const { noHits, responseTimeSeries, tpmSeries } = charts.data;
 
     return (
       <ChartsWrapper>
         <Chart>
           <CustomPlot
             noHits={noHits}
-            chartTitle="Response times"
+            chartTitle={responseTimeLabel(urlParams.transactionType)}
             series={responseTimeSeries}
             onHover={this.onHover}
             onMouseLeave={this.onMouseLeave}
@@ -81,7 +82,7 @@ export class Charts extends Component {
           <CustomPlot
             noHits={noHits}
             chartTitle={tpmLabel(urlParams.transactionType)}
-            series={rpmSeries}
+            series={tpmSeries}
             onHover={this.onHover}
             onMouseLeave={this.onMouseLeave}
             onSelectionEnd={this.onSelectionEnd}
@@ -98,5 +99,21 @@ export class Charts extends Component {
 function tpmLabel(type) {
   return type === 'request' ? 'Requests per minute' : 'Transactions per minute';
 }
+
+function responseTimeLabel(type) {
+  switch (type) {
+    case 'page-load':
+      return 'Page load times';
+    case 'route-change':
+      return 'Route change times';
+    default:
+      return 'Response times';
+  }
+}
+
+Charts.propTypes = {
+  urlParams: PropTypes.object.isRequired,
+  charts: PropTypes.object.isRequired
+};
 
 export default Charts;

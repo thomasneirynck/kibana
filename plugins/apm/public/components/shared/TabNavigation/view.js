@@ -41,8 +41,16 @@ const NavLink = styled(TabLink)`
   ${truncate(px(units.half * 27))};
 `;
 
+// TODO: This is duplicated in TransactionOverview
 function transactionTypeLabel(type) {
-  return type === 'request' ? 'Request' : type;
+  switch (type) {
+    case 'request':
+      return 'Request';
+    case 'page-load':
+      return 'Page load';
+    default:
+      return type;
+  }
 }
 
 function TabNavigation({ urlParams, location, service }) {

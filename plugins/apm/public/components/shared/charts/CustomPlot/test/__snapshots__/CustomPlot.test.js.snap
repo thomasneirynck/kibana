@@ -33,7 +33,16 @@ Array [
 `;
 
 exports[`when response has data Initially should have correct markup 1`] = `
-.c2 {
+Array [
+  .c0 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+<div
+    className="c0"
+  />,
+  .c1 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -53,7 +62,7 @@ exports[`when response has data Initially should have correct markup 1`] = `
   user-select: none;
 }
 
-.c3 {
+.c2 {
   width: 11px;
   height: 11px;
   margin-right: 5.5px;
@@ -61,7 +70,7 @@ exports[`when response has data Initially should have correct markup 1`] = `
   border-radius: 100%;
 }
 
-.c6 {
+.c5 {
   width: 11px;
   height: 11px;
   margin-right: 5.5px;
@@ -69,7 +78,7 @@ exports[`when response has data Initially should have correct markup 1`] = `
   border-radius: 100%;
 }
 
-.c7 {
+.c6 {
   width: 11px;
   height: 11px;
   margin-right: 5.5px;
@@ -77,7 +86,7 @@ exports[`when response has data Initially should have correct markup 1`] = `
   border-radius: 100%;
 }
 
-.c1 {
+.c0 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -92,7 +101,7 @@ exports[`when response has data Initially should have correct markup 1`] = `
   justify-content: flex-end;
 }
 
-.c4 {
+.c3 {
   white-space: nowrap;
   color: #999999;
   display: -webkit-box;
@@ -101,81 +110,72 @@ exports[`when response has data Initially should have correct markup 1`] = `
   display: flex;
 }
 
-.c5 {
+.c4 {
   margin-left: 4px;
   color: #000000;
   display: inline-block;
 }
 
-.c0 {
-  font-size: 16px;
-  margin-bottom: 8px;
-}
-
-<div>
-  <div
+<div
     className="c0"
-  />
-  <div
-    className="c1"
   >
     <div
-      className="c2"
+      className="c1"
       disabled={false}
       fontSize="12px"
       onClick={[Function]}
     >
       <span
-        className="c3"
+        className="c2"
         color="#3185fc"
         radius={11}
       />
       <span
-        className="c4"
+        className="c3"
       >
         Avg.
         <span
-          className="c5"
+          className="c4"
         >
           468 ms
         </span>
       </span>
     </div>
     <div
-      className="c2"
+      className="c1"
+      disabled={false}
+      fontSize="12px"
+      onClick={[Function]}
+    >
+      <span
+        className="c5"
+        color="#ecae23"
+        radius={11}
+      />
+      <span
+        className="c3"
+      >
+        95th percentile
+      </span>
+    </div>
+    <div
+      className="c1"
       disabled={false}
       fontSize="12px"
       onClick={[Function]}
     >
       <span
         className="c6"
-        color="#ecae23"
-        radius={11}
-      />
-      <span
-        className="c4"
-      >
-        95th percentile
-      </span>
-    </div>
-    <div
-      className="c2"
-      disabled={false}
-      fontSize="12px"
-      onClick={[Function]}
-    >
-      <span
-        className="c7"
         color="#f98510"
         radius={11}
       />
       <span
-        className="c4"
+        className="c3"
       >
         99th percentile
       </span>
     </div>
-  </div>
+  </div>,
   <div
     style={
       Object {
@@ -1070,8 +1070,8 @@ exports[`when response has data Initially should have correct markup 1`] = `
         </svg>
       </div>
     </div>
-  </div>
-</div>
+  </div>,
+]
 `;
 
 exports[`when response has data Initially should have correct state 1`] = `
@@ -1116,7 +1116,16 @@ Array [
 `;
 
 exports[`when response has data when setting hoverIndex should match snapshots 1`] = `
-.c2 {
+Array [
+  .c0 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+<div
+    className="c0"
+  />,
+  .c1 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -1136,11 +1145,19 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
   user-select: none;
 }
 
-.c3 {
+.c2 {
   width: 11px;
   height: 11px;
   margin-right: 5.5px;
   background: #3185fc;
+  border-radius: 100%;
+}
+
+.c5 {
+  width: 11px;
+  height: 11px;
+  margin-right: 5.5px;
+  background: #ecae23;
   border-radius: 100%;
 }
 
@@ -1148,43 +1165,11 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
   width: 11px;
   height: 11px;
   margin-right: 5.5px;
-  background: #ecae23;
-  border-radius: 100%;
-}
-
-.c7 {
-  width: 11px;
-  height: 11px;
-  margin-right: 5.5px;
   background: #f98510;
   border-radius: 100%;
 }
 
-.c13 {
-  width: 8px;
-  height: 8px;
-  margin-right: 4px;
-  background: #3185fc;
-  border-radius: 100%;
-}
-
-.c15 {
-  width: 8px;
-  height: 8px;
-  margin-right: 4px;
-  background: #ecae23;
-  border-radius: 100%;
-}
-
-.c16 {
-  width: 8px;
-  height: 8px;
-  margin-right: 4px;
-  background: #f98510;
-  border-radius: 100%;
-}
-
-.c1 {
+.c0 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -1199,7 +1184,7 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
   justify-content: flex-end;
 }
 
-.c4 {
+.c3 {
   white-space: nowrap;
   color: #999999;
   display: -webkit-box;
@@ -1208,13 +1193,117 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
   display: flex;
 }
 
-.c5 {
+.c4 {
   margin-left: 4px;
   color: #000000;
   display: inline-block;
 }
 
+<div
+    className="c0"
+  >
+    <div
+      className="c1"
+      disabled={false}
+      fontSize="12px"
+      onClick={[Function]}
+    >
+      <span
+        className="c2"
+        color="#3185fc"
+        radius={11}
+      />
+      <span
+        className="c3"
+      >
+        Avg.
+        <span
+          className="c4"
+        >
+          468 ms
+        </span>
+      </span>
+    </div>
+    <div
+      className="c1"
+      disabled={false}
+      fontSize="12px"
+      onClick={[Function]}
+    >
+      <span
+        className="c5"
+        color="#ecae23"
+        radius={11}
+      />
+      <span
+        className="c3"
+      >
+        95th percentile
+      </span>
+    </div>
+    <div
+      className="c1"
+      disabled={false}
+      fontSize="12px"
+      onClick={[Function]}
+    >
+      <span
+        className="c6"
+        color="#f98510"
+        radius={11}
+      />
+      <span
+        className="c3"
+      >
+        99th percentile
+      </span>
+    </div>
+  </div>,
+  .c5 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  font-size: 12px;
+  color: #666666;
+  cursor: pointer;
+  opacity: 1;
+  margin-right: 16px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.c6 {
+  width: 8px;
+  height: 8px;
+  margin-right: 4px;
+  background: #3185fc;
+  border-radius: 100%;
+}
+
 .c8 {
+  width: 8px;
+  height: 8px;
+  margin-right: 4px;
+  background: #ecae23;
+  border-radius: 100%;
+}
+
+.c9 {
+  width: 8px;
+  height: 8px;
+  margin-right: 4px;
+  background: #f98510;
+  border-radius: 100%;
+}
+
+.c0 {
   margin: 0 16px;
   -webkit-transform: translateY(-50%);
   -ms-transform: translateY(-50%);
@@ -1226,7 +1315,7 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
   color: #000000;
 }
 
-.c9 {
+.c1 {
   background: #f5f5f5;
   border-bottom: 1px solid #d9d9d9;
   border-radius: 5px 5px 0 0;
@@ -1234,19 +1323,19 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
   color: #999999;
 }
 
-.c10 {
+.c2 {
   margin: 8px;
   margin-right: 16px;
   font-size: 12px;
 }
 
-.c17 {
+.c10 {
   color: #999999;
   margin: 8px;
   font-size: 12px;
 }
 
-.c11 {
+.c3 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -1262,85 +1351,16 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
   justify-content: space-between;
 }
 
-.c12 {
+.c4 {
   color: #999999;
 }
 
-.c14 {
+.c7 {
   color: #666666;
   font-size: 14px;
 }
 
-.c0 {
-  font-size: 16px;
-  margin-bottom: 8px;
-}
-
-<div>
-  <div
-    className="c0"
-  />
-  <div
-    className="c1"
-  >
-    <div
-      className="c2"
-      disabled={false}
-      fontSize="12px"
-      onClick={[Function]}
-    >
-      <span
-        className="c3"
-        color="#3185fc"
-        radius={11}
-      />
-      <span
-        className="c4"
-      >
-        Avg.
-        <span
-          className="c5"
-        >
-          468 ms
-        </span>
-      </span>
-    </div>
-    <div
-      className="c2"
-      disabled={false}
-      fontSize="12px"
-      onClick={[Function]}
-    >
-      <span
-        className="c6"
-        color="#ecae23"
-        radius={11}
-      />
-      <span
-        className="c4"
-      >
-        95th percentile
-      </span>
-    </div>
-    <div
-      className="c2"
-      disabled={false}
-      fontSize="12px"
-      onClick={[Function]}
-    >
-      <span
-        className="c7"
-        color="#f98510"
-        radius={11}
-      />
-      <span
-        className="c4"
-      >
-        99th percentile
-      </span>
-    </div>
-  </div>
-  <div
+<div
     style={
       Object {
         "height": 256,
@@ -1811,82 +1831,82 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
           }
         >
           <div
-            className="c8"
+            className="c0"
           >
             <div
-              className="c9"
+              className="c1"
             >
               1502283720
             </div>
             <div
-              className="c10"
+              className="c2"
             >
               <div
-                className="c11"
+                className="c3"
               >
                 <div
-                  className="c12 c2"
+                  className="c4 c5"
                   disabled={false}
                   fontSize="12px"
                 >
                   <span
-                    className="c13"
+                    className="c6"
                     color="#3185fc"
                     radius={8}
                   />
                   Avg.
                 </div>
                 <div
-                  className="c14"
+                  className="c7"
                 >
                   438704.4
                 </div>
               </div>
               <div
-                className="c11"
+                className="c3"
               >
                 <div
-                  className="c12 c2"
+                  className="c4 c5"
                   disabled={false}
                   fontSize="12px"
                 >
                   <span
-                    className="c15"
+                    className="c8"
                     color="#ecae23"
                     radius={8}
                   />
                   95th
                 </div>
                 <div
-                  className="c14"
+                  className="c7"
                 >
                   1557383.999999999
                 </div>
               </div>
               <div
-                className="c11"
+                className="c3"
               >
                 <div
-                  className="c12 c2"
+                  className="c4 c5"
                   disabled={false}
                   fontSize="12px"
                 >
                   <span
-                    className="c16"
+                    className="c9"
                     color="#f98510"
                     radius={8}
                   />
                   99th
                 </div>
                 <div
-                  className="c14"
+                  className="c7"
                 >
                   1820377.1200000006
                 </div>
               </div>
             </div>
             <div
-              className="c17"
+              className="c10"
             />
           </div>
         </div>
@@ -2394,8 +2414,8 @@ exports[`when response has data when setting hoverIndex should match snapshots 1
         </svg>
       </div>
     </div>
-  </div>
-</div>
+  </div>,
+]
 `;
 
 exports[`when response has data when setting hoverIndex should match snapshots 2`] = `
@@ -2408,15 +2428,16 @@ Object {
 `;
 
 exports[`when response has no data Initially should have correct markup 1`] = `
-.c0 {
+Array [
+  .c0 {
   font-size: 16px;
   margin-bottom: 8px;
 }
 
-<div>
-  <div
+<div
     className="c0"
-  />
+  />,
+  "",
   <div
     style={
       Object {
@@ -2934,8 +2955,8 @@ exports[`when response has no data Initially should have correct markup 1`] = `
         />
       </div>
     </div>
-  </div>
-</div>
+  </div>,
+]
 `;
 
 exports[`when response has no data Initially should have correct state 1`] = `

@@ -73,14 +73,14 @@ export async function getTopTransactions({
   const buckets = get(resp, 'aggregations.transactions.buckets', []);
   const results = buckets.map(bucket => {
     const avg = bucket.avg.value;
-    const rpm = bucket.doc_count / minutes;
-    const impact = Math.round(avg * rpm);
+    const tpm = bucket.doc_count / minutes;
+    const impact = Math.round(avg * tpm);
     return {
       name: bucket.key,
       id: get(bucket, `sample.hits.hits[0]._source.${TRANSACTION_ID}`),
       p95: bucket.p95.values['95.0'],
       avg,
-      rpm,
+      tpm,
       impact,
       transaction_type: transactionType
     };

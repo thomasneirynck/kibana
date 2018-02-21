@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { makeWidthFlexible } from 'react-vis';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import styled from 'styled-components';
 
 import Legends from './Legends';
@@ -119,7 +119,7 @@ export class InnerCustomPlot extends PureComponent {
     }
 
     return (
-      <div>
+      <Fragment>
         <Title>{chartTitle}</Title>
 
         <Legends
@@ -161,7 +161,7 @@ export class InnerCustomPlot extends PureComponent {
             onMouseUp={this.onMouseUp}
           />
         </div>
-      </div>
+      </Fragment>
     );
   }
 }

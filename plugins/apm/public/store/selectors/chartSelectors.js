@@ -30,9 +30,9 @@ export function getCharts(urlParams, charts) {
   const { start, end, transactionType } = urlParams;
   const chartsData = charts.data;
   const noHits = chartsData.totalHits === 0;
-  const rpmSeries = noHits
+  const tpmSeries = noHits
     ? getEmptySerie(start, end)
-    : getRpmSeries(chartsData, transactionType);
+    : getTpmSeries(chartsData, transactionType);
 
   const responseTimeSeries = noHits
     ? getEmptySerie(start, end)
@@ -42,7 +42,7 @@ export function getCharts(urlParams, charts) {
     ...charts,
     data: {
       noHits,
-      rpmSeries,
+      tpmSeries,
       responseTimeSeries
     }
   };
@@ -80,13 +80,22 @@ export function getResponseTimeSeries(chartsData) {
   ];
 }
 
-export function getRpmSeries(chartsData, transactionType) {
+function getTpmLegendTitle(bucketKey) {
+  // hide legend text for transactions without "result"
+  if (bucketKey === 'transaction_result_missing') {
+    return '';
+  }
+
+  return bucketKey;
+}
+
+function getTpmSeries(chartsData, transactionType) {
   const { dates, tpmBuckets } = chartsData;
   const getColor = getColorByKey(tpmBuckets.map(({ key }) => key));
 
   return tpmBuckets.map(bucket => {
     return {
-      title: bucket.key,
+      title: getTpmLegendTitle(bucket.key),
       data: getChartValues(dates, bucket.values),
       legendValue: `${asDecimal(bucket.avg)} ${tpmUnit(transactionType)}`,
       type: 'line',

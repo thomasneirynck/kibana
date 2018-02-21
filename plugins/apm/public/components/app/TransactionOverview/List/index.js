@@ -9,18 +9,24 @@ import { AlignmentKuiTableHeaderCell } from '../../../shared/APMTable/APMTable';
 import FilterableAPMTable from '../../../shared/APMTable/FilterableAPMTable';
 import ListItem from './ListItem';
 import ImpactTooltip from './ImpactTooltip';
+import withService from '../../../shared/withService';
 
 const getRelativeImpact = (impact, impactMin, impactMax) =>
   Math.max((impact - impactMin) / Math.max(impactMax - impactMin, 1) * 100, 1);
 
-function tpmUnitFull(type) {
+function tpmLabel(type) {
   return type === 'request' ? 'Req. per minute' : 'Trans. per minute';
+}
+
+function avgLabel(agentName) {
+  return agentName === 'js-base' ? 'Page load time' : 'Avg. resp. time';
 }
 
 class List extends Component {
   render() {
     const {
       serviceName,
+      service,
       type,
       items,
       changeTransactionSorting,
@@ -34,7 +40,7 @@ class List extends Component {
           key: 'avg',
           sortable: true,
           alignRight: true,
-          label: 'Avg. resp. time'
+          label: avgLabel(service.data.agentName)
         },
         {
           key: 'p95',
@@ -43,10 +49,10 @@ class List extends Component {
           label: '95th percentile'
         },
         {
-          key: 'rpm',
+          key: 'tpm',
           sortable: true,
           alignRight: true,
-          label: tpmUnitFull(type)
+          label: tpmLabel(type)
         },
         { key: 'spacer', sortable: false, label: '' }
       ].map(({ key, sortable, label, alignRight }) => (
@@ -117,4 +123,4 @@ class List extends Component {
   }
 }
 
-export default List;
+export default withService(List);

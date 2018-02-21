@@ -92,7 +92,7 @@ function TransactionListItem({ serviceName, transaction, type, impact }) {
         {asMillisWithDefault(transaction.p95)}
       </TransactionKPICell>
       <TransactionKPICell align={RIGHT_ALIGNMENT}>
-        {asDecimal(transaction.rpm)} {tpmUnit(type)}
+        {asDecimal(transaction.tpm)} {tpmUnit(type)}
       </TransactionKPICell>
       <TransactionSpacerCell />
       <TransactionImpactCell>

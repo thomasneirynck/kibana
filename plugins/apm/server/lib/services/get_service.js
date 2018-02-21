@@ -1,4 +1,9 @@
-import { SERVICE_NAME, TRANSACTION_TYPE } from '../../../common/constants';
+import { get } from 'lodash';
+import {
+  SERVICE_NAME,
+  TRANSACTION_TYPE,
+  SERVICE_AGENT_NAME
+} from '../../../common/constants';
 
 export async function getService({ serviceName, setup }) {
   const { start, end, client, config } = setup;
@@ -26,14 +31,19 @@ export async function getService({ serviceName, setup }) {
       aggs: {
         types: {
           terms: { field: TRANSACTION_TYPE, size: 100 }
+        },
+        agents: {
+          terms: { field: SERVICE_AGENT_NAME, size: 1 }
         }
       }
     }
   };
 
   const resp = await client('search', params);
+
   return {
     service_name: serviceName,
-    types: resp.aggregations.types.buckets.map(bucket => bucket.key)
+    types: resp.aggregations.types.buckets.map(bucket => bucket.key),
+    agent_name: get(resp, 'aggregations.agents.buckets[0].key')
   };
 }

@@ -66,12 +66,13 @@ export async function getTimeseriesData({
         },
         transaction_results: {
           terms: {
-            field: TRANSACTION_RESULT
+            field: TRANSACTION_RESULT,
+            missing: 'transaction_result_missing'
           },
           aggs: {
             overall_avg: {
               stats_bucket: {
-                buckets_path: 'timeseries>rpm[normalized_value]'
+                buckets_path: 'timeseries>tpm[normalized_value]'
               }
             },
             timeseries: {
@@ -90,7 +91,7 @@ export async function getTimeseriesData({
                     buckets_path: '_count'
                   }
                 },
-                rpm: {
+                tpm: {
                   derivative: {
                     buckets_path: 'cumsum',
                     unit: '1m'
@@ -117,19 +118,16 @@ export async function getTimeseriesData({
     resp,
     'aggregations.response_times.buckets',
     []
-  );
+  ).slice(1, -1);
   const transactionResultBuckets = get(
     resp,
     'aggregations.transaction_results.buckets',
     []
   );
   const overallAvg = get(resp, 'aggregations.overall_avg.value');
+  const dates = responseTimeBuckets.map(bucket => bucket.key);
 
-  const dates = get(transactionResultBuckets, '[0].timeseries.buckets', [])
-    .slice(1, -1)
-    .map(bucket => bucket.key);
-
-  const responseTime = responseTimeBuckets.slice(1, -1).reduce(
+  const responseTime = responseTimeBuckets.reduce(
     (acc, bucket) => {
       const p95 = bucket.pct.values['95.0'];
       const p99 = bucket.pct.values['99.0'];
@@ -149,7 +147,7 @@ export async function getTimeseriesData({
         avg: overallAvg.avg,
         values: timeseries.buckets
           .slice(1, -1)
-          .map(bucket => get(bucket.rpm, 'normalized_value') || 0)
+          .map(bucket => get(bucket.tpm, 'normalized_value') || 0)
       })
     ),
     bucket => bucket.key.replace(/^HTTP (\d)xx$/, '00$1') // ensure that HTTP 3xx are sorted at the top

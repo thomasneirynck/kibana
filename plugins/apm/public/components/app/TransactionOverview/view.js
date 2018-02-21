@@ -50,8 +50,16 @@ export class TransactionOverview extends Component {
   }
 }
 
+// TODO: This is duplicated in TabNavigation
 function transactionTypeLabel(type) {
-  return type === 'request' ? 'Request' : type;
+  switch (type) {
+    case 'request':
+      return 'Request';
+    case 'page-load':
+      return 'Page load';
+    default:
+      return type;
+  }
 }
 
 export default withErrorHandler(TransactionOverview, ['transactionList']);
