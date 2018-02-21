@@ -9,8 +9,10 @@ from {kib}. You can view health and performance data for {es}, Logstash, and
 {kib} in real time, as well as analyze past performance. For more information,
 see {xpack-ref}/xpack-monitoring.html[Monitoring the Elastic Stack].
 
-When you install {xpack}, a monitoring agent runs on each {es}, {kib}, and
-Logstash instance to collect and index metrics.
+When you install {xpack}, a monitoring agent runs on each {es} node, Logstash
+node, and {kib} instance to collect and index metrics. Each node and instance is
+considered unique based on its persistent UUID, which is written to the
+<<settings,`path.data`>> directory when the node or instance starts. 
 
 * <<monitoring-xpack-kibana>>
 * <<monitoring-data>>
