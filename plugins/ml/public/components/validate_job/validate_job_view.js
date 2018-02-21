@@ -73,8 +73,8 @@ const link = (url) => {
   return <EuiLink href={url} target="BLANK">Learn More</EuiLink>;
 };
 
-const messageRow = (message) => (
-  <EuiTableRow key={message.id}>
+const messageRow = (message, index) => (
+  <EuiTableRow key={message.id + '_' + index}>
     <EuiTableRowCell className="mlHealthColumn" align="right">
       <EuiHealth color={statusToEuiColor(message.status)} />
     </EuiTableRowCell>
@@ -170,22 +170,22 @@ class ValidateJob extends Component {
   };
 
   render() {
+    const fill = (this.props.fill === false) ? false : true;
     const job = this.props.job;
-    if (typeof job === 'undefined' || typeof job.job_id === 'undefined') {
-      return null;
-    }
+    const disabled = (typeof job === 'undefined' || typeof job.job_id === 'undefined');
 
     return (
       <div>
         <EuiButton
           onClick={this.openModal}
           size="s"
-          fill
+          fill={fill}
+          isDisabled={disabled}
         >
           Validate Job
         </EuiButton>
 
-        {modal({
+        {!disabled && modal({
           closeModal: this.closeModal,
           isVisible: this.state.ui.isModalVisible,
           jobId: job.job_id,
@@ -197,7 +197,8 @@ class ValidateJob extends Component {
 }
 
 ValidateJob.propTypes = {
-  job: PropTypes.object
+  job: PropTypes.object,
+  fill: PropTypes.bool
 };
 
 export { ValidateJob };

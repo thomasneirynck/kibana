@@ -326,7 +326,13 @@ module.service('mlPopulationJobService', function (
     return json;
   }
 
-  function getJobFromConfig(formConfig) {
+  function createJobForSaving(job) {
+    const newJob = angular.copy(job);
+    delete newJob.datafeed_config;
+    return newJob;
+  }
+
+  this.getJobFromConfig = function (formConfig) {
     const job = mlJobService.getBlankJob();
     job.data_description.time_field = formConfig.timeField;
 
@@ -401,18 +407,12 @@ module.service('mlPopulationJobService', function (
     }
 
     return job;
-  }
-
-  function createJobForSaving(job) {
-    const newJob = angular.copy(job);
-    delete newJob.datafeed_config;
-    return newJob;
-  }
+  };
 
   this.createJob = function (formConfig) {
     const deferred = $q.defer();
 
-    this.job = getJobFromConfig(formConfig);
+    this.job = this.getJobFromConfig(formConfig);
     const job = createJobForSaving(this.job);
 
     // DO THE SAVE

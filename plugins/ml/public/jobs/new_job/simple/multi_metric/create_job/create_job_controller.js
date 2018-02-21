@@ -508,6 +508,17 @@ module
       }
     };
 
+    $scope.getJobFromConfig = function () {
+      if (validateJobId($scope.formConfig.jobId, $scope.formConfig.jobGroups, $scope.ui.validation.checks)) {
+        const job = mlMultiMetricJobService.getJobFromConfig($scope.formConfig);
+        job.data_counts = {
+          earliest_record_timestamp: $scope.formConfig.start,
+          latest_record_timestamp: $scope.formConfig.end
+        };
+        return job;
+      }
+    };
+
     function loadCharts() {
       let forceStop = globalForceStop;
       // the percentage doesn't always reach 100, so periodically check the datafeed status

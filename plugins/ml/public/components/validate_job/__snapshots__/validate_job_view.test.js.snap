@@ -6,6 +6,7 @@ exports[`ValidateJob renders button and modal with a messsage 1`] = `
     color="primary"
     fill={true}
     iconSide="left"
+    isDisabled={false}
     onClick={[Function]}
     size="s"
     type="button"
@@ -53,7 +54,7 @@ exports[`ValidateJob renders button and modal with a messsage 1`] = `
             </EuiTableHeader>
             <EuiTableBody>
               <EuiTableRow
-                key="over_field_low_cardinality"
+                key="over_field_low_cardinality_0"
               >
                 <EuiTableRowCell
                   align="right"
@@ -111,6 +112,7 @@ exports[`ValidateJob renders the button 1`] = `
     color="primary"
     fill={true}
     iconSide="left"
+    isDisabled={false}
     onClick={[Function]}
     size="s"
     type="button"
@@ -126,6 +128,7 @@ exports[`ValidateJob renders the button and modal with a success message 1`] = `
     color="primary"
     fill={true}
     iconSide="left"
+    isDisabled={false}
     onClick={[Function]}
     size="s"
     type="button"

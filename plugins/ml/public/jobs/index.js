@@ -21,3 +21,4 @@ import './new_job/simple/multi_metric';
 import './new_job/simple/population';
 import './new_job/simple/recognize';
 import './new_job/wizard';
+import 'plugins/ml/components/validate_job';
