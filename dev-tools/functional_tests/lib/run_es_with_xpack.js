@@ -10,7 +10,7 @@ import {
   RELATIVE_ES_BIN,
   RELATIVE_ES_PLUGIN_BIN,
   RELATIVE_ES_KEYSTORE_BIN,
-  RELATIVE_GRADLE_BIN,
+  ES_GRADLE_WRAPPER_BIN,
   XPACK_ES_REPO_ROOT,
   ES_ARCHIVE_PATTERN,
   XPACK_ES_ARCHIVE_PATTERN,
@@ -19,7 +19,7 @@ import {
 
 async function setupEsWithXpack({ esExtractPath, procs }) {
   await procs.run('buildEsAndXpack', {
-    cmd: RELATIVE_GRADLE_BIN,
+    cmd: ES_GRADLE_WRAPPER_BIN,
     args: [':distribution:archives:tar:assemble', ':x-pack-elasticsearch:plugin:assemble'],
     cwd: XPACK_ES_REPO_ROOT,
     wait: true,

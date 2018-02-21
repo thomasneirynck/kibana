@@ -24,9 +24,9 @@ export const OPTIMIZE_BUNDLE_DIR = resolve(KIBANA_ROOT, 'optimize/xpackTestUiSer
 export const ES_REPO_ROOT = resolve(PROJECT_ROOT, '../../elasticsearch');
 export const XPACK_ES_REPO_ROOT = resolve(ES_REPO_ROOT, '../elasticsearch-extra/x-pack-elasticsearch');
 export const ES_ARCHIVE_PATTERN = resolve(ES_REPO_ROOT, 'distribution/archives/tar/build/distributions/elasticsearch-*.tar.gz');
+export const ES_GRADLE_WRAPPER_BIN = resolve(ES_REPO_ROOT, useBat('gradlew'));
 export const XPACK_ES_ARCHIVE_PATTERN = resolve(XPACK_ES_REPO_ROOT, 'plugin/build/distributions/x-pack-*.zip');
 
-export const RELATIVE_GRADLE_BIN = resolveRelative(useBat('gradle'));
 export const RELATIVE_ES_BIN = resolveRelative(useBat('bin/elasticsearch'));
 export const RELATIVE_ES_PLUGIN_BIN = resolveRelative(useBat('bin/elasticsearch-plugin'));
 export const RELATIVE_ES_KEYSTORE_BIN = resolveRelative(useBat('bin/elasticsearch-keystore'));
