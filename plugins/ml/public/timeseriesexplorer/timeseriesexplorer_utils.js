@@ -127,7 +127,9 @@ export function processDataForFocusAnomalies(
     }
 
     if (chartPoint !== undefined) {
-      chartPoint.anomalyScore = record.record_score;
+      // If chart aggregation interval > bucket span, there may be more than
+      // one anomaly record in the interval, so get max record anomalyScore.
+      chartPoint.anomalyScore = Math.max(_.get(chartPoint, 'anomalyScore', 0), record.record_score);
       chartPoint.function = record.function;
 
       if (_.has(record, 'actual')) {
@@ -170,7 +172,7 @@ export function processScheduledEventsForChart(chartData, scheduledEvents) {
   return chartData;
 }
 
-function findNearestChartPointToTime(chartData, time) {
+export function findNearestChartPointToTime(chartData, time) {
   let chartPoint;
   for (let i = 0; i < chartData.length; i++) {
     if (chartData[i].date.getTime() === time) {

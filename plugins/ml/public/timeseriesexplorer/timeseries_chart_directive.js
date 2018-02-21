@@ -35,6 +35,7 @@ import {
 } from 'plugins/ml/util/chart_utils';
 import { TimeBucketsProvider } from 'ui/time_buckets';
 import ContextChartMask from 'plugins/ml/timeseriesexplorer/context_chart_mask';
+import { findNearestChartPointToTime } from 'plugins/ml/timeseriesexplorer/timeseriesexplorer_utils';
 import 'plugins/ml/filters/format_value';
 
 import { uiModules } from 'ui/modules';
@@ -1018,27 +1019,7 @@ module.directive('mlTimeseriesChart', function (
       // Depending on the way the chart is aggregated, there may not be
       // a point at exactly the same time as the record being highlighted.
       const anomalyTime = record.source.timestamp;
-
-      const chartData = scope.focusChartData;
-      let previousMarker = chartData[0];
-      let markerToSelect = chartData[0];
-      for (let i = 0; i < chartData.length; i++) {
-        const chartItem = chartData[i];
-        const markerTime = chartItem.date.getTime();
-        // Check against all chart points i.e. including those which don't have an anomaly marker, as
-        // there can be records with very low scores where the corresponding bucket anomaly score is 0.
-        if (markerTime === anomalyTime) {
-          markerToSelect = chartItem;
-          break;
-        } else {
-          if (markerTime > anomalyTime) {
-            markerToSelect = previousMarker;
-            break;
-          }
-        }
-        markerToSelect = chartItem;   // Ensures last marker is selected if record is most recent in list.
-        previousMarker = chartItem;
-      }
+      const markerToSelect = findNearestChartPointToTime(scope.focusChartData, anomalyTime);
 
       // Render an additional highlighted anomaly marker on the focus chart.
       // TODO - plot anomaly markers for cases where there is an anomaly due
