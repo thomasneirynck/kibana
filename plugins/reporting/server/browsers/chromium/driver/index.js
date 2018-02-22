@@ -4,11 +4,14 @@ import moment from 'moment';
 import { promisify, delay } from 'bluebird';
 import { transformFn } from './transform_fn';
 import { IgnoreSSLErrorsBehavior } from './behaviors';
+import { screenshotStitcher } from './screenshot_stitcher';
 
 export class HeadlessChromiumDriver {
-  constructor(client) {
+  constructor(client, { maxScreenshotDimension }) {
     this._client = client;
+    this._maxScreenshotDimension = maxScreenshotDimension;
     this._waitForDelayMs = 100;
+    this._zoom = 1;
     this._behaviors = [
       new IgnoreSSLErrorsBehavior(client),
     ];
@@ -29,7 +32,7 @@ export class HeadlessChromiumDriver {
   }
 
   async open(url, { headers, waitForSelector }) {
-    const {  Network, Page } = this._client;
+    const { Network, Page } = this._client;
     await Promise.all([
       Network.enable(),
       Page.enable(),
@@ -61,23 +64,37 @@ export class HeadlessChromiumDriver {
     });
   }
 
-  async screenshot(position = null) {
+  async screenshot(elementPosition = null) {
     const { Page } = this._client;
 
-    let clip;
-    if (position) {
-      const { boundingClientRect, scroll = { x: 0, y: 0 } } = position;
-      clip = {
+    let outputClip;
+    if (!elementPosition) {
+      const { layoutViewport } = await Page.getLayoutMetrics();
+      outputClip = {
+        x: layoutViewport.pageX,
+        y: layoutViewport.pageY,
+        width: layoutViewport.clientWidth,
+        height: layoutViewport.clientHeight,
+      };
+    } else {
+      const { boundingClientRect, scroll = { x: 0, y: 0 } } = elementPosition;
+      outputClip = {
         x: boundingClientRect.left + scroll.x,
         y: boundingClientRect.top + scroll.y,
         height: boundingClientRect.height,
         width: boundingClientRect.width,
-        scale: 1
       };
     }
 
-    const { data } = await Page.captureScreenshot({ clip });
-    return data;
+    return await screenshotStitcher(outputClip, this._zoom, this._maxScreenshotDimension, async screenshotClip => {
+      const { data } = await Page.captureScreenshot({
+        clip: {
+          ...screenshotClip,
+          scale: 1
+        }
+      });
+      return data;
+    });
   }
 
   async _writeData(writePath, base64EncodedData) {
@@ -94,16 +111,18 @@ export class HeadlessChromiumDriver {
       deviceScaleFactor: zoom,
       mobile: false,
     });
+
+    this._zoom = zoom;
   }
 
   async waitFor({ fn, args, toEqual }) {
-    while(!this.killed && (await this.evaluate({ fn, args })) !== toEqual) {
+    while (!this.killed && (await this.evaluate({ fn, args })) !== toEqual) {
       await delay(this._waitForDelayMs);
     }
   }
 
   async waitForSelector(selector) {
-    while(!this.killed) {
+    while (!this.killed) {
       const { nodeId } = await this._client.DOM.querySelector({ nodeId: this.documentNode.root.nodeId, selector });
       if (nodeId) {
         break;

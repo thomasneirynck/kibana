@@ -44,7 +44,9 @@ export class HeadlessChromiumDriverFactory {
       const driver$ = message$
         .first(line => line.indexOf(`DevTools listening on ws://127.0.0.1:${bridgePort}`) >= 0)
         .mergeMap(() => cdp({ port: bridgePort }))
-        .map(client => new HeadlessChromiumDriver(client));
+        .map(client => new HeadlessChromiumDriver(client, {
+          maxScreenshotDimension: config.maxScreenshotDimension
+        }));
 
       const processError$ = Rx.Observable.fromEvent(chromium, 'error')
         .mergeMap(() => Rx.Observable.throw(new Error(`Unable to spawn Chromium`)));

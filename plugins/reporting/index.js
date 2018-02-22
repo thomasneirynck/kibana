@@ -99,7 +99,8 @@ export const reporting = (kibana) => {
                   then: Joi.valid(null),
                   else: Joi.default([])
                 })
-              }).default()
+              }).default(),
+              maxScreenshotDimension: Joi.number().integer().default(1950)
             }).default()
           }).default()
         }).default(),
