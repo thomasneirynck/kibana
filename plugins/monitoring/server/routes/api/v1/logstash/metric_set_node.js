@@ -15,7 +15,14 @@ export const metricSets = {
       ],
       name: 'logstash_node_cgroup_stats'
     },
-    'logstash_queue_events_count'
+    'logstash_queue_events_count',
+    {
+      name: 'logstash_pipeline_queue_size',
+      keys: [
+        'logstash_pipeline_queue_size',
+        'logstash_pipeline_max_queue_size'
+      ]
+    }
   ],
   overview: [
     {

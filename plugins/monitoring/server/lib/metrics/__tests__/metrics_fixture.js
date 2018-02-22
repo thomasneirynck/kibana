@@ -2363,7 +2363,8 @@ export const expected = {
   'logstash_pipeline_queue_size': {
     'field': 'logstash_stats.pipelines.queue.queue_size_in_bytes',
     'label': 'Queue Size',
-    'description': 'Current size of all queues in the Logstash pipelines on this node.',
+    'description': 'Current size of all persistent queues in the Logstash pipelines on this node.',
+    'title': 'Persistent Queue Size',
     'format': '0,0.0 b',
     'units': 'B',
     'app': 'logstash',
@@ -2402,7 +2403,7 @@ export const expected = {
   'logstash_pipeline_max_queue_size': {
     'field': 'logstash_stats.pipelines.queue.max_queue_size_in_bytes',
     'label': 'Max Queue Size',
-    'description': 'Maximum size set for the queues on this node.',
+    'description': 'Maximum size set for the persistent queues on this node.',
     'format': '0,0.0 b',
     'units': 'B',
     'app': 'logstash',
