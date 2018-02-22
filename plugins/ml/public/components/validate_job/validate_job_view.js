@@ -66,7 +66,7 @@ const statusToEuiColor = (status) => {
   }
 };
 
-const Link = ({ url }) => (<EuiLink href={url} target="_BLANK">Learn More</EuiLink>);
+const Link = ({ url }) => (<EuiLink href={url} target="_BLANK">Learn more</EuiLink>);
 Link.propTypes = {
   url: PropTypes.string.isRequired
 };
