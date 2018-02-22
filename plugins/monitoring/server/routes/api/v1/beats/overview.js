@@ -3,6 +3,7 @@ import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 import { getMetrics } from '../../../../lib/details/get_metrics';
 import { getLatestStats, getStats } from '../../../../lib/beats';
 import { handleError } from '../../../../lib/errors';
+import { metricSet } from './metric_set_overview';
 
 export function beatsOverviewRoute(server) {
   server.route({
@@ -18,8 +19,7 @@ export function beatsOverviewRoute(server) {
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
-          }).required(),
-          metrics: Joi.array().required(),
+          }).required()
         })
       }
     },
@@ -29,7 +29,6 @@ export function beatsOverviewRoute(server) {
       const ccs = req.payload.ccs;
       const clusterUuid = req.params.clusterUuid;
       const beatsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.beats.index_pattern', ccs);
-      const metricSet = req.payload.metrics;
 
       try {
         const [

@@ -24,7 +24,7 @@ export const uiExports = {
         esShardTimeout: config.get('elasticsearch.shardTimeout'),
         showLicenseExpiration: config.get('xpack.monitoring.show_license_expiration'),
         showCgroupMetricsElasticsearch: config.get('xpack.monitoring.ui.container.elasticsearch.enabled'),
-        showCgroupMetricsLogstash: config.get('xpack.monitoring.ui.container.logstash.enabled')
+        showCgroupMetricsLogstash: config.get('xpack.monitoring.ui.container.logstash.enabled') // Note, not currently used, but see https://github.com/elastic/x-pack-kibana/issues/1559 part 2
       };
     },
   },

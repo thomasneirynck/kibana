@@ -19,12 +19,7 @@ function getPageData($injector) {
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
-    },
-    metrics: [
-      'logstash_cluster_events_input_rate',
-      'logstash_cluster_events_output_rate',
-      'logstash_cluster_events_latency'
-    ]
+    }
   })
     .then(response => response.data)
     .catch((err) => {

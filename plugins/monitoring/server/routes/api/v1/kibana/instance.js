@@ -3,6 +3,7 @@ import { getKibanaInfo } from '../../../../lib/kibana/get_kibana_info';
 import { handleError } from '../../../../lib/errors';
 import { getMetrics } from '../../../../lib/details/get_metrics';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
+import { metricSet } from './metric_set_instance';
 
 /**
  * Kibana instance: This will fetch all data required to display a Kibana
@@ -25,8 +26,7 @@ export function kibanaInstanceRoute(server) {
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
-          }).required(),
-          metrics: Joi.array().required()
+          }).required()
         })
       }
     },
@@ -36,7 +36,6 @@ export function kibanaInstanceRoute(server) {
       const clusterUuid = req.params.clusterUuid;
       const kibanaUuid = req.params.kibanaUuid;
       const kbnIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.kibana.index_pattern', ccs);
-      const metricSet = req.payload.metrics;
 
       try {
         const [ metrics, kibanaSummary ] = await Promise.all([

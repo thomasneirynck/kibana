@@ -6,9 +6,11 @@ import { getShardStats, getShardAllocation } from '../../../../lib/elasticsearch
 import { getMetrics } from '../../../../lib/details/get_metrics';
 import { handleError } from '../../../../lib/errors/handle_error';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
+import { metricSets } from './metric_set_node_detail';
+
+const { advanced: metricSetAdvanced, overview: metricSetOverview } = metricSets;
 
 export function esNodeRoute(server) {
-
   server.route({
     method: 'POST',
     path: '/api/monitoring/v1/clusters/{clusterUuid}/elasticsearch/nodes/{resolver}',
@@ -25,24 +27,37 @@ export function esNodeRoute(server) {
             min: Joi.date().required(),
             max: Joi.date().required()
           }).required(),
-          metrics: Joi.array().required(),
           is_advanced: Joi.boolean().required()
         })
       }
     },
-    handler: async (req, reply) => {
-      try {
-        const config = server.config();
-        const ccs = req.payload.ccs;
-        const showSystemIndices = req.payload.showSystemIndices;
-        const clusterUuid = req.params.clusterUuid;
-        const resolver = req.params.resolver;
-        const start = req.payload.timeRange.min;
-        const end = req.payload.timeRange.max;
-        const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
-        const metricSet = req.payload.metrics;
-        const isAdvanced = req.payload.is_advanced;
+    async handler(req, reply) {
+      const config = server.config();
+      const ccs = req.payload.ccs;
+      const showSystemIndices = req.payload.showSystemIndices;
+      const clusterUuid = req.params.clusterUuid;
+      const resolver = req.params.resolver;
+      const start = req.payload.timeRange.min;
+      const end = req.payload.timeRange.max;
+      const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
+      const isAdvanced = req.payload.is_advanced;
 
+      let metricSet;
+      if (isAdvanced) {
+        metricSet = metricSetAdvanced;
+      } else {
+        metricSet = metricSetOverview;
+        // set the cgroup option if needed
+        const showCgroupMetricsElasticsearch = config.get('xpack.monitoring.ui.container.elasticsearch.enabled');
+        const metricCpu = metricSet.find(m => m.name === 'node_cpu_metric');
+        if (showCgroupMetricsElasticsearch) {
+          metricCpu.keys = ['node_cgroup_quota_as_cpu_utilization'];
+        } else {
+          metricCpu.keys = ['node_cpu_utilization'];
+        }
+      }
+
+      try {
         const cluster = await getClusterStats(req, esIndexPattern, clusterUuid);
         const nodeResolver = config.get('xpack.monitoring.node_resolver');
 
@@ -77,11 +92,9 @@ export function esNodeRoute(server) {
           metrics,
           ...shardAllocation
         });
-
       } catch (err) {
         reply(handleError(err, req));
       }
     }
   });
-
 }

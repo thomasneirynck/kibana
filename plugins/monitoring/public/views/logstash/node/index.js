@@ -14,7 +14,6 @@ function getPageData($injector) {
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/logstash/node/${$route.current.params.uuid}`;
   const timefilter = $injector.get('timefilter');
   const timeBounds = timefilter.getBounds();
-  const showCgroupMetricsLogstash = $injector.get('showCgroupMetricsLogstash');
 
   return $http.post(url, {
     ccs: globalState.ccs,
@@ -22,32 +21,7 @@ function getPageData($injector) {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
     },
-    metrics: [
-      {
-        name: 'logstash_os_load',
-        keys: [
-          'logstash_os_load_1m',
-          'logstash_os_load_5m',
-          'logstash_os_load_15m'
-        ]
-      },
-      'logstash_events_input_rate',
-      'logstash_events_output_rate',
-      'logstash_events_latency',
-      {
-        name: 'logstash_node_cpu_metric',
-        keys: showCgroupMetricsLogstash ?
-          [ 'logstash_node_cgroup_quota_as_cpu_utilization' ] :
-          [ 'logstash_node_cpu_utilization' ]
-      },
-      {
-        name: 'logstash_jvm_usage',
-        keys: [
-          'logstash_node_jvm_mem_max_in_bytes',
-          'logstash_node_jvm_mem_used_in_bytes'
-        ]
-      }
-    ]
+    is_advanced: false,
   })
     .then(response => response.data)
     .catch((err) => {

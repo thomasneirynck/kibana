@@ -9,7 +9,6 @@ export function getPageData($injector) {
   const showSystemIndices = features.isEnabled('showSystemIndices', false);
   const timefilter = $injector.get('timefilter');
   const timeBounds = timefilter.getBounds();
-  const showCgroupMetricsElasticsearch = $injector.get('showCgroupMetricsElasticsearch');
 
   return $http.post(url, {
     showSystemIndices,
@@ -19,35 +18,6 @@ export function getPageData($injector) {
       max: timeBounds.max.toISOString()
     },
     is_advanced: false,
-    metrics: [
-      {
-        name: 'node_latency',
-        keys: [
-          'node_query_latency',
-          'node_index_latency'
-        ]
-      },
-      {
-        name: 'node_jvm_mem',
-        keys: [ 'node_jvm_mem_max_in_bytes', 'node_jvm_mem_used_in_bytes' ]
-      },
-      {
-        name: 'node_mem',
-        keys: [
-          'node_index_mem_overall',
-          'node_index_mem_terms',
-          'node_index_mem_points'
-        ]
-      },
-      {
-        name: 'node_cpu_metric',
-        keys: showCgroupMetricsElasticsearch ?
-          [ 'node_cgroup_quota_as_cpu_utilization' ] :
-          [ 'node_cpu_utilization' ]
-      },
-      'node_load_average',
-      'node_segment_count'
-    ]
   })
     .then(response => response.data)
     .catch((err) => {

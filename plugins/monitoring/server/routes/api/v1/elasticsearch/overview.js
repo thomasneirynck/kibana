@@ -6,6 +6,7 @@ import { getMetrics } from '../../../../lib/details/get_metrics';
 import { getShardStats } from '../../../../lib/elasticsearch/shards';
 import { handleError } from '../../../../lib/errors/handle_error';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
+import { metricSet } from './metric_set_overview';
 
 export function esOverviewRoute(server) {
   server.route({
@@ -21,8 +22,7 @@ export function esOverviewRoute(server) {
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
-          }).required(),
-          metrics: Joi.array().required()
+          }).required()
         })
       }
     },
@@ -31,7 +31,6 @@ export function esOverviewRoute(server) {
       const ccs = req.payload.ccs;
       const clusterUuid = req.params.clusterUuid;
       const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
-      const metricSet = req.payload.metrics;
 
       try {
         const [ clusterStats, metrics, shardActivity ] = await Promise.all([

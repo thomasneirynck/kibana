@@ -22,39 +22,6 @@ function getPageData($injector) {
       max: timeBounds.max.toISOString()
     },
     is_advanced: false,
-    metrics: [
-      'index_search_request_rate',
-      {
-        name: 'index_request_rate',
-        keys: [
-          'index_request_rate_total',
-          'index_request_rate_primary'
-        ]
-      },
-      {
-        name: 'index_size',
-        keys: [
-          'index_store_total_size',
-          'index_store_primaries_size'
-        ]
-      },
-      {
-        name: 'index_mem',
-        keys: [
-          'index_mem_overall',
-          'index_mem_terms',
-          'index_mem_points'
-        ]
-      },
-      'index_document_count',
-      {
-        name: 'index_segment_count',
-        keys: [
-          'index_segment_count_primaries',
-          'index_segment_count_total'
-        ]
-      }
-    ]
   })
     .then(response => response.data)
     .catch((err) => {

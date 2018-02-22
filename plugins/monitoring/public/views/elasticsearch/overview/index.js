@@ -19,19 +19,7 @@ function getPageData($injector) {
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
-    },
-    metrics: [
-      'cluster_search_request_rate',
-      'cluster_query_latency',
-      {
-        name: 'cluster_index_request_rate',
-        keys: [
-          'cluster_index_request_rate_total',
-          'cluster_index_request_rate_primary'
-        ]
-      },
-      'cluster_index_latency'
-    ]
+    }
   })
     .then(response => response.data)
     .catch((err) => {

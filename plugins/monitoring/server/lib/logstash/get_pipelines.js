@@ -2,11 +2,6 @@ import { omit } from 'lodash';
 import { checkParam } from '../error_missing_required';
 import { getMetrics } from '../details/get_metrics';
 
-async function fetchPipelinesWithMetrics(req, lsIndexPattern) {
-  const metricSet = req.payload.metrics;
-  return await getMetrics(req, lsIndexPattern, metricSet);
-}
-
 export function _handleResponse(response) {
   const pipelinesById = {};
 
@@ -51,9 +46,10 @@ export function _handleResponse(response) {
   return pipelines;
 }
 
-export async function getPipelines(req, logstashIndexPattern) {
-  checkParam(logstashIndexPattern, 'logstashIndexPattern in getPipelines');
+export async function getPipelines(req, logstashIndexPattern, metricSet) {
+  checkParam(logstashIndexPattern, 'logstashIndexPattern in logstash/getPipelines');
+  checkParam(metricSet, 'metricSet in logstash/getPipelines');
 
-  const response = await fetchPipelinesWithMetrics(req, logstashIndexPattern);
-  return _handleResponse(response);
+  const metricsResponse = await getMetrics(req, logstashIndexPattern, metricSet);
+  return _handleResponse(metricsResponse);
 }

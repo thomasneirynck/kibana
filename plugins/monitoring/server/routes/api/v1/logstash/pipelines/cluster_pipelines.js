@@ -22,19 +22,19 @@ export function logstashClusterPipelinesRoute(server) {
             min: Joi.date().required(),
             max: Joi.date().required()
           }).required(),
-          metrics: Joi.array().items(Joi.string()).required()
+          metricSet: Joi.array().items(Joi.string()).required()
         })
       }
     },
     handler: async (req, reply) => {
       const config = server.config();
-      const ccs = req.payload.ccs;
+      const { ccs, metricSet } = req.payload;
       const clusterUuid = req.params.clusterUuid;
       const lsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.logstash.index_pattern', ccs);
 
       try {
         const response = {
-          pipelines: await getPipelines(req, lsIndexPattern),
+          pipelines: await getPipelines(req, lsIndexPattern, metricSet),
           clusterStatus: await getClusterStatus(req, lsIndexPattern, { clusterUuid })
         };
         reply(response);

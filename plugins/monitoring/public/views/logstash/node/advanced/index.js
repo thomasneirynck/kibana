@@ -21,30 +21,7 @@ function getPageData($injector) {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
     },
-    metrics: [
-      {
-        name: 'logstash_node_cpu_utilization',
-        keys: [
-          'logstash_node_cpu_utilization',
-          'logstash_node_cgroup_quota'
-        ]
-      },
-      {
-        name: 'logstash_node_cgroup_cpu',
-        keys: [
-          'logstash_node_cgroup_usage',
-          'logstash_node_cgroup_throttled'
-        ]
-      },
-      {
-        name: 'logstash_node_cgroup_stats',
-        keys: [
-          'logstash_node_cgroup_periods',
-          'logstash_node_cgroup_throttled_count'
-        ]
-      },
-      'logstash_queue_events_count'
-    ]
+    is_advanced: true,
   })
     .then(response => response.data)
     .catch((err) => {

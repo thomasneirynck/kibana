@@ -6,6 +6,9 @@ import { getMetrics } from '../../../../lib/details/get_metrics';
 import { getShardAllocation, getShardStats } from '../../../../lib/elasticsearch/shards';
 import { handleError } from '../../../../lib/errors/handle_error';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
+import { metricSet } from './metric_set_index_detail';
+
+const { advanced: metricSetAdvanced, overview: metricSetOverview } = metricSet;
 
 export function esIndexRoute(server) {
 
@@ -24,7 +27,6 @@ export function esIndexRoute(server) {
             min: Joi.date().required(),
             max: Joi.date().required()
           }).required(),
-          metrics: Joi.array().required(),
           is_advanced: Joi.boolean().required()
         })
       }
@@ -39,7 +41,7 @@ export function esIndexRoute(server) {
         const end = req.payload.timeRange.max;
         const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
         const isAdvanced = req.payload.is_advanced;
-        const metricSet = req.payload.metrics;
+        const metricSet = isAdvanced ? metricSetAdvanced : metricSetOverview;
 
         const cluster = await getClusterStats(req, esIndexPattern, clusterUuid);
         const showSystemIndices = true; // hardcode to true, because this could be a system index

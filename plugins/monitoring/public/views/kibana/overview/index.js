@@ -19,17 +19,7 @@ function getPageData($injector) {
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
-    },
-    metrics: [
-      'kibana_requests',
-      {
-        name: 'kibana_response_times',
-        keys: [
-          'kibana_max_response_times',
-          'kibana_average_response_times'
-        ]
-      }
-    ]
+    }
   })
     .then(response => response.data)
     .catch((err) => {

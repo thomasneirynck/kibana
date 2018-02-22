@@ -30,7 +30,7 @@ const getPageData = ($injector) => {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
     },
-    metrics: [
+    metricSet: [
       throughputMetric,
       nodesCountMetric,
     ]

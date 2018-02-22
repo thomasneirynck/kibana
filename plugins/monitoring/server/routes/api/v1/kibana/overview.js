@@ -1,8 +1,9 @@
 import Joi from 'joi';
 import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 import { getKibanaClusterStatus } from './_get_kibana_cluster_status';
-import { handleError } from '../../../../lib/errors';
 import { getMetrics } from '../../../../lib/details/get_metrics';
+import { metricSet } from './metric_set_overview';
+import { handleError } from '../../../../lib/errors';
 
 export function kibanaOverviewRoute(server) {
   /**
@@ -21,8 +22,7 @@ export function kibanaOverviewRoute(server) {
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
-          }).required(),
-          metrics: Joi.array().required()
+          }).required()
         })
       }
     },
@@ -31,7 +31,6 @@ export function kibanaOverviewRoute(server) {
       const ccs = req.payload.ccs;
       const clusterUuid = req.params.clusterUuid;
       const kbnIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.kibana.index_pattern', ccs);
-      const metricSet = req.payload.metrics;
 
       try {
         const [ clusterStatus, metrics ] = await Promise.all([

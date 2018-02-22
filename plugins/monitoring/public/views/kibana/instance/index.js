@@ -20,34 +20,7 @@ function getPageData($injector) {
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
-    },
-    metrics: [
-      {
-        name: 'kibana_os_load',
-        keys: [
-          'kibana_os_load_1m',
-          'kibana_os_load_5m',
-          'kibana_os_load_15m'
-        ]
-      },
-      'kibana_average_concurrent_connections',
-      'kibana_process_delay',
-      {
-        name: 'kibana_memory',
-        keys: [
-          'kibana_memory_heap_size_limit',
-          'kibana_memory_size'
-        ]
-      },
-      {
-        name: 'kibana_response_times',
-        keys: [
-          'kibana_max_response_times',
-          'kibana_average_response_times'
-        ]
-      },
-      'kibana_requests'
-    ]
+    }
   })
     .then(response => response.data)
     .catch((err) => {
