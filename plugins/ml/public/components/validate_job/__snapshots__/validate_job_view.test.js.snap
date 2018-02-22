@@ -13,96 +13,24 @@ exports[`ValidateJob renders button and modal with a messsage 1`] = `
   >
     Validate Job
   </EuiButton>
-  <EuiOverlayMask>
-    <EuiModal
-      onClose={[Function]}
-      style={
-        Object {
-          "width": "800px",
-        }
+  <Modal
+    close={[Function]}
+    title="Validate job test-id"
+  >
+    <MessageTable
+      messages={
+        Array [
+          Object {
+            "fieldName": "airline",
+            "id": "over_field_low_cardinality",
+            "status": "warning",
+            "text": "Cardinality of over_field \\"airline\\" is low and therefore less suitable for population analysis.",
+            "url": "https://www.elastic.co/blog/sizing-machine-learning-with-elasticsearch",
+          },
+        ]
       }
-    >
-      <EuiModalHeader>
-        <EuiModalHeaderTitle>
-          Validate job 
-          test-id
-        </EuiModalHeaderTitle>
-      </EuiModalHeader>
-      <EuiModalBody>
-        <div>
-          <p>
-            Job validation retrieved the following messages:
-          </p>
-          <EuiTable
-            compressed={true}
-          >
-            <EuiTableHeader>
-              <EuiTableHeaderCell
-                align="left"
-                scope="col"
-                width="20"
-              />
-              <EuiTableHeaderCell
-                align="left"
-                scope="col"
-              />
-              <EuiTableHeaderCell
-                align="left"
-                scope="col"
-                width="120"
-              />
-            </EuiTableHeader>
-            <EuiTableBody>
-              <EuiTableRow
-                key="over_field_low_cardinality_0"
-              >
-                <EuiTableRowCell
-                  align="right"
-                  className="mlHealthColumn"
-                  textOnly={true}
-                >
-                  <EuiHealth
-                    color="warning"
-                  />
-                </EuiTableRowCell>
-                <EuiTableRowCell
-                  align="left"
-                  textOnly={true}
-                >
-                  Cardinality of over_field "airline" is low and therefore less suitable for population analysis.
-                </EuiTableRowCell>
-                <EuiTableRowCell
-                  align="left"
-                  textOnly={true}
-                >
-                  <EuiLink
-                    color="primary"
-                    href="https://www.elastic.co/blog/sizing-machine-learning-with-elasticsearch"
-                    target="BLANK"
-                    type="button"
-                  >
-                    Learn More
-                  </EuiLink>
-                </EuiTableRowCell>
-              </EuiTableRow>
-            </EuiTableBody>
-          </EuiTable>
-        </div>
-      </EuiModalBody>
-      <EuiModalFooter>
-        <EuiButton
-          color="primary"
-          fill={true}
-          iconSide="left"
-          onClick={[Function]}
-          size="s"
-          type="button"
-        >
-          Close
-        </EuiButton>
-      </EuiModalFooter>
-    </EuiModal>
-  </EuiOverlayMask>
+    />
+  </Modal>
 </div>
 `;
 
@@ -135,42 +63,11 @@ exports[`ValidateJob renders the button and modal with a success message 1`] = `
   >
     Validate Job
   </EuiButton>
-  <EuiOverlayMask>
-    <EuiModal
-      onClose={[Function]}
-      style={
-        Object {
-          "width": "800px",
-        }
-      }
-    >
-      <EuiModalHeader>
-        <EuiModalHeaderTitle>
-          Validate job 
-          test-id
-        </EuiModalHeaderTitle>
-      </EuiModalHeader>
-      <EuiModalBody>
-        <EuiCallOut
-          color="primary"
-          iconType="pin"
-          size="s"
-          title="Job validation was successful and didn't return any warnings or errors."
-        />
-      </EuiModalBody>
-      <EuiModalFooter>
-        <EuiButton
-          color="primary"
-          fill={true}
-          iconSide="left"
-          onClick={[Function]}
-          size="s"
-          type="button"
-        >
-          Close
-        </EuiButton>
-      </EuiModalFooter>
-    </EuiModal>
-  </EuiOverlayMask>
+  <Modal
+    close={[Function]}
+    title="Validate job test-id"
+  >
+    <SuccessfulValidation />
+  </Modal>
 </div>
 `;

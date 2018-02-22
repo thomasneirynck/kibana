@@ -66,87 +66,84 @@ const statusToEuiColor = (status) => {
   }
 };
 
-const link = (url) => {
-  if (!url) {
-    return null;
-  }
-  return <EuiLink href={url} target="BLANK">Learn More</EuiLink>;
+const Link = ({ url }) => (<EuiLink href={url} target="_BLANK">Learn More</EuiLink>);
+Link.propTypes = {
+  url: PropTypes.string.isRequired
 };
 
-const messageRow = (message, index) => (
-  <EuiTableRow key={message.id + '_' + index}>
+const MessageRow = ({ message }) => (
+  <EuiTableRow>
     <EuiTableRowCell className="mlHealthColumn" align="right">
       <EuiHealth color={statusToEuiColor(message.status)} />
     </EuiTableRowCell>
     <EuiTableRowCell>{message.text}</EuiTableRowCell>
-    <EuiTableRowCell>{link(message.url)}</EuiTableRowCell>
+    <EuiTableRowCell>{message.url && <Link url={message.url} />}</EuiTableRowCell>
   </EuiTableRow>
 );
-
-const messageRows = (data) => {
-  if (data.success && data.messages.length > 0) {
-    return (
-      <div>
-        <p>Job validation retrieved the following messages:</p>
-        <EuiTable compressed>
-          <EuiTableHeader>
-            <EuiTableHeaderCell width="20" />
-            <EuiTableHeaderCell />
-            <EuiTableHeaderCell width="120" />
-          </EuiTableHeader>
-          <EuiTableBody>
-            {data.messages.map(messageRow)}
-          </EuiTableBody>
-        </EuiTable>
-      </div>
-    );
-  } else if (data.success && data.messages.length === 0) {
-    return (
-      <EuiCallOut
-        size="s"
-        title="Job validation was successful and didn't return any warnings or errors."
-        iconType="pin"
-      />
-    );
-  }
-  return null;
+MessageRow.propTypes = {
+  message: PropTypes.shape({
+    status: PropTypes.string,
+    text: PropTypes.string,
+    url: PropTypes.string
+  })
 };
 
-const modal = ({ isVisible, closeModal, jobId, data }) => {
-  // data.success === false means the API error will be displayed in a Message Bar
-  // so we want to avoid displaying the Modal
-  if (!isVisible || data.success === false) {
-    return null;
-  }
+const MessageTable = ({ messages }) => (
+  <div>
+    <p>Job validation retrieved the following messages:</p>
+    <EuiTable compressed>
+      <EuiTableHeader>
+        <EuiTableHeaderCell width="20" />
+        <EuiTableHeaderCell />
+        <EuiTableHeaderCell width="120" />
+      </EuiTableHeader>
+      <EuiTableBody>
+        {messages.map((m, i) => <MessageRow key={m.id + '_' + i} message={m} />)}
+      </EuiTableBody>
+    </EuiTable>
+  </div>
+);
+MessageTable.propTypes = {
+  messages: PropTypes.array.isRequired
+};
 
-  return (
-    <EuiOverlayMask>
-      <EuiModal
-        onClose={closeModal}
-        style={{ width: '800px' }}
-      >
-        <EuiModalHeader>
-          <EuiModalHeaderTitle >
-            Validate job {jobId}
-          </EuiModalHeaderTitle>
-        </EuiModalHeader>
+const SuccessfulValidation = () => (
+  <EuiCallOut
+    size="s"
+    title="Job validation was successful and didn't return any warnings or errors."
+    iconType="pin"
+  />
+);
 
-        <EuiModalBody>
-          {messageRows(data)}
-        </EuiModalBody>
+const Modal = ({ close, title, children }) => (
+  <EuiOverlayMask>
+    <EuiModal
+      onClose={close}
+      style={{ width: '800px' }}
+    >
+      <EuiModalHeader>
+        <EuiModalHeaderTitle>{title}</EuiModalHeaderTitle>
+      </EuiModalHeader>
 
-        <EuiModalFooter>
-          <EuiButton
-            onClick={closeModal}
-            size="s"
-            fill
-          >
-            Close
-          </EuiButton>
-        </EuiModalFooter>
-      </EuiModal>
-    </EuiOverlayMask>
-  );
+      <EuiModalBody>
+        {children}
+      </EuiModalBody>
+
+      <EuiModalFooter>
+        <EuiButton
+          onClick={close}
+          size="s"
+          fill
+        >
+          Close
+        </EuiButton>
+      </EuiModalFooter>
+    </EuiModal>
+  </EuiOverlayMask>
+);
+Modal.propType = {
+  close: PropTypes.func.isRequired,
+  title: PropTypes.string
 };
 
 class ValidateJob extends Component {
@@ -161,7 +158,6 @@ class ValidateJob extends Component {
 
   openModal = () => {
     this.props.mlJobService.validateJob(this.props.job).then((data) => {
-      console.log('resolving the promise', data);
       this.setState({
         ui: { isModalVisible: true },
         data
@@ -185,20 +181,25 @@ class ValidateJob extends Component {
           Validate Job
         </EuiButton>
 
-        {!disabled && modal({
-          closeModal: this.closeModal,
-          isVisible: this.state.ui.isModalVisible,
-          jobId: job.job_id,
-          data: this.state.data
-        })}
+        {!disabled && this.state.ui.isModalVisible &&
+          <Modal
+            close={this.closeModal}
+            title={'Validate job ' + (job && job.job_id)}
+          >
+            {(this.state.data.success && this.state.data.messages.length > 0)
+              ? <MessageTable messages={this.state.data.messages} />
+              : <SuccessfulValidation />
+            }
+          </Modal>
+        }
       </div>
     );
   }
 }
-
 ValidateJob.propTypes = {
+  fill: PropTypes.bool,
   job: PropTypes.object,
-  fill: PropTypes.bool
+  mlJobService: PropTypes.object
 };
 
 export { ValidateJob };
