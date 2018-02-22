@@ -12,7 +12,7 @@ import {
   KuiTable,
   KuiTableHeaderCell
 } from 'ui_framework/components';
-import { MonitoringTableSearchBar } from './search';
+import { MonitoringTableToolBar } from './toolbar';
 import { MonitoringTableNoData } from './no_data';
 import { MonitoringTableFooter } from './footer';
 import classNames from 'classnames';
@@ -210,12 +210,13 @@ export class MonitoringTable extends React.Component {
   /*
    * @param {Number} numAvailableRows - total number of rows in the table
    */
-  getPaginationControls(numAvailableRows) {
-    if (numAvailableRows === 0) {
-      return null;
+  getPaginationControls(numAvailableRows, alwaysShowPageControls) {
+    let shouldShow = false;
+    if (this.isPaginationRequired(numAvailableRows) || alwaysShowPageControls) {
+      shouldShow = true;
     }
 
-    if (!this.isPaginationRequired(numAvailableRows)) {
+    if (!shouldShow) {
       return null;
     }
 
@@ -240,23 +241,18 @@ export class MonitoringTable extends React.Component {
    * @param {Array} visibleRows - rows of data after they've been filtered and sorted
    * @param {Number} numAvailableRows - number of rows total on all the pages
    */
-  getSearchBar(numVisibleRows, numAvailableRows) {
+  getToolBar(numVisibleRows, numAvailableRows) {
     const firstRow = this.calculateFirstRow();
-    const showSearchBox = this.isSearchBoxShown();
-
-    if (!this.isPaginationRequired(numAvailableRows) && !this.isSearchBoxShown()) {
-      return null;
-    }
 
     return (
-      <MonitoringTableSearchBar
-        showSearchBox={showSearchBox}
+      <MonitoringTableToolBar
+        showSearchBox={this.isSearchBoxShown()}
         pageIndexFirstRow={numVisibleRows ? firstRow + 1 : 0}
         pageIndexLastRow={numVisibleRows ? numVisibleRows + firstRow : 0}
         rowsFiltered={numAvailableRows}
         filterText={this.state.filterText}
         placeholder={this.props.placeholder}
-        paginationControls={this.getPaginationControls(numAvailableRows)}
+        paginationControls={this.getPaginationControls(numAvailableRows, this.props.alwaysShowPageControls)}
         onFilterChange={this.onFilterChange}
         renderToolBarSections={this.props.renderToolBarSections}
         dispatchTableAction={this.dispatchTableAction}
@@ -325,7 +321,7 @@ export class MonitoringTable extends React.Component {
    * @param {Array} visibleRows - rows of data after they've been filtered and sorted
    * @param {Number} numAvailableRows - number of rows total on all the pages
    */
-  getFooter(numVisibleRows, numAvailableRows) {
+  getFooter(numVisibleRows, numAvailableRows, alwaysShowPageControls) {
     if (!this.isPaginationRequired(numAvailableRows)) {
       return null;
     }
@@ -336,7 +332,7 @@ export class MonitoringTable extends React.Component {
         pageIndexFirstRow={numVisibleRows ? firstRow + 1 : 0}
         pageIndexLastRow={numVisibleRows ? numVisibleRows + firstRow : 0}
         rowsFiltered={numAvailableRows}
-        paginationControls={this.getPaginationControls(numAvailableRows)}
+        paginationControls={this.getPaginationControls(numAvailableRows, alwaysShowPageControls)}
       />
     );
   }
@@ -431,17 +427,13 @@ export class MonitoringTable extends React.Component {
       table = <MonitoringTableNoData message={this.props.getNoDataMessage(this.state.filterText)} />;
     }
 
-    if(this.isPaginationRequired(numAvailableRows) || this.isSearchBoxShown()) {
-      return (
-        <KuiControlledTable className={classes} data-test-subj={`${this.props.className}Container`}>
-          { this.getSearchBar(numVisibleRows, numAvailableRows) }
-          { table }
-          { this.getFooter(numVisibleRows, numAvailableRows) }
-        </KuiControlledTable>
-      );
-    }
-
-    return table;
+    return (
+      <KuiControlledTable className={classes} data-test-subj={`${this.props.className}Container`}>
+        { this.getToolBar(numVisibleRows, numAvailableRows) }
+        { table }
+        { this.getFooter(numVisibleRows, numAvailableRows, this.props.alwaysShowPageControls) }
+      </KuiControlledTable>
+    );
   }
 }
 
@@ -456,5 +448,6 @@ MonitoringTable.defaultProps = {
   rows: [],
   filterFields: [],
   getNoDataMessage: defaultGetNoDataMessage,
+  alwaysShowPageControls: false,
   rowsPerPage: 20
 };

@@ -8,7 +8,7 @@ export function MonitoringElasticsearchIndicesProvider({ getService, getPageObje
 
   const SUBJ_TABLE_CONTAINER = 'indicesTableContainer';
   const SUBJ_TABLE_NO_DATA = `${SUBJ_TABLE_CONTAINER} monitoringTableNoData`;
-  const SUBJ_SEARCH_BAR = `${SUBJ_TABLE_CONTAINER} monitoringTableSearchBar`;
+  const SUBJ_SEARCH_BAR = `${SUBJ_TABLE_CONTAINER} monitoringTableToolBar`;
 
   const SUBJ_TABLE_SORT_SEARCH_COL = `${SUBJ_TABLE_CONTAINER} tableHeaderCell-searchRate`;
 

@@ -9,7 +9,7 @@ export function MonitoringLogstashPipelinesProvider({ getService, getPageObjects
 
   const SUBJ_TABLE_CONTAINER = 'logstashPipelinesTableContainer';
   const SUBJ_TABLE_NO_DATA = `${SUBJ_TABLE_CONTAINER} monitoringTableNoData`;
-  const SUBJ_SEARCH_BAR = `${SUBJ_TABLE_CONTAINER} monitoringTableSearchBar`;
+  const SUBJ_SEARCH_BAR = `${SUBJ_TABLE_CONTAINER} monitoringTableToolBar`;
 
   const SUBJ_TABLE_SORT_EVENTS_EMITTED_RATE_COL = `${SUBJ_TABLE_CONTAINER} tableHeaderCell-eventsEmittedRate`;
 

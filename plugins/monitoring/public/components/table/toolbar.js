@@ -7,14 +7,14 @@ import {
   KuiToolBarText
 } from 'ui_framework/components';
 
-export function MonitoringTableSearchBar(props) {
+export function MonitoringTableToolBar(props) {
   const searchBox = props.showSearchBox
     ? (
       <KuiToolBarSearchBox
         filter={props.filterText}
         onFilter={props.onFilterChange}
         placeholder={props.placeholder}
-        data-test-subj="monitoringTableSearchBar"
+        data-test-subj="monitoringTableToolBar"
       />
     )
     : null;
@@ -39,7 +39,7 @@ export function MonitoringTableSearchBar(props) {
     </KuiToolBar>
   );
 }
-MonitoringTableSearchBar.defaultProps = {
+MonitoringTableToolBar.defaultProps = {
   renderToolBarSections: noop,
   showSearchBox: true
 };
