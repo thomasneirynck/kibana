@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Histogram from '../../../shared/charts/Histogram';
 import EmptyMessage from '../../../shared/EmptyMessage';
-import { GraphHeader } from '../../../shared/UIComponents';
+import { HeaderSmall } from '../../../shared/UIComponents';
 import { getKey } from '../../../../store/apiHelpers';
 
 export function getFormattedBuckets(buckets, bucketSize) {
@@ -53,7 +53,7 @@ class Distribution extends Component {
 
     return (
       <div>
-        <GraphHeader>Occurrences</GraphHeader>
+        <HeaderSmall>Occurrences</HeaderSmall>
         <Histogram
           verticalLineHover={bucket => bucket.x}
           xType="time"

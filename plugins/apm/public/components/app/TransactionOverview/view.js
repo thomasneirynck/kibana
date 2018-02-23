@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import withErrorHandler from '../../shared/withErrorHandler';
-import { PageHeader, SectionHeader } from '../../shared/UIComponents';
+import { HeaderLarge, HeaderMedium } from '../../shared/UIComponents';
 import TabNavigation from '../../shared/TabNavigation';
 import Charts from './Charts';
 import List from './List';
@@ -34,10 +34,10 @@ export class TransactionOverview extends Component {
 
     return (
       <div>
-        <PageHeader title={serviceName || ''} />
+        <HeaderLarge>{serviceName}</HeaderLarge>
         <TabNavigation />
         <Charts />
-        <SectionHeader>{transactionTypeLabel(transactionType)}</SectionHeader>
+        <HeaderMedium>{transactionTypeLabel(transactionType)}</HeaderMedium>
         <List
           serviceName={serviceName}
           type={transactionType}

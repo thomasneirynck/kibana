@@ -12,7 +12,7 @@ import {
   unit,
   fontSize
 } from '../../../style/variables';
-import { Info } from '../Icons';
+import { EuiIcon } from '@elastic/eui';
 
 import { getFeatureDocs } from '../../../utils/documentation';
 import { ExternalLink } from '../../../utils/url';
@@ -138,7 +138,7 @@ function AgentFeatureTipMessage({ featureName, agentName }) {
 
   return (
     <TableInfo>
-      <Info />
+      <EuiIcon type="iInCircle" />
       {docs.text}{' '}
       {docs.url && (
         <ExternalLink href={docs.url}>
@@ -154,7 +154,7 @@ export function PropertiesTable({ propData = {}, propKey, agentName }) {
     return (
       <TableContainer>
         <TableInfo>
-          <Info /> No data available
+          <EuiIcon type="iInCircle" /> No data available
         </TableInfo>
       </TableContainer>
     );

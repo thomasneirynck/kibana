@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import withErrorHandler from '../../shared/withErrorHandler';
-import { PageHeader } from '../../shared/UIComponents';
+import { HeaderLarge } from '../../shared/UIComponents';
 import DetailView from './DetailView';
 import Distribution from './Distribution';
 
@@ -87,16 +87,12 @@ class ErrorGroupDetails extends Component {
 
     return (
       <div>
-        <PageHeader
-          title={
-            <Fragment>
-              Error group {getShortGroupId(urlParams.errorGroupId)}
-              {isUnhandled && (
-                <UnhandledBadge color="warning">Unhandled</UnhandledBadge>
-              )}
-            </Fragment>
-          }
-        />
+        <HeaderLarge>
+          Error group {getShortGroupId(urlParams.errorGroupId)}
+          {isUnhandled && (
+            <UnhandledBadge color="warning">Unhandled</UnhandledBadge>
+          )}
+        </HeaderLarge>
 
         {showDetails && (
           <Titles>

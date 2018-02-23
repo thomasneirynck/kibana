@@ -7,7 +7,7 @@ import {
   px,
   borderRadius
 } from '../../../../style/variables';
-import { Tab, SectionHeader } from '../../../shared/UIComponents';
+import { Tab, HeaderMedium } from '../../../shared/UIComponents';
 import { isEmpty, capitalize, get } from 'lodash';
 
 import { ContextProperties } from '../../../shared/ContextProperties';
@@ -43,6 +43,13 @@ const Container = styled.div`
   margin-top: ${px(units.plus)};
 `;
 
+const HeaderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: ${px(units.plus)} ${px(units.plus)} 0;
+  margin-bottom: ${px(unit)};
+`;
+
 const TabContainer = styled.div`
   padding: 0 ${px(units.plus)};
   border-bottom: 1px solid ${colors.gray4};
@@ -50,18 +57,6 @@ const TabContainer = styled.div`
 
 const TabContentContainer = styled.div`
   border-radius: 0 0 ${borderRadius} ${borderRadius};
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: ${px(units.plus)} ${px(units.plus)} 0;
-  margin-bottom: ${px(unit)};
-`;
-
-const Title = styled(SectionHeader)`
-  margin-top: ${px(units.quarter)};
-  margin-bottom: 0;
 `;
 
 const PropertiesTableContainer = styled.div`
@@ -135,12 +130,19 @@ class Transaction extends Component {
 
     return (
       <Container>
-        <Header>
-          <Title>Transaction sample</Title>
+        <HeaderContainer>
+          <HeaderMedium
+            css={`
+              margin-top: ${px(units.quarter)};
+              margin-bottom: 0;
+            `}
+          >
+            Transaction sample
+          </HeaderMedium>
           <DiscoverButton query={discoverQuery}>
             {`View transaction in Discover`}
           </DiscoverButton>
-        </Header>
+        </HeaderContainer>
 
         <ContextProperties
           timestamp={timestamp}

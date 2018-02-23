@@ -1,58 +1,27 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {
-  unit,
-  units,
-  px,
-  fontSizes,
-  colors,
-  truncate
-} from '../../style/variables';
+import { unit, units, px, fontSizes, colors } from '../../style/variables';
 import { RelativeLink } from '../../utils/url';
 
-const PagerHeaderWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
+export const HeaderLarge = styled.h1`
+  font-size: ${fontSizes.xxlarge};
   margin-bottom: ${px(units.plus)};
 
-  > *:not(h1) {
-    position: relative;
-    top: ${px(units.half + 1)};
-    margin-left: ${px(unit)};
+  &:after {
+    content: '.';
+    visibility: hidden;
   }
 `;
 
-const PageHeading = styled.h1`
-  font-size: ${fontSizes.xxlarge};
-  margin: 0;
-  height: ${px(unit * 2.5)};
-  line-height: ${px(unit * 2.5)};
-  ${truncate('100%')};
-  flex-grow: 1;
-`;
-
-export function PageHeader({ title, children }) {
-  return (
-    <PagerHeaderWrapper>
-      <PageHeading>{title}</PageHeading>
-      {children}
-    </PagerHeaderWrapper>
-  );
-}
-
-PageHeader.propTypes = {
-  title: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired
-};
-
-export const SectionHeader = styled.h2`
+export const HeaderMedium = styled.h2`
   margin: ${px(units.plus)} 0;
   font-size: ${fontSizes.xlarge};
+  ${props => props.css};
 `;
 
-export const GraphHeader = styled.h3`
+export const HeaderSmall = styled.h3`
   margin: ${px(units.plus)} 0;
   font-size: ${fontSizes.large};
+  ${props => props.css};
 `;
 
 export const Tab = styled.div`

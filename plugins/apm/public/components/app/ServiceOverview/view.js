@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
 import withErrorHandler from '../../shared/withErrorHandler';
 import { STATUS } from '../../../constants';
 import { isEmpty } from 'lodash';
@@ -6,8 +7,18 @@ import { loadAgentStatus } from '../../../services/rest';
 import { KibanaLink } from '../../../utils/url';
 import { EuiButton } from '@elastic/eui';
 import List from './List';
-import { PageHeader } from '../../shared/UIComponents';
 import { getKey } from '../../../store/apiHelpers';
+import { px, units, fontSizes } from '../../../style/variables';
+
+const HeaderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: ${px(units.plus)};
+
+  h1 {
+    font-size: ${fontSizes.xxlarge};
+  }
+`;
 
 function fetchData(props) {
   const { start, end } = props.urlParams;
@@ -52,14 +63,15 @@ class ServiceOverview extends Component {
       : 'No services with data in the selected time range.';
 
     const emptyMessageSubHeading = noHistoricalDataFound ? (
-      <SetupInstructionsLink buttonFill={true} />
+      <SetupInstructionsLink buttonFill />
     ) : null;
 
     return (
       <div>
-        <PageHeader title="Services">
+        <HeaderContainer>
+          <h1>Services</h1>
           <SetupInstructionsLink />
-        </PageHeader>
+        </HeaderContainer>
 
         <List
           items={serviceList.data}
@@ -73,10 +85,10 @@ class ServiceOverview extends Component {
   }
 }
 
-function SetupInstructionsLink({ buttonFill }) {
+function SetupInstructionsLink({ buttonFill = false }) {
   return (
     <KibanaLink pathname={'/app/kibana'} hash={'/home/tutorial/apm'} query={{}}>
-      <EuiButton size="s" color="primary" fill={buttonFill || false}>
+      <EuiButton size="s" color="primary" fill={buttonFill}>
         Setup Instructions
       </EuiButton>
     </KibanaLink>

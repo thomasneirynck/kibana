@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import withErrorHandler from '../../shared/withErrorHandler';
-import { PageHeader } from '../../shared/UIComponents';
+import { HeaderLarge } from '../../shared/UIComponents';
 import TabNavigation from '../../shared/TabNavigation';
 import List from './List';
 import { getKey } from '../../../store/apiHelpers';
@@ -30,7 +30,7 @@ class ErrorGroupOverview extends Component {
 
     return (
       <div>
-        <PageHeader title={serviceName || ''} />
+        <HeaderLarge>{serviceName}</HeaderLarge>
         <TabNavigation />
 
         <List

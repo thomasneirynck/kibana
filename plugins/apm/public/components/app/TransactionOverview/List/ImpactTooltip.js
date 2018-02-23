@@ -1,36 +1,27 @@
 import React from 'react';
 import styled from 'styled-components';
-import { units, px, colors } from '../../../../style/variables';
-import { Info } from '../../../shared/Icons';
-import TooltipOverlay from '../../../shared/TooltipOverlay';
+import { units, px } from '../../../../style/variables';
+import { EuiIcon } from '@elastic/eui';
+import { Tooltip } from 'pivotal-ui/react/tooltip';
+import { OverlayTrigger } from 'pivotal-ui/react/overlay-trigger';
 
 const TooltipWrapper = styled.div`
-  position: relative;
-  display: inline-block;
-  top: 1px;
-  left: ${px(units.half)};
-  margin-right: ${px(units.quarter * 3)};
+  margin-left: ${px(units.half)};
 `;
 
 const ImpactTooltip = () => (
   <TooltipWrapper>
-    <TooltipOverlay
-      delay={0}
-      content={
-        <span>
+    <OverlayTrigger
+      placement="top"
+      trigger="hover"
+      overlay={
+        <Tooltip>
           Impact shows the most used and<br />slowest endpoints in your service.
-        </span>
+        </Tooltip>
       }
     >
-      <Info
-        style={{ color: colors.blue2 }}
-        onClick={e => {
-          // TODO: Remove this handler once issue with pivotal-ui/react/overlay-trigger has been resolved
-          e.stopPropagation();
-          return false;
-        }}
-      />
-    </TooltipOverlay>
+      <EuiIcon type="questionInCircle" />
+    </OverlayTrigger>
   </TooltipWrapper>
 );
 

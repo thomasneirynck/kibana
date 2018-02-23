@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import d3 from 'd3';
 import Histogram from '../../../shared/charts/Histogram';
 import { toQuery, fromQuery, history } from '../../../../utils/url';
-import { GraphHeader } from '../../../shared/UIComponents';
+import { HeaderSmall } from '../../../shared/UIComponents';
 import EmptyMessage from '../../../shared/EmptyMessage';
 import { getTimeFormatter, timeUnit } from '../../../../utils/formatters';
 import SamplingTooltip from './SamplingTooltip';
@@ -82,9 +82,15 @@ class Distribution extends Component {
 
     return (
       <div>
-        <GraphHeader>
-          Response time distribution <SamplingTooltip />
-        </GraphHeader>
+        <HeaderSmall
+          css={`
+            display: flex;
+            align-items: center;
+          `}
+        >
+          <span>Response time distribution</span>
+          <SamplingTooltip />
+        </HeaderSmall>
         <Histogram
           buckets={buckets}
           bucketSize={distribution.data.bucketSize}

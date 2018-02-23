@@ -12,7 +12,7 @@ import { get, capitalize, isEmpty } from 'lodash';
 import { STATUS } from '../../../../constants';
 
 import { ContextProperties } from '../../../shared/ContextProperties';
-import { Tab, SectionHeader } from '../../../shared/UIComponents';
+import { Tab, HeaderMedium } from '../../../shared/UIComponents';
 import DiscoverButton from '../../../shared/DiscoverButton';
 import {
   PropertiesTable,
@@ -34,16 +34,12 @@ const Container = styled.div`
   margin-top: ${px(units.plus)};
 `;
 
-const Header = styled.div`
+const HeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   padding: ${px(units.plus)} ${px(units.plus)} 0;
   margin-bottom: ${px(unit)};
-`;
-
-const Title = styled(SectionHeader)`
-  margin-top: -${px(units.quarter)};
-  margin-bottom: 0;
 `;
 
 const TabContainer = styled.div`
@@ -136,12 +132,18 @@ function DetailView({ errorGroup, urlParams, location }) {
 
   return (
     <Container>
-      <Header>
-        <Title>Error occurrence</Title>
+      <HeaderContainer>
+        <HeaderMedium
+          css={`
+            margin: 0;
+          `}
+        >
+          Error occurrence
+        </HeaderMedium>
         <DiscoverButton query={discoverQuery}>
           {`View ${occurencesCount} occurences in Discover`}
         </DiscoverButton>
-      </Header>
+      </HeaderContainer>
 
       <ContextProperties
         timestamp={timestamp}

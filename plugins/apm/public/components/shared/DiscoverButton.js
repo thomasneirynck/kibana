@@ -1,16 +1,13 @@
 import React from 'react';
 import { KibanaLink } from '../../utils/url';
-import { KuiButton, KuiButtonIcon } from 'ui_framework/components';
+import { EuiButton } from '@elastic/eui';
 
 function DiscoverButton({ query, children }) {
   return (
     <KibanaLink pathname={'/app/kibana'} hash={'/discover'} query={query}>
-      <KuiButton
-        buttonType="secondary"
-        icon={<KuiButtonIcon className="fa-compass" />}
-      >
+      <EuiButton color="secondary" iconType="discoverApp">
         {children || 'View in Discover'}
-      </KuiButton>
+      </EuiButton>
     </KibanaLink>
   );
 }
