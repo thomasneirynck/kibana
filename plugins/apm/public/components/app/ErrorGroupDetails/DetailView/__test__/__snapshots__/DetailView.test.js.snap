@@ -299,7 +299,9 @@ exports[`DetailView should render with data 1`] = `
               />
             </g>
           </svg>
-          <span>
+          <span
+            className="euiButton__text"
+          >
             View 18 occurences in Discover
           </span>
         </span>
