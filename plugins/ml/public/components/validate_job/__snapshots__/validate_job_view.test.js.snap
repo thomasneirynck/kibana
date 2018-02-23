@@ -17,17 +17,16 @@ exports[`ValidateJob renders button and modal with a messsage 1`] = `
     close={[Function]}
     title="Validate job test-id"
   >
-    <MessageTable
-      messages={
-        Array [
-          Object {
-            "fieldName": "airline",
-            "id": "over_field_low_cardinality",
-            "status": "warning",
-            "text": "Cardinality of over_field \\"airline\\" is low and therefore less suitable for population analysis.",
-            "url": "https://www.elastic.co/blog/sizing-machine-learning-with-elasticsearch",
-          },
-        ]
+    <Callout
+      key="over_field_low_cardinality_0"
+      message={
+        Object {
+          "fieldName": "airline",
+          "id": "over_field_low_cardinality",
+          "status": "warning",
+          "text": "Cardinality of over_field \\"airline\\" is low and therefore less suitable for population analysis.",
+          "url": "https://www.elastic.co/blog/sizing-machine-learning-with-elasticsearch",
+        }
       }
     />
   </Modal>
@@ -66,8 +65,6 @@ exports[`ValidateJob renders the button and modal with a success message 1`] = `
   <Modal
     close={[Function]}
     title="Validate job test-id"
-  >
-    <SuccessfulValidation />
-  </Modal>
+  />
 </div>
 `;

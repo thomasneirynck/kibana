@@ -26,5 +26,14 @@
   },
   "influencer_low_suggestions": {
     "text": "The job configuration includes partition or over fields but no influencers are configured. Consider using one of {{influencerSuggestion}} as an influencer."
+  },
+  "success_cardinality": {
+    "text": "Cardinality"
+  },
+  "success_bucket_span": {
+    "text": "Bucket Span"
+  },
+  "success_influencers": {
+    "text": "Influencers"
   }
 }

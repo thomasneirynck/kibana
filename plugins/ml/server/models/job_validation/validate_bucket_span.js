@@ -142,5 +142,12 @@ export async function validateBucketSpan(callWithRequest, job) {
     throw new Error(error);
   }
 
+  if (messages.length === 0) {
+    messages.push({
+      status: VALIDATION_STATUS.SUCCESS,
+      id: 'success_bucket_span'
+    });
+  }
+
   return messages;
 }

@@ -84,8 +84,17 @@ export async function validateCardinality(callWithRequest, job) {
     isInvalid: cardinality => cardinality > PARTITION_FIELD_CARDINALITY_THRESHOLD
   });
 
-  return [
+  const messages = [
     ...await validateOverFields,
     ...await validatePartitionFields
   ];
+
+  if (messages.length === 0) {
+    messages.push({
+      status: VALIDATION_STATUS.SUCCESS,
+      id: 'success_cardinality'
+    });
+  }
+
+  return messages;
 }

@@ -58,5 +58,12 @@ export async function validateInfluencer(callWithRequest, job) {
     });
   }
 
+  if (messages.length === 0) {
+    messages.push({
+      status: VALIDATION_STATUS.SUCCESS,
+      id: 'success_influencers'
+    });
+  }
+
   return Promise.resolve(messages);
 }

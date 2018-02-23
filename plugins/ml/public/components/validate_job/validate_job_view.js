@@ -23,7 +23,6 @@ import React, {
 import {
   EuiButton,
   EuiCallOut,
-  EuiHealth,
   EuiLink,
   EuiModal,
   EuiModalBody,
@@ -31,12 +30,7 @@ import {
   EuiModalHeader,
   EuiModalHeaderTitle,
   EuiOverlayMask,
-  EuiTable,
-  EuiTableBody,
-  EuiTableHeader,
-  EuiTableHeaderCell,
-  EuiTableRow,
-  EuiTableRowCell
+  EuiSpacer
 } from '@elastic/eui';
 
 // don't use something like plugins/ml/../common
@@ -66,54 +60,62 @@ const statusToEuiColor = (status) => {
   }
 };
 
+const statusToEuiIconType = (status) => {
+  switch (status) {
+    case VALIDATION_STATUS.INFO:
+      return 'pencil';
+      break;
+    case VALIDATION_STATUS.ERROR:
+      return 'cross';
+      break;
+    case VALIDATION_STATUS.SUCCESS:
+      return 'check';
+      break;
+    case VALIDATION_STATUS.WARNING:
+      return 'alert';
+      break;
+    default:
+      return status;
+  }
+};
+
 const Link = ({ url }) => (<EuiLink href={url} target="_BLANK">Learn more</EuiLink>);
 Link.propTypes = {
   url: PropTypes.string.isRequired
 };
 
-const MessageRow = ({ message }) => (
-  <EuiTableRow>
-    <EuiTableRowCell className="mlHealthColumn" align="right">
-      <EuiHealth color={statusToEuiColor(message.status)} />
-    </EuiTableRowCell>
-    <EuiTableRowCell>{message.text}</EuiTableRowCell>
-    <EuiTableRowCell>{message.url && <Link url={message.url} />}</EuiTableRowCell>
-  </EuiTableRow>
+// Message is its own component so it can be passed
+// as the "title" prop in the Callout component.
+const Message = ({ message }) => (
+  <React.Fragment>
+    {message.text} {message.url && <Link url={message.url} />}
+  </React.Fragment>
 );
-MessageRow.propTypes = {
+Message.propTypes = {
+  message: PropTypes.shape({
+    text: PropTypes.string,
+    url: PropTypes.string
+  })
+};
+
+const Callout = ({ message }) => (
+  <React.Fragment>
+    <EuiCallOut
+      color={statusToEuiColor(message.status)}
+      size="s"
+      title={<Message message={message} />}
+      iconType={statusToEuiIconType(message.status)}
+    />
+    <EuiSpacer size="m" />
+  </React.Fragment>
+);
+Callout.propTypes = {
   message: PropTypes.shape({
     status: PropTypes.string,
     text: PropTypes.string,
     url: PropTypes.string
   })
 };
-
-const MessageTable = ({ messages }) => (
-  <div>
-    <p>Job validation retrieved the following messages:</p>
-    <EuiTable compressed>
-      <EuiTableHeader>
-        <EuiTableHeaderCell width="20" />
-        <EuiTableHeaderCell />
-        <EuiTableHeaderCell width="120" />
-      </EuiTableHeader>
-      <EuiTableBody>
-        {messages.map((m, i) => <MessageRow key={m.id + '_' + i} message={m} />)}
-      </EuiTableBody>
-    </EuiTable>
-  </div>
-);
-MessageTable.propTypes = {
-  messages: PropTypes.array.isRequired
-};
-
-const SuccessfulValidation = () => (
-  <EuiCallOut
-    size="s"
-    title="Job validation was successful and didn't return any warnings or errors."
-    iconType="pin"
-  />
-);
 
 const Modal = ({ close, title, children }) => (
   <EuiOverlayMask>
@@ -186,10 +188,9 @@ class ValidateJob extends Component {
             close={this.closeModal}
             title={'Validate job ' + (job && job.job_id)}
           >
-            {(this.state.data.success && this.state.data.messages.length > 0)
-              ? <MessageTable messages={this.state.data.messages} />
-              : <SuccessfulValidation />
-            }
+            {this.state.data.messages.map(
+              (m, i) => <Callout key={m.id + '_' + i} message={m} />
+            )}
           </Modal>
         }
       </div>
