@@ -18,7 +18,9 @@ function executeJobFn(server) {
     try {
       decryptedHeaders = await crypto.decrypt(serializedEncryptedHeaders);
     } catch (e) {
-      throw new Error('Failed to decrypt report job data. Please re-generate this report.');
+      throw new Error(
+        'Failed to decrypt report job data. Please ensure that xpack.reporting.encryptionKey is set and re-generate this report.'
+      );
     }
 
     const fakeRequest = {
