@@ -6,12 +6,11 @@ import { uiModules } from 'ui/modules';
 uiModules.get('kibana')
   // disable stat reporting while running tests,
   // MockInjector used in these tests is not impacted
-  .constant('reportStats', false)
-  .constant('statsReportUrl', 'not.a.valid.url.0');
+  .constant('telemetryEnabled', false)
+  .constant('telemetryUrl', 'not.a.valid.url.0');
 
 const getMockInjector = ({ allowReport, lastReport }) => {
   const get = sinon.stub();
-  get.withArgs('reportStats').returns(true);
   get.withArgs('localStorage').returns({
     get: sinon.stub().returns({ lastReport: lastReport }),
     set: sinon.stub()
@@ -36,7 +35,7 @@ const getMockInjector = ({ allowReport, lastReport }) => {
   });
 
   get.withArgs('$http').returns(mockHttp);
-  get.withArgs('statsReportUrl').returns('https://testo.com/');
+  get.withArgs('telemetryUrl').returns('https://testo.com/');
 
   return { get };
 };

@@ -1,6 +1,5 @@
 import { get } from 'lodash';
-import { createQuery } from '../create_query';
-import { ElasticsearchMetric } from '../metrics'; // TODO should be KibanaMetric to use kibana_stats.timestamp in the query
+import { createQuery } from './create_query';
 import { KIBANA_SYSTEM_ID, REPORTING_SYSTEM_ID } from '../../../common/constants';
 
 const reportingStatsPath = `${KIBANA_SYSTEM_ID}_stats.usage.xpack.${REPORTING_SYSTEM_ID}`;
@@ -16,7 +15,6 @@ export function fetchHighLevelReportingStats(server, callCluster, clusterUuids, 
         start,
         end,
         type: `${KIBANA_SYSTEM_ID}_stats`, // reporting stats are in kibana_stats.xpack.reporting
-        metric: ElasticsearchMetric.getMetricFields(),
         filters: [ { terms: { cluster_uuid: clusterUuids } } ]
       }),
       collapse: {

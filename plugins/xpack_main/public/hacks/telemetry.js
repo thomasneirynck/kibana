@@ -1,8 +1,10 @@
 import moment from 'moment';
 import Promise from 'bluebird';
-import { CONFIG_TELEMETRY, REPORT_INTERVAL_MS } from '../../common/constants';
-
-const STORAGE_KEY = 'xpack.monitoring.data';
+import {
+  CONFIG_TELEMETRY,
+  REPORT_INTERVAL_MS,
+  LOCALSTORAGE_KEY,
+} from '../../common/constants';
 
 export class Telemetry {
 
@@ -14,11 +16,10 @@ export class Telemetry {
   constructor($injector, basePath = '') {
     this._storage = $injector.get('localStorage');
     this._config = $injector.get('config');
-    this._reportStats = $injector.get('reportStats'); // to re-check config on every tick
     this._basePath = basePath;
     this._$http = $injector.get('$http');
-    this._statsReportUrl = $injector.get('statsReportUrl');
-    this._attributes = this._storage.get(STORAGE_KEY) || {};
+    this._telemetryUrl = $injector.get('telemetryUrl');
+    this._attributes = this._storage.get(LOCALSTORAGE_KEY) || {};
   }
 
   _set(key, value) {
@@ -30,7 +31,7 @@ export class Telemetry {
   }
 
   _saveToBrowser() {
-    this._storage.set(STORAGE_KEY, this._attributes);
+    this._storage.set(LOCALSTORAGE_KEY, this._attributes);
   }
 
   /*
@@ -38,7 +39,7 @@ export class Telemetry {
    */
   _checkReportStatus() {
     // check if opt-in for telemetry is enabled in config
-    if (this._reportStats && this._config.get(CONFIG_TELEMETRY, false)) {
+    if (this._config.get(CONFIG_TELEMETRY, false)) {
       // If the last report is empty it means we've never sent telemetry and
       // now is the time to send it.
       if (!this._get('lastReport')) {
@@ -60,7 +61,7 @@ export class Telemetry {
     if (!this._checkReportStatus()) { return Promise.resolve(null); }
 
     // call to get the latest cluster uuids with a time range to go back 20 minutes up to now
-    const currentClustersUrl = `${this._basePath}/api/monitoring/v1/clusters/_stats`;
+    const currentClustersUrl = `${this._basePath}/api/telemetry/v1/clusters/_stats`;
     return this._$http.post(currentClustersUrl, {
       timeRange: {
         min: moment().subtract(20, 'minutes').toISOString(),
@@ -68,15 +69,14 @@ export class Telemetry {
       }
     })
       .then(response => {
-      // TODO: support arrays after https://github.com/elastic/infra/issues/2350
         return response.data.map(cluster => {
           const req = {
             method: 'POST',
-            url: this._statsReportUrl,
+            url: this._telemetryUrl,
             data: cluster
           };
-          // if passing data externally to Infra, suppress kbnXsrfToken
-          if (this._statsReportUrl.match(/^https/)) { req.kbnXsrfToken = false; }
+          // if passing data externally, then suppress kbnXsrfToken
+          if (this._telemetryUrl.match(/^https/)) { req.kbnXsrfToken = false; }
           return this._$http(req);
         });
       })

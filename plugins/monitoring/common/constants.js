@@ -13,21 +13,6 @@ export const KIBANA_MONITORING_LOGGING_TAG = 'kibana-monitoring';
  */
 export const MONITORING_SYSTEM_API_VERSION = '6';
 /**
- * The name of the Kibana System ID used to publish and look up Kibana stats through the Monitoring system.
- * @type {string}
- */
-export const KIBANA_SYSTEM_ID = 'kibana';
-/**
- * The name of the Kibana System ID used to look up Logstash stats through the Monitoring system.
- * @type {string}
- */
-export const LOGSTASH_SYSTEM_ID = 'logstash';
-/**
- * The name of the Kibana System ID used to look up Reporting stats through the Monitoring system.
- * @type {string}
- */
-export const REPORTING_SYSTEM_ID = 'reporting';
-/**
  * The type name used within the Monitoring index to publish Kibana ops stats.
  * @type {string}
  */
@@ -59,12 +44,6 @@ export const STORAGE_KEY = 'xpack.monitoring.data';
  */
 export const SORT_ASCENDING = 1;
 export const SORT_DESCENDING = -1;
-
-/*
- * config options opt into telemetry
- * @type {string}
- */
-export const CONFIG_TELEMETRY = 'telemetry:optIn';
 
 /*
  * Chart colors
@@ -115,14 +94,6 @@ export const INVALID_LICENSE = { type: 'invalid', status: 'inactive' };
  * In order to show ML Jobs tab in the Elasticsearch section / tab navigation, license must be supported
  */
 export const ML_SUPPORTED_LICENSES = [ 'trial', 'platinum' ];
-
-/**
- * The amount of time, in milliseconds, to wait between reports when enabled.
- *
- * Currently 24 hours.
- * @type {Number}
- */
-export const REPORT_INTERVAL_MS = 86400000;
 
 /**
  * Metadata service URLs for the different cloud services that have constant URLs (e.g., unlike GCP, which is a constant prefix).

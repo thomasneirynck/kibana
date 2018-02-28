@@ -1,9 +1,9 @@
 import moment from 'moment';
 
-export const name = 'monitoring_clusters';
-export const description = 'Get the monitoring clusters stats for the last 1 hour from the Kibana server';
+export const name = 'telemetry';
+export const description = 'Get the clusters stats for the last 1 hour from the Kibana server';
 export const method = 'POST';
-export const path = '/api/monitoring/v1/clusters/_stats';
+export const path = '/api/telemetry/v1/clusters/_stats';
 
 // Get an object with start and end times for the last 1 hour, ISO format, in UTC
 function getTimeRange() {

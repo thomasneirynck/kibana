@@ -13,12 +13,12 @@ import { shouldShowBanner } from './should_show_banner';
  * @param {Object} $injector The Angular injector
  */
 async function asyncInjectBanner($injector) {
-  const reportStats = $injector.get('reportStats');
+  const telemetryEnabled = $injector.get('telemetryEnabled');
   const Private = $injector.get('Private');
   const config = $injector.get('config');
 
   // no banner if the server config has telemetry disabled
-  if (!reportStats) {
+  if (!telemetryEnabled) {
     return;
   }
 

@@ -1,6 +1,6 @@
 import Joi from 'joi';
+import { wrap } from 'boom';
 import { getAllStats } from '../../../../lib/telemetry';
-import { handleError } from '../../../../lib/errors';
 
 export function telemetryRoute(server) {
   /**
@@ -11,7 +11,7 @@ export function telemetryRoute(server) {
    */
   server.route({
     method: 'POST',
-    path: '/api/monitoring/v1/clusters/_stats',
+    path: '/api/telemetry/v1/clusters/_stats',
     config: {
       validate: {
         payload: Joi.object({
@@ -33,7 +33,7 @@ export function telemetryRoute(server) {
 
           if (config.get('env.dev')) {
           // don't ignore errors when running in dev mode
-            reply(handleError(err, req));
+            reply(wrap(err));
           } else {
           // ignore errors, return empty set and a 200
             reply([]).code(200);

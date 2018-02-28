@@ -1,4 +1,4 @@
-import { requireUIRoutes, requireTelemetryRoutes } from './server/routes';
+import { requireUIRoutes } from './server/routes';
 import { instantiateClient } from './server/es_client/instantiate_client';
 import { initMonitoringXpackInfo } from './server/init_monitoring_xpack_info';
 import { initKibanaMonitoring } from './server/kibana_monitoring';
@@ -20,26 +20,20 @@ export const init = (monitoringPlugin, server) => {
   xpackMainPlugin.status.once('green', async () => {
     const config = server.config();
     const uiEnabled = config.get('xpack.monitoring.ui.enabled');
-    const reportStats = config.get('xpack.monitoring.report_stats');
     const features = [];
     const onceMonitoringGreen = callbackFn => monitoringPlugin.status.once('green', () => callbackFn()); // avoid race condition in things that require ES client
 
-    if (uiEnabled || reportStats) {
+    if (uiEnabled) {
       // Instantiate the dedicated ES client
       features.push(instantiateClient(server));
 
-      if (uiEnabled) {
-        // route handlers depend on xpackInfo (exposed as server.plugins.monitoring.info)
-        onceMonitoringGreen(async () => {
-          await initMonitoringXpackInfo(server);
-        });
+      // route handlers depend on xpackInfo (exposed as server.plugins.monitoring.info)
+      onceMonitoringGreen(async () => {
+        await initMonitoringXpackInfo(server);
+      });
 
-        // Require only routes needed for ui app
-        features.push(requireUIRoutes(server));
-      }
-
-      // Require only routes needed for telemetry
-      features.push(requireTelemetryRoutes(server));
+      // Require only routes needed for ui app
+      features.push(requireUIRoutes(server));
     }
 
     // Send Kibana usage / server ops to the monitoring bulk api

@@ -1,6 +1,5 @@
 import { get } from 'lodash';
-import { createQuery } from '../create_query';
-import { ElasticsearchMetric } from '../metrics';
+import { createQuery } from './create_query';
 
 /**
  * Update a counter associated with the {@code key}.
@@ -167,7 +166,6 @@ export function fetchHighLevelStats(server, callCluster, clusterUuids, start, en
         start,
         end,
         type: `${product}_stats`,
-        metric: ElasticsearchMetric.getMetricFields(),
         filters: [ { terms: { cluster_uuid: clusterUuids } } ]
       }),
       collapse: {

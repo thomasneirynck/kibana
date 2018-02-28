@@ -23,7 +23,7 @@ export default function ({ getService }) {
 
       it('should load multiple clusters', async () => {
         const { body } = await supertest
-          .post('/api/monitoring/v1/clusters/_stats')
+          .post('/api/telemetry/v1/clusters/_stats')
           .set('kbn-xsrf', 'xxx')
           .send({ timeRange })
           .expect(200);

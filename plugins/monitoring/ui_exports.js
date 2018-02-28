@@ -1,5 +1,3 @@
-import { CONFIG_TELEMETRY } from './common/constants';
-
 /**
  * Configuration of dependency objects for the UI, which are needed for the
  * Monitoring UI app (injectVars) and views and data for outside the monitoring
@@ -28,24 +26,12 @@ export const uiExports = {
       };
     },
   },
-  uiSettingDefaults: {
-    [CONFIG_TELEMETRY]: {
-      description: 'Help us improve Kibana and Elasticsearch?',
-      value: false
-    }
-  },
   injectDefaultVars(server) {
     const config = server.config();
     return {
-      statsReportUrl: config.get('xpack.monitoring.stats_report_url'),
-      reportStats: config.get('xpack.monitoring.report_stats'),
       monitoringUiEnabled: config.get('xpack.monitoring.ui.enabled')
     };
   },
-  hacks: [
-    'plugins/monitoring/hacks/telemetry_opt_in',
-    'plugins/monitoring/hacks/telemetry_trigger',
-    'plugins/monitoring/hacks/toggle_app_link_in_nav'
-  ],
-  home: ['plugins/monitoring/register_feature']
+  hacks: [ 'plugins/monitoring/hacks/toggle_app_link_in_nav' ],
+  home: [ 'plugins/monitoring/register_feature' ]
 };

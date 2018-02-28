@@ -1,6 +1,5 @@
 import { get } from 'lodash';
-import { createQuery } from '../create_query';
-import { ElasticsearchMetric } from '../metrics';
+import { createQuery } from './create_query';
 
 /**
  * Get a list of Cluster UUIDs that exist within the specified timespan.
@@ -33,7 +32,7 @@ export function fetchClusterUuids(server, callCluster, start, end) {
     filterPath: 'aggregations.cluster_uuids.buckets.key',
     body: {
       size: 0, // return no hits, just aggregation buckets
-      query: createQuery({ type: 'cluster_stats', start, end, metric: ElasticsearchMetric.getMetricFields() }),
+      query: createQuery({ type: 'cluster_stats', start, end }),
       aggs: {
         cluster_uuids: {
           terms: {

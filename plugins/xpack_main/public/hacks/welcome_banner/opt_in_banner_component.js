@@ -8,6 +8,8 @@ import {
   EuiFlexItem,
 } from '@elastic/eui';
 
+import { CONFIG_TELEMETRY_DESC } from '../../../common/constants';
+
 /**
  * React component for displaying the Telemetry opt-in banner.
  *
@@ -17,7 +19,7 @@ import {
  */
 export const OptInBanner = ({ optInClick }) => {
   return (
-    <EuiCallOut iconType="questionInCircle" title="Help us improve Kibana and Elasticsearch?">
+    <EuiCallOut iconType="questionInCircle" title={CONFIG_TELEMETRY_DESC}>
       <EuiFlexGroup gutterSize="s" alignItems="center">
         <EuiFlexItem grow={false}>
           <EuiButton
