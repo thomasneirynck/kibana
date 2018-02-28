@@ -1,6 +1,5 @@
 import { get, find } from 'lodash';
 import { verifyMonitoringLicense } from './verify_monitoring_license';
-import { INVALID_LICENSE } from '../../common/constants';
 
 export function alertsClustersAggregation(req, alertsIndex, clusters, checkLicense) {
   const verification = verifyMonitoringLicense(req.server);
@@ -67,7 +66,7 @@ export function alertsClustersAggregation(req, alertsIndex, clusters, checkLicen
       return clusters.reduce((reClusters, cluster) => {
         let alerts;
 
-        const license = cluster.license || INVALID_LICENSE;
+        const license = cluster.license || { };
         // check the license type of the production cluster for alerts feature support
         const prodLicenseInfo = checkLicense(license.type, license.status === 'active', 'production');
         if (prodLicenseInfo.clusterAlerts.enabled) {

@@ -3,7 +3,6 @@ import sinon from 'sinon';
 import { merge } from 'lodash';
 import { createStubs } from './fixtures/create_stubs';
 import { alertsClustersAggregation } from '../alerts_clusters_aggregation';
-import { INVALID_LICENSE } from '../../../common/constants';
 
 const clusters = [
   { cluster_uuid: 'cluster-abc0',  cluster_name: 'cluster-abc0-name', license: { type: 'test_license' } },
@@ -11,7 +10,7 @@ const clusters = [
   { cluster_uuid: 'cluster-abc2',  cluster_name: 'cluster-abc2-name', license: { type: 'test_license' } },
   { cluster_uuid: 'cluster-abc3',  cluster_name: 'cluster-abc3-name', license: { type: 'test_license' } },
   { cluster_uuid: 'cluster-no-license',  cluster_name: 'cluster-no-license-name' },
-  { cluster_uuid: 'cluster-invalid',  cluster_name: 'cluster-invalid-name', license: INVALID_LICENSE }
+  { cluster_uuid: 'cluster-invalid',  cluster_name: 'cluster-invalid-name', license: { } }
 ];
 const mockQueryResult = {
   aggregations: {
@@ -184,13 +183,13 @@ describe('Alerts Clusters Aggregation', () => {
             'cluster-no-license': {
               clusterMeta: {
                 enabled: false,
-                message: `Cluster [cluster-no-license-name] license type [${INVALID_LICENSE.type}] does not support Cluster Alerts`
+                message: `Cluster [cluster-no-license-name] license type [undefined] does not support Cluster Alerts`
               }
             },
             'cluster-invalid': {
               clusterMeta: {
                 enabled: false,
-                message: `Cluster [cluster-invalid-name] license type [${INVALID_LICENSE.type}] does not support Cluster Alerts`
+                message: `Cluster [cluster-invalid-name] license type [undefined] does not support Cluster Alerts`
               }
             },
           });

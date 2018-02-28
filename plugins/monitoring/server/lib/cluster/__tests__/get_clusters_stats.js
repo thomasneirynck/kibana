@@ -1,6 +1,4 @@
 import expect from 'expect.js';
-import sinon from 'sinon';
-import { INVALID_LICENSE } from '../../../../common/constants';
 import { handleClusterStats } from '../get_clusters_stats';
 
 describe('handleClusterStats', () => {
@@ -32,6 +30,7 @@ describe('handleClusterStats', () => {
           {
             _index: 'cluster_one:.monitoring-es-2017.07.26',
             _source: {
+              // missing license
               cluster_uuid: 'xyz'
             }
           }
@@ -44,12 +43,10 @@ describe('handleClusterStats', () => {
     expect(clusters.length).to.eql(1);
     expect(clusters[0].ccs).to.eql('cluster_one');
     expect(clusters[0].cluster_uuid).to.eql('xyz');
-    expect(clusters[0].license).to.be(INVALID_LICENSE);
+    expect(clusters[0].license).to.be(undefined);
   });
 
   it('handles invalid license', () => {
-    const log = sinon.stub();
-    const server = { log };
     const response = {
       hits: {
         hits: [
@@ -65,18 +62,15 @@ describe('handleClusterStats', () => {
       }
     };
 
-    const clusters = handleClusterStats(response, server);
+    const clusters = handleClusterStats(response);
 
     expect(clusters.length).to.eql(1);
     expect(clusters[0].ccs).to.be(undefined);
     expect(clusters[0].cluster_uuid).to.eql('xyz');
-    expect(clusters[0].license).to.be(INVALID_LICENSE);
-    expect(log.calledOnce).to.be(true);
+    expect(clusters[0].license).to.be(validLicense);
   });
 
   it('handles valid license', () => {
-    const log = sinon.stub();
-    const server = { log };
     const response = {
       hits: {
         hits: [
@@ -91,18 +85,15 @@ describe('handleClusterStats', () => {
       }
     };
 
-    const clusters = handleClusterStats(response, server);
+    const clusters = handleClusterStats(response);
 
     expect(clusters.length).to.eql(1);
     expect(clusters[0].ccs).to.be(undefined);
     expect(clusters[0].cluster_uuid).to.be(validLicenseClusterUuid);
     expect(clusters[0].license).to.be(validLicense);
-    expect(log.callCount).to.eql(0);
   });
 
   it('handles multiple clusters', () => {
-    const log = sinon.stub();
-    const server = { log };
     const response = {
       hits: {
         hits: [
@@ -138,7 +129,7 @@ describe('handleClusterStats', () => {
       }
     };
 
-    const clusters = handleClusterStats(response, server);
+    const clusters = handleClusterStats(response);
 
     expect(clusters.length).to.eql(3);
     expect(clusters[0].ccs).to.be(undefined);
@@ -146,10 +137,9 @@ describe('handleClusterStats', () => {
     expect(clusters[0].license).to.be(validLicense);
     expect(clusters[1].ccs).to.eql('abc');
     expect(clusters[1].cluster_uuid).to.eql('xyz');
-    expect(clusters[1].license).to.be(INVALID_LICENSE);
+    expect(clusters[1].license).to.be(validLicense);
     expect(clusters[2].ccs).to.eql('local_cluster');
     expect(clusters[2].cluster_uuid).to.be(validLicenseClusterUuid);
     expect(clusters[2].license).to.be(validLicense);
-    expect(log.callCount).to.eql(1);
   });
 });

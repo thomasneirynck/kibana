@@ -1,10 +1,8 @@
 import { get } from 'lodash';
-import { INVALID_LICENSE, LOGGING_TAG } from '../../../common/constants';
 import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query';
 import { ElasticsearchMetric } from '../metrics';
 import { parseCrossClusterPrefix } from '../ccs_utils';
-import { validateMonitoringLicense } from './validate_monitoring_license';
 import { getClustersState } from './get_clusters_state';
 
 /**
@@ -68,10 +66,9 @@ function fetchClusterStats(req, esIndexPattern, clusterUuid) {
  * Handle the {@code response} from {@code fetchClusterStats}.
  *
  * @param {Object} response The response from Elasticsearch.
- * @param {Object} server The server object from the request.
  * @return {Array} Objects representing each cluster.
  */
-export function handleClusterStats(response, server) {
+export function handleClusterStats(response) {
   const hits = get(response, 'hits.hits', []);
 
   return hits.map(hit => {
@@ -84,16 +81,6 @@ export function handleClusterStats(response, server) {
       // use CCS whenever we come across it so that we can avoid talking to other monitoring clusters whenever possible
       if (ccs) {
         cluster.ccs = ccs;
-      }
-
-      if (!validateMonitoringLicense(cluster.cluster_uuid, cluster.license)) {
-        server.log(
-          ['warning', LOGGING_TAG],
-          `Cluster [${cluster.cluster_uuid}] has an invalid license (defined: [${!!cluster.license}]).`
-        );
-
-        // "invalid" license allow deleted/unknown license clusters to show in UI
-        cluster.license = INVALID_LICENSE;
       }
     }
 

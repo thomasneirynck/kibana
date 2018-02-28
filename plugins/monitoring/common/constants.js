@@ -85,12 +85,6 @@ export const CALCULATE_DURATION_SINCE = 'since';
 export const CALCULATE_DURATION_UNTIL = 'until';
 
 /**
- * Representative of an invalid license to be used when a license cannot be trusted.
- * @type {Object}
- */
-export const INVALID_LICENSE = { type: 'invalid', status: 'inactive' };
-
-/**
  * In order to show ML Jobs tab in the Elasticsearch section / tab navigation, license must be supported
  */
 export const ML_SUPPORTED_LICENSES = [ 'trial', 'platinum' ];
