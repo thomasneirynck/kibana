@@ -62,6 +62,7 @@ module.service('mlJobSelectService', function ($rootScope, mlJobService, globalS
       } else {
         tempJobIds = globalState.ml.jobIds;
       }
+      tempJobIds = tempJobIds.map(id => String(id));
       const invalidIds = getInvalidJobIds(removeGroupIds(tempJobIds));
       warnAboutInvalidJobIds(invalidIds);
 
