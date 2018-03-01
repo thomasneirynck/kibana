@@ -19,6 +19,7 @@
                   <span ng-switch-when="create_time">{{formatDate(value)}}</span>
                   <span ng-switch-when="finished_time">{{formatDate(value)}}</span>
                   <span ng-switch-when="groups">{{(value.join(', '))}}</span>
+                  <span ng-switch-when="established_model_memory">{{formatData(value)}}</span>
                   <span ng-switch-default>{{value}}</span>
                 </span>
               </div>
