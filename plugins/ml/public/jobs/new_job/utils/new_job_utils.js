@@ -96,7 +96,7 @@ export function createResultsUrl(jobId, start, end, resultsPage) {
   let path = '';
   path += 'ml#/';
   path += resultsPage;
-  path += `?_g=(ml:(jobIds:!('${jobId}'))`;
+  path += `?_g=(ml:(jobIds:!(${jobId}))`;
   path += `,refreshInterval:(display:Off,pause:!f,value:0),time:(from:'${from}'`;
   path += `,mode:absolute,to:'${to}'`;
   path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))';
