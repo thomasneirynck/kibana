@@ -103,13 +103,13 @@
         </div>
       </div>
 
-      <div ng-repeat="(key, value) in job" ng-if="key==='calendars'">
+      <div ng-if="calendars && calendars.length">
         <div class="ml_sub_heading">Calendars</div>
         <div class='ml_job_section_container'>
           <div>
             <ml-job-item>
               <div class="ml_job_row row">
-                <div class="col-md-12">{{value.join(', ')}}</div>
+                <div class="col-md-12">{{calendars.join(', ')}}</div>
               </div>
             </ml-job-item>
           </div>

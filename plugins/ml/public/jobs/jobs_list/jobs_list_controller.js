@@ -241,7 +241,7 @@ module.controller('MlJobsList',
         const rowScope = $scope.$new();
         const calendars = jobCalendars[job.job_id];
         if (calendars && calendars.length) {
-          job.calendars = calendars;
+          rowScope.calendars = calendars;
         }
         rowScope.job = job;
         rowScope.closeJob = $scope.closeJob;
@@ -257,10 +257,12 @@ module.controller('MlJobsList',
         rowScope.expandable = true;
         rowScope.expandElement = 'ml-job-list-expanded-row-container';
         rowScope.initRow = function () {
-        // function called when row is opened for the first time
+          // function called when row is opened for the first time
           if (rowScope.$expandElement &&
            rowScope.$expandElement.children().length === 0) {
             const $el = $('<ml-job-list-expanded-row>', {
+              'job': 'job',
+              'calendars': 'calendars',
               'current-tab': 'currentTab',
               'job-audit': 'jobAudit',
               'close-job': 'closeJob',
