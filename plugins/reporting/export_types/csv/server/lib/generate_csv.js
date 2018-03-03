@@ -34,16 +34,23 @@ export function createGenerateCsv(logger) {
     const iterator = hitIterator(settings.scroll, callEndpoint, searchRequest, cancellationToken);
     let maxSizeReached = false;
 
-    // the following can be removed once the following is released in eslint-plugin-babel
-    // https://github.com/babel/eslint-plugin-babel/commit/9468524ea342fa3ec3e2bff5d6e1180635726ab4
-    // eslint-disable-next-line semi
-    for await (const hit of iterator) {
-      if (!builder.tryAppend(formatCsvValues(flattenHit(hit)) + '\n')) {
-        logger('max Size Reached');
-        maxSizeReached = true;
-        cancellationToken.cancel();
-        break;
+    try {
+      while (true) {
+        const { done, value: hit } = await iterator.next();
+
+        if (done) {
+          break;
+        }
+
+        if (!builder.tryAppend(formatCsvValues(flattenHit(hit)) + '\n')) {
+          logger('max Size Reached');
+          maxSizeReached = true;
+          cancellationToken.cancel();
+          break;
+        }
       }
+    } finally {
+      await iterator.return();
     }
 
     logger('finished generating');
