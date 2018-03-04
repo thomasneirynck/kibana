@@ -68,7 +68,7 @@
     "mkdirp": "0.5.1",
     "pdf-image": "1.1.0",
     "pixelmatch": "4.0.2",
-    "prettier": "1.9.2",
+    "prettier": "^1.11.1",
     "proxyquire": "1.7.11",
     "react-test-renderer": "^16.2.0",
     "redux-test-utils": "0.2.2",
