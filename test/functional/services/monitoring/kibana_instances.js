@@ -9,8 +9,9 @@ export function MonitoringKibanaInstancesProvider({ getService }) {
 
   return new class KibanaInstances {
 
-    isOnInstances() {
-      return retry.try(() => testSubjects.exists(SUBJ_INSTANCES_PAGE));
+    async isOnInstances() {
+      const pageId = await retry.try(() => testSubjects.find(SUBJ_INSTANCES_PAGE));
+      return pageId !== null;
     }
 
     clickRowByName(instanceName) {

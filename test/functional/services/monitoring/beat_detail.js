@@ -20,8 +20,9 @@ export function MonitoringBeatDetailProvider({ getService }) {
 
   return new class BeatDetail {
 
-    isOnDetail() {
-      return retry.try(() => testSubjects.exists(SUBJ_DETAIL_PAGE));
+    async isOnDetail() {
+      const pageId = await retry.try(() => testSubjects.find(SUBJ_DETAIL_PAGE));
+      return pageId !== null;
     }
 
     async getSummary() {

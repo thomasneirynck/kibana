@@ -19,8 +19,9 @@ export function MonitoringLogstashPipelinesProvider({ getService, getPageObjects
   const SUBJ_PIPELINES_NODE_COUNTS = `${SUBJ_TABLE_BODY} nodeCount`;
 
   return new class LogstashPipelines {
-    isOnListing() {
-      return retry.try(() => testSubjects.exists(SUBJ_LISTING_PAGE));
+    async isOnListing() {
+      const pageId = await retry.try(() => testSubjects.find(SUBJ_LISTING_PAGE));
+      return pageId !== null;
     }
 
     getRows() {

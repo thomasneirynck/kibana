@@ -14,8 +14,9 @@ export function MonitoringBeatsListingProvider({ getService, getPageObjects }) {
 
   return new class BeatsListing {
 
-    isOnListing() {
-      return retry.try(() => testSubjects.exists(SUBJ_LISTING_PAGE));
+    async isOnListing() {
+      const pageId = await retry.try(() => testSubjects.find(SUBJ_LISTING_PAGE));
+      return pageId !== null;
     }
 
     noRecentActivityMessageIsShowing() {

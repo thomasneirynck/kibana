@@ -7,8 +7,9 @@ export function MonitoringElasticsearchNodesProvider({ getService/*, getPageObje
   const SUBJ_NODE_LINK_PREFIX = `${SUBJ_TABLE_BODY} nodeLink-`;
 
   return new class ElasticsearchIndices {
-    isOnListing() {
-      return retry.try(() => testSubjects.exists(SUBJ_LISTING_PAGE));
+    async isOnListing() {
+      const pageId = await retry.try(() => testSubjects.find(SUBJ_LISTING_PAGE));
+      return pageId !== null;
     }
 
     clickRowByResolver(nodeResolver) {

@@ -84,8 +84,9 @@ export function MonitoringClusterAlertsProvider({ getService, getPageObjects }) 
      * Cluster Alerts Table
      */
 
-    isOnListingPage() {
-      return retry.try(() => testSubjects.exists(SUBJ_LISTING_PAGE));
+    async isOnListingPage() {
+      const pageId = await retry.try(() => testSubjects.find(SUBJ_LISTING_PAGE));
+      return pageId !== null;
     }
 
     getTableAlerts() {

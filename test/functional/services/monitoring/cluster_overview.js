@@ -47,8 +47,9 @@ export function MonitoringClusterOverviewProvider({ getService }) {
 
   return new class ClusterOverview {
 
-    isOnClusterOverview() {
-      return retry.try(() => testSubjects.exists(SUBJ_CLUSTER_OVERVIEW));
+    async isOnClusterOverview() {
+      const pageId = await retry.try(() => testSubjects.find(SUBJ_CLUSTER_OVERVIEW));
+      return pageId !== null;
     }
     getClusterName() {
       return testSubjects.getVisibleText(SUBJ_CLUSTER_NAME);

@@ -13,8 +13,9 @@ export function MonitoringKibanaInstanceProvider({ getService }) {
 
   return new class KibanaInstance {
 
-    isOnInstance() {
-      return retry.try(() => testSubjects.exists(SUBJ_INSTANCE_PAGE));
+    async isOnInstance() {
+      const pageId = await retry.try(() => testSubjects.find(SUBJ_INSTANCE_PAGE));
+      return pageId !== null;
     }
 
     async getSummary() {

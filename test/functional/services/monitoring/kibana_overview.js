@@ -6,8 +6,9 @@ export function MonitoringKibanaOverviewProvider({ getService }) {
 
   return new class KibanaOverview {
 
-    isOnOverview() {
-      return retry.try(() => testSubjects.exists(SUBJ_OVERVIEW_PAGE));
+    async isOnOverview() {
+      const pageId = await retry.try(() => testSubjects.find(SUBJ_OVERVIEW_PAGE));
+      return pageId !== null;
     }
 
   };

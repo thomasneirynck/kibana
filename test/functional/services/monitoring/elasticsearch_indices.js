@@ -3,6 +3,7 @@ import { range } from 'lodash';
 export function MonitoringElasticsearchIndicesProvider({ getService, getPageObjects }) {
   const testSubjects = getService('testSubjects');
   const PageObjects = getPageObjects(['monitoring']);
+  const retry = getService('retry');
 
   const SUBJ_LISTING_PAGE = 'elasticsearchIndicesListingPage';
 
@@ -24,8 +25,9 @@ export function MonitoringElasticsearchIndicesProvider({ getService, getPageObje
   const SUBJ_INDEX_LINK_PREFIX = `${SUBJ_TABLE_BODY} indexLink-`;
 
   return new class ElasticsearchIndices {
-    isOnListing() {
-      return testSubjects.exists(SUBJ_LISTING_PAGE);
+    async isOnListing() {
+      const pageId = await retry.try(() => testSubjects.find(SUBJ_LISTING_PAGE));
+      return pageId !== null;
     }
 
     async clickSearchCol() {
