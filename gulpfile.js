@@ -6,7 +6,6 @@ const gulpIf = require('gulp-if');
 const g = require('gulp-load-plugins')();
 const path = require('path');
 const del = require('del');
-const isparta = require('isparta');
 const runSequence = require('run-sequence');
 const pluginHelpers = require('@kbn/plugin-helpers');
 const argv = require('yargs').argv;
@@ -35,8 +34,6 @@ const MOCHA_OPTIONS = {
     rootDirectory: __dirname,
   }),
 };
-
-const skipTestCoverage = argv['test-coverage'] && argv['test-coverage'] === 'skip';
 
 function isFixed(file) {
   // Has ESLint fixed the file contents?
@@ -167,31 +164,6 @@ gulp.task('build', ['lint', 'clean', 'report', 'prepare'], () => {
   });
 });
 
-gulp.task('pre-test', () => {
-  const globs = [
-    './{common,server,public}/**/*.js',
-    '!./**/__tests__/**',
-  ].concat(fileGlobs.forPlugins());
-
-  if (skipTestCoverage) {
-    return gulp.src(globs);
-  }
-
-  return gulp.src(globs)
-    // instruments code for measuring test coverage
-    .pipe(g.istanbul({
-      instrumenter: isparta.Instrumenter,
-      includeUntested: true,
-      babel: {
-        presets: [
-          require('@kbn/babel-preset/node')
-        ]
-      },
-    }))
-    // force `require` to return covered files
-    .pipe(g.istanbul.hookRequire());
-});
-
 gulp.task('test', (cb) => {
   const preTasks = ['lint', 'clean-test'];
   runSequence(preTasks, 'testserver', 'testbrowser', cb);
@@ -199,20 +171,14 @@ gulp.task('test', (cb) => {
 
 gulp.task('testonly', ['testserver', 'testbrowser']);
 
-gulp.task('testserver', ['pre-test'], () => {
+gulp.task('testserver', () => {
   const globs = [
     'common/**/__tests__/**/*.js',
     'server/**/__tests__/**/*.js',
   ].concat(fileGlobs.forPluginServerTests());
 
-  if (skipTestCoverage) {
-    return gulp.src(globs, { read: false })
-      .pipe(g.mocha(MOCHA_OPTIONS));
-  }
-
   return gulp.src(globs, { read: false })
-    .pipe(g.mocha(MOCHA_OPTIONS))
-    .pipe(g.istanbul.writeReports());
+    .pipe(g.mocha(MOCHA_OPTIONS));
 });
 
 gulp.task('testbrowser', () => {

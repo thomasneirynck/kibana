@@ -148,11 +148,8 @@ yarn test --plugins <plugin>[,<plugin>]*    # where <plugin> is "reporting", etc
 
 #### Running tests with flags
 ```
-yarn test <flag args>
+yarn test
 ```
-
-Flags
-* `--test-coverage=skip`
 
 #### Running single test file
 Edit test file, changing top level `describe` to `describe.only`. Run tests with normal commands.

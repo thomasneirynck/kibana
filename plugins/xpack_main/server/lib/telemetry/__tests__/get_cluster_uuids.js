@@ -35,10 +35,6 @@ describe('get_cluster_uuids', () => {
   });
 
   describe('fetchClusterUuids', () => {
-    it('does not search if indices is empty', async () => {
-      expect(fetchClusterUuids(server, callWith, start, end)).to.eql({});
-    });
-
     it('searches for clusters', async () => {
       callWith.returns(Promise.resolve(response));
 

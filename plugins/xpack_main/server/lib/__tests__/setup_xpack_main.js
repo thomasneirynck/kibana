@@ -52,7 +52,7 @@ describe('setupXPackMain()', () => {
 
     sinon.assert.calledWithExactly(mockServer.expose, 'info', sinon.match.instanceOf(XPackInfo));
     sinon.assert.calledWithExactly(mockServer.ext, 'onPreResponse', sinon.match.func);
-    sinon.assert.calledWithExactly(mockElasticsearchPlugin.status.on, 'change', sinon.match.func);
+    sinon.assert.calledWithExactly(mockElasticsearchPlugin.status.on, 'change', sinon.match.typeOf('asyncfunction'));
   });
 
   it('onPreResponse hook calls `injectXPackInfoSignature` for every request.', () => {
