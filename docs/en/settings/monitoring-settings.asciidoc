@@ -58,6 +58,11 @@ shared with anyone. Set to `false` to disable statistics reporting from any
 browser connected to the {kib} instance. You can also opt out through the
 *Advanced Settings* in {kib}.
 
+`xpack.monitoring.elasticsearch.pingTimeout`::
+Specifies the time in milliseconds to wait for {es} to respond to internal
+health checks. By default, it matches the `elasticsearch.pingTimeout` setting,
+which has a default value of `30000`.
+
 [float]
 [[monitoring-collection-settings]]
 ==== Monitoring Collection Settings
