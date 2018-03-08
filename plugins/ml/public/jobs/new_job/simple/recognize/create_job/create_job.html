@@ -100,8 +100,10 @@
                     type="button"
                     ng-show="overallState === SAVE_STATE.NOT_SAVED"
                     ng-disabled="!ui.formValid"
-                    class="kuiButton kuiButton--primary">
+                    class="euiButton euiButton--primary euiButton--small euiButton--fill">
+                    <span class="euiButton__content">
                       Create Job{{((ui.numberOfJobs > 1)?'s':'')}}
+                    </span>
                   </button>
 
                   <div class='job-state-info' ng-show="overallState === SAVE_STATE.SAVING">Analysis running <i class='fa fa-spinner fa-spin' aria-label="Analysis running" ></i></div>
@@ -116,14 +118,18 @@
                     aria-label="Reset"
                     ng-click="resetJob()"
                     type="button"
-                    class="kuiButton kuiButton--primary">
+                    class="euiButton euiButton--primary euiButton--small euiButton--fill">
+                    <span class="euiButton__content">
                       Reset
+                    </span>
                   </button>
                   <a
                     href='{{resultsUrl}}'
                     aria-label="View Results"
-                    class="kuiButton kuiButton--primary">
+                    class="euiButton euiButton--primary euiButton--small euiButton--fill">
+                    <span class="euiButton__content">
                       View Results
+                    </span>
                   </a>
                 </div>
 
@@ -135,8 +141,10 @@
                     aria-label="Reset"
                     ng-click="resetJob()"
                     type="button"
-                    class="kuiButton kuiButton--primary">
+                    class="euiButton euiButton--primary euiButton--small euiButton--fill">
+                    <span class="euiButton__content">
                       Reset
+                    </span>
                   </button>
                 </div>
               </div>

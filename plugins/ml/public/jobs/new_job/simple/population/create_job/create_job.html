@@ -113,7 +113,7 @@
                         ng-disabled="!ui.formValid"
                         class="euiButton euiButton--primary euiButton--small euiButton--fill">
                         <span class="euiButton__content">
-                          <span>Create Job</span>
+                          Create Job
                         </span>
                       </button>
                     </div>
@@ -130,16 +130,20 @@
                     type="button"
                     ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
                     ng-disabled="jobState === JOB_STATE.STOPPING"
-                    class="kuiButton kuiButton--danger">
+                    class="euiButton euiButton--danger euiButton--small">
+                    <span class="euiButton__content">
                       {{(jobState === JOB_STATE.STOPPING) ? 'Analysis stopping' : 'Stop analysis' }}
+                    </span>
                   </button>
 
                   <a
                     href='{{resultsUrl}}'
                     aria-label="View Results"
                     ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
-                    class="kuiButton kuiButton--primary">
+                    class="euiButton euiButton--primary euiButton--small euiButton--fill">
+                    <span class="euiButton__content">
                       View Results
+                    </span>
                   </a>
                 </div>
                 <div ng-show="jobState === JOB_STATE.FINISHED">
@@ -152,14 +156,18 @@
                     aria-label="Reset"
                     ng-click="resetJob()"
                     type="button"
-                    class="kuiButton kuiButton--primary">
+                    class="euiButton euiButton--primary euiButton--small euiButton--fill">
+                    <span class="euiButton__content">
                       Reset
+                    </span>
                   </button>
                   <a
                     href='{{resultsUrl}}'
                     aria-label="View Results"
-                    class="kuiButton kuiButton--primary">
+                    class="euiButton euiButton--primary euiButton--small euiButton--fill">
+                    <span class="euiButton__content">
                       View Results
+                    </span>
                   </a>
                 </div>
 
@@ -245,7 +253,7 @@
                         ng-click="splitReset(id)"
                         aria-label="Remove split"
                         ng-disabled="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                        class="kuiButton kuiButton--basic kuiButton--small split-align"
+                        class="euiButton euiButton--primary euiButton--small split-align remove-split"
                       >
                         Remove split
                       </button>
