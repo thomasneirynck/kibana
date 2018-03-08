@@ -26,8 +26,16 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
     }
 
     async getErrorMessage() {
-      const errorMessageContainer = await retry.try(() => testSubjects.find('loginErrorMessage'));
-      return errorMessageContainer.getVisibleText();
+      return await retry.try(async () => {
+        const errorMessageContainer = await retry.try(() => testSubjects.find('loginErrorMessage'));
+        const errorMessageText = await errorMessageContainer.getVisibleText();
+
+        if (!errorMessageText) {
+          throw new Error('Login Error Message not present yet');
+        }
+
+        return errorMessageText;
+      });
     }
   }
 
@@ -50,7 +58,7 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
       await retry.try(async () => {
         const logoutLinkExists = await find.existsByLinkText('Logout');
         if (!logoutLinkExists) {
-          throw 'Login is not completed yet';
+          throw new Error('Login is not completed yet');
         }
       });
     }
@@ -69,7 +77,7 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
       await retry.try(async () => {
         const logoutLinkExists = await find.existsByDisplayedByCssSelector('.login-form');
         if (!logoutLinkExists) {
-          throw 'Logout is not completed yet';
+          throw new Error('Logout is not completed yet');
         }
       });
     }
