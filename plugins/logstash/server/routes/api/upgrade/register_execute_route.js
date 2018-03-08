@@ -24,15 +24,6 @@ async function executeUpgrade(callWithRequest) {
         pipeline_settings: {
           dynamic: false,
           type: 'object'
-        },
-        pipeline_node_group_ids: {
-          type: 'keyword',
-          fields: {
-            searchable: {
-              type: 'text',
-              analyzer: 'simple'
-            }
-          }
         }
       }
     }
