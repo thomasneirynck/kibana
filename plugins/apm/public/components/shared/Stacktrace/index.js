@@ -63,7 +63,12 @@ class Stacktrace extends PureComponent {
     const { stackframes = [], codeLanguage } = this.props;
 
     if (isEmpty(stackframes)) {
-      return <EmptyMessage heading="No stacktrace available." />;
+      return (
+        <EmptyMessage
+          heading="No stacktrace available."
+          showSubheading={false}
+        />
+      );
     }
 
     return (

@@ -89,7 +89,12 @@ class Transaction extends Component {
     const { transactionId } = this.props.urlParams;
 
     if (isEmpty(transaction.data)) {
-      return <EmptyMessage heading="No transaction sample." />;
+      return (
+        <EmptyMessage
+          heading="No transaction sample available for this time range."
+          subheading="Please select another time range or another bucket from the distribution histogram."
+        />
+      );
     }
 
     const timestamp = get(transaction, 'data.@timestamp');

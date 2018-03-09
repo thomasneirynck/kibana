@@ -81,7 +81,9 @@ function TabNavigation({ urlParams, location, service }) {
           </TooltipOverlay>
         );
       })}
-      {isEmpty(types) && <EmptyMessage>No transactions available</EmptyMessage>}
+      {isEmpty(types) && (
+        <EmptyMessage>No transactions available.</EmptyMessage>
+      )}
       <Divider />
       <TabLink path={`${serviceName}/errors`} selected={errorsSelected}>
         Errors
