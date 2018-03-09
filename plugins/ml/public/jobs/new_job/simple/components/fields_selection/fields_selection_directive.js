@@ -37,7 +37,7 @@ module.directive('mlFieldsSelection', function () {
           delete $scope.chartStates.fields[key];
         }
         if ($scope.formConfig.splitField !== undefined) {
-          $scope.setModelMemoryLimit($scope.formConfig);
+          $scope.setModelMemoryLimit();
         }
       };
     }

@@ -226,7 +226,7 @@ module
             $scope.formChange();
           });
 
-        $scope.setModelMemoryLimit($scope.formConfig);
+        $scope.setModelMemoryLimit();
       } else {
         setFieldsChartStates(CHART_STATE.LOADING);
         $scope.ui.splitText = '';
@@ -629,7 +629,8 @@ module
       mlMultiMetricJobService.stopDatafeed($scope.formConfig);
     };
 
-    $scope.setModelMemoryLimit = function (formConfig) {
+    $scope.setModelMemoryLimit = function () {
+      const formConfig = $scope.formConfig;
       calculateModelMemoryLimit(
         formConfig.indexPattern.title,
         formConfig.splitField.name,
@@ -677,7 +678,12 @@ module
       populateAppStateSettings(appState, $scope);
     });
 
-    $scope.$listen(timefilter, 'fetch', $scope.loadVis);
+    $scope.$listen(timefilter, 'fetch', () => {
+      $scope.loadVis();
+      if ($scope.formConfig.splitField !== undefined) {
+        $scope.setModelMemoryLimit();
+      }
+    });
 
     angular.element(window).resize(() => {
       resize();
