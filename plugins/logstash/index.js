@@ -19,7 +19,8 @@ export const logstash = (kibana) => new kibana.Plugin({
     managementSections: [
       'plugins/logstash/sections/pipeline_list',
       'plugins/logstash/sections/pipeline_edit'
-    ]
+    ],
+    home: ['plugins/logstash/lib/register_home_feature']
   },
   init: (server) => {
     registerLicenseChecker(server);
