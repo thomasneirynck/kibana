@@ -29,7 +29,7 @@ associate these calendars with your jobs:
 image::ml/images/ml-calendar-management.jpg[Calendar Management]
 
 The *Anomaly Explorer* and *Single Metric Viewer* display the results of your
-{ml} jobs.  For example: 
+{ml} jobs.  For example:
 
 [role="screenshot"]
 image::ml/images/ml-single-metric-viewer.jpg[Single Metric Viewer]
@@ -44,5 +44,5 @@ For more information about {ml}, see
 --
 
 include::creating-jobs.asciidoc[]
-
+include::job-tips.asciidoc[]
 //TO-DO: Add info about creating watch

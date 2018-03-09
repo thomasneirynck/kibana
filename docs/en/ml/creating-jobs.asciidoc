@@ -1,4 +1,5 @@
 [role="xpack"]
+[[ml-jobs]]
 == Creating Machine Learning Jobs
 
 Machine learning jobs contain the configuration information and metadata

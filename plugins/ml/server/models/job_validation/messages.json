@@ -1,31 +1,35 @@
 {
   "field_not_aggregatable": {
-    "text": "Field \"{{fieldName}}\" is not an aggregatable field."
+    "text": "Field \"{{fieldName}}\" is not an aggregatable field.",
+    "url": "https://www.elastic.co/guide/en/x-pack/master/ml-configuring-aggregation.html"
   },
   "over_field_cardinality": {
     "text": "Cardinality of over_field \"{{fieldName}}\" is below 10 and might be less suitable for population analysis.",
-    "url": "https://www.elastic.co/blog/sizing-machine-learning-with-elasticsearch"
+    "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#cardinality"
   },
   "partition_field_cardinality": {
     "text": "Cardinality of partition_field \"{{fieldName}}\" is above 100 and might result in high memory usage. Consider using an over_field.",
-    "url": "https://www.elastic.co/blog/sizing-machine-learning-with-elasticsearch"
+    "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#cardinality"
   },
   "bucket_span_estimation_mismatch": {
     "text": "Current bucket span is \"{{currentBucketSpan}}\", but bucket span estimation returned \"{{estimateBucketSpan}}\".",
-    "url": "https://www.elastic.co/blog/explaining-the-bucket-span-in-machine-learning-for-elasticsearch"
+    "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#bucket-span"
   },
   "bucket_span_high": {
     "text": "Bucket span is 1 day or more. Be aware that days are considered as UTC days, not local days.",
-    "url": "https://www.elastic.co/blog/explaining-the-bucket-span-in-machine-learning-for-elasticsearch"
+    "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#bucket-span"
   },
   "influencer_high": {
-    "text": "The job configuration includes more than 3 influencers. Consider using fewer influencers or creating multiple jobs."
+    "text": "The job configuration includes more than 3 influencers. Consider using fewer influencers or creating multiple jobs.",
+    "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#influencers"
   },
   "influencer_low_suggestion": {
-    "text": "The job configuration includes a partition or over field but no influencers are configured. Consider using {{influencerSuggestion}} as an influencer."
+    "text": "The job configuration includes a partition or over field but no influencers are configured. Consider using {{influencerSuggestion}} as an influencer.",
+    "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#influencers"
   },
   "influencer_low_suggestions": {
-    "text": "The job configuration includes partition or over fields but no influencers are configured. Consider using one of {{influencerSuggestion}} as an influencer."
+    "text": "The job configuration includes partition or over fields but no influencers are configured. Consider using one of {{influencerSuggestion}} as an influencer.",
+    "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#influencers"
   },
   "success_cardinality": {
     "text": "Cardinality"
