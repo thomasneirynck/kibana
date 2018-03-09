@@ -89,6 +89,7 @@ module.controller('MlExplorerController', function (
 
   const ALLOW_CELL_RANGE_SELECTION = mlExplorerDashboardService.allowCellRangeSelection;
   let disableDragSelectOnMouseLeave = true;
+  $scope.queryFilters = [];
 
   const dragSelect = new DragSelect({
     selectables: document.querySelectorAll('.sl-cell'),
@@ -303,7 +304,8 @@ module.controller('MlExplorerController', function (
   // Refresh the data when the dashboard filters are updated.
   $scope.$listen(queryFilter, 'update', () => {
     // TODO - add in filtering functionality.
-    console.log('explorer_controller queryFilter update, filters:', queryFilter.getFilters());
+    $scope.queryFilters = queryFilter.getFilters();
+    console.log('explorer_controller queryFilter update, filters:', $scope.queryFilters);
   });
 
   $scope.initializeVis();
