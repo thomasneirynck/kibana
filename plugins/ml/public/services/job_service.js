@@ -548,9 +548,6 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     delete tempJob.open_time;
     delete tempJob.established_model_memory;
 
-    delete tempJob.data_description.time_format;
-    delete tempJob.data_description.format;
-
     delete tempJob.analysis_config.use_per_partition_normalization;
 
     _.each(tempJob.analysis_config.detectors, (d) => {
