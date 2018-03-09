@@ -61,6 +61,16 @@ location of the {xpack} zip file that you downloaded to a temporary directory.
 bin/kibana-plugin install file:///path/to/file/x-pack-{version}.zip
 ----------------------------------------------------------
 
+The {kib} server needs to be able to write to files in the `optimize` directory.
+If you’re using `sudo` or `su`, run the plugin installation as the built-in
+`kibana` user.  For example:
+
+[source,shell]
+----------------------------------------------------------
+sudo -u kibana bin/kibana-plugin install x-pack
+----------------------------------------------------------
+
+For more information, see <<_installing_plugins>>.
 --
 
 . Update {kib} to use the new password for the built-in `kibana` user, which you
