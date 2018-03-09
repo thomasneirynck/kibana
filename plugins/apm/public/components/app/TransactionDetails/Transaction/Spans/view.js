@@ -50,7 +50,7 @@ class Spans extends PureComponent {
       return (
         <EmptyMessage
           heading="No spans available for this transaction."
-          showSubheading={false}
+          hideSubheading
         />
       );
     }

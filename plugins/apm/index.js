@@ -22,7 +22,8 @@ export function apm(kibana) {
       injectDefaultVars(server) {
         const config = server.config();
         return {
-          apmUiEnabled: config.get('xpack.apm.ui.enabled')
+          apmUiEnabled: config.get('xpack.apm.ui.enabled'),
+          apmIndexPattern: config.get('xpack.apm.indexPattern')
         };
       },
       hacks: ['plugins/apm/hacks/toggle_app_link_in_nav']

@@ -2,6 +2,16 @@ import styled from 'styled-components';
 import { unit, units, px, fontSizes, colors } from '../../style/variables';
 import { RelativeLink } from '../../utils/url';
 
+export const HeaderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: ${px(units.plus)};
+
+  h1 {
+    font-size: ${fontSizes.xxlarge};
+  }
+`;
+
 export const HeaderLarge = styled.h1`
   font-size: ${fontSizes.xxlarge};
   margin-bottom: ${px(units.plus)};

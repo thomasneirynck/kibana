@@ -18,7 +18,7 @@ const HelpMessage = styled.div`
   margin-top: ${px(units.half)};
 `;
 
-function EmptyMessage({ heading, subheading, showSubheading }) {
+function EmptyMessage({ heading, subheading, hideSubheading }) {
   if (!subheading) {
     subheading = (
       <Fragment>
@@ -35,22 +35,22 @@ function EmptyMessage({ heading, subheading, showSubheading }) {
   return (
     <Container>
       {heading || 'No data found.'}
-      {showSubheading ? (
+      {!hideSubheading && (
         <HelpMessage>
           <span>{subheading}</span>
         </HelpMessage>
-      ) : null}
+      )}
     </Container>
   );
 }
 
 EmptyMessage.propTypes = {
   heading: PropTypes.string,
-  showSubheading: PropTypes.bool
+  hideSubheading: PropTypes.bool
 };
 
 EmptyMessage.defaultProps = {
-  showSubheading: true
+  hideSubheading: false
 };
 
 export default EmptyMessage;

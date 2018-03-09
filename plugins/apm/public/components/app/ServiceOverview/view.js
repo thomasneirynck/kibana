@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import withErrorHandler from '../../shared/withErrorHandler';
 import { STATUS } from '../../../constants';
 import { isEmpty } from 'lodash';
@@ -8,17 +7,7 @@ import { KibanaLink } from '../../../utils/url';
 import { EuiButton } from '@elastic/eui';
 import List from './List';
 import { getKey } from '../../../store/apiHelpers';
-import { px, units, fontSizes } from '../../../style/variables';
-
-const HeaderContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: ${px(units.plus)};
-
-  h1 {
-    font-size: ${fontSizes.xxlarge};
-  }
-`;
+import { HeaderContainer } from '../../shared/UIComponents';
 
 function fetchData(props) {
   const { start, end } = props.urlParams;

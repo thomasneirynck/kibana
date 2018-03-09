@@ -1,21 +1,14 @@
 import moment from 'moment';
 
 export function setupRequest(req, reply) {
-  const { server } = req;
-  const config = server.config();
-  const { callWithRequest } = server.plugins.elasticsearch.getCluster('data');
-  const { start, end } = getAsTimestamp(req.query.start, req.query.end);
+  const cluster = req.server.plugins.elasticsearch.getCluster('data');
 
-  reply({
-    start,
-    end,
-    client: callWithRequest.bind(null, req),
-    config
-  });
-}
+  const setup = {
+    start: moment.utc(req.query.start).valueOf(),
+    end: moment.utc(req.query.end).valueOf(),
+    client: cluster.callWithRequest.bind(null, req),
+    config: req.server.config()
+  };
 
-export function getAsTimestamp(start, end) {
-  const startTs = moment.utc(start);
-  const endTs = moment.utc(end);
-  return { start: startTs.valueOf(), end: endTs.valueOf() };
+  reply(setup);
 }

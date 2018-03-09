@@ -15,7 +15,7 @@ class LicenseChecker extends Component {
   componentWillReceiveProps(nextProps) {
     if (
       nextProps.license.status === STATUS.SUCCESS &&
-      !nextProps.license.data.isActive
+      !nextProps.license.data.license.isActive
     ) {
       window.location = '#/invalid-license';
     }

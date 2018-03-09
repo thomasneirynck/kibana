@@ -2,6 +2,7 @@ import 'isomorphic-fetch';
 import { camelizeKeys } from 'humps';
 import url from 'url';
 import _ from 'lodash';
+import chrome from 'ui/chrome';
 
 async function callApi(options) {
   const { pathname, query, camelcase, compact, ...urlOptions } = {
@@ -10,7 +11,8 @@ async function callApi(options) {
     credentials: 'same-origin',
     method: 'GET',
     headers: new Headers({
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'kbn-xsrf': true
     }),
     ...options
   };
@@ -44,10 +46,9 @@ function getAppRootPath(serviceName) {
 }
 
 export async function loadLicense() {
-  const response = await callApi({
+  return callApi({
     pathname: `../api/xpack/v1/info`
   });
-  return response.license;
 }
 
 export async function loadServerStatus() {
@@ -223,5 +224,21 @@ export async function loadErrorDistribution({
       start,
       end
     }
+  });
+}
+
+export async function createWatch(id, watch) {
+  const basePath = chrome.addBasePath('/api/watcher');
+  return callApi({
+    method: 'PUT',
+    pathname: `${basePath}/watch/${id}`,
+    body: JSON.stringify({ type: 'json', id, watch })
+  });
+}
+
+export async function getWatch({ id }) {
+  const basePath = chrome.addBasePath('/api/watcher');
+  return callApi({
+    pathname: `${basePath}/watch/${id}`
   });
 }

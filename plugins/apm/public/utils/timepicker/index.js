@@ -6,20 +6,40 @@ import { set } from 'lodash';
 import { updateTimePicker } from '../../store/urlParams';
 
 let globalTimefilter;
+let globalKibanaConfig;
 let currentInterval;
 
-export function initTimepicker(history, dispatch, callback) {
-  uiModules.get('kibana').run(uiSettings => {
-    set(
-      uiSettings,
-      'defaults.timepicker:timeDefaults.value',
-      JSON.stringify({
-        from: 'now-24h',
-        to: 'now',
-        mode: 'quick'
-      })
-    );
+// hack to wait for angular template to be ready
+function waitForAngularReady() {
+  return new Promise(resolve => {
+    const checkInterval = setInterval(() => {
+      const hasElm = !!document.querySelector('#react-apm-breadcrumbs');
+      if (hasElm) {
+        clearInterval(checkInterval);
+        resolve();
+      }
+    }, 10);
   });
+}
+
+export function initTimepicker(history, dispatch, callback) {
+  const waitForKibanaReady = new Promise(resolve => {
+    uiModules.get('kibana').run((uiSettings, config) => {
+      globalKibanaConfig = config;
+
+      set(
+        uiSettings,
+        'defaults.timepicker:timeDefaults.value',
+        JSON.stringify({
+          from: 'now-24h',
+          to: 'now',
+          mode: 'quick'
+        })
+      );
+    });
+    resolve();
+  });
+
   uiModules
     .get('app/apm', [])
     .controller('TimePickerController', ($scope, timefilter, globalState) => {
@@ -53,14 +73,7 @@ export function initTimepicker(history, dispatch, callback) {
       // hack to access timefilter outside Angular
       globalTimefilter = timefilter;
 
-      // hack to wait for angular template to be ready
-      const waitForAngularReadyInterval = setInterval(() => {
-        const hasElm = !!document.querySelector('#react-apm-breadcrumbs');
-        if (hasElm) {
-          callback();
-          clearInterval(waitForAngularReadyInterval);
-        }
-      }, 10);
+      Promise.all([waitForAngularReady, waitForKibanaReady]).then(callback);
     });
 }
 
@@ -92,4 +105,13 @@ export function getTimefilter() {
     );
   }
   return globalTimefilter;
+}
+
+export function getKibanaConfig() {
+  if (!globalKibanaConfig) {
+    throw new Error(
+      'KibanaConfig must be initialized before calling getConfig'
+    );
+  }
+  return globalKibanaConfig;
 }

@@ -10,7 +10,8 @@ function mapStateToProps(state = {}) {
   return {
     urlParams: getUrlParams(state),
     errorGroupList: getErrorGroupList(state),
-    location: state.location
+    location: state.location,
+    license: state.license
   };
 }
 

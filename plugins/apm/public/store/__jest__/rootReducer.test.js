@@ -24,7 +24,12 @@ describe('root reducer', () => {
       errorDistribution: { data: { buckets: [], totalHits: 0 } },
       errorGroup: { data: {} },
       errorGroupList: { data: [] },
-      license: { data: { isActive: false } },
+      license: {
+        data: {
+          features: { watcher: { isAvailable: false } },
+          license: { isActive: false }
+        }
+      },
       location: { hash: '', pathname: '', search: '' },
       service: { data: { types: [] } },
       serviceList: { data: [] },

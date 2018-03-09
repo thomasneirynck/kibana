@@ -138,6 +138,18 @@ export const APM_AGENT_DOCS = {
 };
 
 //
+// Elastic docs
+//
+export const ELASTIC_DOCS = {
+  'x-pack-emails': {
+    url: `https://www.elastic.co/guide/en/x-pack/${STACK_VERSION}/actions-email.html#configuring-email`
+  },
+  'watcher-get-started': {
+    url: `https://www.elastic.co/guide/en/x-pack/${STACK_VERSION}/watcher-getting-started.html`
+  }
+};
+
+//
 // Helper methods
 //
 function translateAgentName(agentName) {

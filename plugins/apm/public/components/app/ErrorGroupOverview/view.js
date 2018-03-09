@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import withErrorHandler from '../../shared/withErrorHandler';
-import { HeaderLarge } from '../../shared/UIComponents';
+import { HeaderContainer } from '../../shared/UIComponents';
 import TabNavigation from '../../shared/TabNavigation';
 import List from './List';
 import { getKey } from '../../../store/apiHelpers';
+import WatcherFlyout from './Watcher/WatcherFlyOut';
+import OpenWatcherDialogButton from './Watcher/OpenWatcherDialogButton';
 
 function maybeLoadList(props) {
   const { serviceName, start, end } = props.urlParams;
@@ -17,6 +19,18 @@ function maybeLoadList(props) {
 }
 
 class ErrorGroupOverview extends Component {
+  state = {
+    isFlyoutOpen: false
+  };
+
+  onOpenFlyout = () => {
+    this.setState({ isFlyoutOpen: true });
+  };
+
+  onCloseFlyout = () => {
+    this.setState({ isFlyoutOpen: false });
+  };
+
   componentDidMount() {
     maybeLoadList(this.props);
   }
@@ -26,17 +40,30 @@ class ErrorGroupOverview extends Component {
   }
 
   render() {
+    const { license } = this.props;
     const { serviceName, location } = this.props.urlParams;
 
     return (
       <div>
-        <HeaderLarge>{serviceName}</HeaderLarge>
+        <HeaderContainer>
+          <h1>{serviceName}</h1>
+          {license.data.features.watcher.isAvailable && (
+            <OpenWatcherDialogButton onOpenFlyout={this.onOpenFlyout} />
+          )}
+        </HeaderContainer>
+
         <TabNavigation />
 
         <List
           urlParams={this.props.urlParams}
           items={this.props.errorGroupList.data}
           location={location}
+        />
+
+        <WatcherFlyout
+          serviceName={serviceName}
+          isFlyoutOpen={this.state.isFlyoutOpen}
+          onClose={this.onCloseFlyout}
         />
       </div>
     );
