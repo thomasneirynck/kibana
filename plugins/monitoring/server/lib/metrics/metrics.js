@@ -1162,9 +1162,10 @@ const metricInstances = {
   'logstash_queue_events_count': new LogstashMetric({
     field: 'logstash_stats.queue.events_count',
     label: 'Events Queued',
+    title: 'Persistent Queue Events',
     description: 'Average number of events in the persistent queue waiting to be processed by the filter and output stages.',
     format: LARGE_FLOAT,
-    metricAgg: 'avg',
+    metricAgg: 'max',
     units: ''
   }),
   'logstash_pipeline_queue_size': new LogstashPipelineQueueSizeMetric({
