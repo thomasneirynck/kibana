@@ -13,4 +13,8 @@ export class QueueVertex extends Vertex {
   get icon() {
     return queueIcon;
   }
+
+  get next() {
+    return this.outgoingVertices;
+  }
 }

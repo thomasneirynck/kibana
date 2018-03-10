@@ -28,8 +28,16 @@ export class PluginVertex extends Vertex {
     return this.pluginType === 'input';
   }
 
+  get isFilter() {
+    return this.pluginType === 'filter';
+  }
+
+  get isOutput() {
+    return this.pluginType === 'output';
+  }
+
   get isProcessor() {
-    return (this.pluginType === 'filter' || this.pluginType === 'output');
+    return this.isFilter || this.isOutput;
   }
 
   get latestMillisPerEvent() {
@@ -101,5 +109,10 @@ export class PluginVertex extends Vertex {
       default:
         throw new Error(`Unknown plugin type ${this.pluginType}! This shouldn't happen!`);
     }
+  }
+
+  get next() {
+    const firstOutgoingEdge = this.outgoingEdges[0] || {};
+    return firstOutgoingEdge.to;
   }
 }
