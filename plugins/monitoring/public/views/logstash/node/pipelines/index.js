@@ -7,8 +7,7 @@ import uiRoutes from 'ui/routes';
 import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
 import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
 import {
-  isPipelineMonitoringSupportedInVersion,
-  processPipelinesAPIResponse
+  isPipelineMonitoringSupportedInVersion
 } from 'plugins/monitoring/lib/logstash/pipelines';
 import template from './index.html';
 
@@ -23,21 +22,14 @@ const getPageData = ($injector) => {
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/logstash/node/${logstashUuid}/pipelines`;
   const timeBounds = timefilter.getBounds();
 
-  const throughputMetric = 'logstash_node_pipeline_throughput';
-  const nodesCountMetric = 'logstash_node_pipeline_nodes_count';
-
   return $http.post(url, {
     ccs: globalState.ccs,
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
-    },
-    metricSet: [
-      throughputMetric,
-      nodesCountMetric,
-    ]
+    }
   })
-    .then(response => processPipelinesAPIResponse(response.data, throughputMetric, nodesCountMetric))
+    .then(response => response.data)
     .catch((err) => {
       const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
       return ajaxErrorHandlers(err);

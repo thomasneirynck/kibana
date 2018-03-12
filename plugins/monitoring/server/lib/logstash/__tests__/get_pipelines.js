@@ -1,5 +1,49 @@
 import expect from 'expect.js';
-import { _handleResponse } from '../get_pipelines';
+import {
+  _handleResponse,
+  processPipelinesAPIResponse } from '../get_pipelines';
+
+describe('processPipelinesAPIResponse', () => {
+  let response;
+  beforeEach(() => {
+    response = {
+      pipelines: [
+        {
+          metrics: {
+            throughput_for_cluster: {
+              data: [
+                [ 1513721903, 17 ],
+                [ 1513722162, 23 ]
+              ]
+            },
+            nodes_count_for_cluster: {
+              data: [
+                [ 1513721903, 3 ],
+                [ 1513722162, 2 ]
+              ]
+            }
+          }
+        }
+      ]
+    };
+  });
+
+  it('normalizes the metric keys', () => {
+    processPipelinesAPIResponse(response, 'throughput_for_cluster', 'nodes_count_for_cluster')
+      .then(processedResponse => {
+        expect(processedResponse.pipelines[0].metrics.throughput).to.eql(response.pipelines[0].metrics.throughput_for_cluster);
+        expect(processedResponse.pipelines[0].metrics.nodesCount).to.eql(response.pipelines[0].metrics.nodes_count_for_cluster);
+      });
+  });
+
+  it('computes the latest metrics', () => {
+    processPipelinesAPIResponse(response, 'throughput_for_cluster', 'nodes_count_for_cluster')
+      .then(processedResponse => {
+        expect(processedResponse.pipelines[0].latestThroughput).to.eql(23);
+        expect(processedResponse.pipelines[0].latestNodesCount).to.eql(2);
+      });
+  });
+});
 
 describe('get_pipelines', () => {
   let fetchPipelinesWithMetricsResult;

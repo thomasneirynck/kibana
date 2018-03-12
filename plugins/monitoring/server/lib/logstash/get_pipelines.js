@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { cloneDeep, last, omit } from 'lodash';
 import { checkParam } from '../error_missing_required';
 import { getMetrics } from '../details/get_metrics';
 
@@ -44,6 +44,25 @@ export function _handleResponse(response) {
   });
 
   return pipelines;
+}
+
+export async function processPipelinesAPIResponse(response, throughputMetricKey, nodesCountMetricKey) {
+  // Clone to avoid mutating original response
+  const processedResponse = cloneDeep(response);
+
+  // Normalize metric names for shared component code
+  // Calculate latest throughput and node count for each pipeline
+  processedResponse.pipelines.forEach(pipeline => {
+    pipeline.metrics = {
+      throughput: pipeline.metrics[throughputMetricKey],
+      nodesCount: pipeline.metrics[nodesCountMetricKey]
+    };
+
+    pipeline.latestThroughput = last(pipeline.metrics.throughput.data)[1];
+    pipeline.latestNodesCount = last(pipeline.metrics.nodesCount.data)[1];
+  });
+
+  return processedResponse;
 }
 
 export async function getPipelines(req, logstashIndexPattern, metricSet) {

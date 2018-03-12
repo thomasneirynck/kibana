@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { getNodeInfo } from '../../../../../lib/logstash/get_node_info';
-import { getPipelines } from '../../../../../lib/logstash/get_pipelines';
+import { getPipelines, processPipelinesAPIResponse } from '../../../../../lib/logstash/get_pipelines';
 import { handleError } from '../../../../../lib/errors';
 import { prefixIndexPattern } from '../../../../../lib/ccs_utils';
 
@@ -22,22 +22,31 @@ export function logstashNodePipelinesRoute(server) {
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
-          }).required(),
-          metricSet: Joi.array().items(Joi.string()).required()
+          }).required()
         })
       }
     },
     handler: async (req, reply) => {
       const config = server.config();
-      const { ccs, metricSet } = req.payload;
+      const { ccs } = req.payload;
       const { clusterUuid, logstashUuid } = req.params;
       const lsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.logstash.index_pattern', ccs);
+      const throughputMetric = 'logstash_node_pipeline_throughput';
+      const nodesCountMetric = 'logstash_node_pipeline_nodes_count';
+      const metricSet = [
+        throughputMetric,
+        nodesCountMetric
+      ];
 
       try {
-        const response = {
-          pipelines: await getPipelines(req, lsIndexPattern, metricSet),
-          nodeSummary: await getNodeInfo(req, lsIndexPattern, { clusterUuid, logstashUuid })
-        };
+        const response = await processPipelinesAPIResponse(
+          {
+            pipelines: await getPipelines(req, lsIndexPattern, metricSet),
+            nodeSummary: await getNodeInfo(req, lsIndexPattern, { clusterUuid, logstashUuid })
+          },
+          throughputMetric,
+          nodesCountMetric
+        );
         reply(response);
       } catch (err) {
         reply(handleError(err, req));
