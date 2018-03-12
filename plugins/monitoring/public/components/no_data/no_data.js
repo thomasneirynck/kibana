@@ -1,31 +1,44 @@
-import React from 'react';
-import {
-  EuiTitle,
-  EuiSpacer,
-  EuiText,
-} from '@elastic/eui';
+import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
+import { EuiTitle, EuiSpacer, EuiText } from '@elastic/eui';
+import { CheckingSettings } from './checking_settings';
+import { ReasonFound, WeTried } from './reasons';
+import { CheckerErrors } from './checker_errors';
 
-export function NoData() {
+function NoDataBody(props) {
+  const { isLoading, reason, checkMessage } = props;
+
+  if (isLoading && checkMessage !== null) {
+    return <CheckingSettings checkMessage={checkMessage} />;
+  }
+
+  if (reason) {
+    return <ReasonFound {...props} />;
+  }
+
+  return <WeTried />;
+}
+
+export function NoData(props) {
   return (
-    <div className="page-row" data-test-subj="noData">
+    <Fragment>
+      <EuiTitle size="l">
+        <h1>No Monitoring Data Found</h1>
+      </EuiTitle>
+      <EuiSpacer size="m" />
       <EuiText>
-        <EuiTitle size="l">
-          <h1>No Monitoring Data Found</h1>
-        </EuiTitle>
-
-        <EuiSpacer size="m" />
-
-        <p>
-          No Monitoring data is available for the selected time period.  This
-          could be because no data is being sent to the cluster or data was not
-          received during that time.
-        </p>
-
-        <p>
-          Try adjusting the time filter controls to a time range where the
-          Monitoring data is expected.
-        </p>
+        <NoDataBody {...props} />
       </EuiText>
-    </div>
+      <EuiSpacer size="l" />
+      <EuiText>
+        <CheckerErrors errors={props.errors} />
+      </EuiText>
+    </Fragment>
   );
 }
+
+NoData.propTypes = {
+  isLoading: PropTypes.bool.isRequired,
+  reason: PropTypes.object,
+  checkMessage: PropTypes.string
+};

@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NoData should show a default message if reason is unknown 1`] = `
+Array [
+  <h1
+    class="euiTitle euiTitle--large"
+  >
+    No Monitoring Data Found
+  </h1>,
+  <div
+    class="euiSpacer euiSpacer--m"
+  />,
+  <div
+    class="euiText"
+  >
+    <h3
+      class="euiTitle euiTitle--small"
+    >
+      We found the reason that there is no monitoring data available.
+    </h3>
+    <p>
+      There is a 
+      <span
+        class="euiCodeBlock euiCodeBlock--fontSmall euiCodeBlock--paddingLarge euiCodeBlock--inline"
+      >
+        <code
+          class="euiCodeBlock__code"
+        >
+          food
+        </code>
+      </span>
+       setting that has 
+      <span
+        class="euiCodeBlock euiCodeBlock--fontSmall euiCodeBlock--paddingLarge euiCodeBlock--inline"
+      >
+        <code
+          class="euiCodeBlock__code"
+        >
+          xpack.monitoring.foo.bar
+        </code>
+      </span>
+       set to 
+      <span
+        class="euiCodeBlock euiCodeBlock--fontSmall euiCodeBlock--paddingLarge euiCodeBlock--inline"
+      >
+        <code
+          class="euiCodeBlock__code"
+        >
+          taco
+        </code>
+      </span>
+      .
+    </p>
+  </div>,
+  <div
+    class="euiSpacer euiSpacer--l"
+  />,
+  <div
+    class="euiText"
+  />,
+]
+`;
+
+exports[`NoData should show text next to the spinner while checking a setting 1`] = `
+Array [
+  <h1
+    class="euiTitle euiTitle--large"
+  >
+    No Monitoring Data Found
+  </h1>,
+  <div
+    class="euiSpacer euiSpacer--m"
+  />,
+  <div
+    class="euiText"
+  >
+    <div
+      class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--alignItemsCenter euiFlexGroup--responsive"
+    >
+      <div
+        class="euiFlexItem euiFlexItem--flexGrowZero"
+      >
+        <div
+          class="euiLoadingSpinner euiLoadingSpinner--medium"
+        />
+      </div>
+      <div
+        class="euiFlexItem euiFlexItem--flexGrowZero"
+      >
+        checking something to test...
+      </div>
+    </div>
+  </div>,
+  <div
+    class="euiSpacer euiSpacer--l"
+  />,
+  <div
+    class="euiText"
+  />,
+]
+`;

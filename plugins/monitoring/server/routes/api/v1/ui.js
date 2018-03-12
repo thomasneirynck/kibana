@@ -23,6 +23,12 @@ export {
   mlJobRoute
 } from './elasticsearch';
 export {
+  clusterSettingsCheckRoute,
+  nodesSettingsCheckRoute,
+  setCollectionEnabledRoute,
+  setCollectionIntervalRoute
+} from './elasticsearch_settings';
+export {
   kibanaInstanceRoute,
   kibanaInstancesRoute,
   kibanaOverviewRoute

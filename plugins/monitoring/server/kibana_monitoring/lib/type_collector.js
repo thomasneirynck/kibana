@@ -88,7 +88,7 @@ export class TypeCollector {
 
   async _fetchAndUpload(collectors) {
     const data = await this._bulkFetch(collectors);
-    const usableData = data.filter(d => !isEmpty(d.result));
+    const usableData = data.filter(d => Boolean(d) && !isEmpty(d.result));
     const payload = usableData.map(({ result, type }) => {
       if (!isEmpty(result)) {
         return [
