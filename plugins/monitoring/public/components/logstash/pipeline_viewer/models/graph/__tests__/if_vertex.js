@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 import { IfVertex } from '../if_vertex';
 import { Vertex } from '../vertex';
-import ifIcon from 'plugins/monitoring/icons/logstash/if.svg';
+import ifIcon from '@elastic/eui/src/components/icon/assets/logstash_if.svg';
 
 describe('IfVertex', () => {
   let graph;

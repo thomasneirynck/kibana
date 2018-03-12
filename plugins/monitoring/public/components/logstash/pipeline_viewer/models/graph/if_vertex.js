@@ -1,6 +1,6 @@
 import { intersection } from 'lodash';
 import { Vertex } from './vertex';
-import ifIcon from 'plugins/monitoring/icons/logstash/if.svg';
+import ifIcon from '@elastic/eui/src/components/icon/assets/logstash_if.svg';
 
 export class IfVertex extends Vertex {
   get typeString() {

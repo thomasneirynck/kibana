@@ -4,9 +4,9 @@ import {
   PluginVertex,
   TIME_CONSUMING_PROCESSOR_THRESHOLD_COEFFICIENT
 } from '../plugin_vertex';
-import inputIcon from 'plugins/monitoring/icons/logstash/input.svg';
-import filterIcon from 'plugins/monitoring/icons/logstash/filter.svg';
-import outputIcon from 'plugins/monitoring/icons/logstash/output.svg';
+import inputIcon from '@elastic/eui/src/components/icon/assets/logstash_input.svg';
+import filterIcon from '@elastic/eui/src/components/icon/assets/logstash_filter.svg';
+import outputIcon from '@elastic/eui/src/components/icon/assets/logstash_output.svg';
 
 describe('PluginVertex', () => {
   let graph;

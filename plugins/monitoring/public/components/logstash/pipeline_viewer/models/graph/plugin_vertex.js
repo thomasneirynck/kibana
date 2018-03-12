@@ -1,8 +1,8 @@
 import { last, get, omit } from 'lodash';
 import { Vertex } from './vertex';
-import inputIcon from 'plugins/monitoring/icons/logstash/input.svg';
-import filterIcon from 'plugins/monitoring/icons/logstash/filter.svg';
-import outputIcon from 'plugins/monitoring/icons/logstash/output.svg';
+import inputIcon from '@elastic/eui/src/components/icon/assets/logstash_input.svg';
+import filterIcon from '@elastic/eui/src/components/icon/assets/logstash_filter.svg';
+import outputIcon from '@elastic/eui/src/components/icon/assets/logstash_output.svg';
 
 export const TIME_CONSUMING_PROCESSOR_THRESHOLD_COEFFICIENT = 2;
 export const SLOWNESS_STANDARD_DEVIATIONS_ABOVE_THE_MEAN = 2;

@@ -1,5 +1,5 @@
 import { Vertex } from './vertex';
-import queueIcon from 'plugins/monitoring/icons/logstash/queue.svg';
+import queueIcon from '@elastic/eui/src/components/icon/assets/logstash_queue.svg';
 
 export class QueueVertex extends Vertex {
   get typeString() {

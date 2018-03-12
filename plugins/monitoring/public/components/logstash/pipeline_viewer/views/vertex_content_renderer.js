@@ -1,9 +1,9 @@
 import numeral from 'numeral';
-import inputIcon from 'plugins/monitoring/icons/logstash/input.svg';
-import filterIcon from 'plugins/monitoring/icons/logstash/filter.svg';
-import outputIcon from 'plugins/monitoring/icons/logstash/output.svg';
-import queueIcon from 'plugins/monitoring/icons/logstash/queue.svg';
-import ifIcon from 'plugins/monitoring/icons/logstash/if.svg';
+import inputIcon from '@elastic/eui/src/components/icon/assets/logstash_input.svg';
+import filterIcon from '@elastic/eui/src/components/icon/assets/logstash_filter.svg';
+import outputIcon from '@elastic/eui/src/components/icon/assets/logstash_output.svg';
+import queueIcon from '@elastic/eui/src/components/icon/assets/logstash_queue.svg';
+import ifIcon from '@elastic/eui/src/components/icon/assets/logstash_if.svg';
 import { PluginVertex } from '../models/graph/plugin_vertex';
 import { IfVertex } from '../models/graph/if_vertex';
 import { LOGSTASH } from '../../../../../common/constants';
