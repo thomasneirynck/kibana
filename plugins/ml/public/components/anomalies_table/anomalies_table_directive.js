@@ -23,7 +23,7 @@ import rison from 'rison-node';
 
 import { notify } from 'ui/notify';
 import { ES_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
-import { replaceStringTokens } from 'plugins/ml/util/string_utils';
+import { replaceStringTokens, mlEscape } from 'plugins/ml/util/string_utils';
 import { isTimeSeriesViewDetector } from 'plugins/ml/../common/util/job_utils';
 import {
   getEntityFieldName,
@@ -793,7 +793,7 @@ module.directive('mlAnomaliesTable', function (
             value: record['max severity']
           },
           {
-            markup: record.detector,
+            markup: mlEscape(record.detector),
             value: record.detector
           }
         ];
