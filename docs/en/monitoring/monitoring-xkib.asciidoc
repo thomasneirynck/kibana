@@ -90,10 +90,11 @@ xpack.monitoring.elasticsearch.ssl.certificateAuthorities: /path/to/your/cacert.
 
 . Restart {kib}.
 
-. If {security} is enabled on your {kib} server, to view the monitoring
-dashboards you must log in to {kib} as a user who has both the `kibana_user` and
-`monitoring_user` roles. For
-example:
+. If {security} is enabled on your {kib} server:
+
+.. Log in to {kib} as a user who has both the `kibana_user` and
+`monitoring_user` roles. These roles have the necessary privileges to view the
+monitoring dashboards. For example:
 +
 --
 [source,js]
@@ -106,6 +107,10 @@ POST /_xpack/security/user/stack-monitor
 --------------------------------------------------
 // CONSOLE
 --
+
+.. If you are accessing a remote monitoring cluster, you must log in to {kib}
+with username and password credentials that are valid on both the {kib} server
+and the monitoring cluster. 
 
 See also <<monitoring-data>>.
 
