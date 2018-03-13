@@ -495,21 +495,39 @@
 
         <hr class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium">
 
-        <button
-          ng-click="save()"
-          ng-disabled="(saveLock === true || ui.esServerOk === 2)"
-          class="kuiButton kuiButton--primary"
-          aria-label="Save">
-          Save
-        </button>
-        <button
-          ng-click="cancel()"
-          ng-disabled="(saveLock === true)"
-          class="kuiButton kuiButton--primary"
-          aria-label="Cancel">
-          Cancel
-        </button>
+        <div class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--alignItemsCenter euiFlexGroup--responsive">
+          <div class="euiFlexItem euiFlexItem--flexGrowZero">
+            <ml-validate-job
+              fields="fields"
+              fill="false"
+              job="job"
+              ng-show="jobState === JOB_STATE.NOT_STARTED"
+            />
+          </div>
+          <div class="euiFlexItem euiFlexItem--flexGrowZero">
+            <button
+              ng-click="save()"
+              ng-disabled="(saveLock === true || ui.esServerOk === 2)"
+              class="euiButton euiButton--primary euiButton--small euiButton--fill"
+              aria-label="Save">
+              <span class="euiButton__content">
+                <span>Save</span>
+              </span>
+            </button>
+          </div>
+          <div class="euiFlexItem euiFlexItem--flexGrowZero">
+            <button
+              ng-click="cancel()"
+              ng-disabled="(saveLock === true)"
+              class="euiButton euiButton--primary euiButton--small euiButton--fill"
+              aria-label="Cancel">
+              <span class="euiButton__content">
+                <span>Cancel</span>
+              </span>
+            </button>
+          </div>
+        </div>
 
-    </div>
+      </div>
   </div>
 </ml-new-job>

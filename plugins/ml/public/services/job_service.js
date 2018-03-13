@@ -591,9 +591,9 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       });
   };
 
-  this.validateJob = function (job) {
+  this.validateJob = function (obj) {
     // return the promise chain
-    return ml.validateJob(job)
+    return ml.validateJob(obj)
       .then((messages) => {
         console.log('validate job', messages);
         return { success: true, messages };

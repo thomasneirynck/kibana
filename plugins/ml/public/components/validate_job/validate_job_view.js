@@ -148,6 +148,18 @@ Modal.propType = {
   title: PropTypes.string
 };
 
+const getJobConfiguration = (job) => {
+  let jobConfiguration;
+
+  if (typeof job === 'object') {
+    jobConfiguration = job;
+  } else if (typeof job === 'function') {
+    jobConfiguration = job();
+  }
+
+  return jobConfiguration;
+};
+
 class ValidateJob extends Component {
   constructor(props) {
     super(props);
@@ -159,18 +171,26 @@ class ValidateJob extends Component {
   };
 
   openModal = () => {
-    this.props.mlJobService.validateJob(this.props.job).then((data) => {
-      this.setState({
-        ui: { isModalVisible: true },
-        data
+    const jobConfiguration = getJobConfiguration(this.props.job);
+
+    if (typeof jobConfiguration === 'object') {
+      this.props.mlJobService.validateJob({
+        duration: this.props.duration,
+        fields: this.props.fields,
+        job: jobConfiguration
+      }).then((data) => {
+        this.setState({
+          ui: { isModalVisible: true },
+          data
+        });
       });
-    });
+    }
   };
 
   render() {
     const fill = (this.props.fill === false) ? false : true;
     const job = this.props.job;
-    const disabled = (typeof job === 'undefined' || typeof job.job_id === 'undefined');
+    const disabled = (typeof job === 'undefined');
 
     return (
       <div>
@@ -186,7 +206,7 @@ class ValidateJob extends Component {
         {!disabled && this.state.ui.isModalVisible &&
           <Modal
             close={this.closeModal}
-            title={'Validate job ' + (job && job.job_id)}
+            title={'Validate job ' + (typeof job === 'object' && job.job_id)}
           >
             {this.state.data.messages.map(
               (m, i) => <Callout key={m.id + '_' + i} message={m} />
@@ -198,8 +218,13 @@ class ValidateJob extends Component {
   }
 }
 ValidateJob.propTypes = {
+  duration: PropTypes.object,
+  fields: PropTypes.object,
   fill: PropTypes.bool,
-  job: PropTypes.object,
+  job: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.func
+  ]),
   mlJobService: PropTypes.object
 };
 

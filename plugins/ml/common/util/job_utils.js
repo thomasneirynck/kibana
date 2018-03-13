@@ -16,6 +16,9 @@
 import _ from 'lodash';
 import semver from 'semver';
 
+import { parseInterval } from './parse_interval';
+import { VALIDATION_STATUS } from '../constants/validation';
+
 // work out the default frequency based on the bucket_span in seconds
 export function calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) {
 
@@ -202,4 +205,184 @@ export function prefixDatafeedId(datafeedId, prefix) {
 // identifier is used to return a safe 'dummy' name in the format 'field_index' e.g. field_0, field_1
 export function getSafeAggregationName(fieldName, index) {
   return fieldName.match(/^[a-zA-Z0-9-_.]+$/) ? fieldName : `field_${index}`;
+}
+
+// check job without manipulating UI and return a list of messages
+// job and fields get passed as arguments and are not accessed as $scope.* via the outer scope
+// because the plan is to move this function to the common code area so that it can be used on the server side too.
+export function basicJobValidation(job, fields) {
+  const messages = [];
+  let valid = true;
+
+  if (job) {
+    // Job details
+    if (_.isEmpty(job.job_id)) {
+      messages.push({
+        status: VALIDATION_STATUS.ERROR,
+        id: 'job_id_empty'
+      });
+      valid = false;
+    } else if (isJobIdValid(job.job_id) === false) {
+      messages.push({
+        status: VALIDATION_STATUS.ERROR,
+        id: 'job_id_invalid'
+      });
+      valid = false;
+    } else {
+      messages.push({
+        status: VALIDATION_STATUS.SUCCESS,
+        id: 'job_id_valid'
+      });
+    }
+
+    if (job.groups !== undefined) {
+      let groupIdValid = true;
+      job.groups.forEach(group => {
+        if (isJobIdValid(group) === false) {
+          messages.push({
+            status: VALIDATION_STATUS.ERROR,
+            id: 'job_group_id_invalid'
+          });
+          groupIdValid = false;
+          valid = false;
+        }
+      });
+      if (job.groups.length > 0 && groupIdValid) {
+        messages.push({
+          status: VALIDATION_STATUS.SUCCESS,
+          id: 'job_group_id_valid'
+        });
+      }
+    }
+
+    // Analysis Configuration
+    if (job.analysis_config.categorization_filters) {
+      let v = true;
+      _.each(job.analysis_config.categorization_filters, (d) => {
+        try {
+          new RegExp(d);
+        } catch (e) {
+          v = false;
+        }
+
+        if (job.analysis_config.categorization_field_name === undefined || job.analysis_config.categorization_field_name === '') {
+          v = false;
+        }
+
+        if (d === '') {
+          v = false;
+        }
+      });
+
+      if (v) {
+        messages.push({
+          status: VALIDATION_STATUS.SUCCESS,
+          id: 'categorization_filters_valid'
+        });
+      } else {
+        messages.push({
+          status: VALIDATION_STATUS.ERROR,
+          id: 'categorization_filters_invalid'
+        });
+        valid = false;
+      }
+    }
+
+    if (job.analysis_config.detectors.length === 0) {
+      messages.push({
+        status: VALIDATION_STATUS.ERROR,
+        id: 'detectors_empty'
+      });
+      valid = false;
+    } else {
+      let v = true;
+      _.each(job.analysis_config.detectors, (d) => {
+        if (_.isEmpty(d.function)) {
+          v = false;
+        }
+      });
+      if (v) {
+        messages.push({
+          status: VALIDATION_STATUS.SUCCESS,
+          id: 'detectors_function_not_empty'
+        });
+      } else {
+        messages.push({
+          status: VALIDATION_STATUS.ERROR,
+          id: 'detectors_function_empty'
+        });
+        valid = false;
+      }
+    }
+
+    // we skip this influencer test because the client side form check is ignoring it
+    // and the server side tests have their own influencer test
+    // TODO: clarify if this is still needed or can be deleted
+    /*
+    if (job.analysis_config.influencers &&
+      job.analysis_config.influencers.length === 0) {
+      messages.push({
+        status: VALIDATION_STATUS.ERROR,
+        id: 'influencers_empty'
+      });
+      valid = false;
+    } else {
+      messages.push({
+        status: VALIDATION_STATUS.SUCCESS,
+        id: 'influencers_not_empty'
+      });
+    }
+    */
+
+    if (
+      job.analysis_config.bucket_span === '' ||
+      job.analysis_config.bucket_span === undefined
+    ) {
+      messages.push({
+        status: VALIDATION_STATUS.ERROR,
+        id: 'bucket_span_empty'
+      });
+      valid = false;
+    } else {
+      const bucketSpan = parseInterval(job.analysis_config.bucket_span);
+      if (bucketSpan === null) {
+        messages.push({
+          status: VALIDATION_STATUS.ERROR,
+          id: 'bucket_span_invalid'
+        });
+        valid = false;
+      } else {
+        messages.push({
+          status: VALIDATION_STATUS.SUCCESS,
+          id: 'bucket_span_valid'
+        });
+      }
+    }
+
+    // Datafeed
+    if (typeof fields !== 'undefined') {
+      const loadedFields = Object.keys(fields);
+      if (loadedFields.length === 0) {
+        messages.push({
+          status: VALIDATION_STATUS.ERROR,
+          id: 'index_fields_invalid'
+        });
+        valid = false;
+      } else {
+        messages.push({
+          status: VALIDATION_STATUS.SUCCESS,
+          id: 'index_fields_valid'
+        });
+      }
+    }
+  } else {
+    valid = false;
+  }
+
+  return {
+    messages,
+    valid,
+    contains(id) { return _.some(messages, { id }); },
+    find(id) { return _.find(messages, { id }); }
+  };
 }

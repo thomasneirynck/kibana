@@ -402,13 +402,15 @@ module
 
     $scope.getJobFromConfig = function () {
       if (validateJobId($scope.formConfig.jobId, $scope.formConfig.jobGroups, $scope.ui.validation.checks)) {
-        const job = mlSingleMetricJobService.getJobFromConfig($scope.formConfig);
-        job.data_counts = {
-          earliest_record_timestamp: $scope.formConfig.start,
-          latest_record_timestamp: $scope.formConfig.end
-        };
-        return job;
+        return mlSingleMetricJobService.getJobFromConfig($scope.formConfig);
       }
+    };
+
+    $scope.getDurationFromConfig = function () {
+      return {
+        start: $scope.formConfig.start,
+        end: $scope.formConfig.end
+      };
     };
 
     function loadCharts() {

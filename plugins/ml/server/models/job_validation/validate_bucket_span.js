@@ -53,7 +53,14 @@ const pickBucketSpan = (bucketSpans) => {
   return bucketSpans[i];
 };
 
-export async function validateBucketSpan(callWithRequest, job) {
+export async function validateBucketSpan(callWithRequest, job, duration) {
+  if (typeof duration === 'undefined') {
+    return [{
+      status: VALIDATION_STATUS.WARNING,
+      id: 'bucket_span_no_duration'
+    }];
+  }
+
   const messages = [];
   const bucketSpanDays = parseInterval(job.analysis_config.bucket_span).asDays();
 
@@ -71,10 +78,7 @@ export async function validateBucketSpan(callWithRequest, job) {
   const getRequestData = () => {
     return {
       aggTypes: [],
-      duration: {
-        start: job.data_counts.earliest_record_timestamp,
-        end: job.data_counts.latest_record_timestamp
-      },
+      duration,
       fields: [],
       filters: [],
       index: job.datafeed_config.indices[0],

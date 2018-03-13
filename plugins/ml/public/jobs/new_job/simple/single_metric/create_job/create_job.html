@@ -223,6 +223,7 @@
       <div class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--alignItemsCenter euiFlexGroup--responsive">
         <div class="euiFlexItem euiFlexItem--flexGrowZero">
           <ml-validate-job
+            duration="getDurationFromConfig()"
             fill="false"
             job="getJobFromConfig()"
             ng-show="jobState === JOB_STATE.NOT_STARTED"

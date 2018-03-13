@@ -53,9 +53,9 @@ uiRoutes
   });
 
 import {
-  isJobIdValid,
   calculateDatafeedFrequencyDefaultSeconds as juCalculateDatafeedFrequencyDefaultSeconds,
-  ML_DATA_PREVIEW_COUNT
+  ML_DATA_PREVIEW_COUNT,
+  basicJobValidation
 } from 'plugins/ml/../common/util/job_utils';
 
 import { uiModules } from 'ui/modules';
@@ -964,7 +964,9 @@ module.controller('MlNewJob',
 
     // function used to check that all required fields are filled in
     function validateJob() {
-      let valid = true;
+      const validationResults = basicJobValidation($scope.job, $scope.fields);
+
+      const valid = validationResults.valid;
       const message = 'Fill in all required fields';
 
       const tabs = $scope.ui.validation.tabs;
@@ -984,81 +986,47 @@ module.controller('MlNewJob',
       // tab 0 - Job Details
       // job already exists check happens in save function
       // as users may wish to continue and overwrite existing job
-        if (_.isEmpty(job.job_id)) {
+        if (validationResults.contains('job_id_empty')) {
           tabs[0].checks.jobId.valid = false;
-        } else if (isJobIdValid(job.job_id) === false) {
+        } else if (validationResults.contains('job_id_invalid')) {
           tabs[0].checks.jobId.valid = false;
           let msg = 'Job name can contain lowercase alphanumeric (a-z and 0-9), hyphens or underscores; ';
           msg += 'must start and end with an alphanumeric character';
           tabs[0].checks.jobId.message = msg;
         }
 
-        if (job.groups !== undefined) {
-          job.groups.forEach(group => {
-            if (isJobIdValid(group) === false) {
-              tabs[0].checks.groupIds.valid = false;
-              let msg = 'Job group names can contain lowercase alphanumeric (a-z and 0-9), hyphens or underscores; ';
-              msg += 'must start and end with an alphanumeric character';
-              tabs[0].checks.groupIds.message = msg;
-            }
-          });
+        if (validationResults.contains('job_group_id_invalid')) {
+          tabs[0].checks.groupIds.valid = false;
+          let msg = 'Job group names can contain lowercase alphanumeric (a-z and 0-9), hyphens or underscores; ';
+          msg += 'must start and end with an alphanumeric character';
+          tabs[0].checks.groupIds.message = msg;
         }
 
         // tab 1 - Analysis Configuration
-        if (job.analysis_config.categorization_filters) {
-          let v = true;
-          _.each(job.analysis_config.categorization_filters, function (d) {
-            try {
-              new RegExp(d);
-            } catch (e) {
-              v = false;
-            }
-
-            if (job.analysis_config.categorization_field_name === undefined || job.analysis_config.categorization_field_name === '') {
-              tabs[1].checks.categorizationFilters.message = 'categorizationFieldName must be set to allow filters';
-              v = false;
-            }
-
-            if (d === '' || v === false) {
-              tabs[1].checks.categorizationFilters.valid = false;
-              valid = false;
-            }
-          });
+        if (validationResults.contains('categorization_filter_invalid')) {
+          tabs[1].checks.categorizationFilters.message = 'categorizationFieldName must be set to allow filters';
+          tabs[1].checks.categorizationFilters.valid = false;
         }
 
-
-        if (job.analysis_config.detectors.length === 0) {
+        if (validationResults.contains('detectors_empty')) {
           tabs[1].checks.detectors.valid = false;
-        } else {
-          _.each(job.analysis_config.detectors, function (d) {
-            if (_.isEmpty(d.function)) {
-              valid = false;
-            }
-          });
         }
 
-        if (job.analysis_config.influencers &&
-         job.analysis_config.influencers.length === 0) {
+        if (validationResults.contains('influencers_empty')) {
         // tabs[1].checks.influencers.valid = false;
         }
 
-        if (job.analysis_config.bucket_span === '' ||
-         job.analysis_config.bucket_span === undefined) {
+        if (validationResults.contains('bucket_span_empty')) {
           tabs[1].checks.bucketSpan.message = 'bucket_span must be set';
           tabs[1].checks.bucketSpan.valid = false;
-        } else {
-          const bucketSpan = parseInterval(job.analysis_config.bucket_span);
-          if (bucketSpan === null) {
-            tabs[1].checks.bucketSpan.message = job.analysis_config.bucket_span + ' is not a valid time interval format. e.g. 10m, 1h';
-            tabs[1].checks.bucketSpan.valid = false;
-          }
+        } else if (validationResults.contains('bucket_span_invalid')) {
+          tabs[1].checks.bucketSpan.message = `${job.analysis_config.bucket_span} is not a valid time interval format. e.g. 10m, 1h`;
+          tabs[1].checks.bucketSpan.valid = false;
         }
 
         // tab 3 - Datafeed
-        validateIndex(tabs);
+        validateIndex(tabs, () => validationResults.contains('index_fields_invalid'));
 
-      } else {
-        valid = false;
       }
 
       // for each tab, set its validity based on its contained checks
@@ -1067,8 +1035,6 @@ module.controller('MlNewJob',
           if (item.valid === false) {
           // set tab valid state to false
             tab.valid = false;
-            // set overall valid state to false
-            valid = false;
           }
         });
       });
@@ -1079,9 +1045,10 @@ module.controller('MlNewJob',
       };
     }
 
-    function validateIndex(tabs) {
-      const loadedFields = Object.keys($scope.fields);
-      if (loadedFields.length === 0) {
+    // the dataFeedTest argument is a function with the default test used by the directive.
+    // it can be overridden with a custom function to do an alternative test
+    function validateIndex(tabs, dataFeedTest = () => (Object.keys($scope.fields).length === 0)) {
+      if (dataFeedTest()) {
         const msg = 'Could not load fields from index';
         tabs[3].checks.hasAccessToIndex.valid = false;
         tabs[3].checks.hasAccessToIndex.message = msg;

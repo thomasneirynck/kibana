@@ -19,6 +19,27 @@
     "text": "Bucket span is 1 day or more. Be aware that days are considered as UTC days, not local days.",
     "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#bucket-span"
   },
+  "bucket_span_no_duration": {
+    "text": "Bucket span estimation was skipped because no start and end date to reference the original data was supplied. This is not yet available when using the advanced job config wizard."
+  },
+  "bucket_span_valid": {
+    "text": "Bucket span format"
+  },
+  "detectors_empty": {
+    "text": "No detectors were found. At least one detector must be specified."
+  },
+  "detectors_function_empty": {
+    "text": "One of the detector functions is empty."
+  },
+  "detectors_function_not_empty": {
+    "text": "Detector functions"
+  },
+  "index_fields_invalid": {
+    "text": "Could not load fields from index."
+  },
+  "index_fields_valid": {
+    "text": "Index fields"
+  },
   "influencer_high": {
     "text": "The job configuration includes more than 3 influencers. Consider using fewer influencers or creating multiple jobs.",
     "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#influencers"
@@ -31,11 +52,29 @@
     "text": "The job configuration includes partition or over fields but no influencers are configured. Consider using one of {{influencerSuggestion}} as an influencer.",
     "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#influencers"
   },
+  "job_id_empty": {
+    "text": "The job name field must not be empty."
+  },
+  "job_id_invalid": {
+    "text": "The job name is invalid. It can contain lowercase alphanumeric (a-z and 0-9) characters, hyphens or underscores and must start and end with an alphanumeric character."
+  },
+  "job_id_valid": {
+    "text": "Job id"
+  },
+  "job_group_id_invalid": {
+    "text": "One of the job group names is invalid. They can contain lowercase alphanumeric (a-z and 0-9) characters, hyphens or underscores and must start and end with an alphanumeric character."
+  },
+  "job_group_id_valid": {
+    "text": "Job group ids"
+  },
+  "skipped_extended_tests": {
+    "text": "Skipped some checks because the basic requirements of the job configuration were not met."
+  },
   "success_cardinality": {
     "text": "Cardinality"
   },
   "success_bucket_span": {
-    "text": "Bucket Span"
+    "text": "Bucket span"
   },
   "success_influencers": {
     "text": "Influencers"

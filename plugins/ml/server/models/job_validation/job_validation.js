@@ -17,19 +17,44 @@ import Boom from 'boom';
 
 import { renderTemplate } from '../../../common/util/string_utils';
 import messages from './messages.json';
+import { VALIDATION_STATUS } from '../../../common/constants/validation';
 
+import { basicJobValidation } from '../../../common/util/job_utils';
 import { validateBucketSpan } from './validate_bucket_span';
 import { validateCardinality } from './validate_cardinality';
 import { validateInfluencer } from './validate_influencer';
 
 
-export async function validateJob(callWithRequest, job) {
+export async function validateJob(callWithRequest, payload) {
+  const { duration, fields, job } = payload;
+
   try {
-    const validationMessages = [
-      ...await validateCardinality(callWithRequest, job),
-      ...await validateBucketSpan(callWithRequest, job),
-      ...await validateInfluencer(callWithRequest, job)
-    ];
+    // check if basic tests pass the requirements to run the extended tests.
+    // if so, run the extended tests and merge the messages.
+    // otherwise just return the basic test messages.
+    const basicValidation = basicJobValidation(job, fields);
+    let validationMessages;
+
+    if (basicValidation.valid) {
+      // remove basic success messages from tests
+      // where we run additional extended tests.
+      const filteredBasicValidationMessages = basicValidation.messages.filter((m) => {
+        return m.id !== 'bucket_span_valid';
+      });
+
+      validationMessages = [
+        ...filteredBasicValidationMessages,
+        ...await validateCardinality(callWithRequest, job),
+        ...await validateBucketSpan(callWithRequest, job, duration),
+        ...await validateInfluencer(callWithRequest, job)
+      ];
+    } else {
+      validationMessages = basicValidation.messages;
+      validationMessages.push({
+        status: VALIDATION_STATUS.WARNING,
+        id: 'skipped_extended_tests'
+      });
+    }
 
     return validationMessages.map(message => {
       if (typeof messages[message.id] !== 'undefined') {
