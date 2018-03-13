@@ -1,82 +1,127 @@
 {
   "field_not_aggregatable": {
+    "status": "ERROR",
     "text": "Field \"{{fieldName}}\" is not an aggregatable field.",
     "url": "https://www.elastic.co/guide/en/x-pack/master/ml-configuring-aggregation.html"
   },
-  "over_field_cardinality": {
+  "cardinality_over_field": {
+    "status": "WARNING",
     "text": "Cardinality of over_field \"{{fieldName}}\" is below 10 and might be less suitable for population analysis.",
     "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#cardinality"
   },
-  "partition_field_cardinality": {
+  "cardinality_partition_field": {
+    "status": "WARNING",
     "text": "Cardinality of partition_field \"{{fieldName}}\" is above 100 and might result in high memory usage. Consider using an over_field.",
     "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#cardinality"
   },
+  "categorization_filters_valid": {
+    "status": "SUCCESS",
+    "text": "Categorization filters"
+  },
+  "categorization_filters_invalid": {
+    "status": "ERROR",
+    "text": "The categorization filters are invalid."
+  },
+  "bucket_span_empty": {
+    "status": "ERROR",
+    "text": "The bucket span field must be specified."
+  },
   "bucket_span_estimation_mismatch": {
+    "status": "INFO",
     "text": "Current bucket span is \"{{currentBucketSpan}}\", but bucket span estimation returned \"{{estimateBucketSpan}}\".",
     "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#bucket-span"
   },
   "bucket_span_high": {
+    "status": "INFO",
     "text": "Bucket span is 1 day or more. Be aware that days are considered as UTC days, not local days.",
     "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#bucket-span"
   },
   "bucket_span_no_duration": {
+    "status": "INFO",
     "text": "Bucket span estimation was skipped because no start and end date to reference the original data was supplied. This is not yet available when using the advanced job config wizard."
   },
   "bucket_span_valid": {
+    "status": "SUCCESS",
     "text": "Bucket span format"
   },
+  "bucket_span_invalid": {
+    "status": "ERROR",
+    "text": "The specified bucket span is not a valid time interval format e.g. 10m, 1h."
+  },
   "detectors_empty": {
+    "status": "ERROR",
     "text": "No detectors were found. At least one detector must be specified."
   },
   "detectors_function_empty": {
+    "status": "ERROR",
     "text": "One of the detector functions is empty."
   },
   "detectors_function_not_empty": {
+    "status": "SUCCESS",
     "text": "Detector functions"
   },
   "index_fields_invalid": {
+    "status": "ERROR",
     "text": "Could not load fields from index."
   },
   "index_fields_valid": {
+    "status": "SUCCESS",
     "text": "Index fields"
   },
   "influencer_high": {
+    "status": "WARNING",
     "text": "The job configuration includes more than 3 influencers. Consider using fewer influencers or creating multiple jobs.",
     "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#influencers"
   },
+  "influencer_low": {
+    "status": "WARNING",
+    "text": "The job configuration includes no influencers. Picking an influencer is strongly recommended.",
+    "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#influencers"
+  },
   "influencer_low_suggestion": {
+    "status": "WARNING",
     "text": "The job configuration includes a partition or over field but no influencers are configured. Consider using {{influencerSuggestion}} as an influencer.",
     "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#influencers"
   },
   "influencer_low_suggestions": {
+    "status": "WARNING",
     "text": "The job configuration includes partition or over fields but no influencers are configured. Consider using one of {{influencerSuggestion}} as an influencer.",
     "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#influencers"
   },
   "job_id_empty": {
+    "status": "ERROR",
     "text": "The job name field must not be empty."
   },
   "job_id_invalid": {
+    "status": "ERROR",
     "text": "The job name is invalid. It can contain lowercase alphanumeric (a-z and 0-9) characters, hyphens or underscores and must start and end with an alphanumeric character."
   },
   "job_id_valid": {
+    "status": "SUCCESS",
     "text": "Job id"
   },
   "job_group_id_invalid": {
+    "status": "ERROR",
     "text": "One of the job group names is invalid. They can contain lowercase alphanumeric (a-z and 0-9) characters, hyphens or underscores and must start and end with an alphanumeric character."
   },
   "job_group_id_valid": {
+    "status": "SUCCESS",
     "text": "Job group ids"
   },
   "skipped_extended_tests": {
+    "status": "WARNING",
     "text": "Skipped some checks because the basic requirements of the job configuration were not met."
   },
   "success_cardinality": {
+    "status": "SUCCESS",
     "text": "Cardinality"
   },
   "success_bucket_span": {
+    "status": "SUCCESS",
     "text": "Bucket span"
   },
   "success_influencers": {
+    "status": "SUCCESS",
     "text": "Influencers"
   }
 }

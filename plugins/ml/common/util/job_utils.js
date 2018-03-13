@@ -17,7 +17,6 @@ import _ from 'lodash';
 import semver from 'semver';
 
 import { parseInterval } from './parse_interval';
-import { VALIDATION_STATUS } from '../constants/validation';
 
 // work out the default frequency based on the bucket_span in seconds
 export function calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) {
@@ -217,41 +216,26 @@ export function basicJobValidation(job, fields) {
   if (job) {
     // Job details
     if (_.isEmpty(job.job_id)) {
-      messages.push({
-        status: VALIDATION_STATUS.ERROR,
-        id: 'job_id_empty'
-      });
+      messages.push({ id: 'job_id_empty' });
       valid = false;
     } else if (isJobIdValid(job.job_id) === false) {
-      messages.push({
-        status: VALIDATION_STATUS.ERROR,
-        id: 'job_id_invalid'
-      });
+      messages.push({ id: 'job_id_invalid' });
       valid = false;
     } else {
-      messages.push({
-        status: VALIDATION_STATUS.SUCCESS,
-        id: 'job_id_valid'
-      });
+      messages.push({ id: 'job_id_valid' });
     }
 
     if (job.groups !== undefined) {
       let groupIdValid = true;
       job.groups.forEach(group => {
         if (isJobIdValid(group) === false) {
-          messages.push({
-            status: VALIDATION_STATUS.ERROR,
-            id: 'job_group_id_invalid'
-          });
+          messages.push({ id: 'job_group_id_invalid' });
           groupIdValid = false;
           valid = false;
         }
       });
       if (job.groups.length > 0 && groupIdValid) {
-        messages.push({
-          status: VALIDATION_STATUS.SUCCESS,
-          id: 'job_group_id_valid'
-        });
+        messages.push({ id: 'job_group_id_valid' });
       }
     }
 
@@ -275,24 +259,15 @@ export function basicJobValidation(job, fields) {
       });
 
       if (v) {
-        messages.push({
-          status: VALIDATION_STATUS.SUCCESS,
-          id: 'categorization_filters_valid'
-        });
+        messages.push({ id: 'categorization_filters_valid' });
       } else {
-        messages.push({
-          status: VALIDATION_STATUS.ERROR,
-          id: 'categorization_filters_invalid'
-        });
+        messages.push({ id: 'categorization_filters_invalid' });
         valid = false;
       }
     }
 
     if (job.analysis_config.detectors.length === 0) {
-      messages.push({
-        status: VALIDATION_STATUS.ERROR,
-        id: 'detectors_empty'
-      });
+      messages.push({ id: 'detectors_empty' });
       valid = false;
     } else {
       let v = true;
@@ -302,15 +277,9 @@ export function basicJobValidation(job, fields) {
         }
       });
       if (v) {
-        messages.push({
-          status: VALIDATION_STATUS.SUCCESS,
-          id: 'detectors_function_not_empty'
-        });
+        messages.push({ id: 'detectors_function_not_empty' });
       } else {
-        messages.push({
-          status: VALIDATION_STATUS.ERROR,
-          id: 'detectors_function_empty'
-        });
+        messages.push({ id: 'detectors_function_empty' });
         valid = false;
       }
     }
@@ -321,16 +290,10 @@ export function basicJobValidation(job, fields) {
     /*
     if (job.analysis_config.influencers &&
       job.analysis_config.influencers.length === 0) {
-      messages.push({
-        status: VALIDATION_STATUS.ERROR,
-        id: 'influencers_empty'
-      });
+      messages.push({ id: 'influencers_low' });
       valid = false;
     } else {
-      messages.push({
-        status: VALIDATION_STATUS.SUCCESS,
-        id: 'influencers_not_empty'
-      });
+      messages.push({ id: 'success_influencers' });
     }
     */
 
@@ -338,24 +301,15 @@ export function basicJobValidation(job, fields) {
       job.analysis_config.bucket_span === '' ||
       job.analysis_config.bucket_span === undefined
     ) {
-      messages.push({
-        status: VALIDATION_STATUS.ERROR,
-        id: 'bucket_span_empty'
-      });
+      messages.push({ id: 'bucket_span_empty' });
       valid = false;
     } else {
       const bucketSpan = parseInterval(job.analysis_config.bucket_span);
       if (bucketSpan === null) {
-        messages.push({
-          status: VALIDATION_STATUS.ERROR,
-          id: 'bucket_span_invalid'
-        });
+        messages.push({ id: 'bucket_span_invalid' });
         valid = false;
       } else {
-        messages.push({
-          status: VALIDATION_STATUS.SUCCESS,
-          id: 'bucket_span_valid'
-        });
+        messages.push({ id: 'bucket_span_valid' });
       }
     }
 
@@ -363,16 +317,10 @@ export function basicJobValidation(job, fields) {
     if (typeof fields !== 'undefined') {
       const loadedFields = Object.keys(fields);
       if (loadedFields.length === 0) {
-        messages.push({
-          status: VALIDATION_STATUS.ERROR,
-          id: 'index_fields_invalid'
-        });
+        messages.push({ id: 'index_fields_invalid' });
         valid = false;
       } else {
-        messages.push({
-          status: VALIDATION_STATUS.SUCCESS,
-          id: 'index_fields_valid'
-        });
+        messages.push({ id: 'index_fields_valid' });
       }
     }
   } else {

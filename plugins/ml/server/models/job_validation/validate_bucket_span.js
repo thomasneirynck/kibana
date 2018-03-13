@@ -16,7 +16,6 @@
 import { estimateBucketSpanFactory } from '../../models/bucket_span_estimator';
 import { mlFunctionToESAggregation } from '../../../common/util/job_utils';
 import { parseInterval } from '../../../common/util/parse_interval.js';
-import { VALIDATION_STATUS } from '../../../common/constants/validation';
 
 const BUCKET_SPAN_HIGH_THRESHOLD = 1;
 
@@ -55,10 +54,7 @@ const pickBucketSpan = (bucketSpans) => {
 
 export async function validateBucketSpan(callWithRequest, job, duration) {
   if (typeof duration === 'undefined') {
-    return [{
-      status: VALIDATION_STATUS.WARNING,
-      id: 'bucket_span_no_duration'
-    }];
+    return [{ id: 'bucket_span_no_duration' }];
   }
 
   const messages = [];
@@ -66,10 +62,7 @@ export async function validateBucketSpan(callWithRequest, job, duration) {
 
   // test #1: check if bucket span is higher than define threshold
   if (bucketSpanDays >= BUCKET_SPAN_HIGH_THRESHOLD) {
-    messages.push({
-      status: VALIDATION_STATUS.INFO,
-      id: 'bucket_span_high'
-    });
+    messages.push({ id: 'bucket_span_high' });
   }
 
   // test #2: check if bucket span differs from bucket span estimator result
@@ -133,7 +126,6 @@ export async function validateBucketSpan(callWithRequest, job, duration) {
       // with an estimation and it doesn't match the job configuration.
       if (bucketSpan.name !== job.analysis_config.bucket_span) {
         messages.push({
-          status: VALIDATION_STATUS.INFO,
           id: 'bucket_span_estimation_mismatch',
           currentBucketSpan: job.analysis_config.bucket_span,
           estimateBucketSpan: bucketSpan.name
@@ -147,10 +139,7 @@ export async function validateBucketSpan(callWithRequest, job, duration) {
   }
 
   if (messages.length === 0) {
-    messages.push({
-      status: VALIDATION_STATUS.SUCCESS,
-      id: 'success_bucket_span'
-    });
+    messages.push({ id: 'success_bucket_span' });
   }
 
   return messages;

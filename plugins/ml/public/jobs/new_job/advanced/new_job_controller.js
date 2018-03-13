@@ -1020,7 +1020,7 @@ module.controller('MlNewJob',
           tabs[1].checks.bucketSpan.message = 'bucket_span must be set';
           tabs[1].checks.bucketSpan.valid = false;
         } else if (validationResults.contains('bucket_span_invalid')) {
-          tabs[1].checks.bucketSpan.message = `${job.analysis_config.bucket_span} is not a valid time interval format. e.g. 10m, 1h`;
+          tabs[1].checks.bucketSpan.message = `${job.analysis_config.bucket_span} is not a valid time interval format e.g. 10m, 1h.`;
           tabs[1].checks.bucketSpan.valid = false;
         }
 

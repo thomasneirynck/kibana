@@ -15,7 +15,6 @@
 
 import _ from 'lodash';
 
-import { VALIDATION_STATUS } from '../../../common/constants/validation';
 import { DataVisualizer } from '../data_visualizer';
 
 // Threshold to determine whether cardinality is
@@ -49,14 +48,12 @@ const validateFactory = (callWithRequest, job) => {
         if (typeof field === 'object') {
           if (isInvalid(field.stats.cardinality)) {
             messages.push({
-              status: VALIDATION_STATUS.WARNING,
-              id: `${type}_field_cardinality`,
+              id: `cardinality_${type}_field`,
               fieldName: d[fieldName]
             });
           }
         } else {
           messages.push({
-            status: VALIDATION_STATUS.ERROR,
             id: 'field_not_aggregatable',
             fieldName: d[fieldName]
           });
@@ -90,10 +87,7 @@ export async function validateCardinality(callWithRequest, job) {
   ];
 
   if (messages.length === 0) {
-    messages.push({
-      status: VALIDATION_STATUS.SUCCESS,
-      id: 'success_cardinality'
-    });
+    messages.push({ id: 'success_cardinality' });
   }
 
   return messages;

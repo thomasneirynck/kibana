@@ -50,10 +50,7 @@ export async function validateJob(callWithRequest, payload) {
       ];
     } else {
       validationMessages = basicValidation.messages;
-      validationMessages.push({
-        status: VALIDATION_STATUS.WARNING,
-        id: 'skipped_extended_tests'
-      });
+      validationMessages.push({ id: 'skipped_extended_tests' });
     }
 
     return validationMessages.map(message => {
@@ -65,6 +62,8 @@ export async function validateJob(callWithRequest, payload) {
         if (typeof messages[message.id].url !== 'undefined') {
           message.url = messages[message.id].url;
         }
+
+        message.status = VALIDATION_STATUS[messages[message.id].status];
       } else {
         message.text = `${message.id} (unknown message id)`;
       }

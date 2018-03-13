@@ -48,7 +48,10 @@
             </div>
           </div>
           <div class="euiFlexItem euiFlexItem--flexGrowZero">
-            <ml-validate-job class="euiFormRow" job="job" />
+            <ml-validate-job
+              class="euiFormRow"
+              duration="{ start: job.data_counts.earliest_record_timestamp, end: job.data_counts.latest_record_timestamp}"
+              job="job" />
           </div>
         </div>
       </div>

@@ -13,8 +13,6 @@
  * strictly prohibited.
  */
 
-import { VALIDATION_STATUS } from '../../../common/constants/validation';
-
 const INFLUENCER_LOW_THRESHOLD = 0;
 const INFLUENCER_HIGH_THRESHOLD = 4;
 const DETECTOR_FIELD_NAMES_THRESHOLD = 1;
@@ -46,23 +44,15 @@ export async function validateInfluencer(callWithRequest, job) {
       influencerSuggestion = `[${uniqueInfluencers.map(i => `"${i}"`).join(',')}]`;
     }
 
-    messages.push({
-      status: VALIDATION_STATUS.WARNING,
-      id,
-      influencerSuggestion
-    });
+    messages.push({ id, influencerSuggestion });
+  } else if (influencers <= INFLUENCER_LOW_THRESHOLD) {
+    messages.push({ id: 'influencer_low' });
   } else if (influencers >= INFLUENCER_HIGH_THRESHOLD) {
-    messages.push({
-      status: VALIDATION_STATUS.WARNING,
-      id: 'influencer_high'
-    });
+    messages.push({ id: 'influencer_high' });
   }
 
   if (messages.length === 0) {
-    messages.push({
-      status: VALIDATION_STATUS.SUCCESS,
-      id: 'success_influencers'
-    });
+    messages.push({ id: 'success_influencers' });
   }
 
   return Promise.resolve(messages);
