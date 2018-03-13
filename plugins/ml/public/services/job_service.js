@@ -20,6 +20,7 @@ import moment from 'moment';
 import { parseInterval } from 'ui/utils/parse_interval';
 
 import { labelDuplicateDetectorDescriptions } from 'plugins/ml/util/anomaly_utils';
+import { isWebUrl } from 'plugins/ml/util/string_utils';
 import { ML_DATA_PREVIEW_COUNT } from 'plugins/ml/../common/util/job_utils';
 
 import { uiModules } from 'ui/modules';
@@ -995,7 +996,8 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       if (_.has(jobObj, 'custom_settings.custom_urls')) {
         job.customUrls = [];
         _.each(jobObj.custom_settings.custom_urls, (url) => {
-          if (_.has(url, 'url_name') && _.has(url, 'url_value')) {
+          if (_.has(url, 'url_name') && _.has(url, 'url_value') && isWebUrl(url.url_value)) {
+            // Only make web URLs (i.e. http or https) available in dashboard drilldowns.
             job.customUrls.push(url);
           }
         });
