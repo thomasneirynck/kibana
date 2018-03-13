@@ -182,16 +182,15 @@ gulp.task('testserver', () => {
 });
 
 gulp.task('testbrowser', () => {
-  getEnabledPlugins().then(plugins => {
+  return getEnabledPlugins().then(plugins => {
     return pluginHelpers.run('testBrowser', {
       plugins: plugins.join(','),
     });
   });
-
 });
 
 gulp.task('testbrowser-dev', () => {
-  getEnabledPlugins().then(plugins => {
+  return getEnabledPlugins().then(plugins => {
     return pluginHelpers.run('testBrowser', {
       dev: true,
       plugins: plugins.join(','),
