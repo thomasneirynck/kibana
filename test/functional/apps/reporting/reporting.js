@@ -16,7 +16,7 @@ export default function ({ getService, getPageObjects }) {
   const PageObjects = getPageObjects(['reporting', 'common', 'dashboard', 'header', 'discover', 'visualize']);
   const log = getService('log');
 
-  describe('Reporting', () => {
+  describe.skip('Reporting', () => {
 
     before('initialize tests', async () => {
       await kibanaServer.uiSettings.disableToastAutohide();
