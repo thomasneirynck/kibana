@@ -15,6 +15,7 @@
 
 import moment from 'moment';
 import { migrateFilter } from 'ui/courier/data_source/_migrate_filter.js';
+import { addItemToRecentlyAccessed } from 'plugins/ml/util/recently_accessed';
 
 export function getQueryFromSavedSearch(formConfig) {
   const must = [];
@@ -102,4 +103,9 @@ export function createResultsUrl(jobId, start, end, resultsPage) {
   path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))';
 
   return path;
+}
+
+export function addNewJobToRecentlyAccessed(jobId, resultsUrl) {
+  const urlParts = resultsUrl.match(/ml#\/(.+?)(\?.+)/);
+  addItemToRecentlyAccessed(urlParts[1], jobId, urlParts[2]);
 }

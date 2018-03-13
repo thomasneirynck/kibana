@@ -30,7 +30,7 @@ import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/components/utils/filter_agg_types';
 import { validateJobId } from 'plugins/ml/jobs/new_job/simple/components/utils/validate_job';
 import { adjustIntervalDisplayed } from 'plugins/ml/jobs/new_job/simple/components/utils/adjust_interval';
-import { createSearchItems, createResultsUrl } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
+import { createSearchItems, createResultsUrl, addNewJobToRecentlyAccessed } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/components/utils/app_state_settings';
 import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
 import { createFields } from 'plugins/ml/jobs/new_job/simple/components/utils/create_fields';
@@ -70,6 +70,7 @@ module
     const MlTimeBuckets = Private(IntervalHelperProvider);
     const calculateModelMemoryLimit = Private(CalculateModelMemoryLimitProvider);
     const chartDataUtils = Private(ChartDataUtilsProvider);
+    $scope.addNewJobToRecentlyAccessed = addNewJobToRecentlyAccessed;
 
     const stateDefaults = {
       mlJobSettings: {}

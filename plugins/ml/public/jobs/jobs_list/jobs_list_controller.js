@@ -27,6 +27,7 @@ import { toLocaleString, mlEscape } from 'plugins/ml/util/string_utils';
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkGetJobsPrivilege, permissionCheckProvider } from 'plugins/ml/privilege/check_privilege';
+import { addItemToRecentlyAccessed } from 'plugins/ml/util/recently_accessed';
 
 import template from './jobs_list.html';
 import deleteJobTemplate from 'plugins/ml/jobs/jobs_list/delete_job_modal/delete_job_modal.html';
@@ -276,6 +277,7 @@ module.controller('MlJobsList',
         rowScope.time = latestTimeStamp;
         rowScope.jobUrl = mlJobService.jobUrls[job.job_id];
         rowScope.enableTimeSeries = isTimeSeriesViewJob(job);
+        rowScope.addItemToRecentlyAccessed = addItemToRecentlyAccessed;
 
 
         rowScopes.push(rowScope);

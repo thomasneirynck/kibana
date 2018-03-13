@@ -24,6 +24,7 @@ import { checkLicenseExpired } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { getIndexPatternWithRoute, getSavedSearchWithRoute, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
+import { addItemToRecentlyAccessed } from 'plugins/ml/util/recently_accessed';
 import template from './job_type.html';
 
 uiRoutes
@@ -72,6 +73,12 @@ module.controller('MlNewJobStepJobType',
     $scope.getUrl = function (basePath) {
       return (savedSearch.id === undefined) ? `${basePath}?index=${indexPattern.id}` :
         `${basePath}?savedSearchId=${savedSearch.id}`;
+    };
+
+    $scope.addSelectionToRecentlyAccessed = function () {
+      const title = (savedSearch.id === undefined) ? indexPattern.title : savedSearch.title;
+      const url = $scope.getUrl('');
+      addItemToRecentlyAccessed('jobs/new_job/datavisualizer', title, url);
     };
 
     $scope.assetsPath = `${chrome.getBasePath()}/plugins/ml/assets`;

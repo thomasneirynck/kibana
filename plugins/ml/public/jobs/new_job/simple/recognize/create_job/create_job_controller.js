@@ -17,7 +17,7 @@ import _ from 'lodash';
 import angular from 'angular';
 import dateMath from '@elastic/datemath';
 import { isJobIdValid, prefixDatafeedId } from 'plugins/ml/../common/util/job_utils';
-import { createSearchItems, createResultsUrl } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
+import { createSearchItems, createResultsUrl, addNewJobToRecentlyAccessed } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 
 import 'plugins/kibana/visualize/styles/main.less';
 
@@ -75,6 +75,7 @@ module
       FAILED: 5
     };
 
+    $scope.addNewJobToRecentlyAccessed = addNewJobToRecentlyAccessed;
 
     $scope.SAVE_STATE = SAVE_STATE;
     $scope.DATAFEED_STATE = DATAFEED_STATE;

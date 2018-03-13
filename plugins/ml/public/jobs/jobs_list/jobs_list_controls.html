@@ -33,6 +33,7 @@
   <!-- anomaly explorer -->
   <a
     href='ml#/explorer/{{jobUrl.url}}'
+    ng-click="addItemToRecentlyAccessed('explorer',job.job_id,  jobUrl.url)"
     class="kuiButton kuiButton--basic kuiButton--small"
     data-toggle="tooltip"
     aria-label="Open Anomaly Explorer"
@@ -45,6 +46,7 @@
   <a
     ng-if='enableTimeSeries'
     href='ml#/timeseriesexplorer/{{jobUrl.url}}'
+    ng-click="addItemToRecentlyAccessed('timeseriesexplorer', job.job_id, jobUrl.url)"
     class="kuiButton kuiButton--basic kuiButton--small"
     data-toggle="tooltip"
     aria-label="Open Single Metric Viewer"
