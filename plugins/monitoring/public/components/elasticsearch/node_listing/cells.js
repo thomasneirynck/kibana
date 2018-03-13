@@ -1,7 +1,7 @@
 import React from 'react';
 import { get } from 'lodash';
 import { formatMetric } from '../../../lib/format_number';
-import { KuiTableRowCell } from 'ui_framework/components';
+import { KuiTableRowCell } from '@kbn/ui-framework/components';
 
 function OfflineCell() {
   return (

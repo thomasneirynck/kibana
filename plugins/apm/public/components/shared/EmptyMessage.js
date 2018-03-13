@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { units, px, fontSizes, fontSize } from '../../style/variables';
 import { get } from 'lodash';
-import { KuiTableInfo } from 'ui_framework/components';
+import { KuiTableInfo } from '@kbn/ui-framework/components';
 import { APM_DOCS } from '../../utils/documentation';
 import { ExternalLink } from '../../utils/url';
 

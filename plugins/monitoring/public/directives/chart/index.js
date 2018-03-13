@@ -10,7 +10,7 @@ import {
 } from 'plugins/monitoring/components/chart';
 import { Tooltip } from 'pivotal-ui/react/tooltip';
 import { OverlayTrigger } from 'pivotal-ui/react/overlay-trigger';
-import { KuiInfoButton } from 'ui_framework/components';
+import { KuiInfoButton } from '@kbn/ui-framework/components';
 
 const uiModule = uiModules.get('plugins/monitoring/directives', []);
 uiModule.directive('monitoringChart', (timefilter) => {

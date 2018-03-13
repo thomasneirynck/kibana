@@ -15,7 +15,7 @@ import {
   KuiToolBarFooterSection,
   KuiToolBarSearchBox,
   KuiToolBarSection
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 
 import EmptyMessage from '../EmptyMessage';
 import { fontSizes, colors } from '../../../style/variables';

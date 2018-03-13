@@ -7,7 +7,7 @@ import { uiModules } from 'ui/modules';
 import {
   KuiTableRowCell,
   KuiTableRow
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 import {
   EuiHealth,
   EuiLink,

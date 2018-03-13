@@ -8,7 +8,7 @@ import {
   truncate
 } from '../../../../style/variables';
 import { RelativeLink } from '../../../../utils/url';
-import { KuiTableRow, KuiTableRowCell } from 'ui_framework/components';
+import { KuiTableRow, KuiTableRowCell } from '@kbn/ui-framework/components';
 import { RIGHT_ALIGNMENT, EuiBadge } from '@elastic/eui';
 import TooltipOverlay from '../../../shared/TooltipOverlay';
 import numeral from '@elastic/numeral';

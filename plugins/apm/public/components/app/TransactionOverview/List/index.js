@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { get } from 'lodash';
 import { TRANSACTION_ID } from '../../../../../common/constants';
 
-import { KuiTableHeaderCell } from 'ui_framework/components';
+import { KuiTableHeaderCell } from '@kbn/ui-framework/components';
 import { AlignmentKuiTableHeaderCell } from '../../../shared/APMTable/APMTable';
 
 import FilterableAPMTable from '../../../shared/APMTable/FilterableAPMTable';

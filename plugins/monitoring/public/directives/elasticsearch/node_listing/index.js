@@ -5,7 +5,7 @@ import { uiModules } from 'ui/modules';
 import {
   KuiTableRowCell,
   KuiTableRow
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 import { MetricCell, OfflineCell } from 'plugins/monitoring/components/elasticsearch/node_listing/cells';
 import { NodeStatusIcon } from 'plugins/monitoring/components/elasticsearch/node/status_icon';
 import { Tooltip } from 'plugins/monitoring/components/tooltip';

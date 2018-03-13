@@ -89,6 +89,7 @@
     "@elastic/datemath": "4.0.2",
     "@elastic/node-crypto": "0.1.2",
     "@elastic/node-phantom-simple": "2.2.4",
+    "@kbn/ui-framework": "link:../../kibana/packages/kbn-ui-framework",
     "angular-paging": "2.2.1",
     "angular-resource": "1.4.9",
     "angular-sanitize": "1.4.9",

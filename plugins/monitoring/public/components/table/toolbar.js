@@ -5,7 +5,7 @@ import {
   KuiToolBarSearchBox,
   KuiToolBarSection,
   KuiToolBarText
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 
 export function MonitoringTableToolBar(props) {
   const searchBox = props.showSearchBox

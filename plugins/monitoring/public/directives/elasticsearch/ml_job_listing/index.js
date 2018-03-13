@@ -6,7 +6,7 @@ import { uiModules } from 'ui/modules';
 import {
   KuiTableRowCell,
   KuiTableRow
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { MachineLearningJobStatusIcon } from 'plugins/monitoring/components/elasticsearch/ml_job_listing/status_icon';
 import { SORT_ASCENDING } from '../../../../common/constants';

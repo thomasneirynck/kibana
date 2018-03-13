@@ -9,7 +9,7 @@ import {
   KuiFlexGroup,
   KuiFlexItem,
   KuiEmptyTablePrompt
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 import {
   EuiLink,
 } from '@elastic/eui';

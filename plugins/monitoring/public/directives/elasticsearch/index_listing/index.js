@@ -7,7 +7,7 @@ import { uiModules } from 'ui/modules';
 import {
   KuiTableRowCell,
   KuiTableRow,
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { ShowSytemIndicesCheckbox } from 'plugins/monitoring/components/elasticsearch/index_listing';
 import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';

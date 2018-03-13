@@ -2,7 +2,7 @@ import React from 'react';
 import {
   KuiEmptyTablePromptPanel,
   KuiTableInfo
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 
 export function MonitoringTableNoData({ message }) {
   return (

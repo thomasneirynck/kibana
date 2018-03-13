@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { RelativeLink } from '../../../../utils/url';
-import { KuiTableRow, KuiTableRowCell } from 'ui_framework/components';
+import { KuiTableRow, KuiTableRowCell } from '@kbn/ui-framework/components';
 import { fontSizes, truncate } from '../../../../style/variables';
 import TooltipOverlay from '../../../shared/TooltipOverlay';
 import { RIGHT_ALIGNMENT } from '@elastic/eui';

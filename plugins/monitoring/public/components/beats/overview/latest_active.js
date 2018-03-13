@@ -4,7 +4,7 @@ import {
   KuiTableRow,
   KuiTableRowCell,
   KuiTableBody,
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 
 export function LatestActive({ latestActive }) {
   const rangeMap = {

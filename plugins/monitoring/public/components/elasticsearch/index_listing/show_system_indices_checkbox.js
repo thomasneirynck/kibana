@@ -2,7 +2,7 @@ import React from 'react';
 import {
   KuiToolBarSection,
   KuiToolBarText,
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 import {
   EuiSwitch,
 } from '@elastic/eui';

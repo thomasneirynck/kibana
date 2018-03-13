@@ -4,7 +4,7 @@ import {
   KuiButton,
   KuiConfirmModal,
   KuiModalOverlay
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 
 export class UploadLicense extends React.PureComponent {
   getFile = () => {

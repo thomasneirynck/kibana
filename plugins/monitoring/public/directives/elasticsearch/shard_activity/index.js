@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import { EuiText, EuiTitle, EuiLink, EuiSpacer, EuiSwitch } from '@elastic/eui';
 import { uiModules } from 'ui/modules';
-import { KuiTableRowCell, KuiTableRow, KuiToolBarSection, KuiToolBarText } from 'ui_framework/components';
+import { KuiTableRowCell, KuiTableRow, KuiToolBarSection, KuiToolBarText } from '@kbn/ui-framework/components';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { parseProps } from './parse_props';
 import {

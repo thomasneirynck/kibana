@@ -5,7 +5,7 @@ import { uiModules } from 'ui/modules';
 import {
   KuiTableRowCell,
   KuiTableRow
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 import { KibanaStatusIcon } from 'plugins/monitoring/components/kibana/status_icon';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { SORT_ASCENDING } from '../../../../common/constants';

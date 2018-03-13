@@ -11,7 +11,7 @@ import {
   KuiPagerButtonGroup,
   KuiTable,
   KuiTableHeaderCell
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 import { MonitoringTableToolBar } from './toolbar';
 import { MonitoringTableNoData } from './no_data';
 import { MonitoringTableFooter } from './footer';

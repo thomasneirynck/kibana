@@ -6,7 +6,7 @@ import {
   KuiCardDescription,
   KuiCardDescriptionText,
   KuiCardDescriptionTitle
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 import { ExternalLink } from '../external_link';
 
 export class SubscriptionRegistration extends React.PureComponent {

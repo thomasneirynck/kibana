@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { KuiTableInfo } from 'ui_framework/components';
+import { KuiTableInfo } from '@kbn/ui-framework/components';
 import _ from 'lodash';
 import STATIC_PROPS from './staticProperties.json';
 import {

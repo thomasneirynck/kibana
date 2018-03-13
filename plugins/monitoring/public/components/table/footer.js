@@ -3,7 +3,7 @@ import {
   KuiToolBarFooter,
   KuiToolBarFooterSection,
   KuiToolBarText
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 
 export function MonitoringTableFooter({ pageIndexFirstRow, pageIndexLastRow, rowsFiltered, paginationControls }) {
   return (

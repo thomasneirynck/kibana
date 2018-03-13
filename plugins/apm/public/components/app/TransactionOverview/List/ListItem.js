@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { KuiTableRow, KuiTableRowCell } from 'ui_framework/components';
+import { KuiTableRow, KuiTableRowCell } from '@kbn/ui-framework/components';
 import {
   units,
   borderRadius,

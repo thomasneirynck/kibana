@@ -3,7 +3,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { EuiIcon, EuiHealth } from '@elastic/eui';
 import { uiModules } from 'ui/modules';
-import { KuiTableRowCell, KuiTableRow } from 'ui_framework/components';
+import { KuiTableRowCell, KuiTableRow } from '@kbn/ui-framework/components';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { CALCULATE_DURATION_SINCE, SORT_DESCENDING } from '../../../common/constants';
 import { Tooltip } from 'plugins/monitoring/components/tooltip';

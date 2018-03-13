@@ -7,7 +7,7 @@ import {
 } from 'plugins/monitoring/components/chart';
 import { Tooltip } from 'pivotal-ui/react/tooltip';
 import { OverlayTrigger } from 'pivotal-ui/react/overlay-trigger';
-import { KuiInfoButton } from 'ui_framework/components';
+import { KuiInfoButton } from '@kbn/ui-framework/components';
 import { formatMetric } from 'plugins/monitoring/lib/format_number';
 
 function renderTransportAddress(summary) {

@@ -11,7 +11,7 @@ import {
 import {
   KuiTableRowCell,
   KuiTableRow
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 
 import {

@@ -4,7 +4,7 @@ import {
   KuiTableRow,
   KuiTableRowCell,
   KuiTableBody,
-} from 'ui_framework/components';
+} from '@kbn/ui-framework/components';
 
 export function LatestVersions({ latestVersions }) {
   const versions = latestVersions.map(({ version, count }, index) => {
