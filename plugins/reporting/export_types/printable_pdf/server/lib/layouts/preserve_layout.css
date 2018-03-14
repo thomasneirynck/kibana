@@ -52,6 +52,7 @@ visualize
 visualize-app
 visualize
 .vis-editor-content
+.default-vis-editor
 > :not(.vis-editor-canvas):not(.vis_editor) {
 display: none;
 }
