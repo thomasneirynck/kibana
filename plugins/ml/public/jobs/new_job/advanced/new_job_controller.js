@@ -375,6 +375,13 @@ module.controller('MlNewJob',
       }
     }
 
+    $scope.getJobConfig = function () {
+      getDelimiterSelection();
+      getDatafeedSelection();
+      getAnalysisLimitsSelection();
+      return $scope.job;
+    };
+
     $scope.save = function () {
       console.log('save() job: ', $scope.job);
       msgs.clear();

@@ -4,14 +4,24 @@
     "text": "Field \"{{fieldName}}\" is not an aggregatable field.",
     "url": "https://www.elastic.co/guide/en/x-pack/master/ml-configuring-aggregation.html"
   },
-  "cardinality_over_field": {
+  "cardinality_by_field": {
+    "status": "WARNING",
+    "text": "Cardinality of by_field \"{{fieldName}}\" is above 1000 and might result in high memory usage.",
+    "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#cardinality"
+  },
+  "cardinality_over_field_low": {
     "status": "WARNING",
     "text": "Cardinality of over_field \"{{fieldName}}\" is below 10 and might be less suitable for population analysis.",
     "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#cardinality"
   },
+  "cardinality_over_field_high": {
+    "status": "WARNING",
+    "text": "Cardinality of over_field \"{{fieldName}}\" is above 1000000 and might result in high memory usage.",
+    "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#cardinality"
+  },
   "cardinality_partition_field": {
     "status": "WARNING",
-    "text": "Cardinality of partition_field \"{{fieldName}}\" is above 100 and might result in high memory usage. Consider using an over_field.",
+    "text": "Cardinality of partition_field \"{{fieldName}}\" is above 1000 and might result in high memory usage.",
     "url": "https://www.elastic.co/guide/en/kibana/master/job-tips.html#cardinality"
   },
   "categorization_filters_valid": {

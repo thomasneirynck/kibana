@@ -17,15 +17,17 @@ import _ from 'lodash';
 
 import { DataVisualizer } from '../data_visualizer';
 
-// Threshold to determine whether cardinality is
-// too high or low for population analysis
-const OVER_FIELD_CARDINALITY_THRESHOLD = 10;
-const PARTITION_FIELD_CARDINALITY_THRESHOLD = 100;
+// Thresholds to determine whether cardinality is
+// too high or low for certain fields analysis
+const OVER_FIELD_CARDINALITY_THRESHOLD_LOW = 10;
+const OVER_FIELD_CARDINALITY_THRESHOLD_HIGH = 1000000;
+const PARTITION_FIELD_CARDINALITY_THRESHOLD = 1000;
+const BY_FIELD_CARDINALITY_THRESHOLD = 1000;
 
 const validateFactory = (callWithRequest, job) => {
   const dv = new DataVisualizer(callWithRequest);
 
-  return async ({ type, isInvalid }) => {
+  return async ({ type, isInvalid, messageId }) => {
     const messages = [];
     const fieldName = `${type}_field_name`;
 
@@ -48,7 +50,7 @@ const validateFactory = (callWithRequest, job) => {
         if (typeof field === 'object') {
           if (isInvalid(field.stats.cardinality)) {
             messages.push({
-              id: `cardinality_${type}_field`,
+              id: messageId || `cardinality_${type}_field`,
               fieldName: d[fieldName]
             });
           }
@@ -70,9 +72,15 @@ export async function validateCardinality(callWithRequest, job) {
   const validate = validateFactory(callWithRequest, job);
 
   // check over fields (population analysis)
-  const validateOverFields = validate({
+  const validateOverFieldsLow = validate({
     type: 'over',
-    isInvalid: cardinality => cardinality < OVER_FIELD_CARDINALITY_THRESHOLD
+    isInvalid: cardinality => cardinality < OVER_FIELD_CARDINALITY_THRESHOLD_LOW,
+    messageId: 'cardinality_over_field_low'
+  });
+  const validateOverFieldsHigh = validate({
+    type: 'over',
+    isInvalid: cardinality => cardinality > OVER_FIELD_CARDINALITY_THRESHOLD_HIGH,
+    messageId: 'cardinality_over_field_high'
   });
 
   // check partition/by fields (multi-metric analysis)
@@ -80,9 +88,17 @@ export async function validateCardinality(callWithRequest, job) {
     type: 'partition',
     isInvalid: cardinality => cardinality > PARTITION_FIELD_CARDINALITY_THRESHOLD
   });
+  const validateByFields = validate({
+    type: 'by',
+    isInvalid: cardinality => cardinality > BY_FIELD_CARDINALITY_THRESHOLD
+  });
 
+  // we already called the validation functions above,
+  // but add "await" only here so they can be run in parallel.
   const messages = [
-    ...await validateOverFields,
+    ...await validateByFields,
+    ...await validateOverFieldsLow,
+    ...await validateOverFieldsHigh,
     ...await validatePartitionFields
   ];
 
