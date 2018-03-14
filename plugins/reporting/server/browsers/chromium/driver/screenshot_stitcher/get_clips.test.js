@@ -10,6 +10,16 @@ function getClipsTest(description, { dimensions, max }, { clips: expectedClips }
   });
 }
 
+getClipsTest(`creates one rect if 0, 0`,
+  {
+    dimensions: { x: 0, y: 0, height: 0, width: 0 },
+    max: 100,
+  },
+  {
+    clips: [{ x: 0, y: 0, height: 0, width: 0 }],
+  }
+);
+
 getClipsTest(`creates one rect if smaller than max`,
   {
     dimensions: { x: 0, y: 0, height: 99, width: 99 },

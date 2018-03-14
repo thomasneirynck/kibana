@@ -14,6 +14,10 @@ const canUseFirstScreenshot = (screenshots, outputDimensions) => {
 };
 
 export function $combine(screenshots, outputDimensions) {
+  if (screenshots.length === 0) {
+    return Observable.throw('Unable to combine 0 screenshots');
+  }
+
   if (canUseFirstScreenshot(screenshots, outputDimensions)) {
     return Observable.of(screenshots[0].data);
   }

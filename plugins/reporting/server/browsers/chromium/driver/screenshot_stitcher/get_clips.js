@@ -2,8 +2,8 @@ import { Observable } from 'rxjs';
 
 export function $getClips(dimensions, max) {
   return Observable.from(function* () {
-    const columns = Math.ceil(dimensions.width / max);
-    const rows = Math.ceil(dimensions.height / max);
+    const columns = Math.ceil(dimensions.width / max) || 1;
+    const rows = Math.ceil(dimensions.height / max) || 1;
 
     for (let row = 0; row < rows; ++row) {
       for (let column = 0; column < columns; ++column) {
