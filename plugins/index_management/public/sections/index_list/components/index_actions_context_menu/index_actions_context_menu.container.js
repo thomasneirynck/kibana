@@ -33,22 +33,22 @@ const mapDispatchToProps = (dispatch, { indexNames }) => {
       dispatch(editIndexSettings({ indexName: indexNames[0] }));
     },
     clearCacheIndices: () => {
-      dispatch(clearCacheIndices({ indexNames: indexNames }));
+      dispatch(clearCacheIndices({ indexNames }));
     },
     closeIndices: () => {
-      dispatch(closeIndices({ indexNames: indexNames }));
+      dispatch(closeIndices({ indexNames }));
     },
     flushIndices: () => {
-      dispatch(flushIndices({ indexNames: indexNames }));
+      dispatch(flushIndices({ indexNames }));
     },
     openIndices: () => {
-      dispatch(openIndices({ indexNames: indexNames }));
+      dispatch(openIndices({ indexNames }));
     },
     refreshIndices: () => {
-      dispatch(refreshIndices({ indexNames: indexNames }));
+      dispatch(refreshIndices({ indexNames }));
     },
-    forcemergeIndices: () => {
-      dispatch(forcemergeIndices({ indexNames: indexNames }));
+    forcemergeIndices: (maxNumSegments) => {
+      dispatch(forcemergeIndices({ indexNames, maxNumSegments }));
     },
     showSettings: () => {
       dispatch(openDetailPanel({ indexName: indexNames[0], panelType: 'Settings' }));

@@ -7,10 +7,10 @@ export const forcemergeIndicesStart = createAction(
   "INDEX_MANAGEMENT_FORCEMERGE_INDICES_START"
 );
 
-export const forcemergeIndices = ({ indexNames }) => async (dispatch) => {
+export const forcemergeIndices = ({ indexNames, maxNumSegments }) => async (dispatch) => {
   dispatch(forcemergeIndicesStart({ indexNames }));
   try {
-    await request(indexNames);
+    await request(indexNames, maxNumSegments);
   } catch (error) {
     return toastNotifications.addDanger(error.data.message);
   }

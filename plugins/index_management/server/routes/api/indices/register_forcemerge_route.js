@@ -3,17 +3,16 @@ import { isEsErrorFactory } from '../../../lib/is_es_error_factory';
 import { wrapEsError, wrapUnknownError } from '../../../lib/error_wrappers';
 import { licensePreRoutingFactory } from'../../../lib/license_pre_routing_factory';
 
-function getIndexArrayFromPayload(payload) {
-  return payload.indices || [];
-}
-
-async function forcemergeIndices(callWithRequest, indices) {
+async function forcemergeIndices(callWithRequest, indices, maxNumSegments) {
   const params = {
     ignoreUnavailable: true,
     allowNoIndices: false,
     expandWildcards: 'none',
-    index: indices
+    index: indices,
   };
+  if (maxNumSegments) {
+    params.max_num_segments = maxNumSegments;
+  }
 
   return await callWithRequest('indices.forcemerge', params);
 }
@@ -27,10 +26,10 @@ export function registerForcemergeRoute(server) {
     method: 'POST',
     handler: async (request, reply) => {
       const callWithRequest = callWithRequestFactory(server, request);
-      const indices = getIndexArrayFromPayload(request.payload);
-
+      const { payload } = request;
+      const { indices = [], maxNumSegments } = payload;
       try {
-        await forcemergeIndices(callWithRequest, indices);
+        await forcemergeIndices(callWithRequest, indices, maxNumSegments);
 
         //TODO: Should we check acknowledged = true?
         reply();

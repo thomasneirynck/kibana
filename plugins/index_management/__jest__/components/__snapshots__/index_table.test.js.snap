@@ -14,9 +14,11 @@ exports[`index table flush button works from context menu 1`] = `"flushing..."`;
 
 exports[`index table flush button works from context menu 2`] = `"open"`;
 
-exports[`index table force merge button works from context menu 1`] = `"forcing merge..."`;
+exports[`index table force merge button works from context menu 1`] = `"open"`;
 
-exports[`index table force merge button works from context menu 2`] = `"open"`;
+exports[`index table force merge button works from context menu 2`] = `"forcing merge..."`;
+
+exports[`index table force merge button works from context menu 3`] = `"open"`;
 
 exports[`index table open index button works from context menu 1`] = `"opening..."`;
 

@@ -58,9 +58,10 @@ export async function flushIndices(indices) {
   return response.data;
 }
 
-export async function forcemergeIndices(indices) {
+export async function forcemergeIndices(indices, maxNumSegments) {
   const body = {
-    indices
+    indices,
+    maxNumSegments
   };
   const response = await httpClient.post(`${apiPrefix}/indices/forcemerge`, body);
   return response.data;

@@ -98,21 +98,25 @@ describe('check_license', function () {
     });
 
     describe('& license is basic', () => {
-      beforeEach(() => set(mockLicenseInfo, 'license.isOneOf', () => false));
+      beforeEach(() => set(mockLicenseInfo, 'license.isOneOf', () => true));
 
       describe('& license is active', () => {
         beforeEach(() => set(mockLicenseInfo, 'license.isActive', () => true));
 
-        it('should set isAvailable to false', () => {
-          expect(checkLicense(mockLicenseInfo).isAvailable).to.be(false);
+        it('should set isAvailable to true', () => {
+          expect(checkLicense(mockLicenseInfo).isAvailable).to.be(true);
         });
 
-        it ('should set showLinks to false', () => {
-          expect(checkLicense(mockLicenseInfo).showLinks).to.be(false);
+        it ('should set showLinks to true', () => {
+          expect(checkLicense(mockLicenseInfo).showLinks).to.be(true);
         });
 
-        it('should set a message', () => {
-          expect(checkLicense(mockLicenseInfo).message).to.not.be(undefined);
+        it ('should set enableLinks to true', () => {
+          expect(checkLicense(mockLicenseInfo).enableLinks).to.be(true);
+        });
+
+        it('should not set a message', () => {
+          expect(checkLicense(mockLicenseInfo).message).to.be(undefined);
         });
       });
 
@@ -123,8 +127,8 @@ describe('check_license', function () {
           expect(checkLicense(mockLicenseInfo).isAvailable).to.be(false);
         });
 
-        it ('should set showLinks to false', () => {
-          expect(checkLicense(mockLicenseInfo).showLinks).to.be(false);
+        it ('should set showLinks to true', () => {
+          expect(checkLicense(mockLicenseInfo).showLinks).to.be(true);
         });
 
         it('should set a message', () => {

@@ -14,6 +14,7 @@ export function checkLicense(xpackLicenseInfo) {
 
   const VALID_LICENSE_MODES = [
     'trial',
+    'basic',
     'standard',
     'gold',
     'platinum'

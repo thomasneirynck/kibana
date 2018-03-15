@@ -4,6 +4,9 @@ import pluralize from 'pluralize';
 import {
   EuiButton,
   EuiContextMenu,
+  EuiFieldText,
+  EuiForm,
+  EuiFormRow,
   EuiIcon,
   EuiPopover,
   EuiConfirmModal,
@@ -25,7 +28,6 @@ export class IndexActionsContextMenu extends Component {
     const {
       closeIndices,
       openIndices,
-      forcemergeIndices,
       flushIndices,
       refreshIndices,
       clearCacheIndices,
@@ -88,8 +90,9 @@ export class IndexActionsContextMenu extends Component {
         name: `Force merge ${entity}`,
         icon: <EuiIcon type="merge" />,
         onClick: () => {
-          this.closePopoverAndExecute(forcemergeIndices);
-        },
+          this.closePopover();
+          this.openForcemergeSegmentsModal();
+        }
       });
       items.push({
         name: `Refresh ${entity}`,
@@ -129,7 +132,7 @@ export class IndexActionsContextMenu extends Component {
         this.openDeleteConfirmationModal();
       }
     });
-    items.forEach((item) =>{
+    items.forEach(item => {
       item['data-test-subj'] = 'indexTableContextMenuButton';
     });
     const panelTree = {
@@ -167,6 +170,84 @@ export class IndexActionsContextMenu extends Component {
 
   openDeleteConfirmationModal = () => {
     this.setState({ showDeleteConfirmation: true });
+  };
+
+  openForcemergeSegmentsModal = () => {
+    this.setState({ showForcemergeSegmentsModal: true });
+  };
+
+  closeForcemergeSegmentsModal = () => {
+    this.setState({ showForcemergeSegmentsModal: false });
+  };
+
+  forcemergeSegmentsError = () => {
+    const { forcemergeSegments } = this.state;
+    if (!forcemergeSegments || forcemergeSegments.match(/^([1-9][0-9]*)?$/)) {
+      return;
+    } else {
+      return 'Value for number of segments must be a number greater than zero.';
+    }
+  };
+  forcemergeSegmentsModal = () => {
+    const helpText = `The number of segments to merge to.
+      To fully merge the index, set it to 1. Defaults to
+      simply checking if a merge needs to execute, and if so, executes it.`;
+    const oneIndexSelected = this.oneIndexSelected();
+    const entity = this.getEntity(oneIndexSelected);
+    const { forcemergeIndices, indexNames } = this.props;
+    const { showForcemergeSegmentsModal } = this.state;
+    if (!showForcemergeSegmentsModal) {
+      return null;
+    }
+    return (
+      <EuiOverlayMask>
+        <EuiConfirmModal
+          title={`Choose max number of segments for forcemerge ${entity}`}
+          onCancel={this.closeForcemergeSegmentsModal}
+          onConfirm={() => {
+            if (!this.forcemergeSegmentsError()) {
+              this.closePopoverAndExecute(() => {
+                forcemergeIndices(this.state.forcemergeSegments);
+                this.setState({
+                  forcemergeSegments: null,
+                  showForcemergeSegmentsModal: null
+                });
+              });
+            }
+          }}
+          cancelButtonText="Cancel"
+          confirmButtonText="Forcemerge"
+        >
+          <div>
+            <p>
+              You are about to forcemerge {oneIndexSelected ? 'this' : 'these'}{' '}
+              {entity}:
+            </p>
+            <ul>
+              {indexNames.map(indexName => (
+                <li key={indexName}>{indexName}</li>
+              ))}
+            </ul>
+            <EuiForm
+              isInvalid={this.forcemergeSegmentsError()}
+              error={this.forcemergeSegmentsError()}
+            >
+              <EuiFormRow
+                label="Maximum number of segments"
+                helpText={helpText}
+              >
+                <EuiFieldText
+                  onChange={event => {
+                    this.setState({ forcemergeSegments: event.target.value });
+                  }}
+                  name="maxNumberSegments"
+                />
+              </EuiFormRow>
+            </EuiForm>
+          </div>
+        </EuiConfirmModal>
+      </EuiOverlayMask>
+    );
   };
 
   confirmDeleteModal = () => {
@@ -239,6 +320,7 @@ export class IndexActionsContextMenu extends Component {
     return (
       <div>
         {this.confirmDeleteModal()}
+        {this.forcemergeSegmentsModal()}
         <EuiPopover
           id={`contextMenu${entity}`}
           button={button}
