@@ -5,7 +5,7 @@ import { EuiButton } from '@elastic/eui';
 function DiscoverButton({ query, children }) {
   return (
     <KibanaLink pathname={'/app/kibana'} hash={'/discover'} query={query}>
-      <EuiButton color="secondary" iconType="discoverApp">
+      <EuiButton iconType="discoverApp">
         {children || 'View in Discover'}
       </EuiButton>
     </KibanaLink>

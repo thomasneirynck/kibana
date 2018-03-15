@@ -253,7 +253,7 @@ exports[`DetailView should render with data 1`] = `
       href="/app/kibana#/discover?_g=&_a=(interval:auto,query:(language:lucene,query:'context.service.name:\\"opbeans-node\\" AND error.grouping_key:c00e245c2fbebaf178fc31eeb2bb0250'),sort:('@timestamp':desc))"
     >
       <button
-        className="euiButton euiButton--secondary"
+        className="euiButton euiButton--primary"
         type="button"
       >
         <span
