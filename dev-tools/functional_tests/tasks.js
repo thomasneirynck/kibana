@@ -1,10 +1,10 @@
 import { relative } from 'path';
 import Rx from 'rxjs/Rx';
 import { Command } from 'commander';
+import { withProcRunner } from '@kbn/dev-utils';
 
 import {
   withTmpDir,
-  withProcRunner,
   getFtrConfig,
   runKibanaServer,
   runEsWithXpack,

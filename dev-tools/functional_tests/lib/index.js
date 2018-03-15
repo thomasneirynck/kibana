@@ -1,4 +1,3 @@
-export { withProcRunner } from './proc_runner';
 export { withTmpDir } from './tmp';
 export { getFtrConfig } from './get_ftr_config';
 

@@ -23,6 +23,7 @@
     "@elastic/eui": "0.0.26",
     "@elastic/numeral": "2.2.1",
     "@kbn/babel-preset": "link:../../kibana/packages/kbn-babel-preset",
+    "@kbn/dev-utils": "link:../../kibana/packages/kbn-dev-utils",
     "@kbn/plugin-helpers": "link:../../kibana/packages/kbn-plugin-helpers",
     "@types/jest": "21.1.8",
     "ansicolors": "0.3.2",
