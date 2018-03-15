@@ -73,21 +73,7 @@ sudo -u kibana bin/kibana-plugin install x-pack
 For more information, see <<_installing_plugins>>.
 --
 
-. Update {kib} to use the new password for the built-in `kibana` user, which you
-set up along with the other built-in users when you installed {xpack} on {es}.
-You must configure the `elasticsearch.password` setting in the `kibana.yml`
-configuration file with the new password for the `kibana` user.
-+
---
-[source,yaml]
------------------------------------------------
-elasticsearch.username: "kibana"
-elasticsearch.password: "kibanapassword"
------------------------------------------------
-
-For more information,
-see {xpack-ref}/setting-up-authentication.html[Setting Up User Authentication].
---
+include::xpack-passwords.asciidoc[]
 
 . Start {kib}.
 +
