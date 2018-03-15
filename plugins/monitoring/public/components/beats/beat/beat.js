@@ -49,49 +49,51 @@ function renderChart(series,  { onBrush }) {
 export function Beat({ summary, metrics, ...props }) {
   return (
     <div>
-      <div className="monitoring-summary-status">
-        <div
-          className="monitoring-summary-status__content"
-          data-test-subj="beatSummaryStatus01"
-        >
-          <div>
-            <strong data-test-subj="name">{summary.name}</strong>
-          </div>
-          <div>
-            Version: <strong data-test-subj="version">{summary.version}</strong>
-          </div>
-          <div>
-            Beat Type: <strong data-test-subj="type">{summary.type}</strong>
-          </div>
-          { renderTransportAddress(summary) }
-          <div>
-            Output: <strong data-test-subj="output">{summary.output}</strong>
-          </div>
-          <div>
-            Config Reloads: <strong data-test-subj="configReloads">{formatMetric(summary.configReloads, 'int_commas')}</strong>
-          </div>
-          <div>
-            Uptime: <strong data-test-subj="uptime">{formatMetric(summary.uptime, 'time_since')}</strong>
+      <div role="status">
+        <div className="monitoring-summary-status">
+          <div
+            className="monitoring-summary-status__content"
+            data-test-subj="beatSummaryStatus01"
+          >
+            <div>
+              <strong data-test-subj="name">{summary.name}</strong>
+            </div>
+            <div>
+              Version: <strong data-test-subj="version">{summary.version}</strong>
+            </div>
+            <div>
+              Beat Type: <strong data-test-subj="type">{summary.type}</strong>
+            </div>
+            { renderTransportAddress(summary) }
+            <div>
+              Output: <strong data-test-subj="output">{summary.output}</strong>
+            </div>
+            <div>
+              Config Reloads: <strong data-test-subj="configReloads">{formatMetric(summary.configReloads, 'int_commas')}</strong>
+            </div>
+            <div>
+              Uptime: <strong data-test-subj="uptime">{formatMetric(summary.uptime, 'time_since')}</strong>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="monitoring-summary-status">
-        <div
-          className="monitoring-summary-status__content"
-          data-test-subj="beatSummaryStatus02"
-        >
-          <div>
-            Events Total: <strong data-test-subj="eventsTotal">{formatMetric(summary.eventsTotal, 'int_commas')}</strong>
-          </div>
-          <div>
-            Events Emitted: <strong data-test-subj="eventsEmitted">{formatMetric(summary.eventsEmitted, 'int_commas')}</strong>
-          </div>
-          <div>
-            Events Dropped: <strong data-test-subj="eventsDropped">{formatMetric(summary.eventsDropped, 'int_commas')}</strong>
-          </div>
-          <div>
-            Bytes Sent: <strong data-test-subj="bytesWritten">{formatMetric(summary.bytesWritten, 'bytes')}</strong>
+        <div className="monitoring-summary-status" role="status">
+          <div
+            className="monitoring-summary-status__content"
+            data-test-subj="beatSummaryStatus02"
+          >
+            <div>
+              Events Total: <strong data-test-subj="eventsTotal">{formatMetric(summary.eventsTotal, 'int_commas')}</strong>
+            </div>
+            <div>
+              Events Emitted: <strong data-test-subj="eventsEmitted">{formatMetric(summary.eventsEmitted, 'int_commas')}</strong>
+            </div>
+            <div>
+              Events Dropped: <strong data-test-subj="eventsDropped">{formatMetric(summary.eventsDropped, 'int_commas')}</strong>
+            </div>
+            <div>
+              Bytes Sent: <strong data-test-subj="bytesWritten">{formatMetric(summary.bytesWritten, 'bytes')}</strong>
+            </div>
           </div>
         </div>
       </div>
