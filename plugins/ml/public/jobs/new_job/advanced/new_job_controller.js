@@ -817,10 +817,7 @@ module.controller('MlNewJob',
 
         let indices = [];
         if (df.indicesText) {
-          indices = df.indicesText.split(',');
-          for (let i = 0; i < indices.length; i++) {
-            indices[i] = indices[i].trim();
-          }
+          indices = df.indicesText.split(',').map(i => i.trim());
         }
 
         let types = [];

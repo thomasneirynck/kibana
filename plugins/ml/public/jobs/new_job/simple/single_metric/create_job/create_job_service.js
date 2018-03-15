@@ -256,9 +256,11 @@ module.service('mlSingleMetricJobService', function (
 
     const bucketSpanSeconds = parseInterval(formConfig.bucketSpan).asSeconds();
 
+    const indices = formConfig.indexPattern.title.split(',').map(i => i.trim());
+
     job.datafeed_config = {
       query,
-      indices: [formConfig.indexPattern.title],
+      indices,
     };
 
     job.job_id = formConfig.jobId;
