@@ -113,12 +113,10 @@ export function createErrorGroupWatch({
     const webhookPath = slackUrl.replace('https://hooks.slack.com', '');
     const slackTemplate = `
 Your service "${serviceName}" has error groups which exceeds ${threshold} occurrences within "${timeRangeHumanReadable}"
-
 {{#ctx.payload.aggregations.error_groups.buckets}}
-*{{sample.hits.hits.0._source.error.log.message}}{{^sample.hits.hits.0._source.error.log.message}}{{sample.hits.hits.0._source.error.exception.message}}{{/sample.hits.hits.0._source.error.log.message}}*
-{{#sample.hits.hits.0._source.error.culprit}}\`{{sample.hits.hits.0._source.error.culprit}}\`{{/sample.hits.hits.0._source.error.culprit}}{{^sample.hits.hits.0._source.error.culprit}}N/A{{/sample.hits.hits.0._source.error.culprit}}
-{{doc_count}} occurrences
-
+>*{{sample.hits.hits.0._source.error.log.message}}{{^sample.hits.hits.0._source.error.log.message}}{{sample.hits.hits.0._source.error.exception.message}}{{/sample.hits.hits.0._source.error.log.message}}*
+>{{#sample.hits.hits.0._source.error.culprit}}\`{{sample.hits.hits.0._source.error.culprit}}\`{{/sample.hits.hits.0._source.error.culprit}}{{^sample.hits.hits.0._source.error.culprit}}N/A{{/sample.hits.hits.0._source.error.culprit}}
+>{{doc_count}} occurrences
 {{/ctx.payload.aggregations.error_groups.buckets}}`;
 
     body.actions.slack_webhook = {

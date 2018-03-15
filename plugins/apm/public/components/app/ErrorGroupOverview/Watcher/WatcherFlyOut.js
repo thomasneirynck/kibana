@@ -144,7 +144,7 @@ export default class WatcherFlyout extends Component {
     const timeRange =
       this.state.schedule === 'interval'
         ? `now-${this.state.interval.value}${this.state.interval.unit}`
-        : '24h';
+        : 'now-24h';
 
     return createErrorGroupWatch({
       emails,
@@ -159,8 +159,22 @@ export default class WatcherFlyout extends Component {
         this.addSuccessToast(id);
       })
       .catch(e => {
-        console.error('Something bad happened', e);
+        console.error(e);
+        this.addErrorToast();
       });
+  };
+
+  addErrorToast = () => {
+    this.setState({
+      toasts: [
+        {
+          id: 2,
+          title: 'Watch creation failed',
+          color: 'warning',
+          text: <p>Make sure your user has permission to create watches.</p>
+        }
+      ]
+    });
   };
 
   addSuccessToast = id => {
@@ -314,7 +328,10 @@ export default class WatcherFlyout extends Component {
           </EuiFlexGroup>
 
           <h3>Actions</h3>
-          <p>Reports can be sent by email or posted to a Slack channel.</p>
+          <p>
+            Reports can be sent by email or posted to a Slack channel. Each
+            report will include the top 10 errors sorted by occurrence.
+          </p>
           <EuiSwitch
             label="Send email"
             checked={this.state.actions.email}
