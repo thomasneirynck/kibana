@@ -8,6 +8,7 @@ import _ from 'lodash';
 import rison from 'rison-node';
 import { EuiLink } from '@elastic/eui';
 import createHistory from 'history/createHashHistory';
+import chrome from 'ui/chrome';
 
 export function toQuery(search) {
   return qs.parse(search.slice(1));
@@ -80,7 +81,7 @@ export function KibanaLinkComponent({
   };
   const search = stringifyWithoutEncoding(nextQuery);
   const href = url.format({
-    pathname,
+    pathname: chrome.addBasePath(pathname),
     hash: `${hash}?${search}`
   });
 

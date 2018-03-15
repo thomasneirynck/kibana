@@ -26,7 +26,7 @@ describe('loadServiceList', () => {
 
   it('should make a http request', () => {
     expect(fetchMock.lastUrl(matcherName)).toContain(
-      '../api/apm/services?start=myStart&end=myEnd'
+      '/api/apm/services?start=myStart&end=myEnd'
     );
   });
 

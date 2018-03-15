@@ -41,31 +41,27 @@ async function callApi(options) {
   }
 }
 
-function getAppRootPath(serviceName) {
-  return `../api/apm/services/${serviceName}`;
-}
-
 export async function loadLicense() {
   return callApi({
-    pathname: `../api/xpack/v1/info`
+    pathname: chrome.addBasePath(`/api/xpack/v1/info`)
   });
 }
 
 export async function loadServerStatus() {
   return callApi({
-    pathname: `../api/apm/status/server`
+    pathname: chrome.addBasePath(`/api/apm/status/server`)
   });
 }
 
 export async function loadAgentStatus() {
   return callApi({
-    pathname: `../api/apm/status/agent`
+    pathname: chrome.addBasePath(`/api/apm/status/agent`)
   });
 }
 
 export async function loadServiceList({ start, end, query }) {
   return callApi({
-    pathname: `../api/apm/services`,
+    pathname: chrome.addBasePath(`/api/apm/services`),
     query: {
       start,
       end,
@@ -76,7 +72,7 @@ export async function loadServiceList({ start, end, query }) {
 
 export async function loadService({ start, end, serviceName }) {
   return callApi({
-    pathname: `../api/apm/services/${serviceName}`,
+    pathname: chrome.addBasePath(`/api/apm/services/${serviceName}`),
     query: {
       start,
       end
@@ -91,7 +87,9 @@ export async function loadTransactionList({
   transactionType
 }) {
   return callApi({
-    pathname: `${getAppRootPath(serviceName)}/transactions`,
+    pathname: chrome.addBasePath(
+      `/api/apm/services/${serviceName}/transactions`
+    ),
     query: {
       start,
       end,
@@ -107,7 +105,9 @@ export async function loadTransactionDistribution({
   transactionName
 }) {
   return callApi({
-    pathname: `${getAppRootPath(serviceName)}/transactions/distribution`,
+    pathname: chrome.addBasePath(
+      `/api/apm/services/${serviceName}/transactions/distribution`
+    ),
     query: {
       start,
       end,
@@ -118,9 +118,9 @@ export async function loadTransactionDistribution({
 
 export async function loadSpans({ serviceName, start, end, transactionId }) {
   return callApi({
-    pathname: `${getAppRootPath(
-      serviceName
-    )}/transactions/${transactionId}/spans`,
+    pathname: chrome.addBasePath(
+      `/api/apm/services/${serviceName}/transactions/${transactionId}/spans`
+    ),
     query: {
       start,
       end
@@ -135,7 +135,9 @@ export async function loadTransaction({
   transactionId
 }) {
   const res = await callApi({
-    pathname: `${getAppRootPath(serviceName)}/transactions/${transactionId}`,
+    pathname: chrome.addBasePath(
+      `/api/apm/services/${serviceName}/transactions/${transactionId}`
+    ),
     camelcase: false,
     query: {
       start,
@@ -157,7 +159,9 @@ export async function loadCharts({
   transactionName
 }) {
   return callApi({
-    pathname: `${getAppRootPath(serviceName)}/transactions/charts`,
+    pathname: chrome.addBasePath(
+      `/api/apm/services/${serviceName}/transactions/charts`
+    ),
     query: {
       start,
       end,
@@ -177,7 +181,7 @@ export async function loadErrorGroupList({
   sortOrder
 }) {
   return callApi({
-    pathname: `${getAppRootPath(serviceName)}/errors`,
+    pathname: chrome.addBasePath(`/api/apm/services/${serviceName}/errors`),
     query: {
       start,
       end,
@@ -196,7 +200,9 @@ export async function loadErrorGroup({
   end
 }) {
   const res = await callApi({
-    pathname: `${getAppRootPath(serviceName)}/errors/${errorGroupId}`,
+    pathname: chrome.addBasePath(
+      `/api/apm/services/${serviceName}/errors/${errorGroupId}`
+    ),
     camelcase: false,
     query: {
       start,
@@ -217,9 +223,9 @@ export async function loadErrorDistribution({
   errorGroupId
 }) {
   return callApi({
-    pathname: `${getAppRootPath(
-      serviceName
-    )}/errors/${errorGroupId}/distribution`,
+    pathname: chrome.addBasePath(
+      `/api/apm/services/${serviceName}/errors/${errorGroupId}/distribution`
+    ),
     query: {
       start,
       end
@@ -228,17 +234,9 @@ export async function loadErrorDistribution({
 }
 
 export async function createWatch(id, watch) {
-  const basePath = chrome.addBasePath('/api/watcher');
   return callApi({
     method: 'PUT',
-    pathname: `${basePath}/watch/${id}`,
+    pathname: chrome.addBasePath(`/api/watcher/watch/${id}`),
     body: JSON.stringify({ type: 'json', id, watch })
-  });
-}
-
-export async function getWatch({ id }) {
-  const basePath = chrome.addBasePath('/api/watcher');
-  return callApi({
-    pathname: `${basePath}/watch/${id}`
   });
 }
