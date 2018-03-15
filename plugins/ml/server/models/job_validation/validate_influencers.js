@@ -17,7 +17,11 @@ const INFLUENCER_LOW_THRESHOLD = 0;
 const INFLUENCER_HIGH_THRESHOLD = 4;
 const DETECTOR_FIELD_NAMES_THRESHOLD = 1;
 
-export async function validateInfluencer(callWithRequest, job) {
+export async function validateInfluencers(callWithRequest, job) {
+  if (!Array.isArray(job.analysis_config.influencers)) {
+    throw new Error('Invalid job.analysis_config.influencers: Needs to be an array.');
+  }
+
   const messages = [];
   const influencers = job.analysis_config.influencers.length;
 

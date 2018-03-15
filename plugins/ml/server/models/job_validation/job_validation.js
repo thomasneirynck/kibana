@@ -22,13 +22,29 @@ import { VALIDATION_STATUS } from '../../../common/constants/validation';
 import { basicJobValidation } from '../../../common/util/job_utils';
 import { validateBucketSpan } from './validate_bucket_span';
 import { validateCardinality } from './validate_cardinality';
-import { validateInfluencer } from './validate_influencer';
+import { validateInfluencers } from './validate_influencers';
 
 
 export async function validateJob(callWithRequest, payload) {
-  const { duration, fields, job } = payload;
-
   try {
+    if (typeof payload !== 'object' || payload === null) {
+      throw new Error('Invalid payload: Needs to be an object.');
+    }
+
+    const { duration, fields, job } = payload;
+
+    if (typeof job !== 'object') {
+      throw new Error('Invalid job: Needs to be an object.');
+    }
+
+    if (typeof job.analysis_config !== 'object') {
+      throw new Error('Invalid job.analysis_config: Needs to be an object.');
+    }
+
+    if (!Array.isArray(job.analysis_config.detectors)) {
+      throw new Error('Invalid job.analysis_config.detectors: Needs to be an array.');
+    }
+
     // check if basic tests pass the requirements to run the extended tests.
     // if so, run the extended tests and merge the messages.
     // otherwise just return the basic test messages.
@@ -46,7 +62,7 @@ export async function validateJob(callWithRequest, payload) {
         ...filteredBasicValidationMessages,
         ...await validateCardinality(callWithRequest, job),
         ...await validateBucketSpan(callWithRequest, job, duration),
-        ...await validateInfluencer(callWithRequest, job)
+        ...await validateInfluencers(callWithRequest, job)
       ];
     } else {
       validationMessages = basicValidation.messages;

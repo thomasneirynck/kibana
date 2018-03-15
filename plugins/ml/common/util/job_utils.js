@@ -229,13 +229,14 @@ export function basicJobValidation(job, fields) {
       let groupIdValid = true;
       job.groups.forEach(group => {
         if (isJobIdValid(group) === false) {
-          messages.push({ id: 'job_group_id_invalid' });
           groupIdValid = false;
           valid = false;
         }
       });
       if (job.groups.length > 0 && groupIdValid) {
         messages.push({ id: 'job_group_id_valid' });
+      } else if (job.groups.length > 0 && !groupIdValid) {
+        messages.push({ id: 'job_group_id_invalid' });
       }
     }
 
