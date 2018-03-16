@@ -1,6 +1,6 @@
 import chrome from 'ui/chrome';
 import { PathProvider } from 'plugins/xpack_main/services/path';
-
+import { fetchTelemetry } from '../fetch_telemetry';
 import { renderBanner } from './render_banner';
 import { shouldShowBanner } from './should_show_banner';
 
@@ -34,7 +34,9 @@ async function asyncInjectBanner($injector) {
 
   // determine if the banner should be displayed
   if (await shouldShowBanner(config)) {
-    renderBanner(config);
+    const $http = $injector.get('$http');
+
+    renderBanner(config, () => fetchTelemetry($http));
   }
 }
 

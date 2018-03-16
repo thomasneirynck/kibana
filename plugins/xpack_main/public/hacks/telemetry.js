@@ -1,4 +1,3 @@
-import moment from 'moment';
 import Promise from 'bluebird';
 import {
   CONFIG_TELEMETRY,
@@ -8,18 +7,17 @@ import {
 
 export class Telemetry {
 
-  /*
+  /**
    * @param {Object} $injector - AngularJS injector service
-   * @param {String} basePath - url basepath for prefixing kibana routes
-   * @param {Object} attributes - values to inject (just for unit testing)
+   * @param {Function} fetchTelemetry Method used to fetch telemetry data (expects an array response)
    */
-  constructor($injector, basePath = '') {
+  constructor($injector, fetchTelemetry) {
     this._storage = $injector.get('localStorage');
     this._config = $injector.get('config');
-    this._basePath = basePath;
     this._$http = $injector.get('$http');
     this._telemetryUrl = $injector.get('telemetryUrl');
     this._attributes = this._storage.get(LOCALSTORAGE_KEY) || {};
+    this._fetchTelemetry = fetchTelemetry;
   }
 
   _set(key, value) {
@@ -60,14 +58,7 @@ export class Telemetry {
   _sendIfDue() {
     if (!this._checkReportStatus()) { return Promise.resolve(null); }
 
-    // call to get the latest cluster uuids with a time range to go back 20 minutes up to now
-    const currentClustersUrl = `${this._basePath}/api/telemetry/v1/clusters/_stats`;
-    return this._$http.post(currentClustersUrl, {
-      timeRange: {
-        min: moment().subtract(20, 'minutes').toISOString(),
-        max: (new Date()).toISOString()
-      }
-    })
+    return this._fetchTelemetry()
       .then(response => {
         return response.data.map(cluster => {
           const req = {

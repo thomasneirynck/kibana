@@ -1,7 +1,7 @@
 import { uiModules } from 'ui/modules';
-import uiChrome from 'ui/chrome';
 import { PathProvider } from 'plugins/xpack_main/services/path';
 import { Telemetry } from './telemetry';
+import { fetchTelemetry } from './fetch_telemetry';
 
 function telemetryStart($injector) {
   const telemetryEnabled = $injector.get('telemetryEnabled');
@@ -11,7 +11,9 @@ function telemetryStart($injector) {
     // no telemetry for non-logged in users
     if (Private(PathProvider).isLoginOrLogout()) { return; }
 
-    const sender = new Telemetry($injector, uiChrome.getBasePath());
+    const $http = $injector.get('$http');
+    const sender = new Telemetry($injector, () => fetchTelemetry($http));
+
     sender.start();
   }
 }

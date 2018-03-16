@@ -10,11 +10,13 @@ describe('render_banner', () => {
     const banners = {
       add: sinon.stub()
     };
+    const fetchTelemetry = sinon.stub();
     banners.add.returns('brucer-banner');
 
-    renderBanner(config, { _banners: banners });
+    renderBanner(config, fetchTelemetry, { _banners: banners });
 
     expect(banners.add.calledOnce).to.be(true);
+    expect(fetchTelemetry.called).to.be(false);
 
     const bannerConfig = banners.add.getCall(0).args[0];
 

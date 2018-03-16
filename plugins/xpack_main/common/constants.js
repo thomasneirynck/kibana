@@ -7,7 +7,9 @@ export const CONFIG_TELEMETRY = 'telemetry:optIn';
  * config description for opting into telemetry
  * @type {string}
  */
-export const CONFIG_TELEMETRY_DESC = 'Help us improve Kibana and Elasticsearch?';
+export const CONFIG_TELEMETRY_DESC = (
+  'Help us improve the Elastic Stack by providing anonymous feature usage statistics? We will never share this data with anyone, ever.'
+);
 
 /**
  * The name of the Kibana System ID used to publish and look up Kibana stats through the Monitoring system.

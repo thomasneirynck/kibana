@@ -21,12 +21,6 @@ const getMockInjector = ({ allowReport, lastReport }) => {
   const mockHttp = (req) => {
     return req;
   };
-  mockHttp.post = () => Promise.resolve({
-    data: [
-      { cluster_uuid: 'fake-123', },
-      { cluster_uuid: 'fake-456' }
-    ]
-  });
   mockHttp.get = (url) => Promise.resolve({
     data: [
       url,
@@ -39,11 +33,16 @@ const getMockInjector = ({ allowReport, lastReport }) => {
 
   return { get };
 };
-const mockBasePath = '/testo';
+const mockFetchTelemetry = () => Promise.resolve({
+  data: [
+    { cluster_uuid: 'fake-123', },
+    { cluster_uuid: 'fake-456' }
+  ]
+});
 
 describe('telemetry class', () => {
   it('start method for beginning a timer', () => {
-    const sender = new Telemetry(getMockInjector({ allowReport: true }), mockBasePath);
+    const sender = new Telemetry(getMockInjector({ allowReport: true }), mockFetchTelemetry);
     expect(sender.start).to.be.a('function');
   });
 
@@ -52,7 +51,7 @@ describe('telemetry class', () => {
     it('never reported before', () => {
       const sender = new Telemetry(
         getMockInjector({ allowReport: true }),
-        mockBasePath
+        mockFetchTelemetry
       );
       return sender._sendIfDue()
         .then(result => {
@@ -79,7 +78,7 @@ describe('telemetry class', () => {
           allowReport: true,
           lastReport: (new Date()).getTime() - 86401000 // reported 1 day + 1 second ago
         }),
-        mockBasePath
+        mockFetchTelemetry
       );
       return sender._sendIfDue()
         .then(result => expect(result).to.eql([
@@ -101,18 +100,18 @@ describe('telemetry class', () => {
 
   describe('should not send the report', () => {
     it('config does not allow report', () => {
-      const sender = new Telemetry(getMockInjector({ allowReport: false }), mockBasePath);
+      const sender = new Telemetry(getMockInjector({ allowReport: false }), mockFetchTelemetry);
       return sender._sendIfDue()
         .then(result => expect(result).to.be(null));
     });
 
     it('interval check finds last report less than a day ago', () => {
-      const sender = new Telemetry(getMockInjector(
-        {
+      const sender = new Telemetry(
+        getMockInjector({
           allowReport: true,
           lastReport: (new Date()).getTime() - 82800000 // reported 23 hours ago
         }),
-      mockBasePath
+        mockFetchTelemetry
       );
       return sender._sendIfDue()
         .then(result => expect(result).to.be(null));
