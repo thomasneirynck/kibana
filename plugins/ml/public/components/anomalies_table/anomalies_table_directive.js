@@ -23,6 +23,7 @@ import rison from 'rison-node';
 
 import { notify } from 'ui/notify';
 import { ES_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
+import { parseIntervalAcceptZero } from 'plugins/ml/../common/util/parse_interval';
 import { replaceStringTokens, mlEscape } from 'plugins/ml/util/string_utils';
 import { isTimeSeriesViewDetector } from 'plugins/ml/../common/util/job_utils';
 import {
@@ -311,28 +312,35 @@ module.directive('mlAnomaliesTable', function (
         // If url_value contains $earliest$ and $latest$ tokens, add in times to the source record.
         const timestamp = record[scope.timeFieldName];
         const configuredUrlValue = customUrl.url_value;
+        const timeRangeInterval = parseIntervalAcceptZero(customUrl.time_range);
         if (configuredUrlValue.includes('$earliest$')) {
-          const roundedMoment = moment(timestamp).startOf(scope.momentInterval);
-          if (scope.momentInterval === 'hour') {
-            // Start from the previous hour.
-            roundedMoment.subtract(1, 'h');
+          let earliestMoment = moment(timestamp);
+          if (timeRangeInterval !== null) {
+            earliestMoment.subtract(timeRangeInterval);
+          } else {
+            earliestMoment = moment(timestamp).startOf(scope.momentInterval);
+            if (scope.momentInterval === 'hour') {
+              // Start from the previous hour.
+              earliestMoment.subtract(1, 'h');
+            }
           }
-          record.earliest = roundedMoment.toISOString();    // e.g. 2016-02-08T16:00:00.000Z
+          record.earliest = earliestMoment.toISOString();    // e.g. 2016-02-08T16:00:00.000Z
         }
 
         if (configuredUrlValue.includes('$latest$')) {
-          if (scope.isShowingAggregatedData()) {
-            const roundedMoment = moment(timestamp).endOf(scope.momentInterval);
-            if (scope.momentInterval === 'hour') {
-              // Show to the end of the next hour.
-              roundedMoment.add(1, 'h');
-            }
-            record.latest = roundedMoment.toISOString();      // e.g. 2016-02-08T18:59:59.999Z
+          let latestMoment = moment(timestamp).add(record.bucket_span, 's');
+          if (timeRangeInterval !== null) {
+            latestMoment.add(timeRangeInterval);
           } else {
-            // Show the time span of the selected record's bucket.
-            const latestMoment = moment(timestamp).add(record.bucket_span, 's');
-            record.latest = latestMoment.toISOString();
+            if (scope.isShowingAggregatedData()) {
+              latestMoment = moment(timestamp).endOf(scope.momentInterval);
+              if (scope.momentInterval === 'hour') {
+                // Show to the end of the next hour.
+                latestMoment.add(1, 'h');       // e.g. 2016-02-08T18:59:59.999Z
+              }
+            }
           }
+          record.latest = latestMoment.toISOString();
         }
 
         // If url_value contains $mlcategoryterms$ or $mlcategoryregex$, add in the

@@ -1,6 +1,17 @@
-// copied from kibana/src/ui/public/utils/parse_interval.js for now.
-// seems there is no common way to reference a file for node across repositories
-// TODO find a way to reference the original file without copying it.
+/*
+ * ELASTICSEARCH CONFIDENTIAL
+ *
+ * Copyright (c) 2017 Elasticsearch BV. All Rights Reserved.
+ *
+ * Notice: this software, and all information contained
+ * therein, is the exclusive property of Elasticsearch BV
+ * and its licensors, if any, and is protected under applicable
+ * domestic and foreign law, and international treaties.
+ *
+ * Reproduction, republication or distribution without the
+ * express written consent of Elasticsearch BV is
+ * strictly prohibited.
+ */
 
 import _ from 'lodash';
 import moment from 'moment';
@@ -37,4 +48,27 @@ export function parseInterval(interval, fallBackToOne = true) {
   } catch (e) {
     return null;
   }
+}
+
+// Parses an interval String, such as 7d, 1h or 30m to a moment duration.
+// Differs from parseInterval in that it accepts zero length durations
+// e.g. 0s, and allows fractional durations. Note that when adding or
+// subtracting fractional durations, moment is only designed to work
+// with units less than 'day'.
+export function parseIntervalAcceptZero(str) {
+  // TODO - combine this function with parseInterval().
+  let interval = null;
+  const matches = String(str).trim().match(INTERVAL_STRING_RE);
+  if (matches) {
+    try {
+      const value = parseFloat(matches[1]);
+      const unit = matches[2];
+
+      interval = moment.duration(value, unit);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  return interval;
 }

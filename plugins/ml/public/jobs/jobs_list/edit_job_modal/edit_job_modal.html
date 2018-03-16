@@ -155,17 +155,17 @@
     <div class="form-group">
       <div ng-if="job.custom_settings && job.custom_settings.custom_urls">
         <div ng-repeat="item in job.custom_settings.custom_urls track by $index" class="custom-url">
-          <div class="field-cols">
 
-            <div class="form-group">
+            <div class="form-group label-input">
               <label id="ml_aria_label_custom_url_label_{{$index}}" class="kuiFormLabel">Label</label>
               <input
                 aria-labelledby="ml_aria_label_custom_url_label_{{$index}}"
                 ng-model="item.url_name"
                 type="text"
-                class="form-control" />
+                class="kuiTextInput form-control" />
+              <div ng-show="item.url_name === ''" class="validation-error">Enter a label</div>
             </div>
-          </div>
+
 
           <div class="field-cols">
             <div class="form-group">
@@ -178,9 +178,35 @@
             </div>
           </div>
 
+          <div class="form-group time-input">
+            <label id="ml_aria_label_custom_url_time_{{$index}}" class="kuiFormLabel">Time range</label>
+            <input
+              aria-labelledby="ml_aria_label_custom_url_time_{{$index}}"
+              ng-model="item.time_range"
+              ng-change="customUrlTimeRangeChanged($index)"
+              type="text"
+              class="form-control" />
+            <div ng-show="item.timeRangeError === true" class="validation-error">Invalid format</div>
+          </div>
+
+          <button
+            ng-if="showTestLinkForCustomUrl($index)"
+            ng-click="testCustomUrl($index)"
+            tooltip="Test custom URL"
+            tooltip-append-to-body="false"
+            aria-label="Test custom URL"
+            data-toggle="tooltip"
+            type="button"
+            class="kuiButton kuiButton--basic kuiButton--small test-url-button">
+              <i aria-hidden="true" class="fa fa-share-square-o"></i>
+          </button>
+
           <button
             ng-click="removeCustomUrl($index)"
-            tooltip-append-to-body="true"
+            tooltip="Delete custom URL"
+            tooltip-append-to-body="false"
+            aria-label="Delete custom URL"
+            data-toggle="tooltip"
             type="button"
             class="kuiButton kuiButton--danger kuiButton--small remove-button">
               <i aria-hidden="true" class="fa fa-trash"></i>
@@ -199,7 +225,7 @@
         </button>
       </div>
       <div ng-show="ui.editingNewCustomUrl === true" class="custom-url-editor">
-        <h3 class="euiTitle">Create new custom URL<i ml-info-icon="new_custom_url_experimental" /></h3>
+        <h3 class="euiTitle">Create new custom URL</h3>
         <ml-custom-url-editor
           add-custom-url="addCustomUrl"
           job="job">

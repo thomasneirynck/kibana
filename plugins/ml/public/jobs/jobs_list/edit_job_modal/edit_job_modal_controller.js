@@ -17,19 +17,33 @@ import _ from 'lodash';
 import 'plugins/ml/jobs/new_job/advanced/detectors_list_directive';
 import './styles/main.less';
 import angular from 'angular';
+
 import { calculateDatafeedFrequencyDefaultSeconds } from 'plugins/ml/../common/util/job_utils';
+import { parseIntervalAcceptZero } from 'plugins/ml/../common/util/parse_interval';
+import { CustomUrlEditorServiceProvider } from 'plugins/ml/jobs/components/custom_url_editor/custom_url_editor_service';
+import { isWebUrl } from 'plugins/ml/util/string_utils';
 import { parseInterval } from 'ui/utils/parse_interval';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, params, mlJobService, mlMessageBarService) {
+module.controller('MlEditJobModal', function (
+  $scope,
+  $modalInstance,
+  $modal,
+  $window,
+  params,
+  Private,
+  mlJobService,
+  mlMessageBarService) {
   const msgs = mlMessageBarService;
   msgs.clear();
   $scope.saveLock = false;
   const refreshJob = params.pscope.refreshJob;
 
   $scope.job = angular.copy(params.job);
+
+  const CUSTOM_URL_TIME_RANGE_AUTO = 'auto';
 
   const bucketSpan = parseInterval($scope.job.analysis_config.bucket_span);
 
@@ -74,6 +88,15 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
     $scope.ui.datafeed.scrollSizeText = datafeedConfig.scroll_size;
   }
 
+  // Add an 'auto' time for any URLs created before the time_range setting was added.
+  if ($scope.job.custom_settings.custom_urls) {
+    $scope.job.custom_settings.custom_urls.forEach((customUrl) => {
+      if (customUrl.time_range === undefined) {
+        customUrl.time_range = CUSTOM_URL_TIME_RANGE_AUTO;
+      }
+    });
+  }
+
   $scope.editNewCustomUrl = function () {
     $scope.ui.editingNewCustomUrl = true;
   };
@@ -93,6 +116,30 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
 
   $scope.removeCustomUrl = function (index) {
     $scope.job.custom_settings.custom_urls.splice(index, 1);
+  };
+
+  $scope.customUrlTimeRangeChanged = function (index) {
+    const customUrl = $scope.job.custom_settings.custom_urls[index];
+    const timeRange = customUrl.time_range;
+    const interval = parseIntervalAcceptZero(timeRange);
+    customUrl.timeRangeError = (interval === null && timeRange !== CUSTOM_URL_TIME_RANGE_AUTO);
+  };
+
+  $scope.showTestLinkForCustomUrl = function (index) {
+    return isWebUrl($scope.job.custom_settings.custom_urls[index].url_value);
+  };
+
+  $scope.testCustomUrl = function (index) {
+    const customUrlEditorService = Private(CustomUrlEditorServiceProvider);
+    customUrlEditorService.getTestUrl(
+      $scope.job,
+      $scope.job.custom_settings.custom_urls[index])
+      .then((testUrl) => {
+        $window.open(testUrl, '_blank');
+      })
+      .catch((resp) => {
+        console.log('testCustomUrl() - error obtaining URL for test:', resp);
+      });
   };
 
   // add new categorization filter
@@ -240,21 +287,25 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
           // if lengths are the same, check the contents match.
           _.each($scope.job.custom_settings.custom_urls, (url, i) => {
             if (url.url_name !== params.job.custom_settings.custom_urls[i].url_name ||
-               url.url_value !== params.job.custom_settings.custom_urls[i].url_value) {
+               url.url_value !== params.job.custom_settings.custom_urls[i].url_value ||
+               url.time_range !== params.job.custom_settings.custom_urls[i].time_range) {
               doUpdate = true;
             }
           });
         }
 
-
         if (doUpdate) {
           jobData.custom_settings = $scope.job.custom_settings;
+          // Clear any error properties as these are just used by the modal.
+          $scope.job.custom_settings.custom_urls.forEach((customUrl) => {
+            delete customUrl.timeRangeError;
+          });
         }
       } else {
         if (params.job.custom_settings ||
            params.job.custom_settings.custom_urls ||
            params.job.custom_settings.custom_urls.length) {
-          // if urls orginally existed, but now don't
+          // if urls originally existed, but now don't
           // clear the custom settings completely
           jobData.custom_settings = {};
         }
