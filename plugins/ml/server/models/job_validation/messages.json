@@ -56,7 +56,7 @@
   },
   "bucket_span_invalid": {
     "status": "ERROR",
-    "text": "The specified bucket span is not a valid time interval format e.g. 10m, 1h."
+    "text": "The specified bucket span is not a valid time interval format e.g. 10m, 1h. It also needs to be higher than zero."
   },
   "detectors_empty": {
     "status": "ERROR",

@@ -17,7 +17,7 @@ import _ from 'lodash';
 
 import 'plugins/kibana/visualize/styles/main.less';
 import { AggTypesIndexProvider } from 'ui/agg_types/index';
-import { parseInterval } from 'ui/utils/parse_interval';
+import { parseInterval } from 'plugins/ml/../common/util/parse_interval';
 
 import dateMath from '@elastic/datemath';
 import angular from 'angular';
@@ -248,7 +248,7 @@ module
       $scope.formConfig.end = dateMath.parse(timefilter.time.to).valueOf();
       $scope.formConfig.format = 'epoch_millis';
 
-      if(parseInterval($scope.formConfig.bucketSpan) === null) {
+      if(parseInterval($scope.formConfig.bucketSpan, false) === null) {
         $scope.ui.bucketSpanValid = false;
       }
 

@@ -9,15 +9,17 @@ import dateMath from '@elastic/datemath';
 // Assume interval is in the form (value)(unit), such as "1h"
 const INTERVAL_STRING_RE = new RegExp('^([0-9\\.]*)\\s*(' + dateMath.units.join('|') + ')$');
 
-export function parseInterval(interval) {
+export function parseInterval(interval, fallBackToOne = true) {
   const matches = String(interval).trim().match(INTERVAL_STRING_RE);
-
-  if (!matches) return null;
+  if (!Array.isArray(matches)) return null;
+  if (matches.length < 3) return null;
 
   try {
-    const value = parseFloat(matches[1]) || 1;
-    const unit = matches[2];
+    const value = parseFloat(matches[1]) || ((fallBackToOne) ? 1 : 0);
 
+    if (!fallBackToOne && value === 0) return null;
+
+    const unit = matches[2];
     const duration = moment.duration(value, unit);
 
     // There is an error with moment, where if you have a fractional interval between 0 and 1, then when you add that
