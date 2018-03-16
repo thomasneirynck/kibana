@@ -33,6 +33,7 @@ import template from './jobs_list.html';
 import deleteJobTemplate from 'plugins/ml/jobs/jobs_list/delete_job_modal/delete_job_modal.html';
 import editJobTemplate from 'plugins/ml/jobs/jobs_list/edit_job_modal/edit_job_modal.html';
 import createWatchTemplate from 'plugins/ml/jobs/jobs_list/create_watch_modal/create_watch_modal.html';
+import { buttonsEnabledChecks } from 'plugins/ml/jobs/jobs_list/buttons_enabled_checks';
 
 uiRoutes
   .when('/jobs/?', {
@@ -92,7 +93,6 @@ module.controller('MlJobsList',
       canUpdateDatafeed: checkPermission('canUpdateDatafeed'),
       canStartStopDatafeed: checkPermission('canStartStopDatafeed'),
     };
-    $scope.createPermissionFailureMessage = createPermissionFailureMessage;
 
     $scope.jobStats = mlJobService.jobStats;
 
@@ -279,6 +279,7 @@ module.controller('MlJobsList',
         rowScope.enableTimeSeries = isTimeSeriesViewJob(job);
         rowScope.addItemToRecentlyAccessed = addItemToRecentlyAccessed;
 
+        rowScope.checks = buttonsEnabledChecks($scope.permissions, job, createPermissionFailureMessage);
 
         rowScopes.push(rowScope);
         const jobDescription = job.description || '';

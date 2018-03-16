@@ -1,29 +1,24 @@
 <div class="actions">
 
   <!-- start -->
-  <div ng-class="permissions.canStartStopDatafeed ? 'button-wrapper' : ['button-wrapper', 'disabled']" data-placement="right" data-toggle="tooltip"
-    ng-attr-tooltip="{{permissions.canStartStopDatafeed ? undefined : createPermissionFailureMessage('canStartStopDatafeed')}}">
+  <div ng-class="checks.startButtonWrapperClass()" data-placement="right" data-toggle="tooltip"
+    ng-attr-tooltip="{{checks.startButtonWrapperTooltip()}}">
     <button
-      ng-show="job.datafeed_config && job.datafeed_config.state!=='stopping' && job.datafeed_config.state!=='starting'"
+      ng-show="checks.startButtonVisible()"
       ng-click="((job.datafeed_config && job.datafeed_config.state==='started')?stopDatafeed(job):startDatafeed(job))"
       class="kuiButton kuiButton--basic kuiButton--small"
       data-toggle="tooltip"
-      aria-label="{{((job.datafeed_config && job.datafeed_config.state==='started')?'Stop':'Start')}} datafeed"
-      ng-disabled="(job.datafeed_config.datafeed_id === undefined || permissions.canStartStopDatafeed===false) || job.state==='closing' || job.state==='opening' || job.state==='failed'"
-      tooltip="{{(job.datafeed_config && job.datafeed_config.state==='started')?'Stop datafeed for':'Start datafeed for'}} {{job.job_id}}">
-        <i ng-show="job.datafeed_config && job.datafeed_config.state==='started' && job.state!=='failed'" aria-hidden="true" class="fa fa-stop"></i>
-        <i ng-show="job.datafeed_config && job.datafeed_config.state==='stopped' && (job.state==='opened' || job.state==='closed')" aria-hidden="true" class="fa fa-play"></i>
-        <i ng-show="job.state==='failed'" aria-hidden="true" class="fa fa-play"></i>
-
-        <i ng-show="job.datafeed_config && job.datafeed_config.state==='stopped' && (job.state==='closing' || job.state==='opening')" aria-hidden="true" class="fa fa-clock-o"></i>
-        <i ng-show="job.datafeed_config && job.datafeed_config.state===undefined" aria-hidden="true" class="fa fa-play"></i>
+      aria-label="{{check.startButtonAriaLabel()}}}"
+      ng-disabled="checks.startButtonDisabled()"
+      tooltip="{{checks.startButtonTooltip()}}">
+        <i aria-hidden="true" ng-class="checks.buttonIcon()"></i>
     </button>
   </div>
 
-  <!-- stop -->
+  <!-- loading -->
   <button
     disabled
-    ng-show="(!job.datafeed_config) || (job.datafeed_config.state==='stopping' || job.datafeed_config.state==='starting')"
+    ng-show="checks.loadingButtonVisible()"
     class="kuiButton kuiButton--basic kuiButton--small"
     data-toggle="tooltip"
     tooltip="No datafeed settings for {{job.job_id}}">
@@ -63,11 +58,11 @@
   </button>
 
   <!-- edit job -->
-  <div ng-class="permissions.canUpdateJob ? 'button-wrapper' : ['button-wrapper', 'disabled']" data-placement="right" data-toggle="tooltip"
-    ng-attr-tooltip="{{permissions.canUpdateJob ? undefined : createPermissionFailureMessage('canUpdateJob')}}">
+  <div ng-class="checks.editButtonWrapperClass()" data-placement="right" data-toggle="tooltip"
+    ng-attr-tooltip="{{checks.editButtonWrapperTooltip()}}">
     <button
       ng-click="editJob(job)"
-      ng-disabled="permissions.canUpdateJob===false || permissions.canUpdateDatafeed===false"
+      ng-disabled="checks.editButtonDisabled()"
       class="kuiButton kuiButton--basic kuiButton--small"
       aria-label="Edit job"
       data-toggle="tooltip"
@@ -77,13 +72,13 @@
   </div>
 
   <!-- clone job -->
-  <div ng-class="permissions.canCreateJob ? 'button-wrapper' : ['button-wrapper', 'disabled']" data-placement="right" data-toggle="tooltip"
-    ng-attr-tooltip="{{permissions.canCreateJob ? undefined : createPermissionFailureMessage('canCreateJob')}}">
+  <div ng-class="checks.cloneButtonWrapperClass()" data-placement="right" data-toggle="tooltip"
+    ng-attr-tooltip="{{checks.cloneButtonWrapperTooltip()}}">
     <button
       ng-click="cloneJob(job)"
       class="kuiButton kuiButton--basic kuiButton--small"
       data-toggle="tooltip"
-      ng-disabled='permissions.canCreateJob===false'
+      ng-disabled='checks.cloneButtonDisabled()'
       aria-label="Clone job"
       tooltip="Clone job" >
         <i aria-hidden="true" class="fa fa-clone"></i>
@@ -91,13 +86,13 @@
   </div>
 
   <!-- delete job -->
-  <div ng-class="permissions.canDeleteJob ? 'button-wrapper' : ['button-wrapper', 'disabled']" data-placement="right" data-toggle="tooltip"
-    ng-attr-tooltip="{{permissions.canDeleteJob ? undefined : createPermissionFailureMessage('canDeleteJob')}}">
+  <div ng-class="checks.deleteButtonWrapperClass()" data-placement="right" data-toggle="tooltip"
+    ng-attr-tooltip="{{checks.deleteButtonWrapperTooltip()}}">
     <button
       ng-click="deleteJob(job)"
       class="kuiButton kuiButton--danger kuiButton--small"
       data-toggle="tooltip"
-      ng-disabled='permissions.canDeleteJob===false'
+      ng-disabled='checks.deleteButtonDisabled()'
       aria-label="Delete job"
       tooltip="Delete job">
         <i aria-hidden="true" class="fa fa-trash"></i>
