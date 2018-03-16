@@ -61,7 +61,7 @@ describe('ML - validateJob', () => {
   it('basic validation messages', () => {
     const payload = { job: { analysis_config: { detectors: [] } } };
 
-    validateJob(callWithRequest, payload).then(
+    return validateJob(callWithRequest, payload).then(
       (messages) => {
         const ids = messages.map(m => m.id);
 
@@ -224,7 +224,9 @@ describe('ML - validateJob', () => {
           function: 'count'
         }],
         influencers: []
-      }
+      },
+      data_description: { time_field: '@timestamp' },
+      datafeed_config: { indices: [] }
     },
     fields: { testField: {} }
   });
