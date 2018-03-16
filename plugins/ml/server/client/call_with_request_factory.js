@@ -31,4 +31,3 @@ export const callWithRequestFactory = (server, request) => {
     return callWithRequest(server)(request, ...args);
   };
 };
-

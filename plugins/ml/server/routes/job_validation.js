@@ -15,7 +15,7 @@
 
 import Boom from 'boom';
 
-import { callWithRequestFactory } from '../client/get_client_ml';
+import { callWithRequestFactory } from '../client/call_with_request_factory';
 import { wrapError } from '../client/errors';
 import { estimateBucketSpanFactory } from '../models/bucket_span_estimator';
 import { validateJob } from '../models/job_validation';

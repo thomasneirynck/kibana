@@ -341,4 +341,11 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
+  this.mlNodeCount = function () {
+    return http.request({
+      url: `${basePath}/ml_node_count`,
+      method: 'GET'
+    });
+  };
+
 });
