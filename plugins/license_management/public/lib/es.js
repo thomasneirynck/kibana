@@ -15,3 +15,39 @@ export function putLicense(license, acknowledge) {
   return $.ajax(options);
 }
 
+export function startBasic(acknowledge) {
+  const options = {
+    url: `${chrome.addBasePath('/api/license/start_basic')}${acknowledge ? '?acknowledge=true' : ''}`,
+    contentType: 'application/json',
+    cache: false,
+    crossDomain: true,
+    type: 'POST',
+  };
+
+  return $.ajax(options);
+}
+
+export function startTrial() {
+  const options = {
+    url: chrome.addBasePath('/api/license/start_trial'),
+    contentType: 'application/json',
+    cache: false,
+    crossDomain: true,
+    type: 'POST',
+  };
+
+  return $.ajax(options);
+}
+
+export function canStartTrial() {
+  const options = {
+    url: chrome.addBasePath('/api/license/start_trial'),
+    contentType: 'application/json',
+    cache: false,
+    crossDomain: true,
+    type: 'GET',
+  };
+
+  return $.ajax(options);
+}
+

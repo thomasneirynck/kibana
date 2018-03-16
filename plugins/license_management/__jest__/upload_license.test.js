@@ -1,14 +1,20 @@
-import TestRenderer from 'react-test-renderer';
+import { mount } from 'enzyme';
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import Wrapper from '../public/app';
 import { Provider } from 'react-redux';
-import { uploadLicense } from "../public/store/actions/upload_license";
-import { licenseManagementStore } from "../public/store/store";
+import { uploadLicense } from '../public/store/actions/upload_license';
+import { licenseManagementStore } from '../public/store/store';
+import { UploadLicense } from '../public/sections/upload_license';
 import { BASE_PATH } from '../common/constants';
+import {
+  UPLOAD_LICENSE_EXPIRED,
+  UPLOAD_LICENSE_REQUIRES_ACK,
+  UPLOAD_LICENSE_SUCCESS,
+  UPLOAD_LICENSE_TLS_NOT_ENABLED,
+  UPLOAD_LICENSE_INVALID,
+} from './api_responses';
 
 import sinon from 'sinon';
-
+window.location.reload = () => {};
 let server = null;
 let store = null;
 let component = null;
@@ -19,7 +25,9 @@ const services = {
   autoLogout: () => {},
   xPackInfo: {
     refresh: jest.fn(),
-    get: () => { return { license: { type: 'basic' } }; }
+    get: () => {
+      return { license: { type: 'basic' } };
+    }
   }
 };
 
@@ -27,12 +35,10 @@ describe('UploadLicense', () => {
   beforeEach(() => {
     server = sinon.fakeServer.create();
     server.respondImmediately = true;
-    store = licenseManagementStore();
+    store = licenseManagementStore({}, services);
     component = (
       <Provider store={store}>
-        <MemoryRouter initialEntries={[ `${BASE_PATH}upload_license`]}>
-          <Wrapper />
-        </MemoryRouter>
+        <UploadLicense />
       </Provider>
     );
   });
@@ -43,47 +49,41 @@ describe('UploadLicense', () => {
   });
   it('should display an error when submitting invalid JSON', async () => {
     store.dispatch(uploadLicense('INVALID', 'trial'));
-    const rendered = TestRenderer.create(component);
+    const rendered = mount(component);
     expect(rendered).toMatchSnapshot();
   });
   it('should display an error when ES says license is invalid', async () => {
     const invalidLicense = JSON.stringify({ license: { type: 'basic' } });
-    server.respond([200, { "Content-Type": "application/json" },
-      '{"acknowledged": "true", "license_status": "invalid"}']);
+    server.respond(UPLOAD_LICENSE_INVALID);
     await uploadLicense(invalidLicense)(store.dispatch, null, services);
-    const rendered = TestRenderer.create(component);
+    const rendered = mount(component);
     expect(rendered).toMatchSnapshot();
   });
   it('should display an error when ES says license is expired', async () => {
     const invalidLicense = JSON.stringify({ license: { type: 'basic' } });
-    server.respond([200, { "Content-Type": "application/json" },
-      '{"acknowledged": "true", "license_status": "expired"}']);
+    server.respond(UPLOAD_LICENSE_EXPIRED);
     await uploadLicense(invalidLicense)(store.dispatch, null, services);
-    const rendered = TestRenderer.create(component);
+    const rendered = mount(component);
     expect(rendered).toMatchSnapshot();
   });
   it('should display a modal when license requires acknowledgement', async () => {
-    const unacknowledgedLicense = JSON.stringify({ license: { type: 'basic' } });
+    const unacknowledgedLicense = JSON.stringify({
+      license: { type: 'basic' }
+    });
     /* eslint-disable max-len */
-    server.respond([200, { "Content-Type": "application/json" },
-      `{
-          "acknowledged":false,
-          "license_status":"valid",
-          "acknowledge":
-            {
-              "message": "This license update requires acknowledgement. To acknowledge the license, please read the following messages and update the license again, this time with the \\"acknowledge=true\\" parameter:",
-              "watcher":["Watcher will be disabled"]
-            }
-          }`]);
+    server.respond(UPLOAD_LICENSE_REQUIRES_ACK);
     /* eslint-enable max-len */
-    await uploadLicense(unacknowledgedLicense,  'trial')(store.dispatch, null, services);
-    const rendered = TestRenderer.create(component);
+    await uploadLicense(unacknowledgedLicense, 'trial')(
+      store.dispatch,
+      null,
+      services
+    );
+    const rendered = mount(component);
     expect(rendered).toMatchSnapshot();
   });
   it('should refresh xpack info and navigate to BASE_PATH when ES accepts new license', async () => {
     const validLicense = JSON.stringify({ license: { type: 'basic' } });
-    server.respond([200, { "Content-Type": "application/json" },
-      '{"acknowledged": "true", "license_status": "valid"}']);
+    server.respond(UPLOAD_LICENSE_SUCCESS);
     await uploadLicense(validLicense)(store.dispatch, null, services);
     expect(services.xPackInfo.refresh).toHaveBeenCalled();
     expect(services.kbnUrl.change).toHaveBeenCalledWith(BASE_PATH);
@@ -91,22 +91,10 @@ describe('UploadLicense', () => {
   it('should display error when ES returns error', async () => {
     const license = JSON.stringify({ license: { type: 'basic' } });
     /* eslint-disable max-len */
-    server.respond([200, { "Content-Type": "application/json" },
-      `{
-        "error":
-        {
-          "root_cause":
-            [{
-              "type":"illegal_state_exception",
-              "reason":"Can not upgrade to a production license unless TLS is configured or security is disabled"
-            }],"type":"illegal_state_exception",
-            "reason":"Can not upgrade to a production license unless TLS is configured or security is disabled"},
-            "status":500}
-      `]);
-  /* eslint-enable max-len */
+    server.respond(UPLOAD_LICENSE_TLS_NOT_ENABLED);
+    /* eslint-enable max-len */
     await uploadLicense(license)(store.dispatch, null, services);
-    const rendered = TestRenderer.create(component);
+    const rendered = mount(component);
     expect(rendered).toMatchSnapshot();
   });
 });
-

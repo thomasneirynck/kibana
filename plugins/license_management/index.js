@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import { PLUGIN } from './common/constants';
-import { registerLicenseRoute } from "./server/routes/api/license/register_license_route";
+import { registerLicenseRoute, registerStartTrialRoutes, registerStartBasicRoute } from "./server/routes/api/license/";
 
 export function licenseManagement(kibana)  {
   return new kibana.Plugin({
@@ -14,6 +14,8 @@ export function licenseManagement(kibana)  {
     },
     init: (server) => {
       registerLicenseRoute(server);
+      registerStartTrialRoutes(server);
+      registerStartBasicRoute(server);
     }
   });
 }

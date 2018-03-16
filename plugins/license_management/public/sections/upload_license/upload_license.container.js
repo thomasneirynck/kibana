@@ -7,7 +7,7 @@ import {
   getLicenseType,
   isInvalid,
   isApplying,
-  needsAcknowledgement,
+  uploadNeedsAcknowledgement,
   uploadMessages
 } from "../../store/reducers/licenseManagement";
 import { UploadLicense as PresentationComponent } from './upload_license';
@@ -16,7 +16,7 @@ import { UploadLicense as PresentationComponent } from './upload_license';
 const mapStateToProps = (state) => {
   return {
     isInvalid: isInvalid(state),
-    needsAcknowledgement: needsAcknowledgement(state),
+    needsAcknowledgement: uploadNeedsAcknowledgement(state),
     messages: uploadMessages(state),
     errorMessage: getUploadErrorMessage(state),
     applying: isApplying(state),

@@ -1,1 +1,1 @@
-export { LicenseDashboard } from './license_dashboard.container';
+export { LicenseDashboard } from './license_dashboard';

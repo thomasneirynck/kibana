@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RequestTrialExtension component should display when trial license is about to expire 1`] = `null`;
+
+exports[`RequestTrialExtension component should display when trial license is expired 1`] = `null`;
+
+exports[`RequestTrialExtension component should not display when trial expires in > 24 days 1`] = `null`;

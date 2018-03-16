@@ -1,36 +1,49 @@
 import React from 'react';
-
+import { BASE_PATH } from '../../../common/constants';
 import {
-  KuiButton,
-  KuiConfirmModal,
-  KuiModalOverlay
-} from '@kbn/ui-framework/components';
+  EuiButton,
+  EuiButtonEmpty,
+  EuiFilePicker,
+  EuiForm,
+  EuiSpacer,
+  EuiConfirmModal,
+  EuiOverlayMask,
+  EuiText,
+  EuiTitle,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiPanel
+} from '@elastic/eui';
 
 export class UploadLicense extends React.PureComponent {
-  getFile = () => {
-    return this.fileInput.files[0];
-  }
-  send = (acknowledge) => {
-    const file = this.getFile();
+  send = acknowledge => {
+    const file = this.file;
     const fr = new FileReader();
     fr.onload = ({ target: { result } }) => {
-      this.props.uploadLicense(result, this.props.currentLicenseType, acknowledge);
+      this.props.uploadLicense(
+        result,
+        this.props.currentLicenseType,
+        acknowledge
+      );
     };
     fr.readAsText(file);
-  }
+  };
 
   cancel = () => {
     this.props.uploadLicenseStatus({});
-  }
+  };
 
   acknowledgeModal() {
-    const { needsAcknowledgement, messages: [firstLine, ...messages] = [] } = this.props;
+    const {
+      needsAcknowledgement,
+      messages: [firstLine, ...messages] = []
+    } = this.props;
     if (!needsAcknowledgement) {
       return null;
     }
     return (
-      <KuiModalOverlay>
-        <KuiConfirmModal
+      <EuiOverlayMask>
+        <EuiConfirmModal
           title="Confirm License Upload"
           onCancel={this.cancel}
           onConfirm={() => this.send(true)}
@@ -38,13 +51,15 @@ export class UploadLicense extends React.PureComponent {
           confirmButtonText="Confirm"
         >
           <div>
-            <p>{ firstLine }</p>
-            <ul>
-              { messages.map((message) => (<li key={message}>{ message }</li>)) }
-            </ul>
+            <EuiText>{firstLine}</EuiText>
+            <EuiText>
+              <ul>
+                {messages.map(message => <li key={message}>{message}</li>)}
+              </ul>
+            </EuiText>
           </div>
-        </KuiConfirmModal>
-      </KuiModalOverlay>
+        </EuiConfirmModal>
+      </EuiOverlayMask>
     );
   }
   errorMessage() {
@@ -52,72 +67,72 @@ export class UploadLicense extends React.PureComponent {
     if (!errorMessage) {
       return null;
     }
-    return (
-      <div className="kuiInfoPanel kuiInfoPanel--error kuiVerticalRhythm">
-        <div className="kuiInfoPanelHeader">
-          <span
-            className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--error fa-warning"
-            aria-label="Warning"
-            role="img"
-          />
-          <span className="kuiInfoPanelHeader__title">
-            {errorMessage}
-          </span>
-        </div>
-      </div>
-    );
+    return [errorMessage];
   }
-  checkForFile = () => {
-    if (this.getFile()) {
+  handleFile = ([file]) => {
+    if (file) {
       this.props.addUploadErrorMessage('');
     }
-  }
-  submit = (event) => {
+    this.file = file;
+  };
+  submit = event => {
     event.preventDefault();
-    if (this.getFile()) {
+    if (this.file) {
       this.send();
     } else {
       this.props.addUploadErrorMessage('You must select a license file.');
     }
-  }
+  };
 
   render() {
     const { currentLicenseType, applying } = this.props;
     return (
-      <div className="kuiNotice">
-        <div className="kuiPanel">
-          { this.acknowledgeModal() }
-          <div className="kuiPanelHeader">
-            <div className="kuiPanelHeader__title">
-              Upload a license
-            </div>
-          </div>
-          <div className="kuiPanelBody">
-            <p>Your license key is a JSON file with a signature attached.</p>
-            <p>Uploading a license will replace your current <b>{ currentLicenseType.toUpperCase() }</b> license.</p>
-            <form>
-              { this.errorMessage() }
-              <div className="kuiVerticalRhythm">
-                <p>
-                  <input
-                    ref={(input) => { this.fileInput = input; }}
-                    type="file"
-                    onChange={this.checkForFile}
-                    name="licenseFile"
-                  />
-                </p>
-              </div>
-              <KuiButton
-                isLoading={applying}
-                disabled={applying}
-                buttonType="primary"
-                onClick={this.submit}
-              >
-                {applying ? 'Uploading...' : 'Upload'}
-              </KuiButton>
-            </form>
-          </div>
-        </div>
+      <div className="licenseManagement__contain">
+        <EuiFlexGroup justifyContent="spaceAround">
+          <EuiFlexItem grow={false}>
+            <EuiTitle size="l">
+              <h1>Upload your license</h1>
+            </EuiTitle>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiSpacer />
+        <EuiPanel>
+          {this.acknowledgeModal()}
+
+          <EuiText>
+            Your license key is a JSON file with a signature attached.
+          </EuiText>
+          <EuiText>
+            Uploading a license will replace your current{' '}
+            <strong>{currentLicenseType.toUpperCase()}</strong> license.
+          </EuiText>
+          <EuiSpacer />
+          <EuiForm
+            isInvalid={!!this.errorMessage()}
+            error={this.errorMessage()}
+          >
+            <EuiText>
+              <EuiFilePicker
+                id="licenseFile"
+                initialPromptText="Select or drag your license file"
+                onChange={this.handleFile}
+              />
+            </EuiText>
+            <EuiSpacer size="m" />
+            <EuiFlexGroup justifyContent="spaceBetween">
+              <EuiFlexItem grow={false}>
+                <EuiButtonEmpty href={`#${BASE_PATH}home`}>
+                  Cancel
+                </EuiButtonEmpty>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButton fill isLoading={applying} onClick={this.submit}>
+                  {applying ? 'Uploading...' : 'Upload'}
+                </EuiButton>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiForm>
+        </EuiPanel>
       </div>
     );
   }

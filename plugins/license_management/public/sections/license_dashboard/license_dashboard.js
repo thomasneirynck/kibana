@@ -1,29 +1,29 @@
 import React from 'react';
 
-import { BASE_PATH } from '../../../common/constants';
-import { ExpirationNotice } from './expiration_notice';
-import { LicenseStatus } from './license_status';
-import { BasicLicenseRegistration } from './basic_license_registration';
-import { SubscriptionRegistration } from './subscription_registration';
 
-export class LicenseDashboard extends React.PureComponent {
-  render() {
-    const { isExpired } = this.props;
-    return (
-      <div className="kuiViewContent kuiViewContent--constrainedWidth">
-        <div className="kuiNotice">
-          <ExpirationNotice />
-          <LicenseStatus />
-          <div className="kuiCardGroup kuiCardGroup--united kuiVerticalRhythm">
-            <BasicLicenseRegistration />
-            <SubscriptionRegistration />
-          </div>
-          <p className="kuiText kuiVerticalRhythm text-center">
-            { `${isExpired ? 'Already have your' : 'Have a newer' } license? Splendid! `}
-            <a href={`#${BASE_PATH}upload_license`}>Install it now.</a>
-          </p>
-        </div>
-      </div>
-    );
-  }
-}
+import { LicenseStatus } from './license_status';
+import { RevertToBasic } from './revert_to_basic';
+import { StartTrial } from './start_trial';
+import { AddLicense } from './add_license';
+import { RequestTrialExtension } from './request_trial_extension';
+import {
+  EuiFlexGroup,
+  EuiSpacer
+} from '@elastic/eui';
+
+export const LicenseDashboard = () => {
+  return (
+    <div className="licenseManagement__contain">
+      <EuiFlexGroup justifyContent="spaceAround">
+        <LicenseStatus />
+      </EuiFlexGroup>
+      <EuiSpacer size="l" />
+      <EuiFlexGroup justifyContent="spaceAround">
+        <AddLicense />
+        <StartTrial />
+        <RequestTrialExtension/>
+        <RevertToBasic/>
+      </EuiFlexGroup>
+    </div>
+  );
+};

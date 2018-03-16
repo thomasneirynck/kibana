@@ -1,7 +1,9 @@
 import { combineReducers } from 'redux';
 import { license } from './license';
 import { uploadStatus } from './upload_status';
-import { uploadErrorMessage } from "./upload_error_message";
+import { startBasicStatus } from './start_basic_license_status';
+import { uploadErrorMessage } from './upload_error_message';
+import { trialStatus } from './trial_status';
 import moment from 'moment-timezone';
 
 export const WARNING_THRESHOLD_IN_DAYS = 25;
@@ -10,65 +12,101 @@ export const licenseManagement = combineReducers({
   license,
   uploadStatus,
   uploadErrorMessage,
+  trialStatus,
+  startBasicStatus
 });
 
-export const getLicense = (state) => {
+export const getLicense = state => {
   return state.license;
 };
 
-export const getExpirationMillis = (state) => {
-  return getLicense(state).expiryDateInMillis;
-};
-
-export const getExpirationDate = (state) => {
-  return moment.tz(getExpirationMillis(state), moment.tz.guess());
-};
-
-export const getExpirationDateFormatted = (state) => {
-  return getExpirationDate(state).format('LLL z');
-};
-
-export const isExpired = (state) => {
-  return new Date().getTime() > getExpirationMillis(state);
-};
-
-export const getLicenseType = (state) => {
+export const getLicenseType = state => {
   return getLicense(state).type;
 };
 
-export const isImminentExpiration = (state) => {
+export const getExpirationMillis = state => {
+  return getLicense(state).expiryDateInMillis;
+};
+
+export const getExpirationDate = state => {
+  //basic licenses do not expire
+  if (getLicenseType(state) === 'basic') {
+    return null;
+  }
+  const expirationMillis = getExpirationMillis(state);
+  if (expirationMillis) {
+    return moment.tz(getExpirationMillis(state), moment.tz.guess());
+  } else {
+    return null;
+  }
+};
+
+export const getExpirationDateFormatted = state => {
+  const expirationDate = getExpirationDate(state);
+  return expirationDate ? expirationDate.format('LLL z') : null;
+};
+
+export const isExpired = state => {
+  return new Date().getTime() > getExpirationMillis(state);
+};
+
+export const isImminentExpiration = state => {
   const now = new Date();
   const expirationDate = getExpirationDate(state);
-  return expirationDate.isAfter(now) && expirationDate.diff(now, 'days') <= WARNING_THRESHOLD_IN_DAYS;
+  return (
+    expirationDate &&
+    expirationDate.isAfter(now) &&
+    expirationDate.diff(now, 'days') <= WARNING_THRESHOLD_IN_DAYS
+  );
 };
 
-export const couldUpgrade = (state) => {
-  const { type } = getLicense(state);
-  return type === 'basic' || type === 'trial' || isExpired(state);
-};
-
-export const showBasicRegistration = (state) => {
+export const shouldShowRevertToBasicLicense = state => {
   const { type } = getLicense(state);
   return type === 'trial' || isImminentExpiration(state) || isExpired(state);
 };
 
-export const needsAcknowledgement = (state) => {
+export const shouldShowRequestTrialExtension = state => {
+  const { type } = getLicense(state);
+  return type === 'basic' && (isImminentExpiration(state) || isExpired(state));
+};
+
+export const uploadNeedsAcknowledgement = state => {
   return !!state.uploadStatus.acknowledge;
 };
 
-export const isApplying = (state) => {
+export const isApplying = state => {
   return !!state.uploadStatus.applying;
 };
 
-export const uploadMessages = (state) => {
+export const uploadMessages = state => {
   return state.uploadStatus.messages;
 };
 
-export const isInvalid = (state) => {
+export const isInvalid = state => {
   return !!state.uploadStatus.invalid;
 };
 
-export const getUploadErrorMessage = (state) => {
+export const getUploadErrorMessage = state => {
   return state.uploadErrorMessage;
 };
 
+export const shouldShowStartTrial = state => {
+  const licenseType = getLicenseType(state);
+  return (
+    state.trialStatus.canStartTrial &&
+    licenseType !== 'trial' &&
+    //don't show for platinum unless it is expired
+    (licenseType !== 'platinum' || isExpired(state))
+  );
+};
+export const startTrialError = state => {
+  return state.trialStatus.startTrialError;
+};
+
+export const startBasicLicenseNeedsAcknowledgement = state => {
+  return !!state.startBasicStatus.acknowledge;
+};
+
+export const getStartBasicMessages = state => {
+  return state.startBasicStatus.messages;
+};
