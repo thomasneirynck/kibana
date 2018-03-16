@@ -555,6 +555,7 @@ module.controller('MlNewJob',
       if (indexPattern.id !== undefined) {
         timeBasedIndexCheck(indexPattern, true);
         $scope.ui.datafeed.indicesText = indexPattern.title;
+        $scope.job.data_description.time_field = indexPattern.timeFieldName;
 
         if (savedSearch.id !== undefined) {
           $scope.ui.datafeed.queryText = JSON.stringify(combinedQuery);
