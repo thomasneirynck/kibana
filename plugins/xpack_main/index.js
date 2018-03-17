@@ -24,13 +24,12 @@ export { callClusterFactory } from './server/lib/call_cluster_factory';
  * @param {Object} config Kibana configuration object.
  */
 function isTelemetryEnabled(config) {
-  // Remove the requirement for monitoring when possible
-  const monitoringEnabled = config.get('xpack.monitoring.enabled');
-  const enabled = monitoringEnabled && config.get('xpack.xpack_main.telemetry.enabled');
+  const enabled = config.get('xpack.xpack_main.telemetry.enabled');
 
   // Remove deprecated 'report_stats' in 7.0
   if (enabled) {
-    return config.get('xpack.monitoring.report_stats');
+    // if xpack.monitoring.enabled is false, then report_stats cannot be defined
+    return !config.get('xpack.monitoring.enabled') || config.get('xpack.monitoring.report_stats');
   }
 
   return enabled;

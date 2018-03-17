@@ -1,2 +1,2 @@
-export { getAllStats } from './get_all_stats';
-
+export { getAllStats } from './monitoring';
+export { getLocalStats } from './local';

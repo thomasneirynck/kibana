@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { createQuery } from './create_query';
-import { KIBANA_SYSTEM_ID, REPORTING_SYSTEM_ID } from '../../../common/constants';
+import { KIBANA_SYSTEM_ID, REPORTING_SYSTEM_ID } from '../../../../common/constants';
 
 const reportingStatsPath = `${KIBANA_SYSTEM_ID}_stats.usage.xpack.${REPORTING_SYSTEM_ID}`;
 

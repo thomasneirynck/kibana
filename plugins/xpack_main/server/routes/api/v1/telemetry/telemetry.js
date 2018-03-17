@@ -1,6 +1,30 @@
 import Joi from 'joi';
 import { wrap } from 'boom';
-import { getAllStats } from '../../../../lib/telemetry';
+import { getAllStats, getLocalStats } from '../../../../lib/telemetry';
+
+/**
+ * Get the telemetry data.
+ *
+ * @param {Object} req The incoming request.
+ * @param {Object} config Kibana config.
+ * @param {String} start The start time of the request (likely 20m ago).
+ * @param {String} end The end time of the request.
+ * @return {Promise} An array of telemetry objects.
+ */
+export async function getTelemetry(req, config, start, end, { _getAllStats = getAllStats, _getLocalStats = getLocalStats } = { }) {
+  let response = [];
+
+  if (config.get('xpack.monitoring.enabled')) {
+    response = await _getAllStats(req, start, end);
+  }
+
+  if (!Array.isArray(response) || response.length === 0) {
+    // return it as an array for a consistent API response
+    response = [ await _getLocalStats(req) ];
+  }
+
+  return response;
+}
 
 export function telemetryRoute(server) {
   /**
@@ -22,23 +46,22 @@ export function telemetryRoute(server) {
         })
       }
     },
-    handler: (req, reply) => {
+    handler: async (req, reply) => {
+      const config = req.server.config();
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
 
-      return getAllStats(req, start, end)
-        .then(reply)
-        .catch(err => {
-          const config = req.server.config();
-
-          if (config.get('env.dev')) {
-          // don't ignore errors when running in dev mode
-            reply(wrap(err));
-          } else {
-          // ignore errors, return empty set and a 200
-            reply([]).code(200);
-          }
-        });
+      try {
+        reply(await getTelemetry(req, config, start, end));
+      } catch (err) {
+        if (config.get('env.dev')) {
+        // don't ignore errors when running in dev mode
+          reply(wrap(err));
+        } else {
+        // ignore errors, return empty set and a 200
+          reply([]).code(200);
+        }
+      }
     }
   });
 }
