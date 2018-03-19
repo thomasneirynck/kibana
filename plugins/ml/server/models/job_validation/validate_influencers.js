@@ -13,25 +13,28 @@
  * strictly prohibited.
  */
 
+import { validateJobObject } from './validate_job_object';
+
 const INFLUENCER_LOW_THRESHOLD = 0;
 const INFLUENCER_HIGH_THRESHOLD = 4;
 const DETECTOR_FIELD_NAMES_THRESHOLD = 1;
 
 export async function validateInfluencers(callWithRequest, job) {
-  if (!Array.isArray(job.analysis_config.influencers)) {
-    throw new Error('Invalid job.analysis_config.influencers: Needs to be an array.');
-  }
+  validateJobObject(job);
 
   const messages = [];
   const influencers = job.analysis_config.influencers.length;
 
   const detectorFieldNames = [];
   job.analysis_config.detectors.forEach((d) => {
-    if (d.partition_field_name) {
-      detectorFieldNames.push(d.partition_field_name);
+    if (d.by_field_name) {
+      detectorFieldNames.push(d.over_field_name);
     }
     if (d.over_field_name) {
       detectorFieldNames.push(d.over_field_name);
+    }
+    if (d.partition_field_name) {
+      detectorFieldNames.push(d.partition_field_name);
     }
   });
 

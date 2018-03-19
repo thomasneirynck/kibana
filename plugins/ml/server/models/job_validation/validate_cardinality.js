@@ -17,6 +17,8 @@ import _ from 'lodash';
 
 import { DataVisualizer } from '../data_visualizer';
 
+import { validateJobObject } from './validate_job_object';
+
 // Thresholds to determine whether cardinality is
 // too high or low for certain fields analysis
 const OVER_FIELD_CARDINALITY_THRESHOLD_LOW = 10;
@@ -38,7 +40,7 @@ const validateFactory = (callWithRequest, job) => {
 
     if (relevantDetectors.length > 0) {
       const stats = await dv.checkAggregatableFieldsExist(
-        job.datafeed_config.indices[0],
+        job.datafeed_config.indices.join(','),
         job.datafeed_config.query,
         relevantDetectors.map(f => f[fieldName]),
         0,
@@ -68,6 +70,8 @@ const validateFactory = (callWithRequest, job) => {
 };
 
 export async function validateCardinality(callWithRequest, job) {
+  validateJobObject(job);
+
   // validate({ type, isInvalid }) asynchronously returns an array of validation messages
   const validate = validateFactory(callWithRequest, job);
 

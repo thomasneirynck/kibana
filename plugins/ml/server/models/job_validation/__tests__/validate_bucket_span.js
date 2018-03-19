@@ -35,7 +35,6 @@ const callWithRequestFactory = (mockSearchResponse) => {
   };
 };
 
-
 describe('ML - validateBucketSpan', () => {
 
   it('called without arguments', (done) => {
@@ -60,17 +59,24 @@ describe('ML - validateBucketSpan', () => {
   });
 
   it('called with non-valid job argument #3, missing data_description', (done) => {
-    validateBucketSpan(callWithRequestFactory(mockFareQuoteSearchResponse), { datafeed_config: { indices: [] } }).then(
+    const job = { datafeed_config: { indices: [] } };
+    validateBucketSpan(callWithRequestFactory(mockFareQuoteSearchResponse), job).then(
       () => done(new Error('Promise should not resolve for this test without valid job argument.')),
       () => done()
     );
   });
 
   it('called with non-valid job argument #4, missing data_description.time_field', (done) => {
-    validateBucketSpan(
-      callWithRequestFactory(mockFareQuoteSearchResponse),
-      { datafeed_config: { indices: [] }, data_description: {} }
-    ).then(
+    const job = { datafeed_config: { indices: [] }, data_description: {} };
+    validateBucketSpan(callWithRequestFactory(mockFareQuoteSearchResponse), job).then(
+      () => done(new Error('Promise should not resolve for this test without valid job argument.')),
+      () => done()
+    );
+  });
+
+  it('called with non-valid job argument #5, missing analysis_config.influencers', (done) => {
+    const job = { datafeed_config: { indices: [] }, data_description: { time_field: '@timestamp' } };
+    validateBucketSpan(callWithRequestFactory(mockFareQuoteSearchResponse), job).then(
       () => done(new Error('Promise should not resolve for this test without valid job argument.')),
       () => done()
     );
@@ -78,7 +84,7 @@ describe('ML - validateBucketSpan', () => {
 
   it('called without duration argument', () => {
     const job = {
-      analysis_config: { detectors: [] },
+      analysis_config: { detectors: [], influencers: [] },
       data_description: { time_field: '@timestamp' },
       datafeed_config: { indices: [] }
     };
@@ -94,7 +100,8 @@ describe('ML - validateBucketSpan', () => {
   const getJobConfig = (bucketSpan) => ({
     analysis_config: {
       bucket_span: bucketSpan,
-      detectors: []
+      detectors: [],
+      influencers: []
     },
     data_description: { time_field: '@timestamp' },
     datafeed_config: { indices: [] }

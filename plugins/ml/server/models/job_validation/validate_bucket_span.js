@@ -17,6 +17,8 @@ import { estimateBucketSpanFactory } from '../../models/bucket_span_estimator';
 import { mlFunctionToESAggregation } from '../../../common/util/job_utils';
 import { parseInterval } from '../../../common/util/parse_interval.js';
 
+import { validateJobObject } from './validate_job_object';
+
 const BUCKET_SPAN_HIGH_THRESHOLD = 1;
 
 const wrapQuery = (query) => ({
@@ -53,21 +55,7 @@ const pickBucketSpan = (bucketSpans) => {
 };
 
 export async function validateBucketSpan(callWithRequest, job, duration) {
-  if (job === null || typeof job !== 'object') {
-    throw new Error('Invalid job: Needs to be an object.');
-  }
-  if (job.datafeed_config === null || typeof job.datafeed_config !== 'object') {
-    throw new Error('Invalid datafeed_config: Needs to be an object.');
-  }
-  if (!Array.isArray(job.datafeed_config.indices)) {
-    throw new Error('Invalid indices: Needs to be an Array.');
-  }
-  if (job.data_description === null || typeof job.data_description !== 'object') {
-    throw new Error('Invalid data_description: Needs to be an object.');
-  }
-  if (typeof job.data_description.time_field !== 'string') {
-    throw new Error('Invalid time_field: Needs to be a string.');
-  }
+  validateJobObject(job);
 
   if (typeof duration === 'undefined') {
     return [{ id: 'bucket_span_no_duration' }];
