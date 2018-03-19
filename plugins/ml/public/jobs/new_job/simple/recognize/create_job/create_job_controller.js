@@ -224,8 +224,7 @@ module
         // save jobs,datafeeds and kibana savedObjects
           saveDataRecognizerItems()
             .then(() => {
-              const jobIds = $scope.formConfig.jobs.map(job => `'${$scope.formConfig.jobLabel}${job.id}'`);
-              const jobIdsString = jobIds.join(',');
+              const jobIds = $scope.formConfig.jobs.map(job => `${$scope.formConfig.jobLabel}${job.id}`);
 
               // open jobs and save start datafeeds
               if ($scope.formConfig.startDatafeedAfterSave) {
@@ -234,7 +233,7 @@ module
                     // everything saved correctly and datafeeds have started.
                     $scope.overallState = SAVE_STATE.SAVED;
                     $scope.resultsUrl = createResultsUrl(
-                      jobIdsString,
+                      jobIds,
                       $scope.formConfig.start,
                       $scope.formConfig.end,
                       'explorer');
@@ -245,7 +244,7 @@ module
                 // datafeeds didn't need to be started so finish
                 $scope.overallState = SAVE_STATE.SAVED;
                 $scope.resultsUrl = createResultsUrl(
-                  jobIdsString,
+                  jobIds,
                   $scope.formConfig.start,
                   $scope.formConfig.end,
                   'explorer');

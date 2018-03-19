@@ -516,7 +516,7 @@ module
                   }
 
                   $scope.resultsUrl = createResultsUrl(
-                    $scope.formConfig.jobId,
+                    [$scope.formConfig.jobId],
                     $scope.formConfig.start,
                     $scope.formConfig.end,
                     'explorer');
