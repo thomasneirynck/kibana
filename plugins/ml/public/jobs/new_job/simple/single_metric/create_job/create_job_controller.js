@@ -231,7 +231,8 @@ module
       $scope.ui.bucketSpanEstimator.message = '';
 
       $scope.ui.bucketSpanValid = true;
-      if(parseInterval($scope.formConfig.bucketSpan, false) === null) {
+      const bucketSpanInterval = parseInterval($scope.formConfig.bucketSpan);
+      if(bucketSpanInterval === null || bucketSpanInterval.asMilliseconds() === 0) {
         $scope.ui.bucketSpanValid = false;
       }
     };
@@ -242,7 +243,8 @@ module
       $scope.formConfig.end = dateMath.parse(timefilter.time.to).valueOf();
       $scope.formConfig.format = 'epoch_millis';
 
-      if(parseInterval($scope.formConfig.bucketSpan, false) === null) {
+      const bucketSpanInterval = parseInterval($scope.formConfig.bucketSpan);
+      if(bucketSpanInterval === null || bucketSpanInterval.asMilliseconds() === 0) {
         $scope.ui.bucketSpanValid = false;
       }
 
@@ -402,7 +404,9 @@ module
     };
 
     $scope.getJobFromConfig = function () {
-      if (validateJobId($scope.formConfig.jobId, $scope.formConfig.jobGroups, $scope.ui.validation.checks)) {
+      const bucketSpanInterval = parseInterval($scope.formConfig.bucketSpan);
+      if (validateJobId($scope.formConfig.jobId, $scope.formConfig.jobGroups, $scope.ui.validation.checks) &&
+        bucketSpanInterval !== null && bucketSpanInterval.asMilliseconds() !== 0) {
         return mlSingleMetricJobService.getJobFromConfig($scope.formConfig);
       }
     };

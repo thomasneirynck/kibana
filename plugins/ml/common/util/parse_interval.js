@@ -13,62 +13,42 @@
  * strictly prohibited.
  */
 
-import _ from 'lodash';
 import moment from 'moment';
 import dateMath from '@elastic/datemath';
 
 // Assume interval is in the form (value)(unit), such as "1h"
-const INTERVAL_STRING_RE = new RegExp('^([0-9\\.]*)\\s*(' + dateMath.units.join('|') + ')$');
+const INTERVAL_STRING_RE = new RegExp('^([0-9]*)\\s*(' + dateMath.units.join('|') + ')$');
 
-export function parseInterval(interval, fallBackToOne = true) {
+// moment.js is only designed to allow fractional values between 0 and 1
+// for units of hour or less.
+const SUPPORT_ZERO_DURATION_UNITS = ['ms', 's', 'm', 'h'];
+
+// Parses an interval String, such as 7d, 1h or 30m to a moment duration.
+// Differs from the Kibana ui/utils/parse_interval in the following ways:
+// 1. A value-less interval such as 'm' is not allowed - in line with the ML back-end
+// not accepting such interval Strings for the bucket span of a job.
+// 2.  Zero length durations 0ms, 0s, 0m and 0h are accepted as-is.
+// Note that when adding or subtracting fractional durations, moment is only designed
+// to work with units less than 'day'.
+// 3. Fractional intervals e.g. 1.5h or 4.5d are not allowed, in line with the behaviour
+// of the Elasticsearch date histogram aggregation.
+export function parseInterval(interval) {
   const matches = String(interval).trim().match(INTERVAL_STRING_RE);
   if (!Array.isArray(matches)) return null;
   if (matches.length < 3) return null;
 
   try {
-    const value = parseFloat(matches[1]) || ((fallBackToOne) ? 1 : 0);
-
-    if (!fallBackToOne && value === 0) return null;
-
+    const value = parseInt(matches[1]);
     const unit = matches[2];
-    const duration = moment.duration(value, unit);
 
-    // There is an error with moment, where if you have a fractional interval between 0 and 1, then when you add that
-    // interval to an existing moment object, it will remain unchanged, which causes problems in the ordered_x_keys
-    // code. To counteract this, we find the first unit that doesn't result in a value between 0 and 1.
-    // For example, if you have '0.5d', then when calculating the x-axis series, we take the start date and begin
-    // adding 0.5 days until we hit the end date. However, since there is a bug in moment, when you add 0.5 days to
-    // the start date, you get the same exact date (instead of being ahead by 12 hours). So instead of returning
-    // a duration corresponding to 0.5 hours, we return a duration corresponding to 12 hours.
-    const selectedUnit = _.find(dateMath.units, function (_unit) {
-      return Math.abs(duration.as(_unit)) >= 1;
-    });
+    // In line with moment.js, only allow zero value intervals when the unit is less than 'day'.
+    // And check for isNaN as e.g. valueless 'm' will pass the regex test.
+    if (isNaN(value) || (value < 1 && SUPPORT_ZERO_DURATION_UNITS.indexOf(unit) === -1))  {
+      return null;
+    }
 
-    return moment.duration(duration.as(selectedUnit), selectedUnit);
+    return moment.duration(value, unit);
   } catch (e) {
     return null;
   }
-}
-
-// Parses an interval String, such as 7d, 1h or 30m to a moment duration.
-// Differs from parseInterval in that it accepts zero length durations
-// e.g. 0s, and allows fractional durations. Note that when adding or
-// subtracting fractional durations, moment is only designed to work
-// with units less than 'day'.
-export function parseIntervalAcceptZero(str) {
-  // TODO - combine this function with parseInterval().
-  let interval = null;
-  const matches = String(str).trim().match(INTERVAL_STRING_RE);
-  if (matches) {
-    try {
-      const value = parseFloat(matches[1]);
-      const unit = matches[2];
-
-      interval = moment.duration(value, unit);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  return interval;
 }

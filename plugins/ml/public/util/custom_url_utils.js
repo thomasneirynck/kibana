@@ -17,7 +17,7 @@
 
 import moment from 'moment';
 
-import { parseIntervalAcceptZero } from 'plugins/ml/../common/util/parse_interval';
+import { parseInterval } from 'plugins/ml/../common/util/parse_interval';
 import { replaceStringTokens } from 'plugins/ml/util/string_utils';
 
 // Replaces the $ delimited tokens in the url_value of the custom URL configuration
@@ -26,7 +26,7 @@ export function replaceTokensInUrlValue(customUrlConfig, jobBucketSpanSecs, doc,
   // If urlValue contains $earliest$ and $latest$ tokens, add in times to the test doc.
   const urlValue = customUrlConfig.url_value;
   const timestamp = doc[timeFieldName];
-  const timeRangeInterval = parseIntervalAcceptZero(customUrlConfig.time_range);
+  const timeRangeInterval = parseInterval(customUrlConfig.time_range);
   if (urlValue.includes('$earliest$')) {
     const earliestMoment = moment(timestamp);
     if (timeRangeInterval !== null) {

@@ -25,7 +25,7 @@ import './styles/main.less';
 
 import { FORECAST_REQUEST_STATE, JOB_STATE } from 'plugins/ml/../common/constants/states';
 import { FieldsServiceProvider } from 'plugins/ml/services/fields_service';
-import { parseInterval } from 'ui/utils/parse_interval';
+import { parseInterval } from 'plugins/ml/../common/util/parse_interval';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -135,10 +135,10 @@ module.controller('MlForecastingModal', function (
     const duration = parseInterval($scope.newForecastDuration);
     if(duration === null) {
       $scope.newForecastDurationError = 'Invalid duration format';
-    } else {
-      if (duration.asMilliseconds() > FORECAST_DURATION_MAX_MS) {
-        $scope.newForecastDurationError = 'Forecast duration must not be greater than 8 weeks';
-      }
+    } else if (duration.asMilliseconds() > FORECAST_DURATION_MAX_MS) {
+      $scope.newForecastDurationError = 'Forecast duration must not be greater than 8 weeks';
+    } else if (duration.asMilliseconds() === 0) {
+      $scope.newForecastDurationError = 'Forecast duration must not be zero';
     }
   };
 

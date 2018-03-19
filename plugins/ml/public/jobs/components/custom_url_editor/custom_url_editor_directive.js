@@ -23,7 +23,7 @@ import rison from 'rison-node';
 
 import template from './custom_url_editor.html';
 import 'plugins/ml/components/item_select';
-import { parseIntervalAcceptZero } from 'plugins/ml/../common/util/parse_interval';
+import { parseInterval } from 'plugins/ml/../common/util/parse_interval';
 import { SavedObjectsClientProvider } from 'ui/saved_objects';
 
 import { uiModules } from 'ui/modules';
@@ -150,7 +150,7 @@ module.directive('mlCustomUrlEditor', function (Private) {
       };
 
       $scope.timeRangeIntervalChanged = function () {
-        const interval = parseIntervalAcceptZero($scope.newCustomUrl.timeRange.interval);
+        const interval = parseInterval($scope.newCustomUrl.timeRange.interval);
         $scope.timeRangeIntervalError = (interval === null);
       };
 

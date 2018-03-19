@@ -14,7 +14,7 @@
  */
 
 
-import { parseInterval } from 'ui/utils/parse_interval';
+import { parseInterval } from 'plugins/ml/../common/util/parse_interval';
 
 // ensure the displayed interval is never smaller than the bucketSpan
 // otherwise the model plot bounds can be drawn in the wrong place.

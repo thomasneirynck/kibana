@@ -23,7 +23,7 @@ import rison from 'rison-node';
 
 import { notify } from 'ui/notify';
 import { ES_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
-import { parseIntervalAcceptZero } from 'plugins/ml/../common/util/parse_interval';
+import { parseInterval } from 'plugins/ml/../common/util/parse_interval';
 import { replaceStringTokens, mlEscape } from 'plugins/ml/util/string_utils';
 import { isTimeSeriesViewDetector } from 'plugins/ml/../common/util/job_utils';
 import {
@@ -312,7 +312,7 @@ module.directive('mlAnomaliesTable', function (
         // If url_value contains $earliest$ and $latest$ tokens, add in times to the source record.
         const timestamp = record[scope.timeFieldName];
         const configuredUrlValue = customUrl.url_value;
-        const timeRangeInterval = parseIntervalAcceptZero(customUrl.time_range);
+        const timeRangeInterval = parseInterval(customUrl.time_range);
         if (configuredUrlValue.includes('$earliest$')) {
           let earliestMoment = moment(timestamp);
           if (timeRangeInterval !== null) {

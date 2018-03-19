@@ -248,7 +248,8 @@ module
       $scope.formConfig.end = dateMath.parse(timefilter.time.to).valueOf();
       $scope.formConfig.format = 'epoch_millis';
 
-      if(parseInterval($scope.formConfig.bucketSpan, false) === null) {
+      const bucketSpanInterval = parseInterval($scope.formConfig.bucketSpan);
+      if(bucketSpanInterval === null || bucketSpanInterval.asMilliseconds() === 0) {
         $scope.ui.bucketSpanValid = false;
       }
 

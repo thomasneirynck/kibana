@@ -306,7 +306,7 @@ export function basicJobValidation(job, fields) {
       valid = false;
     } else {
       const bucketSpan = parseInterval(job.analysis_config.bucket_span, false);
-      if (bucketSpan === null) {
+      if (bucketSpan === null || bucketSpan.asMilliseconds() === 0) {
         messages.push({ id: 'bucket_span_invalid' });
         valid = false;
       } else {

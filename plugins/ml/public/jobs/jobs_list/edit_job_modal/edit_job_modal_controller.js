@@ -19,10 +19,9 @@ import './styles/main.less';
 import angular from 'angular';
 
 import { calculateDatafeedFrequencyDefaultSeconds } from 'plugins/ml/../common/util/job_utils';
-import { parseIntervalAcceptZero } from 'plugins/ml/../common/util/parse_interval';
+import { parseInterval } from 'plugins/ml/../common/util/parse_interval';
 import { CustomUrlEditorServiceProvider } from 'plugins/ml/jobs/components/custom_url_editor/custom_url_editor_service';
 import { isWebUrl } from 'plugins/ml/util/string_utils';
-import { parseInterval } from 'ui/utils/parse_interval';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -121,7 +120,7 @@ module.controller('MlEditJobModal', function (
   $scope.customUrlTimeRangeChanged = function (index) {
     const customUrl = $scope.job.custom_settings.custom_urls[index];
     const timeRange = customUrl.time_range;
-    const interval = parseIntervalAcceptZero(timeRange);
+    const interval = parseInterval(timeRange);
     customUrl.timeRangeError = (interval === null && timeRange !== CUSTOM_URL_TIME_RANGE_AUTO);
   };
 
