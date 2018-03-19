@@ -1,6 +1,7 @@
 import React from 'react';
 import { ColaGraph } from './views/cola_graph';
 import { DetailDrawer } from './views/detail_drawer';
+import { PropTypes } from 'prop-types';
 
 export class PipelineViewer extends React.Component {
   constructor() {
@@ -13,11 +14,16 @@ export class PipelineViewer extends React.Component {
   }
 
   onShowVertexDetails = (vertex) => {
-    this.setState({
-      detailDrawer: {
-        vertex
-      }
-    });
+    if (vertex === this.state.detailDrawer.vertex) {
+      this.onHideVertexDetails();
+    }
+    else {
+      this.setState({
+        detailDrawer: {
+          vertex
+        }
+      });
+    }
   }
 
   onHideVertexDetails = () => {
@@ -57,3 +63,12 @@ export class PipelineViewer extends React.Component {
     );
   }
 }
+
+PipelineViewer.propTypes = {
+  pipelineState: PropTypes.shape({
+    config: PropTypes.shape({
+      graph: PropTypes.object.isRequired
+    })
+  }),
+  timeseriesTooltipXValueFormatter: PropTypes.object.isRequired
+};
