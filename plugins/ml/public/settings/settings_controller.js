@@ -16,6 +16,7 @@
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
+import { getMlNodeCount, mlNodesAvailable } from 'plugins/ml/ml_nodes_check/check_ml_nodes';
 
 import template from './settings.html';
 
@@ -24,7 +25,8 @@ uiRoutes
     template,
     resolve: {
       CheckLicense: checkLicense,
-      privileges: checkGetJobsPrivilege
+      privileges: checkGetJobsPrivilege,
+      mlNodeCount: getMlNodeCount
     }
   });
 
@@ -39,4 +41,5 @@ module.controller('MlSettings',
     timefilter.disableTimeRangeSelector(); // remove time picker from top of page
     timefilter.disableAutoRefreshSelector(); // remove time picker from top of page
 
+    $scope.mlNodesAvailable = mlNodesAvailable();
   });

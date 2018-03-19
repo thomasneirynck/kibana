@@ -28,19 +28,23 @@ import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkGetJobsPrivilege, permissionCheckProvider } from 'plugins/ml/privilege/check_privilege';
 import { addItemToRecentlyAccessed } from 'plugins/ml/util/recently_accessed';
+import { getMlNodeCount, mlNodesAvailable } from 'plugins/ml/ml_nodes_check/check_ml_nodes';
+
 
 import template from './jobs_list.html';
 import deleteJobTemplate from 'plugins/ml/jobs/jobs_list/delete_job_modal/delete_job_modal.html';
 import editJobTemplate from 'plugins/ml/jobs/jobs_list/edit_job_modal/edit_job_modal.html';
 import createWatchTemplate from 'plugins/ml/jobs/jobs_list/create_watch_modal/create_watch_modal.html';
 import { buttonsEnabledChecks } from 'plugins/ml/jobs/jobs_list/buttons_enabled_checks';
+import { cloudServiceProvider } from 'plugins/ml/services/cloud_service';
 
 uiRoutes
   .when('/jobs/?', {
     template,
     resolve: {
       CheckLicense: checkLicense,
-      privileges: checkGetJobsPrivilege
+      privileges: checkGetJobsPrivilege,
+      mlNodeCount: getMlNodeCount
     }
   });
 
@@ -83,6 +87,11 @@ module.controller('MlJobsList',
     let jobFilterTimeout;
 
     $scope.kbnUrl = kbnUrl;
+    $scope.mlNodesAvailable = mlNodesAvailable();
+
+    const { isRunningOnCloud, getCloudId } = Private(cloudServiceProvider);
+    $scope.isCloud = isRunningOnCloud();
+    $scope.cloudId = getCloudId();
 
     const { checkPermission, createPermissionFailureMessage } = Private(permissionCheckProvider);
     $scope.permissions = {
@@ -246,7 +255,7 @@ module.controller('MlJobsList',
         }
         rowScope.job = job;
         rowScope.closeJob = $scope.closeJob;
-        rowScope.canCloseJob = $scope.permissions.canCloseJob;
+        rowScope.canCloseJob = ($scope.permissions.canCloseJob && $scope.mlNodesAvailable);
         rowScope.currentTab = { index: 0 };
         rowScope.jobAudit = {
           messages: '',
@@ -279,7 +288,7 @@ module.controller('MlJobsList',
         rowScope.enableTimeSeries = isTimeSeriesViewJob(job);
         rowScope.addItemToRecentlyAccessed = addItemToRecentlyAccessed;
 
-        rowScope.checks = buttonsEnabledChecks($scope.permissions, job, createPermissionFailureMessage);
+        rowScope.checks = buttonsEnabledChecks($scope.permissions, job, createPermissionFailureMessage, $scope.mlNodesAvailable);
 
         rowScopes.push(rowScope);
         const jobDescription = job.description || '';

@@ -25,6 +25,7 @@ import uiRoutes from 'ui/routes';
 import { checkLicenseExpired } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { getIndexPatternWithRoute, getSavedSearchWithRoute } from 'plugins/ml/util/index_utils';
+import { checkMlNodesAvailable } from 'plugins/ml/ml_nodes_check/check_ml_nodes';
 import template from './create_job.html';
 
 uiRoutes
@@ -34,7 +35,8 @@ uiRoutes
       CheckLicense: checkLicenseExpired,
       privileges: checkCreateJobsPrivilege,
       indexPattern: getIndexPatternWithRoute,
-      savedSearch: getSavedSearchWithRoute
+      savedSearch: getSavedSearchWithRoute,
+      checkMlNodesAvailable
     }
   });
 

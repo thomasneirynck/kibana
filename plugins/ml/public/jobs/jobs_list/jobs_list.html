@@ -8,6 +8,22 @@
   <ml-message-bar ></ml-message-bar>
 
   <div class="jobs-container">
+    <div ng-if="mlNodesAvailable === false" class="euiCallOut euiCallOut--warning">
+      <div class="euiCallOutHeader">
+        <i class="fa fa-exclamation-triangle" />
+        <span class="euiCallOutHeader__title">No ML Nodes available</span>
+      </div>
+      <div class="euiText euiText--small">
+        <p>
+          There are no ML nodes available.
+          <span ng-if="isCloud">
+            This can be configured in Cloud
+            <a class="euiLink euiLink--primary" href="#">here</a>.
+          </span>
+        </p>
+      </div>
+    </div>
+
     <div>
       <header>
         <div class="row" >
@@ -17,7 +33,7 @@
             <button
               ng-click='newJob()'
               class="kuiButton kuiButton--primary"
-              ng-disabled='permissions.canCreateJob===false'
+              ng-disabled='permissions.canCreateJob===false || mlNodesAvailable === false'
               aria-label="Create new job">
               <i aria-hidden="true" class="fa fa-plus"></i>
               Create new job

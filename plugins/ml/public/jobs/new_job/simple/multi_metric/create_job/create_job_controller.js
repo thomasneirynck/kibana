@@ -36,6 +36,7 @@ import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/component
 import { createFields } from 'plugins/ml/jobs/new_job/simple/components/utils/create_fields';
 import { getIndexPatternWithRoute, getSavedSearchWithRoute, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
 import { ChartDataUtilsProvider } from 'plugins/ml/jobs/new_job/simple/components/utils/chart_data_utils.js';
+import { checkMlNodesAvailable } from 'plugins/ml/ml_nodes_check/check_ml_nodes';
 import template from './create_job.html';
 
 uiRoutes
@@ -45,7 +46,8 @@ uiRoutes
       CheckLicense: checkLicenseExpired,
       privileges: checkCreateJobsPrivilege,
       indexPattern: getIndexPatternWithRoute,
-      savedSearch: getSavedSearchWithRoute
+      savedSearch: getSavedSearchWithRoute,
+      checkMlNodesAvailable
     }
   });
 

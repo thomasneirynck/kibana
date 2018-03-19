@@ -52,6 +52,7 @@ import { refreshIntervalWatcher } from 'plugins/ml/util/refresh_interval_watcher
 import { IntervalHelperProvider, getBoundsRoundedToInterval } from 'plugins/ml/util/ml_time_buckets';
 import template from './timeseriesexplorer.html';
 import forecastingModalTemplate from 'plugins/ml/timeseriesexplorer/forecasting_modal/forecasting_modal.html';
+import { getMlNodeCount, mlNodesAvailable } from 'plugins/ml/ml_nodes_check/check_ml_nodes';
 
 uiRoutes
   .when('/timeseriesexplorer/?', {
@@ -59,7 +60,8 @@ uiRoutes
     resolve: {
       CheckLicense: checkLicense,
       privileges: checkGetJobsPrivilege,
-      indexPatterns: getIndexPatterns
+      indexPatterns: getIndexPatterns,
+      mlNodeCount: getMlNodeCount
     }
   });
 
@@ -575,7 +577,8 @@ module.controller('MlTimeSeriesExplorerController', function (
             pscope: $scope,
             job: $scope.selectedJob,
             entities: $scope.chartDetails.entityData.entities,
-            earliest: bounds.min.valueOf()
+            earliest: bounds.min.valueOf(),
+            mlNodesAvailable: mlNodesAvailable()
           };
         }
       }

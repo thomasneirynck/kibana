@@ -25,6 +25,7 @@ import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { getIndexPatternWithRoute, getSavedSearchWithRoute, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
 import { addItemToRecentlyAccessed } from 'plugins/ml/util/recently_accessed';
+import { checkMlNodesAvailable } from 'plugins/ml/ml_nodes_check/check_ml_nodes';
 import template from './job_type.html';
 
 uiRoutes
@@ -34,7 +35,8 @@ uiRoutes
       CheckLicense: checkLicenseExpired,
       privileges: checkCreateJobsPrivilege,
       indexPattern: getIndexPatternWithRoute,
-      savedSearch: getSavedSearchWithRoute
+      savedSearch: getSavedSearchWithRoute,
+      checkMlNodesAvailable
     }
   });
 

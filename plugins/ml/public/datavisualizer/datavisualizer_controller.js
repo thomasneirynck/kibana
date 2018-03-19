@@ -38,6 +38,7 @@ import { checkLicenseExpired } from 'plugins/ml/license/check_license';
 import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { getIndexPatternWithRoute, getSavedSearchWithRoute, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
+import { checkMlNodesAvailable } from 'plugins/ml/ml_nodes_check/check_ml_nodes';
 import template from './datavisualizer.html';
 
 uiRoutes
@@ -47,7 +48,8 @@ uiRoutes
       CheckLicense: checkLicenseExpired,
       privileges: checkGetJobsPrivilege,
       indexPattern: getIndexPatternWithRoute,
-      savedSearch: getSavedSearchWithRoute
+      savedSearch: getSavedSearchWithRoute,
+      checkMlNodesAvailable
     }
   });
 

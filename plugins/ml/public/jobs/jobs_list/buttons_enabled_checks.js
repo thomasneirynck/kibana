@@ -15,13 +15,21 @@
 
 import { JOB_STATE, DATAFEED_STATE } from 'plugins/ml/../common/constants/states';
 
-export function buttonsEnabledChecks(permissions, job, createPermissionFailureMessage) {
+export function buttonsEnabledChecks(permissions, job, createPermissionFailureMessage, mlNodesAvailable) {
+  const NO_ML_NODES_ERROR = 'No ML nodes available';
+
   function startButtonWrapperClass() {
-    return permissions.canStartStopDatafeed ? 'button-wrapper' : ['button-wrapper', 'disabled'];
+    return (permissions.canStartStopDatafeed && mlNodesAvailable) ? 'button-wrapper' : ['button-wrapper', 'disabled'];
   }
 
   function startButtonWrapperTooltip() {
-    return permissions.canStartStopDatafeed ? undefined : createPermissionFailureMessage('canStartStopDatafeed');
+    let tooltip = undefined;
+    if (permissions.canStartStopDatafeed === false) {
+      tooltip = createPermissionFailureMessage('canStartStopDatafeed');
+    } else if (mlNodesAvailable ===  false) {
+      tooltip = NO_ML_NODES_ERROR;
+    }
+    return tooltip;
   }
 
   function startButtonVisible() {
@@ -43,7 +51,8 @@ export function buttonsEnabledChecks(permissions, job, createPermissionFailureMe
       (job.datafeed_config.datafeed_id === undefined || permissions.canStartStopDatafeed === false) ||
       job.state === JOB_STATE.CLOSING ||
       job.state === JOB_STATE.OPENING ||
-      job.state === JOB_STATE.FAILED
+      job.state === JOB_STATE.FAILED ||
+      mlNodesAvailable === false
     );
   }
 
@@ -81,15 +90,21 @@ export function buttonsEnabledChecks(permissions, job, createPermissionFailureMe
   }
 
   function cloneButtonWrapperClass() {
-    return permissions.canCreateJob ? 'button-wrapper' : ['button-wrapper', 'disabled'];
+    return (permissions.canCreateJob && mlNodesAvailable) ? 'button-wrapper' : ['button-wrapper', 'disabled'];
   }
 
   function cloneButtonWrapperTooltip() {
-    return permissions.canCreateJob ? undefined : createPermissionFailureMessage('canCreateJob');
+    let tooltip = undefined;
+    if (permissions.canCreateJob === false) {
+      tooltip = createPermissionFailureMessage('canCreateJob');
+    } else if (mlNodesAvailable ===  false) {
+      tooltip = NO_ML_NODES_ERROR;
+    }
+    return tooltip;
   }
 
   function cloneButtonDisabled() {
-    return permissions.canCreateJob === false;
+    return (permissions.canCreateJob === false || mlNodesAvailable === false);
   }
 
   function deleteButtonWrapperClass() {

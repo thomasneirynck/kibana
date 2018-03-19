@@ -23,6 +23,7 @@ import { validateCalendarId } from 'plugins/ml/settings/scheduled_events/compone
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
+import { checkMlNodesAvailable } from 'plugins/ml/ml_nodes_check/check_ml_nodes';
 
 import template from './create_calendar.html';
 
@@ -31,14 +32,16 @@ uiRoutes
     template,
     resolve: {
       CheckLicense: checkLicense,
-      privileges: checkGetJobsPrivilege
+      privileges: checkGetJobsPrivilege,
+      checkMlNodesAvailable
     }
   })
   .when('/settings/calendars_list/edit_calendar/:calendarId', {
     template,
     resolve: {
       CheckLicense: checkLicense,
-      privileges: checkGetJobsPrivilege
+      privileges: checkGetJobsPrivilege,
+      checkMlNodesAvailable
     }
   });
 

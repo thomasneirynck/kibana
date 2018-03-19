@@ -22,6 +22,7 @@ import 'ui/sortable_column';
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkGetJobsPrivilege, permissionCheckProvider } from 'plugins/ml/privilege/check_privilege';
+import { checkMlNodesAvailable } from 'plugins/ml/ml_nodes_check/check_ml_nodes';
 
 import template from './calendars_list.html';
 
@@ -30,7 +31,8 @@ uiRoutes
     template,
     resolve: {
       CheckLicense: checkLicense,
-      privileges: checkGetJobsPrivilege
+      privileges: checkGetJobsPrivilege,
+      checkMlNodesAvailable
     }
   });
 

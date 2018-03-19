@@ -18,6 +18,7 @@
           <ul class="list-unstyled">
             <li class="col-xs-4 col-md-3 ng-scope">
               <a
+                ng-if="mlNodesAvailable === true"
                 data-test-subj=""
                 class="management-panel__link ng-binding"
                 tooltip=""
@@ -27,6 +28,12 @@
                 href="ml#/settings/calendars_list">
                  Calendar management
               </a>
+              <span
+                ng-if="mlNodesAvailable === false"
+                tooltip="No ML nodes available"
+                class="disabled">
+                Calendar management
+              </span>
             </li>
           </ul>
         </div>

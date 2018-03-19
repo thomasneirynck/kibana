@@ -127,9 +127,8 @@ module.controller('MlJobTimepickerModal', function (
               $rootScope.$broadcast('openCreateWatchWindow', job);
             }
           })
-          .catch((resp) => {
+          .catch(() => {
             $scope.saveLock = false;
-            msgs.error(resp.message);
           });
       }
     }

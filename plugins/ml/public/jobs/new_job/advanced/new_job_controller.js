@@ -29,6 +29,7 @@ import saveStatusTemplate from 'plugins/ml/jobs/new_job/advanced/save_status_mod
 import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { getIndexPatterns, getIndexPatternWithRoute, getSavedSearchWithRoute, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
 import { ML_JOB_FIELD_TYPES, ES_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
+import { checkMlNodesAvailable } from 'plugins/ml/ml_nodes_check/check_ml_nodes';
 
 uiRoutes
   .when('/jobs/new_job/advanced', {
@@ -38,7 +39,8 @@ uiRoutes
       privileges: checkCreateJobsPrivilege,
       indexPattern: getIndexPatternWithRoute,
       indexPatterns: getIndexPatterns,
-      savedSearch: getSavedSearchWithRoute
+      savedSearch: getSavedSearchWithRoute,
+      checkMlNodesAvailable
     }
   })
   .when('/jobs/new_job/advanced/:jobId', {
@@ -48,7 +50,8 @@ uiRoutes
       privileges: checkCreateJobsPrivilege,
       indexPattern: getIndexPatternWithRoute,
       indexPatterns: getIndexPatterns,
-      savedSearch: getSavedSearchWithRoute
+      savedSearch: getSavedSearchWithRoute,
+      checkMlNodesAvailable
     }
   });
 

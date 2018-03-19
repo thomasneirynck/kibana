@@ -66,7 +66,7 @@
           aria-describedby="ml_aria_description_forecasting_modal_run_duration"
           ng-model="newForecastDuration"
           ng-change="newForecastDurationChange()"
-          ng-disabled="isForecastRunning === true || permissions.canForecastJob === false || invalidJobState !== undefined"
+          ng-disabled="isForecastRunning === true || permissions.canForecastJob === false || invalidJobState !== undefined || mlNodesAvailable === false"
           required
           type="text"
           class="form-control" />
@@ -80,7 +80,7 @@
           class="kuiButton kuiButton--primary run-button"
           ng-click="checkJobStateAndRunForecast()"
           ng-disabled="newForecastDurationError !== null || isForecastRunning === true ||
-            permissions.canForecastJob === false || invalidJobState !== undefined" >
+            permissions.canForecastJob === false || invalidJobState !== undefined || mlNodesAvailable === false" >
           <i ng-if="isForecastRunning === false" class="fa fa-play" ></i>
           <i ng-if="isForecastRunning === true" class="fa fa-spinner fa-spin" ></i>
         </button>
