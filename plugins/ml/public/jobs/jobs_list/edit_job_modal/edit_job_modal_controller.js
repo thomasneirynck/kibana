@@ -88,7 +88,7 @@ module.controller('MlEditJobModal', function (
   }
 
   // Add an 'auto' time for any URLs created before the time_range setting was added.
-  if ($scope.job.custom_settings.custom_urls) {
+  if ($scope.job.custom_settings && $scope.job.custom_settings.custom_urls) {
     $scope.job.custom_settings.custom_urls.forEach((customUrl) => {
       if (customUrl.time_range === undefined) {
         customUrl.time_range = CUSTOM_URL_TIME_RANGE_AUTO;
