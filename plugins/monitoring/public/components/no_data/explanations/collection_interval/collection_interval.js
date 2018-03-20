@@ -5,12 +5,13 @@ import {
   EuiButton,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiLoadingSpinner
+  EuiLoadingSpinner,
+  EuiText,
+  EuiSpacer,
+  EuiHorizontalRule,
+  EuiTitle,
+  EuiTextColor,
 } from '@elastic/eui';
-
-const WaitingIndicator = ({ isCollectionIntervalUpdating }) => {
-  return isCollectionIntervalUpdating ? <EuiLoadingSpinner size="m" /> : null;
-};
 
 export class ExplainCollectionInterval extends React.Component {
   constructor(props) {
@@ -29,56 +30,74 @@ export class ExplainCollectionInterval extends React.Component {
       property,
       data,
       isCollectionIntervalUpdated,
-      isCollectionIntervalUpdating
+      isCollectionEnabledUpdating
     } = this.props;
 
     const renderButton = () => (
-      <EuiFlexGroup alignItems="center" gutterSize="s">
-        <EuiFlexItem grow={false}>
-          <EuiButton
-            fill={true}
-            onClick={this.handleClick}
-            type="button"
-            data-test-subj="enableCollectionInterval"
-          >
-            Enable Monitoring Collection
-          </EuiButton>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <WaitingIndicator
-            isCollectionIntervalUpdating={isCollectionIntervalUpdating}
-          />
-        </EuiFlexItem>
-      </EuiFlexGroup>
+      <Fragment>
+        <EuiTitle size="l">
+          <h2>Monitoring is currently off</h2>
+        </EuiTitle>
+        <EuiTextColor color="subdued">
+          <EuiText>
+            <p>Monitoring provides insight to your hardware performance and load.</p>
+          </EuiText>
+        </EuiTextColor>
+        <EuiHorizontalRule size="half" />
+        <EuiText>
+          <p>
+            We checked the {context} settings and found that <EuiCode>{property}</EuiCode>
+            is set to <EuiCode>{data}</EuiCode>.
+          </p>
+          <p>
+            The collection interval setting needs to be a positive integer
+            (10s is recommended) in order for the collection agents to be active.
+          </p>
+          <p>
+            Would you like us to change it and enable monitoring?
+          </p>
+        </EuiText>
+        <EuiSpacer />
+        <EuiFlexGroup
+          alignItems="center"
+          justifyContent="spaceAround"
+          gutterSize="s"
+        >
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              fill={true}
+              onClick={this.handleClick}
+              type="button"
+              data-test-subj="enableCollectionInterval"
+              isLoading={isCollectionEnabledUpdating}
+            >
+              Turn on monitoring
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </Fragment>
     );
     const renderSuccess = () => (
       <Fragment>
-        <p>
-          Success! An acknowledgement came back from Elasticsearch that the
-          setting was set in the cluster&apos;s persistent settings.
-        </p>
-        <p>
-          You&apos;ll need to wait just few moments for monitoring data to start
-          to appear in the cluster. As soon as as that happens, this page will
-          automatically redirect to your cluster information.
-        </p>
+        <EuiTitle size="l">
+          <h2>Success! Wait a moment please.</h2>
+        </EuiTitle>
+        <EuiHorizontalRule size="half" />
+        <EuiText>
+          <p>
+            As soon as monitoring data appears in your
+            cluster the page will automatically refresh with your monitoring
+            dashboard. This only takes only a few seconds.
+          </p>
+        </EuiText>
+        <EuiSpacer />
+        <EuiLoadingSpinner size="l" />
       </Fragment>
     );
 
     // prettier-ignore
     return (
       <Fragment>
-        <p>
-          We checked the <EuiCode>{context}</EuiCode> settings and found
-          that <EuiCode>{property}</EuiCode> is set to <EuiCode>{data}</EuiCode>,
-          which disables Monitoring.
-        </p>
-        <p>
-          The collection interval setting needs to be a positive integer
-          (usually 10s) in order for the collection agents to be active. Not to
-          worry! You can enable it right here.
-        </p>
-
         {isCollectionIntervalUpdated ? renderSuccess() : renderButton()}
       </Fragment>
     );

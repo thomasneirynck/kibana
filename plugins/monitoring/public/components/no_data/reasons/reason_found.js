@@ -1,6 +1,9 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { EuiTitle, EuiCode } from '@elastic/eui';
+import {
+  EuiText,
+  EuiCode,
+} from '@elastic/eui';
 import {
   ExplainCollectionEnabled,
   ExplainCollectionInterval,
@@ -21,10 +24,12 @@ const ExplainWhyNoData = ({ reason, ...props }) => {
       return <ExplainPluginEnabled {...reason} {...props} />;
     default:
       return (
-        <p>
-          There is a <EuiCode>{context}</EuiCode> setting that has{' '}
-          <EuiCode>{property}</EuiCode> set to <EuiCode>{data}</EuiCode>.
-        </p>
+        <EuiText>
+          <p>
+            There is a <EuiCode>{context}</EuiCode> setting that has{' '}
+            <EuiCode>{property}</EuiCode> set to <EuiCode>{data}</EuiCode>.
+          </p>
+        </EuiText>
       );
   }
 };
@@ -32,9 +37,6 @@ const ExplainWhyNoData = ({ reason, ...props }) => {
 export function ReasonFound(props) {
   return (
     <Fragment>
-      <EuiTitle size="s">
-        <h3>We found the reason that there is no monitoring data available.</h3>
-      </EuiTitle>
       <ExplainWhyNoData {...props} />
     </Fragment>
   );

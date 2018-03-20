@@ -1,37 +1,62 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ExplainPluginEnabled should explain about xpack.monitoring.enabled setting 1`] = `
-<p>
-  We checked the cluster settings and found that 
-  <span
-    class="euiCodeBlock euiCodeBlock--fontSmall euiCodeBlock--paddingLarge euiCodeBlock--inline"
+<div>
+  <h2
+    class="euiTitle euiTitle--large"
   >
-    <code
-      class="euiCodeBlock__code"
-    >
-      xpack.monitoring.enabled
-    </code>
-  </span>
-   is set to 
+    You need to make some adjustments
+  </h2>
   <span
-    class="euiCodeBlock euiCodeBlock--fontSmall euiCodeBlock--paddingLarge euiCodeBlock--inline"
+    class="euiTextColor euiTextColor--subdued"
   >
-    <code
-      class="euiCodeBlock__code"
+    <div
+      class="euiText"
     >
-      false
-    </code>
+      <p>
+        To run monitoring please perform the following steps
+      </p>
+    </div>
   </span>
-   set, which disables monitoring. Removing the 
-  <span
-    class="euiCodeBlock euiCodeBlock--fontSmall euiCodeBlock--paddingLarge euiCodeBlock--inline"
+  <hr
+    class="euiHorizontalRule euiHorizontalRule--half euiHorizontalRule--marginLarge"
+  />
+  <div
+    class="euiText"
   >
-    <code
-      class="euiCodeBlock__code"
-    >
-      xpack.monitoring.enabled: false
-    </code>
-  </span>
-   setting from your configuration will put the default into effect and enable Monitoring.
-</p>
+    <p>
+      We checked the cluster settings and found that 
+      <span
+        class="euiCodeBlock euiCodeBlock--fontSmall euiCodeBlock--paddingLarge euiCodeBlock--inline"
+      >
+        <code
+          class="euiCodeBlock__code"
+        >
+          xpack.monitoring.enabled
+        </code>
+      </span>
+       is set to 
+      <span
+        class="euiCodeBlock euiCodeBlock--fontSmall euiCodeBlock--paddingLarge euiCodeBlock--inline"
+      >
+        <code
+          class="euiCodeBlock__code"
+        >
+          false
+        </code>
+      </span>
+       set, which disables monitoring. Removing the 
+      <span
+        class="euiCodeBlock euiCodeBlock--fontSmall euiCodeBlock--paddingLarge euiCodeBlock--inline"
+      >
+        <code
+          class="euiCodeBlock__code"
+        >
+          xpack.monitoring.enabled: false
+        </code>
+      </span>
+       setting from your configuration will put the default into effect and enable Monitoring.
+    </p>
+  </div>
+</div>
 `;

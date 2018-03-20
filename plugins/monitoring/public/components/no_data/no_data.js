@@ -1,11 +1,18 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiTitle, EuiSpacer, EuiText } from '@elastic/eui';
+import {
+  EuiSpacer,
+  EuiIcon,
+  EuiPage,
+  EuiPageBody,
+  EuiPageContent,
+} from '@elastic/eui';
 import { CheckingSettings } from './checking_settings';
 import { ReasonFound, WeTried } from './reasons';
 import { CheckerErrors } from './checker_errors';
+import '../../less/components/no_data.less';
 
-function NoDataBody(props) {
+function NoDataMessage(props) {
   const { isLoading, reason, checkMessage } = props;
 
   if (isLoading && checkMessage !== null) {
@@ -20,20 +27,22 @@ function NoDataBody(props) {
 }
 
 export function NoData(props) {
+
   return (
-    <Fragment>
-      <EuiTitle size="l">
-        <h1>No Monitoring Data Found</h1>
-      </EuiTitle>
-      <EuiSpacer size="m" />
-      <EuiText>
-        <NoDataBody {...props} />
-      </EuiText>
-      <EuiSpacer size="l" />
-      <EuiText>
-        <CheckerErrors errors={props.errors} />
-      </EuiText>
-    </Fragment>
+    <EuiPage>
+      <EuiPageBody>
+        <EuiPageContent
+          verticalPosition="center"
+          horizontalPosition="center"
+          className="noData__content"
+        >
+          <EuiIcon type="monitoringApp" size="xxl" />
+          <EuiSpacer size="m" />
+          <NoDataMessage {...props} />
+          <CheckerErrors errors={props.errors} />
+        </EuiPageContent>
+      </EuiPageBody>
+    </EuiPage>
   );
 }
 

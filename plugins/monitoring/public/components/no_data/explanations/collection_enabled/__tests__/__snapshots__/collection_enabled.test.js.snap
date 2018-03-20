@@ -11,64 +11,111 @@ exports[`ExplainCollectionEnabled should explain about xpack.monitoring.collecti
   }
   property="xpack.monitoring.collection.enabled"
 >
-  <p>
-    We checked the 
-    cluster
-     settings and found that 
-    <EuiCode>
-      <EuiCodeBlockImpl
-        fontSize="s"
-        inline={true}
-        paddingSize="l"
-        transparentBackground={false}
-      >
-        <span
-          className="euiCodeBlock euiCodeBlock--fontSmall euiCodeBlock--paddingLarge euiCodeBlock--inline"
-          style={Object {}}
+  <EuiTitle
+    size="l"
+  >
+    <h2
+      className="euiTitle euiTitle--large"
+    >
+      Monitoring is currently off
+    </h2>
+  </EuiTitle>
+  <EuiTextColor
+    color="subdued"
+  >
+    <span
+      className="euiTextColor euiTextColor--subdued"
+    >
+      <EuiText>
+        <div
+          className="euiText"
         >
-          <code
-            className="euiCodeBlock__code"
+          <p>
+            Monitoring provides insight to your hardware performance and load.
+          </p>
+        </div>
+      </EuiText>
+    </span>
+  </EuiTextColor>
+  <EuiHorizontalRule
+    margin="l"
+    size="half"
+  >
+    <hr
+      className="euiHorizontalRule euiHorizontalRule--half euiHorizontalRule--marginLarge"
+    />
+  </EuiHorizontalRule>
+  <EuiText>
+    <div
+      className="euiText"
+    >
+      <p>
+        We checked the 
+        cluster
+         settings and found that 
+        <EuiCode>
+          <EuiCodeBlockImpl
+            fontSize="s"
+            inline={true}
+            paddingSize="l"
+            transparentBackground={false}
           >
-            xpack.monitoring.collection.enabled
-          </code>
-        </span>
-      </EuiCodeBlockImpl>
-    </EuiCode>
-    is set to 
-    <EuiCode>
-      <EuiCodeBlockImpl
-        fontSize="s"
-        inline={true}
-        paddingSize="l"
-        transparentBackground={false}
-      >
-        <span
-          className="euiCodeBlock euiCodeBlock--fontSmall euiCodeBlock--paddingLarge euiCodeBlock--inline"
-          style={Object {}}
-        >
-          <code
-            className="euiCodeBlock__code"
+            <span
+              className="euiCodeBlock euiCodeBlock--fontSmall euiCodeBlock--paddingLarge euiCodeBlock--inline"
+              style={Object {}}
+            >
+              <code
+                className="euiCodeBlock__code"
+              >
+                xpack.monitoring.collection.enabled
+              </code>
+            </span>
+          </EuiCodeBlockImpl>
+        </EuiCode>
+        is set to 
+        <EuiCode>
+          <EuiCodeBlockImpl
+            fontSize="s"
+            inline={true}
+            paddingSize="l"
+            transparentBackground={false}
           >
-            -1
-          </code>
-        </span>
-      </EuiCodeBlockImpl>
-    </EuiCode>
-    , which disables Monitoring.
-  </p>
-  <p>
-    Monitoring is now disabled by default since it comes installed automatically. Not to worry! You can enable it right here.
-  </p>
+            <span
+              className="euiCodeBlock euiCodeBlock--fontSmall euiCodeBlock--paddingLarge euiCodeBlock--inline"
+              style={Object {}}
+            >
+              <code
+                className="euiCodeBlock__code"
+              >
+                -1
+              </code>
+            </span>
+          </EuiCodeBlockImpl>
+        </EuiCode>
+        .
+      </p>
+      <p>
+        Would you like to turn it on?
+      </p>
+    </div>
+  </EuiText>
+  <EuiSpacer
+    size="l"
+  >
+    <div
+      className="euiSpacer euiSpacer--l"
+    />
+  </EuiSpacer>
   <EuiFlexGroup
     alignItems="center"
     component="div"
     gutterSize="s"
-    justifyContent="flexStart"
+    justifyContent="spaceAround"
     responsive={true}
     wrap={false}
   >
     <div
-      className="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--alignItemsCenter euiFlexGroup--responsive"
+      className="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceAround euiFlexGroup--responsive"
     >
       <EuiFlexItem
         component="div"
@@ -97,21 +144,11 @@ exports[`ExplainCollectionEnabled should explain about xpack.monitoring.collecti
                 <span
                   className="euiButton__text"
                 >
-                  Enable Monitoring Collection
+                  Turn on monitoring
                 </span>
               </span>
             </button>
           </EuiButton>
-        </div>
-      </EuiFlexItem>
-      <EuiFlexItem
-        component="div"
-        grow={false}
-      >
-        <div
-          className="euiFlexItem euiFlexItem--flexGrowZero"
-        >
-          <WaitingIndicator />
         </div>
       </EuiFlexItem>
     </div>
