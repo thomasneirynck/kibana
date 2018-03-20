@@ -1358,7 +1358,13 @@ module.service('mlResultsService', function ($q, es, ml) {
               } else if (value !== undefined) {
                 obj.results[dataForTime.key] = value;
               } else if (values !== undefined) {
-                obj.results[dataForTime.key] = values[ML_MEDIAN_PERCENTS];
+                // Percentiles agg currently returns NaN rather than null when none of the docs in the
+                // bucket contain the field used in the aggregation
+                // (see elasticsearch issue https://github.com/elastic/elasticsearch/issues/29066).
+                // Store as null, so values can be handled in the same manner downstream as other aggs
+                // (min, mean, max) which return null.
+                const medianValues = values[ML_MEDIAN_PERCENTS];
+                obj.results[dataForTime.key] = !isNaN(medianValues) ? medianValues : null;
               } else {
                 obj.results[dataForTime.key] = null;
               }
