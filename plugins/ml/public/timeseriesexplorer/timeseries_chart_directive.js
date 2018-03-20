@@ -174,28 +174,37 @@ module.directive('mlTimeseriesChart', function (
         .attr('width',  svgWidth)
         .attr('height', svgHeight);
 
-      // Set the size of the left margin according to the width of the largest y axis tick label.
-      // Temporarily set the domain of the focus y axis to the full data range so that we can
-      // measure the maximum tick label width on temporary text elements.
+      let contextDataMin;
+      let contextDataMax;
       if (scope.modelPlotEnabled === true ||
         (scope.contextForecastData !== undefined && scope.contextForecastData.length > 0)) {
         const combinedData = scope.contextForecastData === undefined ?
           scope.contextChartData : scope.contextChartData.concat(scope.contextForecastData);
 
-        focusYScale.domain([
-          d3.min(combinedData, (d) => {
-            return Math.min(d.value, d.lower);
-          }),
-          d3.max(combinedData, (d) => {
-            return Math.max(d.value, d.upper);
-          })
-        ]);
+        contextDataMin = d3.min(combinedData, d => Math.min(d.value, d.lower));
+        contextDataMax = d3.max(combinedData, d => Math.max(d.value, d.upper));
+
       } else {
-        focusYScale.domain([
-          d3.min(scope.contextChartData, (d) => d.value),
-          d3.max(scope.contextChartData, (d) => d.value)
-        ]);
+        contextDataMin = d3.min(scope.contextChartData, d => d.value);
+        contextDataMax = d3.max(scope.contextChartData, d => d.value);
       }
+
+
+      // Set the size of the left margin according to the width of the largest y axis tick label.
+      // The min / max of the aggregated context chart data may be less than the min / max of the
+      // data which is displayed in the focus chart which is likely to be plotted at a lower
+      // aggregation interval. Therefore ceil the min / max with the higher absolute value to allow
+      // for extra space for chart labels which may have higher values than the context data
+      // e.g. aggregated max may be 9500, whereas focus plot max may be 11234.
+      const ceiledMax = contextDataMax > 0 ?
+        Math.pow(10, Math.ceil(Math.log10(Math.abs(contextDataMax)))) : contextDataMax;
+
+      const flooredMin = contextDataMin >= 0 ?
+        contextDataMin : -1 * Math.pow(10, Math.ceil(Math.log10(Math.abs(contextDataMin))));
+
+      // Temporarily set the domain of the focus y axis to the min / max of the full context chart
+      // data range so that we can measure the maximum tick label width on temporary text elements.
+      focusYScale.domain([flooredMin, ceiledMax]);
 
       let maxYAxisLabelWidth = 0;
       const tempLabelText = svg.append('g')
