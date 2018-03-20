@@ -98,7 +98,7 @@ describe('ML - validateCardinality', () => {
     return validateCardinality(callWithRequestFactory(mockFareQuoteCardinality), job).then(
       (messages) => {
         const ids = messages.map(m => m.id);
-        expect(ids).to.eql(['success_cardinality']);
+        expect(ids).to.eql([]);
       }
     );
   });

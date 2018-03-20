@@ -250,9 +250,7 @@ describe('ML - validateJob', () => {
           'job_id_valid',
           'detectors_function_not_empty',
           'index_fields_valid',
-          'success_cardinality',
-          'bucket_span_no_duration',
-          'influencer_low'
+          'bucket_span_no_duration'
         ]);
       }
     );

@@ -72,6 +72,15 @@ const validateFactory = (callWithRequest, job) => {
 export async function validateCardinality(callWithRequest, job) {
   validateJobObject(job);
 
+  // find out if there are any relevant detector field names
+  // where cardinality checks could be run against.
+  const numDetectorsWithFieldNames = job.analysis_config.detectors.filter((d) => {
+    return (d.by_field_name || d.over_field_name || d.partition_field_name);
+  });
+  if (numDetectorsWithFieldNames.length === 0) {
+    return Promise.resolve([]);
+  }
+
   // validate({ type, isInvalid }) asynchronously returns an array of validation messages
   const validate = validateFactory(callWithRequest, job);
 

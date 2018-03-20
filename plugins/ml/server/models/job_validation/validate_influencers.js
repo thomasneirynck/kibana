@@ -23,7 +23,7 @@ export async function validateInfluencers(callWithRequest, job) {
   validateJobObject(job);
 
   const messages = [];
-  const influencers = job.analysis_config.influencers.length;
+  const influencers = job.analysis_config.influencers;
 
   const detectorFieldNames = [];
   job.analysis_config.detectors.forEach((d) => {
@@ -38,8 +38,22 @@ export async function validateInfluencers(callWithRequest, job) {
     }
   });
 
+
+  // if there's one detector but no by/over/partition field,
+  // then we skip further influencer checks.
+  // for example, the simple job wizard might create a job with a
+  // detector using 'count' and no influencers and there shouldn't
+  // be a warning about that.
   if (
-    influencers <= INFLUENCER_LOW_THRESHOLD &&
+    influencers.length === 0 &&
+    job.analysis_config.detectors.length === 1 &&
+    detectorFieldNames.length === 0
+  ) {
+    return Promise.resolve([]);
+  }
+
+  if (
+    influencers.length <= INFLUENCER_LOW_THRESHOLD &&
     detectorFieldNames.length >= DETECTOR_FIELD_NAMES_THRESHOLD
   ) {
     let influencerSuggestion = `"${detectorFieldNames[0]}"`;
@@ -52,9 +66,9 @@ export async function validateInfluencers(callWithRequest, job) {
     }
 
     messages.push({ id, influencerSuggestion });
-  } else if (influencers <= INFLUENCER_LOW_THRESHOLD) {
+  } else if (influencers.length <= INFLUENCER_LOW_THRESHOLD) {
     messages.push({ id: 'influencer_low' });
-  } else if (influencers >= INFLUENCER_HIGH_THRESHOLD) {
+  } else if (influencers.length >= INFLUENCER_HIGH_THRESHOLD) {
     messages.push({ id: 'influencer_high' });
   }
 

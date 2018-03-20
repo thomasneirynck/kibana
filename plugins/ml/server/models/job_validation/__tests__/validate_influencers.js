@@ -72,6 +72,24 @@ describe('ML - validateInfluencers', () => {
     );
   });
 
+  it('skip influencer checks', () => {
+    const job = getJobConfig([], [
+      {
+        detector_description: 'count',
+        function: 'count',
+        rules: [],
+        detector_index: 0
+      }
+    ]);
+
+    return validateInfluencers(undefined, job).then(
+      (messages) => {
+        const ids = messages.map(m => m.id);
+        expect(ids).to.eql([]);
+      }
+    );
+  });
+
   it('influencer_low', () => {
     const job = getJobConfig();
     return validateInfluencers(undefined, job).then(
