@@ -30,9 +30,12 @@ routes.when(`${BASE_PATH}:view?/:id?`, {
   controller: class IndexManagementController {
     constructor($scope, $route, $http) {
       setHttpClient($http);
-      const elem = document.getElementById('indexManagementReactRoot');
-      renderReact(elem);
-      manageAngularLifecycle($scope, $route, elem);
+
+      $scope.$$postDigest(() => {
+        const elem = document.getElementById('indexManagementReactRoot');
+        renderReact(elem);
+        manageAngularLifecycle($scope, $route, elem);
+      });
     }
   }
 });

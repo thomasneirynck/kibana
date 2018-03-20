@@ -59,19 +59,22 @@ routes
         } catch (e) {
           autoLogout = () => {};
         }
-        const elem = document.getElementById('licenseReactRoot');
-        const xPackInfo = xpackInfoProvider($window, $injector, $injector.get('Private'));
-        const initialState = { license: xPackInfo.get('license') };
-        const kbnUrlWrapper = {
-          change(url) {
-            kbnUrl.change(url);
-            $rootScope.$digest();
-          }
-        };
-        const services = { autoLogout, xPackInfo, kbnUrl: kbnUrlWrapper };
-        const store = licenseManagementStore(initialState, services);
-        renderReact(elem, store);
-        manageAngularLifecycle($scope, $route, elem);
+
+        $scope.$$postDigest(() => {
+          const elem = document.getElementById('licenseReactRoot');
+          const xPackInfo = xpackInfoProvider($window, $injector, $injector.get('Private'));
+          const initialState = { license: xPackInfo.get('license') };
+          const kbnUrlWrapper = {
+            change(url) {
+              kbnUrl.change(url);
+              $rootScope.$digest();
+            }
+          };
+          const services = { autoLogout, xPackInfo, kbnUrl: kbnUrlWrapper };
+          const store = licenseManagementStore(initialState, services);
+          renderReact(elem, store);
+          manageAngularLifecycle($scope, $route, elem);
+        });
       }
     }
   });
