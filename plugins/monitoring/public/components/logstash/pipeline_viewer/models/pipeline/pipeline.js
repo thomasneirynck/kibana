@@ -22,7 +22,7 @@ function isVertexChildOfQueue(vertex) {
 
 function getFilterStatements(pipelineGraph) {
 
-  // If the graph has a Queue vertex, then the first filter vertex whose parent is the the Queue vertex
+  // If the graph has a Queue vertex, then the first filter vertex whose parent is the Queue vertex
   // is where we want to start. If there is no Queue vertex then there are necessarily no input-stage vertices
   // either, so the first filter vertex that has no parents (orphan vertex) is where we want to start.
   const allVertices = pipelineGraph.getVertices();
@@ -45,6 +45,12 @@ function getFilterStatements(pipelineGraph) {
   return filterStatements;
 }
 
+function getQueue(pipelineGraph) {
+  return pipelineGraph.hasQueueVertex
+    ? makeStatement(pipelineGraph.queueVertex)
+    : null;
+}
+
 function getOutputStatements(pipelineGraph) {
   return pipelineGraph.getVertices()
     .filter(v => (v.pipelineStage === 'output') && !v.incomingVertices.some(p => p.pipelineStage === 'output'))
@@ -52,10 +58,11 @@ function getOutputStatements(pipelineGraph) {
 }
 
 export class Pipeline {
-  constructor(inputStatements, filterStatements, outputStatements) {
+  constructor(inputStatements, filterStatements, outputStatements, queue) {
     this.inputStatements = inputStatements;
     this.filterStatements = filterStatements;
     this.outputStatements = outputStatements;
+    this.queue = queue;
   }
 
   static fromPipelineGraph(pipelineGraph) {
@@ -68,6 +75,9 @@ export class Pipeline {
     // Determine output statements, if any
     const outputStatements = getOutputStatements(pipelineGraph);
 
-    return new Pipeline(inputStatements, filterStatements, outputStatements);
+    // Create queue, if exists
+    const queue = getQueue(pipelineGraph);
+
+    return new Pipeline(inputStatements, filterStatements, outputStatements, queue);
   }
 }

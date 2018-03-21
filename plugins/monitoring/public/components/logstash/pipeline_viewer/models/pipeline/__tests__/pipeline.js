@@ -3,6 +3,7 @@ import { Pipeline } from '../';
 import { Graph } from '../../graph';
 import { IfStatement } from '../if_statement';
 import { PluginStatement } from '../plugin_statement';
+import { Queue } from '../queue';
 
 describe('Pipeline class', () => {
   let graph;
@@ -21,6 +22,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(0);
       expect(pipeline.filterStatements.length).to.be(0);
       expect(pipeline.outputStatements.length).to.be(0);
+      expect(pipeline.queue).to.be(null);
     });
   });
 
@@ -60,8 +62,22 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(1);
       expect(pipeline.filterStatements.length).to.be(0);
       expect(pipeline.outputStatements.length).to.be(0);
+      expect(pipeline.queue).not.to.be(null);
 
       expect(pipeline.inputStatements[0]).to.be.a(PluginStatement);
+    });
+
+    it('fromPipelineGraph parses Queue and adds it to Pipeline', () => {
+      const pipeline = Pipeline.fromPipelineGraph(graph);
+
+      const { queue } = pipeline;
+
+      expect(queue).to.be.a(Queue);
+      expect(queue.id).to.equal('__QUEUE__');
+      expect(queue.hasExplicitId).to.equal(false);
+      expect(queue.stats).to.be.a(Object);
+      expect(Object.keys(queue.stats).length).to.be(0);
+      expect(queue.meta).to.be(undefined);
     });
   });
 
@@ -88,6 +104,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(0);
       expect(pipeline.filterStatements.length).to.be(1);
       expect(pipeline.outputStatements.length).to.be(0);
+      expect(pipeline.queue).to.be(null);
 
       expect(pipeline.filterStatements[0]).to.be.a(PluginStatement);
     });
@@ -116,6 +133,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(0);
       expect(pipeline.filterStatements.length).to.be(0);
       expect(pipeline.outputStatements.length).to.be(1);
+      expect(pipeline.queue).to.be(null);
 
       expect(pipeline.outputStatements[0]).to.be.a(PluginStatement);
     });
@@ -171,6 +189,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(1);
       expect(pipeline.filterStatements.length).to.be(1);
       expect(pipeline.outputStatements.length).to.be(0);
+      expect(pipeline.queue).to.not.be(null);
 
       expect(pipeline.inputStatements[0]).to.be.a(PluginStatement);
       expect(pipeline.filterStatements[0]).to.be.a(PluginStatement);
@@ -227,6 +246,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(1);
       expect(pipeline.filterStatements.length).to.be(0);
       expect(pipeline.outputStatements.length).to.be(1);
+      expect(pipeline.queue).to.not.be(null);
 
       expect(pipeline.inputStatements[0]).to.be.a(PluginStatement);
       expect(pipeline.outputStatements[0]).to.be.a(PluginStatement);
@@ -271,6 +291,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(0);
       expect(pipeline.filterStatements.length).to.be(1);
       expect(pipeline.outputStatements.length).to.be(1);
+      expect(pipeline.queue).to.be(null);
 
       expect(pipeline.filterStatements[0]).to.be.a(PluginStatement);
       expect(pipeline.outputStatements[0]).to.be.a(PluginStatement);
@@ -341,10 +362,12 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(1);
       expect(pipeline.filterStatements.length).to.be(1);
       expect(pipeline.outputStatements.length).to.be(1);
+      expect(pipeline.queue).to.not.be(null);
 
       expect(pipeline.inputStatements[0]).to.be.a(PluginStatement);
       expect(pipeline.filterStatements[0]).to.be.a(PluginStatement);
       expect(pipeline.outputStatements[0]).to.be.a(PluginStatement);
+      expect(pipeline.queue).to.be.a(Queue);
     });
   });
 
@@ -386,6 +409,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(0);
       expect(pipeline.filterStatements.length).to.be(1);
       expect(pipeline.outputStatements.length).to.be(0);
+      expect(pipeline.queue).to.be(null);
 
       const ifStatement = pipeline.filterStatements[0];
       expect(ifStatement).to.be.a(IfStatement);
@@ -432,6 +456,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(0);
       expect(pipeline.filterStatements.length).to.be(0);
       expect(pipeline.outputStatements.length).to.be(1);
+      expect(pipeline.queue).to.be(null);
 
       const ifStatement = pipeline.outputStatements[0];
       expect(ifStatement).to.be.a(IfStatement);
@@ -504,6 +529,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(1);
       expect(pipeline.filterStatements.length).to.be(1);
       expect(pipeline.outputStatements.length).to.be(0);
+      expect(pipeline.queue).to.not.be(null);
 
       expect(pipeline.inputStatements[0]).to.be.a(PluginStatement);
       const ifStatement = pipeline.filterStatements[0];
@@ -612,6 +638,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(1);
       expect(pipeline.filterStatements.length).to.be(1);
       expect(pipeline.outputStatements.length).to.be(1);
+      expect(pipeline.queue).to.not.be(null);
 
       expect(pipeline.inputStatements[0]).to.be.a(PluginStatement);
 
@@ -677,6 +704,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(2);
       expect(pipeline.filterStatements.length).to.be(0);
       expect(pipeline.outputStatements.length).to.be(0);
+      expect(pipeline.queue).to.not.be(null);
 
       expect(pipeline.inputStatements[0]).to.be.a(PluginStatement);
       expect(pipeline.inputStatements[0].id).to.be('tweet_harvester');
@@ -730,6 +758,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(0);
       expect(pipeline.filterStatements.length).to.be(2);
       expect(pipeline.outputStatements.length).to.be(0);
+      expect(pipeline.queue).to.be(null);
 
       expect(pipeline.filterStatements[0]).to.be.a(PluginStatement);
       expect(pipeline.filterStatements[0].id).to.be('log_line_parser');
@@ -776,6 +805,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(0);
       expect(pipeline.filterStatements.length).to.be(0);
       expect(pipeline.outputStatements.length).to.be(2);
+      expect(pipeline.queue).to.be(null);
 
       expect(pipeline.outputStatements[0]).to.be.a(PluginStatement);
       expect(pipeline.outputStatements[0].id).to.be('es');
@@ -843,6 +873,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(0);
       expect(pipeline.filterStatements.length).to.be(2);
       expect(pipeline.outputStatements.length).to.be(0);
+      expect(pipeline.queue).to.be(null);
 
       expect(pipeline.filterStatements[0]).to.be.a(PluginStatement);
       expect(pipeline.filterStatements[0].id).to.be('log_line_parser');
@@ -933,6 +964,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(0);
       expect(pipeline.filterStatements.length).to.be(3);
       expect(pipeline.outputStatements.length).to.be(0);
+      expect(pipeline.queue).to.be(null);
 
       expect(pipeline.filterStatements[0]).to.be.a(PluginStatement);
       expect(pipeline.filterStatements[0].id).to.be('log_line_parser');
@@ -1000,6 +1032,7 @@ describe('Pipeline class', () => {
         expect(pipeline.inputStatements.length).to.be(0);
         expect(pipeline.filterStatements.length).to.be(0);
         expect(pipeline.outputStatements.length).to.be(2);
+        expect(pipeline.queue).to.be(null);
 
         expect(pipeline.outputStatements[0]).to.be.a(PluginStatement);
         expect(pipeline.outputStatements[0].id).to.be('es');
@@ -1071,6 +1104,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(0);
       expect(pipeline.filterStatements.length).to.be(0);
       expect(pipeline.outputStatements.length).to.be(3);
+      expect(pipeline.queue).to.be(null);
 
       expect(pipeline.outputStatements[0]).to.be.a(PluginStatement);
       expect(pipeline.outputStatements[0].id).to.be('es');
@@ -1262,6 +1296,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(2);
       expect(pipeline.filterStatements.length).to.be(2);
       expect(pipeline.outputStatements.length).to.be(3);
+      expect(pipeline.queue).to.not.be(null);
 
       expect(pipeline.inputStatements[0]).to.be.a(PluginStatement);
       expect(pipeline.inputStatements[0].id).to.be('tweet_harvester');
@@ -1306,6 +1341,9 @@ describe('Pipeline class', () => {
       expect(pipeline.outputStatements[2].hasExplicitId).to.be(true);
       expect(pipeline.outputStatements[2].pluginType).to.be('output');
       expect(pipeline.outputStatements[2].name).to.be('file');
+
+      expect(pipeline.queue).to.be.a(Queue);
+      expect(pipeline.queue.id).to.be('__QUEUE__');
     });
   });
 
@@ -1362,6 +1400,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(0);
       expect(pipeline.filterStatements.length).to.be(1);
       expect(pipeline.outputStatements.length).to.be(0);
+      expect(pipeline.queue).to.be(null);
 
       const ifStatement = pipeline.filterStatements[0];
       expect(ifStatement).to.be.a(IfStatement);
@@ -1429,6 +1468,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(0);
       expect(pipeline.filterStatements.length).to.be(1);
       expect(pipeline.outputStatements.length).to.be(0);
+      expect(pipeline.queue).to.be(null);
 
       const ifStatement = pipeline.filterStatements[0];
       expect(ifStatement).to.be.a(IfStatement);
@@ -1513,6 +1553,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(0);
       expect(pipeline.filterStatements.length).to.be(1);
       expect(pipeline.outputStatements.length).to.be(0);
+      expect(pipeline.queue).to.be(null);
 
       const ifStatement = pipeline.filterStatements[0];
       expect(ifStatement).to.be.a(IfStatement);
@@ -1584,6 +1625,7 @@ describe('Pipeline class', () => {
       expect(pipeline.inputStatements.length).to.be(0);
       expect(pipeline.filterStatements.length).to.be(1);
       expect(pipeline.outputStatements.length).to.be(0);
+      expect(pipeline.queue).to.be(null);
 
       const outerIfStatement = pipeline.filterStatements[0];
       expect(outerIfStatement).to.be.a(IfStatement);
