@@ -20,7 +20,6 @@ import { checkForParseErrors } from 'plugins/searchprofiler/app_util.js';
 // Styles and templates
 import 'ui/autoload/all';
 import './less/main.less';
-import './less/hint.base.min.less';
 import template from './templates/index.html';
 import { defaultQuery } from './templates/default_query';
 

@@ -1,7 +1,8 @@
 <div class="panel panel-default index" ng-repeat="index in profileResponse">
   <div class="shard-details-right">
-    <span class="hint--bottom hint--rounded hint--no-animate hint--large"
-      data-hint="The cumulative time of all shards in the index. Note: this is not wall-clock time, as shards can execute in parallel.">
+    <span
+      tooltip-placement="bottom"
+      tooltip="The cumulative time of all shards in the index. Note: this is not wall-clock time, as shards can execute in parallel.">
       <h3>Cumulative Time: {{index.time[target] | msToPretty: 3}}</h3>
     </span><br/>
   </div>
@@ -53,8 +54,9 @@
               </div>
               {{row.query_type}}
               <span class='detail'>
-              <span class="hint--top hint--rounded hint--no-animate"
-                data-hint="{{row.lucene.length > 40 ? row.lucene : ''}}">
+              <span
+                tooltip-placement="top"
+                tooltip="{{row.lucene.length > 40 ? row.lucene : ''}}">
               {{row.lucene | limitTo : 40}}{{row.lucene.length > 40 ? '...' : ''}}
               </span>
               </span>
