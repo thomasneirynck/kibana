@@ -7,11 +7,9 @@
 
 You can configure `xpack.reporting` settings in your `kibana.yml` to:
 
-.Control how {X-Pack reporting} <<reporting-kibana-server-settings communicates
-with the Kibana server>>
-.<<reporting-job-queue-settings, Manages background
-jobs>>
-.<<reporting-capture-settings, Capture screenshots>>.
+* <<reporting-kibana-server-settings,Control how {reporting}  communicates with the {kib} server>>
+* <<reporting-job-queue-settings,Manage background jobs>>
+* <<reporting-capture-settings,Capture screenshots>>
 
 [float]
 [[general-reporting-settings]]
