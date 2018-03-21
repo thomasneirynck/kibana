@@ -285,6 +285,39 @@ export function basicJobValidation(job, fields) {
       }
     }
 
+    // check for duplicate detectors
+    if (job.analysis_config.detectors.length >= 2) {
+      // create an array of objects with a subset of the attributes
+      // where we want to make sure they are not be the same across detectors
+      const compareSubSet = job.analysis_config.detectors.map((d) => _.pick(d, [
+        'function',
+        'field_name',
+        'by_field_name',
+        'over_field_name',
+        'partition_field_name'
+      ]));
+
+      const dedupeCompareArray = [];
+      const numDuplicates = compareSubSet.reduce((num, detector) => {
+        const duplicates = dedupeCompareArray.filter(
+          compareDetector => _.isEqual(compareDetector, detector)
+        );
+
+        if (duplicates.length >= 1) {
+          num++;
+        } else {
+          dedupeCompareArray.push(detector);
+        }
+
+        return num;
+      }, 0);
+
+      if (numDuplicates > 0) {
+        messages.push({ id: 'detectors_duplicates' });
+        valid = false;
+      }
+    }
+
     // we skip this influencer test because the client side form check is ignoring it
     // and the server side tests have their own influencer test
     // TODO: clarify if this is still needed or can be deleted

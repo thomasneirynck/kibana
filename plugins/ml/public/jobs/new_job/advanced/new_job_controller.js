@@ -991,9 +991,9 @@ module.controller('MlNewJob',
 
       const job = $scope.job;
       if (job) {
-      // tab 0 - Job Details
-      // job already exists check happens in save function
-      // as users may wish to continue and overwrite existing job
+        // tab 0 - Job Details
+        // job already exists check happens in save function
+        // as users may wish to continue and overwrite existing job
         if (validationResults.contains('job_id_empty')) {
           tabs[0].checks.jobId.valid = false;
         } else if (validationResults.contains('job_id_invalid')) {
@@ -1017,6 +1017,13 @@ module.controller('MlNewJob',
         }
 
         if (validationResults.contains('detectors_empty')) {
+          tabs[1].checks.detectors.valid = false;
+        }
+        if (validationResults.contains('detectors_duplicates')) {
+          let msg = 'Duplicate detectors were found. Detectors having the same combined configuration for';
+          msg += ` 'function', 'field_name', 'by_field_name', 'over_field_name' and`;
+          msg += ` 'partition_field_name' are not allowed within the same job.`;
+          tabs[1].checks.detectors.message = msg;
           tabs[1].checks.detectors.valid = false;
         }
 

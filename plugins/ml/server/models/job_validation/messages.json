@@ -58,6 +58,10 @@
     "status": "ERROR",
     "text": "The specified bucket span is not a valid time interval format e.g. 10m, 1h. It also needs to be higher than zero."
   },
+  "detectors_duplicates": {
+    "status": "ERROR",
+    "text": "Duplicate detectors were found. Detectors having the same combined configuration for 'function', 'field_name', 'by_field_name', 'over_field_name' and 'partition_field_name' are not allowed within the same job."
+  },
   "detectors_empty": {
     "status": "ERROR",
     "text": "No detectors were found. At least one detector must be specified."

@@ -241,6 +241,24 @@ describe('ML - validateJob', () => {
     );
   });
 
+  it('duplicate detectors', () => {
+    const payload = getBasicPayload();
+    payload.job.analysis_config.detectors.push({ function: 'count' });
+    return validateJob(callWithRequest, payload).then(
+      (messages) => {
+        const ids = messages.map(m => m.id);
+        expect(ids).to.eql([
+          'job_id_valid',
+          'detectors_function_not_empty',
+          'detectors_duplicates',
+          'bucket_span_valid',
+          'index_fields_valid',
+          'skipped_extended_tests'
+        ]);
+      }
+    );
+  });
+
   it('basic validation passes, extended checks return some messages', () => {
     const payload = getBasicPayload();
     return validateJob(callWithRequest, payload).then(
