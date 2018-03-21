@@ -19,7 +19,7 @@ import { renderTemplate } from '../../../common/util/string_utils';
 import messages from './messages.json';
 import { VALIDATION_STATUS } from '../../../common/constants/validation';
 
-import { basicJobValidation } from '../../../common/util/job_utils';
+import { basicJobValidation, uniqWithIsEqual } from '../../../common/util/job_utils';
 import { validateBucketSpan } from './validate_bucket_span';
 import { validateCardinality } from './validate_cardinality';
 import { validateInfluencers } from './validate_influencers';
@@ -69,7 +69,7 @@ export async function validateJob(callWithRequest, payload) {
       validationMessages.push({ id: 'skipped_extended_tests' });
     }
 
-    return validationMessages.map(message => {
+    return uniqWithIsEqual(validationMessages).map(message => {
       if (typeof messages[message.id] !== 'undefined') {
         // render the message template with the provided metadata
         message.text = renderTemplate(messages[message.id].text, message);

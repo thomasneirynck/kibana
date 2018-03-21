@@ -206,6 +206,20 @@ export function getSafeAggregationName(fieldName, index) {
   return fieldName.match(/^[a-zA-Z0-9-_.]+$/) ? fieldName : `field_${index}`;
 }
 
+// replicates lodash 4's _.uniqWith(arr, _.isEqual)
+export function uniqWithIsEqual(arr) {
+  return arr.reduce((dedupedArray, value) => {
+    if (
+      dedupedArray.filter(
+        compareValue => _.isEqual(compareValue, value)
+      ).length === 0
+    ) {
+      dedupedArray.push(value);
+    }
+    return dedupedArray;
+  }, []);
+}
+
 // check job without manipulating UI and return a list of messages
 // job and fields get passed as arguments and are not accessed as $scope.* via the outer scope
 // because the plan is to move this function to the common code area so that it can be used on the server side too.
@@ -297,22 +311,9 @@ export function basicJobValidation(job, fields) {
         'partition_field_name'
       ]));
 
-      const dedupeCompareArray = [];
-      const numDuplicates = compareSubSet.reduce((num, detector) => {
-        const duplicates = dedupeCompareArray.filter(
-          compareDetector => _.isEqual(compareDetector, detector)
-        );
+      const dedupedSubSet = uniqWithIsEqual(compareSubSet);
 
-        if (duplicates.length >= 1) {
-          num++;
-        } else {
-          dedupeCompareArray.push(detector);
-        }
-
-        return num;
-      }, 0);
-
-      if (numDuplicates > 0) {
+      if (compareSubSet.length !== dedupedSubSet.length) {
         messages.push({ id: 'detectors_duplicates' });
         valid = false;
       }

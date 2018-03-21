@@ -241,7 +241,7 @@ describe('ML - validateJob', () => {
     );
   });
 
-  it('duplicate detectors', () => {
+  it('detect duplicate detectors', () => {
     const payload = getBasicPayload();
     payload.job.analysis_config.detectors.push({ function: 'count' });
     return validateJob(callWithRequest, payload).then(
@@ -254,6 +254,31 @@ describe('ML - validateJob', () => {
           'bucket_span_valid',
           'index_fields_valid',
           'skipped_extended_tests'
+        ]);
+      }
+    );
+  });
+
+  it('dedupe duplicate messages', () => {
+    const payload = getBasicPayload();
+    // in this test setup, the following configuration passes
+    // the duplicate detectors check, but would return the same
+    // 'field_not_aggregatable' message for both detectors.
+    // deduplicating exact message configuration object catches this.
+    payload.job.analysis_config.detectors = [
+      { function: 'count', by_field_name: 'airline' },
+      { function: 'count', partition_field_name: 'airline' },
+    ];
+    return validateJob(callWithRequest, payload).then(
+      (messages) => {
+        const ids = messages.map(m => m.id);
+        expect(ids).to.eql([
+          'job_id_valid',
+          'detectors_function_not_empty',
+          'index_fields_valid',
+          'field_not_aggregatable',
+          'bucket_span_no_duration',
+          'influencer_low_suggestions'
         ]);
       }
     );
