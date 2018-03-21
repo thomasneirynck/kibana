@@ -70,5 +70,5 @@ PipelineViewer.propTypes = {
       graph: PropTypes.object.isRequired
     })
   }),
-  timeseriesTooltipXValueFormatter: PropTypes.object.isRequired
+  timeseriesTooltipXValueFormatter: PropTypes.func.isRequired
 };
