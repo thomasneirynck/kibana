@@ -27,16 +27,16 @@ class PdfMaker {
     const fontPath = (filename) => path.resolve(assetPath, 'fonts', filename);
     const fonts = {
       Roboto: {
-        normal: fontPath('Roboto-Regular.ttf'),
-        bold: fontPath('Roboto-Medium.ttf'),
-        italics: fontPath('Roboto-Italic.ttf'),
-        bolditalics: fontPath('Roboto-Italic.ttf'),
+        normal: fontPath('roboto/Roboto-Regular.ttf'),
+        bold: fontPath('roboto/Roboto-Medium.ttf'),
+        italics: fontPath('roboto/Roboto-Italic.ttf'),
+        bolditalics: fontPath('roboto/Roboto-Italic.ttf'),
       },
       'noto-cjk': { // Roboto does not support CJK characters, so we'll fall back on this font if we detect them.
-        normal: fontPath('NotoSansCJKtc-Regular.ttf'),
-        bold: fontPath('NotoSansCJKtc-Medium.ttf'),
-        italics: fontPath('NotoSansCJKtc-Regular.ttf'),
-        bolditalics: fontPath('NotoSansCJKtc-Medium.ttf'),
+        normal: fontPath('noto/NotoSansCJKtc-Regular.ttf'),
+        bold: fontPath('noto/NotoSansCJKtc-Medium.ttf'),
+        italics: fontPath('noto/NotoSansCJKtc-Regular.ttf'),
+        bolditalics: fontPath('noto/NotoSansCJKtc-Medium.ttf'),
       }
     };
 
