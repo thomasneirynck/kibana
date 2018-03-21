@@ -501,5 +501,12 @@ export const elasticsearchJsPlugin = (Client, config, components) => {
     method: 'DELETE'
   });
 
+  ml.info = ca({
+    url: {
+      fmt: '/_xpack/ml/info'
+    },
+    method: 'GET'
+  });
+
 };
 

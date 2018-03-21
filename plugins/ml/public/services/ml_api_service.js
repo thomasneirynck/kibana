@@ -348,4 +348,11 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
+  this.mlInfo = function () {
+    return http.request({
+      url: `${basePath}/info`,
+      method: 'GET'
+    });
+  };
+
 });
