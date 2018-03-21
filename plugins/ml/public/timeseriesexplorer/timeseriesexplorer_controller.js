@@ -354,33 +354,7 @@ module.controller('MlTimeSeriesExplorerController', function (
         });
     }
 
-    // Populate the entity input datalists with the values from the top records by score
-    // for the selected detector across the full time range. No need to pass through finish().
-    mlResultsService.getRecordsForCriteria(
-      [$scope.selectedJob.job_id],
-      [{ 'fieldName': 'detector_index', 'fieldValue': detectorIndex }],
-      0,
-      searchBounds.min.valueOf(),
-      searchBounds.max.valueOf(),
-      ANOMALIES_MAX_RESULTS)
-      .then((resp) => {
-        if (resp.records && resp.records.length > 0) {
-          const firstRec = resp.records[0];
-
-          _.each($scope.entities, (entity) => {
-            if (firstRec.partition_field_name === entity.fieldName) {
-              entity.fieldValues = _.chain(resp.records).pluck('partition_field_value').uniq().value();
-            }
-            if (firstRec.over_field_name === entity.fieldName) {
-              entity.fieldValues = _.chain(resp.records).pluck('over_field_value').uniq().value();
-            }
-            if (firstRec.by_field_name === entity.fieldName) {
-              entity.fieldValues = _.chain(resp.records).pluck('by_field_value').uniq().value();
-            }
-          });
-        }
-
-      });
+    loadEntityValues();
   };
 
   $scope.refreshFocusData = function (fromDate, toDate) {
@@ -585,6 +559,11 @@ module.controller('MlTimeSeriesExplorerController', function (
     });
   };
 
+  $scope.detectorIndexChanged = function () {
+    updateControlsForDetector();
+    loadEntityValues();
+  };
+
   $scope.toggleShowModelBounds = function () {
     $scope.showModelBounds = !$scope.showModelBounds;
     $timeout(() => {
@@ -713,7 +692,22 @@ module.controller('MlTimeSeriesExplorerController', function (
     // Store the detector index as a string so it can be used as ng-model in a select control.
     $scope.detectorId = '' + detectorIndex;
 
-    const detector = jobDetectors[detectorIndex];
+    updateControlsForDetector();
+
+    // Populate the map of jobs / detectors / field formatters for the selected IDs and refresh.
+    mlFieldFormatService.populateFormats([jobId], $route.current.locals.indexPatterns)
+      .finally(() => {
+        // Load the data - if the FieldFormats failed to populate
+        // the default formatting will be used for metric values.
+        $scope.refresh();
+      });
+  }
+
+  function updateControlsForDetector() {
+    // Update the entity dropdown control(s) according to the partitioning fields for the selected detector.
+    const detectorIndex = +$scope.detectorId;
+    const detector = $scope.selectedJob.analysis_config.detectors[detectorIndex];
+
     const entities = [];
     const entitiesState = $scope.appState.mlTimeSeriesExplorer.entities || {};
     const partitionFieldName = _.get(detector, 'partition_field_name');
@@ -753,13 +747,38 @@ module.controller('MlTimeSeriesExplorerController', function (
       $scope.forecastingDisabled = false;
       $scope.forecastingDisabledMessage = '';
     }
+  }
 
-    // Populate the map of jobs / detectors / field formatters for the selected IDs and refresh.
-    mlFieldFormatService.populateFormats([jobId], $route.current.locals.indexPatterns)
-      .finally(() => {
-        // Load the data - if the FieldFormats failed to populate
-        // the default formatting will be used for metric values.
-        $scope.refresh();
+  function loadEntityValues() {
+    // Populate the entity input datalists with the values from the top records by score
+    // for the selected detector across the full time range. No need to pass through finish().
+    const bounds = timefilter.getActiveBounds();
+    const detectorIndex = +$scope.detectorId;
+
+    mlResultsService.getRecordsForCriteria(
+      [$scope.selectedJob.job_id],
+      [{ 'fieldName': 'detector_index', 'fieldValue': detectorIndex }],
+      0,
+      bounds.min.valueOf(),
+      bounds.max.valueOf(),
+      ANOMALIES_MAX_RESULTS)
+      .then((resp) => {
+        if (resp.records && resp.records.length > 0) {
+          const firstRec = resp.records[0];
+
+          _.each($scope.entities, (entity) => {
+            if (firstRec.partition_field_name === entity.fieldName) {
+              entity.fieldValues = _.chain(resp.records).pluck('partition_field_value').uniq().value();
+            }
+            if (firstRec.over_field_name === entity.fieldName) {
+              entity.fieldValues = _.chain(resp.records).pluck('over_field_value').uniq().value();
+            }
+            if (firstRec.by_field_name === entity.fieldName) {
+              entity.fieldValues = _.chain(resp.records).pluck('by_field_value').uniq().value();
+            }
+          });
+        }
+
       });
   }
 

@@ -17,7 +17,7 @@
 
   <div class="series-controls" ng-show="jobs.length > 0">
     <label for="selectDetector" class="kuiLabel">Detector:</label>
-    <select id="selectDetector" class="kuiSelect kuiSelect--large" ng-model="detectorId">
+    <select id="selectDetector" class="kuiSelect kuiSelect--large" ng-model="detectorId" ng-change="detectorIndexChanged()">
       <option ng-repeat="detector in detectors track by detector.index" value="{{detector.index}}">{{detector.detector_description}}</option>
     </select>
 
