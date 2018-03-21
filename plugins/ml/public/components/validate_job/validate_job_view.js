@@ -44,7 +44,8 @@ const getDefaultState = () => ({
   data: {
     messages: [],
     success: false
-  }
+  },
+  title: ''
 });
 
 const statusToEuiColor = (status) => {
@@ -148,18 +149,6 @@ Modal.propType = {
   title: PropTypes.string
 };
 
-const getJobConfiguration = (job) => {
-  let jobConfiguration;
-
-  if (typeof job === 'object') {
-    jobConfiguration = job;
-  } else if (typeof job === 'function') {
-    jobConfiguration = job();
-  }
-
-  return jobConfiguration;
-};
-
 class ValidateJob extends Component {
   constructor(props) {
     super(props);
@@ -171,26 +160,29 @@ class ValidateJob extends Component {
   };
 
   openModal = () => {
-    const jobConfiguration = getJobConfiguration(this.props.job);
+    const job = this.props.getJobConfig();
+    const getDuration = this.props.getDuration;
+    const duration = (typeof getDuration === 'function') ? getDuration() : undefined;
+    const fields = this.props.fields;
 
-    if (typeof jobConfiguration === 'object') {
-      this.props.mlJobService.validateJob({
-        duration: this.props.duration,
-        fields: this.props.fields,
-        job: jobConfiguration
-      }).then((data) => {
-        this.setState({
-          ui: { isModalVisible: true },
-          data
+    if (typeof job === 'object') {
+      this.props.mlJobService
+        .validateJob({ duration, fields, job })
+        .then((data) => {
+          this.setState({
+            ui: { isModalVisible: true },
+            data,
+            title: job.job_id
+          });
         });
-      });
     }
   };
 
   render() {
+    // only set to false if really false and not another falsy value, so it defaults to true.
     const fill = (this.props.fill === false) ? false : true;
-    const job = this.props.job;
-    const disabled = (typeof job === 'undefined');
+    // default to false if not explicitly set to true
+    const isDisabled = (this.props.isDisabled !== true) ? false : true;
 
     return (
       <div>
@@ -198,18 +190,18 @@ class ValidateJob extends Component {
           onClick={this.openModal}
           size="s"
           fill={fill}
-          isDisabled={disabled}
+          isDisabled={isDisabled}
         >
           Validate Job
         </EuiButton>
 
-        {!disabled && this.state.ui.isModalVisible &&
+        {!isDisabled && this.state.ui.isModalVisible &&
           <Modal
             close={this.closeModal}
-            title={'Validate job ' + (typeof job === 'object' && job.job_id)}
+            title={`Validate job ${this.state.title}`}
           >
             {this.state.data.messages.map(
-              (m, i) => <Callout key={m.id + '_' + i} message={m} />
+              (m, i) => <Callout key={`${m.id}_${i}`} message={m} />
             )}
           </Modal>
         }
@@ -218,14 +210,12 @@ class ValidateJob extends Component {
   }
 }
 ValidateJob.propTypes = {
-  duration: PropTypes.object,
+  getDuration: PropTypes.func,
   fields: PropTypes.object,
   fill: PropTypes.bool,
-  job: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.func
-  ]),
-  mlJobService: PropTypes.object
+  getJobConfig: PropTypes.func.isRequired,
+  isDisabled: PropTypes.bool,
+  mlJobService: PropTypes.object.isRequired
 };
 
 export { ValidateJob };

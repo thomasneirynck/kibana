@@ -9,6 +9,8 @@ const job = {
   job_id: 'test-id'
 };
 
+const getJobConfig = () => job;
+
 function prepareTest(messages) {
   const p = Promise.resolve(messages);
 
@@ -17,7 +19,7 @@ function prepareTest(messages) {
   };
 
   const component = (
-    <ValidateJob job={job} mlJobService={mlJobService} />
+    <ValidateJob getJobConfig={getJobConfig} mlJobService={mlJobService} />
   );
 
   const wrapper = shallow(component);

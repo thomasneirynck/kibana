@@ -405,20 +405,12 @@ module
       }
     };
 
-    $scope.getJobFromConfig = function () {
-      const bucketSpanInterval = parseInterval($scope.formConfig.bucketSpan);
-      if (validateJobId($scope.formConfig.jobId, $scope.formConfig.jobGroups, $scope.ui.validation.checks) &&
-        bucketSpanInterval !== null && bucketSpanInterval.asMilliseconds() !== 0) {
-        return mlSingleMetricJobService.getJobFromConfig($scope.formConfig);
-      }
-    };
+    $scope.getDuration = () => ({
+      start: $scope.formConfig.start,
+      end: $scope.formConfig.end
+    });
 
-    $scope.getDurationFromConfig = function () {
-      return {
-        start: $scope.formConfig.start,
-        end: $scope.formConfig.end
-      };
-    };
+    $scope.getJobConfig = () => mlSingleMetricJobService.getJobFromConfig($scope.formConfig);
 
     function loadCharts() {
       let forceStop = globalForceStop;

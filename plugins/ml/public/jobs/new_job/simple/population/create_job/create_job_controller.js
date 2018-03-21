@@ -537,18 +537,12 @@ module
       }
     };
 
-    $scope.getJobFromConfig = function () {
-      if (validateJobId($scope.formConfig.jobId, $scope.formConfig.jobGroups, $scope.ui.validation.checks)) {
-        return mlPopulationJobService.getJobFromConfig($scope.formConfig);
-      }
-    };
+    $scope.getDuration = () => ({
+      start: $scope.formConfig.start,
+      end: $scope.formConfig.end
+    });
 
-    $scope.getDurationFromConfig = function () {
-      return {
-        start: $scope.formConfig.start,
-        end: $scope.formConfig.end
-      };
-    };
+    $scope.getJobConfig = () => mlPopulationJobService.getJobFromConfig($scope.formConfig);
 
     function loadCharts() {
       let forceStop = globalForceStop;

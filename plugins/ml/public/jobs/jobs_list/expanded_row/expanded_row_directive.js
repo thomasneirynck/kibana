@@ -222,6 +222,11 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
         return moment(txt).format(TIME_FORMAT);
       };
 
+      $scope.getDuration = () => ({
+        start: $scope.job.data_counts.earliest_record_timestamp,
+        end: $scope.job.data_counts.latest_record_timestamp
+      });
+      $scope.getJobConfig = () => $scope.job;
 
       function replaceHost(url) {
         if (url.match('localhost')) {
