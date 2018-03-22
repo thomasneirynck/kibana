@@ -16,7 +16,7 @@ export default function ({ getService, getPageObjects }) {
   const PageObjects = getPageObjects(['reporting', 'common', 'dashboard', 'header', 'discover', 'visualize']);
   const log = getService('log');
 
-  describe.skip('Reporting', () => {
+  describe('Reporting', () => {
 
     before('initialize tests', async () => {
       await kibanaServer.uiSettings.disableToastAutohide();
@@ -74,7 +74,7 @@ export default function ({ getService, getPageObjects }) {
       });
 
       describe('Print Layout', () => {
-        it('matches baseline report', async function () {
+        it.skip('matches baseline report', async function () {
           // Generating and then comparing reports can take longer than the default 60s timeout because the comparePngs
           // function is taking about 15 seconds per comparison in jenkins.
           this.timeout(180000);
@@ -111,7 +111,7 @@ export default function ({ getService, getPageObjects }) {
           expect(diffCount).to.be.lessThan(128000);
         });
 
-        it('matches same baseline report with margins turned on', async function () {
+        it.skip('matches same baseline report with margins turned on', async function () {
           // Generating and then comparing reports can take longer than the default 60s timeout because the comparePngs
           // function is taking about 15 seconds per comparison in jenkins.
           this.timeout(180000);
@@ -141,7 +141,7 @@ export default function ({ getService, getPageObjects }) {
       });
 
       describe('Preserve Layout', () => {
-        it('matches baseline report', async function () {
+        it.skip('matches baseline report', async function () {
 
           // Generating and then comparing reports can take longer than the default 60s timeout because the comparePngs
           // function is taking about 15 seconds per comparison in jenkins.
