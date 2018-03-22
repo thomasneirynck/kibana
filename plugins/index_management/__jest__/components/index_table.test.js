@@ -11,6 +11,21 @@ import axios from 'axios';
 import { setHttpClient } from '../../public/services/api';
 import sinon from 'sinon';
 import { findTestSubject } from '@elastic/eui/lib/test';
+jest.mock('react-ace', () => {
+  const { PureComponent } = require('react');
+  return class extends PureComponent {
+    editor = {
+      textInput: {
+        getElement() {
+          return { addEventListener() {} };
+        }
+      }
+    };
+    render() {
+      return null;
+    }
+  };
+});
 
 setHttpClient(axios.create());
 let server = null;
@@ -312,7 +327,10 @@ describe('index table', () => {
       }
       count++;
     });
-    const confirmButton = findTestSubject(rendered, 'confirmModalConfirmButton');
+    const confirmButton = findTestSubject(
+      rendered,
+      'confirmModalConfirmButton'
+    );
     confirmButton.simulate('click');
     snapshot(status(rendered, rowIndex));
   });
