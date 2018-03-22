@@ -13,7 +13,7 @@ import { checkLicense as checkLicenseForAlerts } from '../../cluster_alerts/chec
 import { CLUSTER_ALERTS_SEARCH_SIZE } from '../../../common/constants';
 
 // manipulate cluster status and license meta data
-export function normalizeClustersData(clusters) {
+export function normalizeClustersData(clusters, kibanaUuid) {
   clusters.forEach(cluster => {
     cluster.elasticsearch = {
       cluster_stats: cluster.cluster_stats,
@@ -24,9 +24,12 @@ export function normalizeClustersData(clusters) {
       cluster.elasticsearch.status,
       cluster.kibana && cluster.kibana.status || null
     ]);
+    cluster.isPrimary = cluster.kibana.uuids.includes(kibanaUuid);
+
     delete cluster.cluster_stats;
     delete cluster.nodes;
     delete cluster.indices;
+    delete cluster.kibana.uuids;
   });
 
   return clusters;
@@ -110,5 +113,7 @@ export async function getClustersFromRequest(req, indexPatterns, { clusterUuid, 
     set(clusters[clusterIndex], 'beats', beats.stats);
   });
 
-  return normalizeClustersData(clusters);
+  const config = req.server.config();
+  const kibanaUuid = config.get('server.uuid');
+  return normalizeClustersData(clusters, kibanaUuid);
 }

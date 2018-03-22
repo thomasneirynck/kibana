@@ -186,6 +186,7 @@ export function getKibanasForClusters(req, kbnIndexPattern, clusters) {
         return {
           clusterUuid,
           stats: {
+            uuids: get(aggregations, 'kibana_uuids.buckets', []).map(({ key }) => key),
             status,
             requests_total: requestsTotal,
             concurrent_connections: connections,

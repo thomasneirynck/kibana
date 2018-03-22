@@ -182,6 +182,7 @@
         "timestamp": 1502835059952
       }
     },
+    "isPrimary": false,
     "kibana": {
       "concurrent_connections": 0,
       "count": 0,
@@ -400,6 +401,7 @@
       }
     },
     "isSupported": true,
+    "isPrimary": false,
     "kibana": {
       "concurrent_connections": 0,
       "count": 0,
@@ -623,6 +625,7 @@
       }
     },
     "isSupported": true,
+    "isPrimary": false,
     "kibana": {
       "concurrent_connections": 307,
       "count": 1,

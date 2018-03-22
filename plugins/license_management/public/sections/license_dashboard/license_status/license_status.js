@@ -15,7 +15,15 @@ export class LicenseStatus extends React.PureComponent {
     let icon;
     let title;
     let message;
-    if (status === 'Active') {
+    if (isExpired) {
+      icon = <EuiIcon color="danger" type="alert" />;
+      message = (
+        <span>
+          Your license expired on <strong>{expiryDate}</strong>
+        </span>
+      );
+      title = `Your ${type} license has expired`;
+    } else {
       icon = <EuiIcon color="success" type="checkInCircleFilled" />;
       message = expiryDate ? (
         <span>
@@ -27,31 +35,28 @@ export class LicenseStatus extends React.PureComponent {
         </span>
       );
       title = `Your ${type} license is ${status.toLowerCase()}`;
-    } else if(isExpired) {
-      icon = <EuiIcon color="danger" type="alert" />;
-      message = (
-        <span>
-          Your license expired on <strong>{expiryDate}</strong>
-        </span>
-      );
-      title = `Your ${type} license has expired`;
     }
     return (
       <div>
         <EuiFlexGroup
           justifyContent="spaceAround"
-          alignItems="center"
-          gutterSize="s"
         >
           <EuiFlexItem grow={false}>
-            {icon}
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiTitle size="l">
-              <h2>
-                {title}
-              </h2>
-            </EuiTitle>
+            <EuiFlexGroup
+              alignItems="center"
+              gutterSize="s"
+            >
+              <EuiFlexItem grow={false}>
+                {icon}
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiTitle size="l">
+                  <h2>
+                    {title}
+                  </h2>
+                </EuiTitle>
+              </EuiFlexItem>
+            </EuiFlexGroup>
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiFlexGroup justifyContent="spaceAround">

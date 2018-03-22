@@ -8,6 +8,7 @@ import { AddLicense } from './add_license';
 import { RequestTrialExtension } from './request_trial_extension';
 import {
   EuiFlexGroup,
+  EuiFlexItem,
   EuiSpacer
 } from '@elastic/eui';
 
@@ -19,7 +20,9 @@ export const LicenseDashboard = () => {
       </EuiFlexGroup>
       <EuiSpacer size="l" />
       <EuiFlexGroup justifyContent="spaceAround">
-        <AddLicense />
+        <EuiFlexItem>
+          <AddLicense />
+        </EuiFlexItem>
         <StartTrial />
         <RequestTrialExtension/>
         <RevertToBasic/>

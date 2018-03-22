@@ -199,6 +199,7 @@
         "timestamp": 1503524825081
       }
     },
+    "isPrimary": true,
     "kibana": {
       "concurrent_connections": 646,
       "count": 1,
