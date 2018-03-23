@@ -15,6 +15,7 @@
 
 import expect from 'expect.js';
 import { validateBucketSpan } from '../validate_bucket_span';
+import { SKIP_BUCKET_SPAN_ESTIMATION } from '../../../../common/constants/validation';
 
 // farequote2017 snapshot snapshot mock search response
 // it returns a mock for the response of PolledDataChecker's search request
@@ -128,6 +129,10 @@ describe('ML - validateBucketSpan', () => {
       }
     );
   });
+
+  if (SKIP_BUCKET_SPAN_ESTIMATION) {
+    return;
+  }
 
   const testBucketSpan = (bucketSpan, mockSearchResponse, test) => {
     const job = getJobConfig(bucketSpan);

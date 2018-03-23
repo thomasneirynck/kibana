@@ -20,3 +20,5 @@ export const VALIDATION_STATUS = {
   SUCCESS: 'success',
   WARNING: 'warning'
 };
+
+export const SKIP_BUCKET_SPAN_ESTIMATION = true;

@@ -15,6 +15,7 @@
 
 import { estimateBucketSpanFactory } from '../../models/bucket_span_estimator';
 import { mlFunctionToESAggregation } from '../../../common/util/job_utils';
+import { SKIP_BUCKET_SPAN_ESTIMATION } from '../../../common/constants/validation';
 import { parseInterval } from '../../../common/util/parse_interval.js';
 
 import { validateJobObject } from './validate_job_object';
@@ -67,6 +68,13 @@ export async function validateBucketSpan(callWithRequest, job, duration) {
   // test #1: check if bucket span is higher than define threshold
   if (bucketSpanDays >= BUCKET_SPAN_HIGH_THRESHOLD) {
     messages.push({ id: 'bucket_span_high' });
+  }
+
+  if (SKIP_BUCKET_SPAN_ESTIMATION) {
+    if (messages.length === 0) {
+      messages.push({ id: 'success_bucket_span' });
+    }
+    return messages;
   }
 
   // test #2: check if bucket span differs from bucket span estimator result
