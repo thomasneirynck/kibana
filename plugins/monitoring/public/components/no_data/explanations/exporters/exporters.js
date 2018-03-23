@@ -4,21 +4,13 @@ import {
   EuiCode,
   EuiText,
   EuiHorizontalRule,
-  EuiTextColor,
-  EuiTitle,
 } from '@elastic/eui';
+import { ChangesNeeded } from '../../blurbs';
 
 export function ExplainExporters({ context, property, data }) {
   return (
     <Fragment>
-      <EuiTitle size="l">
-        <h2>You need to make some adjustments</h2>
-      </EuiTitle>
-      <EuiTextColor color="subdued">
-        <EuiText>
-          <p>To run monitoring please perform the following steps</p>
-        </EuiText>
-      </EuiTextColor>
+      <ChangesNeeded />
       <EuiHorizontalRule size="half" />
       <EuiText className="noData__alignLeft">
         <p>

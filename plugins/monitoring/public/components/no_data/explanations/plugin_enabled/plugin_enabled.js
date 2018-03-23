@@ -1,24 +1,16 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import {
   EuiCode,
   EuiText,
   EuiHorizontalRule,
-  EuiTextColor,
-  EuiTitle,
 } from '@elastic/eui';
+import { ChangesNeeded } from '../../blurbs';
 
 export function ExplainPluginEnabled({ context, property, data }) {
   return (
-    <div>
-      <EuiTitle size="l">
-        <h2>You need to make some adjustments</h2>
-      </EuiTitle>
-      <EuiTextColor color="subdued">
-        <EuiText>
-          <p>To run monitoring please perform the following steps</p>
-        </EuiText>
-      </EuiTextColor>
+    <Fragment>
+      <ChangesNeeded />
       <EuiHorizontalRule size="half" />
       <EuiText>
         <p>
@@ -28,7 +20,7 @@ export function ExplainPluginEnabled({ context, property, data }) {
           from your configuration will put the default into effect and enable Monitoring.
         </p>
       </EuiText>
-    </div>
+    </Fragment>
   );
 }
 

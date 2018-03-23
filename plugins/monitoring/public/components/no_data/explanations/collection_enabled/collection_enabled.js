@@ -9,9 +9,9 @@ import {
   EuiText,
   EuiSpacer,
   EuiHorizontalRule,
-  EuiTitle,
-  EuiTextColor,
+  EuiTitle
 } from '@elastic/eui';
+import { WhatIs } from '../../blurbs';
 
 export class ExplainCollectionEnabled extends React.Component {
   constructor(props) {
@@ -35,14 +35,7 @@ export class ExplainCollectionEnabled extends React.Component {
 
     const renderButton = () => (
       <Fragment>
-        <EuiTitle size="l">
-          <h2>Monitoring is currently off</h2>
-        </EuiTitle>
-        <EuiTextColor color="subdued">
-          <EuiText>
-            <p>Monitoring provides insight to your hardware performance and load.</p>
-          </EuiText>
-        </EuiTextColor>
+        <WhatIs />
         <EuiHorizontalRule size="half" />
         <EuiText>
           <p>

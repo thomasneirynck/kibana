@@ -7,7 +7,7 @@ import {
 } from 'plugins/monitoring/lib/elasticsearch_settings';
 import { ModelUpdater } from './model_updater';
 import { render, unmountComponentAtNode } from 'react-dom';
-import { NoData } from 'plugins/monitoring/components/no_data';
+import { NoData } from 'plugins/monitoring/components';
 
 const REACT_NODE_ID_NO_DATA = 'noDataReact';
 

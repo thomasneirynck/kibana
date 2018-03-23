@@ -69,32 +69,34 @@ exports[`ExplainCollectionInterval collection interval setting updates should sh
   isCollectionIntervalUpdating={true}
   property="xpack.monitoring.collection.interval"
 >
-  <EuiTitle
-    size="l"
-  >
-    <h2
-      className="euiTitle euiTitle--large"
+  <Component>
+    <EuiTitle
+      size="l"
     >
-      Monitoring is currently off
-    </h2>
-  </EuiTitle>
-  <EuiTextColor
-    color="subdued"
-  >
-    <span
-      className="euiTextColor euiTextColor--subdued"
+      <h2
+        className="euiTitle euiTitle--large"
+      >
+        Monitoring is currently off
+      </h2>
+    </EuiTitle>
+    <EuiTextColor
+      color="subdued"
     >
-      <EuiText>
-        <div
-          className="euiText"
-        >
-          <p>
-            Monitoring provides insight to your hardware performance and load.
-          </p>
-        </div>
-      </EuiText>
-    </span>
-  </EuiTextColor>
+      <span
+        className="euiTextColor euiTextColor--subdued"
+      >
+        <EuiText>
+          <div
+            className="euiText"
+          >
+            <p>
+              Monitoring provides insight to your hardware performance and load.
+            </p>
+          </div>
+        </EuiText>
+      </span>
+    </EuiTextColor>
+  </Component>
   <EuiHorizontalRule
     margin="l"
     size="half"
@@ -230,32 +232,34 @@ exports[`ExplainCollectionInterval should explain about xpack.monitoring.collect
   isCollectionIntervalUpdating={false}
   property="xpack.monitoring.collection.interval"
 >
-  <EuiTitle
-    size="l"
-  >
-    <h2
-      className="euiTitle euiTitle--large"
+  <Component>
+    <EuiTitle
+      size="l"
     >
-      Monitoring is currently off
-    </h2>
-  </EuiTitle>
-  <EuiTextColor
-    color="subdued"
-  >
-    <span
-      className="euiTextColor euiTextColor--subdued"
+      <h2
+        className="euiTitle euiTitle--large"
+      >
+        Monitoring is currently off
+      </h2>
+    </EuiTitle>
+    <EuiTextColor
+      color="subdued"
     >
-      <EuiText>
-        <div
-          className="euiText"
-        >
-          <p>
-            Monitoring provides insight to your hardware performance and load.
-          </p>
-        </div>
-      </EuiText>
-    </span>
-  </EuiTextColor>
+      <span
+        className="euiTextColor euiTextColor--subdued"
+      >
+        <EuiText>
+          <div
+            className="euiText"
+          >
+            <p>
+              Monitoring provides insight to your hardware performance and load.
+            </p>
+          </div>
+        </EuiText>
+      </span>
+    </EuiTextColor>
+  </Component>
   <EuiHorizontalRule
     margin="l"
     size="half"

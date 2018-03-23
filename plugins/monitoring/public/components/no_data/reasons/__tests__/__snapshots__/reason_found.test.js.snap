@@ -201,12 +201,12 @@ Array [
 `;
 
 exports[`ReasonFound should load ExplainPluginEnabled component 1`] = `
-<div>
+Array [
   <h2
     class="euiTitle euiTitle--large"
   >
     You need to make some adjustments
-  </h2>
+  </h2>,
   <span
     class="euiTextColor euiTextColor--subdued"
   >
@@ -217,10 +217,10 @@ exports[`ReasonFound should load ExplainPluginEnabled component 1`] = `
         To run monitoring please perform the following steps
       </p>
     </div>
-  </span>
+  </span>,
   <hr
     class="euiHorizontalRule euiHorizontalRule--half euiHorizontalRule--marginLarge"
-  />
+  />,
   <div
     class="euiText"
   >
@@ -257,6 +257,6 @@ exports[`ReasonFound should load ExplainPluginEnabled component 1`] = `
       </span>
        setting from your configuration will put the default into effect and enable Monitoring.
     </p>
-  </div>
-</div>
+  </div>,
+]
 `;
