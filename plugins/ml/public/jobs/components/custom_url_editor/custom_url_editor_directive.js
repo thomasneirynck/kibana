@@ -24,6 +24,7 @@ import rison from 'rison-node';
 import template from './custom_url_editor.html';
 import 'plugins/ml/components/item_select';
 import { parseInterval } from 'plugins/ml/../common/util/parse_interval';
+import { escapeForElasticsearchQuery } from 'plugins/ml/util/string_utils';
 import { SavedObjectsClientProvider } from 'ui/saved_objects';
 
 import { uiModules } from 'ui/modules';
@@ -222,7 +223,7 @@ module.directive('mlCustomUrlEditor', function (Private) {
                 if (index > 0) {
                   queryString += ' AND ';
                 }
-                queryString += `${fieldName}:$${fieldName}$`;
+                queryString += `${escapeForElasticsearchQuery(fieldName)}:"$${fieldName}$"`;
               });
 
               query = {
@@ -294,7 +295,7 @@ module.directive('mlCustomUrlEditor', function (Private) {
             if (i > 0) {
               queryString += ' AND ';
             }
-            queryString += `${fieldName}:$${fieldName}$`;
+            queryString += `${escapeForElasticsearchQuery(fieldName)}:"$${fieldName}$"`;
           });
 
           query = {

@@ -24,6 +24,7 @@ import rison from 'rison-node';
 import { notify } from 'ui/notify';
 import { ES_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
 import { parseInterval } from 'plugins/ml/../common/util/parse_interval';
+import { getUrlForRecord } from 'plugins/ml/util/custom_url_utils';
 import { replaceStringTokens, mlEscape } from 'plugins/ml/util/string_utils';
 import { isTimeSeriesViewDetector } from 'plugins/ml/../common/util/job_utils';
 import {
@@ -373,9 +374,7 @@ module.directive('mlAnomaliesTable', function (
         } else {
           // Replace any tokens in the configured url_value with values from the source record,
           // and then open link in a new tab/window.
-          // TODO - if drilling down to a Kibana dashboard, use escapeForElasticsearchQuery from string_utils
-          // to escape any terms used in the dashboard query or filters.
-          const urlPath = replaceStringTokens(customUrl.url_value, record, true);
+          const urlPath = getUrlForRecord(customUrl, record);
           $window.open(urlPath, '_blank');
         }
 
