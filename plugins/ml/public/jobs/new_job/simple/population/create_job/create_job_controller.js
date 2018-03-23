@@ -27,7 +27,7 @@ import { checkLicenseExpired } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/components/utils/filter_agg_types';
-import { validateJobId } from 'plugins/ml/jobs/new_job/simple/components/utils/validate_job';
+import { validateJob } from 'plugins/ml/jobs/new_job/simple/components/utils/validate_job';
 import { adjustIntervalDisplayed } from 'plugins/ml/jobs/new_job/simple/components/utils/adjust_interval';
 import { createSearchItems, createResultsUrl, addNewJobToRecentlyAccessed } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { populateAppStateSettings } from 'plugins/ml/jobs/new_job/simple/components/utils/app_state_settings';
@@ -36,6 +36,7 @@ import { createFields } from 'plugins/ml/jobs/new_job/simple/components/utils/cr
 import { getIndexPatternWithRoute, getSavedSearchWithRoute, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
 import { ChartDataUtilsProvider } from 'plugins/ml/jobs/new_job/simple/components/utils/chart_data_utils.js';
 import { checkMlNodesAvailable } from 'plugins/ml/ml_nodes_check/check_ml_nodes';
+import { loadNewJobDefaults } from 'plugins/ml/jobs/new_job/utils/new_job_defaults';
 import template from './create_job.html';
 
 uiRoutes
@@ -46,7 +47,8 @@ uiRoutes
       privileges: checkCreateJobsPrivilege,
       indexPattern: getIndexPatternWithRoute,
       savedSearch: getSavedSearchWithRoute,
-      checkMlNodesAvailable
+      checkMlNodesAvailable,
+      loadNewJobDefaults
     }
   });
 
@@ -171,7 +173,8 @@ module
       validation: {
         checks: {
           jobId: { valid: true },
-          groupIds: { valid: true }
+          groupIds: { valid: true },
+          modelMemoryLimit: { valid: true }
         },
       },
       isOverField(field) {
@@ -469,7 +472,8 @@ module
     // the job may fail to open, but the datafeed should still be created
     // if the job save was successful.
     $scope.createJob = function () {
-      if (validateJobId($scope.formConfig.jobId, $scope.formConfig.jobGroups, $scope.ui.validation.checks)) {
+      const tempJob = mlPopulationJobService.getJobFromConfig($scope.formConfig);
+      if (validateJob(tempJob, $scope.ui.validation.checks)) {
         msgs.clear();
         // create the new job
         mlPopulationJobService.createJob($scope.formConfig)
@@ -493,6 +497,11 @@ module
             // save failed
             msgs.error('Save failed: ', resp.resp);
           });
+      } else {
+        // show the advanced section as the model memory limit is invalid
+        if($scope.ui.validation.checks.modelMemoryLimit.valid === false) {
+          $scope.ui.showAdvanced = true;
+        }
       }
 
       // save new datafeed internal function

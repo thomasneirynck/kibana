@@ -74,6 +74,7 @@
           type="text"
           ng-model='formConfig.modelMemoryLimit'
           class="kuiTextInput kuiTextInput--large" />
+        <div ng-hide="ui.validation.checks.modelMemoryLimit.valid" class="validation-error">{{ ui.validation.checks.modelMemoryLimit.message }}</div>
       </div>
     </div>
   </div>

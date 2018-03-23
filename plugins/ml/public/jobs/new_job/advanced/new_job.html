@@ -132,6 +132,7 @@
                 ng-model="ui.modelMemoryLimitText"
                 placeholder="{{ui.modelMemoryLimitDefault}}"
                 class="form-control" />
+              <div ng-hide="ui.validation.tabs[0].checks.modelMemoryLimit.valid" class="validation-error">{{ ui.validation.tabs[0].checks.modelMemoryLimit.message }}</div>
             </div>
 
           </div>

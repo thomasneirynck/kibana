@@ -30,6 +30,12 @@ import { createSearchItems } from 'plugins/ml/jobs/new_job/utils/new_job_utils';
 import { getIndexPatterns, getIndexPatternWithRoute, getSavedSearchWithRoute, timeBasedIndexCheck } from 'plugins/ml/util/index_utils';
 import { ML_JOB_FIELD_TYPES, ES_FIELD_TYPES } from 'plugins/ml/../common/constants/field_types';
 import { checkMlNodesAvailable } from 'plugins/ml/ml_nodes_check/check_ml_nodes';
+import { loadNewJobDefaults, newJobLimits } from 'plugins/ml/jobs/new_job/utils/new_job_defaults';
+import {
+  calculateDatafeedFrequencyDefaultSeconds as juCalculateDatafeedFrequencyDefaultSeconds,
+  ML_DATA_PREVIEW_COUNT,
+  basicJobValidation
+} from 'plugins/ml/../common/util/job_utils';
 
 uiRoutes
   .when('/jobs/new_job/advanced', {
@@ -40,7 +46,8 @@ uiRoutes
       indexPattern: getIndexPatternWithRoute,
       indexPatterns: getIndexPatterns,
       savedSearch: getSavedSearchWithRoute,
-      checkMlNodesAvailable
+      checkMlNodesAvailable,
+      loadNewJobDefaults
     }
   })
   .when('/jobs/new_job/advanced/:jobId', {
@@ -51,15 +58,10 @@ uiRoutes
       indexPattern: getIndexPatternWithRoute,
       indexPatterns: getIndexPatterns,
       savedSearch: getSavedSearchWithRoute,
-      checkMlNodesAvailable
+      checkMlNodesAvailable,
+      loadNewJobDefaults
     }
   });
-
-import {
-  calculateDatafeedFrequencyDefaultSeconds as juCalculateDatafeedFrequencyDefaultSeconds,
-  ML_DATA_PREVIEW_COUNT,
-  basicJobValidation
-} from 'plugins/ml/../common/util/job_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -150,7 +152,7 @@ module.controller('MlNewJob',
       ],
       validation: {
         tabs: [
-          { index: 0, valid: true, checks: { jobId: { valid: true }, groupIds: { valid: true } } },
+          { index: 0, valid: true, checks: { jobId: { valid: true }, groupIds: { valid: true }, modelMemoryLimit: { valid: true } } },
           { index: 1, valid: true, checks: {
             detectors: { valid: true }, influencers: { valid: true }, categorizationFilters: { valid: true }, bucketSpan: { valid: true }
           } },
@@ -971,7 +973,8 @@ module.controller('MlNewJob',
 
     // function used to check that all required fields are filled in
     function validateJob() {
-      const validationResults = basicJobValidation($scope.job, $scope.fields);
+      const limits = newJobLimits();
+      const validationResults = basicJobValidation($scope.job, $scope.fields, limits);
 
       const valid = validationResults.valid;
       const message = 'Fill in all required fields';
@@ -1007,6 +1010,12 @@ module.controller('MlNewJob',
           let msg = 'Job group names can contain lowercase alphanumeric (a-z and 0-9), hyphens or underscores; ';
           msg += 'must start and end with an alphanumeric character';
           tabs[0].checks.groupIds.message = msg;
+        }
+
+        if (validationResults.contains('model_memory_limit_invalid')) {
+          tabs[0].checks.modelMemoryLimit.valid = false;
+          const msg = `Model memory limit cannot be higher than the maximum value of ${limits.max_model_memory_limit}`;
+          tabs[0].checks.modelMemoryLimit.message = msg;
         }
 
         // tab 1 - Analysis Configuration

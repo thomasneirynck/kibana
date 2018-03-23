@@ -15,6 +15,7 @@
 
 import _ from 'lodash';
 import semver from 'semver';
+import numeral from 'numeral';
 
 import { parseInterval } from './parse_interval';
 
@@ -223,7 +224,7 @@ export function uniqWithIsEqual(arr) {
 // check job without manipulating UI and return a list of messages
 // job and fields get passed as arguments and are not accessed as $scope.* via the outer scope
 // because the plan is to move this function to the common code area so that it can be used on the server side too.
-export function basicJobValidation(job, fields) {
+export function basicJobValidation(job, fields, limits) {
   const messages = [];
   let valid = true;
 
@@ -358,6 +359,25 @@ export function basicJobValidation(job, fields) {
         messages.push({ id: 'index_fields_valid' });
       }
     }
+
+    // model memory limit
+    if (typeof job.analysis_limits !== 'undefined' && typeof job.analysis_limits.model_memory_limit !== 'undefined') {
+      if (typeof limits === 'object' && typeof limits.max_model_memory_limit !== 'undefined') {
+        const max = limits.max_model_memory_limit.toUpperCase();
+        const mml = job.analysis_limits.model_memory_limit.toUpperCase();
+
+        const mmlMB = +numeral(mml).format('MB');
+        const maxMB = +numeral(max).format('MB');
+
+        if(mmlMB > maxMB) {
+          messages.push({ id: 'model_memory_limit_invalid' });
+          valid = false;
+        } else {
+          messages.push({ id: 'model_memory_limit_valid' });
+        }
+      }
+    }
+
   } else {
     valid = false;
   }
