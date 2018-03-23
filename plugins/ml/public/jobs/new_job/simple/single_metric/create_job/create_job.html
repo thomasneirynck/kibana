@@ -225,8 +225,9 @@
         <div class="euiFlexItem euiFlexItem--flexGrowZero">
           <ml-validate-job
             get-duration="getDuration"
-            fill="false"
             get-job-config="getJobConfig"
+            fill="false"
+            is-current-job-config="isCurrentJobConfig"
             is-disabled='ui.formValid === false || ui.dirty === true || formConfig.jobId === undefined || ui.bucketSpanValid === false'
             ng-show="jobState === JOB_STATE.NOT_STARTED"
           />

@@ -36,10 +36,14 @@ import {
 // don't use something like plugins/ml/../common
 // because it won't work with the jest tests
 import { VALIDATION_STATUS } from '../../../common/constants/validation';
+import { getMostSevereMessageStatus } from '../../../common/util/validation_utils';
 
+const defaultIconType = 'questionInCircle';
 const getDefaultState = () => ({
   ui: {
-    isModalVisible: false,
+    iconType: defaultIconType,
+    isLoading: false,
+    isModalVisible: false
   },
   data: {
     messages: [],
@@ -64,7 +68,7 @@ const statusToEuiColor = (status) => {
 const statusToEuiIconType = (status) => {
   switch (status) {
     case VALIDATION_STATUS.INFO:
-      return 'pencil';
+      return 'iInCircle';
       break;
     case VALIDATION_STATUS.ERROR:
       return 'cross';
@@ -156,7 +160,9 @@ class ValidateJob extends Component {
   }
 
   closeModal = () => {
-    this.setState(getDefaultState());
+    const newState = getDefaultState();
+    newState.ui.iconType = this.state.ui.iconType;
+    this.setState(newState);
   };
 
   openModal = () => {
@@ -166,15 +172,43 @@ class ValidateJob extends Component {
     const fields = this.props.fields;
 
     if (typeof job === 'object') {
+      let shouldShowLoadingIndicator = true;
+
       this.props.mlJobService
         .validateJob({ duration, fields, job })
         .then((data) => {
+          shouldShowLoadingIndicator = false;
           this.setState({
-            ui: { isModalVisible: true },
+            ...this.state,
+            ui: {
+              ...this.state.ui,
+              iconType: statusToEuiIconType(
+                getMostSevereMessageStatus(data.messages)
+              ),
+              isLoading: false,
+              isModalVisible: true
+            },
             data,
             title: job.job_id
           });
         });
+
+      // wait for 250ms before triggering the loading indicator
+      // to avoid flickering when there's a loading time below
+      // 250ms for the job validation data
+      const delay = 250;
+      setTimeout(() => {
+        if (shouldShowLoadingIndicator) {
+          this.setState({
+            ...this.state,
+            ui: {
+              ...this.state.ui,
+              isLoading: true,
+              isModalVisible: false
+            }
+          });
+        }
+      }, delay);
     }
   };
 
@@ -182,7 +216,9 @@ class ValidateJob extends Component {
     // only set to false if really false and not another falsy value, so it defaults to true.
     const fill = (this.props.fill === false) ? false : true;
     // default to false if not explicitly set to true
+    const isCurrentJobConfig = (this.props.isCurrentJobConfig !== true) ? false : true;
     const isDisabled = (this.props.isDisabled !== true) ? false : true;
+
 
     return (
       <div>
@@ -190,7 +226,10 @@ class ValidateJob extends Component {
           onClick={this.openModal}
           size="s"
           fill={fill}
+          iconType={isCurrentJobConfig ? this.state.ui.iconType : defaultIconType}
+          iconSide="right"
           isDisabled={isDisabled}
+          isLoading={this.state.ui.isLoading}
         >
           Validate Job
         </EuiButton>
@@ -210,10 +249,11 @@ class ValidateJob extends Component {
   }
 }
 ValidateJob.propTypes = {
-  getDuration: PropTypes.func,
   fields: PropTypes.object,
   fill: PropTypes.bool,
+  getDuration: PropTypes.func,
   getJobConfig: PropTypes.func.isRequired,
+  isCurrentJobConfig: PropTypes.bool,
   isDisabled: PropTypes.bool,
   mlJobService: PropTypes.object.isRequired
 };

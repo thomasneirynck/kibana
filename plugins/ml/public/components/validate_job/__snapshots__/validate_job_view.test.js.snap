@@ -5,8 +5,10 @@ exports[`ValidateJob renders button and modal with a messsage 1`] = `
   <EuiButton
     color="primary"
     fill={true}
-    iconSide="left"
+    iconSide="right"
+    iconType="questionInCircle"
     isDisabled={false}
+    isLoading={false}
     onClick={[Function]}
     size="s"
     type="button"
@@ -38,8 +40,10 @@ exports[`ValidateJob renders the button 1`] = `
   <EuiButton
     color="primary"
     fill={true}
-    iconSide="left"
+    iconSide="right"
+    iconType="questionInCircle"
     isDisabled={false}
+    isLoading={false}
     onClick={[Function]}
     size="s"
     type="button"
@@ -54,8 +58,10 @@ exports[`ValidateJob renders the button and modal with a success message 1`] = `
   <EuiButton
     color="primary"
     fill={true}
-    iconSide="left"
+    iconSide="right"
+    iconType="questionInCircle"
     isDisabled={false}
+    isLoading={false}
     onClick={[Function]}
     size="s"
     type="button"

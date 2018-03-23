@@ -17,6 +17,7 @@ import _ from 'lodash';
 
 import 'plugins/kibana/visualize/styles/main.less';
 import { AggTypesIndexProvider } from 'ui/agg_types/index';
+import { addJobValidationMethods } from 'plugins/ml/../common/util/validation_utils';
 import { parseInterval } from 'plugins/ml/../common/util/parse_interval';
 
 import dateMath from '@elastic/datemath';
@@ -414,12 +415,7 @@ module
       }
     };
 
-    $scope.getDuration = () => ({
-      start: $scope.formConfig.start,
-      end: $scope.formConfig.end
-    });
-
-    $scope.getJobConfig = () => mlSingleMetricJobService.getJobFromConfig($scope.formConfig);
+    addJobValidationMethods($scope, mlSingleMetricJobService);
 
     function loadCharts() {
       let forceStop = globalForceStop;

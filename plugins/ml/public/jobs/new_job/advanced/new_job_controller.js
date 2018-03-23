@@ -379,10 +379,16 @@ module.controller('MlNewJob',
       }
     }
 
+    // isCurrentJobConfig is used to track if the form configuration
+    // changed since the last job validation was done
+    $scope.isCurrentJobConfig = false;
+    // need to pass true as third argument here to track granular changes
+    $scope.$watch('job', () => { $scope.isCurrentJobConfig = false; }, true);
     $scope.getJobConfig = function () {
       getDelimiterSelection();
       getDatafeedSelection();
       getAnalysisLimitsSelection();
+      $scope.isCurrentJobConfig = true;
       return $scope.job;
     };
 
