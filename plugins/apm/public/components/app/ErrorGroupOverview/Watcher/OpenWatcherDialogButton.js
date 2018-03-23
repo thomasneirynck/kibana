@@ -5,6 +5,7 @@ import {
   EuiContextMenuItem,
   EuiPopover
 } from '@elastic/eui';
+import chrome from 'ui/chrome';
 
 export default class OpenWatcherDialogButton extends Component {
   state = {
@@ -50,7 +51,9 @@ export default class OpenWatcherDialogButton extends Component {
         key="view"
         icon="tableOfContents"
         onClick={() => {
-          window.location = '/app/kibana#/management/elasticsearch/watcher/';
+          window.location = chrome.addBasePath(
+            '/app/kibana#/management/elasticsearch/watcher/'
+          );
         }}
       >
         View existing watches
