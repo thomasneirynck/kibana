@@ -7,7 +7,7 @@ export const AddLicense = ({ uploadPath = `#${BASE_PATH}upload_license` }) => {
   return (
     <EuiCard
       title="Update your license"
-      description="If you already have a new license, upload it now"
+      description="If you already have a new license, upload it now."
       footer={
         <EuiButton
           style={{ marginTop: 'auto' }}

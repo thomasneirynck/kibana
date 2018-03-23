@@ -58,7 +58,7 @@ export class RevertToBasic extends React.PureComponent {
     const description = (
       <span>
         You’ll revert to our free features and lose access to Security, Machine
-        Learning and our other{' '}
+        Learning and other{' '}
         <EuiLink
           href="https://www.elastic.co/subscriptions/xpack"
           target="_blank"
@@ -76,7 +76,7 @@ export class RevertToBasic extends React.PureComponent {
           description={description}
           footer={
             <EuiButton onClick={() => startBasicLicense(licenseType)}>
-              Revert to Basic
+              Revert to basic
             </EuiButton>
           }
         />
