@@ -2,7 +2,6 @@ import React from 'react';
 import { get } from 'lodash';
 import { formatNumber } from 'plugins/monitoring/lib/format_number';
 import { ClusterItemContainer, HealthStatusIndicator, BytesUsage, BytesPercentageUsage } from './helpers';
-
 import {
   EuiFlexGrid,
   EuiFlexItem,
@@ -14,6 +13,7 @@ import {
   EuiDescriptionListDescription,
   EuiHorizontalRule,
 } from '@elastic/eui';
+import { LicenseText } from './license_text';
 
 const calculateShards = shards => {
   const total = get(shards, 'total', 0);
@@ -60,8 +60,10 @@ export function ElasticsearchPanel(props) {
     return null;
   };
 
+  const licenseText = <LicenseText license={props.license} showLicenseExpiration={props.showLicenseExpiration} />;
+
   return (
-    <ClusterItemContainer {...props} statusIndicator={statusIndicator} url="elasticsearch" title="Elasticsearch">
+    <ClusterItemContainer {...props} statusIndicator={statusIndicator} url="elasticsearch" title="Elasticsearch" extras={licenseText}>
       <EuiFlexGrid columns={3}>
 
         <EuiFlexItem>

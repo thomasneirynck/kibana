@@ -1,31 +1,26 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import moment from 'moment-timezone';
 import { capitalize } from 'lodash';
+import { EuiLink } from '@elastic/eui';
 
-import {
-  EuiCallOut,
-  EuiLink,
-  EuiSpacer,
-} from '@elastic/eui';
+const formatDateLocal = input => moment.tz(input, moment.tz.guess()).format('LL');
 
-export function LicenseText(props) {
-  const formatDateLocal = input => moment.tz(input, moment.tz.guess()).format('LL');
-  const goToLicense = () => props.changeUrl('/license');
-
-  if (props.license && props.showLicenseExpiration) {
-    const message = (
-      <EuiLink onClick={goToLicense} >
-        Your { capitalize(props.license.type) } license will expire on { formatDateLocal(props.license.expiry_date) }.
-      </EuiLink>
-    );
-
-    return (
-      <div>
-        <EuiCallOut color="warning" title={message} />
-        <EuiSpacer size="m" />
-      </div>
-    );
+const WillExpireOn = ({ expiryDate }) => {
+  if (expiryDate === undefined) {
+    return null;
   }
 
-  return null;
+  return <Fragment> will expire on {formatDateLocal(expiryDate)}</Fragment>;
+};
+
+export function LicenseText({ license, showLicenseExpiration }) {
+  if (!showLicenseExpiration) {
+    return null;
+  }
+
+  return (
+    <EuiLink href="#/license">
+      {capitalize(license.type)} license <WillExpireOn expiryDate={license.expiry_date} />
+    </EuiLink>
+  );
 }

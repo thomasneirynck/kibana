@@ -8,11 +8,6 @@ export function routeInitProvider(Private, monitoringClusters, globalState, lice
     return _.contains(window.location.hash, hash);
   }
 
-  // check if the license expiration is in the future
-  function isLicenseFresh(expiryDateInMillis) {
-    return (new Date()).getTime() < expiryDateInMillis;
-  }
-
   /*
    * returns true if:
    * license is not basic or
@@ -41,15 +36,14 @@ export function routeInitProvider(Private, monitoringClusters, globalState, lice
           return kbnUrl.redirect('/no-data');
         }
 
-        const clusterLicense = cluster.license;
-        license.setLicenseType(clusterLicense.type);
+        license.setLicense(cluster.license);
 
-        // check if we need to redirect because of license expiration
-        if (!(isOnPage('license') || isOnPage('home')) && !isLicenseFresh(clusterLicense.expiry_date_in_millis)) {
+        // check if we need to redirect because of license problems
+        if (!(isOnPage('license') || isOnPage('home')) && license.isExpired()) {
           return kbnUrl.redirect('/license');
         }
 
-        // check if we need to redirect because of license limitations to multi-cluster monitoring
+        // check if we need to redirect because of attempt at unsupported multi-cluster monitoring
         if (!isOnPage('home') && !cluster.isSupported) {
           return kbnUrl.redirect('/home');
         }

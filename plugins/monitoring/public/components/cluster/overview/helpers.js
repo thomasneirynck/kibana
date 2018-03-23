@@ -28,6 +28,19 @@ export function HealthStatusIndicator(props) {
   );
 }
 
+const PanelExtras = ({ extras }) => {
+  if (extras === undefined) {
+    return null;
+  }
+
+  // mimic the spacing of an EuiHealth which this is adjacent to
+  return (
+    <EuiFlexItem grow={false}>
+      {extras}
+    </EuiFlexItem>
+  );
+};
+
 export function ClusterItemContainer(props) {
   const iconMap = {
     elasticsearch: 'logoElasticSearch',
@@ -57,6 +70,7 @@ export function ClusterItemContainer(props) {
         <EuiFlexItem grow={false}>
           { props.statusIndicator }
         </EuiFlexItem>
+        <PanelExtras extras={props.extras} />
       </EuiFlexGroup>
       <EuiSpacer size="m" />
       { props.children }
