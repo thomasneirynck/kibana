@@ -74,6 +74,8 @@ module.directive('mlCustomUrlEditor', function (Private) {
       $scope.indexPatterns = [];
       $scope.timeRangeIntervalError = false;
 
+      $scope.updateQueryFieldNames = {};    // External update function for Kibana query field names ml-item-select.
+
       // Query 1 - load the saved Kibana dashboards.
       const savedObjectsClient = Private(SavedObjectsClientProvider);
       function getSavedDashboards() {
@@ -339,6 +341,11 @@ module.directive('mlCustomUrlEditor', function (Private) {
         $scope.newCustomUrl.kibanaSettings = {
           queryFieldNames: []
         };
+
+        // Clear selections from the Entities select control.
+        if (typeof $scope.updateQueryFieldNames.update === 'function') {
+          $scope.updateQueryFieldNames.update([]);
+        }
 
         if ($scope.dashboards.length > 0) {
           $scope.newCustomUrl.type = URL_TYPE.KIBANA_DASHBOARD;
