@@ -52,7 +52,7 @@ export async function runApiTests() {
         const ftrConfig = await getFtrConfig();
 
         await runEsWithXpack({ tmpDir, procs, ftrConfig });
-        await runKibanaServer({ procs, ftrConfig, enableUI: false });
+        await runKibanaServer({ procs, ftrConfig, enableUI: true });
         await runFtr({ procs, configPath: require.resolve('../../test/api_integration/config.js') });
 
         await procs.stop('kibana');

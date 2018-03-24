@@ -1,3 +1,5 @@
+import expect from 'expect.js';
+
 const removeWhitespace = (str) => {
   return str.replace(/\s/g, '');
 };
@@ -5,8 +7,31 @@ const removeWhitespace = (str) => {
 export default function ({ getService }) {
   const supertest = getService('supertest');
   const esArchiver = getService('esArchiver');
+  const log = getService('log');
+
+  async function waitForJobToFinish(downloadReportPath) {
+    const PDF_IS_PENDING_CODE = 503;
+
+    const statusCode = await new Promise(resolve => {
+      const intervalId = setInterval(async () => {
+
+        const response = await supertest
+          .get(downloadReportPath)
+          .responseType('blob')
+          .set('kbn-xsrf', 'xxx');
+        log.debug(`Report at path ${downloadReportPath} returned code ${response.statusCode}`);
+        if (response.statusCode !== PDF_IS_PENDING_CODE) {
+          clearInterval(intervalId);
+          resolve(response.statusCode);
+        }
+      }, 1500);
+    });
+
+    expect(statusCode).to.be(200);
+  }
 
   describe('generate pdf API', () => {
+    let downloadReportPath;
 
     before('load reporting archive', async () => {
       await esArchiver.load('reporting/6_2');
@@ -42,10 +67,15 @@ export default function ({ getService }) {
           valueAxes:!!((id:ValueAxis-1,labels:(color:%2523555,rotate:0,show:!!f),scale:(defaultYExtents:!!f,
           type:linear),show:!!f,type:value))),title:!%27bytes%2Bheatmap!%27,type:heatmap))%27,
           savedObjectId:dae7e680-2891-11e8-88fd-5754aa989b85)`);
-      await supertest
+      const { body } = await supertest
         .post(`/api/reporting/generate/printablePdf?jobParams=${jobParams}`)
         .set('kbn-xsrf', 'xxx')
         .expect(200);
+      downloadReportPath = body.path;
+    });
+
+    it('report completes', async () => {
+      await waitForJobToFinish(downloadReportPath);
     });
   });
 }

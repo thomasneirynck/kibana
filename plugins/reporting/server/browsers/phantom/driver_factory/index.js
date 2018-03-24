@@ -13,7 +13,7 @@ export class PhantomDriverFactory {
 
   type = 'phantom';
 
-  create({ bridgePort, viewport, zoom }) {
+  create({ bridgePort, viewport, zoom, logger }) {
     return Rx.Observable.create(observer => {
       let killed = false;
       let browser;
@@ -66,6 +66,7 @@ export class PhantomDriverFactory {
           page,
           browser,
           zoom,
+          logger,
         });
         const driver$ = Rx.Observable.of(driver);
 

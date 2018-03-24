@@ -3,9 +3,10 @@ import { randomBytes } from 'crypto';
 import { fromCallback } from 'bluebird';
 import { transformFn } from './transform_fn';
 
-export function PhantomDriver({ page, browser, zoom }) {
+export function PhantomDriver({ page, browser, zoom, logger }) {
   this.browser = browser;
   this.page = page;
+  this.logger = logger;
 
   const validateInstance = () => {
     if (page === false || browser === false) throw new Error('Phantom instance is closed');
@@ -13,7 +14,6 @@ export function PhantomDriver({ page, browser, zoom }) {
 
   const configurePage = (pageOptions) => {
     const RESOURCE_TIMEOUT = 5000;
-
     return fromCallback(cb => page.set('resourceTimeout', RESOURCE_TIMEOUT, cb))
       .then(() => {
         if (zoom) return fromCallback(cb => page.set('zoomFactor', zoom, cb));
@@ -28,8 +28,10 @@ export function PhantomDriver({ page, browser, zoom }) {
       validateInstance();
 
       return configurePage(pageOptions)
+        .then(() => logger.debug('Configured page'))
         .then(() => fromCallback(cb => page.open(url, cb)))
         .then(status => {
+          logger.debug(`Page opened with status ${status}`);
           if (status !== 'success') throw new Error('URL open failed. Is the server running?');
           if (pageOptions.waitForSelector) {
             return this.waitForSelector(pageOptions.waitForSelector);
@@ -204,6 +206,8 @@ export function PhantomDriver({ page, browser, zoom }) {
     },
 
     waitForSelector(selector) {
+      logger.debug(`PhantomDriver: waitForSelector ${selector}`);
+
       validateInstance();
 
       return this.waitFor({
@@ -212,7 +216,10 @@ export function PhantomDriver({ page, browser, zoom }) {
         },
         args: [selector],
         toEqual: true,
-      });
+      })
+        .then(() => {
+          logger.debug(`Finished waiting for selector ${selector}`);
+        });
     },
 
     async screenshot(position) {
