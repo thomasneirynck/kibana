@@ -3,41 +3,8 @@ import { LatestActive } from './latest_active';
 import { LatestVersions } from './latest_versions';
 import { LatestTypes } from './latest_types';
 import { Stats } from '../';
-import {
-  getTitle,
-  getUnits,
-  MonitoringTimeseries,
-  InfoTooltip,
-} from 'plugins/monitoring/components/chart';
-import { Tooltip } from 'pivotal-ui/react/tooltip';
-import { OverlayTrigger } from 'pivotal-ui/react/overlay-trigger';
-import { KuiInfoButton } from '@kbn/ui-framework/components';
+import { MonitoringTimeseriesContainer } from 'plugins/monitoring/components';
 import { EuiCallOut } from '@elastic/eui';
-
-function renderChart(series,  { onBrush }) {
-  const units = getUnits(series);
-
-  return (
-    <div className="monitoring-chart__container">
-      <h2 className="euiTitle">
-        { getTitle(series) }{ units ? ` (${units})` : '' }
-        <OverlayTrigger
-          placement="left"
-          trigger="click"
-          overlay={<Tooltip><InfoTooltip series={series}/></Tooltip>}
-        >
-          <span className="monitoring-chart-tooltip__trigger overlay-trigger">
-            <KuiInfoButton />
-          </span>
-        </OverlayTrigger>
-      </h2>
-      <MonitoringTimeseries
-        series={series}
-        onBrush={onBrush}
-      />
-    </div>
-  );
-}
 
 function renderLatestActive(latestActive, latestTypes, latestVersions) {
   if (latestTypes && latestTypes.length > 0) {
@@ -63,10 +30,8 @@ function renderLatestActive(latestActive, latestTypes, latestVersions) {
     );
   }
 
-  const calloutMsg = (
-    `Hi there! This area is where your latest Beats activity would show
-up, but you don't seem to have any activity within the last day.`
-  );
+  const calloutMsg = `Hi there! This area is where your latest Beats activity would show
+up, but you don't seem to have any activity within the last day.`;
 
   return (
     <EuiCallOut
@@ -77,23 +42,49 @@ up, but you don't seem to have any activity within the last day.`
   );
 }
 
-export function BeatsOverview({ latestActive, latestTypes, latestVersions, stats, metrics, ...props }) {
+export function BeatsOverview({
+  latestActive,
+  latestTypes,
+  latestVersions,
+  stats,
+  metrics,
+  ...props
+}) {
   return (
     <div>
-
       {renderLatestActive(latestActive, latestTypes, latestVersions)}
 
       <Stats stats={stats} />
 
       <div className="page-row">
         <div className="row">
-          <div className="col-md-6">{renderChart(metrics.beat_event_rates, props)}</div>
-          <div className="col-md-6">{renderChart(metrics.beat_fail_rates, props)}</div>
-          <div className="col-md-6">{renderChart(metrics.beat_throughput_rates, props)}</div>
-          <div className="col-md-6">{renderChart(metrics.beat_output_errors, props)}</div>
+          <div className="col-md-6">
+            <MonitoringTimeseriesContainer
+              series={metrics.beat_event_rates}
+              {...props}
+            />
+          </div>
+          <div className="col-md-6">
+            <MonitoringTimeseriesContainer
+              series={metrics.beat_fail_rates}
+              {...props}
+            />
+          </div>
+          <div className="col-md-6">
+            <MonitoringTimeseriesContainer
+              series={metrics.beat_throughput_rates}
+              {...props}
+            />
+          </div>
+          <div className="col-md-6">
+            <MonitoringTimeseriesContainer
+              series={metrics.beat_output_errors}
+              {...props}
+            />
+          </div>
         </div>
       </div>
-
     </div>
   );
 }
+
