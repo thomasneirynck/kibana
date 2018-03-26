@@ -16,8 +16,7 @@
 // Service for carrying out queries to obtain data
 // specific to fields in Elasticsearch indices.
 
-import _ from 'lodash';
-export function FieldsServiceProvider(es) {
+export function FieldsServiceProvider(ml) {
 
   // Obtains the cardinality of one or more fields.
   // Returns an Object whose keys are the names of the fields,
@@ -31,59 +30,14 @@ export function FieldsServiceProvider(es) {
     earliestMs,
     latestMs) {
 
-    // Build the criteria to use in the bool filter part of the request.
-    // Add criteria for the time range and the datafeed config query.
-    const mustCriteria = [];
-    const timeRangeCriteria = { range: {} };
-    timeRangeCriteria.range[timeFieldName] = {
-      gte: earliestMs,
-      lte: latestMs,
-      format: 'epoch_millis'
-    };
-    mustCriteria.push(timeRangeCriteria);
-
-    if (types && types.length) {
-      mustCriteria.push({ terms: { _type: types } });
-    }
-
-    if (query) {
-      mustCriteria.push(query);
-    }
-
-    const aggs = {};
-    _.each(fieldNames, (field) => {
-      aggs[field] = { cardinality: { field } };
-    });
-
-    const body = {
-      query: {
-        bool: {
-          must: mustCriteria
-        }
-      },
-      size: 0,
-      _source: {
-        excludes: []
-      },
-      aggs: aggs
-    };
-
-    return new Promise((resolve, reject) => {
-      es.search({
-        index,
-        body
-      })
-        .then((resp) => {
-          const aggregations = resp.aggregations;
-          const results = _.reduce(fieldNames, (obj, field) => {
-            obj[field] = _.get(aggregations, [field, 'value'], 0);
-            return obj;
-          }, {});
-          resolve(results);
-        })
-        .catch((resp) => {
-          reject(resp);
-        });
+    return ml.getCardinalityOfFields({
+      index,
+      types,
+      fieldNames,
+      query,
+      timeFieldName,
+      earliestMs,
+      latestMs
     });
   }
 

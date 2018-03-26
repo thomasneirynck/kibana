@@ -18,9 +18,32 @@ import Boom from 'boom';
 import { callWithRequestFactory } from '../client/call_with_request_factory';
 import { wrapError } from '../client/errors';
 import { estimateBucketSpanFactory } from '../models/bucket_span_estimator';
+import { calculateModelMemoryLimitProvider } from '../models/calculate_model_memory_limit';
 import { validateJob } from '../models/job_validation';
 
 export function jobValidationRoutes(server, commonRouteConfig) {
+
+  function calculateModelMemoryLimit(callWithRequest, payload) {
+
+    const {
+      indexPattern,
+      splitFieldName,
+      query,
+      fieldNames,
+      influencerNames,
+      timeFieldName,
+      earliestMs,
+      latestMs } = payload;
+
+    return calculateModelMemoryLimitProvider(callWithRequest)(indexPattern,
+      splitFieldName,
+      query,
+      fieldNames,
+      influencerNames,
+      timeFieldName,
+      earliestMs,
+      latestMs);
+  }
 
   server.route({
     method: 'POST',
@@ -46,6 +69,22 @@ export function jobValidationRoutes(server, commonRouteConfig) {
       } catch(error) {
         throw Boom.badRequest(error);
       }
+    },
+    config: {
+      ...commonRouteConfig
+    }
+  });
+
+  server.route({
+    method: 'POST',
+    path: '/api/ml/validate/calculate_model_memory_limit',
+    handler(request, reply) {
+      const callWithRequest = callWithRequestFactory(server, request);
+      return calculateModelMemoryLimit(callWithRequest, request.payload)
+        .then(reply)
+        .catch((resp) => {
+          reply(wrapError(resp));
+        });
     },
     config: {
       ...commonRouteConfig

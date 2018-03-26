@@ -16,13 +16,8 @@
 // calculates the size of the model memory limit used in the job config
 // based on the cardinality of the field being used to split the data.
 // the limit should be 10MB plus 20kB per series, rounded up to the nearest MB.
-import numeral from 'numeral';
-import { FieldsServiceProvider } from 'plugins/ml/services/fields_service';
-import { newJobLimits } from 'plugins/ml/jobs/new_job/utils/new_job_defaults';
 
-export function CalculateModelMemoryLimitProvider(Private) {
-  const fieldsService = Private(FieldsServiceProvider);
-
+export function CalculateModelMemoryLimitProvider(ml) {
   return function calculateModelMemoryLimit(
     indexPattern,
     splitFieldName,
@@ -32,87 +27,15 @@ export function CalculateModelMemoryLimitProvider(Private) {
     timeFieldName,
     earliestMs,
     latestMs) {
-    return new Promise((response, reject) => {
-
-      // find the cardinality of the split field
-      function splitFieldCardinality() {
-        return fieldsService.getCardinalityOfFields(
-          indexPattern,
-          [],
-          [splitFieldName],
-          query,
-          timeFieldName,
-          earliestMs,
-          latestMs
-        );
-      }
-
-      // find the cardinality of an influencer field
-      function influencerCardinality(influencerName) {
-        return fieldsService.getCardinalityOfFields(
-          indexPattern,
-          [],
-          [influencerName],
-          query,
-          timeFieldName,
-          earliestMs,
-          latestMs
-        );
-      }
-
-      const calculations = [
-        splitFieldCardinality(),
-        ...(influencerNames.map(inf => influencerCardinality(inf)))
-      ];
-
-      Promise.all(calculations).then((responses) => {
-        let mmlMB = 0;
-        const MB = 1000;
-        responses.forEach((resp, i) => {
-          let mmlKB = 0;
-          if (i === 0) {
-            // first in the list is the basic calculation.
-            // a base of 10MB plus 32KB per series per detector
-            // i.e. 10000KB + (32KB * cardinality of split field * number or detectors)
-            const cardinality = resp[splitFieldName];
-            mmlKB = 10000;
-            const SERIES_MULTIPLIER = 32;
-            const numberOfFields = fieldNames.length;
-
-            if (cardinality !== undefined) {
-              mmlKB += ((SERIES_MULTIPLIER * cardinality) * numberOfFields);
-            }
-
-          } else {
-            // the rest of the calculations are for influencers fields
-            // 10KB per series of influencer field
-            // i.e. 10KB * cardinality of influencer field
-            const cardinality = resp[splitFieldName];
-            mmlKB = 0;
-            const SERIES_MULTIPLIER = 10;
-            if (cardinality !== undefined) {
-              mmlKB = (SERIES_MULTIPLIER * cardinality);
-            }
-          }
-          // convert the total to MB, rounding up.
-          mmlMB += Math.ceil(mmlKB / MB);
-        });
-
-        // if max_model_memory_limit has been set,
-        // make sure the estimated value is not greater than it.
-        const limits = newJobLimits();
-        if (limits.max_model_memory_limit !== undefined) {
-          const maxMB = +numeral(limits.max_model_memory_limit).format('MB');
-          if (mmlMB > maxMB) {
-            mmlMB = maxMB;
-          }
-        }
-        response(`${mmlMB}MB`);
-      })
-        .catch((error) => {
-          reject(error);
-        });
+    return ml.calculateModelMemoryLimit({
+      indexPattern,
+      splitFieldName,
+      query,
+      fieldNames,
+      influencerNames,
+      timeFieldName,
+      earliestMs,
+      latestMs
     });
   };
-
 }

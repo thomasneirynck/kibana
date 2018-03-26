@@ -355,4 +355,41 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
+  this.calculateModelMemoryLimit = function (obj) {
+    const data = pick(obj, [
+      'indexPattern',
+      'splitFieldName',
+      'query',
+      'fieldNames',
+      'influencerNames',
+      'timeFieldName',
+      'earliestMs',
+      'latestMs'
+    ]);
+
+    return http.request({
+      url: `${basePath}/validate/calculate_model_memory_limit`,
+      method: 'POST',
+      data
+    });
+  };
+
+  this.getCardinalityOfFields = function (obj) {
+    const data = pick(obj, [
+      'index',
+      'types',
+      'fieldNames',
+      'query',
+      'timeFieldName',
+      'earliestMs',
+      'latestMs'
+    ]);
+
+    return http.request({
+      url: `${basePath}/fields_service/field_cardinality`,
+      method: 'POST',
+      data
+    });
+  };
+
 });
