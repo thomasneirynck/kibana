@@ -13,6 +13,7 @@
  * strictly prohibited.
  */
 
+import _ from 'lodash';
 import moment from 'moment';
 import { migrateFilter } from 'ui/courier/data_source/_migrate_filter.js';
 import { addItemToRecentlyAccessed } from 'plugins/ml/util/recently_accessed';
@@ -23,8 +24,11 @@ export function getQueryFromSavedSearch(formConfig) {
 
   must.push(formConfig.query);
 
-  formConfig.filters.forEach(f => {
-    const query = migrateFilter(f.query || f);
+  formConfig.filters.forEach((f) => {
+    let query = (f.query || f);
+    query = _.omit(query, ['meta', '$state']);
+    query = migrateFilter(query);
+
     if(f.meta.disabled === false) {
       if(f.meta.negate) {
         mustNot.push(query);
