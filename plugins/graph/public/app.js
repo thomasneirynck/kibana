@@ -153,7 +153,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   $scope.allSavingDisabled = $scope.graphSavePolicy === 'none';
   $scope.searchTerm = '';
 
-  // Because grrrrr http://stackoverflow.com/questions/12618342/ng-model-does-not-update-controller-value
+  //So scope properties can be used consistently with ng-model
   $scope.grr = $scope;
 
   //Updates styling on all nodes in the UI that use this field
