@@ -8,21 +8,20 @@ import React from 'react';
 import uuid from 'uuid/v4';
 
 import { VECTOR_SHAPE_TYPES } from '../vector_feature_types';
-import { AbstractESSource } from '../es_source';
 import { VectorLayer } from '../../vector_layer';
 import { CreateSourceEditor } from './create_source_editor';
 import { UpdateSourceEditor } from './update_source_editor';
-import { VectorStyle } from '../../styles/vector_style';
-import { vectorStyles } from '../../styles/vector_style_defaults';
+import { VectorStyle } from '../../styles/vector/vector_style';
+import { vectorStyles } from '../../styles/vector/vector_style_defaults';
 import { i18n } from '@kbn/i18n';
 import { SOURCE_DATA_ID_ORIGIN, ES_PEW_PEW, METRIC_TYPE } from '../../../../common/constants';
 import { getDataSourceLabel } from '../../../../common/i18n_getters';
 import { convertToLines } from './convert_to_lines';
 import { Schemas } from 'ui/vis/editors/default/schemas';
 import { AggConfigs } from 'ui/agg_types';
+import { AbstractESAggSource } from '../es_agg_source';
+import { DynamicStyleProperty } from '../../styles/vector/properties/dynamic_style_property';
 
-const COUNT_PROP_LABEL = 'count';
-const COUNT_PROP_NAME = 'doc_count';
 const MAX_GEOTILE_LEVEL = 29;
 
 const aggSchemas = new Schemas([
@@ -46,7 +45,7 @@ const aggSchemas = new Schemas([
   }
 ]);
 
-export class ESPewPewSource extends AbstractESSource {
+export class ESPewPewSource extends AbstractESAggSource {
 
   static type = ES_PEW_PEW;
   static title = i18n.translate('xpack.maps.source.pewPewTitle', {
@@ -103,12 +102,6 @@ export class ESPewPewSource extends AbstractESSource {
     return true;
   }
 
-  async getNumberFields() {
-    return this.getMetricFields().map(({ propertyKey: name, propertyLabel: label }) => {
-      return { label, name };
-    });
-  }
-
   async getSupportedShapeTypes() {
     return [VECTOR_SHAPE_TYPES.LINE];
   }
@@ -116,7 +109,7 @@ export class ESPewPewSource extends AbstractESSource {
   async getImmutableProperties() {
     let indexPatternTitle = this._descriptor.indexPatternId;
     try {
-      const indexPattern = await this._getIndexPattern();
+      const indexPattern = await this.getIndexPattern();
       indexPatternTitle = indexPattern.title;
     } catch (error) {
       // ignore error, title will just default to id
@@ -150,22 +143,22 @@ export class ESPewPewSource extends AbstractESSource {
   createDefaultLayer(options) {
     const styleDescriptor = VectorStyle.createDescriptor({
       [vectorStyles.LINE_COLOR]: {
-        type: VectorStyle.STYLE_TYPE.DYNAMIC,
+        type: DynamicStyleProperty.type,
         options: {
           field: {
-            label: COUNT_PROP_LABEL,
-            name: COUNT_PROP_NAME,
+            label: AbstractESAggSource.COUNT_PROP_LABEL,
+            name: AbstractESAggSource.COUNT_PROP_NANE,
             origin: SOURCE_DATA_ID_ORIGIN
           },
           color: 'Blues'
         }
       },
       [vectorStyles.LINE_WIDTH]: {
-        type: VectorStyle.STYLE_TYPE.DYNAMIC,
+        type: DynamicStyleProperty.type,
         options: {
           field: {
-            label: COUNT_PROP_LABEL,
-            name: COUNT_PROP_NAME,
+            label: AbstractESAggSource.COUNT_PROP_LABEL,
+            name: AbstractESAggSource.COUNT_PROP_NANE,
             origin: SOURCE_DATA_ID_ORIGIN
           },
           minSize: 4,
@@ -191,20 +184,9 @@ export class ESPewPewSource extends AbstractESSource {
   }
 
   async getGeoJsonWithMeta(layerName, searchFilters, registerCancelCallback) {
-    const indexPattern = await this._getIndexPattern();
-    const metricAggConfigs = this.getMetricFields().map(metric => {
-      const metricAggConfig = {
-        id: metric.propertyKey,
-        enabled: true,
-        type: metric.type,
-        schema: 'metric',
-        params: {}
-      };
-      if (metric.type !== METRIC_TYPE.COUNT) {
-        metricAggConfig.params = { field: metric.field };
-      }
-      return metricAggConfig;
-    });
+
+    const metricAggConfigs = this.createMetricAggConfigs();
+    const indexPattern = await this.getIndexPattern();
     const aggConfigs = new AggConfigs(indexPattern, metricAggConfigs, aggSchemas.all);
 
     const searchSource  = await this._makeSearchSource(searchFilters, 0);
@@ -258,16 +240,8 @@ export class ESPewPewSource extends AbstractESSource {
     };
   }
 
-  _formatMetricKey(metric) {
-    return metric.type !== METRIC_TYPE.COUNT ? `${metric.type}_of_${metric.field}` : COUNT_PROP_NAME;
-  }
-
-  _formatMetricLabel(metric) {
-    return metric.type !== METRIC_TYPE.COUNT ? `${metric.type} of ${metric.field}` : COUNT_PROP_LABEL;
-  }
-
   async _getGeoField() {
-    const indexPattern = await this._getIndexPattern();
+    const indexPattern = await this.getIndexPattern();
     const geoField = indexPattern.fields.getByName(this._descriptor.destGeoField);
     if (!geoField) {
       throw new Error(i18n.translate('xpack.maps.source.esSource.noGeoFieldErrorMessage', {

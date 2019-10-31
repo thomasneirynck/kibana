@@ -7,7 +7,7 @@
 import turf from 'turf';
 import React from 'react';
 import { AbstractLayer } from './layer';
-import { VectorStyle } from './styles/vector_style';
+import { VectorStyle } from './styles/vector/vector_style';
 import { InnerJoin } from './joins/inner_join';
 import {
   GEO_JSON_TYPE,
@@ -91,9 +91,11 @@ export class VectorLayer extends AbstractLayer {
     this._joins = [];
     if (options.layerDescriptor.joins) {
       options.layerDescriptor.joins.forEach((joinDescriptor) => {
-        this._joins.push(new InnerJoin(joinDescriptor, this._source.getInspectorAdapters()));
+        const join = new InnerJoin(joinDescriptor, this._source);
+        this._joins.push(join);
       });
     }
+    this._style = new VectorStyle(this._descriptor.style, this._source, this);
   }
 
   destroy() {
@@ -200,7 +202,7 @@ export class VectorLayer extends AbstractLayer {
       return await source.getFieldFormatter(field.name);
     };
 
-    return this._style.getLegendDetails(getFieldLabel, getFieldFormatter);
+    return this._style.renderLegendDetails(getFieldLabel, getFieldFormatter);
   }
 
   _getBoundsBasedOnData() {
@@ -241,7 +243,6 @@ export class VectorLayer extends AbstractLayer {
     return this._source.getDisplayName();
   }
 
-
   async getDateFields() {
     const timeFields = await this._source.getDateFields();
     return timeFields.map(({ label, name }) => {
@@ -252,7 +253,6 @@ export class VectorLayer extends AbstractLayer {
       };
     });
   }
-
 
   async getNumberFields() {
     const numberFields = await this._source.getNumberFields();
@@ -410,7 +410,7 @@ export class VectorLayer extends AbstractLayer {
       } = await joinSource.getPropertiesMap(
         searchFilters,
         leftSourceName,
-        join.getLeftFieldName(),
+        join.getLeftField().getName(),
         registerCancelCallback.bind(null, requestToken));
       stopLoading(sourceDataId, requestToken, propertiesMap);
       return {
@@ -442,9 +442,7 @@ export class VectorLayer extends AbstractLayer {
     const fieldNames = [
       ...this._source.getFieldNames(),
       ...this._style.getSourceFieldNames(),
-      ...this.getValidJoins().map(join => {
-        return join.getLeftFieldName();
-      })
+      ...this.getValidJoins().map(join => join.getLeftField().getName())
     ];
 
     return {
@@ -476,9 +474,8 @@ export class VectorLayer extends AbstractLayer {
       let isFeatureVisible = true;
       for (let j = 0; j < joinStates.length; j++) {
         const joinState = joinStates[j];
-        const InnerJoin = joinState.join;
-        const rightMetricFields = InnerJoin.getRightMetricFields();
-        const canJoinOnCurrent = InnerJoin.joinPropertiesToFeature(feature, joinState.propertiesMap, rightMetricFields);
+        const innerJoin = joinState.join;
+        const canJoinOnCurrent = innerJoin.joinPropertiesToFeature(feature, joinState.propertiesMap);
         isFeatureVisible = isFeatureVisible && canJoinOnCurrent;
       }
 
@@ -762,7 +759,7 @@ export class VectorLayer extends AbstractLayer {
       const tooltipProperty = tooltipsFromSource[i];
       const matchingJoins = [];
       for (let j = 0; j < this._joins.length; j++) {
-        if (this._joins[j].getLeftFieldName() === tooltipProperty.getPropertyKey()) {
+        if (this._joins[j].getLeftField().getName() === tooltipProperty.getPropertyKey()) {
           matchingJoins.push(this._joins[j]);
         }
       }

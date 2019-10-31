@@ -4,10 +4,9 @@
  * you may not use this file except in compliance with the Elastic License.
  */
 
-import _ from 'lodash';
 import { AbstractLayer } from './layer';
 import { VectorLayer } from './vector_layer';
-import { HeatmapStyle } from './styles/heatmap_style';
+import { HeatmapStyle } from './styles/heatmap/heatmap_style';
 import { EMPTY_FEATURE_COLLECTION, LAYER_TYPE } from '../../common/constants';
 
 const SCALED_PROPERTY_NAME = '__kbn_heatmap_weight__';//unique name to store scaled value for weighting
@@ -28,12 +27,14 @@ export class HeatmapLayer extends VectorLayer {
     if (!style) {
       const defaultStyle = HeatmapStyle.createDescriptor();
       this._style = new HeatmapStyle(defaultStyle);
+    } else {
+      this._style = style;
     }
   }
 
   _getPropKeyOfSelectedMetric() {
     const metricfields = this._source.getMetricFields();
-    return metricfields[0].propertyKey;
+    return metricfields[0].getName();
   }
 
   _getHeatmapLayerId() {
@@ -102,7 +103,8 @@ export class HeatmapLayer extends VectorLayer {
   }
 
   getLegendDetails() {
-    const label = _.get(this._source.getMetricFields(), '[0].propertyLabel', '');
+    const metricFields = this._source.getMetricFields();
+    const label = metricFields[0].getPropertyLabel();
     return this._style.getLegendDetails(label);
   }
 }
