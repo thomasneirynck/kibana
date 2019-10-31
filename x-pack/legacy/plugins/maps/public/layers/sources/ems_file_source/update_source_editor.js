@@ -8,12 +8,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { TooltipSelector } from '../../../components/tooltip_selector';
 import { getEMSClient } from '../../../meta';
+import { EMSRegionLayerField } from '../../fields/ems_region_field';
 
 export class UpdateSourceEditor extends Component {
 
   static propTypes = {
     onChange: PropTypes.func.isRequired,
-    tooltipProperties: PropTypes.arrayOf(PropTypes.string).isRequired
+    tooltipFields: PropTypes.arrayOf(PropTypes.object).isRequired,
+    source: PropTypes.object
   };
 
   state = {
@@ -36,16 +38,15 @@ export class UpdateSourceEditor extends Component {
       const emsFiles = await emsClient.getFileLayers();
       const emsFile = emsFiles.find((emsFile => emsFile.getId() === this.props.layerId));
       const emsFields = emsFile.getFieldsInLanguage();
-      fields = emsFields.map(field => {
-        return {
-          name: field.name,
-          label: field.description
-        };
-      });
+      fields = emsFields.map(field => new EMSRegionLayerField({
+        fieldName: field.name,
+        source: this.props.source
+      }));
     } catch(e) {
       //swallow this error. when a matching EMS-config cannot be found, the source already will have thrown errors during the data request. This will propagate to the vector-layer and be displayed in the UX
       fields = [];
     }
+
     if (this._isMounted) {
       this.setState({ fields: fields });
     }
@@ -56,9 +57,14 @@ export class UpdateSourceEditor extends Component {
   };
 
   render() {
+
+    if (!this.state.fields) {
+      return null;
+    }
+
     return (
       <TooltipSelector
-        tooltipProperties={this.props.tooltipProperties}
+        tooltipFields={this.props.tooltipFields}
         onChange={this._onTooltipPropertiesSelect}
         fields={this.state.fields}
       />
