@@ -6,7 +6,33 @@
 
 
 import { AbstractStyleProperty } from './style_property';
+import { STYLE_TYPE } from '../../../../../common/constants';
 
 export class DynamicStyleProperty extends AbstractStyleProperty {
-    static type = 'DYNAMIC';
+    static type = STYLE_TYPE.DYNAMIC;
+
+    constructor(options, styleName, field) {
+      super(options, styleName);
+      this._field = field;
+    }
+
+    getField() {
+      return this._field;
+    }
+
+    isDynamic() {
+      return !!this._field;
+    }
+
+    getFieldOrigin() {
+      return this._options.field.origin;
+    }
+
+    supportsFeatureState() {
+      return true;
+    }
+
+    isScaled() {
+      return true;
+    }
 }

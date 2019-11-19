@@ -634,19 +634,6 @@ export function setLayerQuery(id, query) {
   };
 }
 
-export function setLayerApplyGlobalQuery(id, applyGlobalQuery) {
-  return (dispatch) => {
-    dispatch({
-      type: UPDATE_LAYER_PROP,
-      id,
-      propName: 'applyGlobalQuery',
-      newValue: applyGlobalQuery,
-    });
-
-    dispatch(syncDataForLayer(id));
-  };
-}
-
 export function removeSelectedLayer() {
   return (dispatch, getState) => {
     const state = getState();
@@ -745,9 +732,7 @@ export function clearMissingStyleProperties(layerId) {
       return;
     }
 
-    const dateFields = await targetLayer.getDateFields();
-    const numberFields = await targetLayer.getNumberFields();
-    const ordinalFields = [...dateFields, ...numberFields];
+    const ordinalFields = await targetLayer.getOrdinalFields();
     const { hasChanges, nextStyleDescriptor } = style.getDescriptorWithMissingStylePropsRemoved(ordinalFields);
     if (hasChanges) {
       dispatch(updateLayerStyle(layerId, nextStyleDescriptor));

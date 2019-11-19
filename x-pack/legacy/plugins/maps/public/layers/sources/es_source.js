@@ -17,12 +17,19 @@ import { AggConfigs } from 'ui/agg_types';
 import { i18n } from '@kbn/i18n';
 import uuid from 'uuid/v4';
 import { copyPersistentState } from '../../reducers/util';
-import { ES_GEO_FIELD_TYPE, METRIC_TYPE } from '../../../common/constants';
+import { ES_GEO_FIELD_TYPE } from '../../../common/constants';
 import { DataRequestAbortError } from '../util/data_request';
 
 export class AbstractESSource extends AbstractVectorSource {
 
   static icon = 'logoElasticsearch';
+
+  constructor(descriptor, inspectorAdapters) {
+    super({
+      ...descriptor,
+      applyGlobalQuery: _.get(descriptor, 'applyGlobalQuery', true),
+    }, inspectorAdapters);
+  }
 
   isFieldAware() {
     return true;
@@ -40,6 +47,13 @@ export class AbstractESSource extends AbstractVectorSource {
     return  [this._descriptor.indexPatternId];
   }
 
+  getQueryableIndexPatternIds() {
+    if (this.getApplyGlobalQuery()) {
+      return  [this._descriptor.indexPatternId];
+    }
+    return [];
+  }
+
   supportsElasticsearchFilters() {
     return true;
   }
@@ -53,6 +67,10 @@ export class AbstractESSource extends AbstractVectorSource {
     // id used as uuid to track requests in inspector
     clonedDescriptor.id = uuid();
     return clonedDescriptor;
+  }
+
+  _getRawFieldName(fieldName) {
+    return fieldName;
   }
 
 
@@ -82,7 +100,7 @@ export class AbstractESSource extends AbstractVectorSource {
   }
 
   async _makeSearchSource(searchFilters, limit, initialSearchContext) {
-    const indexPattern = await this._getIndexPattern();
+    const indexPattern = await this.getIndexPattern();
     const isTimeAware = await this.isTimeAware();
     const applyGlobalQuery = _.get(searchFilters, 'applyGlobalQuery', true);
     const globalFilters = applyGlobalQuery ? searchFilters.filters : [];
@@ -117,7 +135,7 @@ export class AbstractESSource extends AbstractVectorSource {
 
     const searchSource = await this._makeSearchSource({ sourceQuery, query, timeFilters, filters, applyGlobalQuery }, 0);
     const geoField = await this._getGeoField();
-    const indexPattern = await this._getIndexPattern();
+    const indexPattern = await this.getIndexPattern();
 
     const geoBoundsAgg = [{
       type: 'geo_bounds',
@@ -158,7 +176,7 @@ export class AbstractESSource extends AbstractVectorSource {
 
   async isTimeAware() {
     try {
-      const indexPattern = await this._getIndexPattern();
+      const indexPattern = await this.getIndexPattern();
       const timeField = indexPattern.timeFieldName;
       return !!timeField;
     } catch (error) {
@@ -166,7 +184,7 @@ export class AbstractESSource extends AbstractVectorSource {
     }
   }
 
-  async _getIndexPattern() {
+  async getIndexPattern() {
     if (this.indexPattern) {
       return this.indexPattern;
     }
@@ -195,7 +213,7 @@ export class AbstractESSource extends AbstractVectorSource {
 
 
   async _getGeoField() {
-    const indexPattern = await this._getIndexPattern();
+    const indexPattern = await this.getIndexPattern();
     const geoField = indexPattern.fields.getByName(this._descriptor.geoField);
     if (!geoField) {
       throw new Error(i18n.translate('xpack.maps.source.esSource.noGeoFieldErrorMessage', {
@@ -208,7 +226,7 @@ export class AbstractESSource extends AbstractVectorSource {
 
   async getDisplayName() {
     try {
-      const indexPattern = await this._getIndexPattern();
+      const indexPattern = await this.getIndexPattern();
       return indexPattern.title;
     } catch (error) {
       // Unable to load index pattern, just return id as display name
@@ -224,31 +242,28 @@ export class AbstractESSource extends AbstractVectorSource {
     return this._descriptor.id;
   }
 
-  async getFieldFormatter(fieldName) {
-    const metricField = this.getMetricFields().find(({ propertyKey }) => {
-      return propertyKey === fieldName;
-    });
 
-    // Do not use field formatters for counting metrics
-    if (metricField && metricField.type === METRIC_TYPE.COUNT || metricField.type === METRIC_TYPE.UNIQUE_COUNT) {
+
+  async getFieldFormatter(fieldName) {
+    // fieldName could be an aggregation so it needs to be unpacked to expose raw field.
+    const rawFieldName = this._getRawFieldName(fieldName);
+    if (!rawFieldName) {
       return null;
     }
 
     let indexPattern;
     try {
-      indexPattern = await this._getIndexPattern();
+      indexPattern = await this.getIndexPattern();
     } catch(error) {
       return null;
     }
 
-    const realFieldName = metricField
-      ? metricField.field
-      : fieldName;
-    const fieldFromIndexPattern = indexPattern.fields.getByName(realFieldName);
+    const fieldFromIndexPattern = indexPattern.fields.getByName(rawFieldName);
     if (!fieldFromIndexPattern) {
       return null;
     }
 
     return fieldFromIndexPattern.format.getConverterFor('text');
   }
+
 }

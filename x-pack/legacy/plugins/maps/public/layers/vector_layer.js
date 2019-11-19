@@ -91,9 +91,11 @@ export class VectorLayer extends AbstractLayer {
     this._joins = [];
     if (options.layerDescriptor.joins) {
       options.layerDescriptor.joins.forEach((joinDescriptor) => {
-        this._joins.push(new InnerJoin(joinDescriptor, this._source.getInspectorAdapters()));
+        const join = new InnerJoin(joinDescriptor, this._source);
+        this._joins.push(join);
       });
     }
+    this._style = new VectorStyle(this._descriptor.style, this._source, this);
   }
 
   destroy() {
@@ -181,26 +183,8 @@ export class VectorLayer extends AbstractLayer {
     return this._style.getDynamicPropertiesArray().length > 0;
   }
 
-  getLegendDetails() {
-    const getFieldLabel = async fieldName => {
-      const ordinalFields = await this._getOrdinalFields();
-      const field = ordinalFields.find(({ name }) => {
-        return name === fieldName;
-      });
-
-      return field ? field.label : fieldName;
-    };
-
-    const getFieldFormatter = async field => {
-      const source = this._getFieldSource(field);
-      if (!source) {
-        return null;
-      }
-
-      return await source.getFieldFormatter(field.name);
-    };
-
-    return this._style.getLegendDetails(getFieldLabel, getFieldFormatter);
+  renderLegendDetails() {
+    return this._style.renderLegendDetails();
   }
 
   _getBoundsBasedOnData() {
@@ -241,43 +225,21 @@ export class VectorLayer extends AbstractLayer {
     return this._source.getDisplayName();
   }
 
-
   async getDateFields() {
-    const timeFields = await this._source.getDateFields();
-    return timeFields.map(({ label, name }) => {
-      return {
-        label,
-        name,
-        origin: SOURCE_DATA_ID_ORIGIN
-      };
-    });
+    return await this._source.getDateFields();
   }
 
-
   async getNumberFields() {
-    const numberFields = await this._source.getNumberFields();
-    const numberFieldOptions = numberFields.map(({ label, name }) => {
-      return {
-        label,
-        name,
-        origin: FIELD_ORIGIN.SOURCE
-      };
-    });
+    const numberFieldOptions = await this._source.getNumberFields();
     const joinFields = [];
     this.getValidJoins().forEach(join => {
-      const fields = join.getJoinFields().map(joinField => {
-        return {
-          ...joinField,
-          origin: FIELD_ORIGIN.JOIN,
-        };
-      });
+      const fields = join.getJoinFields();
       joinFields.push(...fields);
     });
-
     return [...numberFieldOptions, ...joinFields];
   }
 
-  async _getOrdinalFields() {
+  async getOrdinalFields() {
     return [
       ... await this.getDateFields(),
       ... await this.getNumberFields()
@@ -288,6 +250,14 @@ export class VectorLayer extends AbstractLayer {
     const indexPatternIds = this._source.getIndexPatternIds();
     this.getValidJoins().forEach(join => {
       indexPatternIds.push(...join.getIndexPatternIds());
+    });
+    return indexPatternIds;
+  }
+
+  getQueryableIndexPatternIds() {
+    const indexPatternIds = this._source.getQueryableIndexPatternIds();
+    this.getValidJoins().forEach(join => {
+      indexPatternIds.push(...join.getQueryableIndexPatternIds());
     });
     return indexPatternIds;
   }
@@ -389,7 +359,7 @@ export class VectorLayer extends AbstractLayer {
       ...dataFilters,
       fieldNames: joinSource.getFieldNames(),
       sourceQuery: joinSource.getWhereQuery(),
-      applyGlobalQuery: this.getApplyGlobalQuery(),
+      applyGlobalQuery: joinSource.getApplyGlobalQuery(),
     };
     const canSkip = await this._canSkipSourceUpdate(joinSource, sourceDataId, searchFilters);
     if (canSkip) {
@@ -410,7 +380,7 @@ export class VectorLayer extends AbstractLayer {
       } = await joinSource.getPropertiesMap(
         searchFilters,
         leftSourceName,
-        join.getLeftFieldName(),
+        join.getLeftField().getName(),
         registerCancelCallback.bind(null, requestToken));
       stopLoading(sourceDataId, requestToken, propertiesMap);
       return {
@@ -442,9 +412,7 @@ export class VectorLayer extends AbstractLayer {
     const fieldNames = [
       ...this._source.getFieldNames(),
       ...this._style.getSourceFieldNames(),
-      ...this.getValidJoins().map(join => {
-        return join.getLeftFieldName();
-      })
+      ...this.getValidJoins().map(join => join.getLeftField().getName())
     ];
 
     return {
@@ -452,7 +420,7 @@ export class VectorLayer extends AbstractLayer {
       fieldNames: _.uniq(fieldNames).sort(),
       geogridPrecision: this._source.getGeoGridPrecision(dataFilters.zoom),
       sourceQuery: this.getQuery(),
-      applyGlobalQuery: this.getApplyGlobalQuery(),
+      applyGlobalQuery: this._source.getApplyGlobalQuery(),
       sourceMeta: this._source.getSyncMeta(),
     };
   }
@@ -476,9 +444,8 @@ export class VectorLayer extends AbstractLayer {
       let isFeatureVisible = true;
       for (let j = 0; j < joinStates.length; j++) {
         const joinState = joinStates[j];
-        const InnerJoin = joinState.join;
-        const rightMetricFields = InnerJoin.getRightMetricFields();
-        const canJoinOnCurrent = InnerJoin.joinPropertiesToFeature(feature, joinState.propertiesMap, rightMetricFields);
+        const innerJoin = joinState.join;
+        const canJoinOnCurrent = innerJoin.joinPropertiesToFeature(feature, joinState.propertiesMap);
         isFeatureVisible = isFeatureVisible && canJoinOnCurrent;
       }
 
@@ -535,7 +502,7 @@ export class VectorLayer extends AbstractLayer {
   _assignIdsToFeatures(featureCollection) {
 
     //wrt https://github.com/elastic/kibana/issues/39317
-    // In constrained resource environments, mapbox-gl may throw a stackoverflow error due to hitting the browser's recursion limit. This crashes Kibana.
+    //In constrained resource environments, mapbox-gl may throw a stackoverflow error due to hitting the browser's recursion limit. This crashes Kibana.
     //This error is thrown in mapbox-gl's quicksort implementation, when it is sorting all the features by id.
     //This is a work-around to avoid hitting such a worst-case
     //This was tested as a suitable work-around for mapbox-gl 0.54
@@ -762,7 +729,7 @@ export class VectorLayer extends AbstractLayer {
       const tooltipProperty = tooltipsFromSource[i];
       const matchingJoins = [];
       for (let j = 0; j < this._joins.length; j++) {
-        if (this._joins[j].getLeftFieldName() === tooltipProperty.getPropertyKey()) {
+        if (this._joins[j].getLeftField().getName() === tooltipProperty.getPropertyKey()) {
           matchingJoins.push(this._joins[j]);
         }
       }
@@ -806,20 +773,24 @@ export class VectorLayer extends AbstractLayer {
 
     if (field.origin === FIELD_ORIGIN.SOURCE) {
       return this._source;
-    }
-
-    const join = this.getValidJoins().find(join => {
-      const matchingField = join.getJoinFields().find(joinField => {
-        return joinField.name === field.name;
+    } else if (field.origin === FIELD_ORIGIN.JOIN) {
+      const join = this.getValidJoins().find(join => {
+        const matchingField = join.getJoinFields().find(joinField => {
+          return joinField.getName() === field.name;
+        });
+        return !!matchingField;
       });
-      return !!matchingField;
-    });
 
-    if (!join) {
+      if (!join) {
+        return null;
+      }
+
+      return join.getRightJoinSource();
+    } else {
       return null;
     }
 
-    return join.getRightJoinSource();
+
   }
 
 }
