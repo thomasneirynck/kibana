@@ -31,6 +31,7 @@ export class VectorStyleEditor extends Component {
   state = {
     dateFields: [],
     numberFields: [],
+    stringFields: [],
     fields: [],
     defaultDynamicProperties: getDefaultDynamicProperties(),
     defaultStaticProperties: getDefaultStaticProperties(),
@@ -74,6 +75,13 @@ export class VectorStyleEditor extends Component {
     const numberFieldsArray = await Promise.all(numberFieldPromises);
     if (this._isMounted && !_.isEqual(numberFieldsArray, this.state.numberFields)) {
       this.setState({ numberFields: numberFieldsArray });
+    }
+
+    const stringFields = await this.props.layer.getStringFields();
+    const stringFieldPromises = stringFields.map(getFieldMeta);
+    const stringFieldsArray = await Promise.all(stringFieldPromises);
+    if (this._isMounted && !_.isEqual(stringFieldsArray, this.state.stringFields)) {
+      this.setState({ stringFields: stringFieldsArray });
     }
 
     const fields = await this.props.layer.getFields();
@@ -125,6 +133,10 @@ export class VectorStyleEditor extends Component {
     return [...this.state.dateFields, ...this.state.numberFields];
   }
 
+  _getOrdinalAndStringFields() {
+    return [...this.state.dateFields, ...this.state.numberFields, ...this.state.stringFields];
+  }
+
   _handleSelectedFeatureChange = selectedFeature => {
     this.setState({ selectedFeature });
   };
@@ -150,13 +162,15 @@ export class VectorStyleEditor extends Component {
   };
 
   _renderFillColor() {
+    const f = this._getOrdinalAndStringFields();
     return (
       <VectorStyleColorEditor
         swatches={DEFAULT_FILL_COLORS}
         onStaticStyleChange={this._onStaticStyleChange}
         onDynamicStyleChange={this._onDynamicStyleChange}
         styleProperty={this.props.styleProperties[VECTOR_STYLES.FILL_COLOR]}
-        fields={this._getOrdinalFields()}
+        // fields={this._getOrdinalFields()}
+        fields={f}
         defaultStaticStyleOptions={
           this.state.defaultStaticProperties[VECTOR_STYLES.FILL_COLOR].options
         }

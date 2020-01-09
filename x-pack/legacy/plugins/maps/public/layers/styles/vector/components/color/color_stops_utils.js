@@ -56,3 +56,7 @@ export function isInvalid(colorStops) {
     return isColorInvalid(colorStop.color) || isStopInvalid(colorStop.stop) || isDescending;
   });
 }
+
+export function isInvalidCategorical(colorStops) {
+  return false;
+}

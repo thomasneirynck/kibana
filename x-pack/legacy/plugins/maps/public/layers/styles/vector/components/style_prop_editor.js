@@ -10,10 +10,45 @@ import { getVectorStyleLabel } from './get_vector_style_label';
 import { EuiFormRow, EuiSelect } from '@elastic/eui';
 import { VectorStyle } from '../vector_style';
 import { i18n } from '@kbn/i18n';
+import { RAMP_TYPE } from './color/ramp_type';
 
 export class StylePropEditor extends Component {
-  _prevStaticStyleOptions = this.props.defaultStaticStyleOptions;
-  _prevDynamicStyleOptions = this.props.defaultDynamicStyleOptions;
+  state = {
+    rampType: RAMP_TYPE.COLOR_RAMP,
+  };
+
+  constructor() {
+    super();
+    this._isMounted = false;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  componentDidMount() {
+    this._isMounted = true;
+    this._loadRampType();
+    this._prevStaticStyleOptions = this.props.defaultStaticStyleOptions;
+    this._prevDynamicStyleOptions = this.props.defaultDynamicStyleOptions;
+  }
+
+  componentDidUpdate() {
+    this._loadRampType();
+  }
+
+  async _loadRampType() {
+    if (!this.props.styleProperty || !this.props.styleProperty.isDynamic()) {
+      return;
+    }
+
+    const field = this.props.styleProperty.getField();
+    const dataType = await field.getDataType();
+    const rampType = dataType === 'string' ? RAMP_TYPE.COLOR_PALETTE : RAMP_TYPE.COLOR_RAMP;
+    if (this._isMounted && this.state.rampType !== rampType) {
+      this.setState({ rampType: rampType });
+    }
+  }
 
   _onTypeToggle = () => {
     if (this.props.styleProperty.isDynamic()) {
@@ -80,12 +115,13 @@ export class StylePropEditor extends Component {
   }
 
   render() {
-    const fieldMetaOptionsPopover = this.props.styleProperty.isDynamic() ? (
-      <FieldMetaOptionsPopover
-        styleProperty={this.props.styleProperty}
-        onChange={this._onFieldMetaOptionsChange}
-      />
-    ) : null;
+    const fieldMetaOptionsPopover =
+      this.props.styleProperty.isDynamic() && this.state.rampType === RAMP_TYPE.COLOR_RAMP ? (
+        <FieldMetaOptionsPopover
+          styleProperty={this.props.styleProperty}
+          onChange={this._onFieldMetaOptionsChange}
+        />
+      ) : null;
 
     return (
       <EuiFormRow

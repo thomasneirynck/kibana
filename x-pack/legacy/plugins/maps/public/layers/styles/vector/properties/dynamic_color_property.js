@@ -92,12 +92,11 @@ export class DynamicColorProperty extends DynamicStyleProperty {
     return this._getMBDataDrivenColor({
       targetName: getComputedFieldName(this._styleName, this._options.field.name),
       colorStops: this._getMBColorStops(),
-      isSteps: this._options.useCustomColorRamp,
     });
   }
 
-  _getMBDataDrivenColor({ targetName, colorStops, isSteps }) {
-    if (isSteps) {
+  _getMbDataDrivenOrdinalColor({ targetName, colorStops }) {
+    if (this._options.useCustomColorRamp) {
       const firstStopValue = colorStops[0];
       const lessThenFirstStopValue = firstStopValue - 1;
       return [
@@ -116,6 +115,27 @@ export class DynamicColorProperty extends DynamicStyleProperty {
       'rgba(0,0,0,0)',
       ...colorStops,
     ];
+  }
+
+  _getMbDataDrivenCategoricalColor() {
+    const mbStops = [];
+    if (this._options.customColorRamp) {
+      this._options.customColorRamp.forEach(stop => {
+        mbStops.push(stop.stop);
+        mbStops.push(stop.color);
+      });
+    }
+    mbStops.push('rgba(0,0,0,0)');
+    const expression = ['match', ['get', this._options.field.name], ...mbStops];
+    return expression;
+  }
+
+  _getMBDataDrivenColor({ targetName, colorStops }) {
+    if (this._options.type === 'PALETTE') {
+      return this._getMbDataDrivenCategoricalColor({ targetName, colorStops });
+    } else {
+      return this._getMbDataDrivenOrdinalColor({ targetName, colorStops });
+    }
   }
 
   _getMBColorStops() {

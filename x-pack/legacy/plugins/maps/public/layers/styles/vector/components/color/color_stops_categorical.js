@@ -11,39 +11,37 @@ import PropTypes from 'prop-types';
 import {
   EuiColorPicker,
   EuiFormRow,
-  EuiFieldNumber,
+  EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
   EuiButtonIcon,
 } from '@elastic/eui';
-import { addRow, removeRow, isColorInvalid, isStopInvalid, isInvalid } from './color_stops_utils';
+import {
+  addRow,
+  removeRow,
+  isColorInvalid,
+  isInvalid,
+  isInvalidCategorical,
+} from './color_stops_utils';
 
 const DEFAULT_COLOR = '#FF0000';
 
-export const ColorStops = ({ colorStops = [{ stop: 0, color: DEFAULT_COLOR }], onChange }) => {
+export const ColorStopsCategorical = ({
+  colorStops = [{ stop: 'foobar', color: DEFAULT_COLOR }],
+  onChange,
+}) => {
   function getStopInput(stop, index) {
     const onStopChange = e => {
       const newColorStops = _.cloneDeep(colorStops);
-      const sanitizedValue = parseFloat(e.target.value);
-      newColorStops[index].stop = isNaN(sanitizedValue) ? '' : sanitizedValue;
+      newColorStops[index].stop = e.target.value;
       onChange({
         colorStops: newColorStops,
-        isInvalid: isInvalid(newColorStops),
+        isInvalid: isInvalidCategorical(newColorStops),
       });
     };
 
-    let error;
-    if (isStopInvalid(stop)) {
-      error = 'Stop must be a number';
-    } else if (index !== 0 && colorStops[index - 1].stop >= stop) {
-      error = 'Stop must be greater than previous stop value';
-    }
-
     return {
-      stopError: error,
-      stopInput: (
-        <EuiFieldNumber aria-label="Stop" value={stop} onChange={onStopChange} compressed />
-      ),
+      stopInput: <EuiFieldText aria-label="Stop" value={stop} onChange={onStopChange} compressed />,
     };
   }
 
@@ -135,7 +133,7 @@ export const ColorStops = ({ colorStops = [{ stop: 0, color: DEFAULT_COLOR }], o
   return <div>{rows}</div>;
 };
 
-ColorStops.propTypes = {
+ColorStopsCategorical.propTypes = {
   /**
    * Array of { stop, color }.
    * Stops are numbers in strictly ascending order.

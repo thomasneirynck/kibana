@@ -8,13 +8,12 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 
 import { EuiSuperSelect, EuiSpacer } from '@elastic/eui';
-import { COLOR_GRADIENTS } from '../../../color_utils';
 import { FormattedMessage } from '@kbn/i18n/react';
-import { ColorStopsOrdinal } from './color_stops_ordinal';
+import { ColorStopsCategorical } from './color_stops_categorical';
 
 const CUSTOM_COLOR_RAMP = 'CUSTOM_COLOR_RAMP';
 
-export class ColorRampSelect extends Component {
+export class ColorPaletteSelect extends Component {
   state = {};
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -28,23 +27,19 @@ export class ColorRampSelect extends Component {
     return null;
   }
 
-  _onColorRampSelect = selectedValue => {
+  _onColorPaletteSelect = selectedValue => {
     const useCustomColorRamp = selectedValue === CUSTOM_COLOR_RAMP;
     this.props.onChange({
       color: useCustomColorRamp ? null : selectedValue,
       useCustomColorRamp,
+      type: 'PALETTE',
     });
   };
 
-  _onCustomColorRampChange = ({ colorStops, isInvalid }) => {
-    // Manage invalid custom color ramp in local state
-    if (isInvalid) {
-      this.setState({ customColorRamp: colorStops });
-      return;
-    }
-
+  _onCustomColorPaletteChange = ({ colorStops }) => {
     this.props.onChange({
       customColorRamp: colorStops,
+      type: 'PALETTE',
     });
   };
 
@@ -62,43 +57,42 @@ export class ColorRampSelect extends Component {
       colorStopsInput = (
         <Fragment>
           <EuiSpacer size="s" />
-          <ColorStopsOrdinal
+          <ColorStopsCategorical
             colorStops={this.state.customColorRamp}
-            onChange={this._onCustomColorRampChange}
+            onChange={this._onCustomColorPaletteChange}
           />
         </Fragment>
       );
     }
 
-    const colorRampOptions = [
-      {
-        value: CUSTOM_COLOR_RAMP,
-        inputDisplay: (
-          <FormattedMessage
-            id="xpack.maps.style.customColorRampLabel"
-            defaultMessage="Custom color ramp"
-          />
-        ),
-      },
-      ...COLOR_GRADIENTS,
-    ];
+    const customOption = {
+      value: CUSTOM_COLOR_RAMP,
+      inputDisplay: (
+        <FormattedMessage
+          id="xpack.maps.style.customColorPaletteLabel"
+          defaultMessage="Custom color palette"
+        />
+      ),
+    };
 
+    const colorRampOptions = [customOption];
     return (
       <Fragment>
         <EuiSuperSelect
           options={colorRampOptions}
-          onChange={this._onColorRampSelect}
+          onChange={this._onColorPaletteSelect}
           valueOfSelected={useCustomColorRamp ? CUSTOM_COLOR_RAMP : color}
           hasDividers={true}
           {...rest}
         />
+
         {colorStopsInput}
       </Fragment>
     );
   }
 }
 
-ColorRampSelect.propTypes = {
+ColorPaletteSelect.propTypes = {
   color: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   useCustomColorRamp: PropTypes.bool,

@@ -8,55 +8,104 @@ import _ from 'lodash';
 import React, { Fragment } from 'react';
 import { FieldSelect } from '../field_select';
 import { ColorRampSelect } from './color_ramp_select';
+import { ColorPaletteSelect } from './color_palette_select';
 import { EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui';
+import { RAMP_TYPE } from './ramp_type';
 
-export function DynamicColorForm({
-  fields,
-  onDynamicStyleChange,
-  staticDynamicSelect,
-  styleProperty,
-}) {
-  const styleOptions = styleProperty.getOptions();
-
-  const onFieldChange = ({ field }) => {
-    onDynamicStyleChange(styleProperty.getStyleName(), { ...styleOptions, field });
+export class DynamicColorForm extends React.Component {
+  state = {
+    rampType: RAMP_TYPE.COLOR_RAMP,
   };
 
-  const onColorChange = colorOptions => {
-    onDynamicStyleChange(styleProperty.getStyleName(), {
-      ...styleOptions,
-      ...colorOptions,
-    });
-  };
-
-  let colorRampSelect;
-  if (styleOptions.field && styleOptions.field.name) {
-    colorRampSelect = (
-      <ColorRampSelect
-        onChange={onColorChange}
-        color={styleOptions.color}
-        customColorRamp={styleOptions.customColorRamp}
-        useCustomColorRamp={_.get(styleOptions, 'useCustomColorRamp', false)}
-        compressed
-      />
-    );
+  constructor() {
+    super();
+    this._isMounted = false;
   }
 
-  return (
-    <Fragment>
-      <EuiFlexGroup gutterSize="none" justifyContent="flexEnd">
-        <EuiFlexItem grow={false}>{staticDynamicSelect}</EuiFlexItem>
-        <EuiFlexItem>
-          <FieldSelect
-            fields={fields}
-            selectedFieldName={_.get(styleOptions, 'field.name')}
-            onChange={onFieldChange}
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  componentDidMount() {
+    this._isMounted = true;
+    this._loadRampType();
+  }
+
+  componentDidUpdate() {
+    this._loadRampType();
+  }
+
+  async _loadRampType() {
+    const field = this.props.styleProperty.getField();
+    const dataType = await field.getDataType();
+    const rampType = dataType === 'string' ? RAMP_TYPE.COLOR_PALETTE : RAMP_TYPE.COLOR_RAMP;
+    if (this._isMounted && this.state.rampType !== rampType) {
+      this.setState({ rampType: rampType });
+    }
+  }
+
+  _getColorSelector() {
+    const { onDynamicStyleChange, styleProperty } = this.props;
+    const styleOptions = styleProperty.getOptions();
+
+    let colorSelect;
+    if (styleOptions.field && styleOptions.field.name) {
+      const onColorChange = colorOptions => {
+        onDynamicStyleChange(styleProperty.getStyleName(), {
+          ...styleOptions,
+          ...colorOptions,
+        });
+      };
+      if (this.state.rampType === RAMP_TYPE.COLOR_RAMP) {
+        colorSelect = (
+          <ColorRampSelect
+            onChange={options => onColorChange(options)}
+            color={styleOptions.color}
+            customColorRamp={styleOptions.customColorRamp}
+            useCustomColorRamp={_.get(styleOptions, 'useCustomColorRamp', false)}
             compressed
           />
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiSpacer size="s" />
-      {colorRampSelect}
-    </Fragment>
-  );
+        );
+      } else {
+        colorSelect = (
+          <ColorPaletteSelect
+            onChange={options => onColorChange(options)}
+            color={styleOptions.color}
+            customColorRamp={styleOptions.customColorRamp}
+            useCustomColorRamp={_.get(styleOptions, 'useCustomColorRamp', false)}
+            compressed
+          />
+        );
+      }
+      return colorSelect;
+    }
+  }
+
+  render() {
+    const { fields, onDynamicStyleChange, staticDynamicSelect, styleProperty } = this.props;
+    const styleOptions = styleProperty.getOptions();
+    const onFieldChange = ({ field }) => {
+      onDynamicStyleChange(styleProperty.getStyleName(), { ...styleOptions, field });
+    };
+
+    const colorSelect = this._getColorSelector();
+
+    return (
+      <Fragment>
+        <EuiFlexGroup gutterSize="none" justifyContent="flexEnd">
+          <EuiFlexItem grow={false}>{staticDynamicSelect}</EuiFlexItem>
+          <EuiFlexItem>
+            <FieldSelect
+              fields={fields}
+              selectedFieldName={_.get(styleOptions, 'field.name')}
+              onChange={onFieldChange}
+              compressed
+            />
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiSpacer size="s" />
+        {colorSelect}
+      </Fragment>
+    );
+  }
 }
