@@ -87,14 +87,11 @@ export class ColorRampSelect extends Component {
 
     let valueOfSelected;
     if (useCustomColorRamp) {
-      console.log('use customoptions');
       valueOfSelected = CUSTOM_COLOR_RAMP;
     } else {
       if (colorRampOptions.find(option => option.value === color)) {
-        console.log('found match');
         valueOfSelected = color;
       } else {
-        console.log('just use first');
         valueOfSelected = COLOR_GRADIENTS[0].value;
       }
     }

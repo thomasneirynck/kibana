@@ -55,6 +55,18 @@ export class DynamicColorProperty extends DynamicStyleProperty {
     mbMap.setPaintProperty(mbLayerId, 'text-opacity', alpha);
   }
 
+  isOrdinal() {
+    if (this._options.type === 'PALETTE') {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  isCategorical() {
+    return this._options.type === 'PALETTE';
+  }
+
   isCustomColorRamp() {
     return this._options.useCustomColorRamp;
   }
@@ -90,12 +102,12 @@ export class DynamicColorProperty extends DynamicStyleProperty {
     }
 
     return this._getMBDataDrivenColor({
-      targetName: getComputedFieldName(this._styleName, this._options.field.name),
-      colorStops: this._getMBColorStops(),
+      targetName: getComputedFieldName(this._styleName, this._options.field.name)
     });
   }
 
-  _getMbDataDrivenOrdinalColor({ targetName, colorStops }) {
+  _getMbDataDrivenOrdinalColor({ targetName }) {
+    const colorStops = this._getMBColorStops();
     if (this._options.useCustomColorRamp) {
       const firstStopValue = colorStops[0];
       const lessThenFirstStopValue = firstStopValue - 1;
@@ -106,7 +118,6 @@ export class DynamicColorProperty extends DynamicStyleProperty {
         ...colorStops,
       ];
     }
-
     return [
       'interpolate',
       ['linear'],
@@ -118,23 +129,26 @@ export class DynamicColorProperty extends DynamicStyleProperty {
   }
 
   _getMbDataDrivenCategoricalColor() {
-    const mbStops = [];
-    if (this._options.customColorRamp) {
+    if (this._options.useCustomColorRamp && this._options.customColorRamp) {
+      const mbStops = [];
       this._options.customColorRamp.forEach(stop => {
         mbStops.push(stop.stop);
         mbStops.push(stop.color);
       });
+      mbStops.push('rgba(0,0,0,0)');
+      const expression = ['match', ['get', this._options.field.name], ...mbStops];
+      return expression;
+    } else {
+      console.log('get data-driven expression without custom-palette');
+      return null;
     }
-    mbStops.push('rgba(0,0,0,0)');
-    const expression = ['match', ['get', this._options.field.name], ...mbStops];
-    return expression;
   }
 
-  _getMBDataDrivenColor({ targetName, colorStops }) {
+  _getMBDataDrivenColor({ targetName }) {
     if (this._options.type === 'PALETTE') {
-      return this._getMbDataDrivenCategoricalColor({ targetName, colorStops });
+      return this._getMbDataDrivenCategoricalColor({ targetName });
     } else {
-      return this._getMbDataDrivenOrdinalColor({ targetName, colorStops });
+      return this._getMbDataDrivenOrdinalColor({ targetName });
     }
   }
 
@@ -145,9 +159,10 @@ export class DynamicColorProperty extends DynamicStyleProperty {
   }
 
   _getMBColorStops() {
-    console.log('thi', this._options);
     if (this._options.type === 'PALETTE') {
+      console.log('get for palette');
       if (this._options.useCustomColorRamp) {
+        console.log('get stops from custom');
         return this._getColorStopsFromCustom();
       } else {
         console.log('todo implement');
@@ -171,7 +186,6 @@ export class DynamicColorProperty extends DynamicStyleProperty {
   }
 
   _renderStopIcon(color, isLinesOnly, isPointsOnly, symbolId) {
-    console.log('render stop icon');
     if (this.getStyleName() === VECTOR_STYLES.LABEL_COLOR) {
       const style = { color: color };
       return (

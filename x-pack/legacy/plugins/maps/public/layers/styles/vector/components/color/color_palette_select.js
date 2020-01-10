@@ -7,12 +7,11 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 
-import { EuiSuperSelect, EuiSpacer, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import { EuiSuperSelect, EuiSpacer } from '@elastic/eui';
 import { FormattedMessage } from '@kbn/i18n/react';
 import { ColorStopsCategorical } from './color_stops_categorical';
-import {COLOR_GRADIENTS, COLOR_PALETTES} from '../../../color_utils';
+import {  COLOR_PALETTES } from '../../../color_utils';
 
-console.log('COLO', COLOR_PALETTES);
 
 const CUSTOM_COLOR_RAMP = 'CUSTOM_COLOR_RAMP';
 

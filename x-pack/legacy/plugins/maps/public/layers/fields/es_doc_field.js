@@ -29,7 +29,7 @@ export class ESDocField extends AbstractField {
     return true;
   }
 
-  async getFieldMetaRequest(/* config */) {
+  async getOrdinalFieldMetaRequest() {
     const field = await this._getField();
 
     if (field.type !== 'number' && field.type !== 'date') {
@@ -48,6 +48,31 @@ export class ESDocField extends AbstractField {
     return {
       [this._fieldName]: {
         extended_stats: extendedStats,
+      },
+    };
+  }
+
+  async getCategoricalFieldMetaRequest() {
+    const field = await this._getField();
+    if (field.type !== 'string') {
+      //UX does not yet support categorical styling for number/date fields
+      return null;
+    }
+
+    const topTerms = {
+      size: 10,
+    };
+    if (field.scripted) {
+      topTerms.script = {
+        source: field.script,
+        lang: field.lang,
+      };
+    } else {
+      topTerms.field = this._fieldName;
+    }
+    return {
+      [this._fieldName]: {
+        terms: topTerms,
       },
     };
   }

@@ -94,3 +94,10 @@ export const COLOR_PALETTES = [
     colors: DEFAULT_FILL_COLORS.slice(0, 10),
   },
 ];
+
+export function getColorPaletteStops(paletteId, fieldMeta) {
+  console.log('get for pak', paletteId, fieldMeta);
+  const palette = COLOR_PALETTES.find(palette => (palette.id = paletteId));
+
+ return null;
+}

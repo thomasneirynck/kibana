@@ -299,10 +299,14 @@ export class AbstractESSource extends AbstractVectorSource {
     searchFilters
   ) {
     const promises = dynamicStyleProps.map(dynamicStyleProp => {
+      console.log('get field meta request');
       return dynamicStyleProp.getFieldMetaRequest();
     });
 
     const fieldAggRequests = await Promise.all(promises);
+
+    console.log('field ag r', fieldAggRequests);
+
     const aggs = fieldAggRequests.reduce((aggs, fieldAggRequest) => {
       return fieldAggRequest ? { ...aggs, ...fieldAggRequest } : aggs;
     }, {});
