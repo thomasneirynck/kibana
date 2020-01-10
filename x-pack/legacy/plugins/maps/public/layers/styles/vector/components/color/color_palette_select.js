@@ -7,11 +7,30 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 
-import { EuiSuperSelect, EuiSpacer } from '@elastic/eui';
+import { EuiSuperSelect, EuiSpacer, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
 import { FormattedMessage } from '@kbn/i18n/react';
 import { ColorStopsCategorical } from './color_stops_categorical';
+import {COLOR_GRADIENTS, COLOR_PALETTES} from '../../../color_utils';
+
+console.log('COLO', COLOR_PALETTES);
 
 const CUSTOM_COLOR_RAMP = 'CUSTOM_COLOR_RAMP';
+
+const customColorPalettesInputs = COLOR_PALETTES.map(palette => {
+  const ramp = palette.colors.map(color => {
+    const style = {
+      backgroundColor: color,
+      width: '10%',
+      display: 'inline-block',
+    };
+    // eslint-disable-next-line react/no-danger
+    return <div style={style} dangerouslySetInnerHTML={{ __html: '&nbsp;' }} />;
+  });
+  return {
+    value: palette.id,
+    inputDisplay: <div style={{ width: '100%', display: 'inline-block' }}>{ramp}</div>,
+  };
+});
 
 export class ColorPaletteSelect extends Component {
   state = {};
@@ -75,17 +94,27 @@ export class ColorPaletteSelect extends Component {
       ),
     };
 
-    const colorRampOptions = [customOption];
+    const colorPaletteOptions = [customOption, ...customColorPalettesInputs];
+    let valueOfSelected;
+    if (useCustomColorRamp) {
+      valueOfSelected = CUSTOM_COLOR_RAMP;
+    } else {
+      if (colorPaletteOptions.find(option => option.value === color)) {
+        valueOfSelected = color;
+      } else {
+        valueOfSelected = customColorPalettesInputs[0].value;
+      }
+    }
+
     return (
       <Fragment>
         <EuiSuperSelect
-          options={colorRampOptions}
+          options={colorPaletteOptions}
           onChange={this._onColorPaletteSelect}
-          valueOfSelected={useCustomColorRamp ? CUSTOM_COLOR_RAMP : color}
+          valueOfSelected={valueOfSelected}
           hasDividers={true}
           {...rest}
         />
-
         {colorStopsInput}
       </Fragment>
     );

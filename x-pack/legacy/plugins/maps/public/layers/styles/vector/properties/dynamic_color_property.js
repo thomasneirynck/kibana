@@ -138,14 +138,28 @@ export class DynamicColorProperty extends DynamicStyleProperty {
     }
   }
 
-  _getMBColorStops() {
-    if (this._options.useCustomColorRamp) {
-      return this._options.customColorRamp.reduce((accumulatedStops, nextStop) => {
-        return [...accumulatedStops, nextStop.stop, nextStop.color];
-      }, []);
-    }
+  _getColorStopsFromCustom() {
+    return this._options.customColorRamp.reduce((accumulatedStops, nextStop) => {
+      return [...accumulatedStops, nextStop.stop, nextStop.color];
+    }, []);
+  }
 
-    return getColorRampStops(this._options.color);
+  _getMBColorStops() {
+    console.log('thi', this._options);
+    if (this._options.type === 'PALETTE') {
+      if (this._options.useCustomColorRamp) {
+        return this._getColorStopsFromCustom();
+      } else {
+        console.log('todo implement');
+        return null;
+      }
+    } else {
+      if (this._options.useCustomColorRamp) {
+        return this._getColorStopsFromCustom();
+      } else {
+        return getColorRampStops(this._options.color);
+      }
+    }
   }
 
   renderRangeLegendHeader() {
@@ -157,6 +171,7 @@ export class DynamicColorProperty extends DynamicStyleProperty {
   }
 
   _renderStopIcon(color, isLinesOnly, isPointsOnly, symbolId) {
+    console.log('render stop icon');
     if (this.getStyleName() === VECTOR_STYLES.LABEL_COLOR) {
       const style = { color: color };
       return (

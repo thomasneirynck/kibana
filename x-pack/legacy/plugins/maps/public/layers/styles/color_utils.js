@@ -16,6 +16,9 @@ import chroma from 'chroma-js';
 const GRADIENT_INTERVALS = 8;
 
 export const DEFAULT_FILL_COLORS = palettes.euiPaletteColorBlind.colors;
+
+console.log('DEFAULT_FILL_COLORS', DEFAULT_FILL_COLORS);
+
 export const DEFAULT_LINE_COLORS = [
   ...DEFAULT_FILL_COLORS.map(color =>
     tinycolor(color)
@@ -84,3 +87,10 @@ export function getLinearGradient(colorStrings) {
   }
   return `${linearGradient} ${colorStrings[colorStrings.length - 1]} 100%)`;
 }
+
+export const COLOR_PALETTES = [
+  {
+    id: 'default',
+    colors: DEFAULT_FILL_COLORS.slice(0, 10),
+  },
+];

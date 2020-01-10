@@ -410,6 +410,7 @@ export class VectorStyle extends AbstractStyle {
   };
 
   getIcon = () => {
+    console.log('geticon');
     const symbolId = this._getSymbolId();
 
     return (

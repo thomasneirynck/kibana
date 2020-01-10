@@ -33,6 +33,7 @@ export class ColorRampSelect extends Component {
     this.props.onChange({
       color: useCustomColorRamp ? null : selectedValue,
       useCustomColorRamp,
+      type: 'RAMP',
     });
   };
 
@@ -83,12 +84,26 @@ export class ColorRampSelect extends Component {
       ...COLOR_GRADIENTS,
     ];
 
+
+    let valueOfSelected;
+    if (useCustomColorRamp) {
+      console.log('use customoptions');
+      valueOfSelected = CUSTOM_COLOR_RAMP;
+    } else {
+      if (colorRampOptions.find(option => option.value === color)) {
+        console.log('found match');
+        valueOfSelected = color;
+      } else {
+        console.log('just use first');
+        valueOfSelected = COLOR_GRADIENTS[0].value;
+      }
+    }
     return (
       <Fragment>
         <EuiSuperSelect
           options={colorRampOptions}
           onChange={this._onColorRampSelect}
-          valueOfSelected={useCustomColorRamp ? CUSTOM_COLOR_RAMP : color}
+          valueOfSelected={valueOfSelected}
           hasDividers={true}
           {...rest}
         />

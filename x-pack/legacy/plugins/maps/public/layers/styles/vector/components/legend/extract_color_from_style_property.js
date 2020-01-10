@@ -35,5 +35,14 @@ export function extractColorFromStyleProperty(colorStyleProperty, defaultColor) 
     return colorStyleProperty.options.customColorRamp[middleIndex].color;
   }
 
+
+  console.log('co', colorStyleProperty.options);
+
+  if (colorStyleProperty.options.type === 'PALETTE') {
+    console.log('todo implement');
+    return null;
+  }
+
+
   return getColorRampCenterColor(colorStyleProperty.options.color);
 }

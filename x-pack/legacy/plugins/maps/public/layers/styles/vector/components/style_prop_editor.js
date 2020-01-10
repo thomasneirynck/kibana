@@ -43,6 +43,9 @@ export class StylePropEditor extends Component {
     }
 
     const field = this.props.styleProperty.getField();
+    if (!field) {
+      return;
+    }
     const dataType = await field.getDataType();
     const rampType = dataType === 'string' ? RAMP_TYPE.COLOR_PALETTE : RAMP_TYPE.COLOR_RAMP;
     if (this._isMounted && this.state.rampType !== rampType) {
