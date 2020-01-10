@@ -20,7 +20,10 @@ import { addRow, removeRow, isColorInvalid, isStopInvalid, isInvalid } from './c
 
 const DEFAULT_COLOR = '#FF0000';
 
-export const ColorStopsOrdinal = ({ colorStops = [{ stop: 0, color: DEFAULT_COLOR }], onChange }) => {
+export const ColorStopsOrdinal = ({
+  colorStops = [{ stop: 0, color: DEFAULT_COLOR }],
+  onChange,
+}) => {
   function getStopInput(stop, index) {
     const onStopChange = e => {
       const newColorStops = _.cloneDeep(colorStops);

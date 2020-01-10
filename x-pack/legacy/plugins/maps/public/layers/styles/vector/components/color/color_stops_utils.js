@@ -57,6 +57,6 @@ export function isInvalid(colorStops) {
   });
 }
 
-export function isInvalidCategorical(colorStops) {
+export function isInvalidCategorical() {
   return false;
 }
