@@ -95,9 +95,7 @@ export const COLOR_PALETTES = [
   },
 ];
 
-export function getColorPaletteStops(paletteId, fieldMeta) {
-  console.log('get for pak', paletteId, fieldMeta);
+export function getColorPalette(paletteId) {
   const palette = COLOR_PALETTES.find(palette => (palette.id = paletteId));
-
- return null;
+  return palette ? palette.colors : null;
 }

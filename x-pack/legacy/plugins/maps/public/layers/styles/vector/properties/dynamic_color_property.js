@@ -7,7 +7,7 @@
 import { DynamicStyleProperty } from './dynamic_style_property';
 import _ from 'lodash';
 import { getComputedFieldName } from '../style_util';
-import { getColorRampStops } from '../../color_utils';
+import { getColorRampStops, getColorPalette } from '../../color_utils';
 import { ColorGradient } from '../../components/color_gradient';
 import React from 'react';
 import { EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiText, EuiToolTip } from '@elastic/eui';
@@ -76,15 +76,15 @@ export class DynamicColorProperty extends DynamicStyleProperty {
   }
 
   isScaled() {
-    return !this.isCustomColorRamp();
+    return this.isOrdinal() && !this.isCustomColorRamp();
   }
 
   isRanged() {
-    return !this.isCustomColorRamp();
+    return this.isOrdinal() && !this.isCustomColorRamp();
   }
 
   hasBreaks() {
-    return this.isCustomColorRamp();
+    return (this.isOrdinal() && this.isCustomColorRamp()) || this.isCategorical();
   }
 
   _getMbColor() {
@@ -94,6 +94,12 @@ export class DynamicColorProperty extends DynamicStyleProperty {
       return null;
     }
 
+    return this._getMBDataDrivenColor({
+      targetName: getComputedFieldName(this._styleName, this._options.field.name),
+    });
+  }
+
+  _getMbDataDrivenOrdinalColor({ targetName }) {
     if (
       this._options.useCustomColorRamp &&
       (!this._options.customColorRamp || !this._options.customColorRamp.length)
@@ -101,13 +107,7 @@ export class DynamicColorProperty extends DynamicStyleProperty {
       return null;
     }
 
-    return this._getMBDataDrivenColor({
-      targetName: getComputedFieldName(this._styleName, this._options.field.name)
-    });
-  }
-
-  _getMbDataDrivenOrdinalColor({ targetName }) {
-    const colorStops = this._getMBColorStops();
+    const colorStops = this._getMbOrdinalColorStops();
     if (this._options.useCustomColorRamp) {
       const firstStopValue = colorStops[0];
       const lessThenFirstStopValue = firstStopValue - 1;
@@ -129,6 +129,13 @@ export class DynamicColorProperty extends DynamicStyleProperty {
   }
 
   _getMbDataDrivenCategoricalColor() {
+    if (
+      this._options.useCustomColorRamp &&
+      (!this._options.customColorRamp || !this._options.customColorRamp.length)
+    ) {
+      return null;
+    }
+
     if (this._options.useCustomColorRamp && this._options.customColorRamp) {
       const mbStops = [];
       this._options.customColorRamp.forEach(stop => {
@@ -139,13 +146,20 @@ export class DynamicColorProperty extends DynamicStyleProperty {
       const expression = ['match', ['get', this._options.field.name], ...mbStops];
       return expression;
     } else {
-      console.log('get data-driven expression without custom-palette');
+      console.log('get data-driven expression without custom-palette', this._options);
+      const fieldMeta = this.getFieldMeta();
+      const colors = getColorPalette(this._options.color);
 
-
-
-
-
-      return null;
+      const maxLength = Math.min(colors.length, fieldMeta.categories.length);
+      const mbStops = [];
+      for (let i = 0; i < maxLength; i++) {
+        mbStops.push(fieldMeta.categories[i].key);
+        mbStops.push(colors[i]);
+      }
+      mbStops.push('rgba(0,0,0,0)');
+      const expression = ['match', ['get', this._options.field.name], ...mbStops];
+      console.log('expression for palette', expression);
+      return expression;
     }
   }
 
@@ -163,23 +177,12 @@ export class DynamicColorProperty extends DynamicStyleProperty {
     }, []);
   }
 
-  _getMBColorStops() {
+  _getMbOrdinalColorStops() {
     console.log('get color stops');
-    if (this._options.type === 'PALETTE') {
-      console.log('get for palette');
-      if (this._options.useCustomColorRamp) {
-        console.log('get stops from custom');
-        return this._getColorStopsFromCustom();
-      } else {
-        console.log('todo implement');
-        return null;
-      }
+    if (this._options.useCustomColorRamp) {
+      return this._getColorStopsFromCustom();
     } else {
-      if (this._options.useCustomColorRamp) {
-        return this._getColorStopsFromCustom();
-      } else {
-        return getColorRampStops(this._options.color);
-      }
+      return getColorRampStops(this._options.color);
     }
   }
 

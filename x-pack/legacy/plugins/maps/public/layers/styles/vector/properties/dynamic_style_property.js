@@ -24,6 +24,7 @@ export class DynamicStyleProperty extends AbstractStyleProperty {
   }
 
   getFieldMeta() {
+    console.log('get fm');
     return this._getFieldMeta && this._field ? this._getFieldMeta(this._field.getName()) : null;
   }
 
@@ -65,7 +66,13 @@ export class DynamicStyleProperty extends AbstractStyleProperty {
   }
 
   supportsFieldMeta() {
-    return this.isComplete() && this.isScaled() && this._field.supportsFieldMeta();
+    if (this.isOrdinal()) {
+      return this.isComplete() && this.isScaled() && this._field.supportsFieldMeta();
+    } else if (this.isCategorical()) {
+      return this.isComplete() && this._field.supportsFieldMeta();
+    } else {
+      return false;
+    }
   }
 
   async getFieldMetaRequest() {
@@ -190,12 +197,14 @@ export class DynamicStyleProperty extends AbstractStyleProperty {
         count: bucket.doc_count,
       };
     });
-    return ordered;
+    return {
+      categories: ordered
+    };
   }
 
   pluckStyleMetaFromFieldMetaData(fieldMetaData) {
     if (this.isOrdinal()) {
-      return this._pluckOrdinalStyleMetaFromFieldMetaData();
+      return this._pluckOrdinalStyleMetaFromFieldMetaData(fieldMetaData);
     } else if (this.isCategorical()) {
       return this._pluckCategoricalStyleMetaFromFieldMetaData(fieldMetaData);
     } else {

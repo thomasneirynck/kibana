@@ -319,6 +319,10 @@ export class VectorStyle extends AbstractStyle {
   }
 
   _getFieldMeta = fieldName => {
+
+
+    // console.log('get fm', fieldName);
+
     const fieldMetaFromLocalFeatures = _.get(this._descriptor, ['__styleMeta', fieldName]);
 
     const dynamicProp = this._getDynamicPropertyByFieldName(fieldName);
@@ -326,6 +330,7 @@ export class VectorStyle extends AbstractStyle {
       return fieldMetaFromLocalFeatures;
     }
 
+    // console.log('find field meta');
     let dataRequestId;
     if (dynamicProp.getFieldOrigin() === FIELD_ORIGIN.SOURCE) {
       dataRequestId = SOURCE_META_ID_ORIGIN;
@@ -339,9 +344,11 @@ export class VectorStyle extends AbstractStyle {
     }
 
     if (!dataRequestId) {
+      // console.log('return field meta from local features');
       return fieldMetaFromLocalFeatures;
     }
 
+    // console.log('use stylemeta');
     const styleMetaDataRequest = this._layer._findDataRequestById(dataRequestId);
     if (!styleMetaDataRequest || !styleMetaDataRequest.hasData()) {
       return fieldMetaFromLocalFeatures;
