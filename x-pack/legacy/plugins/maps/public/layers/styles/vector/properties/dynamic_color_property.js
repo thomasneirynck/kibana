@@ -140,6 +140,11 @@ export class DynamicColorProperty extends DynamicStyleProperty {
       return expression;
     } else {
       console.log('get data-driven expression without custom-palette');
+
+
+
+
+
       return null;
     }
   }
@@ -159,6 +164,7 @@ export class DynamicColorProperty extends DynamicStyleProperty {
   }
 
   _getMBColorStops() {
+    console.log('get color stops');
     if (this._options.type === 'PALETTE') {
       console.log('get for palette');
       if (this._options.useCustomColorRamp) {

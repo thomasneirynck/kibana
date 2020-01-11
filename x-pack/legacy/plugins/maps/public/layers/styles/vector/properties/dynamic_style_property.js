@@ -69,15 +69,12 @@ export class DynamicStyleProperty extends AbstractStyleProperty {
   }
 
   async getFieldMetaRequest() {
-    console.log('dynprop', this, this._options, this.isOrdinal());
     if (this.isOrdinal()) {
-      console.log('get ordinal field meta request');
       const fieldMetaOptions = this.getFieldMetaOptions();
       return this._field.getOrdinalFieldMetaRequest({
         sigma: _.get(fieldMetaOptions, 'sigma', DEFAULT_SIGMA),
       });
     } else if (this.isCategorical()) {
-      console.log('get categorical field meta request');
       return this._field.getCategoricalFieldMetaRequest();
     } else {
       return null;
@@ -96,59 +93,111 @@ export class DynamicStyleProperty extends AbstractStyleProperty {
     return _.get(this.getOptions(), 'fieldMetaOptions', {});
   }
 
+  _pluckOrdinalMetaFromFeatures(features) {
+    const name = this.getField().getName();
+    let min = Infinity;
+    let max = -Infinity;
+    for (let i = 0; i < features.length; i++) {
+      const feature = features[i];
+      const newValue = parseFloat(feature.properties[name]);
+      if (!isNaN(newValue)) {
+        min = Math.min(min, newValue);
+        max = Math.max(max, newValue);
+      }
+    }
+
+    return min === Infinity || max === -Infinity
+      ? null
+      : {
+          min: min,
+          max: max,
+          delta: max - min,
+        };
+  }
+
+  _pluckCategoricalMetaFromFeatures(features) {
+    const fieldName = this.getField().getName();
+    const counts = new Map();
+    for (let i = 0; i < features.length; i++) {
+      const feature = features[i];
+      const term = feature.properties[fieldName];
+      if (counts.has(term)) {
+        counts.set(term, counts.get(term) + 1);
+      } else {
+        counts.set(term, 1);
+      }
+    }
+
+    const ordered = [];
+    for (const [key, value] of counts) {
+      ordered.push({ key, count: value });
+    }
+
+    ordered.sort((a, b) => {
+      return a.count > b.count;
+    });
+
+    const truncated = ordered.slice(0, 10);
+    console.log('tr', truncated);
+    return {
+      categories: truncated,
+    };
+  }
+
   pluckStyleMetaFromFeatures(features) {
     if (this.isOrdinal()) {
-      const name = this.getField().getName();
-      let min = Infinity;
-      let max = -Infinity;
-      for (let i = 0; i < features.length; i++) {
-        const feature = features[i];
-        const newValue = parseFloat(feature.properties[name]);
-        if (!isNaN(newValue)) {
-          min = Math.min(min, newValue);
-          max = Math.max(max, newValue);
-        }
-      }
-
-      return min === Infinity || max === -Infinity
-        ? null
-        : {
-            min: min,
-            max: max,
-            delta: max - min,
-          };
+      return this._pluckOrdinalMetaFromFeatures(features);
     } else if (this.isCategorical()) {
-      console.log('need to pluck from ategories');
-      return null;
+      return this._pluckCategoricalMetaFromFeatures(features);
     } else {
       return null;
     }
   }
 
+  _pluckOrdinalStyleMetaFromFieldMetaData(fieldMetaData) {
+    const realFieldName = this._field.getESDocFieldName
+      ? this._field.getESDocFieldName()
+      : this._field.getName();
+    const stats = fieldMetaData[realFieldName];
+    if (!stats) {
+      return null;
+    }
+
+    const sigma = _.get(this.getFieldMetaOptions(), 'sigma', DEFAULT_SIGMA);
+    const stdLowerBounds = stats.avg - stats.std_deviation * sigma;
+    const stdUpperBounds = stats.avg + stats.std_deviation * sigma;
+    const min = Math.max(stats.min, stdLowerBounds);
+    const max = Math.min(stats.max, stdUpperBounds);
+    return {
+      min,
+      max,
+      delta: max - min,
+      isMinOutsideStdRange: stats.min < stdLowerBounds,
+      isMaxOutsideStdRange: stats.max > stdUpperBounds,
+    };
+  }
+
+  _pluckCategoricalStyleMetaFromFieldMetaData(fieldMetaData) {
+    console.log(fieldMetaData);
+    const name = this.getField().getName();
+    if (!fieldMetaData[name] || !fieldMetaData[name].buckets) {
+      return null;
+    }
+
+    const ordered = fieldMetaData[name].buckets.map(bucket => {
+      return {
+        key: bucket.key,
+        count: bucket.doc_count,
+      };
+    });
+    return ordered;
+  }
+
   pluckStyleMetaFromFieldMetaData(fieldMetaData) {
     if (this.isOrdinal()) {
-      const realFieldName = this._field.getESDocFieldName
-        ? this._field.getESDocFieldName()
-        : this._field.getName();
-      const stats = fieldMetaData[realFieldName];
-      if (!stats) {
-        return null;
-      }
-
-      const sigma = _.get(this.getFieldMetaOptions(), 'sigma', DEFAULT_SIGMA);
-      const stdLowerBounds = stats.avg - stats.std_deviation * sigma;
-      const stdUpperBounds = stats.avg + stats.std_deviation * sigma;
-      const min = Math.max(stats.min, stdLowerBounds);
-      const max = Math.min(stats.max, stdUpperBounds);
-      return {
-        min,
-        max,
-        delta: max - min,
-        isMinOutsideStdRange: stats.min < stdLowerBounds,
-        isMaxOutsideStdRange: stats.max > stdUpperBounds,
-      };
+      return this._pluckOrdinalStyleMetaFromFieldMetaData();
     } else if (this.isCategorical()) {
-      console.log('need to pluck categorical stylemeta');
+      return this._pluckCategoricalStyleMetaFromFieldMetaData(fieldMetaData);
     } else {
       return null;
     }
