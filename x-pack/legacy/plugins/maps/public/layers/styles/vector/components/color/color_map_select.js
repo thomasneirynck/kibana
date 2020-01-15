@@ -75,6 +75,7 @@ export class ColorMapSelect extends Component {
             <ColorStopsCategorical
               colorStops={this.state.customColorMap}
               onChange={this._onCustomColorMapChange}
+              isBoolean={this.props.isBoolean}
             />
           </Fragment>
         );

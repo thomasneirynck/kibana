@@ -16,6 +16,7 @@ import { i18n } from '@kbn/i18n';
 export class DynamicColorForm extends React.Component {
   state = {
     colorMapType: COLOR_MAP_TYPE.ORDINAL,
+    isBoolean: false,
   };
 
   constructor() {
@@ -45,15 +46,21 @@ export class DynamicColorForm extends React.Component {
     const colorMapType = CATEGORICAL_DATA_TYPES.includes(dataType)
       ? COLOR_MAP_TYPE.CATEGORICAL
       : COLOR_MAP_TYPE.ORDINAL;
-    if (this._isMounted && this.state.colorMapType !== colorMapType) {
-      this.setState({ colorMapType }, () => {
-        const options = this.props.styleProperty.getOptions();
-        this.props.onDynamicStyleChange(this.props.styleProperty.getStyleName(), {
-          ...options,
-          type: colorMapType,
-        });
-      });
+
+    const isBoolean = dataType === 'boolean';
+    if (
+      !this._isMounted ||
+      (this.state.colorMapType === colorMapType && this.state.isBoolean === isBoolean)
+    ) {
+      return;
     }
+    this.setState({ colorMapType, isBoolean }, () => {
+      const options = this.props.styleProperty.getOptions();
+      this.props.onDynamicStyleChange(this.props.styleProperty.getStyleName(), {
+        ...options,
+        type: colorMapType,
+      });
+    });
   }
 
   _getColorSelector() {
@@ -99,6 +106,7 @@ export class DynamicColorForm extends React.Component {
           customColorMap={styleOptions.customColorRamp}
           useCustomColorMap={_.get(styleOptions, 'useCustomColorRamp', false)}
           compressed
+          isBoolean={false}
         />
       );
     } else if (this.state.colorMapType === COLOR_MAP_TYPE.CATEGORICAL) {
@@ -115,6 +123,7 @@ export class DynamicColorForm extends React.Component {
           customColorMap={styleOptions.customColorPalette}
           useCustomColorMap={_.get(styleOptions, 'useCustomColorPalette', false)}
           compressed
+          isBoolean={this.state.isBoolean}
         />
       );
     }

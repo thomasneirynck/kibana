@@ -24,7 +24,10 @@ export const ColorStopsCategorical = ({
     { stop: '', color: DEFAULT_NEXT_COLOR },
   ],
   onChange,
+  isBoolean,
 }) => {
+  console.log('is boolean', isBoolean);
+
   const sanitizeStopInput = value => {
     return value;
   };
@@ -45,6 +48,34 @@ export const ColorStopsCategorical = ({
   };
 
   const renderStopInput = (stop, onStopChange, index) => {
+    if (isBoolean) {
+      const value = index === 0 ? 'true' : 'false';
+      const label =
+        index === 0
+          ? i18n.translate(
+              'xpack.maps.styles.colorStops.categoricalStop.defaultBooleanCategoryTrueAriaLabel',
+              {
+                defaultMessage: 'Boolean value',
+              }
+            )
+          : i18n.translate(
+              'xpack.maps.styles.colorStops.categoricalStop.defaultBooleanCategoryFalseAriaLabel',
+              {
+                defaultMessage: 'Boolean value',
+              }
+            );
+      return (
+        <EuiFieldText
+          aria-label={label}
+          value={value}
+          placeholder={getOtherCategoryLabel()}
+          disabled
+          onChange={onStopChange}
+          compressed
+        />
+      );
+    }
+
     const stopValue = typeof stop === 'string' ? stop : '';
     if (index === 0) {
       return (
