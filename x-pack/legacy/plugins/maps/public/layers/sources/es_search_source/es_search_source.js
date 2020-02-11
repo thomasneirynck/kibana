@@ -49,6 +49,7 @@ export class ESSearchSource extends AbstractESSource {
         {
           id: uuid(),
           ...sourceConfig,
+          type: ESSearchSource.type
         },
         inspectorAdapters
       );
@@ -62,7 +63,7 @@ export class ESSearchSource extends AbstractESSource {
       {
         ...descriptor,
         id: descriptor.id,
-        type: ESSearchSource.type,
+        // type: ESSearchSource.type,
         indexPatternId: descriptor.indexPatternId,
         geoField: descriptor.geoField,
         filterByMapBounds: _.get(descriptor, 'filterByMapBounds', DEFAULT_FILTER_BY_MAP_BOUNDS),
@@ -100,6 +101,7 @@ export class ESSearchSource extends AbstractESSource {
         useTopHits={this._descriptor.useTopHits}
         topHitsSplitField={this._descriptor.topHitsSplitField}
         topHitsSize={this._descriptor.topHitsSize}
+        showSorting={true}
       />
     );
   }
@@ -361,6 +363,11 @@ export class ESSearchSource extends AbstractESSource {
       searchSource.setField('fields', searchFilters.fieldNames); // Setting "fields" filters out unused scripted fields
     } else {
       // geo_shape fields do not support docvalue_fields yet, so still have to be pulled from _source
+      const fields = await this._excludeDateFields(searchFilters.fieldNames);
+      const withoutGeoField = fields.filter(field => field !== geoField.name);
+      initialSearchContext.docvalue_fields.push(
+        ...(withoutGeoField)
+      );
       searchSource = await this._makeSearchSource(
         searchFilters,
         maxResultWindow,

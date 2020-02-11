@@ -140,9 +140,14 @@ export class TooltipControl extends React.Component {
         uniqueFeatures.push({
           id: featureId,
           layerId: layerId,
+          meta: {
+            docId: mbFeature.properties._id, //hacky for now
+            indexName: mbFeature.properties._index //hacky for now
+          }
         });
       }
     }
+
     return uniqueFeatures;
   }
 
@@ -242,45 +247,32 @@ export class TooltipControl extends React.Component {
 
   // Must load original geometry instead of using geometry from mapbox feature.
   // Mapbox feature geometry is from vector tile and is not the same as the original geometry.
-  _loadFeatureGeometry = ({ layerId, featureId }) => {
+  _loadFeatureGeometry = ({ layerId, featureId, meta }) => {
+
     const tooltipLayer = this._findLayerById(layerId);
     if (!tooltipLayer) {
       return null;
     }
 
-    const targetFeature = tooltipLayer.getFeatureById(featureId);
-    if (!targetFeature) {
-      return null;
-    }
-
-    return targetFeature.geometry;
+    return tooltipLayer.getGeometryByFeatureId(featureId);
   };
 
-  _loadFeatureProperties = async ({ layerId, featureId }) => {
+  _loadFeatureProperties = async ({ layerId, featureId, meta }) => {
     const tooltipLayer = this._findLayerById(layerId);
     if (!tooltipLayer) {
       return [];
     }
 
-    const targetFeature = tooltipLayer.getFeatureById(featureId);
-    if (!targetFeature) {
-      return [];
-    }
-    return await tooltipLayer.getPropertiesForTooltip(targetFeature.properties);
+
+    return await tooltipLayer.getFeaturePropertiesByFeatureId(featureId, meta);
   };
 
-  _loadPreIndexedShape = async ({ layerId, featureId }) => {
+  _loadPreIndexedShape = async ({ layerId, featureId, meta}) => {
     const tooltipLayer = this._findLayerById(layerId);
     if (!tooltipLayer) {
       return null;
     }
-
-    const targetFeature = tooltipLayer.getFeatureById(featureId);
-    if (!targetFeature) {
-      return null;
-    }
-
-    return await tooltipLayer.getSource().getPreIndexedShape(targetFeature.properties);
+    return await tooltipLayer.loadPreIndexedShapeByFeatureId(featureId, meta);
   };
 
   _findLayerById = layerId => {

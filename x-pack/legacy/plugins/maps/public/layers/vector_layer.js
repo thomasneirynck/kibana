@@ -19,6 +19,7 @@ import {
   LAYER_TYPE,
   FIELD_ORIGIN,
   LAYER_STYLE_TYPE,
+  KBN_TOO_MANY_FEATURES_PROPERTY,
 } from '../../common/constants';
 import _ from 'lodash';
 import { JoinTooltipProperty } from './tooltips/join_tooltip_property';
@@ -410,9 +411,9 @@ export class VectorLayer extends AbstractLayer {
   }
 
   async _syncSourceStyleMeta(syncContext) {
-    if (this._style.constructor.type !== LAYER_STYLE_TYPE.VECTOR) {
-      return;
-    }
+    // if (this._style.constructor.type !== LAYER_STYLE_TYPE.VECTOR) {
+    //   return;
+    // }
 
     return this._syncStyleMeta({
       source: this._source,
@@ -459,6 +460,7 @@ export class VectorLayer extends AbstractLayer {
     onLoadError,
     registerCancelCallback,
   }) {
+
     if (!source.isESSource() || dynamicStyleProps.length === 0) {
       return;
     }
@@ -572,13 +574,7 @@ export class VectorLayer extends AbstractLayer {
     }
   }
 
-  async syncData(syncContext) {
-    if (!this.isVisible() || !this.showAtZoomLevel(syncContext.dataFilters.zoom)) {
-      return;
-    }
-
-    await this._syncSourceStyleMeta(syncContext);
-    await this._syncSourceFormatters(syncContext);
+  async _syncGeoJsonSource(syncContext) {
     const sourceResult = await this._syncSource(syncContext);
     if (
       !sourceResult.featureCollection ||
@@ -590,6 +586,16 @@ export class VectorLayer extends AbstractLayer {
 
     const joinStates = await this._syncJoins(syncContext);
     await this._performInnerJoins(sourceResult, joinStates, syncContext.updateSourceData);
+  }
+
+  async syncData(syncContext) {
+    if (!this.isVisible() || !this.showAtZoomLevel(syncContext.dataFilters.zoom)) {
+      return;
+    }
+
+    await this._syncSourceStyleMeta(syncContext);
+    await this._syncSourceFormatters(syncContext);
+    await this._syncGeoJsonSource(syncContext);
   }
 
   _getSourceFeatureCollection() {
@@ -623,7 +629,7 @@ export class VectorLayer extends AbstractLayer {
     }
   }
 
-  _setMbPointsProperties(mbMap) {
+  _setMbPointsProperties(mbMap, options) {
     const pointLayerId = this._getMbPointLayerId();
     const symbolLayerId = this._getMbSymbolLayerId();
     const pointLayer = mbMap.getLayer(pointLayerId);
@@ -640,7 +646,7 @@ export class VectorLayer extends AbstractLayer {
       if (symbolLayer) {
         mbMap.setLayoutProperty(symbolLayerId, 'visibility', 'none');
       }
-      this._setMbCircleProperties(mbMap);
+      this._setMbCircleProperties(mbMap, options);
     } else {
       markerLayerId = symbolLayerId;
       textLayerId = symbolLayerId;
@@ -648,7 +654,7 @@ export class VectorLayer extends AbstractLayer {
         mbMap.setLayoutProperty(pointLayerId, 'visibility', 'none');
         mbMap.setLayoutProperty(this._getMbTextLayerId(), 'visibility', 'none');
       }
-      this._setMbSymbolProperties(mbMap);
+      this._setMbSymbolProperties(mbMap, options);
     }
 
     this.syncVisibilityWithMb(mbMap, markerLayerId);
@@ -659,27 +665,35 @@ export class VectorLayer extends AbstractLayer {
     }
   }
 
-  _setMbCircleProperties(mbMap) {
+  _setMbCircleProperties(mbMap, { mvtSourceLayer }) {
     const sourceId = this.getId();
     const pointLayerId = this._getMbPointLayerId();
     const pointLayer = mbMap.getLayer(pointLayerId);
     if (!pointLayer) {
-      mbMap.addLayer({
+      const mbLayer = {
         id: pointLayerId,
         type: 'circle',
         source: sourceId,
         paint: {},
-      });
+      };
+      if (mvtSourceLayer) {
+        mbLayer['source-layer'] = mvtSourceLayer;
+      }
+      mbMap.addLayer(mbLayer);
     }
 
     const textLayerId = this._getMbTextLayerId();
     const textLayer = mbMap.getLayer(textLayerId);
     if (!textLayer) {
-      mbMap.addLayer({
+      const mbLayer = {
         id: textLayerId,
         type: 'symbol',
         source: sourceId,
-      });
+      };
+      if (mvtSourceLayer) {
+        mbLayer['source-layer'] = mvtSourceLayer;
+      }
+      mbMap.addLayer(mbLayer);
     }
 
     const filterExpr = getPointFilterExpression(this._hasJoins());
@@ -701,17 +715,21 @@ export class VectorLayer extends AbstractLayer {
     });
   }
 
-  _setMbSymbolProperties(mbMap) {
+  _setMbSymbolProperties(mbMap, { mvtSourceLayer }) {
     const sourceId = this.getId();
     const symbolLayerId = this._getMbSymbolLayerId();
     const symbolLayer = mbMap.getLayer(symbolLayerId);
 
     if (!symbolLayer) {
-      mbMap.addLayer({
+      const mbLayer = {
         id: symbolLayerId,
         type: 'symbol',
         source: sourceId,
-      });
+      };
+      if (mvtSourceLayer) {
+        mbLayer['source-layer'] = mvtSourceLayer;
+      }
+      mbMap.addLayer(mbLayer);
     }
 
     const filterExpr = getPointFilterExpression(this._hasJoins());
@@ -732,27 +750,57 @@ export class VectorLayer extends AbstractLayer {
     });
   }
 
-  _setMbLinePolygonProperties(mbMap) {
+  _setMbLinePolygonProperties(mbMap, { mvtSourceLayer }) {
     const sourceId = this.getId();
     const fillLayerId = this._getMbPolygonLayerId();
     const lineLayerId = this._getMbLineLayerId();
+    const tooManyFeaturesLayerId = this._getMbTooManyFeaturesLayerId();
     const hasJoins = this._hasJoins();
     if (!mbMap.getLayer(fillLayerId)) {
-      mbMap.addLayer({
+      const mbLayer = {
         id: fillLayerId,
         type: 'fill',
         source: sourceId,
         paint: {},
-      });
+      };
+      if (mvtSourceLayer) {
+        mbLayer['source-layer'] = mvtSourceLayer;
+      }
+      mbMap.addLayer(mbLayer);
     }
     if (!mbMap.getLayer(lineLayerId)) {
-      mbMap.addLayer({
+      const mbLayer = {
         id: lineLayerId,
         type: 'line',
         source: sourceId,
         paint: {},
-      });
+      };
+      if (mvtSourceLayer) {
+        mbLayer['source-layer'] = mvtSourceLayer;
+      }
+      mbMap.addLayer(mbLayer);
     }
+    if (!mbMap.getLayer(tooManyFeaturesLayerId)) {
+      const mbLayer = {
+        id: tooManyFeaturesLayerId,
+        type: 'fill',
+        source: sourceId,
+        paint: {},
+      };
+      if (mvtSourceLayer) {
+        mbLayer['source-layer'] = mvtSourceLayer;
+      }
+      mbMap.addLayer(mbLayer);
+      mbMap.setFilter(tooManyFeaturesLayerId, [
+        '==',
+        ['get', KBN_TOO_MANY_FEATURES_PROPERTY],
+        true,
+      ]);
+      // mbMap.setPaintProperty(tooManyFeaturesLayerId, 'fill-color', 'rgb(255,0,0)');
+      mbMap.setPaintProperty(tooManyFeaturesLayerId, 'fill-pattern', '__kbn_too_many_features__');
+      mbMap.setPaintProperty(tooManyFeaturesLayerId, 'fill-opacity', this.getAlpha(),);
+    }
+
     this._style.setMBPaintProperties({
       alpha: this.getAlpha(),
       mbMap,
@@ -773,11 +821,18 @@ export class VectorLayer extends AbstractLayer {
     if (lineFilterExpr !== mbMap.getFilter(lineLayerId)) {
       mbMap.setFilter(lineLayerId, lineFilterExpr);
     }
+
+    this.syncVisibilityWithMb(mbMap, tooManyFeaturesLayerId);
+    mbMap.setLayerZoomRange(
+      tooManyFeaturesLayerId,
+      this._descriptor.minZoom,
+      this._descriptor.maxZoom
+    );
   }
 
   _syncStylePropertiesWithMb(mbMap) {
-    this._setMbPointsProperties(mbMap);
-    this._setMbLinePolygonProperties(mbMap);
+    this._setMbPointsProperties(mbMap, {});
+    this._setMbLinePolygonProperties(mbMap, {});
   }
 
   _syncSourceBindingWithMb(mbMap) {
@@ -816,6 +871,10 @@ export class VectorLayer extends AbstractLayer {
     return this.makeMbLayerId('fill');
   }
 
+  _getMbTooManyFeaturesLayerId() {
+    return this.makeMbLayerId('toomanyfeatures');
+  }
+
   getMbLayerIds() {
     return [
       this._getMbPointLayerId(),
@@ -823,6 +882,7 @@ export class VectorLayer extends AbstractLayer {
       this._getMbSymbolLayerId(),
       this._getMbLineLayerId(),
       this._getMbPolygonLayerId(),
+      this._getMbTooManyFeaturesLayerId(),
     ];
   }
 
@@ -873,5 +933,31 @@ export class VectorLayer extends AbstractLayer {
     return featureCollection.features.find(feature => {
       return feature.properties[FEATURE_ID_PROPERTY_NAME] === id;
     });
+  }
+
+  getGeometryByFeatureId(featureId) {
+    const targetFeature = this.getFeatureById(featureId);
+    if (!targetFeature) {
+      return null;
+    }
+
+    return targetFeature.geometry;
+  }
+
+  async getFeaturePropertiesByFeatureId(featureId) {
+    const targetFeature = this.getFeatureById(featureId);
+    if (!targetFeature) {
+      return [];
+    }
+    return await this.getPropertiesForTooltip(targetFeature.properties);
+  }
+
+  async loadPreIndexedShapeByFeatureId(featureId) {
+    const targetFeature = this.getFeatureById(featureId);
+    if (!targetFeature) {
+      return null;
+    }
+
+    return await this.getSource().getPreIndexedShape(targetFeature.properties);
   }
 }

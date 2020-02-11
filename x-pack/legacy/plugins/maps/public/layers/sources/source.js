@@ -82,6 +82,10 @@ export class AbstractSource {
     return false;
   }
 
+  isQueryAwareTogglable() {
+    return true;
+  }
+
   getFieldNames() {
     return [];
   }
@@ -123,6 +127,10 @@ export class AbstractSource {
   }
 
   isESSource() {
+    return false;
+  }
+
+  supportsESFilters() {
     return false;
   }
 

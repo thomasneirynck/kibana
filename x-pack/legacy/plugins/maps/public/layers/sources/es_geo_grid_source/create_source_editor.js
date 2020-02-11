@@ -15,16 +15,21 @@ import { NoIndexPatternCallout } from '../../../components/no_index_pattern_call
 import { i18n } from '@kbn/i18n';
 
 import { EuiFormRow, EuiComboBox, EuiSpacer } from '@elastic/eui';
-import { ES_GEO_FIELD_TYPE } from '../../../../common/constants';
+import {
+  AGGREGATABLE_GEO_FIELD_TYPES,
+  getAggregatableGeoFields,
+} from '../../../index_pattern_util';
 
 import { npStart } from 'ui/new_platform';
 const { IndexPatternSelect } = npStart.plugins.data.ui;
 
-function filterGeoField({ type }) {
-  return [ES_GEO_FIELD_TYPE.GEO_POINT].includes(type);
-}
-
 const requestTypeOptions = [
+  {
+    label: i18n.translate('xpack.maps.source.esGeoGrid.pointsDropdownOption', {
+      defaultMessage: 'clusters',
+    }),
+    value: RENDER_AS.POINT,
+  },
   {
     label: i18n.translate('xpack.maps.source.esGeoGrid.gridRectangleDropdownOption', {
       defaultMessage: 'grid rectangles',
@@ -36,12 +41,6 @@ const requestTypeOptions = [
       defaultMessage: 'heat map',
     }),
     value: RENDER_AS.HEATMAP,
-  },
-  {
-    label: i18n.translate('xpack.maps.source.esGeoGrid.pointsDropdownOption', {
-      defaultMessage: 'clusters',
-    }),
-    value: RENDER_AS.POINT,
   },
 ];
 
@@ -115,7 +114,7 @@ export class CreateSourceEditor extends Component {
     });
 
     //make default selection
-    const geoFields = indexPattern.fields.filter(filterGeoField);
+    const geoFields = getAggregatableGeoFields(indexPattern.fields);
     if (geoFields[0]) {
       this._onGeoFieldSelect(geoFields[0].name);
     }
@@ -170,8 +169,11 @@ export class CreateSourceEditor extends Component {
           })}
           value={this.state.geoField}
           onChange={this._onGeoFieldSelect}
-          filterField={filterGeoField}
-          fields={this.state.indexPattern ? this.state.indexPattern.fields : undefined}
+          fields={
+            this.state.indexPattern
+              ? getAggregatableGeoFields(this.state.indexPattern.fields)
+              : undefined
+          }
         />
       </EuiFormRow>
     );
@@ -181,6 +183,8 @@ export class CreateSourceEditor extends Component {
     if (!this.state.indexPattern) {
       return null;
     }
+
+    const options = this.props.clustersOnly ? requestTypeOptions.slice(0, 1) : requestTypeOptions;
 
     return (
       <EuiFormRow
@@ -193,7 +197,7 @@ export class CreateSourceEditor extends Component {
             defaultMessage: 'Select a single option',
           })}
           singleSelection={{ asPlainText: true }}
-          options={requestTypeOptions}
+          options={options}
           selectedOptions={[this.state.requestType]}
           onChange={this._onRequestTypeSelect}
           isClearable={false}
@@ -216,7 +220,7 @@ export class CreateSourceEditor extends Component {
           placeholder={i18n.translate('xpack.maps.source.esGeoGrid.indexPatternPlaceholder', {
             defaultMessage: 'Select index pattern',
           })}
-          fieldTypes={[ES_GEO_FIELD_TYPE.GEO_POINT]}
+          fieldTypes={AGGREGATABLE_GEO_FIELD_TYPES}
           onNoIndexPatterns={this._onNoIndexPatterns}
         />
       </EuiFormRow>

@@ -7,7 +7,11 @@
 import _ from 'lodash';
 import { AbstractStyleProperty } from './style_property';
 import { DEFAULT_SIGMA } from '../vector_style_defaults';
-import { COLOR_PALETTE_MAX_SIZE, STYLE_TYPE } from '../../../../../common/constants';
+import {
+  COLOR_PALETTE_MAX_SIZE,
+  DEFAULT_COUNTABLE_SCALE,
+  STYLE_TYPE,
+} from '../../../../../common/constants';
 import { scaleValue, getComputedFieldName } from '../style_util';
 import React from 'react';
 import { OrdinalLegend } from './components/ordinal_legend';
@@ -17,11 +21,12 @@ import { OrdinalFieldMetaOptionsPopover } from '../components/ordinal_field_meta
 export class DynamicStyleProperty extends AbstractStyleProperty {
   static type = STYLE_TYPE.DYNAMIC;
 
-  constructor(options, styleName, field, getFieldMeta, getFieldFormatter) {
+  constructor(options, styleName, field, getFieldMeta, getFieldFormatter, style) {
     super(options, styleName);
     this._field = field;
     this._getFieldMeta = getFieldMeta;
     this._getFieldFormatter = getFieldFormatter;
+    this._style = style;
   }
 
   getFieldMeta() {
@@ -30,6 +35,10 @@ export class DynamicStyleProperty extends AbstractStyleProperty {
 
   getField() {
     return this._field;
+  }
+
+  getFieldName() {
+    return this._field ? this._field.getName() : '';
   }
 
   getComputedFieldName() {
@@ -74,7 +83,8 @@ export class DynamicStyleProperty extends AbstractStyleProperty {
 
   supportsFieldMeta() {
     if (this.isOrdinal()) {
-      return this.isComplete() && this.isOrdinalScaled() && this._field.supportsFieldMeta();
+      // return this.isComplete() && this.isOrdinalScaled() && this._field.supportsFieldMeta();
+      return this.isComplete() && this._field.supportsFieldMeta();
     } else if (this.isCategorical()) {
       return this.isComplete() && this._field.supportsFieldMeta();
     } else {
@@ -173,6 +183,19 @@ export class DynamicStyleProperty extends AbstractStyleProperty {
     const realFieldName = this._field.getESDocFieldName
       ? this._field.getESDocFieldName()
       : this._field.getName();
+
+    if (fieldMetaData.type_count && typeof fieldMetaData.type_count.value === 'number') {
+      const min = 0;
+      const max = Math.ceil(fieldMetaData.type_count.value / DEFAULT_COUNTABLE_SCALE);
+      return {
+        min: min,
+        max: max,
+        delta: max - min,
+        isMinOutsideStdRange: false,
+        isMaxOutsideStdRange: false,
+      };
+    }
+
     const stats = fieldMetaData[realFieldName];
     if (!stats) {
       return null;

@@ -7,7 +7,7 @@
 import React from 'react';
 import { EuiFormRow, EuiSwitch } from '@elastic/eui';
 
-export function GlobalFilterCheckbox({ applyGlobalQuery, label, setApplyGlobalQuery }) {
+export function GlobalFilterCheckbox({ applyGlobalQuery, label, setApplyGlobalQuery, enableSwitch}) {
   const onApplyGlobalQueryChange = event => {
     setApplyGlobalQuery(event.target.checked);
   };
@@ -15,6 +15,7 @@ export function GlobalFilterCheckbox({ applyGlobalQuery, label, setApplyGlobalQu
   return (
     <EuiFormRow display="columnCompressedSwitch">
       <EuiSwitch
+        disabled={!enableSwitch}
         label={label}
         checked={applyGlobalQuery}
         onChange={onApplyGlobalQueryChange}

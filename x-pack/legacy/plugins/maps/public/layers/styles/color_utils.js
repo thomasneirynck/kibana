@@ -5,14 +5,16 @@
  */
 
 import React from 'react';
-
-import { vislibColorMaps } from 'ui/color_maps';
-import { getLegendColors, getColor } from 'ui/vis/map/color_util';
-import { ColorGradient } from './components/color_gradient';
-import { euiPaletteColorBlind } from '@elastic/eui/lib/services';
 import tinycolor from 'tinycolor2';
 import chroma from 'chroma-js';
+
+import { euiPaletteColorBlind } from '@elastic/eui/lib/services';
+
+import { getLegendColors, getColor } from 'ui/vis/map/color_util';
+
+import { ColorGradient } from './components/color_gradient';
 import { COLOR_PALETTE_MAX_SIZE } from '../../../common/constants';
+import { vislibColorMaps } from '../../../../../../../src/plugins/charts/public';
 
 const GRADIENT_INTERVALS = 8;
 
@@ -62,13 +64,19 @@ export function getColorRampCenterColor(colorRampName) {
 
 // Returns an array of color stops
 // [ stop_input_1: number, stop_output_1: color, stop_input_n: number, stop_output_n: color ]
-export function getOrdinalColorRampStops(colorRampName, numberColors = GRADIENT_INTERVALS) {
+export function getOrdinalColorRampStops(
+  colorRampName,
+  scale = 1,
+  offset = 0
+) {
+
+  const numberColors = GRADIENT_INTERVALS;
   if (!colorRampName) {
     return null;
   }
   return getHexColorRangeStrings(colorRampName, numberColors).reduce(
     (accu, stopColor, idx, srcArr) => {
-      const stopNumber = idx / srcArr.length; // number between 0 and 1, increasing as index increases
+      const stopNumber = offset + ((idx * scale) / srcArr.length); // number between 0 and 1, increasing as index increases
       return [...accu, stopNumber, stopColor];
     },
     []

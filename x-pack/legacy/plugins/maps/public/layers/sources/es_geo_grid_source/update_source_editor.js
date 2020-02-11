@@ -14,6 +14,7 @@ import { i18n } from '@kbn/i18n';
 import { FormattedMessage } from '@kbn/i18n/react';
 import { EuiPanel, EuiSpacer, EuiTitle } from '@elastic/eui';
 import { isMetricCountable } from '../../util/is_metric_countable';
+import { isNestedField } from '../../../../../../../../src/plugins/data/public';
 
 export class UpdateSourceEditor extends Component {
   state = {
@@ -51,7 +52,7 @@ export class UpdateSourceEditor extends Component {
       return;
     }
 
-    this.setState({ fields: indexPattern.fields });
+    this.setState({ fields: indexPattern.fields.filter(field => !isNestedField(field)) });
   }
 
   _onMetricsChange = metrics => {
@@ -90,12 +91,14 @@ export class UpdateSourceEditor extends Component {
     );
   }
 
-  render() {
+  _renderResolutionEditor() {
+    if (this.props.showResolution === false) {
+      return null;
+    }
+
     return (
       <Fragment>
-        {this._renderMetricsPanel()}
         <EuiSpacer size="s" />
-
         <EuiPanel>
           <EuiTitle size="xs">
             <h6>
@@ -111,6 +114,15 @@ export class UpdateSourceEditor extends Component {
             onChange={this._onResolutionChange}
           />
         </EuiPanel>
+      </Fragment>
+    );
+  }
+
+  render() {
+    return (
+      <Fragment>
+        {this._renderMetricsPanel()}
+        {this._renderResolutionEditor()}
         <EuiSpacer size="s" />
       </Fragment>
     );
