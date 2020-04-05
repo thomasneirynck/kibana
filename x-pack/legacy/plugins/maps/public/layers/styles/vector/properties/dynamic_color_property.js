@@ -10,6 +10,7 @@ import {
   getOrdinalMbColorRampStops,
   getColorPalette,
   getHexColorRangeStrings,
+  getOrdinalColorRampStopsForLegend,
   GRADIENT_INTERVALS,
 } from '../../color_utils';
 import { ColorGradient } from '../../components/color_gradient';
@@ -150,8 +151,9 @@ export class DynamicColorProperty extends DynamicStyleProperty {
         return null;
       }
 
+      console.log('interpolate');
       const lessThanFirstStopValue = rangeFieldMeta.min - 1;
-      return [
+      const exp = [
         'interpolate',
         ['linear'],
         makeMbClampedNumberExpression({
@@ -165,6 +167,10 @@ export class DynamicColorProperty extends DynamicStyleProperty {
         RGBA_0000,
         ...colorStops,
       ];
+
+      console.log(exp);
+
+      return exp;
     }
   }
 
@@ -266,23 +272,45 @@ export class DynamicColorProperty extends DynamicStyleProperty {
       return [];
     }
 
-    const colors = getHexColorRangeStrings(this._options.color, GRADIENT_INTERVALS);
+    const nrOfLegendBreaks = 5;
+    // const colors = getHexColorRangeStrings(this._options.color, nrOfLegendBreaks);
+    //
+    // if (rangeFieldMeta.delta === 0) {
+    //   //map to last color.
+    //   return [
+    //     {
+    //       color: colors[colors.length - 1],
+    //       stop: dynamicRound(rangeFieldMeta.max),
+    //     },
+    //   ];
+    // }
+    //
+    // return colors.map((color, index) => {
+    //   const rawStopValue = rangeFieldMeta.min + rangeFieldMeta.delta * (index / nrOfLegendBreaks);
+    //   return {
+    //     color,
+    //     stop: dynamicRound(rawStopValue),
+    //   };
+    // });
 
-    if (rangeFieldMeta.delta === 0) {
-      //map to last color.
-      return [
-        {
-          color: colors[colors.length - 1],
-          stop: dynamicRound(rangeFieldMeta.max),
-        },
-      ];
-    }
+    const s = '#2070b4';
+    const t = '#072f6b';
 
-    return colors.map((color, index) => {
-      const rawStopValue = rangeFieldMeta.min + rangeFieldMeta.delta * (index / GRADIENT_INTERVALS);
+    const unrounded = getOrdinalColorRampStopsForLegend(
+      this._options.color,
+      rangeFieldMeta.min,
+      rangeFieldMeta.max,
+      GRADIENT_INTERVALS,
+      nrOfLegendBreaks
+    );
+
+    console.log('unr', unrounded);
+
+    return unrounded.map(({ stop, color, mb }) => {
       return {
         color,
-        stop: dynamicRound(rawStopValue),
+        stop: dynamicRound(stop),
+        mb,
       };
     });
   }
@@ -304,12 +332,20 @@ export class DynamicColorProperty extends DynamicStyleProperty {
     const categories = [];
     const { stops, defaultColor } = this._getColorStops();
 
-    stops.map(({ stop, color }, index) => {
+    console.log('s', stops);
+
+    stops.map(({ stop, color, mb }, index) => {
+      console.log(stop, color, mb)
+      const label = this.formatField(stop);
+      console.log(label);
+      const suffix = mb === true ? '-mb' : '-i';
+      console.log('suf', suffix);
+      const formattedLAbel = label + suffix;
       categories.push(
         <Category
           key={index}
           styleName={this.getStyleName()}
-          label={this.formatField(stop)}
+          label={formattedLAbel}
           color={color}
           isLinesOnly={isLinesOnly}
           isPointsOnly={isPointsOnly}

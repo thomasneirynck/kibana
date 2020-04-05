@@ -100,6 +100,95 @@ export function getOrdinalMbColorRampStops(colorRampName, min, max, numberColors
   }, []);
 }
 
+export function getOrdinalColorRampStopsForLegend(
+  colorRampName,
+  min,
+  max,
+  mapNumberColors,
+  legendNumberOfColors
+) {
+  const colorRampForTheMap = getOrdinalMbColorRampStops(colorRampName, min, max, mapNumberColors);
+  if (!colorRampForTheMap) {
+    return null;
+  }
+
+  console.log(colorRampForTheMap);
+
+  if (colorRampForTheMap.length / 2 <= legendNumberOfColors) {
+    //return the map legend
+    const stops = [];
+    for (let j = 0; j < colorRampForTheMap.length; j += 2) {
+      stops.push({
+        stop: colorRampForTheMap[j],
+        color: colorRampForTheMap[j + 1],
+        mb: true,
+      });
+    }
+    return stops;
+  }
+
+  console.log('need to rescale the deltas!');
+
+  const stops = [];
+  const delta = max - min;
+  for (let j = 0; j < legendNumberOfColors; j++) {
+    console.log('--------');
+    const legendScaleFactor = j / legendNumberOfColors;
+
+    console.log(j, legendScaleFactor);
+
+    const fromIndex = Math.max(0, Math.floor(legendScaleFactor * mapNumberColors));
+    const toIndex = fromIndex + 1;
+    console.log('index', fromIndex, toIndex);
+    const fromColor = colorRampForTheMap[fromIndex * 2 + 1];
+    const fromStop = colorRampForTheMap[fromIndex * 2];
+    const toColor = colorRampForTheMap[toIndex * 2 + 1];
+    const toStop = colorRampForTheMap[toIndex * 2];
+
+    console.log('stops - colors', fromColor, toColor);
+
+    const stop = min + (delta * j) / legendNumberOfColors;
+
+    console.log('stops', fromStop, stop, toStop);
+    const scaleFactor = (stop - fromStop) / (toStop - fromStop);
+
+    console.log('scalefactor', scaleFactor);
+    const scale = chroma.scale([fromColor, toColor]);
+    const color = scale(scaleFactor).hex(); // #FF7F7F
+    console.log('scalefactor', fromColor, toColor, scaleFactor, color);
+
+    const from = '#2070b4';
+    const interolated = '#165697';
+    const to = '#072f6b';
+
+    if (!stops.length || stops[stops.length - 1].stop !== fromStop) {
+      stops.push({stop: fromStop, color: fromColor, mb: true});
+    }
+    stops.push({ stop, color });
+    stops.push({ stop: toStop, color: toColor , mb: true});
+  }
+
+  console.log(stops);
+  return stops;
+
+  // const stops = [];
+  // for (let j = 0; j < colorRampForTheMap.length; j += 2) {
+  //   stops.push({
+  //     stop: colorRampForTheMap[j],
+  //     color: colorRampForTheMap[j + 1],
+  //   });
+  // }
+  // return stops;
+}
+
+//
+// export function getColorRampScaleForLegend(colorRampName, min, max, numberColorsOnMap, numberColorsOn) {
+//
+//   const scale = chroma.scale(['white', 'red']);
+//   scale(0.5).hex(); // #FF7F7F
+//
+// }
+
 export const COLOR_GRADIENTS = Object.keys(vislibColorMaps).map(colorRampName => ({
   value: colorRampName,
   inputDisplay: <ColorGradient colorRampName={colorRampName} />,

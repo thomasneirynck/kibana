@@ -102,3 +102,35 @@ describe('getLinearGradient', () => {
     );
   });
 });
+
+
+describe('getColorRampScaleForLegend', () => {
+
+  it('Should correctly interpolate between breaks that are used on the map', () => {
+
+
+
+
+    expect(getOrdinalMbColorRampStops('Blues', 0, 1000, 8)).toEqual([
+      0,
+      '#f7faff',
+      125,
+      '#ddeaf7',
+      250,
+      '#c5daee',
+      375,
+      '#9dc9e0',
+      500,
+      '#6aadd5',
+      625,
+      '#4191c5',
+      750,
+      '#2070b4',
+      875,
+      '#072f6b',
+    ]);
+
+
+
+  });
+});
