@@ -4,7 +4,6 @@
  * you may not use this file except in compliance with the Elastic License.
  */
 
-import { SavedObjectAttributes } from 'src/core/public';
 import { AGENT_TYPE_EPHEMERAL, AGENT_TYPE_PERMANENT, AGENT_TYPE_TEMPORARY } from '../../constants';
 
 export type AgentType =
@@ -26,15 +25,16 @@ export interface AgentAction extends NewAgentAction {
   created_at: string;
 }
 
-export interface AgentActionSOAttributes extends SavedObjectAttributes {
+export interface AgentActionSOAttributes {
   type: 'CONFIG_CHANGE' | 'DATA_DUMP' | 'RESUME' | 'PAUSE';
   sent_at?: string;
+  timestamp?: string;
   created_at: string;
   agent_id: string;
   data?: string;
 }
 
-export interface AgentEvent {
+export interface NewAgentEvent {
   type: 'STATE' | 'ERROR' | 'ACTION_RESULT' | 'ACTION';
   subtype: // State
   | 'RUNNING'
@@ -58,8 +58,17 @@ export interface AgentEvent {
   stream_id?: string;
 }
 
-export interface AgentEventSOAttributes extends AgentEvent, SavedObjectAttributes {}
+export interface AgentEvent extends NewAgentEvent {
+  id: string;
+}
 
+export type AgentEventSOAttributes = NewAgentEvent;
+
+type MetadataValue = string | AgentMetadata;
+
+export interface AgentMetadata {
+  [x: string]: MetadataValue;
+}
 interface AgentBase {
   type: AgentType;
   active: boolean;
@@ -72,19 +81,19 @@ interface AgentBase {
   config_revision?: number | null;
   config_newest_revision?: number;
   last_checkin?: string;
+  user_provided_metadata: AgentMetadata;
+  local_metadata: AgentMetadata;
 }
 
 export interface Agent extends AgentBase {
   id: string;
   current_error_events: AgentEvent[];
-  user_provided_metadata: Record<string, string>;
-  local_metadata: Record<string, string>;
   access_api_key?: string;
   status?: string;
+  packages: string[];
 }
 
-export interface AgentSOAttributes extends AgentBase, SavedObjectAttributes {
-  user_provided_metadata: string;
-  local_metadata: string;
+export interface AgentSOAttributes extends AgentBase {
   current_error_events?: string;
+  packages?: string[];
 }

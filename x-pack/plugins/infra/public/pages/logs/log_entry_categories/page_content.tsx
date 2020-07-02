@@ -12,12 +12,12 @@ import {
   LogAnalysisSetupStatusUnknownPrompt,
   MissingResultsPrivilegesPrompt,
   MissingSetupPrivilegesPrompt,
-  MlUnavailablePrompt,
+  SubscriptionSplashContent,
 } from '../../../components/logging/log_analysis_setup';
 import { SourceErrorPage } from '../../../components/source_error_page';
 import { SourceLoadingPage } from '../../../components/source_loading_page';
 import { useLogAnalysisCapabilitiesContext } from '../../../containers/logs/log_analysis';
-import { useSourceContext } from '../../../containers/source';
+import { useLogSourceContext } from '../../../containers/logs/log_source';
 import { LogEntryCategoriesResultsContent } from './page_results_content';
 import { LogEntryCategoriesSetupContent } from './page_setup_content';
 import { useLogEntryCategoriesModuleContext } from './use_log_entry_categories_module';
@@ -25,11 +25,11 @@ import { useLogEntryCategoriesModuleContext } from './use_log_entry_categories_m
 export const LogEntryCategoriesPageContent = () => {
   const {
     hasFailedLoadingSource,
-    isLoadingSource,
+    isLoading,
     isUninitialized,
     loadSource,
     loadSourceFailureMessage,
-  } = useSourceContext();
+  } = useLogSourceContext();
 
   const {
     hasLogAnalysisCapabilites,
@@ -45,12 +45,12 @@ export const LogEntryCategoriesPageContent = () => {
     }
   }, [fetchJobStatus, hasLogAnalysisReadCapabilities]);
 
-  if (isLoadingSource || isUninitialized) {
+  if (isLoading || isUninitialized) {
     return <SourceLoadingPage />;
   } else if (hasFailedLoadingSource) {
     return <SourceErrorPage errorMessage={loadSourceFailureMessage ?? ''} retry={loadSource} />;
   } else if (!hasLogAnalysisCapabilites) {
-    return <MlUnavailablePrompt />;
+    return <SubscriptionSplashContent />;
   } else if (!hasLogAnalysisReadCapabilities) {
     return <MissingResultsPrivilegesPrompt />;
   } else if (setupStatus.type === 'initializing') {

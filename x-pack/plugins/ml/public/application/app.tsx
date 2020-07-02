@@ -15,14 +15,10 @@ import { KibanaContextProvider } from '../../../../../src/plugins/kibana_react/p
 import { setDependencyCache, clearCache } from './util/dependency_cache';
 import { setLicenseCache } from './license';
 import { MlSetupDependencies, MlStartDependencies } from '../plugin';
-import { MlConfigType } from '../../common/types/ml_config';
 
 import { MlRouter } from './routing';
 
-type MlDependencies = MlSetupDependencies &
-  MlStartDependencies & {
-    mlConfig: MlConfigType;
-  };
+type MlDependencies = MlSetupDependencies & MlStartDependencies;
 
 interface AppProps {
   coreStart: CoreStart;
@@ -39,6 +35,8 @@ const App: FC<AppProps> = ({ coreStart, deps }) => {
   };
   const services = {
     appName: 'ML',
+    kibanaVersion: deps.kibanaVersion,
+    share: deps.share,
     data: deps.data,
     security: deps.security,
     licenseManagement: deps.licenseManagement,
@@ -78,14 +76,15 @@ export const renderApp = (
     http: coreStart.http,
     security: deps.security,
     urlGenerators: deps.share.urlGenerators,
-    mlConfig: deps.mlConfig,
   });
 
-  const mlLicense = setLicenseCache(deps.licensing);
+  deps.kibanaLegacy.loadFontAwesome();
 
-  appMountParams.onAppLeave(actions => actions.default());
+  appMountParams.onAppLeave((actions) => actions.default());
 
-  ReactDOM.render(<App coreStart={coreStart} deps={deps} />, appMountParams.element);
+  const mlLicense = setLicenseCache(deps.licensing, [
+    () => ReactDOM.render(<App coreStart={coreStart} deps={deps} />, appMountParams.element),
+  ]);
 
   return () => {
     mlLicense.unsubscribe();

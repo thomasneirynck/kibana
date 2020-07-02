@@ -11,6 +11,7 @@ export {
   IngestManagerSetupContract,
   IngestManagerSetupDeps,
   IngestManagerStartContract,
+  ExternalCallback,
 } from './plugin';
 
 export const config = {
@@ -22,16 +23,18 @@ export const config = {
     enabled: schema.boolean({ defaultValue: false }),
     epm: schema.object({
       enabled: schema.boolean({ defaultValue: true }),
-      registryUrl: schema.uri({ defaultValue: 'https://epr-staging.elastic.co' }),
+      registryUrl: schema.maybe(schema.uri()),
     }),
     fleet: schema.object({
       enabled: schema.boolean({ defaultValue: true }),
+      tlsCheckDisabled: schema.boolean({ defaultValue: false }),
+      pollingRequestTimeout: schema.number({ defaultValue: 60000 }),
       kibana: schema.object({
         host: schema.maybe(schema.string()),
         ca_sha256: schema.maybe(schema.string()),
       }),
       elasticsearch: schema.object({
-        host: schema.string({ defaultValue: 'http://localhost:9200' }),
+        host: schema.maybe(schema.string()),
         ca_sha256: schema.maybe(schema.string()),
       }),
     }),
@@ -40,16 +43,8 @@ export const config = {
 
 export type IngestManagerConfigType = TypeOf<typeof config.schema>;
 
+export { DatasourceServiceInterface } from './services/datasource';
+
 export const plugin = (initializerContext: PluginInitializerContext) => {
   return new IngestManagerPlugin(initializerContext);
 };
-
-// Saved object information bootstrapped by legacy `ingest_manager` plugin
-// TODO: Remove once saved object mappings can be done from NP
-export { savedObjectMappings } from './saved_objects';
-export {
-  OUTPUT_SAVED_OBJECT_TYPE,
-  AGENT_CONFIG_SAVED_OBJECT_TYPE,
-  DATASOURCE_SAVED_OBJECT_TYPE,
-  PACKAGES_SAVED_OBJECT_TYPE,
-} from './constants';

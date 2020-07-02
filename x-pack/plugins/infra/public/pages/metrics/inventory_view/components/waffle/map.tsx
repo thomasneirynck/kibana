@@ -12,10 +12,10 @@ import { InfraWaffleMapBounds, InfraWaffleMapOptions } from '../../../../../lib/
 import { AutoSizer } from '../../../../../components/auto_sizer';
 import { GroupOfGroups } from './group_of_groups';
 import { GroupOfNodes } from './group_of_nodes';
-import { Legend } from './legend';
 import { applyWaffleMapLayout } from '../../lib/apply_wafflemap_layout';
 import { SnapshotNode } from '../../../../../../common/http_api/snapshot_api';
 import { InventoryItemType } from '../../../../../../common/inventory_models/types';
+import { sortNodes } from '../../lib/sort_nodes';
 
 interface Props {
   nodes: SnapshotNode[];
@@ -38,7 +38,8 @@ export const Map: React.FC<Props> = ({
   nodeType,
   dataBounds,
 }) => {
-  const map = nodesToWaffleMap(nodes);
+  const sortedNodes = sortNodes(options.sort, nodes);
+  const map = nodesToWaffleMap(sortedNodes);
   return (
     <AutoSizer content>
       {({ measureRef, content: { width = 0, height = 0 } }) => {
@@ -46,7 +47,7 @@ export const Map: React.FC<Props> = ({
         return (
           <WaffleMapOuterContainer ref={(el: any) => measureRef(el)} data-test-subj="waffleMap">
             <WaffleMapInnerContainer>
-              {groupsWithLayout.map(group => {
+              {groupsWithLayout.map((group) => {
                 if (isWaffleMapGroupWithGroups(group)) {
                   return (
                     <GroupOfGroups
@@ -78,12 +79,6 @@ export const Map: React.FC<Props> = ({
                 }
               })}
             </WaffleMapInnerContainer>
-            <Legend
-              formatter={formatter}
-              bounds={bounds}
-              dataBounds={dataBounds}
-              legend={options.legend}
-            />
           </WaffleMapOuterContainer>
         );
       }}

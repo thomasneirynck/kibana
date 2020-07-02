@@ -12,7 +12,7 @@ import { pipe } from 'fp-ts/lib/pipeable';
 import { Option, some, map as mapOptional } from 'fp-ts/lib/Option';
 import {
   SavedObjectsSerializer,
-  IScopedClusterClient,
+  ILegacyScopedClusterClient,
   ISavedObjectsRepository,
 } from '../../../../src/core/server';
 import { Result, asErr, either, map, mapErr, promiseResult } from './lib/result_type';
@@ -43,6 +43,7 @@ import {
   TaskLifecycle,
   TaskLifecycleResult,
   TaskStatus,
+  ElasticJs,
 } from './task';
 import { createTaskPoller, PollingError, PollingErrorType } from './task_poller';
 import { TaskPool } from './task_pool';
@@ -62,7 +63,7 @@ const VERSION_CONFLICT_STATUS = 409;
 export interface TaskManagerOpts {
   logger: Logger;
   config: TaskManagerConfig;
-  callAsInternalUser: IScopedClusterClient['callAsInternalUser'];
+  callAsInternalUser: ILegacyScopedClusterClient['callAsInternalUser'];
   savedObjectsRepository: ISavedObjectsRepository;
   serializer: SavedObjectsSerializer;
   taskManagerId: string;
@@ -129,14 +130,14 @@ export class TaskManager {
     this.store = new TaskStore({
       serializer: opts.serializer,
       savedObjectsRepository: opts.savedObjectsRepository,
-      callCluster: opts.callAsInternalUser,
+      callCluster: (opts.callAsInternalUser as unknown) as ElasticJs,
       index: opts.config.index,
       maxAttempts: opts.config.max_attempts,
       definitions: this.definitions,
       taskManagerId: `kibana:${taskManagerId}`,
     });
     // pipe store events into the TaskManager's event stream
-    this.store.events.subscribe(event => this.events$.next(event));
+    this.store.events.subscribe((event) => this.events$.next(event));
 
     this.pool = new TaskPool({
       logger: this.logger,
@@ -199,7 +200,7 @@ export class TaskManager {
   public start() {
     if (!this.isStarted) {
       // Some calls are waiting until task manager is started
-      this.startQueue.forEach(fn => fn());
+      this.startQueue.forEach((fn) => fn());
       this.startQueue = [];
 
       this.pollingSubscription = this.poller$.subscribe(
@@ -207,7 +208,7 @@ export class TaskManager {
           if (error.type === PollingErrorType.RequestCapacityReached) {
             pipe(
               error.data,
-              mapOptional(id => this.emitEvent(asTaskRunRequestEvent(id, asErr(error))))
+              mapOptional((id) => this.emitEvent(asTaskRunRequestEvent(id, asErr(error))))
             );
           }
           this.logger.error(error.message);
@@ -218,7 +219,7 @@ export class TaskManager {
 
   private async waitUntilStarted() {
     if (!this.isStarted) {
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         this.startQueue.push(resolve);
       });
     }
@@ -239,8 +240,8 @@ export class TaskManager {
    * @param taskDefinitions - The Kibana task definitions dictionary
    */
   public registerTaskDefinitions(taskDefinitions: TaskDictionary<TaskDefinition>) {
-    this.assertUninitialized('register task definitions');
-    const duplicate = Object.keys(taskDefinitions).find(k => !!this.definitions[k]);
+    this.assertUninitialized('register task definitions', Object.keys(taskDefinitions).join(', '));
+    const duplicate = Object.keys(taskDefinitions).find((k) => !!this.definitions[k]);
     if (duplicate) {
       throw new Error(`Task ${duplicate} is already defined!`);
     }
@@ -273,7 +274,7 @@ export class TaskManager {
    */
   public async schedule(
     taskInstance: TaskInstanceWithDeprecatedFields,
-    options?: any
+    options?: object
   ): Promise<ConcreteTaskInstance> {
     await this.waitUntilStarted();
     const { taskInstance: modifiedTask } = await this.middleware.beforeSave({
@@ -308,7 +309,7 @@ export class TaskManager {
    */
   public async ensureScheduled(
     taskInstance: TaskInstanceWithId,
-    options?: any
+    options?: object
   ): Promise<TaskInstanceWithId> {
     try {
       return await this.schedule(taskInstance, options);
@@ -359,9 +360,11 @@ export class TaskManager {
    * @param {string} message shown if task manager is already initialized
    * @returns void
    */
-  private assertUninitialized(message: string) {
+  private assertUninitialized(message: string, context?: string) {
     if (this.isStarted) {
-      throw new Error(`Cannot ${message} after the task manager is initialized!`);
+      throw new Error(
+        `${context ? `[${context}] ` : ''}Cannot ${message} after the task manager is initialized`
+      );
     }
   }
 }

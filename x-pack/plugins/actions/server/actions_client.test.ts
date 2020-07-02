@@ -19,10 +19,16 @@ import {
   elasticsearchServiceMock,
   savedObjectsClientMock,
 } from '../../../../src/core/server/mocks';
+import { actionExecutorMock } from './lib/action_executor.mock';
+import uuid from 'uuid';
+import { KibanaRequest } from 'kibana/server';
 
 const defaultKibanaIndex = '.kibana';
 const savedObjectsClient = savedObjectsClientMock.create();
 const scopedClusterClient = elasticsearchServiceMock.createScopedClusterClient();
+const actionExecutor = actionExecutorMock.create();
+const executionEnqueuer = jest.fn();
+const request = {} as KibanaRequest;
 
 const mockTaskManager = taskManagerMock.setup();
 
@@ -30,7 +36,7 @@ let actionsClient: ActionsClient;
 let mockedLicenseState: jest.Mocked<ILicenseState>;
 let actionTypeRegistry: ActionTypeRegistry;
 let actionTypeRegistryParams: ActionTypeRegistryOpts;
-const executor: ExecutorType = async options => {
+const executor: ExecutorType = async (options) => {
   return { status: 'ok', actionId: options.actionId };
 };
 
@@ -44,6 +50,7 @@ beforeEach(() => {
     ),
     actionsConfigUtils: actionsConfigMock.create(),
     licenseState: mockedLicenseState,
+    preconfiguredActions: [],
   };
   actionTypeRegistry = new ActionTypeRegistry(actionTypeRegistryParams);
   actionsClient = new ActionsClient({
@@ -52,6 +59,9 @@ beforeEach(() => {
     scopedClusterClient,
     defaultKibanaIndex,
     preconfiguredActions: [],
+    actionExecutor,
+    executionEnqueuer,
+    request,
   });
 });
 
@@ -221,6 +231,7 @@ describe('create()', () => {
       ),
       actionsConfigUtils: localConfigUtils,
       licenseState: licenseStateMock.create(),
+      preconfiguredActions: [],
     };
 
     actionTypeRegistry = new ActionTypeRegistry(localActionTypeRegistryParams);
@@ -230,6 +241,9 @@ describe('create()', () => {
       scopedClusterClient,
       defaultKibanaIndex,
       preconfiguredActions: [],
+      actionExecutor,
+      executionEnqueuer,
+      request,
     });
 
     const savedObjectCreateResult = {
@@ -326,6 +340,9 @@ describe('get()', () => {
       savedObjectsClient,
       scopedClusterClient,
       defaultKibanaIndex,
+      actionExecutor,
+      executionEnqueuer,
+      request,
       preconfiguredActions: [
         {
           id: 'testPreconfigured',
@@ -369,6 +386,7 @@ describe('getAll()', () => {
               foo: 'bar',
             },
           },
+          score: 1,
           references: [],
         },
       ],
@@ -386,6 +404,9 @@ describe('getAll()', () => {
       savedObjectsClient,
       scopedClusterClient,
       defaultKibanaIndex,
+      actionExecutor,
+      executionEnqueuer,
+      request,
       preconfiguredActions: [
         {
           id: 'testPreconfigured',
@@ -416,6 +437,77 @@ describe('getAll()', () => {
         isPreconfigured: true,
         name: 'test',
         referencedByCount: 2,
+      },
+    ]);
+  });
+});
+
+describe('getBulk()', () => {
+  test('calls getBulk savedObjectsClient with parameters', async () => {
+    savedObjectsClient.bulkGet.mockResolvedValueOnce({
+      saved_objects: [
+        {
+          id: '1',
+          type: 'action',
+          attributes: {
+            actionTypeId: 'test',
+            name: 'test',
+            config: {
+              foo: 'bar',
+            },
+          },
+          references: [],
+        },
+      ],
+    });
+    scopedClusterClient.callAsInternalUser.mockResolvedValueOnce({
+      aggregations: {
+        '1': { doc_count: 6 },
+        testPreconfigured: { doc_count: 2 },
+      },
+    });
+
+    actionsClient = new ActionsClient({
+      actionTypeRegistry,
+      savedObjectsClient,
+      scopedClusterClient,
+      defaultKibanaIndex,
+      actionExecutor,
+      executionEnqueuer,
+      request,
+      preconfiguredActions: [
+        {
+          id: 'testPreconfigured',
+          actionTypeId: '.slack',
+          secrets: {},
+          isPreconfigured: true,
+          name: 'test',
+          config: {
+            foo: 'bar',
+          },
+        },
+      ],
+    });
+    const result = await actionsClient.getBulk(['1', 'testPreconfigured']);
+    expect(result).toEqual([
+      {
+        actionTypeId: '.slack',
+        config: {
+          foo: 'bar',
+        },
+        id: 'testPreconfigured',
+        isPreconfigured: true,
+        name: 'test',
+        secrets: {},
+      },
+      {
+        actionTypeId: 'test',
+        config: {
+          foo: 'bar',
+        },
+        id: '1',
+        isPreconfigured: false,
+        name: 'test',
       },
     ]);
   });
@@ -646,5 +738,42 @@ describe('update()', () => {
         },
       })
     ).rejects.toThrowErrorMatchingInlineSnapshot(`"Fail"`);
+  });
+});
+
+describe('execute()', () => {
+  test('calls the actionExecutor with the appropriate parameters', async () => {
+    const actionId = uuid.v4();
+    actionExecutor.execute.mockResolvedValue({ status: 'ok', actionId });
+    await expect(
+      actionsClient.execute({
+        actionId,
+        params: {
+          name: 'my name',
+        },
+      })
+    ).resolves.toMatchObject({ status: 'ok', actionId });
+
+    expect(actionExecutor.execute).toHaveBeenCalledWith({
+      actionId,
+      request,
+      params: {
+        name: 'my name',
+      },
+    });
+  });
+});
+
+describe('enqueueExecution()', () => {
+  test('calls the executionEnqueuer with the appropriate parameters', async () => {
+    const opts = {
+      id: uuid.v4(),
+      params: { baz: false },
+      spaceId: 'default',
+      apiKey: Buffer.from('123:abc').toString('base64'),
+    };
+    await expect(actionsClient.enqueueExecution(opts)).resolves.toMatchInlineSnapshot(`undefined`);
+
+    expect(executionEnqueuer).toHaveBeenCalledWith(savedObjectsClient, opts);
   });
 });

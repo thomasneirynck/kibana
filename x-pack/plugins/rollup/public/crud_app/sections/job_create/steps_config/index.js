@@ -42,7 +42,7 @@ export const stepIds = [
  *  1. getDefaultFields: (overrides) => object
  *  2. fieldValidations
  *
- * See x-pack/plugins/rollup/public/crud_app/services/jobs.js for more information on override's shape
+ * See rollup/public/crud_app/services/jobs.js for more information on override's shape
  */
 export const stepIdToStepConfigMap = {
   [STEP_LOGISTICS]: {
@@ -80,7 +80,7 @@ export const stepIdToStepConfigMap = {
         clonedRollupId,
       };
     },
-    fieldsValidator: fields => {
+    fieldsValidator: (fields) => {
       const {
         id,
         indexPattern,
@@ -113,7 +113,7 @@ export const stepIdToStepConfigMap = {
         ...pick(overrides, Object.keys(defaults)),
       };
     },
-    fieldsValidator: fields => {
+    fieldsValidator: (fields) => {
       const { dateHistogramField, dateHistogramInterval } = fields;
 
       return {
@@ -131,14 +131,14 @@ export const stepIdToStepConfigMap = {
     },
   },
   [STEP_HISTOGRAM]: {
-    getDefaultFields: overrides => {
+    getDefaultFields: (overrides) => {
       return {
         histogram: [],
         histogramInterval: undefined,
         ...pick(overrides, ['histogram', 'histogramInterval']),
       };
     },
-    fieldsValidator: fields => {
+    fieldsValidator: (fields) => {
       const { histogram, histogramInterval } = fields;
 
       return {
@@ -153,7 +153,7 @@ export const stepIdToStepConfigMap = {
         ...pick(overrides, ['metrics']),
       };
     },
-    fieldsValidator: fields => {
+    fieldsValidator: (fields) => {
       const { metrics } = fields;
 
       return {
@@ -184,5 +184,5 @@ export function getAffectedStepsFields(fields, stepsFields) {
 
 export function hasErrors(fieldErrors) {
   const errorValues = Object.values(fieldErrors);
-  return errorValues.some(error => error !== undefined);
+  return errorValues.some((error) => error !== undefined);
 }

@@ -82,6 +82,8 @@ export interface SavedObjectsFindOptions extends SavedObjectsBaseOptions {
   hasReference?: { type: string; id: string };
   defaultSearchOperator?: 'AND' | 'OR';
   filter?: string;
+  /** An optional ES preference value to be used for the query **/
+  preference?: string;
 }
 
 /**
@@ -155,15 +157,6 @@ export type MutatingOperationRefreshSetting = boolean | 'wait_for';
  * object the request/call was targeting could not be found. This is why #14141
  * takes special care to ensure that 404 errors are generic and don't distinguish
  * between index missing or document missing.
- *
- * ### 503s from missing index
- *
- * Unlike all other methods, create requests are supposed to succeed even when
- * the Kibana index does not exist because it will be automatically created by
- * elasticsearch. When that is not the case it is because Elasticsearch's
- * `action.auto_create_index` setting prevents it from being created automatically
- * so we throw a special 503 with the intention of informing the user that their
- * Elasticsearch settings need to be updated.
  *
  * See {@link SavedObjectsClient}
  * See {@link SavedObjectsErrorHelpers}

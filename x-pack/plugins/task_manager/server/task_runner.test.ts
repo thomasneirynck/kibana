@@ -9,7 +9,7 @@ import sinon from 'sinon';
 import { minutesFromNow } from './lib/intervals';
 import { asOk, asErr } from './lib/result_type';
 import { TaskEvent, asTaskRunEvent, asTaskMarkRunningEvent } from './task_events';
-import { ConcreteTaskInstance, TaskStatus } from './task';
+import { ConcreteTaskInstance, TaskStatus, TaskDictionary, TaskDefinition } from './task';
 import { TaskManagerRunner } from './task_runner';
 import { mockLogger } from './test_utils';
 import { SavedObjectsErrorHelpers } from '../../../../src/core/server';
@@ -141,9 +141,7 @@ describe('TaskManagerRunner', () => {
   });
 
   test('runDuration returns duration which has elapsed since start', async () => {
-    const now = moment()
-      .subtract(30, 's')
-      .toDate();
+    const now = moment().subtract(30, 's').toDate();
     const { runner } = testOpts({
       instance: {
         schedule: { interval: '10m' },
@@ -242,7 +240,7 @@ describe('TaskManagerRunner', () => {
         bar: {
           createTaskRunner: () => ({
             async run() {
-              const promise = new Promise(r => setTimeout(r, 1000));
+              const promise = new Promise((r) => setTimeout(r, 1000));
               fakeTimer.tick(1000);
               await promise;
             },
@@ -906,8 +904,8 @@ describe('TaskManagerRunner', () => {
 
   interface TestOpts {
     instance?: Partial<ConcreteTaskInstance>;
-    definitions?: any;
-    onTaskEvent?: (event: TaskEvent<any, any>) => void;
+    definitions?: unknown;
+    onTaskEvent?: (event: TaskEvent<unknown, unknown>) => void;
   }
 
   function testOpts(opts: TestOpts) {
@@ -945,8 +943,8 @@ describe('TaskManagerRunner', () => {
     store.update.returns(instance);
 
     const runner = new TaskManagerRunner({
-      beforeRun: context => Promise.resolve(context),
-      beforeMarkRunning: context => Promise.resolve(context),
+      beforeRun: (context) => Promise.resolve(context),
+      beforeMarkRunning: (context) => Promise.resolve(context),
       logger,
       store,
       instance,
@@ -956,7 +954,7 @@ describe('TaskManagerRunner', () => {
           title: 'Bar!',
           createTaskRunner,
         },
-      }),
+      }) as TaskDictionary<TaskDefinition>,
       onTaskEvent: opts.onTaskEvent,
     });
 
@@ -970,7 +968,7 @@ describe('TaskManagerRunner', () => {
     };
   }
 
-  async function testReturn(result: any, shouldBeValid: boolean) {
+  async function testReturn(result: unknown, shouldBeValid: boolean) {
     const { runner, logger } = testOpts({
       definitions: {
         bar: {
@@ -991,11 +989,11 @@ describe('TaskManagerRunner', () => {
     }
   }
 
-  function allowsReturnType(result: any) {
+  function allowsReturnType(result: unknown) {
     return testReturn(result, true);
   }
 
-  function disallowsReturnType(result: any) {
+  function disallowsReturnType(result: unknown) {
     return testReturn(result, false);
   }
 });

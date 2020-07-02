@@ -11,20 +11,17 @@ jest.mock('./lib/post_pagerduty', () => ({
 import { getActionType } from './pagerduty';
 import { ActionType, Services, ActionTypeExecutorOptions } from '../types';
 import { validateConfig, validateSecrets, validateParams } from '../lib';
-import { savedObjectsClientMock } from '../../../../../src/core/server/mocks';
 import { postPagerduty } from './lib/post_pagerduty';
 import { createActionTypeRegistry } from './index.test';
 import { Logger } from '../../../../../src/core/server';
 import { actionsConfigMock } from '../actions_config.mock';
+import { actionsMock } from '../mocks';
 
 const postPagerdutyMock = postPagerduty as jest.Mock;
 
 const ACTION_TYPE_ID = '.pagerduty';
 
-const services: Services = {
-  callCluster: async (path: string, opts: any) => {},
-  savedObjectsClient: savedObjectsClientMock.create(),
-};
+const services: Services = actionsMock.createServices();
 
 let actionType: ActionType;
 let mockedLogger: jest.Mocked<Logger>;
@@ -61,7 +58,7 @@ describe('validateConfig()', () => {
       logger: mockedLogger,
       configurationUtilities: {
         ...actionsConfigMock.create(),
-        ensureWhitelistedUri: url => {
+        ensureWhitelistedUri: (url) => {
           expect(url).toEqual('https://events.pagerduty.com/v2/enqueue');
         },
       },
@@ -77,7 +74,7 @@ describe('validateConfig()', () => {
       logger: mockedLogger,
       configurationUtilities: {
         ...actionsConfigMock.create(),
-        ensureWhitelistedUri: _ => {
+        ensureWhitelistedUri: (_) => {
           throw new Error(`target url is not whitelisted`);
         },
       },

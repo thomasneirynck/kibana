@@ -5,6 +5,7 @@
  */
 
 import { datasourceService } from './datasource';
+import { PackageInfo } from '../types';
 
 async function mockedGetAssetsData(_a: any, _b: any, dataset: string) {
   if (dataset === 'dataset1') {
@@ -26,18 +27,34 @@ paths:
 
 jest.mock('./epm/packages/assets', () => {
   return {
-    getAssetsDataForPackageKey: mockedGetAssetsData,
+    getAssetsData: mockedGetAssetsData,
+  };
+});
+
+jest.mock('./epm/registry', () => {
+  return {
+    fetchInfo: () => ({}),
   };
 });
 
 describe('Datasource service', () => {
   describe('assignPackageStream', () => {
-    it('should work with cofig variables from the stream', async () => {
+    it('should work with config variables from the stream', async () => {
       const inputs = await datasourceService.assignPackageStream(
-        {
-          pkgName: 'package',
-          pkgVersion: '1.0.0',
-        },
+        ({
+          datasets: [
+            {
+              type: 'logs',
+              name: 'package.dataset1',
+              streams: [{ input: 'log', template_path: 'some_template_path.yml' }],
+            },
+          ],
+          config_templates: [
+            {
+              inputs: [{ type: 'log' }],
+            },
+          ],
+        } as unknown) as PackageInfo,
         [
           {
             type: 'log',
@@ -45,9 +62,9 @@ describe('Datasource service', () => {
             streams: [
               {
                 id: 'dataset01',
-                dataset: 'package.dataset1',
+                dataset: { name: 'package.dataset1', type: 'logs' },
                 enabled: true,
-                config: {
+                vars: {
                   paths: {
                     value: ['/var/log/set.log'],
                   },
@@ -65,14 +82,14 @@ describe('Datasource service', () => {
           streams: [
             {
               id: 'dataset01',
-              dataset: 'package.dataset1',
+              dataset: { name: 'package.dataset1', type: 'logs' },
               enabled: true,
-              config: {
+              vars: {
                 paths: {
                   value: ['/var/log/set.log'],
                 },
               },
-              pkg_stream: {
+              agent_stream: {
                 metricset: ['dataset1'],
                 paths: ['/var/log/set.log'],
                 type: 'log',
@@ -85,15 +102,25 @@ describe('Datasource service', () => {
 
     it('should work with config variables at the input level', async () => {
       const inputs = await datasourceService.assignPackageStream(
-        {
-          pkgName: 'package',
-          pkgVersion: '1.0.0',
-        },
+        ({
+          datasets: [
+            {
+              name: 'package.dataset1',
+              type: 'logs',
+              streams: [{ input: 'log', template_path: 'some_template_path.yml' }],
+            },
+          ],
+          config_templates: [
+            {
+              inputs: [{ type: 'log' }],
+            },
+          ],
+        } as unknown) as PackageInfo,
         [
           {
             type: 'log',
             enabled: true,
-            config: {
+            vars: {
               paths: {
                 value: ['/var/log/set.log'],
               },
@@ -101,7 +128,7 @@ describe('Datasource service', () => {
             streams: [
               {
                 id: 'dataset01',
-                dataset: 'package.dataset1',
+                dataset: { name: 'package.dataset1', type: 'logs' },
                 enabled: true,
               },
             ],
@@ -113,7 +140,7 @@ describe('Datasource service', () => {
         {
           type: 'log',
           enabled: true,
-          config: {
+          vars: {
             paths: {
               value: ['/var/log/set.log'],
             },
@@ -121,9 +148,9 @@ describe('Datasource service', () => {
           streams: [
             {
               id: 'dataset01',
-              dataset: 'package.dataset1',
+              dataset: { name: 'package.dataset1', type: 'logs' },
               enabled: true,
-              pkg_stream: {
+              agent_stream: {
                 metricset: ['dataset1'],
                 paths: ['/var/log/set.log'],
                 type: 'log',
