@@ -133,15 +133,10 @@ export class ToolsControl extends Component<Props, State> {
       },
     ];
 
-    const hasGeoPoints = this.props.geoFields.some(({ geoFieldType }) => {
-      return geoFieldType === ES_GEO_FIELD_TYPE.GEO_POINT;
+    tools.push({
+      name: DRAW_DISTANCE_LABEL,
+      panel: 3,
     });
-    if (hasGeoPoints) {
-      tools.push({
-        name: DRAW_DISTANCE_LABEL,
-        panel: 3,
-      });
-    }
 
     return [
       {
@@ -198,9 +193,7 @@ export class ToolsControl extends Component<Props, State> {
           <DistanceFilterForm
             className="mapDrawControl__geometryFilterForm"
             buttonLabel={DRAW_DISTANCE_LABEL_SHORT}
-            geoFields={this.props.geoFields.filter(({ geoFieldType }) => {
-              return geoFieldType === ES_GEO_FIELD_TYPE.GEO_POINT;
-            })}
+            geoFields={this.props.geoFields}
             getFilterActions={this.props.getFilterActions}
             getActionContext={this.props.getActionContext}
             onSubmit={this._initiateDistanceDraw}
