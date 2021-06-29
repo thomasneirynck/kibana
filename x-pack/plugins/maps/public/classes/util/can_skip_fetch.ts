@@ -64,18 +64,19 @@ export async function canSkipSourceUpdate({
   extentAware: boolean;
   getUpdateDueToTimeslice: (timeslice?: Timeslice) => boolean;
 }): Promise<boolean> {
-  const timeAware = await source.isTimeAware();
+  const isFilterableByGlobalTimePicker =
+    (await source.isTimeAware()) && source.getApplyGlobalTime();
   const refreshTimerAware = await source.isRefreshTimerAware();
   const isFieldAware = source.isFieldAware();
-  const isQueryAware = source.isQueryAware();
+  const isFilterableByGlobalQueryBar = source.isQueryAware() && source.getApplyGlobalQuery();
   const isGeoGridPrecisionAware = source.isGeoGridPrecisionAware();
 
   if (
-    !timeAware &&
+    !isFilterableByGlobalTimePicker &&
     !refreshTimerAware &&
     !extentAware &&
     !isFieldAware &&
-    !isQueryAware &&
+    !isFilterableByGlobalQueryBar &&
     !isGeoGridPrecisionAware
   ) {
     return !!prevDataRequest && prevDataRequest.hasDataOrRequestInProgress();
@@ -89,16 +90,19 @@ export async function canSkipSourceUpdate({
     return false;
   }
 
-  let updateDueToApplyGlobalTime = false;
+  const isRefreshDueToAutoRefreshOrRefreshButtonClick = isRefreshOnlyQuery(
+    prevMeta.query,
+    nextMeta.query
+  );
+
   let updateDueToTime = false;
   let updateDueToTimeslice = false;
-  if (timeAware) {
-    updateDueToApplyGlobalTime = prevMeta.applyGlobalTime !== nextMeta.applyGlobalTime;
-    if (nextMeta.applyGlobalTime) {
-      updateDueToTime = !_.isEqual(prevMeta.timeFilters, nextMeta.timeFilters);
-      if (!_.isEqual(prevMeta.timeslice, nextMeta.timeslice)) {
-        updateDueToTimeslice = getUpdateDueToTimeslice(nextMeta.timeslice);
-      }
+  if (isFilterableByGlobalTimePicker) {
+    updateDueToTime =
+      isRefreshDueToAutoRefreshOrRefreshButtonClick ||
+      !_.isEqual(prevMeta.timeFilters, nextMeta.timeFilters);
+    if (!_.isEqual(prevMeta.timeslice, nextMeta.timeslice)) {
+      updateDueToTimeslice = getUpdateDueToTimeslice(nextMeta.timeslice);
     }
   }
 
@@ -117,24 +121,18 @@ export async function canSkipSourceUpdate({
 
   let updateDueToQuery = false;
   let updateDueToFilters = false;
-  let updateDueToSourceQuery = false;
-  let updateDueToApplyGlobalQuery = false;
-  if (isQueryAware) {
-    updateDueToApplyGlobalQuery = prevMeta.applyGlobalQuery !== nextMeta.applyGlobalQuery;
-    updateDueToSourceQuery = !_.isEqual(prevMeta.sourceQuery, nextMeta.sourceQuery);
-
-    if (nextMeta.applyGlobalQuery) {
-      updateDueToQuery = !_.isEqual(prevMeta.query, nextMeta.query);
-      updateDueToFilters = !_.isEqual(prevMeta.filters, nextMeta.filters);
-    } else {
-      // Global filters and query are not applied to layer search request so no re-fetch required.
-      // Exception is "Refresh" query.
-      updateDueToQuery = isRefreshOnlyQuery(prevMeta.query, nextMeta.query);
-    }
+  const updateDueToSourceQuery =
+    source.isQueryAware() && !_.isEqual(prevMeta.sourceQuery, nextMeta.sourceQuery);
+  if (isFilterableByGlobalQueryBar) {
+    updateDueToQuery =
+      isRefreshDueToAutoRefreshOrRefreshButtonClick || !_.isEqual(prevMeta.query, nextMeta.query);
+    updateDueToFilters =
+      isRefreshDueToAutoRefreshOrRefreshButtonClick ||
+      !_.isEqual(prevMeta.filters, nextMeta.filters);
   }
 
   let updateDueToSearchSessionId = false;
-  if (timeAware || isQueryAware) {
+  if (isFilterableByGlobalTimePicker || isFilterableByGlobalQueryBar) {
     updateDueToSearchSessionId = prevMeta.searchSessionId !== nextMeta.searchSessionId;
   }
 
@@ -152,7 +150,6 @@ export async function canSkipSourceUpdate({
   const updateDueToSourceMetaChange = !_.isEqual(prevMeta.sourceMeta, nextMeta.sourceMeta);
 
   return (
-    !updateDueToApplyGlobalTime &&
     !updateDueToTime &&
     !updateDueToTimeslice &&
     !updateDueToRefreshTimer &&
@@ -161,7 +158,6 @@ export async function canSkipSourceUpdate({
     !updateDueToQuery &&
     !updateDueToFilters &&
     !updateDueToSourceQuery &&
-    !updateDueToApplyGlobalQuery &&
     !updateDueToPrecisionChange &&
     !updateDueToSourceMetaChange &&
     !updateDueToSearchSessionId
