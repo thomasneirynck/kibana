@@ -24,7 +24,7 @@ import { UpdateAnomalySourceEditor } from './update_anomaly_source_editor';
 
 export interface AnomalySourceDescriptor extends AbstractSourceDescriptor {
   jobId: string;
-  typicalActual: 'typical' | 'actual';
+  typicalActual: 'typical' | 'actual' | 'connected';
 }
 
 export class AnomalySource implements IVectorSource {
@@ -223,7 +223,9 @@ export class AnomalySource implements IVectorSource {
   }
 
   async getSupportedShapeTypes(): Promise<VECTOR_SHAPE_TYPE[]> {
-    return [VECTOR_SHAPE_TYPE.POINT];
+    return this._descriptor.typicalActual === 'connected'
+      ? [VECTOR_SHAPE_TYPE.LINE]
+      : [VECTOR_SHAPE_TYPE.POINT];
   }
 
   getSyncMeta(): object | null {
