@@ -200,6 +200,7 @@ export class AnomalySource implements IVectorSource {
     // Return true if you can compute bounds of data
     return true;
   }
+
   async getLicensedFeatures() {
     return [];
   }
