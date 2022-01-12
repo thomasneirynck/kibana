@@ -200,9 +200,8 @@ export class AnomalySource implements IVectorSource {
     // Return true if you can compute bounds of data
     return true;
   }
-  // Promise<Array<{ name: string; license: string }>>
-  async getLicensedFeatures(): Promise<any[]> {
-    return [{ name: 'layer from ML anomaly job', license: 'enterprise' }];
+  async getLicensedFeatures() {
+    return [];
   }
 
   getMaxZoom(): number {
