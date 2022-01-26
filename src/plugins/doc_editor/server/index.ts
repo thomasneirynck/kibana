@@ -9,6 +9,7 @@
 import { schema } from '@kbn/config-schema';
 import { PluginInitializerContext } from '../../../core/server';
 import { DocEditorServerPlugin } from './plugin';
+export { DocEditorServerPluginSetup, DocEditorServerPluginStart } from './types';
 
 //  This exports static code and TypeScript types,
 //  as well as, Kibana Platform `plugin()` initializer.

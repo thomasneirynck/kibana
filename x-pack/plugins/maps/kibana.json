@@ -22,7 +22,8 @@
     "mapsEms",
     "savedObjects",
     "share",
-    "presentationUtil"
+    "presentationUtil",
+    "docEditor"
   ],
   "optionalPlugins": [
     "customIntegrations",

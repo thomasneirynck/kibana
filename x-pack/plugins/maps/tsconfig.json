@@ -19,6 +19,7 @@
     { "path": "../../../src/plugins/dashboard/tsconfig.json" },
     { "path": "../../../src/plugins/inspector/tsconfig.json" },
     { "path": "../../../src/plugins/data/tsconfig.json" },
+    { "path": "../../../src/plugins/docEditor/tsconfig.json" },
     { "path": "../../../src/plugins/ui_actions/tsconfig.json" },
     { "path": "../../../src/plugins/navigation/tsconfig.json" },
     { "path": "../../../src/plugins/expressions/tsconfig.json" },

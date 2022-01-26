@@ -13,6 +13,7 @@ import { MapsEmsPluginServerSetup } from '../../../../src/plugins/maps_ems/serve
 import { EmbeddableSetup } from '../../../../src/plugins/embeddable/server';
 import { PluginStart as DataPluginStart } from '../../../../src/plugins/data/server';
 import { CustomIntegrationsPluginSetup } from '../../../../src/plugins/custom_integrations/server';
+import { DocEditorServerPluginSetup } from '../../../../src/plugins/doc_editor/server';
 
 export interface SetupDeps {
   features: FeaturesPluginSetupContract;
@@ -22,6 +23,7 @@ export interface SetupDeps {
   mapsEms: MapsEmsPluginServerSetup;
   embeddable: EmbeddableSetup;
   customIntegrations: CustomIntegrationsPluginSetup;
+  docEditor: DocEditorServerPluginSetup;
 }
 
 export interface StartDeps {

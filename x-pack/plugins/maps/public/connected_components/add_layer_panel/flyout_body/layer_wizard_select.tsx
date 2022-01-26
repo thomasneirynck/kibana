@@ -23,6 +23,7 @@ import { i18n } from '@kbn/i18n';
 import { getLayerWizards, LayerWizard, LayerWizardWithMeta } from '../../../classes/layers';
 import { LAYER_WIZARD_CATEGORY } from '../../../../common/constants';
 import './layer_wizard_select.scss';
+import { getDocEditor } from '../../../kibana_services';
 
 interface Props {
   onSelect: (layerWizard: LayerWizard) => void;
@@ -183,10 +184,13 @@ export class LayerWizardSelect extends Component<Props, State> {
         );
       });
 
+    const editor = getDocEditor();
+    const Foobar = editor.getFoobar();
+    console.log('f', Foobar);
     return (
       <>
         {this._renderCategoryFacets()}
-
+        <Foobar />
         <EuiSpacer size="s" />
         <EuiFlexGrid columns={2} gutterSize="m">
           {wizardCards}

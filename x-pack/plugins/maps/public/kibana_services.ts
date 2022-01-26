@@ -11,6 +11,7 @@ import type { MapsPluginStartDependencies } from './plugin';
 import type { EMSSettings } from '../../../../src/plugins/maps_ems/common/ems_settings';
 import type { PaletteRegistry } from '../../../../src/plugins/charts/public';
 import { MapsEmsPluginPublicStart } from '../../../../src/plugins/maps_ems/public';
+import { DocEditorPublicStart } from '../../../../src/plugins/doc_editor/public/types';
 
 let coreStart: CoreStart;
 let pluginsStart: MapsPluginStartDependencies;
@@ -23,6 +24,9 @@ export function setStartServices(core: CoreStart, plugins: MapsPluginStartDepend
   emsSettings = mapsEms.createEMSSettings();
 }
 
+export function getDocEditor(): DocEditorPublicStart {
+  return pluginsStart.docEditor;
+}
 export const getIndexNameFormComponent = () => pluginsStart.fileUpload.IndexNameFormComponent;
 export const getFileUploadComponent = () => pluginsStart.fileUpload.FileUploadComponent;
 export const getIndexPatternService = () => pluginsStart.data.indexPatterns;

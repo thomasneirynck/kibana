@@ -13,6 +13,7 @@ import {
   DocEditorPublicSetupDependencies,
   DocEditorPublicStartDependencies,
 } from './types';
+import { Foobar } from './components/foobar';
 
 export class DocEditorPublicPlugin implements Plugin<DocEditorPublicSetup, DocEditorPublicStart> {
   public setup(
@@ -21,7 +22,7 @@ export class DocEditorPublicPlugin implements Plugin<DocEditorPublicSetup, DocEd
   ): DocEditorPublicSetup {
     return {
       async getHello(): Promise<string> {
-        return core.http.basePath.prepend('Hello from doc editor');
+        return core.http.basePath.prepend('Hello from doc editor setup');
       },
     };
   }
@@ -30,7 +31,14 @@ export class DocEditorPublicPlugin implements Plugin<DocEditorPublicSetup, DocEd
     coreStart: CoreStart,
     startPlugins: DocEditorPublicStartDependencies
   ): DocEditorPublicStart {
-    return {};
+    return {
+      async getHello(): Promise<string> {
+        return coreStart.http.basePath.prepend('Hello from doc editor start');
+      },
+      getFoobar(): any {
+        return Foobar;
+      },
+    };
   }
 
   public stop() {}

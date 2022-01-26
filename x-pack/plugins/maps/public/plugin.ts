@@ -21,7 +21,7 @@ import type {
 } from '../../../../src/core/public';
 import { DEFAULT_APP_CATEGORIES } from '../../../../src/core/public';
 import { MapInspectorView } from './inspector/map_inspector_view';
-import { setMapAppConfig, setStartServices } from './kibana_services';
+import {getDocEditor, setMapAppConfig, setStartServices} from './kibana_services';
 import { featureCatalogueEntry } from './feature_catalogue_entry';
 import { getMapsVisTypeAlias } from './maps_vis_type_alias';
 import type { HomePublicPluginSetup } from '../../../../src/plugins/home/public';
@@ -73,6 +73,7 @@ import {
 } from './legacy_visualizations';
 import type { SecurityPluginStart } from '../../security/public';
 import type { SpacesPluginStart } from '../../spaces/public';
+import type { DocEditorPublicSetup, DocEditorPublicStart } from '../../../../src/plugins/doc_editor/public';
 
 export interface MapsPluginSetupDependencies {
   expressions: ReturnType<ExpressionsPublicPlugin['setup']>;
@@ -83,6 +84,7 @@ export interface MapsPluginSetupDependencies {
   share: SharePluginSetup;
   licensing: LicensingPluginSetup;
   usageCollection?: UsageCollectionSetup;
+  docEditor: DocEditorPublicSetup;
 }
 
 export interface MapsPluginStartDependencies {
@@ -103,6 +105,7 @@ export interface MapsPluginStartDependencies {
   security?: SecurityPluginStart;
   spaces?: SpacesPluginStart;
   mapsEms: MapsEmsPluginPublicStart;
+  docEditor: DocEditorPublicStart;
 }
 
 /**
@@ -199,6 +202,9 @@ export class MapsPlugin
     if (!core.application.capabilities.maps.save) {
       plugins.visualizations.unRegisterAlias(APP_ID);
     }
+
+    const doceditor = getDocEditor();
+    doceditor.getHello().then(console.log);
 
     return {
       createLayerDescriptors,

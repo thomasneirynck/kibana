@@ -6,17 +6,18 @@
  * Side Public License, v 1.
  */
 
-export interface DocEditorPublicSetup {
-  getHello: () => Promise<string>;
-}
-
-export interface DocEditorPublicStart {
-  getHello: () => Promise<string>;
-  getFoobar: () => React.Component;
-}
+// @ts-ignore
+import React, { Component } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface DocEditorPublicSetupDependencies {}
+interface Props {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface DocEditorPublicStartDependencies {}
+interface State {}
+
+// eslint-disable-next-line react/prefer-stateless-function
+export class Foobar extends Component<Props, State> {
+  render() {
+    return <div>Hello Foobar</div>;
+  }
+}
