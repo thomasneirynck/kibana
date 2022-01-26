@@ -9,6 +9,7 @@
     "console": "src/plugins/console",
     "core": "src/core",
     "customIntegrations": "src/plugins/custom_integrations",
+    "docEditor": "src/plugins/doc_editor",
     "dashboard": "src/plugins/dashboard",
     "controls": "src/plugins/controls",
     "data": "src/plugins/data",
