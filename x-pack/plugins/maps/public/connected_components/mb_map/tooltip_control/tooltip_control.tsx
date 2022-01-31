@@ -234,6 +234,8 @@ export class TooltipControl extends Component<Props, {}> {
             layerId,
             mbProperties,
             actions,
+            docId: mbProperties._id || '',
+            indexId: mbProperties._index,
           });
         }
       }

@@ -41,7 +41,7 @@ import {
   setUiActions,
   setScopedHistory,
   getScopedHistory,
-  syncHistoryLocations,
+  syncHistoryLocations, setDocEditorStart,
 } from './kibana_services';
 import { registerFeature } from './register_feature';
 import { buildServices } from './build_services';
@@ -63,6 +63,7 @@ import { FieldFormatsStart } from '../../field_formats/public';
 import { injectTruncateStyles } from './utils/truncate_styles';
 import { DOC_TABLE_LEGACY, TRUNCATE_MAX_HEIGHT } from '../common';
 import { useDiscoverServices } from './utils/use_discover_services';
+import {DocEditorPublicStart} from "../../doc_editor/public/types";
 
 declare module '../../share/public' {
   export interface UrlGeneratorStateMapping {
@@ -189,6 +190,7 @@ export interface DiscoverStartPlugins {
   usageCollection?: UsageCollectionSetup;
   dataViewFieldEditor: IndexPatternFieldEditorStart;
   spaces?: SpacesPluginStart;
+  docEditor: DocEditorPublicStart;
 }
 
 /**
@@ -410,6 +412,8 @@ export class DiscoverPlugin
     // when the application/embeddable is mounted
 
     const { uiActions } = plugins;
+
+    setDocEditorStart(plugins.docEditor);
 
     const viewSavedSearchAction = new ViewSavedSearchAction(core.application);
     uiActions.addTriggerAction('CONTEXT_MENU_TRIGGER', viewSavedSearchAction);

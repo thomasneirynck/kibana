@@ -214,6 +214,7 @@ export const TableRow = ({
           isTimeBased={indexPattern.isTimeBased()}
           singleDocProps={singleDocProps}
           surrDocsProps={surrDocsProps}
+          hit={row}
         >
           <DocViewer
             columns={columns}

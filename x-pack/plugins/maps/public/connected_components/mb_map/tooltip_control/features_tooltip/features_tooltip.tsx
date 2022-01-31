@@ -6,7 +6,7 @@
  */
 
 import React, { Component, Fragment, ReactNode } from 'react';
-import { EuiIcon, EuiLink } from '@elastic/eui';
+import { EuiIcon, EuiLink, EuiButtonIcon } from '@elastic/eui';
 import { i18n } from '@kbn/i18n';
 import { ActionExecutionContext, Action } from 'src/plugins/ui_actions/public';
 import { GeoJsonProperties } from 'geojson';
@@ -18,6 +18,7 @@ import { Header } from './header';
 import { GEOMETRY_FILTER_ACTION, TooltipFeature } from '../../../../../common/descriptor_types';
 import { ITooltipProperty } from '../../../../classes/tooltips/tooltip_property';
 import { IVectorLayer } from '../../../../classes/layers/vector_layer';
+import { getDocEditor } from '../../../../kibana_services';
 
 const PROPERTIES_VIEW = 'PROPERTIES_VIEW';
 const FILTER_ACTIONS_VIEW = 'FILTER_ACTIONS_VIEW';
@@ -48,6 +49,7 @@ interface State {
   filterView: ReactNode | null;
   prevFeatures: TooltipFeature[];
   view: VIEWS;
+  showEditor: boolean;
 }
 
 export class FeaturesTooltip extends Component<Props, State> {
@@ -56,6 +58,7 @@ export class FeaturesTooltip extends Component<Props, State> {
     filterView: null,
     prevFeatures: [],
     view: PROPERTIES_VIEW,
+    showEditor: false,
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -134,6 +137,41 @@ export class FeaturesTooltip extends Component<Props, State> {
     );
   }
 
+  _renderEditButton() {
+    const onClick = () => {
+      this.setState({
+        showEditor: true,
+      });
+    };
+
+    return <EuiButtonIcon iconType={'pencil'} onClick={onClick} />;
+  }
+
+  _renderEditForm() {
+    const onClose = () => {
+      this.setState({
+        showEditor: false,
+      });
+    };
+
+    console.log(this.state.currentFeature);
+    if (
+      this.state.showEditor &&
+      this.state.currentFeature &&
+      this.state.currentFeature.docId &&
+      this.state.currentFeature.indexId
+    ) {
+      const editor = getDocEditor();
+      return editor.renderFoobar({
+        closeFlyout: onClose,
+        docId: this.state.currentFeature.docId,
+        indexId: this.state.currentFeature.indexId,
+      });
+    } else {
+      return null;
+    }
+  }
+
   render() {
     if (!this.state.currentFeature) {
       return null;
@@ -188,6 +226,8 @@ export class FeaturesTooltip extends Component<Props, State> {
           showFilterActions={this._showFilterActionsView}
         />
         {this._renderActions()}
+        {this._renderEditButton()}
+        {this._renderEditForm()}
         <Footer
           features={this.props.features}
           isLocked={this.props.isLocked}

@@ -184,13 +184,9 @@ export class LayerWizardSelect extends Component<Props, State> {
         );
       });
 
-    const editor = getDocEditor();
-    const Foobar = editor.getFoobar();
-    console.log('f', Foobar);
     return (
       <>
         {this._renderCategoryFacets()}
-        <Foobar />
         <EuiSpacer size="s" />
         <EuiFlexGrid columns={2} gutterSize="m">
           {wizardCards}

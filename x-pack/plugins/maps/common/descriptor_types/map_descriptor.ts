@@ -60,6 +60,10 @@ export type TooltipFeature = {
   mbProperties: GeoJsonProperties;
 
   actions: TooltipFeatureAction[];
+
+  indexPatternId?: string;
+  indexId?: string;
+  docId?: string;
 };
 
 export type TooltipState = {

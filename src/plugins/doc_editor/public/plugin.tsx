@@ -6,6 +6,7 @@
  * Side Public License, v 1.
  */
 
+import React from 'react';
 import { CoreSetup, CoreStart, Plugin } from 'src/core/public';
 import {
   DocEditorPublicSetup,
@@ -13,7 +14,8 @@ import {
   DocEditorPublicSetupDependencies,
   DocEditorPublicStartDependencies,
 } from './types';
-import { Foobar } from './components/foobar';
+import {Foobar, FoobarProps} from './components/foobar';
+import {setCoreStart} from "./services";
 
 export class DocEditorPublicPlugin implements Plugin<DocEditorPublicSetup, DocEditorPublicStart> {
   public setup(
@@ -31,12 +33,19 @@ export class DocEditorPublicPlugin implements Plugin<DocEditorPublicSetup, DocEd
     coreStart: CoreStart,
     startPlugins: DocEditorPublicStartDependencies
   ): DocEditorPublicStart {
+
+    setCoreStart(coreStart);
+
     return {
       async getHello(): Promise<string> {
         return coreStart.http.basePath.prepend('Hello from doc editor start');
       },
       getFoobar(): any {
         return Foobar;
+      },
+
+      renderFoobar(props: FoobarProps): any {
+        return <Foobar closeFlyout={props.closeFlyout} docId={props.docId} indexId={props.indexId} />;
       },
     };
   }

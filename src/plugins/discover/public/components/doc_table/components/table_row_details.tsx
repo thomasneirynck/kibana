@@ -6,10 +6,12 @@
  * Side Public License, v 1.
  */
 
-import React from 'react';
-import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiLink, EuiTitle } from '@elastic/eui';
+import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiLink, EuiTitle, EuiButtonIcon } from '@elastic/eui';
 import { FormattedMessage } from '@kbn/i18n-react';
+import React, { Fragment, useCallback, useMemo, useState } from 'react';
 import { DiscoverNavigationProps } from '../../../utils/use_navigation_props';
+import { getDocEditor, setDocEditorStart } from '../../../kibana_services';
+
 interface TableRowDetailsProps {
   open: boolean;
   colLength: number;
@@ -17,6 +19,9 @@ interface TableRowDetailsProps {
   singleDocProps: DiscoverNavigationProps;
   surrDocsProps: DiscoverNavigationProps;
   children: JSX.Element;
+  showEditor: boolean;
+  onEditorChange: any;
+  hit: any;
 }
 
 export const TableRowDetails = ({
@@ -26,13 +31,36 @@ export const TableRowDetails = ({
   singleDocProps,
   surrDocsProps,
   children,
+  hit,
+  showEditor,
+  onEditorChange,
 }: TableRowDetailsProps) => {
+  const [isOpen, setOpen] = useState(false);
+
   if (!open) {
     return null;
   }
 
+  let flyout;
+
+  if (isOpen) {
+    const editor = getDocEditor();
+    console.log('s', singleDocProps);
+    console.log('s', hit);
+    flyout = editor.renderFoobar({
+      closeFlyout: () => {
+        setOpen(false);
+      },
+      docId: hit._id,
+      indexId: hit._index,
+    });
+  } else {
+    flyout = <></>;
+  }
+
   return (
     <td colSpan={(colLength || 1) + 2}>
+      {flyout}
       <EuiFlexGroup gutterSize="l" justifyContent="spaceBetween" responsive={false}>
         <EuiFlexItem grow={false}>
           <EuiFlexGroup gutterSize="s" alignItems="center" responsive={false}>
@@ -70,6 +98,15 @@ export const TableRowDetails = ({
                   defaultMessage="View single document"
                 />
               </EuiLink>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiButtonIcon
+                onClick={() => {
+                  console.log('set state true');
+                  setOpen(true);
+                }}
+                iconType="pencil"
+              />
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiFlexItem>

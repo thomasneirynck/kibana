@@ -12,7 +12,6 @@
   "extraPublicDirs": [
     "common"
   ],
-  "requiredPlugins": [
-  ],
+  "requiredPlugins": ["data"],
   "optionalPlugins": []
 }

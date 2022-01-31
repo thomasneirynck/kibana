@@ -13,6 +13,7 @@ export interface DocEditorPublicSetup {
 export interface DocEditorPublicStart {
   getHello: () => Promise<string>;
   getFoobar: () => React.Component;
+  renderFoobar: any;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

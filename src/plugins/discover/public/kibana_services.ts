@@ -13,11 +13,21 @@ import type { UiActionsStart } from 'src/plugins/ui_actions/public';
 import { HistoryLocationState } from './build_services';
 import { createGetterSetter } from '../../kibana_utils/public';
 import { DocViewsRegistry } from './services/doc_views/doc_views_registry';
+import {DocEditorPublicStart} from "../../doc_editor/public/types";
 
 let uiActions: UiActionsStart;
 
 export const setUiActions = (pluginUiActions: UiActionsStart) => (uiActions = pluginUiActions);
 export const getUiActions = () => uiActions;
+
+
+let docEditor : DocEditorPublicStart;
+export function getDocEditor():DocEditorPublicStart {
+  return docEditor;
+}
+export function setDocEditorStart(v) {
+  docEditor = v;
+}
 
 export const [getHeaderActionMenuMounter, setHeaderActionMenuMounter] =
   createGetterSetter<AppMountParameters['setHeaderActionMenu']>('headerActionMenuMounter');
